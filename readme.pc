@@ -1,39 +1,35 @@
-  Ok, here are the sources for my PC port of Angband.  It was written
-with #ifdefs to try to allow both the PC and Unix versions to use the
-same code.  For the moment, Sean Marsh is releasing the Unix source
-seperate from the PC source.  Hopefully, this is a stopgap measure, taken
-so that we could release Angband to all of you quickly.  It would be a
-real shame if PC and Unix Angband were to grow apart after all the work
-put into porting it to the PC.
+  Okay, here's the executable version of Angband for the PC.  It uses
+no 286, 386, or 486 code, so it should run on all PC systems.  Before
+playing this game, you should create a directory named "bones" as a subdir
+of where-ever you intend to play (for example, if you play angband from the
+directory \games\angband, then you should cd to \games\angband and then
+type "md bones").
 
-  This port includes color, thanks to Justin Anderson.  The color code
-is based directly on his color code for Umoria 5.4, and is used with
-his permission, provided his name stays in the credits (including the
-"news" file in the play directory...).  I'm greatful for it.
+  PC Angband has ALL of the features of Angband, and it runs in color.
+The color code was adapted directly from Justin Anderson's color code for
+Umoria 5.4, to whom I am greatful for permission to use it.
 
-  This port is written to compile under TC++, ver 1.0 (or higher).  It
-may compile under TurboC, but I don't think TC has the overlay support
-needed to fit Angband into memory.  There is TC-specific code in the
-color code, and in the tcio.c file, which contains screen I/O functions.
-If you're trying to port this to MSC, you'll probably need to start by
-replacing and/or converting those.  Good luck to you.
+  Angband is a memory hog, and it uses TurboC's overlay system to fit into
+memory.  You will need at least 500-510K of free memory to run this
+executable.  It will swap back and forth to disk, but it's still playable.
+If you have extended memory, you can drastically improve performance by
+running smartdrv, or some other disk cache.  (If memory is tight, use
+"devicehigh" to load smartdrv, to keep as much memory as possible free.)
 
-  I compiled angband, using the makefile "makefile.tc", which calls the
-linker response file "tclink.lnk".  They are written to be called from
-the same directory as the source files (the src directory).
+  The executable packaged here was compiled with a "mid-sized" overlay
+buffer of 128k.  People with lots of free memory (>590k) could get better
+performance using an overlay buffer size of 192k, especially if they also
+ran a disk cache.  If enough people request it, and the kind folks at KSU
+don't begrudge us the disk space, I'll make available an executable with
+the larger overlay buffer.  But, for now, if you want to try that, you'll
+have to compile it yourself...
 
-  The file changes.tc is probably of little interest to you unless you're
-debugging Angband -- It merely contains a history of my porting efforts
-from the Unix code to a working PC version.
+  A quick note about compiling (to save some people some trouble):
+The current PC sources will probably only compile under Turbo C++, version
+1.00 or greater.  I know that the color code uses many TC-specific functions,
+so anyone who wants to port it to MSC will have to figure out how to make
+it work.  Also, the makefile (as it stands now) links in the tcio package,
+which also uses TC-specific screen functions.  So I don't really recommend
+compiling your own version of angband, unless you have TC++ (or BC++).
 
-  The other *.tc files contain brief notes which you might find helpful.
-
-	Good luck,
---
-Charles F. Teague II  Net:cteague@cs.umb.edu  Real:33 Sidney Ave, Lynn MA 01902
-+------------------------------------+-----------------------+----------------+
-| Computers are so powerful because  | "Don't do what I SAY, | 'lush' CS 1993 |
-| they do whatever you tell them to. |  do what I mean!!!!"  | TKE-zm sn 603  |
-+------------------------------------+-----------------------+----------------+
-Hi!  I'm a replicating .sig virus!  Join in the fun and copy me into yours!
 
