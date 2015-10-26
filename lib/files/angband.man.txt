@@ -11,9 +11,6 @@
 
 
         Angband may be copied and modified freely,  but  may
-/*--------------------------------------------------------------------------*\
-
-\*--------------------------------------------------------------------------  
      not be sold or marketed IN ANY FORM without the permis-
      sion and written consent of  the  authors  Robert  Alan
      Koeneke  and James E. Wilson.  We retain all copyrights

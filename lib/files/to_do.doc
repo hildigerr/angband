@@ -1,3 +1,12 @@
+Received: from stone (stone.dcs.warwick.ac.uk) by cs.umb.edu with SMTP id AA22449
+  (5.65c/IDA-1.4.4 for <cteague@cs.umb.edu>); Fri, 9 Apr 1993 23:38:53 -0400
+From: Sean Marsh <smarsh@dcs.warwick.ac.uk>
+Message-Id: <19137.199304100337@stone>
+Subject: no subject (file transmission)
+To: cteague@cs.umb.edu
+Date: Sat, 10 Apr 93 4:37:45 BST
+Status: R
+
    This is file of suggestions for improvements to Angband/ideas that I have
 had but not implemented yet. Hopefully, a lot of these fixes will be added
 sometime in the future.

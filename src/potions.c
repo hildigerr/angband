@@ -442,30 +442,30 @@ void quaff()
 	      msg_print("You feel you know yourself a little better...");
 	      self_knowledge();
 	      ident = TRUE;
-	      break; 
-	    case 56: /*  *Healing*  */
-              ident = hp_player(1200);
-              if (py.flags.stun>0) {
-                if (py.flags.stun>50) {
-                  py.misc.ptohit+=20;
-                  py.misc.ptodam+=20;
-	        } else {
-                  py.misc.ptohit+=5;
-                  py.misc.ptodam+=5;
-	        }
-                py.flags.stun=0;
-                ident = TRUE;
-                msg_print("Your head stops stinging.");
+	      break;
+	    case 56: /*   *Healing*  */
+	      ident = hp_player(1200);
+	      if (py.flags.stun>0) {
+		if (py.flags.stun>50) {
+		  py.misc.ptohit+=20;
+		  py.misc.ptodam+=20;
+		} else {
+		  py.misc.ptohit+=5;
+		  py.misc.ptodam+=5;
+		}
+		py.flags.stun=0;
+		ident = TRUE;
+		msg_print("Your head stops stinging.");
 	      }
-              if (py.flags.cut>0) {
-                py.flags.cut=0;
-                ident = TRUE;
-                msg_print("Your wounds heal.");
+	      if (py.flags.cut>0) {
+		py.flags.cut=0;
+		ident = TRUE;
+		msg_print("Your wounds heal.");
 	      }
-              if (cure_blindness()) ident = TRUE;
-              if (cure_confusion()) ident = TRUE;
-              if (cure_poison()) ident = TRUE;
-              break;
+	      if (cure_blindness()) ident = TRUE;
+	      if (cure_confusion()) ident = TRUE;
+	      if (cure_poison()) ident = TRUE;
+	      break;
 	    default:
 	      if (1) {
 		char tmp_str[100];
