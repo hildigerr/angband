@@ -31,29 +31,37 @@
 #include <strings.h>
 #endif
 
-static int sv_write();
-static void wr_byte();
-static void wr_short();
-static void wr_long();
-static void wr_bytes();
-static void wr_string();
-static void wr_shorts();
-static void wr_item();
-static void wr_monster();
-static void rd_byte();
-static void rd_short();
-static void rd_long();
-static void rd_bytes();
-static void rd_string();
-static void rd_shorts();
-static void rd_item();
-static void rd_monster();
+static int sv_write(ARG_VOID);
+static void wr_byte(ARG_INT8U);
+static void wr_short(ARG_INT16U);
+static void wr_long(ARG_INT32U);
+static void wr_bytes(ARG_INT8U_PTR ARG_COMMA ARG_INT);
+static void wr_string(ARG_CHAR_PTR);
+static void wr_shorts(ARG_INT16U_PTR ARG_COMMA ARG_INT);
+static void wr_item(ARG_INV_PTR);
+static void wr_monster(ARG_MON_PTR);
+static void rd_byte(ARG_INT8U_PTR);
+static void rd_short(ARG_INT16U_PTR);
+static void rd_long(ARG_INT32U_PTR);
+static void rd_bytes(ARG_INT8U_PTR ARG_COMMA ARG_INT);
+static void rd_string(ARG_CHAR_PTR);
+static void rd_shorts(ARG_INT16U_PTR ARG_COMMA ARG_INT);
+static void rd_item(ARG_INV_PTR);
+static void rd_monster(ARG_MON_PTR);
+static void wr_unique(ARG_UNIQ_PTR);
+static void rd_unique(ARG_UNIQ_PTR);
+static char *basename(ARG_CHAR_PTR);
+int access(ARG_CHAR_PTR ARG_COMMA ARG_INT);
+int chmod(ARG_CHAR_PTR ARG_COMMA ARG_INT);
+#ifdef MSDOS
+int setmode(ARG_INT ARG_COMMA ARG_INT);
+#endif
 
 #if !defined(ATARIST_MWC)
 #ifdef MAC
 #include <time.h>
 #else
-long time();
+long time(ARG_INT32_PTR);
 #endif
 #else
 char *malloc();
@@ -91,15 +99,25 @@ static char *basename(a)
 static void wr_unique(item)
 register struct unique_mon *item;
 {
-  wr_long((int32)item->exist);
-  wr_long((int32)item->dead);
+#ifdef MSDOS
+  wr_byte((int8u)item->exist);
+  wr_byte((int8u)item->dead);
+#else
+  wr_long((int32u)item->exist);
+  wr_long((int32u)item->dead);
+#endif
 }
 
 static void rd_unique(item)
 register struct unique_mon *item;
 {
-  rd_long((int32)&item->exist);
-  rd_long((int32)&item->dead);
+#ifdef MSDOS
+  rd_byte((int8u *)&item->exist);
+  rd_byte((int8u *)&item->dead);
+#else
+  rd_long((int32u *)&item->exist);
+  rd_long((int32u *)&item->dead);
+#endif
 }
 
 
@@ -112,6 +130,9 @@ static int sv_write()
   register cave_type *c_ptr;
   register recall_type *r_ptr;
   struct stats *s_ptr;
+#ifdef MSDOS
+  inven_type *t_ptr;
+#endif
   register struct flags *f_ptr;
   store_type *st_ptr;
   struct misc *m_ptr;
@@ -141,124 +162,140 @@ static int sv_write()
     l |= 128;
   if (find_ignore_doors)
     l |= 256;
+#ifdef MSDOS
+  if (sound_beep_flag)
+    l |= 0x200L;
+  if (no_haggle_flag)
+    l |= 0x400L;
+#endif    
   if (death)
     l |= 0x80000000L;	/* Sign bit */
-  wr_long(GROND);
-  wr_long(RINGIL);
-  wr_long(AEGLOS);
-  wr_long(ARUNRUTH);
-  wr_long(MORMEGIL);
-  wr_long(ANGRIST);
-  wr_long(GURTHANG);
-  wr_long(CALRIS);
-  wr_long(ANDURIL);
-  wr_long(STING);
-  wr_long(ORCRIST);
-  wr_long(GLAMDRING);
-  wr_long(DURIN);
-  wr_long(AULE);
-  wr_long(THUNDERFIST);
-  wr_long(BLOODSPIKE);
-  wr_long(DOOMCALLER);
-  wr_long(NARTHANC);
-  wr_long(NIMTHANC);
-  wr_long(DETHANC);
-  wr_long(GILETTAR);
-  wr_long(RILIA);
-  wr_long(BELANGIL);
-  wr_long(BALLI);
-  wr_long(LOTHARANG);
-  wr_long(FIRESTAR);
-  wr_long(ERIRIL);
-  wr_long(CUBRAGOL);
-  wr_long(BARD);
-  wr_long(COLLUIN);
-  wr_long(HOLCOLLETH);
-  wr_long(TOTILA);
-  wr_long(PAIN);
-  wr_long(ELVAGIL);
-  wr_long(AGLARANG);
-  wr_long(EORLINGAS);
-  wr_long(BARUKKHELED);
-  wr_long(WRATH);
-  wr_long(HARADEKKET);
-  wr_long(MUNDWINE);
-  wr_long(GONDRICAM);
-  wr_long(ZARCUTHRA);
-  wr_long(CARETH);
-  wr_long(FORASGIL);
-  wr_long(CRISDURIAN);
-  wr_long(COLANNON);
-  wr_long(HITHLOMIR);
-  wr_long(THALKETTOTH);
-  wr_long(ARVEDUI);
-  wr_long(THRANDUIL);
-  wr_long(THENGEL);
-  wr_long(HAMMERHAND);
-  wr_long(CELEFARN);
-  wr_long(THROR);
-  wr_long(MAEDHROS);
-  wr_long(OLORIN);
-  wr_long(ANGUIREL);
-  wr_long(OROME);
-  wr_long(EONWE);
-  wr_long(THEODEN);
-  wr_long(ULMO);
-  wr_long(OSONDIR);
-  wr_long(TURMIL);
-  wr_long(CASPANION);
-  wr_long(TIL);
-  wr_long(DEATHWREAKER);
-  wr_long(AVAVIR);
-  wr_long(TARATOL);
 
-  wr_long(DOR_LOMIN);
-  wr_long(NENYA);
-  wr_long(NARYA);
-  wr_long(VILYA);
-  wr_long(BELEGENNON);
-  wr_long(FEANOR);
-  wr_long(ISILDUR);
-  wr_long(SOULKEEPER);
-  wr_long(FINGOLFIN);
-  wr_long(ANARION);
-  wr_long(POWER);
-  wr_long(PHIAL);
-  wr_long(BELEG);
-  wr_long(DAL);
-  wr_long(PAURHACH);
-  wr_long(PAURNIMMEN);
-  wr_long(PAURAEGEN);
-  wr_long(PAURNEN);
-  wr_long(CAMMITHRIM);
-  wr_long(CAMBELEG);
-  wr_long(INGWE);
-  wr_long(CARLAMMAS);
-  wr_long(HOLHENNETH);
-  wr_long(AEGLIN);
-  wr_long(CAMLOST);
-  wr_long(NIMLOTH);
-  wr_long(NAR);
-  wr_long(BERUTHIEL);
-  wr_long(GORLIM);
-  wr_long(ELENDIL);
-  wr_long(THORIN);
-  wr_long(CELEBORN);
-  wr_long(THRAIN);
-  wr_long(GONDOR);
-  wr_long(THINGOL);
-  wr_long(THORONGIL);
-  wr_long(LUTHIEN);
-  wr_long(TUOR);
-  wr_long(ROHAN);
-  wr_long(TULKAS);
-  wr_long(NECKLACE);
-  wr_long(BARAHIR);
-  wr_long(RAZORBACK);
-  wr_long(BLADETURNER);
+#ifdef MSDOS
+#define WRITE_FN wr_byte
+#else
+#define WRITE_FN wr_long
+#endif
+  WRITE_FN(GROND);
+  WRITE_FN(RINGIL);
+  WRITE_FN(AEGLOS);
+  WRITE_FN(ARUNRUTH);
+  WRITE_FN(MORMEGIL);
+  WRITE_FN(ANGRIST);
+  WRITE_FN(GURTHANG);
+  WRITE_FN(CALRIS);
+  WRITE_FN(ANDURIL);
+  WRITE_FN(STING);
+  WRITE_FN(ORCRIST);
+  WRITE_FN(GLAMDRING);
+  WRITE_FN(DURIN);
+  WRITE_FN(AULE);
+  WRITE_FN(THUNDERFIST);
+  WRITE_FN(BLOODSPIKE);
+  WRITE_FN(DOOMCALLER);
+  WRITE_FN(NARTHANC);
+  WRITE_FN(NIMTHANC);
+  WRITE_FN(DETHANC);
+  WRITE_FN(GILETTAR);
+  WRITE_FN(RILIA);
+  WRITE_FN(BELANGIL);
+  WRITE_FN(BALLI);
+  WRITE_FN(LOTHARANG);
+  WRITE_FN(FIRESTAR);
+  WRITE_FN(ERIRIL);
+  WRITE_FN(CUBRAGOL);
+  WRITE_FN(BARD);
+  WRITE_FN(COLLUIN);
+  WRITE_FN(HOLCOLLETH);
+  WRITE_FN(TOTILA);
+  WRITE_FN(PAIN);
+  WRITE_FN(ELVAGIL);
+  WRITE_FN(AGLARANG);
+  WRITE_FN(EORLINGAS);
+  WRITE_FN(BARUKKHELED);
+  WRITE_FN(WRATH);
+  WRITE_FN(HARADEKKET);
+  WRITE_FN(MUNDWINE);
+  WRITE_FN(GONDRICAM);
+  WRITE_FN(ZARCUTHRA);
+  WRITE_FN(CARETH);
+  WRITE_FN(FORASGIL);
+  WRITE_FN(CRISDURIAN);
+  WRITE_FN(COLANNON);
+  WRITE_FN(HITHLOMIR);
+  WRITE_FN(THALKETTOTH);
+  WRITE_FN(ARVEDUI);
+  WRITE_FN(THRANDUIL);
+  WRITE_FN(THENGEL);
+  WRITE_FN(HAMMERHAND);
+  WRITE_FN(CELEFARN);
+  WRITE_FN(THROR);
+  WRITE_FN(MAEDHROS);
+  WRITE_FN(OLORIN);
+  WRITE_FN(ANGUIREL);
+  WRITE_FN(OROME);
+  WRITE_FN(EONWE);
+  WRITE_FN(THEODEN);
+  WRITE_FN(ULMO);
+  WRITE_FN(OSONDIR);
+  WRITE_FN(TURMIL);
+  WRITE_FN(CASPANION);
+  WRITE_FN(TIL);
+  WRITE_FN(DEATHWREAKER);
+  WRITE_FN(AVAVIR);
+  WRITE_FN(TARATOL);
+
+  WRITE_FN(DOR_LOMIN);
+  WRITE_FN(NENYA);
+  WRITE_FN(NARYA);
+  WRITE_FN(VILYA);
+  WRITE_FN(BELEGENNON);
+  WRITE_FN(FEANOR);
+  WRITE_FN(ISILDUR);
+  WRITE_FN(SOULKEEPER);
+  WRITE_FN(FINGOLFIN);
+  WRITE_FN(ANARION);
+  WRITE_FN(POWER);
+  WRITE_FN(PHIAL);
+  WRITE_FN(BELEG);
+  WRITE_FN(DAL);
+  WRITE_FN(PAURHACH);
+  WRITE_FN(PAURNIMMEN);
+  WRITE_FN(PAURAEGEN);
+  WRITE_FN(PAURNEN);
+  WRITE_FN(CAMMITHRIM);
+  WRITE_FN(CAMBELEG);
+  WRITE_FN(INGWE);
+  WRITE_FN(CARLAMMAS);
+  WRITE_FN(HOLHENNETH);
+  WRITE_FN(AEGLIN);
+  WRITE_FN(CAMLOST);
+  WRITE_FN(NIMLOTH);
+  WRITE_FN(NAR);
+  WRITE_FN(BERUTHIEL);
+  WRITE_FN(GORLIM);
+  WRITE_FN(ELENDIL);
+  WRITE_FN(THORIN);
+  WRITE_FN(CELEBORN);
+  WRITE_FN(THRAIN);
+  WRITE_FN(GONDOR);
+  WRITE_FN(THINGOL);
+  WRITE_FN(THORONGIL);
+  WRITE_FN(LUTHIEN);
+  WRITE_FN(TUOR);
+  WRITE_FN(ROHAN);
+  WRITE_FN(TULKAS);
+  WRITE_FN(NECKLACE);
+  WRITE_FN(BARAHIR);
+  WRITE_FN(RAZORBACK);
+  WRITE_FN(BLADETURNER);
 
   for (i=0; i<MAX_QUESTS; i++)
+#ifdef MSDOS
+    wr_short(quests[i]);
+#else
     wr_long(quests[i]);
+#endif
 
   for (i=0; i<MAX_CREATURES; i++)
     wr_unique(&u_list[i]);
@@ -505,7 +542,11 @@ static int sv_write()
 	  {
 	    wr_byte((int8u)i);
 	    wr_byte((int8u)j);
+#ifdef MSDOS
 	    wr_short((int16u)c_ptr->tptr);
+#else
+	    wr_short((int16u)c_ptr->tptr);
+#endif
 	  }
       }
   wr_byte(0xFF); /* marks end of tptr info */
@@ -584,6 +625,9 @@ int save_char()
 #endif
   if (death && NO_SAVE) return TRUE;
 
+#ifdef MSDOS
+  return _save_char(savefile);
+#else
   if (_save_char(savefile)) {
 
     tmp2=basename(savefile);
@@ -598,6 +642,7 @@ int save_char()
   beGames();
 #endif
   return TRUE;
+#endif
 }
 
 int _save_char(fnam)
@@ -639,9 +684,9 @@ char *fnam;
   if (fd >= 0)
     {
       (void) close(fd);
-#endif /* ATARIST_MWC */
+#endif /* !ATARIST_MWC */
       /* GCC for atari st defines atarist */
-#if defined(atarist) || defined(ATARIST_MWC)
+#if defined(atarist) || defined(ATARIST_MWC) || defined(MSDOS)
       fileptr = fopen(savefile, "wb");
 #else
       fileptr = fopen(savefile, "w");
@@ -651,9 +696,6 @@ char *fnam;
 #endif
   if (fileptr != NULL)
     {
-#ifdef MSDOS
-      (void) setmode(fileno(fileptr), O_BINARY);
-#endif
       xor_byte = 0;
       wr_byte((int8u)CUR_VERSION_MAJ);
       xor_byte = 0;
@@ -678,6 +720,7 @@ char *fnam;
       if (fd >= 0)
 	(void) sprintf(temp, "Error writing to savefile", fnam);
       else
+/* here? */
 	(void) sprintf(temp, "Can't create new savefile", fnam);
       msg_print(temp);
       return FALSE;
@@ -710,6 +753,9 @@ int *generate;
   struct stats *s_ptr;
   register struct flags *f_ptr;
   store_type *st_ptr;
+#ifdef MSDOS
+  inven_type *t_ptr;
+#endif
   int8u char_tmp, ychar, xchar, count;
   int8u version_maj, version_min, patch_level;
 
@@ -752,7 +798,11 @@ int *generate;
 #endif
       (void) close(fd);
       /* GCC for atari st defines atarist */
+#if defined(atarist) || defined(ATARI_ST) || defined(THINK_C) || defined(MSDOS)
+      fileptr = fopen(savefile, "rb");
+#else
       fileptr = fopen(savefile, "r");
+#endif
       if (fileptr == NULL)
 	goto error;
 
@@ -781,127 +831,136 @@ int *generate;
 	}
 
       put_qio();
-      rd_long(&GROND);
-      rd_long(&RINGIL);
-      rd_long(&AEGLOS);
-      rd_long(&ARUNRUTH);
-      rd_long(&MORMEGIL);
-      rd_long(&ANGRIST);
-      rd_long(&GURTHANG);
-      rd_long(&CALRIS);
-      rd_long(&ANDURIL);
-      rd_long(&STING);
-      rd_long(&ORCRIST);
-      rd_long(&GLAMDRING);
-      rd_long(&DURIN);
-      rd_long(&AULE);
-      rd_long(&THUNDERFIST);
-      rd_long(&BLOODSPIKE);
-      rd_long(&DOOMCALLER);
-      rd_long(&NARTHANC);
-      rd_long(&NIMTHANC);
-      rd_long(&DETHANC);
-      rd_long(&GILETTAR);
-      rd_long(&RILIA);
-      rd_long(&BELANGIL);
-      rd_long(&BALLI);
-      rd_long(&LOTHARANG);
-      rd_long(&FIRESTAR);
-      rd_long(&ERIRIL);
-      rd_long(&CUBRAGOL);
-      rd_long(&BARD);
-      rd_long(&COLLUIN);
-      rd_long(&HOLCOLLETH);
-      rd_long(&TOTILA);
-      rd_long(&PAIN);
-      rd_long(&ELVAGIL);
-      rd_long(&AGLARANG);
-      rd_long(&EORLINGAS);
-      rd_long(&BARUKKHELED);
-      rd_long(&WRATH);
-      rd_long(&HARADEKKET);
-      rd_long(&MUNDWINE);
-      rd_long(&GONDRICAM);
-      rd_long(&ZARCUTHRA);
-      rd_long(&CARETH);
-      rd_long(&FORASGIL);
-      rd_long(&CRISDURIAN);
-      rd_long(&COLANNON);
-      rd_long(&HITHLOMIR);
-      rd_long(&THALKETTOTH);
-      rd_long(&ARVEDUI);
-      rd_long(&THRANDUIL);
-      rd_long(&THENGEL);
-      rd_long(&HAMMERHAND);
-      rd_long(&CELEFARN);
-      rd_long(&THROR);
-      rd_long(&MAEDHROS);
-      rd_long(&OLORIN);
-      rd_long(&ANGUIREL);
-      rd_long(&OROME);
-      rd_long(&EONWE);
-      rd_long(&THEODEN);
-      rd_long(&ULMO);
-      rd_long(&OSONDIR);
-      rd_long(&TURMIL);
-      rd_long(&CASPANION);
-      rd_long(&TIL);
-      rd_long(&DEATHWREAKER);
-      rd_long(&AVAVIR);
-      rd_long(&TARATOL);
+#ifdef MSDOS
+#define READ_FN rd_byte
+#else
+#define READ_FN rd_long
+#endif
+      READ_FN(&GROND);
+      READ_FN(&RINGIL);
+      READ_FN(&AEGLOS);
+      READ_FN(&ARUNRUTH);
+      READ_FN(&MORMEGIL);
+      READ_FN(&ANGRIST);
+      READ_FN(&GURTHANG);
+      READ_FN(&CALRIS);
+      READ_FN(&ANDURIL);
+      READ_FN(&STING);
+      READ_FN(&ORCRIST);
+      READ_FN(&GLAMDRING);
+      READ_FN(&DURIN);
+      READ_FN(&AULE);
+      READ_FN(&THUNDERFIST);
+      READ_FN(&BLOODSPIKE);
+      READ_FN(&DOOMCALLER);
+      READ_FN(&NARTHANC);
+      READ_FN(&NIMTHANC);
+      READ_FN(&DETHANC);
+      READ_FN(&GILETTAR);
+      READ_FN(&RILIA);
+      READ_FN(&BELANGIL);
+      READ_FN(&BALLI);
+      READ_FN(&LOTHARANG);
+      READ_FN(&FIRESTAR);
+      READ_FN(&ERIRIL);
+      READ_FN(&CUBRAGOL);
+      READ_FN(&BARD);
+      READ_FN(&COLLUIN);
+      READ_FN(&HOLCOLLETH);
+      READ_FN(&TOTILA);
+      READ_FN(&PAIN);
+      READ_FN(&ELVAGIL);
+      READ_FN(&AGLARANG);
+      READ_FN(&EORLINGAS);
+      READ_FN(&BARUKKHELED);
+      READ_FN(&WRATH);
+      READ_FN(&HARADEKKET);
+      READ_FN(&MUNDWINE);
+      READ_FN(&GONDRICAM);
+      READ_FN(&ZARCUTHRA);
+      READ_FN(&CARETH);
+      READ_FN(&FORASGIL);
+      READ_FN(&CRISDURIAN);
+      READ_FN(&COLANNON);
+      READ_FN(&HITHLOMIR);
+      READ_FN(&THALKETTOTH);
+      READ_FN(&ARVEDUI);
+      READ_FN(&THRANDUIL);
+      READ_FN(&THENGEL);
+      READ_FN(&HAMMERHAND);
+      READ_FN(&CELEFARN);
+      READ_FN(&THROR);
+      READ_FN(&MAEDHROS);
+      READ_FN(&OLORIN);
+      READ_FN(&ANGUIREL);
+      READ_FN(&OROME);
+      READ_FN(&EONWE);
+      READ_FN(&THEODEN);
+      READ_FN(&ULMO);
+      READ_FN(&OSONDIR);
+      READ_FN(&TURMIL);
+      READ_FN(&CASPANION);
+      READ_FN(&TIL);
+      READ_FN(&DEATHWREAKER);
+      READ_FN(&AVAVIR);
+      READ_FN(&TARATOL);
       if (to_be_wizard) prt("Loaded Weapon Artifacts", 2, 0);
       put_qio();
 
 
-      rd_long(&DOR_LOMIN);
-      rd_long(&NENYA);
-      rd_long(&NARYA);
-      rd_long(&VILYA);
-      rd_long(&BELEGENNON);
-      rd_long(&FEANOR);
-      rd_long(&ISILDUR);
-      rd_long(&SOULKEEPER);
-      rd_long(&FINGOLFIN);
-      rd_long(&ANARION);
-      rd_long(&POWER);
-      rd_long(&PHIAL);
-      rd_long(&BELEG);
-      rd_long(&DAL);
-      rd_long(&PAURHACH);
-      rd_long(&PAURNIMMEN);
-      rd_long(&PAURAEGEN);
-      rd_long(&PAURNEN);
-      rd_long(&CAMMITHRIM);
-      rd_long(&CAMBELEG);
-      rd_long(&INGWE);
-      rd_long(&CARLAMMAS);
-      rd_long(&HOLHENNETH);
-      rd_long(&AEGLIN);
-      rd_long(&CAMLOST);
-      rd_long(&NIMLOTH);
-      rd_long(&NAR);
-      rd_long(&BERUTHIEL);
-      rd_long(&GORLIM);
-      rd_long(&ELENDIL);
-      rd_long(&THORIN);
-      rd_long(&CELEBORN);
-      rd_long(&THRAIN);
-      rd_long(&GONDOR);
-      rd_long(&THINGOL);
-      rd_long(&THORONGIL);
-      rd_long(&LUTHIEN);
-      rd_long(&TUOR);
-      rd_long(&ROHAN);
-      rd_long(&TULKAS);
-      rd_long(&NECKLACE);
-      rd_long(&BARAHIR);
-      rd_long(&RAZORBACK);
-      rd_long(&BLADETURNER);
+      READ_FN(&DOR_LOMIN);
+      READ_FN(&NENYA);
+      READ_FN(&NARYA);
+      READ_FN(&VILYA);
+      READ_FN(&BELEGENNON);
+      READ_FN(&FEANOR);
+      READ_FN(&ISILDUR);
+      READ_FN(&SOULKEEPER);
+      READ_FN(&FINGOLFIN);
+      READ_FN(&ANARION);
+      READ_FN(&POWER);
+      READ_FN(&PHIAL);
+      READ_FN(&BELEG);
+      READ_FN(&DAL);
+      READ_FN(&PAURHACH);
+      READ_FN(&PAURNIMMEN);
+      READ_FN(&PAURAEGEN);
+      READ_FN(&PAURNEN);
+      READ_FN(&CAMMITHRIM);
+      READ_FN(&CAMBELEG);
+      READ_FN(&INGWE);
+      READ_FN(&CARLAMMAS);
+      READ_FN(&HOLHENNETH);
+      READ_FN(&AEGLIN);
+      READ_FN(&CAMLOST);
+      READ_FN(&NIMLOTH);
+      READ_FN(&NAR);
+      READ_FN(&BERUTHIEL);
+      READ_FN(&GORLIM);
+      READ_FN(&ELENDIL);
+      READ_FN(&THORIN);
+      READ_FN(&CELEBORN);
+      READ_FN(&THRAIN);
+      READ_FN(&GONDOR);
+      READ_FN(&THINGOL);
+      READ_FN(&THORONGIL);
+      READ_FN(&LUTHIEN);
+      READ_FN(&TUOR);
+      READ_FN(&ROHAN);
+      READ_FN(&TULKAS);
+      READ_FN(&NECKLACE);
+      READ_FN(&BARAHIR);
+      READ_FN(&RAZORBACK);
+      READ_FN(&BLADETURNER);
       if (to_be_wizard) prt("Loaded Armour Artifacts", 3, 0);
       put_qio();
 
       for (i=0; i<MAX_QUESTS; i++)
+#ifdef MSDOS
+	rd_short(&quests[i]);
+#else	
 	rd_long(&quests[i]);
+#endif
       if (to_be_wizard) prt("Loaded Quests", 4, 0);
 
       for (i=0; i<MAX_CREATURES; i++)
@@ -970,6 +1029,16 @@ int *generate;
 	find_ignore_doors = TRUE;
       else
 	find_ignore_doors = FALSE;
+#ifdef MSDOS
+      if (l & 0x200L)
+      	sound_beep_flag = TRUE;
+      else
+        sound_beep_flag = FALSE;
+      if (l & 0x400L)
+      	no_haggle_flag = TRUE;
+      else
+        no_haggle_flag = FALSE;
+#endif        
       if (to_be_wizard && (l & 0x80000000L)
 	  && get_check("Resurrect a dead character?"))
 	l &= ~0x80000000L;
@@ -1241,12 +1310,20 @@ int *generate;
 	{
 	  ychar = char_tmp;
 	  rd_byte(&xchar);
+#ifdef MSDOS
 	  rd_short((int16u *)&int16u_tmp);
+#else
+	  rd_short((int16u *)&int16u_tmp);
+#endif
 	  if (xchar > MAX_WIDTH || ychar > MAX_HEIGHT) {
             prt("Error in treasure pointer info", 12, 0);
 	    goto error;
 	  }
+#ifdef MSDOS
 	  cave[ychar][xchar].tptr = int16u_tmp;
+#else
+	  cave[ychar][xchar].tptr = int16u_tmp;
+#endif
 	  rd_byte(&char_tmp);
 	}
       /* read in the rest of the cave info */
@@ -1423,6 +1500,9 @@ int *generate;
 	    }
 
 	  if (turn >= 0) {
+#ifndef MSDOS  /* I'm not quite sure what this does, but UM55 doesn't
+		  use it, and link() is undefined on TC, so I'm ifndef-ing
+		  it out for now...  -CFT */
 	    char *tmp2;
 
 	    tmp2=basename(savefile);
@@ -1431,6 +1511,7 @@ int *generate;
 
 	    link(savefile, temp);
 	    unlink(savefile);
+#endif
 	    return TRUE;
 	  } else {
 	    return FALSE;	/* Only restored options and monster memory. */
@@ -1546,6 +1627,9 @@ register inven_type *item;
   wr_byte(item->ident);
   wr_long(item->flags2);
   wr_short((int16u)item->timeout);
+#ifdef TC_COLOR
+  wr_byte(item->color);
+#endif
 }
 
 static void wr_monster(mon)
@@ -1561,6 +1645,9 @@ register monster_type *mon;
   wr_byte(mon->ml);
   wr_byte(mon->stunned);
   wr_byte(mon->confused);
+#ifdef TC_COLOR
+  wr_byte(mon->color);
+#endif
 }
 
 static void rd_byte(ptr)
@@ -1678,6 +1765,9 @@ register inven_type *item;
   rd_byte(&item->ident);
   rd_long(&item->flags2);
   rd_short((int16u *)&item->timeout);
+#ifdef TC_COLOR
+  rd_byte(&item->color);
+#endif
 }
 
 static void rd_monster(mon)
@@ -1693,4 +1783,7 @@ register monster_type *mon;
   rd_byte(&mon->ml);
   rd_byte(&mon->stunned);
   rd_byte(&mon->confused);
+#ifdef TC_COLOR
+  rd_byte(&mon->color);
+#endif
 }

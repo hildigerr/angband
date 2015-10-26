@@ -32,8 +32,16 @@ static void sub1_move_light(int, int, int, int);
 static void sub3_move_light(int, int, int, int);
 static int see_wall(int, int, int);
 static int see_nothing(int, int, int);
-#else
-static int see_wall();
+#else 
+static int see_wall(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+static void inven_screen(ARG_INT);
+static char map_roguedir(ARG_CHAR);
+static void flood_light(ARG_INT ARG_COMMA ARG_INT);
+static void flood_permanent(ARG_INT ARG_COMMA ARG_INT);
+static void flood_permanent_dark(ARG_INT ARG_COMMA ARG_INT);
+static void sub3_move_light(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+static void sub1_move_light(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+static int see_nothing(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
 #endif
 
 /* Changes speed of monsters relative to player		-RAK-	*/
@@ -222,60 +230,59 @@ void calc_bonuses()
     m_ptr->dis_th += (py.stats.use_stat[A_STR] * 15 -
 		      inventory[INVEN_WIELD].weight);
 
-  
-  /* don't forget stun adj, or we'll get incorrect values... -CFT */
-    if (p_ptr->stun > 50){
-      m_ptr->ptohit -= 20;
-      m_ptr->dis_th -= 20;
-      m_ptr->ptodam -= 20;
-      m_ptr->dis_td -= 20;
-    }
-    else if (p_ptr->stun > 0){
-      m_ptr->ptohit -= 5;
-      m_ptr->dis_th -= 5;
-      m_ptr->ptodam -= 5;
-      m_ptr->dis_td -= 5;
-    }
-  
+/* don't forget stun adj, or we'll get incorrect values... -CFT */
+  if (p_ptr->stun > 50){
+    m_ptr->ptohit -= 20;
+    m_ptr->dis_th -= 20;
+    m_ptr->ptodam -= 20;
+    m_ptr->dis_td -= 20;
+  }
+  else if (p_ptr->stun > 0){
+    m_ptr->ptohit -= 5;
+    m_ptr->dis_th -= 5;
+    m_ptr->ptodam -= 5;
+    m_ptr->dis_td -= 5;
+  }
+
   /* Add in temporary spell increases	*/
-  /* these changed from pac to ptoac, since mana now affected by high pac
-     (to sim. encumberence), and these really should be magical bonuses -CFT */
-    if (p_ptr->status & PY_INVULN)
+/* these changed from pac to ptoac, since mana now affected by high pac
+   (to sim. encumberence), and these really should be magical bonuses -CFT */
+  if (p_ptr->status & PY_INVULN)
     {
-        m_ptr->ptoac += 100;
-        m_ptr->dis_tac += 100;
+      m_ptr->ptoac += 100;
+      m_ptr->dis_tac += 100;
     }
-    if (p_ptr->status & PY_BLESSED)
-      { /* changed to agree w/ code in dungeon()... -CFT */
-        m_ptr->ptoac += 5; 
-        m_ptr->dis_tac += 5;
-        m_ptr->ptohit += 10;
-        m_ptr->dis_th += 10;
-      }
-    if (p_ptr->shield > 0)
-	{
-        m_ptr->ptoac += 50;
-        m_ptr->dis_tac += 50;
-        }
-    if (p_ptr->detect_inv > 0)
-      p_ptr->see_inv = TRUE;
-    if (p_ptr->status & PY_HERO){ /* now agrees w/ code in dungeon() -CFT */
-      m_ptr->ptohit += 12;
-      m_ptr->dis_th += 12;
+  if (p_ptr->status & PY_BLESSED)
+    { /* changed to agree w/ code in dungeon()... -CFT */
+      m_ptr->ptoac += 5; 
+      m_ptr->dis_tac += 5;
+      m_ptr->ptohit += 10;
+      m_ptr->dis_th += 10;
     }
-    if (p_ptr->status & PY_SHERO) { /* now agrees w/ code in dungeon() -CFT */
-      m_ptr->ptohit += 24;
-      m_ptr->dis_th += 24;
-      m_ptr->ptoac -= 10; /* beserk, so not being careful... -CFT */
-      m_ptr->dis_tac -=10;
+  if (p_ptr->shield > 0)
+    {
+      m_ptr->ptoac += 50;
+      m_ptr->dis_tac += 50;
     }
-  
-    m_ptr->dis_ac += m_ptr->dis_tac; /* this moved from above, so it will show
-                                        ac adjustments from spells... -CFT */ 
+  if (p_ptr->detect_inv > 0)
+    p_ptr->see_inv = TRUE;
+  if (p_ptr->status & PY_HERO){ /* now agrees w/ code in dungeon() -CFT */
+    m_ptr->ptohit += 12;
+    m_ptr->dis_th += 12;
+  }
+  if (p_ptr->status & PY_SHERO) { /* now agrees w/ code in dungeon() -CFT */
+    m_ptr->ptohit += 24;
+    m_ptr->dis_th += 24;
+    m_ptr->ptoac -= 10; /* beserk, so not being careful... -CFT */
+    m_ptr->dis_tac -=10;
+  }
+
+  m_ptr->dis_ac += m_ptr->dis_tac; /* this moved from above, so it will show
+  					ac adjustments from spells... -CFT */
 
   /* can't print AC here because might be in a store */
   p_ptr->status |= PY_ARMOR; /* This was in an if, but I want to be
-                               sure ac is shown properly... -CFT */
+  				sure ac is shown properly... -CFT */
 
   item_flags = 0L;
   i_ptr = &inventory[INVEN_WIELD];
@@ -1611,9 +1618,13 @@ int y,x;
       c_ptr->fval=NT_LIGHT_FLOOR;
     else if (c_ptr->fval==DARK_FLOOR)
       c_ptr->fval=LIGHT_FLOOR;
+#ifdef MSDOS
+    lite_spot(y,x); /* this does all that; plus color-safe -CFT */
+#else
     if ((y-panel_row_prt)<23 && (y-panel_row_prt)>0 &&
 	(x-panel_col_prt)>12 && (x-panel_col_prt)<80)
       print(loc_symbol(y, x), y, x);
+#endif
     if (c_ptr->fval<MIN_CLOSED_SPACE) {
       flood_permanent(y+1,x);
       flood_permanent(y-1,x);
@@ -1638,6 +1649,22 @@ int y,x;
       c_ptr->fval=NT_DARK_FLOOR;
     else if (c_ptr->fval==LIGHT_FLOOR)
       c_ptr->fval=DARK_FLOOR;
+#ifdef MSDOS
+    if (panel_contains(y,x)) {
+      if (c_ptr->fval < MIN_CLOSED_SPACE){
+        c_ptr->pl = FALSE;
+        flood_permanent_dark(y+1,x);
+        flood_permanent_dark(y-1,x);
+        flood_permanent_dark(y,x+1);
+        flood_permanent_dark(y,x-1);
+        flood_permanent_dark(y+1,x+1);
+        flood_permanent_dark(y-1,x-1);
+        flood_permanent_dark(y-1,x+1);
+        flood_permanent_dark(y+1,x-1);
+        }
+      lite_spot(y,x);
+      }
+#else
     if ((y-panel_row_prt)<23 && (y-panel_row_prt)>0 &&
 	(x-panel_col_prt)>12 && (x-panel_col_prt)<80)
     if (c_ptr->fval<MIN_CLOSED_SPACE) {
@@ -1652,6 +1679,7 @@ int y,x;
       flood_permanent_dark(y+1,x-1);
     }
     print(loc_symbol(y, x), y, x);
+#endif
   }
 }
 
@@ -1718,6 +1746,9 @@ register int y, x;
 {
   if (panel_contains(y, x))
     print(loc_symbol(y, x), y, x);
+#ifdef TC_COLOR
+  textcolor(LIGHTGRAY);
+#endif
 }
 
 
@@ -1782,7 +1813,11 @@ int y1, y2;
     }
   for (i = top; i <= bottom; i++)
     for (j = left; j <= right; j++)   /* Leftmost to rightmost do*/
+#ifdef MSDOS
+      lite_spot(i, j); /* this does that, plus panel check + color safe */
+#else
       print(loc_symbol(i, j), i, j);
+#endif
 }
 
 
@@ -1800,12 +1835,20 @@ int y2, x2;
 	for (j = x1-1; j <= x1+1; j++)
 	  {
 	    cave[i][j].tl = FALSE;
+#ifdef MSDOS
+	    lite_spot(i,j);
+#else
 	    print(loc_symbol(i, j), i, j);
+#endif
 	  }
       light_flag = FALSE;
     }
   else
+#ifdef MSDOS
+    lite_spot(y1, x1);
+#else
     print(loc_symbol(y1, x1), y1, x1);
+#endif
 
   if (!find_flag || find_prself)
     print('@', y2, x2);
@@ -2265,7 +2308,11 @@ int dir, y, x;
   if (!mmove(dir, &y, &x))	/* check to see if movement there possible */
     return TRUE;
 #ifdef MSDOS
+#ifdef TC_COLOR
+  else if ((c = loc_symbol(y, x)) == wallsym)
+#else
   else if ((c = loc_symbol(y, x)) == wallsym || c == '%')
+#endif
 #else
 #ifdef ATARIST_MWC
   else if ((c = loc_symbol(y, x)) == (unsigned char)240 || c == '%')
@@ -2273,9 +2320,17 @@ int dir, y, x;
   else if ((c = loc_symbol(y, x)) == '#' || c == '%')
 #endif
 #endif
+#ifdef TC_COLOR
+    { textcolor(LIGHTGRAY);  return TRUE; }
+#else
     return TRUE;
+#endif
   else
+#ifdef TC_COLOR
+    { textcolor(LIGHTGRAY);  return FALSE; }
+#else
     return FALSE;
+#endif
 }
 
 /* Do we see anything? Used in running.		-CJS- */
@@ -2285,9 +2340,17 @@ int dir, y, x;
   if (!mmove(dir, &y, &x))	/* check to see if movement there possible */
     return FALSE;
   else if (loc_symbol(y, x) == ' ')
+#ifdef TC_COLOR
+    { textcolor(LIGHTGRAY);  return TRUE; }
+#else
     return TRUE;
+#endif
   else
+#ifdef TC_COLOR
+    { textcolor(LIGHTGRAY);  return FALSE; }
+#else
     return FALSE;
+#endif
 }
 
 

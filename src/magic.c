@@ -48,7 +48,7 @@ void cast()
 	  m_ptr = &magic_spell[py.misc.pclass-1][choice];
 	  free_turn_flag = FALSE;
 
-	  if (randint(100) < chance)
+	  if (randint(100) <= chance) /* changed -CFT */
 	    msg_print("You failed to get the spell off!");
 	  else
 	    {
@@ -236,7 +236,11 @@ void cast()
 		  break;
 		case 43: /* Meteor Swarm */
 		  if (get_dir(NULL, &dir))
+#ifdef TC_COLOR
+		    fire_ball(GF_METEOR, dir, char_row, char_col,
+#else
 		    fire_ball(GF_MAGIC_MISSILE, dir, char_row, char_col,
+#endif
 			      65+(py.misc.lev),
 			      "Meteor Swarm");
 		  break;
@@ -286,7 +290,6 @@ void cast()
                   py.flags.shield += randint(20)+30;
 		  calc_bonuses();
 		  prt_pac(); 
-		  calc_mana(A_INT);
                   msg_print("A mystic shield forms around your body!");
                   break;
                 case 57:
@@ -299,7 +302,7 @@ void cast()
 		    py.flags.fast += randint(5);
 		  break;
                 case 59:
-                  py.flags.invuln += randint(8)+6;
+                  py.flags.invuln += randint(8)+8;
                   break;
 		default:
 		  break;

@@ -1,5 +1,6 @@
 :  - Map area.
 !  - Rerate the characters hitpoints.
+%  - Self Knowledge
 ^A - Remove Curse and Cure all maladies.
 ^B - Print random objects sample.
 ^D - Down/Up n levels.
@@ -16,5 +17,3 @@
 ^U - Summon monster.
 ^W - Wizard password on/off.
 @  - Create any object *CAN CAUSE FATAL ERROR*
-~  - Save 'found' artifacts to file
-%  - Self-knowledge

@@ -21,9 +21,40 @@
 #endif
 #endif
 
+#ifdef MSDOS
+int8u is_home=FALSE;
+#else
 int is_home=FALSE;
+#endif
 
 long atol();
+
+/* prototypes:  ARG_* collapses to nothing unless TURBOC -CFT */
+static void store_prt_gold(ARG_VOID);
+static void display_commands(ARG_VOID);
+static void display_inventory(ARG_INT ARG_COMMA ARG_INT);
+static void prt_comment1(ARG_VOID);
+static void prt_comment2(ARG_INT32 ARG_COMMA ARG_INT32 ARG_COMMA ARG_INT);
+static void prt_comment3(ARG_INT32 ARG_COMMA ARG_INT32 ARG_COMMA ARG_INT);
+static void prt_comment4(ARG_VOID);
+static void prt_comment5(ARG_VOID);
+static void prt_comment6(ARG_VOID);
+static int get_haggle(ARG_CHAR_PTR ARG_COMMA ARG_INT32_PTR ARG_COMMA ARG_INT ARG_COMMA ARG_INT32 ARG_COMMA ARG_INT);
+static int haggle_insults(ARG_INT);
+static void haggle_commands(ARG_INT);
+static int receive_offer(ARG_INT ARG_COMMA ARG_CHAR_PTR ARG_COMMA ARG_INT32_PTR
+		ARG_COMMA ARG_INT32 ARG_COMMA ARG_INT ARG_COMMA ARG_INT
+		ARG_COMMA ARG_INT32 ARG_COMMA ARG_INT);
+static int purchase_haggle(ARG_INT ARG_COMMA ARG_INT32_PTR ARG_COMMA ARG_INV_PTR);
+static int increase_insults(ARG_INT);
+static void decrease_insults(ARG_INT);
+static int sell_haggle(ARG_INT ARG_COMMA ARG_INT32_PTR ARG_COMMA ARG_INV_PTR);
+static void display_store(ARG_INT ARG_COMMA ARG_INT);
+static int store_sell(ARG_INT ARG_COMMA ARG_INT_PTR);
+static int store_purchase(ARG_INT ARG_COMMA ARG_INT_PTR);
+static void display_cost(ARG_INT ARG_COMMA ARG_INT);
+static int get_store_item(ARG_INT_PTR ARG_COMMA ARG_CHAR_PTR ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+
 
 static char *comment1[14] = {
   "Done!",  "Accepted!",  "Fine.",  "Agreed!",  "Ok.",  "Taken!",
@@ -399,7 +430,7 @@ static int get_haggle(comment, new_offer, num_offer, price, final)
   char buf[100];
   register int flag, clen;
   register char *p;
-  static int32 last_inc=0;
+  static int32 last_inc=0l;
   int inc=FALSE;
 
   flag = TRUE;
@@ -511,7 +542,6 @@ inven_type *item;
   if (max_sell <= 0)  max_sell = 1;
   min_sell = min_sell * chr_adj() / 100;
   if (min_sell <= 0)  min_sell = 1;
-  /* cast max_inflate to signed so that subtraction works correctly */
   max_buy  = cost * (200 - (int)o_ptr->max_inflate) / 100;
   if (max_buy <= 0) max_buy = 1;
   min_per  = o_ptr->haggle_per;
@@ -647,7 +677,6 @@ inven_type *item;
   final_flag = 0;
   s_ptr = &store[store_num];
   cost = item_value(item);
-  if (store_num==6) cost/=4;
   if (cost < 1)
     {
       sell = 3;
@@ -660,9 +689,8 @@ inven_type *item;
       cost = cost * (200 - rgold_adj[o_ptr->owner_race][py.misc.prace]) / 100;
       if (cost < 1)  cost = 1;
       max_sell = cost * o_ptr->max_inflate / 100;
-      /* cast max_inflate to signed so that subtraction works correctly */
-      max_buy  = cost * (200 - (int)o_ptr->max_inflate) / 100;
-      min_buy  = cost * (200 - (int)o_ptr->min_inflate) / 100;
+      max_buy = cost * (200 - (int)o_ptr->max_inflate) / 100;
+      min_buy = cost * (200 - (int)o_ptr->min_inflate) / 100;
       if (min_buy < 1) min_buy = 1;
       if (max_buy < 1) max_buy = 1;
       if (min_buy < max_buy)  min_buy = max_buy;

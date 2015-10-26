@@ -1,3 +1,12 @@
+Received: from stone (stone.dcs.warwick.ac.uk) by cs.umb.edu with SMTP id AA22444
+  (5.65c/IDA-1.4.4 for <cteague@cs.umb.edu>); Fri, 9 Apr 1993 23:38:46 -0400
+From: Sean Marsh <smarsh@dcs.warwick.ac.uk>
+Message-Id: <19114.199304100337@stone>
+Subject: no subject (file transmission)
+To: cteague@cs.umb.edu
+Date: Sat, 10 Apr 93 4:37:38 BST
+Status: R
+
    Most bugs in Angband have been fixed now, these are the ones that may turn
 up, but have a habit of not doing so when you're trying to test them in wiz
 mode!
@@ -15,12 +24,15 @@ excellent flag, but not sure.
 	Paladins have been known to lose all their spells around about 29-31
 and the only way to get them back is to go up another level. This may have
 been fixed now.
-	Sometimes monsters that have the heal spell will cast it, and then be
-on 0 hp, so they die the next round. 
+	Max HPs for some monsters seems to get set to 0.  This used to
+cause the "monster heal bug", but we've kludged around it by forcing it
+to recalculate max HPs if it finds this when healing.  But we still haven't
+found the underlying problem.
+	Sometimes, Probing (staff/rod/spell) just ignores some monsters,
+as if they didn't exist.
 	Sometimes when an object is to clear in the shops, the shopkeeper
 still asks for the full price, not 10% of it like he should do. This may only
 occur for stackable objects.
 
 	Please mail any other bugs/fixes to smarsh@dcs.warwick.ac.uk.
-
 

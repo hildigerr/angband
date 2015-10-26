@@ -24,7 +24,7 @@ static void randes(void);
 static void rantitle(char *);
 static void unsample(char *);
 #else
-static void unsample();
+static void unsample(ARG_INV_PTR);
 #endif
 
 char titles[MAX_TITLES][10];
@@ -50,6 +50,9 @@ void magic_init()
   register int h, i, j, k;
   register char *tmp;
   vtype string;
+#ifdef TC_COLOR
+  int8u ctmp;
+#endif
 
   set_seed(randes_seed);
 
@@ -60,6 +63,11 @@ void magic_init()
       tmp = colors[i];
       colors[i] = colors[j];
       colors[j] = tmp;
+#ifdef TC_COLOR
+      ctmp = tccolors[i];
+      tccolors[i] = tccolors[j];
+      tccolors[j] = ctmp;
+#endif      
     }
   for (i = 0; i < MAX_WOODS; i++)
     {
@@ -67,6 +75,11 @@ void magic_init()
       tmp = woods[i];
       woods[i] = woods[j];
       woods[j] = tmp;
+#ifdef TC_COLOR
+      ctmp = tcwoods[i];
+      tcwoods[i] = tcwoods[j];
+      tcwoods[j] = ctmp;
+#endif      
     }
   for (i = 0; i < MAX_METALS; i++)
     {
@@ -74,6 +87,11 @@ void magic_init()
       tmp = metals[i];
       metals[i] = metals[j];
       metals[j] = tmp;
+#ifdef TC_COLOR
+      ctmp = tcmetals[i];
+      tcmetals[i] = tcmetals[j];
+      tcmetals[j] = ctmp;
+#endif      
     }
   for (i = 0; i < MAX_ROCKS; i++)
     {
@@ -81,6 +99,11 @@ void magic_init()
       tmp = rocks[i];
       rocks[i] = rocks[j];
       rocks[j] = tmp;
+#ifdef TC_COLOR
+      ctmp = tcrocks[i];
+      tcrocks[i] = tcrocks[j];
+      tcrocks[j] = ctmp;
+#endif      
     }
   for (i = 0; i < MAX_AMULETS; i++)
     {
@@ -88,6 +111,11 @@ void magic_init()
       tmp = amulets[i];
       amulets[i] = amulets[j];
       amulets[j] = tmp;
+#ifdef TC_COLOR
+      ctmp = tcamulets[i];
+      tcamulets[i] = tcamulets[j];
+      tcamulets[j] = ctmp;
+#endif      
     }
   for (i = 0; i < MAX_MUSH; i++)
     {
@@ -95,6 +123,11 @@ void magic_init()
       tmp = mushrooms[i];
       mushrooms[i] = mushrooms[j];
       mushrooms[j] = tmp;
+#ifdef TC_COLOR
+      ctmp = tcmushrooms[i];
+      tcmushrooms[i] = tcmushrooms[j];
+      tcmushrooms[j] = ctmp;
+#endif      
     }
   for (h = 0; h < MAX_TITLES; h++)
     {
@@ -121,7 +154,7 @@ inven_type *t_ptr;
 {
   switch (t_ptr->tval)
     {
-    case TV_ROD:        return(7); /* -CFT */       
+    case TV_ROD:        return(7); /* -CFT */
     case TV_AMULET:	return(0);
     case TV_RING:	return(1);
     case TV_STAFF:	return(2);
@@ -686,6 +719,9 @@ int from_index;
   to->damage[1] = from->damage[1];
   to->level     = from->level;
   to->ident	= 0;
+#ifdef TC_COLOR
+  to->color     = from->color;
+#endif
 }
 
 

@@ -92,6 +92,14 @@ int getuid(), getgid();
 #endif
 #endif
 
+#ifdef MSDOS
+void textcolor(int newc);
+extern unsigned _stklen = STK_LEN_SZ; /* defined by makefile -CFT */
+#ifdef TC_OVERLAY /* Am I trying to make an overlayed executable? -CFT */
+extern unsigned _ovrbuffer = OVLY_BUF_SZ; /* defined by makefile -CFT */
+#endif /* TC_OVERLAY */
+#endif
+
 
 #if defined(ultrix) || defined(USG)
 void perror();
@@ -102,23 +110,35 @@ void exit();
 #endif
 
 
-static void char_inven_init();
-static void init_m_level();
-static void init_t_level();
+static void char_inven_init(ARG_VOID);
+static void init_m_level(ARG_VOID);
+static void init_t_level(ARG_VOID);
+static d_check(ARG_CHAR_PTR);
 
 #if (COST_ADJ != 100)
 static void price_adjust();
 #endif
 
+#ifdef MSDOS
+int8u peek=FALSE;
+int8u be_nasty=FALSE;
+int16 quests[MAX_QUESTS];
+#else
 int peek=FALSE;
-int player_uid;
 int be_nasty=FALSE;
 int quests[MAX_QUESTS];
+#endif
+int player_uid;
 creature_type ghost;
 
 
-/* Unique artifact weapon flags, even though some are in the wrong place!*/
-int GROND, RINGIL, AEGLOS, ARUNRUTH, MORMEGIL, ANGRIST, GURTHANG,
+/* Unique artifact weapon flags */
+#ifdef MSDOS
+int8u
+#else
+int
+#endif
+	GROND, RINGIL, AEGLOS, ARUNRUTH, MORMEGIL, ANGRIST, GURTHANG,
   CALRIS, ANDURIL, STING, ORCRIST, GLAMDRING, DURIN, AULE, THUNDERFIST,
   BLOODSPIKE, DOOMCALLER, NARTHANC, NIMTHANC, DETHANC, GILETTAR, RILIA,
   BELANGIL, BALLI, LOTHARANG, FIRESTAR, ERIRIL, CUBRAGOL, BARD, COLLUIN,
@@ -129,7 +149,12 @@ int GROND, RINGIL, AEGLOS, ARUNRUTH, MORMEGIL, ANGRIST, GURTHANG,
   EONWE, THEODEN, ULMO, OSONDIR, TURMIL, TIL, DEATHWREAKER, AVAVIR, TARATOL;
 
 /* Unique artifact armor flags */
-int DOR_LOMIN, NENYA, NARYA, VILYA, BELEGENNON, FEANOR, ISILDUR, SOULKEEPER,
+#ifdef MSDOS
+int8u
+#else
+int
+#endif
+	DOR_LOMIN, NENYA, NARYA, VILYA, BELEGENNON, FEANOR, ISILDUR, SOULKEEPER,
 FINGOLFIN, ANARION, POWER, PHIAL, BELEG, DAL, PAURHACH, PAURNIMMEN, PAURAEGEN,
 PAURNEN, CAMMITHRIM, CAMBELEG, INGWE, CARLAMMAS, HOLHENNETH, AEGLIN, CAMLOST,
 NIMLOTH, NAR, BERUTHIEL, GORLIM, ELENDIL, THORIN, CELEBORN, THRAIN,
@@ -151,25 +176,35 @@ char *argv[];
   int force_keys_to, FORGET;
   char temphost[10], thishost[10], discard[80];
   char string[80];
+#ifndef MSDOS
   struct rlimit rlp;
+#endif
 
+#ifndef MSDOS
   /* Disable core dumps */
-
   getrlimit(RLIMIT_CORE,&rlp);
   rlp.rlim_cur=0;
   setrlimit(RLIMIT_CORE,&rlp);
+#endif
 
   /* default command set defined in config.h file */
   rogue_like_commands = ROGUE_LIKE;
 
   strcpy(py.misc.name, "\0");
 
+#ifndef MSDOS /* -CFT */
 #ifndef SET_UID
   (void) umask(0);
+#endif
 #endif
 
 #ifdef SECURE
   Authenticate();
+#endif
+
+
+#ifdef MSDOS /* -CFT */
+  msdos_init(); /* set up some screen stuff + get cnf file */
 #endif
 
   /* call this routine to grab a file pointer to the highscore file */
@@ -181,11 +216,16 @@ char *argv[];
 
   init_files();
 
+#ifndef MSDOS
   if ((player_uid = getuid())<= 0) {
     perror("Can't set permissions correctly!  Getuid call failed.\n");
     exit(0);
   }
   user_name(py.misc.name, player_uid);
+#else
+  user_name(py.misc.name);
+#endif
+
 #ifdef SET_UID
   if (setuid(geteuid()) != 0) {
     perror("Can't set permissions correctly!  Setuid call failed.\n");
@@ -197,9 +237,12 @@ char *argv[];
   if (player_uid == ANNOY)
     be_nasty=TRUE;
   else
-#endif
     be_nasty=FALSE;
+#else
+  be_nasty=FALSE;
+#endif
 
+#ifndef MSDOS
   (void)gethostname(thishost, sizeof thishost);	/* get host */
   if ((fp=fopen(ANGBAND_LOAD, "r")) == NULL) {
     perror("Can't get load-check.\n");
@@ -216,10 +259,7 @@ char *argv[];
   } while (strcmp(temphost,thishost)); /* Until we've found ourselves */
 
   fclose(fp);
-
-  /* catch those nasty signals */
-  /* must come after init_curses as some of the signal handlers use curses */
-  init_signals();
+#endif
 
   seed = 0; /* let wizard specify rng seed */
   /* check for user interface option */
@@ -300,6 +340,10 @@ char *argv[];
   /* use curses */
   init_curses();
 
+  /* catch those nasty signals */
+  /* must come after init_curses as some of the signal handlers use curses */
+  init_signals();
+
   /* Check operating hours			*/
   /* If not wizard  No_Control_Y	       */
   read_times();
@@ -327,8 +371,15 @@ char *argv[];
      hence, this code is not necessary */
 #endif
 
+#ifdef MSDOS /* cut out of Um55 code... */
+  /* Auto-restart of saved file */
+  if (argv[0] != NULL)
+    (void) strcpy (savefile, argv[0]);
+  else
+    (void) strcpy(savefile, ANGBAND_SAV);
+#else  
   (void) sprintf(savefile, "%s/%d%s", ANGBAND_SAV, player_uid, py.misc.name);
-
+#endif
 
 /* This restoration of a saved character may get ONLY the monster memory. In
    this case, get_char returns false. It may also resurrect a dead character
@@ -355,7 +406,7 @@ char *argv[];
     if (py.misc.chp < 0)
       death = TRUE;
   } else {  /* Create character */
-      /* Unique Weapons, Armour and Rings */
+      /* Unique Weapons */
       GROND=0;
       RINGIL=0;
       AEGLOS=0;
@@ -423,6 +474,8 @@ char *argv[];
       DEATHWREAKER=0;
       AVAVIR=0;
       TARATOL=0;
+
+      /* Unique Armour */
       DOR_LOMIN=0;
       BELEGENNON=0;
       FEANOR=0;
@@ -456,6 +509,8 @@ char *argv[];
       CASPANION=0;
       RAZORBACK=0;
       BLADETURNER=0;
+
+      /* Unique Rings and things */
       NARYA=0;
       NENYA=0;
       VILYA=0;
@@ -509,6 +564,10 @@ char *argv[];
     rogue_like_commands = force_keys_to;
 
   magic_init();
+
+#ifdef MSDOS
+  textcolor(7); /* set color to gray to avoid ansi prompts */
+#endif
 
   /* Begin the game				*/
   clear_screen();
@@ -627,7 +686,7 @@ static void price_adjust()
 }
 #endif
 
-d_check(a)
+static d_check(a)
   char *a;
 {
   while (*a)

@@ -23,11 +23,12 @@
 static void insert_store(int, int, int32, struct inven_type *);
 static void store_create(int);
 #else
-static void insert_store();
-static void store_create();
+static void insert_store(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT32 ARG_COMMA ARG_INV_PTR);
+static void store_create(ARG_INT);
+static int special_offer(ARG_INV_PTR);
 #endif
 
-extern int is_home;
+extern int8u is_home;
 
 /* Returns the value for any given object		-RAK-	*/
 int32 item_value(i_ptr)
@@ -405,7 +406,7 @@ int store_num;
   pusht((int8u)cur_pos);
 }
 
-int special_offer(i_ptr) 
+static int special_offer(i_ptr) 
   inven_type *i_ptr;
 {
   if (randint(30)==1) {
@@ -465,6 +466,9 @@ int32 minprice;
   register int flagnoneed;
   register store_type *s_ptr;
 
+#ifdef MSDOS
+  if (no_haggle_flag) return TRUE; /* turn off haggling as an option... */
+#endif  
   s_ptr = &store[store_num];
   flagnoneed = ((s_ptr->good_buy == MAX_SHORT)
 		|| ((s_ptr->good_buy > 2 * s_ptr->bad_buy + 3) &&

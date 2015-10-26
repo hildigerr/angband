@@ -44,7 +44,7 @@
 
 /* number of messages to save in a buffer */
 #define MAX_SAVE_MSG   22   /* How many messages to save -CJS- */
-#define MAX_SAVE_HISCORES 500
+#define MAX_SAVE_HISCORES 20
 /* How many hiscores to be saved */
 
 /* Dungeon size parameters					*/
@@ -82,7 +82,7 @@
 #define STORE_TURN_AROUND 9   /* Amount of buying and selling normally */
 #define COST_ADJ	 100  /* Adjust prices for buying and selling  */
 
-#define MAX_QUESTS         4
+#define MAX_QUESTS         4 /* only 1 defined anyway --CFT */
 #define DEFINED_QUESTS     1
 #define SAURON_QUEST       0
 #define Q_PLANE           -1
@@ -124,7 +124,7 @@
 #define MAX_GOLD       18     /* Number of different types of gold     */
 /* with MAX_TALLOC 150, it is possible to get compacting objects during
    level generation, although it is extremely rare */
-#define MAX_TALLOC     2000    /* Max objects per level		       */
+#define MAX_TALLOC     400    /* Max objects per level		       */
 #define MIN_TRIX	1     /* Minimum t_list index used		*/
 #define TREAS_ROOM_ALLOC  9   /* Amount of objects for rooms	       */
 #define TREAS_ANY_ALLOC	  3   /* Amount of objects for corridors       */
@@ -151,7 +151,7 @@
 #define N_MONS_ATTS	  285 /* Number of monster attack types.	*/
 /* with MAX_MALLOC 101, it is possible to get compacting monsters messages
    while breeding/cloning monsters */
-#define MAX_MALLOC	 1500 /* Max that can be allocated	      */
+#define MAX_MALLOC	 255 /* Max that can be allocated	      */
 #define MAX_MALLOC_CHANCE 160 /* 1/x chance of new monster each round  */
 #define MAX_MONS_LEVEL	   99 /* Maximum level of creatures	       */
 #define MAX_SIGHT	   20 /* Maximum dis a creature can be seen    */
@@ -377,7 +377,7 @@
 #define TR_IM_ACID      0x00000100L
 #define TR_IM_LIGHT     0x00000200L
 #define TR_LIGHT        0x00000400L
-#define TR_ACTIVATE     0x00000800L
+#define TR_ACTIVATE     0x00000800L /* was TR_ARTIFACT, changed to better name -CFT */
 #define TR_LIGHTNING    0x00001000L
 #define TR_IMPACT       0x00002000L
 #define TR_IM_POISON    0x00004000L
@@ -391,7 +391,7 @@
 #define TR_RES_NEXUS	0x00400000L
 #define TR_RES_BLIND	0x00800000L
 #define TR_RES_NETHER   0x01000000L
-#define TR_ARTIFACT     0x02000000L
+#define TR_ARTIFACT	0x02000000L /* means "is an artifact" -CFT */
 
 /* definitions for chests */
 #define CH_LOCKED	0x00000001L
@@ -763,6 +763,26 @@
 #define GF_FROST	4
 #define GF_FIRE		5
 #define GF_HOLY_ORB	6
+#ifdef TC_COLOR /* used is colorizing bolts/balls/breath -CFT */
+#define GF_ARROW	7
+#define GF_PLASMA	8
+#define GF_NETHER	9
+#define GF_WATER	10
+#define GF_CHAOS	11
+#define GF_SHARDS	12
+#define GF_SOUND	13
+#define GF_CONFUSION	14
+#define GF_DISENCHANT	15
+#define GF_NEXUS	16
+#define GF_FORCE	17
+#define GF_INERTIA	18
+#define GF_LIGHT	19
+#define GF_DARK		20
+#define GF_TIME		21
+#define GF_GRAVITY	22
+#define GF_MANA		23
+#define GF_METEOR	24
+#endif
 
 #define WD_LT	        1L
 #define WD_LT_BLTS	2L
@@ -856,3 +876,23 @@
 #define ST_SURROUND	28L
 #define ST_HEALING	29L
 #define ST_PROBE        30L
+
+
+#ifdef TC_COLOR
+#define	BLUE 1
+#define GREEN 2 
+#define CYAN 3
+#define RED 4
+#define MAGENTA 5
+#define BROWN 6
+#define LIGHTGRAY 7
+#define DARKGRAY 8
+#define LIGHTBLUE 9
+#define LIGHTGREEN 10
+#define LIGHTCYAN 11
+#define LIGHTRED 12
+#define LIGHTMAGENTA 13
+#define YELLOW 14
+#define WHITE 15
+#endif
+

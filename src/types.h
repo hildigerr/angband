@@ -55,6 +55,9 @@ typedef struct creature_type
   attid damage[4];	/* Type attack and damage*/
   int16u level;		/* Level of creature	*/
   int8u rarity;		/* Rarity of creature	*/
+#ifdef TC_COLOR
+  int8u color;		/* I want color! -CFT */
+#endif
 } creature_type;
 
 typedef struct m_attack_type	/* Monster attack and damage types */
@@ -78,8 +81,13 @@ typedef struct recall_type	/* Monster memories. -CJS- */
   } recall_type;
 
 struct unique_mon {
+#ifdef MSDOS /* only booleans, why waste a full int? -CFT */
+  int8u exist;
+  int8u dead;
+#else /* but I'll leave them as I found them... -CFT */
   int exist;
   int dead;
+#endif
 };
 
 typedef struct describe_mon_type {
@@ -101,6 +109,9 @@ typedef struct monster_type
   int8u ml;
   int8u stunned;
   int8u confused;
+#ifdef TC_COLOR
+  int8u color;		/* I want color! -CFT */
+#endif
 } monster_type;
 
 typedef struct treasure_type
@@ -124,6 +135,9 @@ typedef struct treasure_type
   int8u level;		/* Level item first found */
   int8u rare;           /* True if Rare         */
   int32u flags2;        /* Yes! even more froggin' flags!*/
+#ifdef TC_COLOR
+  int8u color;		/* I want color! -CFT */
+#endif
 } treasure_type;
 
 /* only damage, ac, and tchar are constant; level could possibly be made
@@ -155,6 +169,9 @@ typedef struct inven_type
   int8u ident;		/* Identify information */
   int32u flags2;        /* Yes! even more froggin' flags!*/
   int16u timeout;        /* How long to wait before reactivating an Artifact */
+#ifdef TC_COLOR
+  int8u color;		/* I want color! -CFT */
+#endif
 } inven_type;
 
 
@@ -205,7 +222,11 @@ typedef struct player_type
   struct stats
     {
       int16u max_stat[6];	/* What is restored */
+#ifdef MSDOS
+      int16u cur_stat[6];	/* What is natural */
+#else /* why is this only int8u?  save.c uses wr_shorts to write!  -CFT */
       int8u cur_stat[6];	/* What is natural */
+#endif
       int16 mod_stat[6];	/* What is modified, may be +/- */
       int16u use_stat[6];	/* What is used */
     } stats;
@@ -356,15 +377,28 @@ typedef struct background_type
 
 typedef struct cave_type
 {
-  int16u cptr;
+#ifdef MSDOS
+  int8u cptr; /* can only use int8u if MAX_MALLOC <= 255  -CFT */
+  int16u tptr; /* can only use int8u if MAX_TALLOC <= 255  -CFT */
+  unsigned fval : 4; /* only need 4 bits for 0-15, this give sizeof(cave_type)
+			to be only 4, which helps cave[][] fit in mem -CFT */
+  unsigned lr : 1;  /* room should be lit with perm light, walls with
+			   this set should be perm lit after tunneled out */
+  unsigned fm : 1;	/* field mark, used for traps/doors/stairs, object is
+			   hidden if fm is FALSE */
+  unsigned pl : 1;	/* permanent light, used for walls and lighted rooms*/
+  unsigned tl : 1;	/* temporary light, used for player's lamp light,etc.*/
+#else
+  int8u cptr;
   int16u tptr;
   int8u fval;
-  unsigned int lr : 1;  /* room should be lit with perm light, walls with
+  unsigned lr : 1;  /* room should be lit with perm light, walls with
 			   this set should be perm lit after tunneled out */
-  unsigned int fm : 1;	/* field mark, used for traps/doors/stairs, object is
+  unsigned fm : 1;	/* field mark, used for traps/doors/stairs, object is
 			   hidden if fm is FALSE */
-  unsigned int pl : 1;	/* permanent light, used for walls and lighted rooms*/
-  unsigned int tl : 1;	/* temporary light, used for player's lamp light,etc.*/
+  unsigned pl : 1;	/* permanent light, used for walls and lighted rooms*/
+  unsigned tl : 1;	/* temporary light, used for player's lamp light,etc.*/
+#endif
 } cave_type;
 
 typedef struct owner_type

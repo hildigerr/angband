@@ -30,10 +30,18 @@ static void make_move(int, int *, int32u *);
 static void mon_cast_spell(int, int *);
 static void mon_move(int, int32u *);
 static int check_mon_lite(int, int);
+#else /* ARG_* collapses to nothing if not TURBOC -CFT */
+static shatter_quake(ARG_INT ARG_COMMA ARG_INT);
+static br_wall(ARG_INT ARG_COMMA ARG_INT);
+static int monster_critical(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+static int check_mon_lite(ARG_INT ARG_COMMA ARG_INT);
+static void make_move(ARG_INT ARG_COMMA ARG_INT_PTR ARG_COMMA ARG_INT32U_PTR);
+static void mon_cast_spell(ARG_INT ARG_COMMA ARG_INT_PTR);
+static void get_moves(ARG_INT ARG_COMMA ARG_INT_PTR);
+static void make_attack(ARG_INT);
+static void mon_move(ARG_INT ARG_COMMA ARG_INT32U_PTR);
 #endif
 
-static shatter_quake();
-static br_wall();
 
 /* Updates screen when monsters move about		-RAK-	*/
 void update_mon(monptr)
@@ -61,14 +69,14 @@ int monptr;
 	{
 	  c_ptr = &cave[m_ptr->fy][m_ptr->fx];
 	  r_ptr = &c_list[m_ptr->mptr];
-          if ((py.flags.see_infra > 0) && /* moved here to allow infra to see invis -CFT */
-                   (m_ptr->cdis <= py.flags.see_infra))
-            {
-             if (NO_INFRA & r_ptr->cdefense) /* changed to act sensibly -CFT */
-                c_recall[m_ptr->mptr].r_cdefense |= NO_INFRA;
-              else
-                flag = TRUE; /* only can see if not NO_INFRA... */
-            }
+	  if ((py.flags.see_infra > 0) && /* moved here to allow infra to see invis -CFT */
+		   (m_ptr->cdis <= py.flags.see_infra))
+	    {
+	      if (NO_INFRA & r_ptr->cdefense) /* changed to act sensibly -CFT */
+	        c_recall[m_ptr->mptr].r_cdefense |= NO_INFRA;
+	      else
+		flag = TRUE; /* only can see if not NO_INFRA... */
+	    }
 	  if (c_ptr->pl || c_ptr->tl ||
 	      (find_flag && m_ptr->cdis < 2 && player_light))
 	    {
@@ -360,7 +368,6 @@ int monptr;
   register struct flags *f_ptr;
   register inven_type *i_ptr;
   int8u blinked = 0; /* flag to see if blinked away (after steal) -CFT */
-
   if (death)  /* don't beat a dead body! */
     return;
 
@@ -776,10 +783,10 @@ int monptr;
 	      else
 		{
 		  i = randint(inven_ctr) - 1;
-                    if ((inventory[i].tval >= TV_MIN_WEAR) &&
-                        (inventory[i].tval <= TV_MAX_WEAR) &&
-                        (inventory[i].flags2 & TR_ARTIFACT))
-                      break; /* don't destroy artifacts -CFT */
+		    if ((inventory[i].tval >= TV_MIN_WEAR) &&
+		        (inventory[i].tval <= TV_MAX_WEAR) &&
+		        (inventory[i].flags2 & TR_ARTIFACT))
+		      break; /* don't destroy artifacts -CFT */
 		  inven_destroy(i);
 		  msg_print("Your backpack feels lighter.");
 		}
@@ -1132,17 +1139,17 @@ int32u *rcmove;
 	    t_ptr = &t_list[c_ptr->tptr];
 	    do_move = TRUE;
 	    c_recall[m_ptr->mptr].r_cdefense |= BREAK_WALL;
-            if ((t_ptr->tval == TV_CLOSED_DOOR) ||
-                (t_ptr->tval == TV_SECRET_DOOR)) { /* break the door -CFT */
-              invcopy(t_ptr, OBJ_OPEN_DOOR);
-              t_ptr->p1 = -1; /* make it broken, not just open */
-              c_ptr->fval = CORR_FLOOR; /* change floor setting */
-              lite_spot(newy, newx); /* show broken door */
-              msg_print("You hear a door burst open!");
-              disturb(1,0);
-              }
-            else /* otherwise, break those walls! -CFT */
-	    (void) twall(newy, newx, 1, 0);
+	    if ((t_ptr->tval == TV_CLOSED_DOOR) ||
+		(t_ptr->tval == TV_SECRET_DOOR)) { /* break the door -CFT */
+	      invcopy(t_ptr, OBJ_OPEN_DOOR);
+	      t_ptr->p1 = -1; /* make it broken, not just open */
+	      c_ptr->fval = CORR_FLOOR; /* change floor setting */
+	      lite_spot(newy, newx); /* show broken door */
+	      msg_print("You hear a door burst open!");
+	      disturb(1,0);
+	      }
+	    else /* otherwise, break those walls! -CFT */
+	      (void) twall(newy, newx, 1, 0);
 	  }
 	  /* Creature can open doors?	   */
 	  else if (c_ptr->tptr != 0)
@@ -1289,9 +1296,9 @@ int32u *rcmove;
 
 		  if ((c_ptr->tptr != 0)
 		      && (t_list[c_ptr->tptr].tval <= TV_MAX_OBJECT)
-                      && ((t_list[c_ptr->tptr].tval < TV_MIN_WEAR)
-                        || (t_list[c_ptr->tptr].tval > TV_MAX_WEAR)
-                        || !(t_list[c_ptr->tptr].flags2 & TR_ARTIFACT)))
+		      && ((t_list[c_ptr->tptr].tval < TV_MIN_WEAR)
+		        || (t_list[c_ptr->tptr].tval > TV_MAX_WEAR)
+		        || !(t_list[c_ptr->tptr].flags2 & TR_ARTIFACT)))
 		    {
 #ifdef ATARIST_MWC
 		      *rcmove |= holder;
@@ -1658,7 +1665,11 @@ static void mon_cast_spell(monptr, took_turn)
 	case 32:  /* Mana Bolt */
 	  (void) strcat(cdesc, "casts a Mana bolt.");
 	  msg_print(cdesc);
+#ifdef TC_COLOR
+	  bolt(GF_MANA, char_row, char_col,
+#else
 	  bolt(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 	       randint((c_list[m_ptr->mptr].level*7)/2)+50, ddesc, m_ptr,
 	       monptr);
 	  break;
@@ -1666,13 +1677,25 @@ static void mon_cast_spell(monptr, took_turn)
 	  (void) strcat(cdesc, "breathes Chaos.");
 	  msg_print(cdesc);
 	  if (py.flags.chaos_resist)
+#ifdef TC_COLOR
+	    breath(GF_CHAOS, char_row, char_col,
+#else
 	    breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 	 	  ((m_ptr->hp/6)>400?400:(m_ptr->hp/6)), ddesc, monptr);
 	  else if (py.flags.nether_resist)
+#ifdef TC_COLOR
+	    breath(GF_CHAOS, char_row, char_col,
+#else
 	    breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 		  ((m_ptr->hp/6)>450?450:(m_ptr->hp/6)), ddesc, monptr);
           else {
+#ifdef TC_COLOR
+	    breath(GF_CHAOS, char_row, char_col,
+#else
 	    breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 	           ((m_ptr->hp/6)>600?600:(m_ptr->hp/6)), ddesc, monptr);
 	    f_ptr = &py.flags;
 	    if (f_ptr->hold_life && randint(3)>1)
@@ -1696,10 +1719,18 @@ static void mon_cast_spell(monptr, took_turn)
 	  (void) strcat(cdesc, "breathes shards.");
 	  msg_print(cdesc);
 	  if (py.flags.shards_resist)
+#ifdef TC_COLOR
+	    breath(GF_SHARDS, char_row, char_col,
+#else
 	    breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 	          ((m_ptr->hp/6)>267?267:(m_ptr->hp/6)), ddesc, monptr);
 	  else {
+#ifdef TC_COLOR
+	    breath(GF_SHARDS, char_row, char_col,
+#else
 	    breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
                   ((m_ptr->hp/6)>400?400:(m_ptr->hp/6)), ddesc, monptr);
             cut_player(m_ptr->hp/3);
 	  }
@@ -1708,10 +1739,18 @@ static void mon_cast_spell(monptr, took_turn)
 	  (void) strcat(cdesc, "breathes sound.");
 	  msg_print(cdesc);
 	  if (py.flags.sound_resist)
+#ifdef TC_COLOR
+	    breath(GF_SOUND, char_row, char_col,
+#else
 	    breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 	   	 ((m_ptr->hp / 6)>200?200:(m_ptr->hp / 6)), ddesc, monptr);
 	  else {
+#ifdef TC_COLOR
+	    breath(GF_SOUND, char_row, char_col,
+#else
 	    breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 		 ((m_ptr->hp / 6)>400?400:(m_ptr->hp / 6)), ddesc, monptr);
            stun_player(randint((((m_ptr->hp/20)>30)? 35 : (m_ptr->hp/20))+5));
           }
@@ -1720,10 +1759,18 @@ static void mon_cast_spell(monptr, took_turn)
 	  (void) strcat(cdesc, "breathes confusion.");
 	  msg_print(cdesc);
 	  if ((py.flags.confusion_resist) || (py.flags.chaos_resist))
+#ifdef TC_COLOR
+	    breath(GF_CONFUSION, char_row, char_col,
+#else
 	    breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 		 ((m_ptr->hp / 6)>200?200:(m_ptr->hp / 6)), ddesc, monptr);
 	  else {
+#ifdef TC_COLOR
+	    breath(GF_CONFUSION, char_row, char_col,
+#else
 	    breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 		 ((m_ptr->hp / 6)>400?400:(m_ptr->hp / 6)), ddesc, monptr);
             if (py.flags.confused > 0)
 	      py.flags.confused += 12;
@@ -1735,7 +1782,11 @@ static void mon_cast_spell(monptr, took_turn)
 	  (void) strcat(cdesc, "breathes disenchantment.");
 	  msg_print(cdesc);
 	  if (py.flags.disenchant_resist)
+#ifdef TC_COLOR
+	    breath(GF_DISENCHANT, char_row, char_col,
+#else
 	    breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
                    ((m_ptr->hp / 6)>334?334:(m_ptr->hp / 6)), ddesc, monptr);
 	  else {
             disenchant = FALSE;
@@ -1771,7 +1822,11 @@ static void mon_cast_spell(monptr, took_turn)
 		  i_ptr->toac = 0;
 	        disenchant = TRUE;
 	      }
+#ifdef TC_COLOR
+	    breath(GF_DISENCHANT, char_row, char_col,
+#else
 	    breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 	           ((m_ptr->hp / 6)>500?500:(m_ptr->hp / 6)), ddesc, monptr);
 	    if (disenchant)
 	    {
@@ -1784,10 +1839,18 @@ static void mon_cast_spell(monptr, took_turn)
 	  (void) strcat(cdesc, "breathes nether.");
 	  msg_print(cdesc);
 	  if (py.flags.nether_resist)
+#ifdef TC_COLOR
+	    breath(GF_NETHER, char_row, char_col,
+#else
 	    breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 		  ((m_ptr->hp/6)>300?300:(m_ptr->hp/6)), ddesc, monptr);
 	  else {
+#ifdef TC_COLOR
+	    breath(GF_NETHER, char_row, char_col,
+#else
 	    breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 		   ((m_ptr->hp/6)>400?400:(m_ptr->hp/6)), ddesc, monptr);
 	    f_ptr = &py.flags;
 	    if (f_ptr->hold_life && randint(4)>1)
@@ -1858,15 +1921,15 @@ static void mon_cast_spell(monptr, took_turn)
 	case 46:
 	  (void) sprintf(outval,"%sconcentrates on its wounds.",cdesc);
 	  msg_print(outval);
-            if (m_ptr->maxhp == 0){ /* then we're just going to fix it! -CFT */
-            if ((c_list[m_ptr->mptr].cdefense & MAX_HP) || be_nasty)
-              m_ptr->maxhp = max_hp(c_list[m_ptr->mptr].hd);
-            else
-              m_ptr->maxhp = pdamroll(c_list[m_ptr->mptr].hd);
-          }
-          if (m_ptr->hp>=m_ptr->maxhp) { /* need >= because, if we recalc-ed
-                                           maxhp, we might have gotten a low
-                                          roll, which could be below hp -CFT */
+          if (m_ptr->maxhp == 0){ /* then we're just going to fix it! -CFT */
+	    if ((c_list[m_ptr->mptr].cdefense & MAX_HP) || be_nasty)
+	      m_ptr->maxhp = max_hp(c_list[m_ptr->mptr].hd);
+	    else
+	      m_ptr->maxhp = pdamroll(c_list[m_ptr->mptr].hd);
+	  }
+	  if (m_ptr->hp>=m_ptr->maxhp) { /* need >= because, if we recalc-ed
+	  				    maxhp, we might have gotten a low
+	  				    roll, which could be below hp -CFT */
 	      (void) strcat(cdesc, "looks as healthy as can be.");
 	      msg_print(cdesc);
 	  } else {
@@ -1896,13 +1959,21 @@ static void mon_cast_spell(monptr, took_turn)
 	case 48:
 	  (void) strcat(cdesc, "fires missiles at you.");
 	  msg_print(cdesc);
+#ifdef TC_COLOR
+	  bolt(GF_ARROW, char_row, char_col,
+#else
 	  bolt(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 		 damroll(6,7), ddesc, m_ptr, monptr);
 	  break;
 	case 49:
 	  (void) strcat(cdesc,"casts a Plasma bolt.");
 	  msg_print(cdesc);
+#ifdef TC_COLOR
+	  bolt(GF_PLASMA, char_row, char_col,
+#else
 	  bolt(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 		 10+damroll(8,7)+(c_list[m_ptr->mptr].level)
 		 , ddesc, m_ptr, monptr);
 	  break;
@@ -1923,17 +1994,26 @@ static void mon_cast_spell(monptr, took_turn)
 	  (void) strcat(cdesc, "casts a Nether bolt.");
 	  msg_print(cdesc);
 	  if (py.flags.nether_resist)
+#ifdef TC_COLOR
+	  bolt(GF_NETHER, char_row, char_col,
+#else
 	  bolt(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 	        20+damroll(5,3)+((c_list[m_ptr->mptr].level*8)/3),
 	        ddesc, m_ptr, monptr);
 	  else {
-	    int player_hit; /* used to decide if should drain exps. Not
-			       needed above, no need with neth res. -CFT */
+	    int player_hit; /* used to decide if should drain exps.  Not
+	    			needed above, because don't drain if
+	    			nether resist. -CFT */
+#ifdef TC_COLOR
+	    player_hit = bolt(GF_NETHER, char_row, char_col,
+#else
 	    player_hit = bolt(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 		  30+damroll(5,5)+(c_list[m_ptr->mptr].level/4),
 		  ddesc, m_ptr, monptr);
-	    if (player_hit) { /* only do 2ndary effects if hit player, not 
-				 if hit other monster... -CFT */
+	    if (player_hit) { /* only do 2ndary effects if hit player, not
+	    			 if hit other monster... -CFT */
 	      f_ptr = &py.flags;
 	      if (f_ptr->hold_life && randint(5)>1)
 	        msg_print("You keep hold of your life force!");
@@ -2042,13 +2122,17 @@ static void mon_cast_spell(monptr, took_turn)
 	  f_ptr=&py.flags;
 	  (void) strcat(cdesc, "casts a Water bolt.");
 	  msg_print(cdesc);
-	  { int player_hit; /* control 2ndary effect -CFT */
-	  player_hit = bolt(GF_MAGIC_MISSILE, char_row, char_col,
+	  { int player_hit; /* control 2ndary eff. -CFT */
+#ifdef TC_COLOR
+	    player_hit = bolt(GF_WATER, char_row, char_col,
+#else
+	    player_hit = bolt(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 		 damroll(10,10)+(c_list[m_ptr->mptr].level)
 		 , ddesc, m_ptr, monptr);
-	  if (player_hit) {
-	    if (!py.flags.sound_resist)
-              stun_player(randint(15));
+	    if (player_hit){
+	      if (!py.flags.sound_resist)
+                stun_player(randint(15));
 	    }
 	  }
 	  break;
@@ -2057,7 +2141,11 @@ static void mon_cast_spell(monptr, took_turn)
 	  (void) strcat(cdesc, "gestures fluidly.");
 	  msg_print(cdesc);
 	  msg_print("You are engulfed in a whirlpool.");
+#ifdef TC_COLOR
+	  breath(GF_WATER, char_row, char_col,
+#else
 	  breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 		 randint((c_list[m_ptr->mptr].level*5)/2)+50, ddesc, monptr);
 	  if (!py.flags.sound_resist)
 	    stun_player(randint(55));
@@ -2073,10 +2161,18 @@ static void mon_cast_spell(monptr, took_turn)
 	  (void) strcat(cdesc, "casts a Nether Ball.");
 	  msg_print(cdesc);
 	  if (py.flags.nether_resist)
+#ifdef TC_COLOR
+	    breath(GF_NETHER, char_row, char_col,
+#else
 	    breath(GF_MAGIC_MISSILE, char_row, char_col,
-	((34+damroll(10,7)+(c_list[m_ptr->mptr].level)*2)/3), ddesc, monptr);
+#endif
+	(34+damroll(10,7)+(c_list[m_ptr->mptr].level*2)/3), ddesc, monptr);
 	  else {
+#ifdef TC_COLOR
+	    breath(GF_NETHER, char_row, char_col,
+#else
 	    breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 	       (50+damroll(10,10)+(c_list[m_ptr->mptr].level)), ddesc, monptr);
 	    f_ptr = &py.flags;
 	    if (f_ptr->hold_life && randint(2)==1)
@@ -2128,11 +2224,19 @@ static void mon_cast_spell(monptr, took_turn)
 	  (void) strcat(cdesc, "breathes Nexus.");
 	  msg_print(cdesc);
 	  if (py.flags.nexus_resist) {
+#ifdef TC_COLOR
+	    breath(GF_NEXUS, char_row, char_col,
+#else
 	    breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 		  ((m_ptr->hp/3)>167?167:(m_ptr->hp/3)), ddesc, monptr);
 	  }
           else {
+#ifdef TC_COLOR
+	    breath(GF_NEXUS, char_row, char_col,
+#else
 	    breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 	           ((m_ptr->hp/3)>250?250:(m_ptr->hp/3)), ddesc, monptr);
 	    switch (randint(7)) {
 	    case 1:
@@ -2169,7 +2273,7 @@ static void mon_cast_spell(monptr, took_turn)
 	      if (player_saves() && randint(2)==1)
 	        msg_print("You resist the effects.");
 	      else {
-	        int max1, cur1, max2, cur2, i, j;
+	        int max1, cur1, use1, max2, cur2, use2, i, j;
 	        msg_print("Your body starts to scramble...");
 	        i=randint(6)-1;
 	        do {
@@ -2198,7 +2302,11 @@ static void mon_cast_spell(monptr, took_turn)
 	  if (randint(10)==1)
 	    br_wall(m_ptr->fy, m_ptr->fx);
 	  else {
+#ifdef TC_COLOR
+	    breath(GF_FORCE, char_row, char_col,
+#else
 	    breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 		   ((m_ptr->hp/6)>200?200:(m_ptr->hp/6)), ddesc, monptr);
 	    if (!py.flags.sound_resist)
 		stun_player(randint(20));
@@ -2207,7 +2315,11 @@ static void mon_cast_spell(monptr, took_turn)
 	case 66:
 	  (void) strcat(cdesc, "breathes inertia.");
 	  msg_print(cdesc);
+#ifdef TC_COLOR
+	  breath(GF_INERTIA, char_row, char_col,
+#else
 	  breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 		 ((m_ptr->hp/6)>200?200:(m_ptr->hp/6)), ddesc, monptr);
 	  msg_print("You feel less able to move.");
 	  py.flags.slow = randint(5) + 3;
@@ -2216,12 +2328,20 @@ static void mon_cast_spell(monptr, took_turn)
 	  (void) strcat(cdesc, "breathes light.");
 	  msg_print(cdesc);
  	  if (py.flags.light_resist) {
+#ifdef TC_COLOR
+	    breath(GF_LIGHT, char_row, char_col,
+#else
 	    breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 	           ((m_ptr->hp/6)>200?200:(m_ptr->hp/6)), ddesc, monptr);
 	    light_area(char_row, char_col);
 	  }
           else {
+#ifdef TC_COLOR
+	    breath(GF_LIGHT, char_row, char_col,
+#else
 	    breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 	           ((m_ptr->hp/6)>400?400:(m_ptr->hp/6)), ddesc, monptr);
 	    light_area(char_row, char_col);
 	    if (!py.flags.blindness_resist) {
@@ -2235,7 +2355,11 @@ static void mon_cast_spell(monptr, took_turn)
 	case 68:
 	  (void) strcat(cdesc, "breathes time.");
 	  msg_print(cdesc);
+#ifdef TC_COLOR
+	  breath(GF_TIME, char_row, char_col,
+#else
 	  breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 		 ((m_ptr->hp/3)>150?150:(m_ptr->hp/3)), ddesc, monptr);
 	  switch (randint(10)) {
 	  case 1:
@@ -2348,7 +2472,11 @@ static void mon_cast_spell(monptr, took_turn)
 	  if (!py.flags.sound_resist)
 	      stun_player(randint((m_ptr->hp/8)>35? 35 : ((m_ptr->hp/8)<=0)?
 			      1 : (m_ptr->hp/8)));
+#ifdef TC_COLOR
+	  breath(GF_GRAVITY, char_row, char_col,
+#else
 	  breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 		 ((m_ptr->hp/3)>200?200:(m_ptr->hp/3)), ddesc, monptr);
 	  py.flags.slow = randint(5) + 3;
 	  msg_print("Gravity warps around you.");
@@ -2358,12 +2486,20 @@ static void mon_cast_spell(monptr, took_turn)
 	  (void) strcat(cdesc, "breathes darkness.");
 	  msg_print(cdesc);
 	  if (py.flags.dark_resist) {
+#ifdef TC_COLOR
+	    breath(GF_DARK, char_row, char_col,
+#else
 	    breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 		  ((m_ptr->hp/6)>200?200:(m_ptr->hp/6)), ddesc, monptr);
 	    unlight_area(char_row, char_col);
 	  }
 	  else {
+#ifdef TC_COLOR
+	    breath(GF_DARK, char_row, char_col,
+#else
 	    breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 		  ((m_ptr->hp/6)>400?400:(m_ptr->hp/6)), ddesc, monptr);
 	    unlight_area(char_row, char_col);
 	  }
@@ -2372,7 +2508,11 @@ static void mon_cast_spell(monptr, took_turn)
 	  f_ptr=&py.flags;
 	  (void) strcat(cdesc, "breathes plasma.");
 	  msg_print(cdesc);
+#ifdef TC_COLOR
+	  breath(GF_PLASMA, char_row, char_col,
+#else
 	  breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 		 ((m_ptr->hp/6)>150?150:(m_ptr->hp/6)), ddesc, monptr);
 	  if (!py.flags.sound_resist)
 	      stun_player(randint((m_ptr->hp/8)>35? 35 : ((m_ptr->hp/8)<=0)?
@@ -2381,7 +2521,11 @@ static void mon_cast_spell(monptr, took_turn)
 	case 72:
 	  (void) strcat(cdesc, "fires an arrow at you.");
 	  msg_print(cdesc);
+#ifdef TC_COLOR
+	  bolt(GF_ARROW, char_row, char_col,
+#else
 	  bolt(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 		 damroll(1,6), ddesc, m_ptr, monptr);
 	  break;
 	case 73:
@@ -2407,12 +2551,20 @@ static void mon_cast_spell(monptr, took_turn)
 	  (void) strcat(cdesc, "casts a darkness storm.");
 	  msg_print(cdesc);
 	  if (py.flags.dark_resist) {
+#ifdef TC_COLOR
+	    breath(GF_DARK, char_row, char_col,
+#else
 	    breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 	          ((m_ptr->hp/6)>250?250:(m_ptr->hp/6)), ddesc, monptr);
 	    unlight_area(char_row, char_col);
 	  }
 	  else {
+#ifdef TC_COLOR
+	    breath(GF_DARK, char_row, char_col,
+#else
 	    breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
                   ((m_ptr->hp/6)>500?500:(m_ptr->hp/6)), ddesc, monptr);
             unlight_area(char_row, char_col);
           }
@@ -2420,7 +2572,11 @@ static void mon_cast_spell(monptr, took_turn)
 	case 75: /* Mana storm */
 	  (void) strcat(cdesc, "invokes a Mana storm.");
 	  msg_print(cdesc);
+#ifdef TC_COLOR
+	  breath(GF_MANA, char_row, char_col,
+#else
 	  breath(GF_MAGIC_MISSILE, char_row, char_col,
+#endif
 	    	(c_list[m_ptr->mptr].level*5)+damroll(10,10),
 		ddesc, monptr);
 	  break;
@@ -2503,16 +2659,16 @@ static void mon_cast_spell(monptr, took_turn)
 	  msg_print(cdesc);
 	}
       /* End of spells				       */
-        if ((m_ptr->ml) /* this won't work if we've been moved, so... */
-        || (thrown_spell == 45) /* add teleport away, */
-        || (thrown_spell == 57) /* and teleport lv -CFT */
-          ){
+      if ((m_ptr->ml) /* this won't work if we've been moved, so... */
+	|| (thrown_spell == 45) /* add teleport away, */
+	|| (thrown_spell == 57) /* and teleport lv -CFT */
+ 	  ){
 	if (thrown_spell<33)
 	  c_recall[m_ptr->mptr].r_spells |= 1L << (thrown_spell-1);
 	else if (thrown_spell<65)
-          c_recall[m_ptr->mptr].r_spells2 |= 1L << (thrown_spell-33);
-        else if (thrown_spell<97) /* in case of 200 for bugs... -CFT */
-          c_recall[m_ptr->mptr].r_spells3 |= 1L << (thrown_spell-65);
+	  c_recall[m_ptr->mptr].r_spells2 |= 1L << (thrown_spell-33);
+	else if (thrown_spell<97) /* in case of 200 for bugs... -CFT */
+	  c_recall[m_ptr->mptr].r_spells3 |= 1L << (thrown_spell-65);
 	if ((c_recall[m_ptr->mptr].r_spells & CS_FREQ) != CS_FREQ)
 	  c_recall[m_ptr->mptr].r_spells++;
 	if (death && c_recall[m_ptr->mptr].r_deaths < MAX_SHORT)
@@ -2902,12 +3058,12 @@ static shatter_quake(mon_y, mon_x)
 	  if ((i==mon_y) && (j==mon_x)) continue;
 	  c_ptr = &cave[i][j];
 	  if (c_ptr->tptr != 0)
-            if ((t_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
-                (t_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
-                (t_list[c_ptr->tptr].flags2 & TR_ARTIFACT))
-              continue; /* don't kill artifacts... */
-            else
-	    (void) delete_object(i, j);
+	    if ((t_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
+	        (t_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
+	        (t_list[c_ptr->tptr].flags2 & TR_ARTIFACT))
+	      continue; /* don't kill artifacts... */
+	    else
+	      (void) delete_object(i, j);
 	  if (c_ptr->cptr>1) {
 	    m_ptr = &m_list[c_ptr->cptr];
 	    r_ptr = &c_list[m_ptr->mptr];

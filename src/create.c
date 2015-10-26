@@ -37,7 +37,25 @@ struct previous {
 
 extern int peek;
 
-/* Generates character's stats				-JWT-	*/
+/* prototypes...  ARG_* will be nothing except on TURBOC... -CFT */
+static void get_stats(ARG_VOID);
+static void change_stat(ARG_INT ARG_COMMA ARG_INT16);
+static int monval(ARG_INT16);
+static void choose_race(ARG_VOID);
+static void get_sex(ARG_VOID);
+static void get_class_choice(ARG_VOID);
+static void get_all_stats(ARG_VOID);
+static void get_history(ARG_VOID);
+static void get_ahw(ARG_VOID);
+static void print_history(ARG_VOID);
+static void get_class(ARG_VOID);
+static int get_prev_stats(ARG_VOID);
+static void get_prev_history(ARG_VOID);
+static void get_prev_ahw(ARG_VOID);
+static void get_money(ARG_VOID);
+
+
+/* Generates character's stats			-JWT-	*/
 static void get_stats()
 {
   register int i, tot;
@@ -464,16 +482,18 @@ static void get_class()
   /* initialize hit_points array */
   /* put bounds on total possible hp, only succeed if it is within
     1/8 of average value */
-  min_value = (MAX_PLAYER_LEVEL*3/8 * (m_ptr->hitdie-1)) +
+  min_value = (MAX_PLAYER_LEVEL*3 * (m_ptr->hitdie-1))/8 +
     MAX_PLAYER_LEVEL;
-  max_value = (MAX_PLAYER_LEVEL*5/8 * (m_ptr->hitdie-1)) +
+  max_value = (MAX_PLAYER_LEVEL*5 * (m_ptr->hitdie-1))/8 +
     MAX_PLAYER_LEVEL;
+#ifndef MSDOS /* I don't like this -CFT */
   if (is_wizard(player_uid) && !(peek || wizard)) {
-    min_value = (MAX_PLAYER_LEVEL/2 * (m_ptr->hitdie-1)) +
+    min_value = (MAX_PLAYER_LEVEL * (m_ptr->hitdie-1))/2 +
       MAX_PLAYER_LEVEL;
-    max_value = (MAX_PLAYER_LEVEL*6/8 * (m_ptr->hitdie-1)) +
+    max_value = (MAX_PLAYER_LEVEL*6 * (m_ptr->hitdie-1))/8 +
       MAX_PLAYER_LEVEL;
   }
+#endif
   player_hp[0] = m_ptr->hitdie;
   do {
     for (i = 1; i < MAX_PLAYER_LEVEL; i++) {
@@ -485,8 +505,8 @@ static void get_class()
 	 (player_hp[MAX_PLAYER_LEVEL-1] > max_value));
 
   if (peek) {
-    percent = (player_hp[MAX_PLAYER_LEVEL-1]*200) /
-      (m_ptr->hitdie + ((MAX_PLAYER_LEVEL-1)*m_ptr->hitdie));
+    percent = (int)( ((long)player_hp[MAX_PLAYER_LEVEL-1]*200L) /
+      (m_ptr->hitdie + ((MAX_PLAYER_LEVEL-1)*m_ptr->hitdie)) );
     sprintf(buf, "%d%% Life Rating", percent);
     msg_print(buf);
   }
@@ -506,9 +526,9 @@ void rerate() {
   char buf[50];
   struct misc *m_ptr = &py.misc;
 
-  min_value = (MAX_PLAYER_LEVEL*3/8 * (m_ptr->hitdie-1)) +
+  min_value = (MAX_PLAYER_LEVEL*3 * (m_ptr->hitdie-1))/8 +
     MAX_PLAYER_LEVEL;
-  max_value = (MAX_PLAYER_LEVEL*5/8 * (m_ptr->hitdie-1)) +
+  max_value = (MAX_PLAYER_LEVEL*5 * (m_ptr->hitdie-1))/8 +
     MAX_PLAYER_LEVEL;
   player_hp[0] = m_ptr->hitdie;
   do {
@@ -521,10 +541,16 @@ void rerate() {
   while ((player_hp[MAX_PLAYER_LEVEL-1] < min_value) ||
 	 (player_hp[MAX_PLAYER_LEVEL-1] > max_value));
 
+/* This taken from above...  used here to avoid flt. pt. math -CFT */
+    percent = (int)( ((long)player_hp[MAX_PLAYER_LEVEL-1]*200L) /
+      (m_ptr->hitdie + ((MAX_PLAYER_LEVEL-1)*m_ptr->hitdie)) );
+
+#if 0 /* this was here before -- I'm trying to avoid floating pt.. -CFT */
   percent = (int) (((double) (player_hp[MAX_PLAYER_LEVEL-1]*100) /
 		    (double) ((double)m_ptr->hitdie + 
 			      (double)((double)((MAX_PLAYER_LEVEL-1)*
 						m_ptr->hitdie)/(double)2))));
+#endif
   sprintf(buf, "%d%% Life Rating", percent);
   calc_hitpoints();
   prt_stat_block();

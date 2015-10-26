@@ -1,6 +1,7 @@
 *  - Wizard light.
 !  - Rerate the characters hitpoints.
 :  - Map area.
+%  - Self Knowledge
 \  - Wizard Help.
 ^A - Remove Curse and Cure all maladies.
 ^D - Down/Up n levels.
@@ -17,4 +18,3 @@
 +  - Gain experience.
 &  - Summon monster.
 ~  - Save 'found' artifact names to a file
-%  - Self-knowledge

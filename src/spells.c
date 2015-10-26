@@ -25,10 +25,17 @@
 #if defined(LINT_ARGS)
 static void replace_spot(int, int, int);
 #else
-static void replace_spot();
+static void replace_spot(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
 #endif
 
 char *pain_message();
+
+#ifdef MSDOS /* then need prototype... -CFT */
+static char bolt_shape(int); /* added for bolts, minor nicety... -CFT */
+#ifdef TC_COLOR
+static int8u bolt_color(int); /* ditto -CFT */
+#endif
+#endif
 
 /* Following are spell procedure/functions			-RAK-	*/
 /* These routines are commonly used in the scroll, potion, wands, and	 */
@@ -44,6 +51,41 @@ static char bolt_shape(int dir){ /* added for bolts, minor nicety... -CFT */
   }
   return '*'; /* should never happen... -CFT */
 }
+
+#ifdef TC_COLOR
+static int8u bolt_color(int typ){
+  switch(typ){
+    case GF_MAGIC_MISSILE: case GF_MANA:
+      return LIGHTCYAN;
+    case GF_LIGHTNING: case GF_LIGHT:
+      return YELLOW;
+    case GF_POISON_GAS: case GF_CONFUSION:
+      return GREEN;
+    case GF_ACID:
+      return LIGHTGREEN;
+    case GF_FROST: case GF_WATER:
+      return LIGHTBLUE;
+    case GF_FIRE:
+      return RED;
+    case GF_HOLY_ORB: case GF_NETHER: case GF_CHAOS: case GF_TIME:
+    case GF_DARK:
+      return DARKGRAY;
+    case GF_ARROW:
+      return BROWN;
+    case GF_PLASMA: case GF_METEOR:
+      return LIGHTRED;
+    case GF_SHARDS: case GF_SOUND:
+      return WHITE;
+    case GF_DISENCHANT:
+      return CYAN;
+    case GF_NEXUS: case GF_GRAVITY:
+      return MAGENTA;
+    case GF_FORCE: case GF_INERTIA:
+      return LIGHTGRAY;
+  }
+  return randint(15); /* should never happen... -CFT */
+}
+#endif
 
 void monster_name (m_name, m_ptr, r_ptr)
 char *m_name;
@@ -219,8 +261,15 @@ int detection()
 	{
 	  m_ptr->ml = TRUE;
 	  /* works correctly even if hallucinating */
+#ifdef TC_COLOR
+	  textcolor(c_list[m_ptr->mptr].color);
 	  print((char)c_list[m_ptr->mptr].cchar, (int)m_ptr->fy,
 		(int)m_ptr->fx);
+	  textcolor(LIGHTGRAY);
+#else
+	  print((char)c_list[m_ptr->mptr].cchar, (int)m_ptr->fy,
+		(int)m_ptr->fx);
+#endif
 	  detect = TRUE;
 	}
     }
@@ -292,21 +341,22 @@ int stair_creation()
     register int cur_pos;
 
     c_ptr = &cave[char_row][char_col];
-      if ((c_ptr->tptr == 0) ||
-          (t_list[c_ptr->tptr].tval < TV_MIN_WEAR) ||
-          (t_list[c_ptr->tptr].tval > TV_MAX_WEAR) ||
-          !(t_list[c_ptr->tptr].flags2 & TR_ARTIFACT)) { /* if no artifact here -CFT */
-        if (c_ptr->tptr != 0)
-          (void) delete_object(char_row, char_col);
-        cur_pos = popt();
-        c_ptr->tptr = cur_pos;
-        if (randint(2)==1 || is_quest(dun_level))
-          invcopy(&t_list[cur_pos], OBJ_UP_STAIR);
-        else
-          invcopy(&t_list[cur_pos], OBJ_DOWN_STAIR);
-        }
+ 
+    if ((c_ptr->tptr == 0) ||
+        (t_list[c_ptr->tptr].tval < TV_MIN_WEAR) ||
+        (t_list[c_ptr->tptr].tval > TV_MAX_WEAR) ||
+        !(t_list[c_ptr->tptr].flags2 & TR_ARTIFACT)) { /* if no artifact here -CFT */
+      if (c_ptr->tptr != 0)
+        (void) delete_object(char_row, char_col);
+      cur_pos = popt();
+      c_ptr->tptr = cur_pos;
+      if (randint(2)==1 || is_quest(dun_level))
+        invcopy(&t_list[cur_pos], OBJ_UP_STAIR);
       else
-        msg_print("The object resists the spell.");
+        invcopy(&t_list[cur_pos], OBJ_DOWN_STAIR);
+      }
+    else
+      msg_print("The object resists the spell.");
 }
 
 /* Surround the player with doors.			-RAK-	*/
@@ -324,10 +374,10 @@ int door_creation()
 	  c_ptr = &cave[i][j];
 	  if (c_ptr->fval <= MAX_CAVE_FLOOR)
 	    {
-      if ((c_ptr->tptr == 0) ||
-          (t_list[c_ptr->tptr].tval < TV_MIN_WEAR) ||
-          (t_list[c_ptr->tptr].tval > TV_MAX_WEAR) ||
-          !(t_list[c_ptr->tptr].flags2 & TR_ARTIFACT)) { /* if no artifact here -CFT */
+    if ((c_ptr->tptr == 0) ||
+        (t_list[c_ptr->tptr].tval < TV_MIN_WEAR) ||
+        (t_list[c_ptr->tptr].tval > TV_MAX_WEAR) ||
+        !(t_list[c_ptr->tptr].flags2 & TR_ARTIFACT)) { /* if no artifact here -CFT */
 	      door = TRUE;
 	      if (c_ptr->tptr != 0)
 		(void) delete_object(i, j);
@@ -336,9 +386,9 @@ int door_creation()
 	      c_ptr->tptr = k;
 	      invcopy(&t_list[k], OBJ_CLOSED_DOOR);
 	      lite_spot(i, j);
-        }
-      else
-        msg_print("The object resists the spell.");
+      }
+    else
+      msg_print("The object resists the spell.");
 	    }
 	}
   return(door);
@@ -392,8 +442,15 @@ int detect_invisible()
 	{
 	  m_ptr->ml = TRUE;
 	  /* works correctly even if hallucinating */
+#ifdef TC_COLOR
+	  textcolor(c_list[m_ptr->mptr].color);
 	  print((char)c_list[m_ptr->mptr].cchar, (int)m_ptr->fy,
 		(int)m_ptr->fx);
+	  textcolor(LIGHTGRAY);
+#else
+	  print((char)c_list[m_ptr->mptr].cchar, (int)m_ptr->fy,
+		(int)m_ptr->fx);
+#endif
 	  flag = TRUE;
 	}
     }
@@ -556,11 +613,11 @@ int trap_creation()
 	c_ptr = &cave[i][j];
 	if (c_ptr->fval <= MAX_CAVE_FLOOR)
 	  {
-        if ((c_ptr->tptr == 0) ||
-          (t_list[c_ptr->tptr].tval < TV_MIN_WEAR) ||
-          (t_list[c_ptr->tptr].tval > TV_MAX_WEAR) ||
-          !(t_list[c_ptr->tptr].flags2 & TR_ARTIFACT)) { /* if no artifact here -CFT */
-           trap = TRUE;
+    if ((c_ptr->tptr == 0) ||
+        (t_list[c_ptr->tptr].tval < TV_MIN_WEAR) ||
+        (t_list[c_ptr->tptr].tval > TV_MAX_WEAR) ||
+        !(t_list[c_ptr->tptr].flags2 & TR_ARTIFACT)) { /* if no artifact here -CFT */
+	    trap = TRUE;
 	    if (c_ptr->tptr != 0)
 	      (void) delete_object(i, j);
 	    place_trap(i, j, randint(MAX_TRAP)-1);
@@ -568,9 +625,9 @@ int trap_creation()
 	    t_list[c_ptr->tptr].p1 = 0;
 	    /* open pits are immediately visible, so call lite_spot */
 	    lite_spot(i, j);
-        }
-      else
-        msg_print("The object resists the spell.");
+      }
+    else
+      msg_print("The object resists the spell.");
 	  }
       }
   return(trap);
@@ -628,8 +685,15 @@ int detect_monsters()
 	{
 	  m_ptr->ml = TRUE;
 	  /* works correctly even if hallucinating */
+#ifdef TC_COLOR
+	  textcolor(c_list[m_ptr->mptr].color);
 	  print((char)c_list[m_ptr->mptr].cchar, (int)m_ptr->fy,
 		(int)m_ptr->fx);
+	  textcolor(LIGHTGRAY);
+#else
+	  print((char)c_list[m_ptr->mptr].cchar, (int)m_ptr->fy,
+		(int)m_ptr->fx);
+#endif
 	  detect = TRUE;
 	}
     }
@@ -782,7 +846,11 @@ int dir, y, x;
 void get_flags(typ, weapon_type, harm_type, destroy)
 int typ;
 int32u *weapon_type; int32u *harm_type;
+#ifdef MSDOS
+int (**destroy)(inven_type *);
+#else
 int (**destroy)();
+#endif
 {
   switch(typ)
     {
@@ -839,9 +907,26 @@ char *bolt_typ;
   register monster_type *m_ptr;
   register creature_type *r_ptr;
   vtype out_val, m_name;
+#ifdef TC_COLOR
+  int ttyp;
+#endif
 
   flag = FALSE;
+#ifdef TC_COLOR
+  switch( typ ){
+    case GF_ARROW: case GF_PLASMA: case GF_NETHER: case GF_WATER:
+    case GF_CHAOS: case GF_SHARDS: case GF_SOUND: case GF_CONFUSION:
+    case GF_DISENCHANT: case GF_NEXUS: case GF_FORCE: case GF_INERTIA:
+    case GF_LIGHT: case GF_DARK: case GF_TIME: case GF_GRAVITY:
+    case GF_METEOR: case GF_MANA:
+      ttyp = GF_MAGIC_MISSILE; /* use m.m. for dam/destroy calcs... */
+      break;
+    default: ttyp = typ;
+  }
+  get_flags(ttyp, &weapon_type, &harm_type, &dummy);
+#else
   get_flags(typ, &weapon_type, &harm_type, &dummy);
+#endif
   oldy = y;
   oldx = x;
   dist = 0;
@@ -909,9 +994,18 @@ char *bolt_typ;
 	    }
 	  else if (panel_contains(y, x) && (py.flags.blind < 1))
 	    {
-              print(bolt_shape(dir), y, x);
+#ifdef TC_COLOR
+	      textcolor(bolt_color(typ));
+#endif
+	      print(bolt_shape(dir), y, x);
 	      /* show the bolt */
 	      put_qio();
+#ifdef MSDOS
+	      delay(23); /* slow it down, so we can actually see it! -CFT */
+#endif
+#ifdef TC_COLOR
+	      textcolor(LIGHTGRAY);
+#endif
 	    }
 	}
       oldy = y;
@@ -923,138 +1017,173 @@ char *bolt_typ;
 
 
 /* Shoot a bolt in a given direction			-RAK-	*/
+/* At the player, it looks like... -CFT
+	Changed from void to int.  ret val of 1 means hit player, ret val
+	of 0 means did not hit player.  This value used in mon_cast_spell()
+	to control secondary effects of the bolt (ie lose experience from
+	nether bolt).  If it doesn't hit the player, then no 2ndary effects
+	should happen. -CFT	
+ */
+int bolt(typ, y, x, dam_hp, ddesc, ptr, monptr)
+  int typ, y, x, dam_hp;
+  char *ddesc;
+  monster_type *ptr;
+  int monptr;
+{
+  register int i=ptr->fy, j=ptr->fx, k;
+  int dam, max_dis;
+  int32u weapon_type, harm_type;
+  int32u tmp, treas;
+  register cave_type *c_ptr;
+  int (*destroy)();
+  register monster_type *m_ptr;
+  register creature_type *r_ptr;
+  int y2, x2; /* deltas */
+  int xstep, ystep; /* 1 or -1 */
+  int dy, dx; /* 1, 0, or -1 */
+  char bolt_char;
+  int retval = 0; /* return value -CFT */
+#ifdef TC_COLOR
+  int ttyp;
+#endif
 
-  /* At the player, it looks like... -CFT
-        Changed from void to int.  ret val of 1 means hit player, ret val
-        of 0 means did not hit player.  This value used in mon_cast_spell()
-        to control secondary effects of the bolt (ie lose experience from
-        nether bolt).  If it doesn't hit the player, then no 2ndary effects
-        should happen. -CFT       */
-  int bolt(typ, y, x, dam_hp, ddesc, ptr, monptr)
-    int typ, y, x, dam_hp;
-    char *ddesc;
-    monster_type *ptr;
-    int monptr;
-  {
-    register int i=ptr->fy, j=ptr->fx, k;
-    int dam, max_dis;
-    int32u weapon_type, harm_type;
-    int32u tmp, treas;
-    register cave_type *c_ptr;
-    int (*destroy)();
-    register monster_type *m_ptr;
-    register creature_type *r_ptr;
-    int y2, x2; /* deltas */
-    int xstep, ystep; /* 1 or -1 */
-    int dy, dx; /* 1, 0, or -1 */
-    char bolt_char;
-    int retval = 0; /* return value -CFT */
+#ifdef TC_COLOR
+  switch( typ ){
+    case GF_ARROW: case GF_PLASMA: case GF_NETHER: case GF_WATER:
+    case GF_CHAOS: case GF_SHARDS: case GF_SOUND: case GF_CONFUSION:
+    case GF_DISENCHANT: case GF_NEXUS: case GF_FORCE: case GF_INERTIA:
+    case GF_LIGHT: case GF_DARK: case GF_TIME: case GF_GRAVITY:
+    case GF_METEOR: case GF_MANA:
+      ttyp = GF_MAGIC_MISSILE; /* use m.m. for dam/destroy calcs... */
+      break;
+    default: ttyp = typ;
+  }
+  get_flags(ttyp, &weapon_type, &harm_type, &destroy);
+#else
+  get_flags(typ, &weapon_type, &harm_type, &destroy);
+#endif
+
+  y2 = y - ptr->fy; /* calc deltas to target (player... *grin*) */
+  x2 = x - ptr->fx;
+
+  if (y2 < 0) { /* calc x, y step vals, and make x2, y2 abs value */
+    ystep = -1;
+    y2 *= -1; /* and make positive */
+  } else {
+    ystep = 1;
+  }
+  if (x2 < 0) {
+    xstep = -1;
+    x2 *= -1; /* and make positive */
+  } else {
+    xstep = 1;
+  }
   
-    y2 = y - ptr->fy; /* calc deltas to target (player... *grin*) */
-    x2 = x - ptr->fx;
-  
-    if (y2 < 0) { /* calc x, y step vals, and make x2, y2 abs value */
-      ystep = -1;
-      y2 *= -1; /* and make positive */
-    } else {
-      ystep = 1;
-    }
-    if (x2 < 0) {
-      xstep = -1;
-      x2 *= -1; /* and make positive */
-    } else {
-      xstep = 1;
-    }
+  while ( (x2 + y2) > 0 ) { /* keep going until hits target, or break  -CFT */
+    dy = ystep; dx = xstep; /* defaults... */
+    if ((y2*100) > (x2*241)) /* 2.41 is tan(45/2 deg) */
+      { dy = ystep; dx = 0; } /* only move in y... */
+    if ((x2*100) > (y2*241)) /* 2.41 is tan(45/2 deg) */
+      { dx = xstep; dy = 0; } /* only move in x... */
+    i += dy;  y2 -= (dy != 0 ? 1 : 0); /* adjust coords */
+    j += dx;  x2 -= (dx != 0 ? 1 : 0);
+
+  /* choose the right shape for the bolt... -CFT */
+  if (dy == 0) bolt_char = '-';
+  else if (dx == 0) bolt_char = '|';
+  else if (dy == dx) bolt_char = '\\';
+  else bolt_char = '/';
     
-   while ( (x2 + y2) > 0 ) { /* keep going until hits target, or break  -CFT */
-      dy = ystep; dx = xstep; /* defaults... */
-      if ((y2*100) > (x2*241)) /* 2.41 is tan(45/2 deg) */
-        { dy = ystep; dx = 0; } /* only move in y... */
-      if ((x2*100) > (y2*241)) /* 2.41 is tan(45/2 deg) */
-        { dx = xstep; dy = 0; } /* only move in x... */
-      i += dy;  y2 -= (dy != 0 ? 1 : 0); /* adjust coords */
-      j += dx;  x2 -= (dx != 0 ? 1 : 0);
-  
-    /* choose the right shape for the bolt... -CFT */
-    if (dy == 0) bolt_char = '-';
-    else if (dx == 0) bolt_char = '|';
-    else if (dy == dx) bolt_char = '\\';
-    else bolt_char = '/';
-      
-      if (in_bounds(i, j) && los(y, x, i, j)) {
-        c_ptr = &cave[i][j];
-        if (c_ptr->fval <= MAX_OPEN_SPACE) {
-        if (panel_contains(i, j) && !(py.flags.status & PY_BLIND)) {
-          print(bolt_char, i, j);
-          put_qio();
-          lite_spot(i, j);
-        }
-        if (c_ptr->cptr > 1 && c_ptr->cptr != monptr) {
-          m_ptr = &m_list[c_ptr->cptr];
-          r_ptr = &c_list[m_ptr->mptr];
-          dam = dam_hp;
-          if (harm_type & r_ptr->cdefense) {
-            if (harm_type == EVIL)
-              dam = dam*2;
-            else
-              dam = dam/9;
-          }
-          m_ptr->hp = m_ptr->hp - dam;
-          m_ptr->csleep = 0;
-          if (m_ptr->hp < 0) {
-            treas = monster_death((int)m_ptr->fy, (int)m_ptr->fx,
-                                  r_ptr->cmove, 0, 0);
-            if (m_ptr->ml) {
-              tmp = (c_recall[m_ptr->mptr].r_cmove & CM_TREASURE)
-                >> CM_TR_SHIFT;
-              if (tmp > ((treas & CM_TREASURE) >> CM_TR_SHIFT))
-                treas = (treas & ~CM_TREASURE)|(tmp<<CM_TR_SHIFT);
-              c_recall[m_ptr->mptr].r_cmove = treas |
-                (c_recall[m_ptr->mptr].r_cmove & ~CM_TREASURE);
-            }
-  
-            if (monptr < c_ptr->cptr)
-              delete_monster((int) c_ptr->cptr);
-            else
-              fix1_delete_monster((int) c_ptr->cptr);
-          }
-          break;
-        } else if (c_ptr->cptr == 1) {
-          retval = 1; /* it hit the player, activate 2ndary effects -CFT */
-          if (dam_hp == 0)
-            dam_hp = 1;
-	  switch(typ) {
-          case GF_LIGHTNING:
-            light_dam(dam_hp, ddesc);
-            break;
-          case GF_POISON_GAS:
-            poison_gas(dam_hp, ddesc);
-            break;
-          case GF_ACID:
-            acid_dam(dam_hp, ddesc);
-            break;
-          case GF_FROST:
-            cold_dam(dam_hp, ddesc);
-            break;
-          case GF_FIRE:
-            fire_dam(dam_hp, ddesc);
-            break;
-          case GF_MAGIC_MISSILE:
-            take_hit(dam_hp, ddesc);
-            break;
+    if (in_bounds(i, j) && los(y, x, i, j)) {
+#ifndef MSDOS
+      usleep(50000); /* u-secs */
+#endif
+      c_ptr = &cave[i][j];
+      if (c_ptr->fval <= MAX_OPEN_SPACE) {
+	if (panel_contains(i, j) && !(py.flags.status & PY_BLIND)) {
+#ifdef TC_COLOR
+	  textcolor(bolt_color(typ));
+#endif	  
+	  print(bolt_char, i, j);
+	  put_qio();
+#ifdef TC_COLOR
+	  textcolor(LIGHTGRAY);
+#endif	  
+#ifdef MSDOS
+	  delay(23); /* milli-secs -CFT */
+#endif
+	  lite_spot(i, j);
 	}
-          disturb(1, 0);
-          break;
+	if (c_ptr->cptr > 1 && c_ptr->cptr != monptr) {
+	  m_ptr = &m_list[c_ptr->cptr];
+	  r_ptr = &c_list[m_ptr->mptr];
+	  dam = dam_hp;
+	  if (harm_type & r_ptr->cdefense) {
+	    if (harm_type == EVIL)
+	      dam = dam*2;
+	    else
+	      dam = dam/9;
+	  }
+	  m_ptr->hp = m_ptr->hp - dam;
+	  m_ptr->csleep = 0;
+	  if (m_ptr->hp < 0) {
+	    treas = monster_death((int)m_ptr->fy, (int)m_ptr->fx,
+				  r_ptr->cmove, 0, 0);
+	    if (m_ptr->ml) {
+	      tmp = (c_recall[m_ptr->mptr].r_cmove & CM_TREASURE)
+		>> CM_TR_SHIFT;
+	      if (tmp > ((treas & CM_TREASURE) >> CM_TR_SHIFT))
+		treas = (treas & ~CM_TREASURE)|(tmp<<CM_TR_SHIFT);
+	      c_recall[m_ptr->mptr].r_cmove = treas |
+		(c_recall[m_ptr->mptr].r_cmove & ~CM_TREASURE);
+	    }
+
+	    if (monptr < c_ptr->cptr)
+	      delete_monster((int) c_ptr->cptr);
+	    else
+	      fix1_delete_monster((int) c_ptr->cptr);
+	  }
+	  break;
+	} else if (c_ptr->cptr == 1) {
+	  retval = 1; /* it hit the player, activate 2ndary effects -CFT */
+	  if (dam_hp == 0)
+	    dam_hp = 1;
+#ifdef TC_COLOR
+	  switch(ttyp) {
+#else
+	  switch(typ) {
+#endif
+	  case GF_LIGHTNING:
+	    light_dam(dam_hp, ddesc);
+	    break;
+	  case GF_POISON_GAS:
+	    poison_gas(dam_hp, ddesc);
+	    break;
+	  case GF_ACID:
+	    acid_dam(dam_hp, ddesc);
+	    break;
+	  case GF_FROST:
+	    cold_dam(dam_hp, ddesc);
+	    break;
+	  case GF_FIRE:
+	    fire_dam(dam_hp, ddesc);
+	    break;
+	  case GF_MAGIC_MISSILE:
+	    take_hit(dam_hp, ddesc);
+	    break;
+	  }
+	  disturb(1, 0);
+	  break;
+	}
       }
     }
-    }
   }
-    return retval; /* tell calling code if hit the player or not... -CFT */
+  return retval; /* tell calling code if hit the player or not... -CFT */
 }
- 
- /* old code follows, using flt. pt. math.  Above code should do same thing
-         with integers... -CFT */
-/*
+
+#if 0  /* old code, using flt. pt. math.  Above code should do same thing
+	  with integers... -CFT */
+/* Shoot a bolt in a given direction			-RAK-	*/
 void bolt(typ, y, x, dam_hp, ddesc, ptr, monptr)
   int typ, y, x, dam_hp;
   char *ddesc;
@@ -1089,7 +1218,11 @@ void bolt(typ, y, x, dam_hp, ddesc, ptr, monptr)
     j=(int)x1;
 
     if (in_bounds(i, j) && los(y, x, i, j)) {
-      usleep(50000);
+#ifdef MSDOS
+      delay(50); /* milli-secs -CFT */
+#else
+      usleep(50000); /* u-secs */
+#endif
       c_ptr = &cave[i][j];
       if (c_ptr->fval <= MAX_OPEN_SPACE) {
 	if (panel_contains(i, j) && !(py.flags.status & PY_BLIND)) {
@@ -1157,7 +1290,7 @@ void bolt(typ, y, x, dam_hp, ddesc, ptr, monptr)
     }
   }
 }
-*/
+#endif
 
 /* Shoot a ball in a given direction.  Note that balls have an	*/
 /* area affect.					      -RAK-   */
@@ -1175,11 +1308,28 @@ char *descrip;
   register creature_type *r_ptr, *R_ptr;
   vtype m_name;
   vtype out_val;
+#ifdef TC_COLOR
+  int ttyp, origy = y, origx = x;
+#endif
 
   thit	 = 0;
   tkill	 = 0;
   max_dis = 2;
+#ifdef TC_COLOR
+  switch( typ ){
+    case GF_ARROW: case GF_PLASMA: case GF_NETHER: case GF_WATER:
+    case GF_CHAOS: case GF_SHARDS: case GF_SOUND: case GF_CONFUSION:
+    case GF_DISENCHANT: case GF_NEXUS: case GF_FORCE: case GF_INERTIA:
+    case GF_LIGHT: case GF_DARK: case GF_TIME: case GF_GRAVITY:
+    case GF_METEOR: case GF_MANA:
+      ttyp = GF_MAGIC_MISSILE; /* use m.m. for dam/destroy calcs... */
+      break;
+    default: ttyp = typ;
+  }
+  get_flags(ttyp, &weapon_type, &harm_type, &destroy);
+#else
   get_flags(typ, &weapon_type, &harm_type, &destroy);
+#endif
   flag = FALSE;
   oldy = y;
   oldx = x;
@@ -1200,6 +1350,64 @@ char *descrip;
 	}
 	/* The ball hits and explodes.		     */
 	/* The explosion.			     */
+#ifdef TC_COLOR /* do ball a little diff, so we can see the colors... */
+	for (i = y-max_dis; i <= y+max_dis; i++)
+	  for (j = x-max_dis; j <= x+max_dis; j++)
+	    if (in_bounds(i, j) && (distance(y, x, i, j) <= max_dis) &&
+		los(origy, origx, i, j) && los(y, x, i, j) &&
+		(cave[i][j].fval <= MAX_OPEN_SPACE) &&
+		panel_contains(i, j) && (py.flags.blind < 1)) {
+	      textcolor(bolt_color(typ));
+	      print('*', i, j);
+	      put_qio();
+	      textcolor(LIGHTGRAY); /* prob don't need here, but... -CFT */
+	      }
+	if (py.flags.blind < 1)      
+	  delay(75); /* millisecs, so we see the ball we just drew */
+	/* now go over area of affect and DO something... */
+	for (i = y-max_dis; i <= y+max_dis; i++)
+	  for (j = x-max_dis; j <= x+max_dis; j++)
+	    if (in_bounds(i, j) && (distance(y, x, i, j) <= max_dis)
+		&& los(y, x, i, j)) {
+	      c_ptr = &cave[i][j];
+	      if ((c_ptr->tptr != 0) &&
+		  (*destroy)(&t_list[c_ptr->tptr]))
+		(void) delete_object(i, j);
+	      if (c_ptr->fval <= MAX_OPEN_SPACE) {
+		if (c_ptr->cptr > 1) {
+		  m_ptr = &m_list[c_ptr->cptr];
+		  r_ptr = &c_list[m_ptr->mptr];
+		  monptr = c_ptr->cptr;
+
+		  /* lite up creature if visible, temp
+		     set pl so that update_mon works */
+		  tmp = c_ptr->pl;
+		  c_ptr->pl = TRUE;
+		  update_mon((int)c_ptr->cptr);
+
+		  thit++;
+		  dam = dam_hp;
+		  if (harm_type & r_ptr->cdefense) {
+		    if (harm_type == EVIL)
+		      dam = dam*2;
+		    else
+		      dam = dam/9;
+		    c_recall[m_ptr->mptr].r_cdefense |=harm_type;
+		  }
+		  dam = (dam/(distance(i, j, y, x)+1));
+		  k = mon_take_hit((int)c_ptr->cptr, dam);
+		  if (k >= 0)
+		    tkill++;
+		  c_ptr->pl = tmp;
+		}
+		else if (panel_contains(i, j) &&(py.flags.blind < 1))
+		 lite_spot(i,j); /* erase the ball... */
+	      }
+	    }
+	/* show ball of whatever */
+	put_qio();
+
+#else
 	for (i = y-max_dis; i <= y+max_dis; i++)
 	  for (j = x-max_dis; j <= x+max_dis; j++)
 	    if (in_bounds(i, j) && (distance(y, x, i, j) <= max_dis)
@@ -1239,6 +1447,7 @@ char *descrip;
 		  print('*', i, j);
 	      }
 	    }
+#endif
 	/* show ball of whatever */
 	put_qio();
 
@@ -1247,7 +1456,6 @@ char *descrip;
 	    if (in_bounds(i, j) && panel_contains(i, j) &&
 		(distance(y, x, i, j) <= max_dis))
 	      lite_spot(i, j);
-
 	/* End  explosion.		     */
 	if (thit == 1) {
 	  lower_monster_name(m_name, m_ptr, r_ptr);
@@ -1284,9 +1492,17 @@ char *descrip;
 	  prt_experience();
 	/* End ball hitting.		     */
       } else if (panel_contains(y, x) && (py.flags.blind < 1)) {
-        print(bolt_shape(dir), y, x);
-	/* show bolt */
+#ifdef TC_COLOR
+	textcolor(bolt_color(typ));
+#endif	  
+	print(bolt_shape(dir), y, x);
 	put_qio();
+#ifdef TC_COLOR
+	textcolor(LIGHTGRAY);
+#endif	  
+#ifdef MSDOS
+	delay(23); /* milli-secs -CFT */
+#endif
       }
       oldy = y;
       oldx = x;
@@ -1322,9 +1538,111 @@ int monptr;
   register cave_type *c_ptr;
   register monster_type *m_ptr;
   register creature_type *r_ptr;
+#ifdef TC_COLOR
+  int ttyp;
+#endif
 
   max_dis = 2;
+#ifdef TC_COLOR
+  switch( typ ){
+    case GF_ARROW: case GF_PLASMA: case GF_NETHER: case GF_WATER:
+    case GF_CHAOS: case GF_SHARDS: case GF_SOUND: case GF_CONFUSION:
+    case GF_DISENCHANT: case GF_NEXUS: case GF_FORCE: case GF_INERTIA:
+    case GF_LIGHT: case GF_DARK: case GF_TIME: case GF_GRAVITY:
+    case GF_METEOR: case GF_MANA:
+      ttyp = GF_MAGIC_MISSILE; /* use m.m. for dam/destroy calcs... */
+      break;
+    default: ttyp = typ;
+  }
+  get_flags(ttyp, &weapon_type, &harm_type, &destroy);
+#else
   get_flags(typ, &weapon_type, &harm_type, &destroy);
+#endif
+
+#ifdef TC_COLOR /* do ball a little diff, so we can see the colors... */
+	for (i = y-max_dis; i <= y+max_dis; i++)
+	  for (j = x-max_dis; j <= x+max_dis; j++)
+	    if (in_bounds(i, j) && (distance(y, x, i, j) <= max_dis) &&
+		los(y, x, i, j) && (cave[i][j].fval <= MAX_OPEN_SPACE) &&
+		panel_contains(i, j) && !(py.flags.status & PY_BLIND)) {
+	      textcolor(bolt_color(typ));
+	      print('*', i, j);
+	      put_qio();
+	      textcolor(LIGHTGRAY); /* prob don't need here, but... -CFT */
+	      }
+        if (!(py.flags.status & PY_BLIND))
+	  delay(75); /* millisecs, so we see the ball we just drew */
+	/* now go over area of affect and DO something... */
+	for (i = y-max_dis; i <= y+max_dis; i++)
+	  for (j = x-max_dis; j <= x+max_dis; j++)
+	    if (in_bounds(i, j) && (distance(y, x, i, j) <= max_dis)
+		&& los(y, x, i, j)) {
+	      c_ptr = &cave[i][j];
+	      if ((c_ptr->tptr != 0) &&
+		  (*destroy)(&t_list[c_ptr->tptr]))
+		(void) delete_object(i, j);
+	      if (c_ptr->fval <= MAX_OPEN_SPACE) {
+		if (c_ptr->cptr > 1) {
+		  m_ptr = &m_list[c_ptr->cptr];
+		  r_ptr = &c_list[m_ptr->mptr];
+		  dam = dam_hp;
+		  if (harm_type & r_ptr->cdefense) {
+		    if (harm_type == EVIL)
+		      dam = dam*2;
+		    else
+		      dam = dam/9;
+		  }
+		  dam = (dam/(distance(i, j, y, x)+1));
+		  /* can not call mon_take_hit here, since player does not
+		     get experience for kill */
+		  m_ptr->hp = m_ptr->hp - dam;
+		  m_ptr->csleep = 0;
+		  if (m_ptr->hp < 0)
+		    {
+		      treas = monster_death((int)m_ptr->fy, (int)m_ptr->fx,
+					    r_ptr->cmove, 0, 0);
+		      if (m_ptr->ml)
+			{
+			  tmp = (c_recall[m_ptr->mptr].r_cmove & CM_TREASURE)
+			    >> CM_TR_SHIFT;
+			  if (tmp > ((treas & CM_TREASURE) >> CM_TR_SHIFT))
+			    treas = (treas & ~CM_TREASURE)|(tmp<<CM_TR_SHIFT);
+			  c_recall[m_ptr->mptr].r_cmove = treas |
+			    (c_recall[m_ptr->mptr].r_cmove & ~CM_TREASURE);
+			}
+
+		      /* It ate an already processed monster.Handle normally.*/
+		      if (monptr < c_ptr->cptr)
+			delete_monster((int) c_ptr->cptr);
+		      /* If it eats this monster, an already processed monster
+			 will take its place, causing all kinds of havoc.
+			 Delay the kill a bit. */
+		      else
+			fix1_delete_monster((int) c_ptr->cptr);
+		    }
+		}
+	      else if (c_ptr->cptr == 1)
+		{
+		  dam = (dam_hp/(distance(i, j, y, x)+1));
+		  /* let's do at least one point of damage */
+		  /* prevents randint(0) problem with poison_gas, also */
+		  if (dam <= 0)
+		    dam = 1;
+                  if (dam>1600)
+		    dam = 1600;
+		  switch(ttyp)
+		    {
+		    case GF_LIGHTNING: light_dam(dam, ddesc); break;
+		    case GF_POISON_GAS: poison_gas(dam, ddesc); break;
+		    case GF_ACID: acid_dam(dam, ddesc); break;
+		    case GF_FROST: cold_dam(dam, ddesc); break;
+		    case GF_FIRE: fire_dam(dam, ddesc); break;
+		    case GF_MAGIC_MISSILE: take_hit(dam, ddesc); break;
+		    }
+		}
+	    }
+	}
+#else
   for (i = y-2; i <= y+2; i++)
     for (j = x-2; j <= x+2; j++)
       if (in_bounds(i, j) && (distance(y, x, i, j) <= max_dis)
@@ -1402,6 +1720,7 @@ int monptr;
 		}
 	    }
 	}
+#endif
   /* show the ball of gas */
   put_qio();
 
@@ -1948,13 +2267,13 @@ int dir, y, x;
 		  m_ptr->hp += damroll(4, 8);
 		}
 	    }
-          if (c_ptr->tptr != 0)
-            if ((t_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
-                (t_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
-                (t_list[c_ptr->tptr].flags2 & TR_ARTIFACT))
-              continue; /* don't bury the artifact... */
-            else
-              (void) delete_object(y, x);
+	  if (c_ptr->tptr != 0)
+	    if ((t_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
+	        (t_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
+	        (t_list[c_ptr->tptr].flags2 & TR_ARTIFACT))
+	      continue; /* don't bury the artifact... */
+	    else
+	      (void) delete_object(y, x);
 	  c_ptr->fval  = MAGMA_WALL;
 	  c_ptr->fm = FALSE;
 	  lite_spot(y, x);
@@ -2044,10 +2363,10 @@ int ny, nx;
   ctr = 0;
   do
     {
-        do { /* bounds check added -CFT */
-          y = ny + (randint(2*dis+1) - (dis + 1));
-          x = nx + (randint(2*dis+1) - (dis + 1));
-        } while (!in_bounds(ny, nx));
+      do { /* bounds check added -CFT */
+        y = ny + (randint(2*dis+1) - (dis + 1));
+        x = nx + (randint(2*dis+1) - (dis + 1));
+      } while (!in_bounds(ny, nx));
       ctr++;
       if (ctr > 9)
 	{
@@ -2125,7 +2444,11 @@ int mass_genocide(spell)
 	    take_hit(randint(3),"the strain of casting Mass Genocide");
 	    prt_chp();
 	    put_qio();
-	    usleep(50000);
+#ifdef MSDOS
+      delay(50); /* milli-secs -CFT */
+#else
+      usleep(50000); /* u-secs */
+#endif
           }
 	  result = TRUE;
 	}
@@ -2159,7 +2482,11 @@ int genocide(spell)
 	        take_hit(randint(4),"the strain of casting Genocide");
 	        prt_chp();
                 put_qio();
-	        usleep(50000);
+#ifdef MSDOS
+      delay(50); /* milli-secs -CFT */
+#else
+      usleep(50000); /* u-secs */
+#endif
               }
 	      killed = TRUE;
 	    }
@@ -2350,8 +2677,15 @@ int detect_evil()
 	{
 	  m_ptr->ml = TRUE;
 	  /* works correctly even if hallucinating */
+#ifdef TC_COLOR
+	  textcolor(c_list[m_ptr->mptr].color);
 	  print((char)c_list[m_ptr->mptr].cchar, (int)m_ptr->fy,
 		(int)m_ptr->fx);
+	  textcolor(LIGHTGRAY);
+#else
+	  print((char)c_list[m_ptr->mptr].cchar, (int)m_ptr->fy,
+		(int)m_ptr->fx);
+#endif
 	  flag = TRUE;
 	}
     }
@@ -2486,12 +2820,12 @@ void earthquake()
 	{
 	  c_ptr = &cave[i][j];
 	  if (c_ptr->tptr != 0)
-            if ((t_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
-                (t_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
-                (t_list[c_ptr->tptr].flags2 & TR_ARTIFACT))
-              continue; /* don't touch artifacts... */
-            else
-              (void) delete_object(i, j);
+	    if ((t_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
+	    	(t_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
+	    	(t_list[c_ptr->tptr].flags2 & TR_ARTIFACT))
+	      continue; /* don't touch artifacts... */
+	    else
+	      (void) delete_object(i, j);
 	  if (c_ptr->cptr > 1)
 	    {
 	      m_ptr = &m_list[c_ptr->cptr];
@@ -2663,7 +2997,11 @@ int probing()
 /* Attempts to destroy a type of creature.  Success depends on	*/
 /* the creatures level VS. the player's level		 -RAK-	 */
 int dispel_creature(cflag, damage)
+#ifdef MSDOS
+int32u cflag; /* ring o power passes 0xffffffffL */
+#else
 int cflag;
+#endif
 int damage;
 {
   register int i;
@@ -3012,11 +3350,21 @@ char *pain_message(monptr,dam)
 {
   register monster_type *m_ptr;
   creature_type *c_ptr;
+#ifdef MSDOS /* fix for 16bit ints... -CFT */
+  int32 percentage,oldhp,newhp;
+#else
   int percentage,oldhp,newhp;
+#endif
+
   m_ptr=&m_list[monptr];
   c_ptr=&c_list[m_ptr->mptr];
+#ifdef MSDOS /* more fix -CFT */
+  newhp=(int32)(m_ptr->hp);
+  oldhp=newhp+(int32)dam;
+#else
   newhp=m_ptr->hp;
   oldhp=newhp+dam;
+#endif
   percentage=(newhp*100)/oldhp;
 
   if ((c_ptr->cchar=='j') || /* Non-verbal creatures like molds*/
@@ -3158,6 +3506,7 @@ int restore_level()
   return(restore);
 }
 
+
 /* this fn only exists to avoid duplicating this code in the selfknowledge
    fn. -CFT */
 static void pause_if_screen_full(int *i, int j){
@@ -3168,7 +3517,7 @@ static void pause_if_screen_full(int *i, int j){
     for (t=2;t<23;t++) erase_line(t,j); /* don't forget to erase extra */
     prt("Your Attributes: (continued)", 1, j+5);
     *i = 2;
-}
+  }
 }
 
 /* self-knowledge... idea from nethack.  Useful for determining powers and
@@ -3185,13 +3534,13 @@ void self_knowledge(void){
     if (inventory[i].tval != TV_NOTHING){
       f |= inventory[i].flags; 
       f2 |= inventory[i].flags2;
+    }
   }
-}
 
   save_screen();
 
   j = 15; /* map starts at 13, but I want a couple of spaces.  This means
-             must start by erasing map... */
+  	     must start by erasing map... */
   for(i=1;i<23;i++) erase_line(i, j-2); /* erase a couple of spaces to left */
 
   i = 1; 
@@ -3234,263 +3583,277 @@ void self_knowledge(void){
     prt("You can learn some more spells.", i++, j);
   if (py.flags.word_recall > 0)
     prt("You will soon be recalled.", i++, j);
-
+    
   if (f & TR_STEALTH)
     prt("You are hard to find.", i++, j);  
   if (f & TR_SEARCH){
     prt("You are perceptive.", i++, j);  
     pause_if_screen_full(&i, j);
-}
+  }
   if ((py.flags.see_infra) || (py.flags.tim_infra)){
     prt("Your eyes are sensitive to infrared.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   if ((py.flags.see_inv) || (py.flags.detect_inv)){
     prt("You can see invisible creatures.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   if (py.flags.ffall){
     prt("You land gently.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   if (py.flags.free_act){
     prt("You have free action.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   if (py.flags.regenerate){
     prt("You regenerate quickly.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   if (py.flags.slow_digest){
     prt("Your appetite is small.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   if (py.flags.telepathy){
     prt("You have ESP.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   if (py.flags.hold_life){
     prt("You have a firm hold on your life force.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   if (py.flags.light){
     prt("You are carrying a permanent light.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
 
   if (py.flags.blindness_resist){
     prt("Your eye are resistant to blindness.", i++, j);    
     pause_if_screen_full(&i, j);
-}
+  }
   if (py.flags.fire_im){
     prt("You are completely immune to fire.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   else if ((py.flags.fire_resist) && (py.flags.resist_heat)){
     prt("You resist fire exceptionally well.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   else if ((py.flags.fire_resist) || (py.flags.resist_heat)){
     prt("You are resistant to fire.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   if (py.flags.cold_im){
     prt("You are completely immune to cold.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   else if ((py.flags.cold_resist) && (py.flags.resist_cold)){
     prt("You resist cold exceptionally well.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   else if ((py.flags.cold_resist) || (py.flags.resist_cold)){
     prt("You are resistant to cold.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   if (py.flags.acid_im){
     prt("You are completely immune to acid.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   else if ((py.flags.acid_resist) && (py.flags.resist_acid)){
     prt("You resist acid exceptionally well.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   else if ((py.flags.acid_resist) || (py.flags.resist_acid)){
     prt("You are resistant to acid.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   if (py.flags.poison_im){
     prt("You are completely immune to poison.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   else if ((py.flags.poison_resist) && (py.flags.resist_poison)){
     prt("You resist poison exceptionally well.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   else if ((py.flags.poison_resist) || (py.flags.resist_poison)){
     prt("You are resistant to poison.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   if (py.flags.light_im){
     prt("You are completely immune to lightning.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   else if ((py.flags.lght_resist) && (py.flags.resist_light)){
     prt("You resist lightning exceptionally well.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   else if ((py.flags.lght_resist) || (py.flags.resist_light)){
     prt("You are resistant to lightning.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   if (py.flags.light_resist){
     prt("You are resistant to bright light.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   if (py.flags.dark_resist){
     prt("You are resistant to darkness.", i++, j);   
     pause_if_screen_full(&i, j);
-}
+  }
   if (py.flags.confusion_resist){
     prt("You are resistant to confusion.", i++, j);    
     pause_if_screen_full(&i, j);
-}
+  }
   if (py.flags.sound_resist){
     prt("You are resistant to sonic attacks.", i++, j);    
     pause_if_screen_full(&i, j);
-}
+  }
   if (py.flags.disenchant_resist){
     prt("You are resistant to disenchantment.", i++, j);    
     pause_if_screen_full(&i, j);
-}
+  }
   if (py.flags.chaos_resist){
     prt("You are resistant to blasts of chaos.", i++, j);    
     pause_if_screen_full(&i, j);
-}
+  }
   if (py.flags.shards_resist){
     prt("You are resistant to blasts of shards.", i++, j);    
     pause_if_screen_full(&i, j);
-}
+  }
   if (py.flags.nexus_resist){
     prt("You are resistant to nexus attacks.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   if (py.flags.nether_resist){
     prt("You are resistant to nether forces.", i++, j);    
     pause_if_screen_full(&i, j);
-}
+  }
 
 /* Are these needed?  The player can see this...  For now, in here for
    completeness... -CFT */
   if (f & TR_STR){
     prt("You have magical strength.", i++, j);  
     pause_if_screen_full(&i, j);
-}
+  }
   if (f & TR_INT){
     prt("You have magically enhanced intelligence.", i++, j);  
     pause_if_screen_full(&i, j);
-}
+  }
   if (f & TR_WIS){
     prt("You are magically wise.", i++, j);  
     pause_if_screen_full(&i, j);
-}
+  }
   if (f & TR_DEX){
     prt("You are magically agile.", i++, j);  
     pause_if_screen_full(&i, j);
-}
+  }
   if (f & TR_CON){
     prt("You are magically tough.", i++, j);  
     pause_if_screen_full(&i, j);
-}
+  }
   if (f & TR_CHR){
     prt("You are magically popular.", i++, j);  
     pause_if_screen_full(&i, j);
-}
+  }
   if (py.flags.sustain_str){
     prt("You will not become weaker.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   if (py.flags.sustain_int){
     prt("You will not become dumber.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   if (py.flags.sustain_wis){
     prt("You will not become less wise.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   if (py.flags.sustain_con){
     prt("You will not become out of shape.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   if (py.flags.sustain_dex){
     prt("You will not become clumsy.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   if (py.flags.sustain_chr){
     prt("You will not become less popular.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
     
   if (inventory[INVEN_WIELD].tval != TV_NOTHING){ /* this IS a bit redundant,
-                                                but it prevents flags from
-                                                other items from affecting
-                                                the weapon stats... -CFT */
+  						but it prevents flags from
+  						other items from affecting
+  						the weapon stats... -CFT */
     f = inventory[INVEN_WIELD].flags;
     f2 = inventory[INVEN_WIELD].flags2;
-} else {
+  } else {
     f = 0L;
     f2 = 0L;
-}
+  }
+  if (f & TR_CURSED){
+    if (inventory[INVEN_WIELD].name2 == SN_MORGUL)
+      prt("Your weapon is truly foul.", i++, j);
+    else if (inventory[INVEN_WIELD].name2 == SN_CALRIS)
+      prt("Your bastard sword is wickedly accursed.", i++, j);
+    else if (inventory[INVEN_WIELD].name2 == SN_MORMEGIL)  
+      prt("Your two-handed sword radiates an aura of unspeakable evil.", i++, j);
+    else prt("Your weapon is accursed.", i++, j);
+    pause_if_screen_full(&i, j);
+    }
+  if (f & TR_TUNNEL){
+    prt("Your weapon is an effective digging tool.", i++, j);
+    pause_if_screen_full(&i, j);
+    }
   if (f2 & TR_SLAY_ORC){
     prt("Your weapon is especially deadly against orcs.", i++, j);  
     pause_if_screen_full(&i, j);
-}
+  }
   if (f2 & TR_SLAY_TROLL){
     prt("Your weapon is especially deadly against trolls.", i++, j);  
     pause_if_screen_full(&i, j);
-}
+  }
   if (f2 & TR_SLAY_GIANT){
     prt("Your weapon is especially deadly against giants.", i++, j);  
     pause_if_screen_full(&i, j);
-}
+  }
   if (f & TR_SLAY_ANIMAL){
-    prt("Your weapon is especially deadly against Nature's creatures.", i++, j);    pause_if_screen_full(&i, j);
-}
+    prt("Your weapon is especially deadly against Nature's creatures.", i++, j);
+    pause_if_screen_full(&i, j);
+  }
   if (f & TR_SLAY_X_DRAGON){
     prt("Your weapon is a great bane of dragons.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   else if (f & TR_SLAY_DRAGON){
     prt("Your weapon is especially deadly against dragons.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   if (f2 & TR_SLAY_DEMON){
     prt("Your weapon strikes at demons with holy wrath.", i++, j);  
     pause_if_screen_full(&i, j);
-}
+  }
   if (f & TR_SLAY_UNDEAD){
     prt("Your weapon strikes at undead with holy wrath.", i++, j);  
     pause_if_screen_full(&i, j);
-}
+  }
   if (f2 & TR_SLAY_EVIL){
     prt("Your weapon fights against evil with holy fury.", i++, j);  
     pause_if_screen_full(&i, j);
-}
+  }
   if (f & TR_FROST_BRAND){  
     prt("Your frigid weapon freezes your foes.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   if (f & TR_FLAME_TONGUE){
     prt("Your flaming weapon burns your foes.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   if (f2 & TR_LIGHTNING){
     prt("Your weapon electrocutes your foes.", i++, j);
     pause_if_screen_full(&i, j);
-}
+  }
   if (f2 & TR_IMPACT)
     prt("The unbelievable impact of your weapon can cause earthquakes.", i++, j);
 
   pause_line(i);
   restore_screen();
 }
-

@@ -20,22 +20,27 @@
 #include <strings.h>
 #endif
 
-static char original_commands();
-static void do_command();
-static int valid_countcommand();
-static void regenhp();
-static void regenmana();
+/* ARG_* will collapse to nothing except on TURBOC -CFT */
+static char original_commands(ARG_CHAR);
+static void do_command(ARG_CHAR);
+static int valid_countcommand(ARG_CHAR);
+static void regenhp(ARG_INT);
+static void regenmana(ARG_INT);
 static int enchanted();
+#ifdef LINT_ARGS  /* It's defined it in externs.h now, but I didn't
+		     change the LINT_ARGS section... -CFT */
 int special_check();
-static void examine_book();
-static void activate();
-static void go_up();
-static void go_down();
-static void jamdoor();
-static void refill_lamp();
-static int regen_monsters();
+#endif
+static void examine_book(ARG_VOID);
+static void activate(ARG_VOID);
+static void go_up(ARG_VOID);
+static void go_down(ARG_VOID);
+static void jamdoor(ARG_VOID);
+static void refill_lamp(ARG_VOID);
+static int regen_monsters(ARG_VOID);
+int kbhit(ARG_VOID);
 
-extern int peek;
+extern int8u peek;
 extern int rating;
 
 /* ANGBAND game module					-RAK-	*/
@@ -44,9 +49,15 @@ extern int rating;
 
 /* It has had a bit more hard work.			-CJS- */
 
+#ifdef MSDOS
+int8u good_item_flag=FALSE;
+int8u create_up_stair=FALSE;
+int8u create_down_stair=FALSE;
+#else
 int good_item_flag=FALSE;
 int create_up_stair=FALSE;
 int create_down_stair=FALSE;
+#endif
 
 void dungeon()
 {
@@ -88,21 +99,21 @@ void dungeon()
     register int cur_pos;
 
     c_ptr = &cave[char_row][char_col];
-      if ((c_ptr->tptr == 0) ||
-            (t_list[c_ptr->tptr].tval < TV_MIN_WEAR) ||
-                  (t_list[c_ptr->tptr].tval > TV_MIN_WEAR) ||
-                  !(t_list[c_ptr->tptr].flags2 & TR_ARTIFACT)) { /* if no artifact here -CFT */
-        if (c_ptr->tptr != 0)
-          (void) delete_object(char_row, char_col);
-        cur_pos = popt();
-        c_ptr->tptr = cur_pos;
-        if (create_up_stair)
-          invcopy(&t_list[cur_pos], OBJ_UP_STAIR);
-        else if (create_down_stair && !is_quest(dun_level))
-          invcopy(&t_list[cur_pos], OBJ_DOWN_STAIR);
-        }
-        else
-          msg_print("The object resists your attempt to transform it into a stairway.");
+    if ((c_ptr->tptr == 0) ||
+          (t_list[c_ptr->tptr].tval < TV_MIN_WEAR) ||
+      	  (t_list[c_ptr->tptr].tval > TV_MIN_WEAR) ||
+      	  !(t_list[c_ptr->tptr].flags2 & TR_ARTIFACT)) { /* if no artifact here -CFT */
+      if (c_ptr->tptr != 0)
+        (void) delete_object(char_row, char_col);
+      cur_pos = popt();
+      c_ptr->tptr = cur_pos;
+      if (create_up_stair)
+        invcopy(&t_list[cur_pos], OBJ_UP_STAIR);
+      else if (create_down_stair && !is_quest(dun_level))
+        invcopy(&t_list[cur_pos], OBJ_DOWN_STAIR);
+      }
+      else
+        msg_print("The object resists your attempt to transform it into a stairway.");
     create_down_stair = FALSE;
     create_up_stair = FALSE;
   }
@@ -127,15 +138,15 @@ void dungeon()
       msg_print("You feel there is something special about this level.");
     else if (rating>100)
       msg_print("You have a superb feeling about this level.");
-    else if (rating>70)
+    else if (rating>80)
       msg_print("You have an excellent feeling that your luck is turning...");
-    else if (rating>40)
+    else if (rating>60)
       msg_print("You have a very good feeling.");
-    else if (rating>30)
+    else if (rating>40)
       msg_print("You have a good feeling.");
-    else if (rating>22)
+    else if (rating>30)
       msg_print("You feel strangely lucky.");
-    else if (rating>15)
+    else if (rating>20)
       msg_print("You feel your luck is turning...");
     else if (rating>10)
       msg_print("You like the look of this place.");
@@ -181,14 +192,14 @@ void dungeon()
       /* Check for creature generation		*/
       if (randint(MAX_MALLOC_CHANCE) == 1)
 	alloc_monster(1, MAX_SIGHT, FALSE);
-        if (!(turn % 20))
+      if (!(turn % 20))
 	regen_monsters();
       /* Check light status			       */
       i_ptr = &inventory[INVEN_LIGHT];
       if (player_light)
-	if (i_ptr->p1 > 0)
+        if (i_ptr->p1 > 0)
 	  {
-            if (!(i_ptr->flags2 & TR_LIGHT)) i_ptr->p1--; /* don't dec if perm light -CFT */
+	    if (!(i_ptr->flags2 & TR_LIGHT)) i_ptr->p1--; /* don't dec if perm light -CFT */
 	    if (i_ptr->p1 == 0)
 	      {
 		player_light = FALSE;
@@ -197,9 +208,9 @@ void dungeon()
 		creatures(FALSE);
 		msg_print("Your light has gone out!");
 	      }
-            else if ((i_ptr->p1 < 40) && (randint(5) == 1) &&
-                     (py.flags.blind < 1) &&
-                     !(i_ptr->flags2 & TR_LIGHT)) /* perm light doesn't dim -CFT */
+	    else if ((i_ptr->p1 < 40) && (randint(5) == 1) &&
+		     (py.flags.blind < 1) &&
+		     !(i_ptr->flags2 & TR_LIGHT)) /* perm light doesn't dim -CFT */
 	      {
 		disturb (0, 0);
 		msg_print("Your light is growing faint.");
@@ -216,7 +227,7 @@ void dungeon()
 	  }
       else if (i_ptr->p1 > 0 || f_ptr->light)
 	{
-          if (!(i_ptr->flags2 & TR_LIGHT)) i_ptr->p1--; /* don't dec if perm light -CFT */
+	  if (!(i_ptr->flags2 & TR_LIGHT)) i_ptr->p1--; /* don't dec if perm light -CFT */
 	  player_light = TRUE;
 	  disturb (0, 1);
 	  /* light creatures */
@@ -373,25 +384,24 @@ void dungeon()
 
       /* Stun */
       if (f_ptr->stun > 0) {
+        int oldstun = f_ptr->stun;
 
-          int oldstun = f_ptr->stun;
-  
-        f_ptr->stun -= (con_adj()<=0 ? 1 : (con_adj()/2+1)); /* fixes endless 
-                                                       stun if bad con. -CFT */
-          if ((oldstun > 50) && (f_ptr->stun <= 50)){ /* if crossed 50 mark... */
-          p_ptr->ptohit +=15;
-          p_ptr->ptodam +=15;
-          p_ptr->dis_th +=15;
-          p_ptr->dis_td +=15;
-          }             
-        if (f_ptr->stun<=0) {
-          f_ptr->stun=0;
-          msg_print("Your head stops stinging.");
-          p_ptr->ptohit +=5;
-          p_ptr->ptodam +=5;
-          p_ptr->dis_th +=5;
-          p_ptr->dis_td +=5;
-        }
+	f_ptr->stun -= (con_adj()<=0 ? 1 : (con_adj()/2+1)); /* fixes endless 
+							stun if bad con. -CFT */
+        if ((oldstun > 50) && (f_ptr->stun <= 50)){ /* if crossed 50 mark... */
+	  p_ptr->ptohit +=15;
+	  p_ptr->ptodam +=15;
+	  p_ptr->dis_th +=15;
+	  p_ptr->dis_td +=15;
+	  }        	
+	if (f_ptr->stun<=0) {
+	  f_ptr->stun=0;
+	  msg_print("Your head stops stinging.");
+	  p_ptr->ptohit +=5;
+	  p_ptr->ptodam +=5;
+	  p_ptr->dis_th +=5;
+	  p_ptr->dis_td +=5;
+	}
       }
       prt_stun();
 
@@ -496,9 +506,20 @@ void dungeon()
 
       /* Check for interrupts to find or rest. */
       if ((command_count > 0 || find_flag || f_ptr->rest>0 || f_ptr->rest==-1)
+#if defined(MSDOS) || defined(VMS)  /* stolen from Um55 src -CFT */
+	  && kbhit()
+#else
 	  && (check_input (find_flag ? 0 : 10000))
+#endif
 	  )
 	{
+#ifdef MSDOS
+	  (void) msdos_getch();
+#endif
+#ifdef VMS
+	  /* Get and ignore the key used to interrupt resting/running.  */
+	  (void) vms_getch ();
+#endif
 	  disturb (0, 0);
 	}
 
@@ -534,7 +555,7 @@ void dungeon()
 	      py.misc.ptoac += 100; /* changed to ptoac -CFT */
 	      py.misc.dis_tac += 100;
 	      msg_print("Your skin turns into steel!");
-              f_ptr->status |= PY_ARMOR; /* have to update ac display */
+	      f_ptr->status |= PY_ARMOR; /* have to update ac display */
 	    }
 	  f_ptr->invuln--;
 	  if (f_ptr->invuln == 0)
@@ -544,8 +565,8 @@ void dungeon()
 	      py.misc.ptoac -= 100; /* changed to ptoac -CFT */
 	      py.misc.dis_tac -= 100;
 	      msg_print("Your skin returns to normal.");
-              f_ptr->status |= PY_ARMOR; /* have to update ac display */
-	   }
+	      f_ptr->status |= PY_ARMOR; /* have to update ac display */
+	    }
 	}
       /* Heroism       */
       if (f_ptr->hero > 0)
@@ -596,6 +617,7 @@ void dungeon()
 	      msg_print("You feel like a killing machine!");
 	      prt_mhp();
 	      prt_chp();
+	      f_ptr->status |= PY_ARMOR; /* have to update ac display */
 	    }
 	  f_ptr->shero--;
 	  if (f_ptr->shero == 0)
@@ -615,6 +637,7 @@ void dungeon()
 	      p_ptr->dis_th -= 24;
 	      msg_print("You feel less Berserk.");
 	      prt_mhp();
+	      f_ptr->status |= PY_ARMOR; /* have to update ac display */
 	    }
 	}
       /* Blessed       */
@@ -629,7 +652,7 @@ void dungeon()
 	      p_ptr->ptoac += 5; /* changed to ptoac -CFT */
 	      p_ptr->dis_tac+= 5;
 	      msg_print("You feel righteous!");
-              f_ptr->status |= PY_ARMOR; /* have to update ac display */
+	      f_ptr->status |= PY_ARMOR; /* have to update ac display */
 	    }
 	  f_ptr->blessed--;
 	  if (f_ptr->blessed == 0)
@@ -641,7 +664,7 @@ void dungeon()
 	      p_ptr->ptoac -= 5; /* changed to ptoac -CFT */
 	      p_ptr->dis_tac -= 5;
 	      msg_print("The prayer has expired.");
-              f_ptr->status |= PY_ARMOR; /* have to update ac display */
+	      f_ptr->status |= PY_ARMOR; /* have to update ac display */
 	    }
 	}
       /* Shield       */
@@ -652,9 +675,9 @@ void dungeon()
 	    {
 	      disturb (0, 0);
 	      msg_print("Your mystic shield crumbles away.");
-              py.misc.ptoac -= 50; /* changed to ptoac -CFT */
-              py.misc.dis_tac -= 50;
-              f_ptr->status |= PY_ARMOR; /* have to update ac display */
+	      py.misc.ptoac -= 50; /* changed to ptoac -CFT */
+	      py.misc.dis_tac -= 50;
+	      f_ptr->status |= PY_ARMOR; /* have to update ac display */
 	    }
 	}
       /* Resist Heat   */
@@ -730,14 +753,14 @@ void dungeon()
 	    {
 	      f_ptr->status &= ~PY_DET_INV;
 	      /* may still be able to see_inv if wearing magic item */
-              if (py.misc.prace == 9)
-                f_ptr->see_inv = TRUE;
-              else {
-                f_ptr->see_inv = FALSE; /* unless item grants it */
-                for (i = INVEN_WIELD; i <= INVEN_LIGHT; i++)
-                  if (TR_SEE_INVIS & inventory[i].flags)
-                    f_ptr->see_inv = TRUE;
-              }
+	      if (py.misc.prace == 9)
+	        f_ptr->see_inv = TRUE;
+	      else {
+	      	f_ptr->see_inv = FALSE; /* unless item grants it */
+		for (i = INVEN_WIELD; i <= INVEN_LIGHT; i++)
+		  if (TR_SEE_INVIS & inventory[i].flags)
+		    f_ptr->see_inv = TRUE;
+	      }
 	      /* unlight but don't move creatures */
 	      creatures (FALSE);
 	    }
@@ -814,7 +837,7 @@ void dungeon()
 
       if ((py.flags.status & PY_ARMOR) != 0)
 	{
-          py.misc.dis_ac = py.misc.pac + py.misc.dis_tac; /* use updated ac */
+	  py.misc.dis_ac = py.misc.pac + py.misc.dis_tac; /* use updated ac */
 	  prt_pac();
 	  py.flags.status &= ~PY_ARMOR;
 	}
@@ -902,7 +925,7 @@ void dungeon()
 	  (randint((int)(20000/(py.misc.lev*py.misc.lev+40)) + 1) == 1))
 	  ||
 	  ((py.misc.pclass==5) && (f_ptr->confused == 0) &&
-	  (randint((int)(80000/(py.misc.lev*py.misc.lev+40)) + 1) == 1))) {
+	  (randint((int)(80000L/(py.misc.lev*py.misc.lev+40)) + 1) == 1))) {
 	  vtype tmp_str;
 	  char *value_check();
 
@@ -1318,6 +1341,7 @@ char com_val;
     case CTRL('V'):	/*^V = treasure*/
     case '@':
     case '+':
+    case '%':  /* '%' == self knowledge */
       break;
     case CTRL('U'):	/*^U = summon  */
       com_val = '&';
@@ -1536,7 +1560,11 @@ char com_val;
       break;
     case '!':		/* (!) escape to the shell */
       if (!wizard)
+#ifdef MSDOS /* Let's be a little more accurate... */
+	msg_print("Sorry, Angband doesn't leave enough free memory for a subshell.");
+#else
 	msg_print("Sorry, inferior shells are not allowed from ANGBAND.");
+#endif
       else
 	rerate();
       free_turn_flag = TRUE;
@@ -1926,16 +1954,13 @@ char com_val;
 	      erase_line(MSG_LINE, 0);
 	      break;
 	    case '*':
-	      wizard_light(FALSE);
+	      wizard_light(TRUE);
 	      break;
 	    case ':':
 	      map_area();
 	      break;
 	    case '~':
 	      artifact_check();
-	      break;
-	    case '%':
-	      self_knowledge();
 	      break;
 	    case CTRL('T'):	/*^T = teleport*/
 	      teleport(100);
@@ -1960,6 +1985,9 @@ char com_val;
 	      break;
 	    case '@':
 	      wizard_create();
+	      break;
+	    case '%': /* self-knowledge */
+	      self_knowledge();
 	      break;
 	    default:
 	      if (rogue_like_commands)
@@ -2669,7 +2697,11 @@ static void activate() {
 	      msg_print("You are confused.");
 	      do {dir = randint(9);} while (dir == 5);
 	    }
+#ifdef TC_COLOR
+	    fire_bolt(GF_ARROW, dir, char_row, char_col, 150,
+#else
 	    fire_bolt(GF_MAGIC_MISSILE, dir, char_row, char_col, 150,
+#endif
 		      "set of spikes");
 	    inventory[i].timeout=88+randint(88);
 	  }
@@ -2767,7 +2799,11 @@ static void activate() {
 	      msg_print("You are confused.");
 	      do {dir = randint(9);} while (dir == 5);
 	    }
+#ifdef TC_COLOR
+	    fire_ball(GF_MANA, dir, char_row, char_col, 300,
+#else
 	    fire_ball(GF_MAGIC_MISSILE, dir, char_row, char_col, 300,
+#endif
 		      "huge ball of Raw Mana");
 	  }
 	  break;
@@ -2777,7 +2813,11 @@ static void activate() {
 	      msg_print("You are confused.");
 	      do {dir = randint(9);} while (dir == 5);
 	    }
+#ifdef TC_COLOR
+	    fire_bolt(GF_MANA, dir, char_row, char_col, 250,
+#else
 	    fire_bolt(GF_MAGIC_MISSILE, dir, char_row, char_col, 250,
+#endif
 		      "bolt of Raw Mana");
 	  }
 	}
@@ -2884,7 +2924,11 @@ static void activate() {
 	    msg_print("You are confused.");
 	    do {dir = randint(9);} while (dir == 5);
 	  }
+#ifdef TC_COLOR
+	  fire_ball(GF_CONFUSION, dir, char_row, char_col, 120,
+#else
 	  fire_ball(GF_MAGIC_MISSILE, dir, char_row, char_col, 120,
+#endif
 		    "huge blast of Confusion");
 	  inventory[i].timeout=444+randint(444);
 	}
@@ -2896,7 +2940,11 @@ static void activate() {
 	    msg_print("You are confused.");
 	    do {dir = randint(9);} while (dir == 5);
 	  }
+#ifdef TC_COLOR
+	  fire_ball(GF_SOUND, dir, char_row, char_col, 130,
+#else
 	  fire_ball(GF_MAGIC_MISSILE, dir, char_row, char_col, 130,
+#endif
 		    "huge blast of Sound");
 	  inventory[i].timeout=444+randint(444);
 	}
@@ -2913,7 +2961,12 @@ static void activate() {
 	  msg_print(tmp2);
 	  sprintf(tmp2, "huge ball of %s",
 		  ((choice==1?"Chaos":"Disenchantment")));
+#ifdef TC_COLOR
+	  fire_ball((choice==1 ? GF_CHAOS : GF_DISENCHANT), dir,
+		char_row, char_col, 220, tmp2);
+#else
 	  fire_ball(GF_MAGIC_MISSILE, dir, char_row, char_col, 220, tmp2);
+#endif
 	  inventory[i].timeout=300+randint(300);
 	}
         break;
@@ -2929,7 +2982,12 @@ static void activate() {
           msg_print(tmp2);
           sprintf(tmp2, "huge %s of %s", ((choice==1)?"blast":"ball"),
                   ((choice==1?"Sound":"Shards")));
+#ifdef TC_COLOR
+          fire_ball((choice==1 ? GF_SOUND : GF_SHARDS), dir,
+		char_row, char_col, 230, tmp2);
+#else
           fire_ball(GF_MAGIC_MISSILE, dir, char_row, char_col, 230, tmp2);
+#endif
           inventory[i].timeout=300+randint(300);
         }
         break;
@@ -2949,7 +3007,13 @@ static void activate() {
                   ((choice==1)?"Chaos":
                    ((choice==2)?"Disenchantment":
                     ((choice==3)?"Sound":"Shards"))));
+#ifdef TC_COLOR
+          fire_ball(((choice==1) ? GF_CHAOS : ((choice==2) ? GF_DISENCHANT :
+		((choice==3) ? GF_SOUND : GF_SHARDS))), dir,
+		char_row, char_col, 250, tmp2);
+#else
           fire_ball(GF_MAGIC_MISSILE, dir, char_row, char_col, 250, tmp2);
+#endif
           inventory[i].timeout=300+randint(300);
         }
         break;
@@ -2965,7 +3029,12 @@ static void activate() {
           msg_print(tmp2);
           sprintf(tmp2, "huge %s of %s", ((choice==1)?"flash":"sphere"),
                   ((choice==1?"Light":"Darkness")));
+#ifdef TC_COLOR
+          fire_ball((choice==1 ? GF_LIGHT : GF_DARK), dir,
+		char_row, char_col, 200, tmp2);
+#else
           fire_ball(GF_MAGIC_MISSILE, dir, char_row, char_col, 200, tmp2);
+#endif
           inventory[i].timeout=300+randint(300);
         }
         break;

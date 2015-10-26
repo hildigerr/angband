@@ -29,6 +29,9 @@ int is_wizard(uid)
   char buf[100];
   int test;
 
+#ifdef MSDOS
+  return TRUE; /* let PC player go into wiz mode if they want to. -CFT */
+#endif 
   if ((fp=fopen(ANGBAND_WIZ, "r"))==NULL) {
     fprintf(stderr, "Can't get wizard check...");
     exit_game();
@@ -344,20 +347,6 @@ void change_character()
 	{
 	  m_ptr->au = tmp_lval;
 	  prt_gold();
-	}
-    }
-  else
-    return;
-  (void) sprintf(tmp_str, "Current=%ld  Max Exp = ", m_ptr->max_exp);
-  tmp_val = strlen(tmp_str);
-  prt(tmp_str, 0, 0);
-  if (get_string(tmp_str, 0, tmp_val, 7))
-    {
-      tmp_lval = atol(tmp_str);
-      if (tmp_lval > -1 && (*tmp_str != '\0'))
-	{
-	  m_ptr->max_exp = tmp_lval;
-	  prt_experience();
 	}
     }
   else
@@ -1080,11 +1069,11 @@ void wizard_create()
   if (get_com("Give off Light? [yn]: ", &ch)) {
     if (ch=='y'||ch=='Y') i_ptr->flags2 |= TR_LIGHT;
   } else if (ch=='\033') goto end;
-  if (get_com("Is it an Artifact? [yn]: ", &ch)) {
-    if (ch=='y'||ch=='Y') i_ptr->flags2 |= TR_ARTIFACT;
-  } else if (ch=='\033') goto end;
   if (get_com("Active Artifact? [yn]: ", &ch)) {
     if (ch=='y'||ch=='Y') i_ptr->flags2 |= TR_ACTIVATE;
+  } else if (ch=='\033') goto end;
+  if (get_com("Is it an Artifact? [yn]: ", &ch)) {
+    if (ch=='y'||ch=='Y') i_ptr->flags2 |= TR_ARTIFACT;
   } else if (ch=='\033') goto end;
   if (get_com("Cursed? [yn]: ", &ch)) {
     if (ch=='y'||ch=='Y') i_ptr->flags |= TR_CURSED;

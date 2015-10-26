@@ -48,7 +48,7 @@ void pray()
 
 	  if (py.flags.stun>50) chance+=25;
 	  else if (py.flags.stun>0) chance+=15;
-	  if (randint(100) < chance)
+	  if (randint(100) <= chance) /* changed -CFT */
 	    msg_print("You lost your concentration!");
 	  else
 	    {
@@ -109,21 +109,21 @@ void pray()
 		  create_food();
 		  break;
 		case 15:
-      	  /* this old code allows priests to uncurse the One Ring.  It looks
-         wrong to me.  Why not just call remove_curse()??  In case this really
-         was what was meant, I've left it here. -CFT 
+#if 0 /* this old code allows priests to uncurse the One Ring.  It looks
+	 wrong to me.  Why not just call remove_curse()??  In case this really
+	 was what was meant, I've left it here in the #if block... -CFT */
 		  for (i = 0; i < INVEN_ARRAY_SIZE; i++)
 		    {
-		      i_ptr = &inventory[i]; */
+		      i_ptr = &inventory[i];
 		      /* only clear flag for items that are wielded or worn */
-		  /*    if (i_ptr->tval >= TV_MIN_WEAR
+		      if (i_ptr->tval >= TV_MIN_WEAR
 			  && i_ptr->tval <= TV_MAX_WEAR)
 			if (!(i_ptr->name2 & SN_MORGUL) &&
 			    !(i_ptr->name2 & SN_MORMEGIL) &&
 			    !(i_ptr->name2 & SN_CALRIS))
 			  i_ptr->flags &= ~TR_CURSED;
 		    }
-		  break; */
+#endif
 		  remove_curse(); /* -CFT */
 		  break;
 		case 16:

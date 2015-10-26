@@ -8,7 +8,10 @@
 
 #include <stdio.h>
 #include <errno.h>
+
+#ifndef MSDOS
 #include <sys/param.h>
+#endif
 
 #include "constant.h"
 #include "config.h"
@@ -302,7 +305,7 @@ void print_objects()
 		  } else {
 		    invcopy(&t_list[j],
 			    sorted_objects[get_obj_num(level, FALSE)]);
-		    magic_treasure(j, level, TRUE, FALSE);
+		    magic_treasure(j, level, FALSE, TRUE);
 		    i_ptr = &t_list[j];
 		    store_bought(i_ptr);
 		    if (i_ptr->flags & TR_CURSED)

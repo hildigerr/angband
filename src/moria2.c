@@ -36,8 +36,17 @@ static void facts(struct inven_type *, int *, int *, int *, int *);
 static void drop_throw(int, int, struct inven_type *);
 static void py_bash(int, int);
 #else
-static int look_ray();
-static int look_see();
+static int look_ray(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+static int look_see(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT_PTR);
+static void hit_trap(ARG_INT ARG_COMMA ARG_INT);
+static int summon_object(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT32U);
+static void py_attack(ARG_INT ARG_COMMA ARG_INT);
+static void chest_trap(ARG_INT ARG_COMMA ARG_INT);
+static void inven_throw(ARG_INT ARG_COMMA ARG_INV_PTR);
+static void facts(ARG_INV_PTR ARG_COMMA ARG_INT_PTR ARG_COMMA ARG_INT_PTR ARG_COMMA ARG_INT_PTR ARG_COMMA ARG_INT_PTR);
+static void drop_throw(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INV_PTR);
+static void py_bash(ARG_INT ARG_COMMA ARG_INT);
+int unlink(ARG_CHAR_PTR);
 #endif
 
 /* Player hit a trap.	(Chuckle)			-RAK-	*/
@@ -409,7 +418,7 @@ void delete_monster(j)
 {
   register monster_type *m_ptr;
 
-  m_ptr = &m_list[j]; 
+  m_ptr = &m_list[j];
   if (c_list[m_ptr->mptr].cdefense & UNIQUE)
     check_unique(m_ptr);
   cave[m_ptr->fy][m_ptr->fx].cptr = 0;
@@ -461,7 +470,7 @@ int j;
 {
   register monster_type *m_ptr;
 
-  m_ptr = &m_list[j]; /* Fixed from a c_list ptr to a m_list ptr. -CFT */
+  m_ptr = &m_list[j];  /* Fixed from a c_list ptr to a m_list ptr. -CFT */
   if (c_list[m_ptr->mptr].cdefense & UNIQUE)
     check_unique(m_ptr);
   if (j != mfptr - 1)
@@ -597,7 +606,7 @@ int32u win;
 	    t_ptr->name2 |= SN_MORGOTH;
 	    t_ptr->p1 = 125;
 	    t_ptr->ident |= ID_SHOW_P1;
-	    t_ptr->cost = 10000000;
+	    t_ptr->cost = 10000000L;
 	    if (cave[j][k].cptr == 1)
 	      msg_print ("You feel something roll beneath your feet.");
 	  } else {
@@ -622,7 +631,7 @@ int32u win;
 		    TR_IMPACT|TR_TELEPATHY|TR_ARTIFACT);
 	    t_ptr->p1    = -1;
 	    t_ptr->toac    = 10;
-	    t_ptr->cost  = 500000;
+	    t_ptr->cost  = 500000L;
 	    GROND = 1;
 	    if (cave[j][k].cptr == 1)
 	      msg_print ("You feel something roll beneath your feet.");
@@ -777,24 +786,24 @@ int monptr, dam;
 	  int cur_pos;
 
 	  c_ptr = &cave[m_ptr->fy][m_ptr->fx];
-          if (c_ptr->tptr != 0) { /* don't overwrite artifact -CFT */
-            int8u ty = m_ptr->fy, tx = m_ptr->fx, ny, nx;
-  
-            while ((cave[ty][tx].tptr != 0) &&
-                   (t_list[cave[ty][tx].tptr].tval >= TV_MIN_WEAR) &&
-                   (t_list[cave[ty][tx].tptr].tval <= TV_MAX_WEAR) &&
-                   (t_list[cave[ty][tx].tptr].flags2 & TR_ARTIFACT)) {
-              do {
-                ny = ty + (int8u)randint(3) -2; /* pick new possible spot */
-                nx = tx + (int8u)randint(3) -2;
-                } while (cave[ny][nx].fval > MAX_OPEN_SPACE);
-              ty = ny; /* this is a new spot, not in a wall/door/etc */
-              tx = nx;
-              } /* ok, to exit this, [ty][tx] must not be artifact -CFT */
-            if (cave[ty][tx].tptr != 0) /* so we can delete it -CFT */
-              (void) delete_object(ty,tx);
-              c_ptr = &cave[ty][tx]; /* put stairway here... */
-            }
+	  if (c_ptr->tptr != 0) { /* don't overwrite artifact -CFT */
+	    int8u ty = m_ptr->fy, tx = m_ptr->fx, ny, nx;
+
+	    while ((cave[ty][tx].tptr != 0) &&
+	    	   (t_list[cave[ty][tx].tptr].tval >= TV_MIN_WEAR) &&
+	    	   (t_list[cave[ty][tx].tptr].tval <= TV_MAX_WEAR) &&
+	           (t_list[cave[ty][tx].tptr].flags2 & TR_ARTIFACT)) {
+	      do {
+		ny = ty + (int8u)randint(3) -2; /* pick new possible spot */
+		nx = tx + (int8u)randint(3) -2;
+	        } while (cave[ny][nx].fval > MAX_OPEN_SPACE);
+	      ty = ny; /* this is a new spot, not in a wall/door/etc */
+	      tx = nx;
+	      } /* ok, to exit this, [ty][tx] must not be artifact -CFT */
+	    if (cave[ty][tx].tptr != 0) /* so we can delete it -CFT */
+	      (void) delete_object(ty,tx);
+            c_ptr = &cave[ty][tx]; /* put stairway here... */
+	    }
 	  cur_pos = popt();
 	  c_ptr->tptr = cur_pos;
 	  invcopy(&t_list[cur_pos], OBJ_DOWN_STAIR);

@@ -20,7 +20,9 @@
 #include <strings.h>
 #endif
 
-int direction(dir)
+static int direction(ARG_INT_PTR); /* to shut up TC's warning msgs -CFT */
+
+static int direction(dir)
   int *dir;
 {
   if (get_dir(NULL, dir)) {

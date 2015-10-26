@@ -87,6 +87,14 @@ static void date(char *);
 static char *center_string(char *, char *);
 static void print_tomb(void);
 static void kingly(void);
+#else
+static int look_line(ARG_INT);
+static char *center_string(ARG_CHAR_PTR ARG_COMMA ARG_CHAR_PTR);
+static void date(ARG_CHAR_PTR);
+static long total_points(ARG_VOID);
+static void kingly(ARG_VOID);
+static void print_tomb(ARG_VOID);
+static int top_twenty(ARG_VOID);
 #endif
 
 #ifndef MAC
@@ -131,17 +139,21 @@ void display_scores(from, to)
   high_scores score;
  /* MAX_SAVE_HISCORES scores, 2 lines per score */
   char list[2*MAX_SAVE_HISCORES][128];
-  char hugebuffer[10000];
   char string[100];
 
   vtype tmp_str;
 
   if (to<0) to=20;
   if (to>MAX_SAVE_HISCORES) to=MAX_SAVE_HISCORES;
+#ifdef MSDOS
+  if (1 > (fd = open(ANGBAND_TOP, O_RDONLY | O_BINARY, 0666))) {
+	/* binary mode to avoid lf/cr conversions, which cause havoc -CFT */
+#else
 #ifdef SET_UID
   if (1 > (fd = open(ANGBAND_TOP, O_RDONLY, 0644))) {
 #else
   if (1 > (fd = open(ANGBAND_TOP, O_RDONLY, 0666))) {
+#endif
 #endif
     (void) sprintf(string, "Error opening score file \"%s\"\n", ANGBAND_TOP);
     prt(string, 0, 0);
@@ -149,28 +161,34 @@ void display_scores(from, to)
   }
 
   while (0 < read(fd, (char *)&score, sizeof(high_scores))) {
-    (void) sprintf(hugebuffer, "%3d) %-7ld %s the %s %s (Level %d)",
+    int tt; 
+    (void) sprintf(list[i], "%3d) %-7ld %*s the %*s %*s (Level %d)",
 		   i/2+1,
-		   score.points, score.name,
-		   race[score.prace].trace, class[score.pclass].title,
+		   score.points,
+		   ((tt = strlen(score.name)) > 35 ? 35 : tt),
+		   score.name,
+		   ((tt = strlen(race[score.prace].trace)) > 16 ? 16 : tt),
+		   race[score.prace].trace,
+		   ((tt = strlen(class[score.pclass].title)) > 16 ? 16 : tt),
+		   class[score.pclass].title,
 		   (int)score.lev);
-    strncpy(list[i],hugebuffer,127);
-    (void) sprintf(hugebuffer, "\t Killed by %s on Dungeon Level %d.",
+    (void) sprintf(list[i+1], "    Killed by %s on Dungeon Level %d.",
 		   score.died_from, score.dun_level);
-    strncpy(list[i+1],hugebuffer,127);
     i+=2;
     if (i>=(MAX_SAVE_HISCORES*2)) break;
   }
 
-  signal(SIGTSTP,SIG_IGN);
+#ifndef MSDOS
+  signal(SIGTSTP,SIG_IGN);  
+#endif
   k = from*2;
   do {
     if (k>0) {
-      sprintf(tmp_str, "\t\tAngband Hall of Fame (from position %d)", 
+      sprintf(tmp_str, "                Angband Hall of Fame (from position %d)", 
 	      (k/2)+1);
       put_buffer(tmp_str, 0, 0);
     } else {
-      put_buffer("\t\tAngband Hall of Fame                     ", 0, 0);
+      put_buffer("                Angband Hall of Fame                     ", 0, 0);
     }
     put_buffer("Score", 1, 0);
     l=0;
@@ -194,7 +212,7 @@ void display_scores(from, to)
 }
 
 /* Pauses for user response before returning		-RAK-	*/
-int look_line(prt_line)
+static int look_line(prt_line)
   int prt_line;
 {
   prt("[Press ESC to quit, any other key to continue.]", prt_line, 17);
@@ -222,7 +240,9 @@ static void print_tomb()
     sprintf(str, "%s%d", ANGBAND_BONES, dun_level);
     if ((fp = fopen(str, "r")) == NULL && (dun_level>1)) {
       if ((fp = fopen(str, "w")) != NULL) {
+#ifndef MSDOS   /* why bother for PCs? -CFT */
 	(void) fchmod(fileno(fp), 0666);
+#endif
 	fprintf(fp, "%s\n%d\n%d\n%d", 
 		py.misc.name, py.misc.mhp, py.misc.prace, py.misc.pclass);
 	fclose(fp);
@@ -330,7 +350,11 @@ static int top_twenty()
   register int i, j, k;
   high_scores scores[MAX_SAVE_HISCORES], myscore;
   char *tmp;
-
+#if defined(MSDOS) || defined(VMS) || defined(AMIGA) || defined(MAC)
+  FILE *highscore_fp; /* used in opening file instead of locking it */
+  vtype string; /* used in error msgs -CFT */
+#endif
+  
   clear_screen();
 
   if (wizard || to_be_wizard) {
@@ -372,13 +396,35 @@ static int top_twenty()
   myscore.died_from[strlen(died_from)] = '\0';
   /* Get rid of '.' at end of death description */
 
+
   /*  First, get a lock on the high score file so no-one else tries */
-  /*  to write to it while we are using it */
-  if (0 != flock(highscore_fd, LOCK_EX))
+  /*  to write to it while we are using it, on VMS and IBMPCs only one
+      process can have the file open at a time, so we just open it here */
+#if defined(MSDOS) || defined(VMS) || defined(AMIGA) || defined(MAC)
+#if defined(MAC) || defined(MSDOS)
+  if ((highscore_fp = fopen(ANGBAND_TOP, "rb+")) == NULL)
+#else
+  if ((highscore_fp = fopen(ANGBAND_TOP, "r+")) == NULL)
+#endif
+    {
+      (void) sprintf (string, "Error opening score file \"%s\"\n", ANGBAND_TOP);
+      perror(string);
+      exit_game();
+    }
+  highscore_fd = fileno(highscore_fp); /* get fd from fp...  This must
+  					  happen bacause rest of code
+  					  assumes fd, not fp  -CFT */
+#else
+#ifdef ATARIST_TC
+  /* 'lock' always succeeds on the Atari ST */
+#else
+  if (0 != flock((int)fileno(highscore_fp), LOCK_EX))
     {
       perror("Error gaining lock for score file");
       exit_game();
     }
+#endif
+#endif
 
   /*  Check to see if this score is a high one and where it goes */
   i = 0;
@@ -416,7 +462,10 @@ static int top_twenty()
     (void) write(highscore_fd, (char *)&myscore, sizeof(high_scores));
   }
 
+#ifndef MSDOS /* we never locked, so don't unlock...  Should probably also
+		  add in VMS, AMIGA, etc...  -CFT */
   (void) flock(highscore_fd, LOCK_UN);
+#endif
   (void) close(highscore_fd);
   if (j<10) {
     display_scores(0, 10);
@@ -432,15 +481,47 @@ delete_entry(which)
   register int i, j, k;
   high_scores scores[MAX_SAVE_HISCORES];
   char *tmp;
+#if defined(MSDOS) || defined(VMS) || defined(AMIGA) || defined(MAC)
+  FILE *highscore_fp; /* used in opening file instead of locking it */
+  vtype string; /* used in error msgs -CFT */
+#endif
 
-  if (0 != flock(highscore_fd, LOCK_EX)) {
-    perror("Error gaining lock for score file");
-    exit_game();
-  }
+  /*  First, get a lock on the high score file so no-one else tries */
+  /*  to write to it while we are using it, on VMS and IBMPCs only one
+      process can have the file open at a time, so we just open it here */
+#if defined(MSDOS) || defined(VMS) || defined(AMIGA) || defined(MAC)
+#if defined(MAC) || defined(MSDOS)
+  if ((highscore_fp = fopen(ANGBAND_TOP, "rb+")) == NULL)
+#else
+  if ((highscore_fp = fopen(ANGBAND_TOP, "r+")) == NULL)
+#endif
+    {
+      (void) sprintf (string, "Error opening score file \"%s\"\n", ANGBAND_TOP);
+      perror(string);
+      exit_game();
+    }
+  highscore_fd = fileno(highscore_fp); /* get fd from fp...  This must
+  					  happen bacause rest of code
+  					  assumes fd, not fp  -CFT */
+#else
+#ifdef ATARIST_TC
+  /* 'lock' always succeeds on the Atari ST */
+#else
+  if (0 != flock((int)fileno(highscore_fp), LOCK_EX))
+    {
+      perror("Error gaining lock for score file");
+      exit_game();
+    }
+#endif
+#endif
 
   /*  Check to see if this score is a high one and where it goes */
   i = 0;
+#ifndef BSD4_3
+  (void) lseek(highscore_fd, (long)0, L_SET);
+#else
   (void) lseek(highscore_fd, (off_t)0, L_SET);
+#endif
   while ((i<MAX_SAVE_HISCORES) && 
 	 (0 != read(highscore_fd, (char *)&scores[i], sizeof(high_scores))))
     i++;
@@ -450,7 +531,10 @@ delete_entry(which)
   write(highscore_fd, (char *)&scores[0], (which-1)*sizeof(high_scores));
   write(highscore_fd, (char *)&scores[which], (i-which)*sizeof(high_scores));
 
+#ifndef MSDOS  /* again, we don't lock, so we don't unlock.  Add in VMS,
+		  AMIGA, etc for portability once sure this works.. -CFT */
   (void) flock(highscore_fd, LOCK_UN);
+#endif
   (void) close(highscore_fd);
   if (which<10) {
     display_scores(0, 10);

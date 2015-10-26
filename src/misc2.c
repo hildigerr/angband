@@ -37,6 +37,12 @@ static void prt_num(char *, int, int, int);
 static void prt_long(int32, int, int);
 static void prt_int(int, int, int);
 static void gain_level(void);
+#else
+static void prt_int(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+static void prt_long(ARG_INT32 ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+static void prt_num(ARG_CHAR_PTR ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+static void prt_lnum(ARG_CHAR_PTR ARG_COMMA ARG_INT32 ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+static void gain_level(ARG_VOID);
 #endif
 
 static char *stat_names[] = { "STR: ", "INT: ", "WIS: ",
@@ -44,7 +50,7 @@ static char *stat_names[] = { "STR: ", "INT: ", "WIS: ",
 #define BLANK_LENGTH	24
 static char blank_string[] = "                        ";
 
-extern int peek;
+extern int8u peek;
 extern int rating;
 char *malloc();
 
@@ -383,7 +389,11 @@ int32u good;
 
 /* Allocates an object for tunnels and rooms		-RAK-	*/
 void alloc_object(alloc_set, typ, num)
+#ifdef MSDOS
+int (*alloc_set)(int);
+#else
 int (*alloc_set)();
+#endif
 int typ, num;
 {
   register int i, j, k;
@@ -1659,7 +1669,11 @@ register int item_val, drop_all;
 
 /* Destroys a type of item on a given percent chance	-RAK-	*/
 int inven_damage(typ, perc)
+#ifdef MSDOS
+int (*typ)(inven_type *);
+#else
 int (*typ)();
+#endif
 register int perc;
 {
   register int i, j;
@@ -1827,7 +1841,7 @@ int spell;
   register int chance;
   register int stat;
   int minfail;
-
+  
   s_ptr = &magic_spell[py.misc.pclass-1][spell];
   chance = s_ptr->sfail - 3*(py.misc.lev-s_ptr->slevel);
   if (class[py.misc.pclass].spell == MAGE)
@@ -1838,22 +1852,22 @@ int spell;
   if (s_ptr->smana > py.misc.cmana)
     chance += 5 * (s_ptr->smana-py.misc.cmana);
   switch(stat_adj(stat)){
-     case 0: minfail = 50; break; /* I doubt can cast spells with stat this low, anyways... */
-     case 1: minfail = 12; break; /* 8-14 stat */
-     case 2: minfail = 8; break; /* 15-17 stat */
-     case 3: minfail = 5; break; /* 18-18/49 stat */
-     case 4: minfail = 4; break; /* 18/50-18/69 */
-     case 5: minfail = 4; break; /* 18/70-18/89 */
-     case 6: minfail = 3; break; /* 18/90-18/99 */
-     case 7: minfail = 3; break; /* 18/100 */
-     case 8: case 9: case 10: minfail = 2; break; /* 18/101 - /130 */
-     case 11: case 12: minfail = 2; break; /* /131 - /150 */
-     case 13: case 14: minfail = 1; break; /* /151 - /170 */
-     case 15: case 16: minfail = 1; break; /* /171 - /200 */
-     default: minfail = 0; break; /* > 18/200 */
-   }   
-   if ((minfail < 5) && (py.misc.pclass != 1) && (py.misc.pclass != 2))
-     minfail = 5; /* only mages/priests can get best chances... */
+    case 0: minfail = 50; break; /* I doubt can cast spells with stat this low, anyways... */
+    case 1: minfail = 12; break; /* 8-14 stat */
+    case 2: minfail = 8; break; /* 15-17 stat */
+    case 3: minfail = 5; break; /* 18-18/49 stat */
+    case 4: minfail = 4; break; /* 18/50-18/69 */
+    case 5: minfail = 4; break; /* 18/70-18/89 */
+    case 6: minfail = 3; break; /* 18/90-18/99 */
+    case 7: minfail = 3; break; /* 18/100 */
+    case 8: case 9: case 10: minfail = 2; break; /* 18/101 - /130 */
+    case 11: case 12: minfail = 2; break; /* /131 - /150 */
+    case 13: case 14: minfail = 1; break; /* /151 - /170 */
+    case 15: case 16: minfail = 1; break; /* /171 - /200 */
+    default: minfail = 0; break; /* > 18/200 */
+  }   
+  if ((minfail < 5) && (py.misc.pclass != 1) && (py.misc.pclass != 2))
+    minfail = 5; /* only mages/priests can get best chances... */
   if (chance > 95)
     chance = 95;
   else if (chance < minfail)
@@ -2096,37 +2110,37 @@ int stat;
 	  /* shifting by amounts greater than number of bits in long gives
 	     an undefined result, so don't shift for unknown spells */
 	  if (j == 99)
-            continue; /* don't process unknown spells... -CFT */
-          
-            if (j < 32) { /* use spell_learned, spell_forgotten... -CFT */
-            mask = 1L << j; /* bit in spell fields */
-            if (mask & spell_forgotten){            
-              if (msp_ptr[j].slevel <= p_ptr->lev) {
-                spell_forgotten &= ~mask;
-                spell_learned |= mask;
-                new_spells--;
-                (void) sprintf(tmp_str, "You have remembered the %s of %s.", p,
-                             spell_names[j+offset]);
-                msg_print(tmp_str);
-                }
-              else num_allowed++; /* if was too high lv to remember */
-              } /* if mask&spell_forgotten */
-            } /* j < 32 */
-          else { /* j > 31, use spell_learned2, spell_forgotten2... -CFT */
-            mask = 1L << (j - 32); /* bit in spell fields */
-            if (mask & spell_forgotten2){           
-              if (msp_ptr[j].slevel <= p_ptr->lev) {
-                spell_forgotten2 &= ~mask;
-                spell_learned2 |= mask;
-                new_spells--;
-                (void) sprintf(tmp_str, "You have remembered the %s of %s.", p,
-                             spell_names[j+offset]);
-                msg_print(tmp_str);
-                }
-              else num_allowed++; /* if was too high lv to remember */
-              } /* if mask&spell_forgotten2 */
-            } /* j > 31 */
-        } /* for loop... */         
+	    continue; /* don't process unknown spells... -CFT */
+	  
+          if (j < 32) { /* use spell_learned, spell_forgotten... -CFT */
+	    mask = 1L << j; /* bit in spell fields */
+	    if (mask & spell_forgotten){	    
+	      if (msp_ptr[j].slevel <= p_ptr->lev) {
+	        spell_forgotten &= ~mask;
+	        spell_learned |= mask;
+	        new_spells--;
+	        (void) sprintf(tmp_str, "You have remembered the %s of %s.", p,
+			     spell_names[j+offset]);
+	        msg_print(tmp_str);
+	        }
+	      else num_allowed++; /* if was too high lv to remember */
+	      } /* if mask&spell_forgotten */
+	    } /* j < 32 */
+	  else { /* j > 31, use spell_learned2, spell_forgotten2... -CFT */
+	    mask = 1L << (j - 32); /* bit in spell fields */
+	    if (mask & spell_forgotten2){	    
+	      if (msp_ptr[j].slevel <= p_ptr->lev) {
+	        spell_forgotten2 &= ~mask;
+	        spell_learned2 |= mask;
+	        new_spells--;
+	        (void) sprintf(tmp_str, "You have remembered the %s of %s.", p,
+			     spell_names[j+offset]);
+	        msg_print(tmp_str);
+	        }
+	      else num_allowed++; /* if was too high lv to remember */
+	      } /* if mask&spell_forgotten2 */
+	    } /* j > 31 */
+	} /* for loop... */	    
 
       if (new_spells > 0)
 	{
@@ -2168,33 +2182,33 @@ int stat;
 	  /* shifting by amounts greater than number of bits in long gives
 	     an undefined result, so don't shift for unknown spells */
 	  if (j == 99)
-            continue; /* don't process unknown spells... -CFT */
-          
-            if (j < 32) { /* use spell_learned, spell_forgotten... -CFT */
-            mask = 1L << j; /* bit in spell fields */
-            if (mask & spell_learned){      
-             spell_learned &= ~mask;
-             spell_forgotten |= mask;
-             new_spells++;
-              (void) sprintf(tmp_str, "You have forgotten the %s of %s.", p,
-                             spell_names[j+offset]);
-              msg_print(tmp_str);
-              } /* if mask&spell_learned */
-            } /* j < 32 */
-          else { /* j > 31, use spell_learned2, spell_forgotten2... -CFT */
-            mask = 1L << (j - 32); /* bit in spell fields */
-            if (mask & spell_learned2){     
-             spell_learned2 &= ~mask;
-             spell_forgotten2 |= mask;
-             new_spells++;
-              (void) sprintf(tmp_str, "You have forgotten the %s of %s.", p,
-                             spell_names[j+offset]);
-              msg_print(tmp_str);
-             } /* if mask&spell_learned2 */
-            } /* j > 31 */
-        } /* for loop... */         
-       new_spells = 0; /* we've forgotten, so we shouldn't be learning any... */
-}
+	    continue; /* don't process unknown spells... -CFT */
+	  
+          if (j < 32) { /* use spell_learned, spell_forgotten... -CFT */
+	    mask = 1L << j; /* bit in spell fields */
+	    if (mask & spell_learned){	    
+	     spell_learned &= ~mask;
+	     spell_forgotten |= mask;
+	     new_spells++;
+	      (void) sprintf(tmp_str, "You have forgotten the %s of %s.", p,
+			     spell_names[j+offset]);
+	      msg_print(tmp_str);
+	      } /* if mask&spell_learned */
+	    } /* j < 32 */
+	  else { /* j > 31, use spell_learned2, spell_forgotten2... -CFT */
+	    mask = 1L << (j - 32); /* bit in spell fields */
+	    if (mask & spell_learned2){	    
+	     spell_learned2 &= ~mask;
+	     spell_forgotten2 |= mask;
+	     new_spells++;
+	      (void) sprintf(tmp_str, "You have forgotten the %s of %s.", p,
+			     spell_names[j+offset]);
+	      msg_print(tmp_str);
+	      } /* if mask&spell_learned2 */
+	    } /* j > 31 */
+	} /* for loop... */	    
+      new_spells = 0; /* we've forgotten, so we shouldn't be learning any... */
+    }
 
   if (new_spells != py.flags.new_spells)
     {
@@ -2584,8 +2598,8 @@ int show_sign;
   while (flag);
   if (string)
     {
-      (void) strncpy(str1, object_str, (int)(string - object_str));
-      str1[(int)(string - object_str)] = '\0';
+      (void) strncpy(str1, object_str, string - object_str);
+      str1[string - object_str] = '\0';
       (void) strcpy(str2, string + mlen);
       if ((number >= 0) && (show_sign))
 	(void) sprintf(object_str, "%s+%d%s", str1, number, str2);
@@ -2624,8 +2638,8 @@ int show_sign;
   while (flag);
   if (string)
     {
-      (void) strncpy(str1, object_str, string - object_str);
-      str1[string - object_str] = '\0';
+      (void) strncpy(str1, object_str, (int)(string - object_str));
+      str1[(int)(string - object_str)] = '\0';
       (void) strcpy(str2, string + mlen);
       if ((number >= 0) && (show_sign))
 	(void) sprintf(object_str, "%s+%ld%s", str1, number, str2);

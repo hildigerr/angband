@@ -163,12 +163,36 @@ char *colors[MAX_COLORS] = {
   "Shimmering","Coagulated Crimson"
 };
 
+#ifdef TC_COLOR
+int8u tccolors[MAX_COLORS] = {
+  GREEN, BROWN, LIGHTCYAN,
+  LIGHTBLUE, LIGHTBLUE, LIGHTBLUE, LIGHTGRAY, BROWN, BROWN, GREEN,
+  MAGENTA, LIGHTGRAY, BROWN, LIGHTRED, CYAN, LIGHTBLUE,
+  GREEN, RED, YELLOW, GREEN, LIGHTGREEN, LIGHTGRAY,
+  DARKGRAY, LIGHTGRAY, LIGHTMAGENTA, LIGHTBLUE, LIGHTGREEN, MAGENTA,
+  LIGHTBLUE, RED, GREEN, MAGENTA, LIGHTGRAY,
+  LIGHTRED, LIGHTRED, LIGHTMAGENTA, LIGHTMAGENTA, MAGENTA, MAGENTA,
+  LIGHTMAGENTA, RED, LIGHTRED, WHITE, LIGHTGRAY,
+  LIGHTRED, MAGENTA, RED, WHITE, YELLOW, LIGHTMAGENTA,
+  GREEN, RED, LIGHTRED, YELLOW, GREEN,
+  YELLOW, RED
+};
+#endif
+	
+
 char *mushrooms[MAX_MUSH] = {
   "Blue","Black","Black Spotted","Brown","Dark Blue","Dark Green","Dark Red",
   "Ecru","Furry","Green","Grey","Light Blue","Light Green","Plaid","Red",
   "Slimy","Tan","White","White Spotted","Wooden","Wrinkled"/*,"Yellow",
   "Shaggy","Red Spotted","Pale Blue","Dark Orange"*/
 };
+#ifdef TC_COLOR
+int8u tcmushrooms[MAX_MUSH] = {
+  LIGHTBLUE, DARKGRAY, LIGHTGRAY, BROWN, LIGHTBLUE, GREEN, RED,
+  LIGHTGRAY, BROWN, LIGHTGREEN, LIGHTGRAY, LIGHTBLUE, LIGHTGREEN, LIGHTMAGENTA,
+  LIGHTRED, LIGHTGREEN, BROWN, WHITE, LIGHTGRAY, BROWN, BROWN
+};
+#endif
 
 char *woods[MAX_WOODS] = {
   "Aspen","Balsa","Banyan","Birch","Cedar","Cottonwood","Cypress","Dogwood",
@@ -178,6 +202,15 @@ char *woods[MAX_WOODS] = {
   "Mistletoe","Hawthorn","Bamboo","Silver","Runed","Golden","Ashen"/*,
   "Gnarled","Ivory","Decorative","Willow"*/
 };
+#ifdef TC_COLOR
+int8u tcwoods[MAX_WOODS] = {
+  BROWN, WHITE, YELLOW, BROWN, LIGHTRED, BROWN, BROWN, BROWN,
+  BROWN, GREEN, LIGHTGREEN, BROWN, DARKGRAY, BROWN, DARKGRAY,
+  BROWN, BROWN, BROWN, BROWN, RED, LIGHTRED, BROWN, BROWN,
+  BROWN, BROWN,
+  LIGHTRED, BROWN, YELLOW, WHITE, DARKGRAY, YELLOW, LIGHTGRAY
+};
+#endif
 
 char *metals[MAX_METALS] = {
   "Aluminum","Cast Iron","Chromium","Copper","Gold","Iron","Magnesium",
@@ -187,6 +220,16 @@ char *metals[MAX_METALS] = {
   "Mithril-Plated","Mithril","Runed","Bronze","Brass","Platinum",
   "Lead"/*,"Lead-Plated","Ivory","Pewter"*/
 };
+#ifdef TC_COLOR
+int8u tcmetals[MAX_METALS] = {
+  LIGHTGRAY, DARKGRAY, WHITE, BROWN, YELLOW, DARKGRAY, LIGHTGRAY,
+  LIGHTGRAY, LIGHTGRAY, RED, WHITE, LIGHTGRAY, LIGHTGRAY, DARKGRAY, DARKGRAY,
+  LIGHTGREEN, BROWN, LIGHTGRAY, BROWN, YELLOW,
+  LIGHTGRAY, WHITE, LIGHTGRAY, LIGHTGRAY, BROWN,
+  LIGHTCYAN, LIGHTCYAN, DARKGRAY, BROWN, YELLOW, WHITE,
+  DARKGRAY
+};
+#endif
 
 char *rocks[MAX_ROCKS] = {
   "Alexandrite","Amethyst","Aquamarine","Azurite","Beryl","Bloodstone",
@@ -196,12 +239,29 @@ char *rocks[MAX_ROCKS] = {
   "Tiger Eye","Topaz","Turquoise","Zircon","Platinum","Bronze",
   "Gold","Obsidian","Silver","Tortoise Shell","Mithril"
 };
+#ifdef TC_COLOR
+int8u tcrocks[MAX_ROCKS] = {
+  GREEN, MAGENTA, CYAN, LIGHTBLUE, LIGHTGRAY, RED,
+  WHITE, RED, BROWN, WHITE, GREEN, YELLOW, DARKGRAY,
+  LIGHTGRAY, LIGHTGREEN, BROWN, LIGHTBLUE, GREEN, LIGHTMAGENTA, LIGHTCYAN,
+  LIGHTRED, DARKGRAY, WHITE, WHITE, WHITE, LIGHTRED, RED, LIGHTBLUE,
+  BROWN, YELLOW, CYAN, LIGHTBLUE, WHITE, BROWN,
+  YELLOW, DARKGRAY, WHITE, GREEN, LIGHTCYAN
+};
+#endif
 
 char *amulets[MAX_AMULETS] = {
   "Amber","Driftwood","Coral","Agate","Ivory","Obsidian",
   "Bone","Brass","Bronze","Pewter","Tortoise Shell","Golden","Azure",
   "Crystal","Silver","Copper"
 };
+#ifdef TC_COLOR
+int8u tcamulets[MAX_AMULETS] = {
+  YELLOW, BROWN, WHITE, MAGENTA, WHITE, DARKGRAY,
+  WHITE, YELLOW, BROWN, LIGHTGRAY, GREEN, YELLOW, LIGHTBLUE,
+  LIGHTCYAN, WHITE, BROWN
+};
+#endif
 
 char *syllables[MAX_SYLLABLES] = {
   "a","ab","ag","aks","ala","an","ankh","app",

@@ -1,4 +1,4 @@
-/* misc1.c: misc utility and initialization code, magic objects code
+/* Misc1.c: misc utility and initialization code, magic objects code
 
    Copyright (c) 1989 James E. Wilson, Robert A. Koeneke
 
@@ -37,6 +37,7 @@
 #include <strings.h>
 #endif
 
+#ifndef MSDOS
 typedef struct statstime {
   int cp_time[4];
   int dk_xfer[4];
@@ -55,17 +56,22 @@ typedef struct statstime {
   struct timeval boottime;
   struct timeval curtime;
 } statstime;
+#endif
 
 #if defined(LINT_ARGS)
 static void compact_monsters(void);
 static void compact_objects(void);
+#else
+static int compact_monsters(ARG_VOID);
+static void compact_objects(ARG_VOID);
+static char *cap(ARG_CHAR_PTR);
 #endif
 
 #if !defined(ATARIST_MWC) && !defined(MAC)
 long time();
 #endif
 struct tm *localtime();
-extern int peek;
+extern int8u peek;
 extern int rating;
 
 /* gets a new random seed for the random number generator */
@@ -116,18 +122,23 @@ int check_time()
 {
   long clock;
   register struct tm *tp;
+#ifndef MSDOS
   struct statstime st;
+#endif
 
   clock = time((long *)0);
   tp = localtime(&clock);
   if (days[tp->tm_wday][tp->tm_hour+4] != 'X') {
     return FALSE;
-  } else {
+  }
+#ifndef MSDOS 
+ else {
     if (!rstat("localhost", &st)) {
       if (((int) ((double)st.avenrun[2]/(double) FSCALE)) >= (int)LOAD)
 	return FALSE;
     }
   }
+#endif
   return TRUE;
 }
 
@@ -136,11 +147,11 @@ int check_time()
 int randint(maxval)
 int maxval;
 {
-  register long randval;
+  register int32u randval;
 
   if (maxval<1) return 1;
   randval = rnd ();
-  return ((randval % maxval) + 1);
+  return ((int)((randval % maxval) + 1));
 }
 
 /* Generates a random integer number of NORMAL distribution -RAK-*/
@@ -573,6 +584,10 @@ int y, x;
   register cave_type *cave_ptr;
   register struct flags *f_ptr;
 
+#ifdef TC_COLOR
+  textcolor(LIGHTGRAY);
+#endif
+
   cave_ptr = &cave[y][x];
   f_ptr = &py.flags;
 
@@ -581,18 +596,63 @@ int y, x;
   else if (f_ptr->status & PY_BLIND)
     return ' ';
   else if ((f_ptr->image > 0) && (randint (12) == 1))
+#ifdef TC_COLOR
+    { textcolor( randint(15) );  return randint (95) + 31; }
+#else
     return randint (95) + 31;
+#endif
   else if ((cave_ptr->cptr > 1) && (m_list[cave_ptr->cptr].ml))
+#ifdef TC_COLOR
+  { textcolor(c_list[m_list[cave_ptr->cptr].mptr].color);
+    return c_list[m_list[cave_ptr->cptr].mptr].cchar; }
+#else
     return c_list[m_list[cave_ptr->cptr].mptr].cchar;
+#endif
   else if (!cave_ptr->pl && !cave_ptr->tl && !cave_ptr->fm)
     return ' ';
   else if ((cave_ptr->tptr != 0)
 	   && (t_list[cave_ptr->tptr].tval != TV_INVIS_TRAP))
+#ifdef TC_COLOR
+    {  if (t_list[cave_ptr->tptr].color != 0)
+         textcolor(t_list[cave_ptr->tptr].color);
+       else switch(t_list[cave_ptr->tptr].tval){
+       	 case TV_POTION1:
+       	 case TV_POTION2:
+	   textcolor(tccolors[t_list[cave_ptr->tptr].subval
+					- ITEM_SINGLE_STACK_MIN]);
+	   break;
+	 case TV_WAND:
+	 case TV_ROD:
+	   textcolor(tcmetals[t_list[cave_ptr->tptr].subval]);
+	   break;
+	 case TV_STAFF:
+	   textcolor(tcwoods[t_list[cave_ptr->tptr].subval]);
+	   break;
+	 case TV_RING:
+	   textcolor(tcrocks[t_list[cave_ptr->tptr].subval]);
+	   break;
+	 case TV_AMULET:
+	   textcolor(tcamulets[t_list[cave_ptr->tptr].subval]);
+	   break;
+	 case TV_FOOD:
+	   textcolor(tcmushrooms[t_list[cave_ptr->tptr].subval
+	   				- ITEM_SINGLE_STACK_MIN]);
+	   break;
+	 default: textcolor( randint(15) ); /* should never happen. -CFT */
+       } /* switch */
     return t_list[cave_ptr->tptr].tchar;
+    } /* else-if clause */	 
+#else
+    return t_list[cave_ptr->tptr].tchar;
+#endif
   else if (cave_ptr->fval <= MAX_CAVE_FLOOR)
+#ifdef MSDOS
+      return floorsym;
+#else
     {
       return '.';
     }
+#endif
   else if (cave_ptr->fval == GRANITE_WALL || cave_ptr->fval == BOUNDARY_WALL
 	   || highlight_seams == FALSE)
     {
@@ -609,7 +669,15 @@ int y, x;
   else	/* Originally set highlight bit, but that is not portable, now use
 	   the percent sign instead. */
     {
+#ifdef TC_COLOR
+      if (cave_ptr->fval == MAGMA_WALL)
+        textcolor(DARKGRAY);
+      else
+        textcolor(WHITE);
+      return wallsym;
+#else
       return '%';
+#endif
     }
 }
 
@@ -645,6 +713,9 @@ void prt_map()
 	  tmp_char = loc_symbol(i, j);
 	  if (tmp_char != ' ')
 	    print(tmp_char, i, j);
+#ifdef TC_COLOR
+	  textcolor(LIGHTGRAY); /* clear colors */
+#endif	  
 	}
     }
 }
@@ -777,10 +848,14 @@ int slp;
   mon_ptr->fx = x;
   mon_ptr->mptr = z;
   if ((z<0)||(z>=MAX_CREATURES)) {
-      char *wibble;
+#ifndef MSDOS 
+      char *wibble; /* Why? -CFT */
       wibble=NULL;
       msg_print("FOUL UP IN PLACE_MONSTER");
-      *wibble=3;
+      *wibble=3; /* Are you intentionally causing a Seg. Fault to exit? -CFT */
+#else
+      msg_print("FOUL UP IN PLACE_MONSTER");
+#endif
   }
   if ((c_list[z].cdefense & MAX_HP) || be_nasty)
     mon_ptr->hp = max_hp(c_list[z].hd);
@@ -2253,12 +2328,12 @@ static void compact_objects()
 		    chance = 3;
 		    break;
 		  default:
-                    if ((t_list[cave_ptr->tptr].tval >= TV_MIN_WEAR) &&
-                        (t_list[cave_ptr->tptr].tval <= TV_MAX_WEAR) &&
-                        (t_list[cave_ptr->tptr].flags2 & TR_ARTIFACT))
-                      chance = 0; /* don't compact artifacts -CFT */
-                    else
-	              chance = 10;
+		    if ((t_list[cave_ptr->tptr].tval >= TV_MIN_WEAR) &&
+		    	(t_list[cave_ptr->tptr].tval <= TV_MAX_WEAR) &&
+		    	(t_list[cave_ptr->tptr].flags2 & TR_ARTIFACT))
+		      chance = 0; /* don't compact artifacts -CFT */
+		    else
+		      chance = 10;
 		  }
 		if (randint (100) <= chance)
 		  {
@@ -2355,9 +2430,9 @@ inven_type *t_ptr;
 		      TR_SPEED|TR_RES_COLD|TR_FROST_BRAND|TR_FREE_ACT|
 		      TR_SLOW_DIGEST);
       t_ptr->flags2|= (TR_SLAY_DEMON|TR_SLAY_TROLL|TR_LIGHT|TR_ACTIVATE
-		      |TR_RES_LT|TR_ARTIFACT);
+		      |TR_ARTIFACT|TR_RES_LT);
       t_ptr->p1    = 1;
-      t_ptr->cost  = 300000;
+      t_ptr->cost  = 300000L;
       RINGIL = 1;
       return 1;
     case 2:
@@ -2374,7 +2449,7 @@ inven_type *t_ptr;
       t_ptr->flags2|= (TR_SLAY_TROLL|TR_ACTIVATE|TR_SLAY_ORC|TR_ARTIFACT);
       t_ptr->p1    = 4;
       t_ptr->toac    = 5;
-      t_ptr->cost  = 80000;
+      t_ptr->cost  = 80000L;
       ANDURIL = 1;
       return 1;
     case 5:
@@ -2389,10 +2464,10 @@ inven_type *t_ptr;
       t_ptr->todam = 12;
       t_ptr->flags = (TR_SEE_INVIS|TR_SLAY_EVIL|TR_FREE_ACT|TR_RES_LIGHT
 			|TR_STR|TR_CON);
-      t_ptr->flags2 = (TR_LIGHTNING|TR_LIGHT|TR_SLAY_DEMON|TR_RES_LT
-		       |TR_ARTIFACT);
+      t_ptr->flags2 |= (TR_ARTIFACT|
+		TR_LIGHTNING|TR_LIGHT|TR_SLAY_DEMON|TR_RES_LT);
       t_ptr->p1 = 2;
-      t_ptr->cost = 40000;
+      t_ptr->cost = 40000L;
       ANGUIREL = 1;
       return 1;
     default:
@@ -2405,7 +2480,7 @@ inven_type *t_ptr;
       t_ptr->flags |= (TR_SEE_INVIS|TR_CHR|TR_DEX|TR_STEALTH|TR_FFALL);
       t_ptr->flags2|= (TR_SLAY_TROLL|TR_SLAY_ORC|TR_ARTIFACT);
       t_ptr->p1    = 2;
-      t_ptr->cost  = 30000;
+      t_ptr->cost  = 30000L;
       ELVAGIL = 1;
       return 1;
     }
@@ -2422,9 +2497,9 @@ inven_type *t_ptr;
       t_ptr->todam = 17;
       t_ptr->flags = (TR_REGEN|TR_SLAY_X_DRAGON|TR_STR|
 		      TR_FREE_ACT|TR_SLOW_DIGEST);
-      t_ptr->flags2= (TR_ARTIFACT|TR_SLAY_TROLL);
+      t_ptr->flags2 |= (TR_SLAY_TROLL|TR_ARTIFACT);
       t_ptr->p1    = 2;
-      t_ptr->cost  = 100000;
+      t_ptr->cost  = 100000L;
       GURTHANG= 1;
       return 1;
     case 3:
@@ -2438,12 +2513,12 @@ inven_type *t_ptr;
       t_ptr->flags = (TR_SLAY_X_DRAGON|TR_STR|TR_SLAY_EVIL|TR_SLAY_ANIMAL|
 		      TR_SLAY_UNDEAD|TR_AGGRAVATE|TR_CHR|TR_FLAME_TONGUE|
 		      TR_RES_FIRE|TR_FREE_ACT|TR_INFRA);
-      t_ptr->flags2 = (TR_SLAY_TROLL|TR_SLAY_ORC|TR_SLAY_GIANT|TR_SLAY_DEMON
-		      |TR_RES_CHAOS|TR_ARTIFACT);
+      t_ptr->flags2 |= (TR_ARTIFACT|TR_SLAY_TROLL|TR_SLAY_ORC|TR_SLAY_GIANT
+		|TR_SLAY_DEMON|TR_RES_CHAOS);
       t_ptr->p1 = 4;
       t_ptr->damage[0] = 6;
       t_ptr->damage[1] = 4;
-      t_ptr->cost = 200000;
+      t_ptr->cost = 200000L;
       ZARCUTHRA = 1;
       return 1;
     default:
@@ -2457,7 +2532,7 @@ inven_type *t_ptr;
       t_ptr->flags2 |= (TR_ARTIFACT);
       t_ptr->p1    = -1;
       t_ptr->toac  = -50;
-      t_ptr->cost  = 10000;
+      t_ptr->cost  = 10000L;
       MORMEGIL = 1;
       return 1;
     }
@@ -2475,9 +2550,9 @@ inven_type *t_ptr;
       t_ptr->damage[0] = 3;
       t_ptr->flags = (TR_FFALL|TR_DEX|
           	      TR_FREE_ACT|TR_SLOW_DIGEST);
-      t_ptr->flags2= (TR_SLAY_DEMON|TR_SLAY_ORC|TR_ACTIVATE|TR_ARTIFACT);
+      t_ptr->flags2 |= (TR_SLAY_DEMON|TR_SLAY_ORC|TR_ACTIVATE|TR_ARTIFACT);
       t_ptr->p1    = 4;
-      t_ptr->cost  = 50000;
+      t_ptr->cost  = 50000L;
       ARUNRUTH = 1;
       return 1;
     case 3:
@@ -2492,8 +2567,8 @@ inven_type *t_ptr;
       t_ptr->todam = 15;
       t_ptr->flags = (TR_SLAY_EVIL|TR_SLOW_DIGEST|TR_SEARCH|TR_FLAME_TONGUE|
 		      TR_RES_FIRE);
-      t_ptr->flags2 = (TR_SLAY_ORC|TR_LIGHT|TR_RES_LT|TR_ARTIFACT);
-      t_ptr->cost  = 40000;
+      t_ptr->flags2 |= (TR_ARTIFACT|TR_SLAY_ORC|TR_LIGHT|TR_RES_LT);
+      t_ptr->cost  = 40000L;
       GLAMDRING = 1;
       return 1;
     case 7:
@@ -2504,8 +2579,8 @@ inven_type *t_ptr;
       t_ptr->tohit = 12;
       t_ptr->todam = 16;
       t_ptr->flags = (TR_SLOW_DIGEST|TR_SEARCH|TR_RES_LIGHT);
-      t_ptr->flags2 = (TR_SLAY_ORC|TR_LIGHT|TR_LIGHTNING|TR_ARTIFACT);
-      t_ptr->cost  = 45000;
+      t_ptr->flags2 |= (TR_ARTIFACT|TR_SLAY_ORC|TR_LIGHT|TR_LIGHTNING);
+      t_ptr->cost  = 45000L;
       AEGLIN = 1;
       return 1;
     default:
@@ -2517,9 +2592,9 @@ inven_type *t_ptr;
       t_ptr->todam = 15;
       t_ptr->flags = (TR_SLAY_EVIL|TR_SLOW_DIGEST|TR_STEALTH|TR_FROST_BRAND|
 		      TR_RES_COLD);
-      t_ptr->flags2 = (TR_SLAY_ORC|TR_LIGHT|TR_ARTIFACT);
+      t_ptr->flags2 |= (TR_ARTIFACT|TR_SLAY_ORC|TR_LIGHT);
       t_ptr->p1    = 3;
-      t_ptr->cost  = 40000;
+      t_ptr->cost  = 40000L;
       ORCRIST = 1;
       return 1;
     }
@@ -2535,9 +2610,9 @@ inven_type *t_ptr;
     t_ptr->damage[1] = 7;
     t_ptr->flags = (TR_SLAY_X_DRAGON|TR_CON|TR_AGGRAVATE|
 		    TR_CURSED|TR_SLAY_EVIL);
-    t_ptr->flags2= (TR_SLAY_DEMON|TR_SLAY_TROLL|TR_RES_DISENCHANT|TR_ARTIFACT);
+    t_ptr->flags2 |= (TR_SLAY_DEMON|TR_SLAY_TROLL|TR_RES_DISENCHANT|TR_ARTIFACT);
     t_ptr->p1    = 5;
-    t_ptr->cost  = 100000;
+    t_ptr->cost  = 100000L;
     CALRIS = 1;
     return 1;
   }
@@ -2552,9 +2627,9 @@ inven_type *t_ptr;
     t_ptr->damage[0] = 2;
     t_ptr->damage[1] = 6;
     t_ptr->flags = (TR_DEX|TR_INT|TR_FREE_ACT|TR_SEE_INVIS);
-    t_ptr->flags2 = (TR_SLAY_GIANT|TR_SLAY_TROLL|TR_ARTIFACT);
+    t_ptr->flags2 |= (TR_ARTIFACT|TR_SLAY_GIANT|TR_SLAY_TROLL);
     t_ptr->p1 = 3;
-    t_ptr->cost = 20000;
+    t_ptr->cost = 20000L;
     MAEDHROS = 1;
     return 1;
   }
@@ -2566,10 +2641,10 @@ inven_type *t_ptr;
     t_ptr->name2 = SN_PAIN;
     t_ptr->tohit = 0;
     t_ptr->todam = 30;
+    t_ptr->flags2 |= (TR_ARTIFACT);
     t_ptr->damage[0] = 10;
     t_ptr->damage[1] = 6;
-    t_ptr->flags2 |= (TR_ARTIFACT);
-    t_ptr->cost  = 50000;
+    t_ptr->cost  = 50000L;
     PAIN = 1;
     return 1;
   }
@@ -2582,9 +2657,9 @@ inven_type *t_ptr;
     t_ptr->todam = 9;
     t_ptr->flags = (TR_FLAME_TONGUE|TR_SLAY_UNDEAD|TR_RES_FIRE|TR_SEE_INVIS|
 				TR_FFALL|TR_CHR);
-    t_ptr->flags2 = (TR_RES_SOUND|TR_SLAY_GIANT|TR_ARTIFACT);
+    t_ptr->flags2 |= (TR_ARTIFACT|TR_RES_SOUND|TR_SLAY_GIANT);
     t_ptr->p1 = 3;
-    t_ptr->cost = 22000;
+    t_ptr->cost = 22000L;
     OSONDIR = 1;
     return 1;
   }
@@ -2597,9 +2672,9 @@ inven_type *t_ptr;
     t_ptr->tohit = 10;
     t_ptr->todam = 6;
     t_ptr->flags = (TR_WIS|TR_REGEN|TR_FROST_BRAND|TR_RES_COLD|TR_INFRA);
-    t_ptr->flags2 = (TR_SLAY_ORC|TR_LIGHT|TR_ACTIVATE|TR_RES_LT|TR_ARTIFACT);
+    t_ptr->flags2 |= (TR_ARTIFACT|TR_SLAY_ORC|TR_LIGHT|TR_ACTIVATE|TR_RES_LT);
     t_ptr->p1 = 4;
-    t_ptr->cost = 30000;
+    t_ptr->cost = 30000L;
     t_ptr->toac = 8;
     TURMIL = 1;
     return 1;
@@ -2615,9 +2690,9 @@ inven_type *t_ptr;
     t_ptr->toac = 10;
     t_ptr->flags = (TR_FROST_BRAND|TR_FLAME_TONGUE|TR_RES_FIRE|TR_RES_COLD|
 			TR_SLOW_DIGEST|TR_INT|TR_SUST_STAT);
-    t_ptr->flags2 = (TR_SLAY_DEMON|TR_SLAY_GIANT|TR_SLAY_TROLL|TR_ARTIFACT);
+    t_ptr->flags2 |= (TR_ARTIFACT|TR_SLAY_DEMON|TR_SLAY_GIANT|TR_SLAY_TROLL);
     t_ptr->p1 = 2;
-    t_ptr->cost = 32000;
+    t_ptr->cost = 32000L;
     TIL = 1;
     return 1;
   }
@@ -2632,10 +2707,10 @@ inven_type *t_ptr;
     t_ptr->damage[1] = 12;
     t_ptr->flags = (TR_STR|TR_FLAME_TONGUE|TR_SLAY_EVIL|TR_SLAY_DRAGON|
 		    TR_SLAY_ANIMAL|TR_TUNNEL|TR_AGGRAVATE);
-    t_ptr->flags2 = (TR_IM_FIRE|TR_RES_CHAOS|TR_RES_DISENCHANT|TR_RES_DARK
-		     |TR_ARTIFACT);
+    t_ptr->flags2 |= (TR_ARTIFACT|TR_IM_FIRE|TR_RES_CHAOS
+		|TR_RES_DISENCHANT|TR_RES_DARK);
     t_ptr->p1 = 6;
-    t_ptr->cost = 400000;
+    t_ptr->cost = 400000L;
     DEATHWREAKER = 1;
     return 1;
   }
@@ -2649,9 +2724,9 @@ inven_type *t_ptr;
     t_ptr->toac = 10;
     t_ptr->flags = (TR_DEX|TR_CHR|TR_FREE_ACT|TR_RES_FIRE|TR_RES_COLD|
 		    TR_SEE_INVIS|TR_FLAME_TONGUE|TR_FROST_BRAND);
-    t_ptr->flags2 = (TR_LIGHT|TR_ACTIVATE|TR_RES_LT|TR_ARTIFACT);
+    t_ptr->flags2 |= (TR_ARTIFACT|TR_LIGHT|TR_ACTIVATE|TR_RES_LT);
     t_ptr->p1 = 3;
-    t_ptr->cost = 18000;
+    t_ptr->cost = 18000L;
     AVAVIR = 1;
     return 1;
   }
@@ -2666,8 +2741,8 @@ inven_type *t_ptr;
     t_ptr->weight = 200;
     t_ptr->damage[1] = 7;
     t_ptr->flags = (TR_SLAY_X_DRAGON|TR_RES_LIGHT);
-    t_ptr->flags2 = (TR_LIGHTNING|TR_ACTIVATE|TR_RES_DARK|TR_ARTIFACT);
-    t_ptr->cost = 20000;
+    t_ptr->flags2 |= (TR_ARTIFACT|TR_LIGHTNING|TR_ACTIVATE|TR_RES_DARK);
+    t_ptr->cost = 20000L;
     TARATOL = 1;
     return 1;
   }
@@ -2684,7 +2759,7 @@ inven_type *t_ptr;
     t_ptr->flags2 |= (TR_SLAY_TROLL|TR_SLAY_ORC|TR_ARTIFACT);
     t_ptr->p1 = 2;
     t_ptr->damage[1] = 12;
-    t_ptr->cost  = 55000;
+    t_ptr->cost  = 55000L;
     EORLINGAS = 1;
     return 1;
   }
@@ -2698,7 +2773,7 @@ inven_type *t_ptr;
     t_ptr->flags |= (TR_SEE_INVIS|TR_SLAY_EVIL|TR_CON);
     t_ptr->flags2 |= (TR_SLAY_ORC|TR_SLAY_TROLL|TR_SLAY_GIANT|TR_ARTIFACT);
     t_ptr->p1 = 3;
-    t_ptr->cost  = 50000;
+    t_ptr->cost  = 50000L;
     BARUKKHELED = 1;
     return 1;
   }
@@ -2720,7 +2795,7 @@ inven_type *t_ptr;
 				TR_SLAY_UNDEAD);
       t_ptr->flags2 |= (TR_RES_DARK|TR_RES_LT|TR_ARTIFACT);
       t_ptr->p1 = 2;
-      t_ptr->cost  = 90000;
+      t_ptr->cost  = 90000L;
       WRATH = 1;
       return 1;
     case 3:
@@ -2735,10 +2810,10 @@ inven_type *t_ptr;
       t_ptr->damage[1] = 10;
       t_ptr->flags = (TR_SEE_INVIS|TR_FREE_ACT|TR_DEX|TR_REGEN|TR_SLOW_DIGEST
 			|TR_SLAY_ANIMAL|TR_SLAY_DRAGON);
-      t_ptr->flags2= (TR_IM_ACID|TR_HOLD_LIFE|TR_ACTIVATE|TR_RES_NETHER
-		      |TR_ARTIFACT);
+      t_ptr->flags2 |= (TR_IM_ACID|TR_HOLD_LIFE|TR_ACTIVATE
+		|TR_RES_NETHER|TR_ARTIFACT);
       t_ptr->p1 = 4;
-      t_ptr->cost = 120000;
+      t_ptr->cost = 120000L;
       ULMO = 1;
       return 1;
     }
@@ -2754,7 +2829,7 @@ inven_type *t_ptr;
 		     |TR_SLAY_ANIMAL);
     t_ptr->flags2 |= (TR_ARTIFACT);
     t_ptr->p1 = 2;
-    t_ptr->cost  = 20000;
+    t_ptr->cost  = 20000L;
     HARADEKKET = 1;
     return 1;
   }
@@ -2768,7 +2843,7 @@ inven_type *t_ptr;
     t_ptr->flags |= (TR_SLAY_EVIL|TR_RES_FIRE|TR_RES_COLD
 		     |TR_RES_LIGHT|TR_RES_ACID);
     t_ptr->flags2 |= (TR_ARTIFACT);
-    t_ptr->cost  = 30000;
+    t_ptr->cost  = 30000L;
     MUNDWINE= 1;
     return 1;
   }
@@ -2784,7 +2859,7 @@ inven_type *t_ptr;
     t_ptr->flags2 |= (TR_ARTIFACT);
     t_ptr->p1 = 3;
     t_ptr->ident |= ID_SHOW_P1;
-    t_ptr->cost  = 28000;
+    t_ptr->cost  = 28000L;
     GONDRICAM = 1;
     return 1;
   }
@@ -2797,7 +2872,7 @@ inven_type *t_ptr;
     t_ptr->todam = 8;
     t_ptr->flags |= (TR_SLAY_DRAGON|TR_SLAY_ANIMAL);
     t_ptr->flags2 |= (TR_SLAY_GIANT|TR_SLAY_ORC|TR_SLAY_TROLL|TR_ARTIFACT);
-    t_ptr->cost  = 20000;
+    t_ptr->cost  = 20000L;
     CARETH = 1;
     return 1;
   }
@@ -2810,7 +2885,7 @@ inven_type *t_ptr;
     t_ptr->todam = 19;
     t_ptr->flags |= (TR_RES_COLD|TR_FROST_BRAND|TR_SLAY_ANIMAL);
     t_ptr->flags2 |= (TR_LIGHT|TR_RES_LT|TR_ARTIFACT);
-    t_ptr->cost  = 15000;
+    t_ptr->cost  = 15000L;
     FORASGIL = 1;
     return 1;
   }
@@ -2824,7 +2899,7 @@ inven_type *t_ptr;
     t_ptr->todam = 19;
     t_ptr->flags |= (TR_SEE_INVIS|TR_SLAY_EVIL|TR_SLAY_UNDEAD|TR_SLAY_DRAGON);
     t_ptr->flags2 |= (TR_SLAY_GIANT|TR_SLAY_ORC|TR_SLAY_TROLL|TR_ARTIFACT);
-    t_ptr->cost  = 100000;
+    t_ptr->cost  = 100000L;
     CRISDURIAN = 1;
     return 1;
   }
@@ -2837,10 +2912,10 @@ inven_type *t_ptr;
     t_ptr->todam = 8;
     t_ptr->damage[1] = 9;
     t_ptr->flags = (TR_STEALTH|TR_RES_FIRE|TR_FLAME_TONGUE|TR_SLAY_EVIL);
-    t_ptr->flags2 = (TR_ACTIVATE|TR_RES_CONF|TR_ARTIFACT);
+    t_ptr->flags2 |= (TR_ARTIFACT|TR_ACTIVATE|TR_RES_CONF);
     t_ptr->p1    = 2;
     t_ptr->ident |= ID_SHOW_P1;
-    t_ptr->cost  = 55000;
+    t_ptr->cost  = 55000L;
     TOTILA = 1;
     return 1;
   }
@@ -2852,8 +2927,8 @@ inven_type *t_ptr;
     t_ptr->tohit = 3;
     t_ptr->todam = 7;
     t_ptr->flags = (TR_REGEN|TR_SLOW_DIGEST|TR_SLAY_ANIMAL);
-    t_ptr->flags2 |= (TR_ARTIFACT);
-    t_ptr->cost  = 10000;
+    t_ptr->flags = (TR_ARTIFACT);
+    t_ptr->cost  = 10000L;
     GILETTAR = 1;
     return 1;
   }
@@ -2871,7 +2946,7 @@ inven_type *t_ptr;
     t_ptr->flags = (TR_DEX|TR_SUST_STAT);
     t_ptr->flags2 |= (TR_ARTIFACT);
     t_ptr->p1    = 5;
-    t_ptr->cost  = 40000;
+    t_ptr->cost  = 40000L;
     AGLARANG = 1;
     return 1;
   }
@@ -2888,10 +2963,10 @@ inven_type *t_ptr;
       t_ptr->damage[1] = 20;
       t_ptr->flags = (TR_WIS|TR_FROST_BRAND|
 		      TR_RES_COLD|TR_FREE_ACT|TR_SLOW_DIGEST);
-      t_ptr->flags2= (TR_SLAY_TROLL|TR_SLAY_ORC|TR_ACTIVATE|TR_ARTIFACT);
+      t_ptr->flags2 |= (TR_SLAY_TROLL|TR_SLAY_ORC|TR_ACTIVATE|TR_ARTIFACT);
       t_ptr->toac  = 5;
       t_ptr->p1    = 4;
-      t_ptr->cost  = 140000;
+      t_ptr->cost  = 140000L;
       AEGLOS = 1;
       return 1;
     case 2:
@@ -2905,9 +2980,9 @@ inven_type *t_ptr;
       t_ptr->tohit = 11;
       t_ptr->todam = 13;
       t_ptr->flags = (TR_FROST_BRAND|TR_RES_COLD|TR_SLAY_UNDEAD|TR_STEALTH);
-      t_ptr->flags2 = (TR_ARTIFACT);
+      t_ptr->flags2 |= (TR_ARTIFACT);
       t_ptr->p1    = 3;
-      t_ptr->cost  = 30000;
+      t_ptr->cost  = 30000L;
       NIMLOTH = 1;
       return 1;
     case 6:
@@ -2919,10 +2994,10 @@ inven_type *t_ptr;
       t_ptr->todam = 15;
       t_ptr->flags = (TR_FLAME_TONGUE|TR_SEE_INVIS|TR_SEARCH|TR_INT|
 		      TR_RES_FIRE|TR_FFALL|TR_INFRA);
-      t_ptr->flags2= (TR_ACTIVATE|TR_LIGHT|TR_SLAY_GIANT|TR_RES_LT
-		      |TR_ARTIFACT);
+      t_ptr->flags2 |= (TR_ACTIVATE|TR_LIGHT|TR_SLAY_GIANT|TR_RES_LT
+		|TR_ARTIFACT);
       t_ptr->p1 = 4;
-      t_ptr->cost = 60000;
+      t_ptr->cost = 60000L;
       OROME = 1;
       return 1;
     }
@@ -2940,10 +3015,10 @@ inven_type *t_ptr;
       t_ptr->damage[1] = 5;
       t_ptr->flags = (TR_DEX|TR_SLAY_EVIL|TR_SUST_STAT|
 		      TR_FREE_ACT);
-      t_ptr->flags2= (TR_SLAY_TROLL|TR_SLAY_ORC|TR_RES_DARK|TR_ARTIFACT);
+      t_ptr->flags2 |= (TR_SLAY_TROLL|TR_SLAY_ORC|TR_RES_DARK|TR_ARTIFACT);
       t_ptr->toac  = 5;
       t_ptr->p1    = 4;
-      t_ptr->cost  = 100000;
+      t_ptr->cost  = 100000L;
       ANGRIST = 1;
       return 1;
     case 2:
@@ -2955,8 +3030,8 @@ inven_type *t_ptr;
       t_ptr->tohit = 4;
       t_ptr->todam = 6;
       t_ptr->flags = (TR_FLAME_TONGUE|TR_RES_FIRE);
-      t_ptr->flags2= (TR_ACTIVATE|TR_ARTIFACT);
-      t_ptr->cost  = 12000;
+      t_ptr->flags2 |= (TR_ACTIVATE|TR_ARTIFACT);
+      t_ptr->cost  = 12000L;
       NARTHANC = 1;
       return 1;
     case 4:
@@ -2968,8 +3043,8 @@ inven_type *t_ptr;
       t_ptr->tohit = 4;
       t_ptr->todam = 6;
       t_ptr->flags = (TR_FROST_BRAND|TR_RES_COLD);
-      t_ptr->flags2= (TR_ACTIVATE|TR_ARTIFACT);
-      t_ptr->cost  = 11000;
+      t_ptr->flags2 |= (TR_ACTIVATE|TR_ARTIFACT);
+      t_ptr->cost  = 11000L;
       NIMTHANC = 1;
       return 1;
     case 6:
@@ -2981,8 +3056,8 @@ inven_type *t_ptr;
       t_ptr->tohit = 4;
       t_ptr->todam = 6;
       t_ptr->flags = (TR_RES_LIGHT);
-      t_ptr->flags2= (TR_ACTIVATE|TR_LIGHTNING|TR_ARTIFACT);
-      t_ptr->cost  = 13000;
+      t_ptr->flags2 |= (TR_ACTIVATE|TR_LIGHTNING|TR_ARTIFACT);
+      t_ptr->cost  = 13000L;
       DETHANC = 1;
       return 1;
     case 8:
@@ -2995,8 +3070,8 @@ inven_type *t_ptr;
       t_ptr->todam = 3;
       t_ptr->damage[0] = 2;
       t_ptr->damage[1] = 4;
-      t_ptr->flags2= (TR_ACTIVATE|TR_RES_DISENCHANT|TR_ARTIFACT);
-      t_ptr->cost  = 15000;
+      t_ptr->flags2 |= (TR_ACTIVATE|TR_RES_DISENCHANT|TR_ARTIFACT);
+      t_ptr->cost  = 15000L;
       RILIA = 1;
       return 1;
     case 10:
@@ -3011,9 +3086,9 @@ inven_type *t_ptr;
       t_ptr->damage[1] = 2;
       t_ptr->flags = (TR_FROST_BRAND|TR_RES_COLD|TR_REGEN|TR_SLOW_DIGEST|
 		      TR_DEX|TR_SEE_INVIS);
-      t_ptr->flags2= (TR_ACTIVATE|TR_ARTIFACT);
+      t_ptr->flags2 |= (TR_ACTIVATE|TR_ARTIFACT);
       t_ptr->p1    = 2;
-      t_ptr->cost  = 40000;
+      t_ptr->cost  = 40000L;
       BELANGIL = 1;
       return 1;
     }
@@ -3025,9 +3100,9 @@ inven_type *t_ptr;
     t_ptr->tohit = 7;
     t_ptr->todam = 8;
     t_ptr->flags = (TR_SEE_INVIS|TR_DEX);
-    t_ptr->flags2 = (TR_SLAY_ORC|TR_LIGHT|TR_RES_LT|TR_ARTIFACT);
+    t_ptr->flags2 |= (TR_ARTIFACT|TR_SLAY_ORC|TR_LIGHT|TR_RES_LT);
     t_ptr->p1    = 2;
-    t_ptr->cost  = 12000;
+    t_ptr->cost  = 12000L;
     STING = 1;
     return 1;
   } else if (!strcmp("& Great Axe", name)) {
@@ -3043,10 +3118,10 @@ inven_type *t_ptr;
         t_ptr->toac  = 15;
         t_ptr->flags = (TR_SLAY_X_DRAGON|TR_CON|TR_FREE_ACT|
                 	    TR_RES_FIRE|TR_RES_ACID);
-        t_ptr->flags2= (TR_SLAY_DEMON|TR_SLAY_TROLL|TR_SLAY_ORC|TR_RES_DARK
+        t_ptr->flags2 |= (TR_SLAY_DEMON|TR_SLAY_TROLL|TR_SLAY_ORC|TR_RES_DARK
 			|TR_RES_LT|TR_RES_CHAOS|TR_ARTIFACT);
         t_ptr->p1    = 3;
-        t_ptr->cost  = 150000;
+        t_ptr->cost  = 150000L;
         DURIN = 1;
         return 1;
       case 2:
@@ -3060,9 +3135,9 @@ inven_type *t_ptr;
 	t_ptr->toac  = 8;
         t_ptr->flags = (TR_STATS|TR_SLAY_EVIL|TR_SLAY_UNDEAD|TR_FROST_BRAND|
 				TR_FREE_ACT|TR_SEE_INVIS);
-	t_ptr->flags2= (TR_IM_COLD|TR_SLAY_ORC|TR_ACTIVATE|TR_ARTIFACT);
+	t_ptr->flags2 |= (TR_IM_COLD|TR_SLAY_ORC|TR_ACTIVATE|TR_ARTIFACT);
 	t_ptr->p1    = 2;
-        t_ptr->cost  = 200000;
+        t_ptr->cost  = 200000L;
 	EONWE = 1;
         return 1;
       }
@@ -3081,10 +3156,10 @@ inven_type *t_ptr;
       t_ptr->flags = (TR_FFALL|TR_RES_LIGHT|TR_SEE_INVIS|TR_STR|TR_CON
 		      |TR_FREE_ACT|TR_RES_COLD|TR_RES_ACID
 		      |TR_RES_FIRE|TR_REGEN|TR_STEALTH);
-      t_ptr->flags2= (TR_SLAY_DEMON|TR_SLAY_TROLL|TR_SLAY_ORC|TR_RES_BLIND
-		      |TR_ARTIFACT);
+      t_ptr->flags2 |= (TR_SLAY_DEMON|TR_SLAY_TROLL|TR_SLAY_ORC|TR_RES_BLIND
+		|TR_ARTIFACT);
       t_ptr->p1    = 3;
-      t_ptr->cost  = 90000;
+      t_ptr->cost  = 90000L;
       BALLI = 1;
       return 1;
     case 2:
@@ -3095,9 +3170,9 @@ inven_type *t_ptr;
       t_ptr->tohit = 4;
       t_ptr->todam = 3;
       t_ptr->flags = (TR_STR|TR_DEX);
-      t_ptr->flags2= (TR_ACTIVATE|TR_SLAY_TROLL|TR_SLAY_ORC|TR_ARTIFACT);
+      t_ptr->flags2 |= (TR_ACTIVATE|TR_SLAY_TROLL|TR_SLAY_ORC|TR_ARTIFACT);
       t_ptr->p1    = 1;
-      t_ptr->cost  = 21000;
+      t_ptr->cost  = 21000L;
       LOTHARANG = 1;
       return 1;
     }
@@ -3115,9 +3190,9 @@ inven_type *t_ptr;
     t_ptr->flags = (TR_SLAY_X_DRAGON|TR_SLAY_EVIL|TR_SLAY_UNDEAD|
 		    TR_RES_FIRE|TR_RES_ACID|TR_RES_COLD|TR_RES_LIGHT|
 		    TR_FREE_ACT|TR_SEE_INVIS|TR_WIS);
-    t_ptr->flags2 = (TR_SLAY_DEMON|TR_LIGHTNING|TR_RES_NEXUS|TR_ARTIFACT);
+    t_ptr->flags2 |= (TR_ARTIFACT|TR_SLAY_DEMON|TR_LIGHTNING|TR_RES_NEXUS);
     t_ptr->p1 = 4;
-    t_ptr->cost = 250000;
+    t_ptr->cost = 250000L;
     AULE = 1;
     return 1;
   } else if (!strcmp("& Beaked Axe", name)) {
@@ -3129,9 +3204,9 @@ inven_type *t_ptr;
     t_ptr->tohit = 8;
     t_ptr->todam = 10;
     t_ptr->flags = (TR_WIS|TR_CON|TR_SEARCH|TR_SLOW_DIGEST|TR_SLAY_DRAGON);
-    t_ptr->flags2= (TR_TELEPATHY|TR_ACTIVATE|TR_ARTIFACT);
+    t_ptr->flags2 |= (TR_TELEPATHY|TR_ACTIVATE|TR_ARTIFACT);
     t_ptr->p1 = 3;
-    t_ptr->cost = 40000;
+    t_ptr->cost = 40000L;
     THEODEN = 1;
     return 1;
   } else if (!strcmp("& Two-Handed Great Flail", name)) {
@@ -3144,10 +3219,10 @@ inven_type *t_ptr;
     t_ptr->todam = 18;
     t_ptr->flags = (TR_SLAY_ANIMAL|TR_STR|TR_FLAME_TONGUE|
 		    TR_RES_FIRE|TR_RES_LIGHT);
-    t_ptr->flags2 = (TR_SLAY_TROLL|TR_SLAY_ORC|TR_LIGHTNING|TR_RES_DARK
-		     |TR_ARTIFACT);
+    t_ptr->flags2 |= (TR_ARTIFACT|TR_SLAY_TROLL|TR_SLAY_ORC
+		|TR_LIGHTNING|TR_RES_DARK);
     t_ptr->p1 = 4;
-    t_ptr->cost = 160000;
+    t_ptr->cost = 160000L;
     THUNDERFIST = 1;
     return 1;
   } else if (!strcmp("& Morningstar", name)) {
@@ -3161,9 +3236,9 @@ inven_type *t_ptr;
       t_ptr->tohit = 8;
       t_ptr->todam = 22;
       t_ptr->flags = (TR_SLAY_ANIMAL|TR_STR|TR_SEE_INVIS);
-      t_ptr->flags2 = (TR_SLAY_TROLL|TR_SLAY_ORC|TR_RES_NEXUS|TR_ARTIFACT);
+      t_ptr->flags2 |= (TR_ARTIFACT|TR_SLAY_TROLL|TR_SLAY_ORC|TR_RES_NEXUS);
       t_ptr->p1 = 4;
-      t_ptr->cost = 30000;
+      t_ptr->cost = 30000L;
       BLOODSPIKE = 1;
       return 1;
     case 2:
@@ -3174,9 +3249,9 @@ inven_type *t_ptr;
       t_ptr->tohit = 5;
       t_ptr->todam = 7;
       t_ptr->flags = (TR_FLAME_TONGUE|TR_RES_FIRE);
-      t_ptr->flags2 = (TR_ACTIVATE|TR_ARTIFACT);
+      t_ptr->flags2 |= (TR_ARTIFACT|TR_ACTIVATE);
       t_ptr->toac = 2;
-      t_ptr->cost = 35000;
+      t_ptr->cost = 35000L;
       FIRESTAR = 1;
       return 1;
     }
@@ -3192,9 +3267,9 @@ inven_type *t_ptr;
 		    TR_FROST_BRAND|TR_SLAY_EVIL|TR_FREE_ACT|TR_SEE_INVIS|
 		    TR_RES_FIRE|TR_RES_COLD|TR_RES_LIGHT|TR_RES_ACID|
 		    TR_AGGRAVATE);
-    t_ptr->flags2 = (TR_SLAY_TROLL|TR_SLAY_ORC|TR_TELEPATHY|TR_ARTIFACT);
+    t_ptr->flags2 |= (TR_ARTIFACT|TR_SLAY_TROLL|TR_SLAY_ORC|TR_TELEPATHY);
     t_ptr->p1 = -5;
-    t_ptr->cost = 200000;
+    t_ptr->cost = 200000L;
     DOOMCALLER = 1;
     return 1;
   } else if (!strcmp("& Quarterstaff", name)) {
@@ -3212,7 +3287,7 @@ inven_type *t_ptr;
       t_ptr->flags2 |= (TR_ARTIFACT);
       t_ptr->p1 = 3;
       t_ptr->ident |= ID_SHOW_P1;
-      t_ptr->cost = 70000;
+      t_ptr->cost = 70000L;
       NAR = 1;
       return 1;
     case 4:
@@ -3225,9 +3300,9 @@ inven_type *t_ptr;
       t_ptr->tohit = 3;
       t_ptr->todam = 5;
       t_ptr->flags = (TR_SLAY_EVIL|TR_SEE_INVIS|TR_INT|TR_WIS);
-      t_ptr->flags2 = (TR_LIGHT|TR_ACTIVATE|TR_RES_LT|TR_ARTIFACT);
+      t_ptr->flags2 |= (TR_ARTIFACT|TR_LIGHT|TR_ACTIVATE|TR_RES_LT);
       t_ptr->p1 = 4;
-      t_ptr->cost = 20000;
+      t_ptr->cost = 20000L;
       ERIRIL = 1;
       return 1;
     case 7:
@@ -3242,10 +3317,10 @@ inven_type *t_ptr;
       t_ptr->damage[1] = 10;
       t_ptr->flags = (TR_SLAY_EVIL|TR_SEE_INVIS|TR_WIS|TR_INT|TR_CHR
 			|TR_FLAME_TONGUE|TR_RES_FIRE);
-      t_ptr->flags2 = (TR_HOLD_LIFE|TR_SLAY_ORC|TR_SLAY_TROLL|TR_ACTIVATE|
-		       TR_RES_NETHER|TR_ARTIFACT);
+      t_ptr->flags2 |= (TR_ARTIFACT|TR_HOLD_LIFE|TR_SLAY_ORC|TR_SLAY_TROLL
+		|TR_ACTIVATE|TR_RES_NETHER);
       t_ptr->p1 = 4;
-      t_ptr->cost = 130000;
+      t_ptr->cost = 130000L;
       OLORIN = 1;
       return 1;
     }
@@ -3270,7 +3345,7 @@ inven_type *t_ptr;
 		      TR_RES_NEXUS|TR_RES_NETHER|TR_ARTIFACT);
     t_ptr->name2 |= SN_SOULKEEPER;
     t_ptr->toac += 20;
-    t_ptr->cost = 300000;
+    t_ptr->cost = 300000L;
     SOULKEEPER = 1;
     return 1;
   }/* etc.....*/
@@ -3287,7 +3362,7 @@ inven_type *t_ptr;
     t_ptr->weight = 400;
     t_ptr->ac = 40;
     t_ptr->tohit = -3;
-    t_ptr->cost = 400000;
+    t_ptr->cost = 400000L;
     t_ptr->name2 |= RAZORBACK;
     RAZORBACK = 1;
     return 1;
@@ -3299,14 +3374,15 @@ inven_type *t_ptr;
     t_ptr->flags |= (TR_RES_FIRE|TR_RES_COLD|TR_RES_ACID|TR_POISON|TR_RES_LIGHT
 		     |TR_DEX|TR_SEARCH|TR_REGEN);
     t_ptr->flags2 |= (TR_HOLD_LIFE|TR_RES_CONF|TR_RES_SOUND|TR_RES_LT
-		     |TR_RES_DARK|TR_RES_CHAOS|TR_RES_DISENCHANT|TR_ARTIFACT
-		     |TR_RES_SHARDS|TR_RES_BLIND|TR_RES_NEXUS|TR_RES_NETHER);
+		     |TR_RES_DARK|TR_RES_CHAOS|TR_RES_DISENCHANT
+		     |TR_RES_SHARDS|TR_RES_BLIND|TR_RES_NEXUS|TR_RES_NETHER
+		     |TR_ARTIFACT);
     t_ptr->toac += 35;
     t_ptr->p1 = -3;
     t_ptr->ac = 50;
     t_ptr->tohit = -4;
     t_ptr->weight = 500;
-    t_ptr->cost = 500000;
+    t_ptr->cost = 500000L;
     t_ptr->name2 |= BLADETURNER;
     BLADETURNER = 1;
     return 1;
@@ -3321,7 +3397,7 @@ inven_type *t_ptr;
     t_ptr->name2 |= SN_FEANOR;
     t_ptr->p1 = 1;
     t_ptr->toac += 20;
-    t_ptr->cost = 130000;
+    t_ptr->cost = 130000L;
     FEANOR = 1;
     return 1;
   }
@@ -3335,7 +3411,7 @@ inven_type *t_ptr;
     t_ptr->p1 = 5;
     t_ptr->ident |= ID_SHOW_P1;
     t_ptr->toac += 15;
-    t_ptr->cost = 40000;
+    t_ptr->cost = 40000L;
     DAL = 1;
     return 1;
   }
@@ -3346,12 +3422,12 @@ inven_type *t_ptr;
     else good_item_flag = TRUE;
     t_ptr->flags |= (TR_CON|TR_FREE_ACT|TR_STR|
 				TR_RES_ACID|TR_SEARCH);
-    t_ptr->flags2 |= (TR_RES_SOUND|TR_RES_CHAOS|TR_ARTIFACT|TR_IM_ACID);
+    t_ptr->flags2 |= (TR_IM_ACID|TR_RES_SOUND|TR_RES_CHAOS|TR_ARTIFACT);
     t_ptr->name2 |= SN_THORIN;
     t_ptr->tohit = 0;
     t_ptr->p1 = 4;
     t_ptr->toac += 25;
-    t_ptr->cost = 60000;
+    t_ptr->cost = 60000L;
     THORIN = 1;
     return 1;
   }
@@ -3364,7 +3440,7 @@ inven_type *t_ptr;
     t_ptr->name2 |= SN_ISILDUR;
     t_ptr->tohit = 0;
     t_ptr->toac += 25;
-    t_ptr->cost = 40000;
+    t_ptr->cost = 40000L;
     ISILDUR = 1;
     return 1;
   }
@@ -3379,7 +3455,7 @@ inven_type *t_ptr;
     t_ptr->tohit = 0;
     t_ptr->p1 = 2;
     t_ptr->toac += 15;
-    t_ptr->cost = 30000;
+    t_ptr->cost = 30000L;
     ROHAN = 1;
     return 1;
   }
@@ -3395,7 +3471,7 @@ inven_type *t_ptr;
     t_ptr->p1 = 10;
     t_ptr->tohit = 0;
     t_ptr->toac += 20;
-    t_ptr->cost = 160000;
+    t_ptr->cost = 160000L;
     ANARION = 1;
     return 1;
   }
@@ -3412,7 +3488,7 @@ inven_type *t_ptr;
     t_ptr->tohit = 10;
     t_ptr->todam = 10;
     t_ptr->toac += 20;
-    t_ptr->cost = 110000;
+    t_ptr->cost = 110000L;
     FINGOLFIN = 1;
     return 1;
   }
@@ -3429,7 +3505,7 @@ inven_type *t_ptr;
       t_ptr->tohit = 8;
       t_ptr->todam = 8;
       t_ptr->toac += 15;
-      t_ptr->cost = 36000;
+      t_ptr->cost = 36000L;
       CAMBELEG = 1;
       return 1;
     } else {
@@ -3441,7 +3517,7 @@ inven_type *t_ptr;
       t_ptr->name2 |= SN_CAMMITHRIM;
       t_ptr->p1 = 5;
       t_ptr->toac += 10;
-      t_ptr->cost = 30000;
+      t_ptr->cost = 30000L;
       CAMMITHRIM = 1;
       return 1;
     }
@@ -3456,7 +3532,7 @@ inven_type *t_ptr;
       t_ptr->flags2 |= (TR_ACTIVATE|TR_ARTIFACT);
       t_ptr->name2 |= SN_PAURHACH;
       t_ptr->toac += 15;
-      t_ptr->cost = 15000;
+      t_ptr->cost = 15000L;
       PAURHACH = 1;
       return 1;
     case 2:
@@ -3467,7 +3543,7 @@ inven_type *t_ptr;
       t_ptr->flags2 |= (TR_ACTIVATE|TR_ARTIFACT);
       t_ptr->name2 |= SN_PAURNIMMEN;
       t_ptr->toac += 15;
-      t_ptr->cost = 13000;
+      t_ptr->cost = 13000L;
       PAURNIMMEN = 1;
       return 1;
     case 3:
@@ -3478,7 +3554,7 @@ inven_type *t_ptr;
       t_ptr->flags2 |= (TR_ACTIVATE|TR_ARTIFACT);
       t_ptr->name2 |= SN_PAURAEGEN;
       t_ptr->toac += 15;
-      t_ptr->cost = 11000;
+      t_ptr->cost = 11000L;
       PAURAEGEN = 1;
       return 1;
     case 4:
@@ -3489,7 +3565,7 @@ inven_type *t_ptr;
       t_ptr->flags2 |= (TR_ACTIVATE|TR_ARTIFACT);
       t_ptr->name2 |= SN_PAURNEN;
       t_ptr->toac += 15;
-      t_ptr->cost = 12000;
+      t_ptr->cost = 12000L;
       PAURNEN = 1;
       return 1;
     default:
@@ -3503,7 +3579,7 @@ inven_type *t_ptr;
       t_ptr->tohit = -11;
       t_ptr->todam = -12;
       t_ptr->ident |=(ID_SHOW_HITDAM|ID_SHOW_P1);
-      t_ptr->cost = 0;
+      t_ptr->cost = 0L;
       CAMLOST = 1;
       return 1;
     }
@@ -3519,7 +3595,7 @@ inven_type *t_ptr;
     t_ptr->p1 = 4;
     t_ptr->ident |= ID_SHOW_P1;
     t_ptr->toac += 20;
-    t_ptr->cost = 105000;
+    t_ptr->cost = 105000L;
     BELEGENNON = 1;
     return 1;
   }
@@ -3533,7 +3609,7 @@ inven_type *t_ptr;
     t_ptr->name2 |= SN_CELEBORN;
     t_ptr->p1 = 4;
     t_ptr->toac += 25;
-    t_ptr->cost = 150000;
+    t_ptr->cost = 150000L;
     CELEBORN = 1;
     return 1;
   }
@@ -3547,7 +3623,7 @@ inven_type *t_ptr;
     t_ptr->name2 |= SN_CASPANION;
     t_ptr->p1 = 3;
     t_ptr->toac += 20;
-    t_ptr->cost = 40000;
+    t_ptr->cost = 40000L;
     CASPANION = 1;
     return 1;
   }
@@ -3562,7 +3638,7 @@ inven_type *t_ptr;
     t_ptr->p1 = 4;
     t_ptr->toac += 20;
     t_ptr->ident |= ID_SHOW_P1;
-    t_ptr->cost = 45000;
+    t_ptr->cost = 45000L;
     HITHLOMIR = 1;
     return 1;
   }
@@ -3575,7 +3651,7 @@ inven_type *t_ptr;
     t_ptr->name2 |= SN_THALKETTOTH;
     t_ptr->toac += 25;
     t_ptr->p1 = 3;
-    t_ptr->cost = 25000;
+    t_ptr->cost = 25000L;
     THALKETTOTH = 1;
     return 1;
   }
@@ -3589,7 +3665,7 @@ inven_type *t_ptr;
     t_ptr->name2 |= SN_ARVEDUI;
     t_ptr->p1 = 2;
     t_ptr->toac += 15;
-    t_ptr->cost = 32000;
+    t_ptr->cost = 32000L;
     ARVEDUI = 1;
     return 1;
   }
@@ -3602,7 +3678,7 @@ inven_type *t_ptr;
     t_ptr->name2 |= SN_THRANDUIL;
     t_ptr->p1 = 2;
     t_ptr->toac += 10;
-    t_ptr->cost = 50000;
+    t_ptr->cost = 50000L;
     THRANDUIL = 1;
     return 1;
   }
@@ -3615,7 +3691,7 @@ inven_type *t_ptr;
     t_ptr->name2 |= SN_THENGEL;
     t_ptr->p1 = 3;
     t_ptr->toac += 12;
-    t_ptr->cost = 22000;
+    t_ptr->cost = 22000L;
     THENGEL = 1;
     return 1;
   }
@@ -3628,7 +3704,7 @@ inven_type *t_ptr;
     t_ptr->name2 |= SN_HAMMERHAND;
     t_ptr->p1 = 3;
     t_ptr->toac += 20;
-    t_ptr->cost = 45000;
+    t_ptr->cost = 45000L;
     HAMMERHAND = 1;
     return 1;
   }
@@ -3637,10 +3713,10 @@ inven_type *t_ptr;
     if (wizard || peek) msg_print("Celefarn");
     else good_item_flag = TRUE;
     t_ptr->flags |= (TR_RES_ACID|TR_RES_FIRE|TR_RES_COLD|TR_RES_LIGHT);
-    t_ptr->flags2 |= (TR_RES_LT|TR_RES_DARK|TR_ARTIFACT);
+    t_ptr->flags2 |= (TR_ARTIFACT);
     t_ptr->name2 |= SN_CELEFARN;
     t_ptr->toac += 20;
-    t_ptr->cost = 12000;
+    t_ptr->cost = 12000L;
     CELEFARN = 1;
     return 1;
   }
@@ -3653,7 +3729,7 @@ inven_type *t_ptr;
     t_ptr->name2 |= SN_THROR;
     t_ptr->p1 = 3;
     t_ptr->toac += 20;
-    t_ptr->cost = 12000;
+    t_ptr->cost = 12000L;
     THROR = 1;
     return 1;
   }
@@ -3665,11 +3741,11 @@ inven_type *t_ptr;
       t_ptr->flags |= (TR_RES_ACID|TR_RES_FIRE|TR_RES_COLD|TR_RES_LIGHT|
 		       TR_CON|TR_DEX|TR_STR|TR_SEE_INVIS);
       t_ptr->flags2 |= (TR_TELEPATHY|TR_LIGHT|TR_RES_LT|TR_RES_BLIND
-			|TR_ARTIFACT);
+		|TR_ARTIFACT);
       t_ptr->name2 |= SN_DOR_LOMIN;
       t_ptr->p1 = 4;
       t_ptr->toac += 20;
-      t_ptr->cost = 300000;
+      t_ptr->cost = 300000L;
       DOR_LOMIN = 1;
       return 1;
     } else if (randint(2)==1) {
@@ -3682,7 +3758,7 @@ inven_type *t_ptr;
       t_ptr->ident |= ID_SHOW_P1;
       t_ptr->p1 = 2;
       t_ptr->toac += 10;
-      t_ptr->cost = 100000;
+      t_ptr->cost = 100000L;
       HOLHENNETH = 1;
       return 1;
     } else {
@@ -3696,7 +3772,7 @@ inven_type *t_ptr;
       t_ptr->ident |= ID_SHOW_P1;
       t_ptr->p1 = -125;
       t_ptr->toac += 10;
-      t_ptr->cost = 0;
+      t_ptr->cost = 0L;
       GORLIM = 1;
       return 1;
     }
@@ -3709,11 +3785,11 @@ inven_type *t_ptr;
     t_ptr->name2 = SN_GONDOR;
     t_ptr->flags = (TR_STR|TR_CON|TR_WIS|TR_SEE_INVIS|TR_REGEN
 				|TR_RES_ACID|TR_RES_FIRE);
-    t_ptr->flags2 = (TR_ACTIVATE|TR_LIGHT|TR_RES_LT|TR_RES_BLIND|TR_ARTIFACT);
+    t_ptr->flags2 |= (TR_ARTIFACT|TR_ACTIVATE|TR_LIGHT|TR_RES_LT|TR_RES_BLIND);
     t_ptr->p1 = 3;
     t_ptr->ident = ID_SHOW_P1;
     t_ptr->toac += 15;
-    t_ptr->cost = 100000;
+    t_ptr->cost = 100000L;
     GONDOR = 1;
     return 1;
   }
@@ -3728,7 +3804,7 @@ inven_type *t_ptr;
     t_ptr->p1 = -125;
     t_ptr->ident |= ID_SHOW_P1;
     t_ptr->toac += 20;
-    t_ptr->cost = 10000;
+    t_ptr->cost = 10000L;
     BERUTHIEL = 1;
     return 1;
   }
@@ -3741,8 +3817,13 @@ void magic_treasure(x, level, good, not_unique)
 int x, level, good, not_unique;
 {
   register inven_type *t_ptr;
-  register int chance, special, cursed, i;
-  int tmp;
+#ifdef MSDOS
+  register int chance, special, cursed;
+  register int32u i;
+#else
+  register int32u chance, special, cursed, i;
+#endif
+  int32u tmp;
 
   chance = OBJ_BASE_MAGIC + level;
   if (chance > OBJ_BASE_MAX)
@@ -3780,7 +3861,7 @@ int x, level, good, not_unique;
 	    t_ptr->p1 = 10;
 	    t_ptr->toac += 10+randint(5);
 	    t_ptr->name2 = SN_MAGI;
-	    t_ptr->cost = 10000 + (t_ptr->toac * 100);
+	    t_ptr->cost = 10000L + (t_ptr->toac * 100);
 	  } else if ((t_ptr->index>=389 && t_ptr->index<=394)
 		 || (t_ptr->index>=408 && t_ptr->index<=409)
    		 || (t_ptr->index>=415 && t_ptr->index<=419)) {
@@ -3805,13 +3886,13 @@ int x, level, good, not_unique;
 		  t_ptr->p1 = randint(3);
 		  t_ptr->name2 = SN_ELVENKIND;
 		  t_ptr->toac += 15;
-		  t_ptr->cost += 15000;
+		  t_ptr->cost += 15000L;
 		} else {
 		  if (peek) msg_print("Resist");
 		  rating += 20;
 		  t_ptr->name2 = SN_R;
 		  t_ptr->toac += 8;
-		  t_ptr->cost += 12500;
+		  t_ptr->cost += 12500L;
 		}
 		break;
 	      case 2:	 /* Resist Acid	  */
@@ -3825,7 +3906,7 @@ int x, level, good, not_unique;
 		rating += 15;
 		t_ptr->flags |= TR_RES_ACID;
 		t_ptr->name2 = SN_RA;
-		t_ptr->cost += 1000;
+		t_ptr->cost += 1000L;
 		break;
 	      case 3: case 4:	 /* Resist Fire	  */
 		if ((randint(3)==1 || good==666) && !not_unique &&
@@ -3834,7 +3915,7 @@ int x, level, good, not_unique;
 		rating += 17;
 		t_ptr->flags |= TR_RES_FIRE;
 		t_ptr->name2 = SN_RF;
-		t_ptr->cost += 600;
+		t_ptr->cost += 600L;
 		break;
 	      case 5: case 6:	/* Resist Cold	 */
 		if ((randint(3)==1 || good==666) && !not_unique &&
@@ -3843,7 +3924,7 @@ int x, level, good, not_unique;
 		rating += 16;
 		t_ptr->flags |= TR_RES_COLD;
 		t_ptr->name2 = SN_RC;
-		t_ptr->cost += 600;
+		t_ptr->cost += 600L;
 		break;
 	      case 7: case 8: case 9:  /* Resist Lightning*/
 		if ((randint(3)==1 || good==666) && !not_unique &&
@@ -3852,14 +3933,14 @@ int x, level, good, not_unique;
 		rating += 15;
 		t_ptr->flags |= TR_RES_LIGHT;
 		t_ptr->name2 = SN_RL;
-		t_ptr->cost += 500;
+		t_ptr->cost += 500L;
 		break;
 	      }
 	}
       else if (magik(cursed))
 	{
 	  t_ptr->toac -= m_bonus(1, 40, level);
-	  t_ptr->cost = 0;
+	  t_ptr->cost = 0L;
 	  t_ptr->flags |= TR_CURSED;
 	}
       break;
@@ -3899,7 +3980,7 @@ int x, level, good, not_unique;
 		  t_ptr->tohit += randint(5)+3;
 		  t_ptr->todam += randint(5)+3;
 		  t_ptr->p1 = 1;
-		  t_ptr->cost += 15000;
+		  t_ptr->cost += 15000L;
 		  t_ptr->cost *= 2;
 		  t_ptr->name2 = SN_WEST;
 		  break;
@@ -3919,7 +4000,7 @@ int x, level, good, not_unique;
 		  t_ptr->p1    = randint(4);
 		  t_ptr->name2 = SN_HA;
 		  t_ptr->cost += t_ptr->p1*500;
-		  t_ptr->cost += 10000;
+		  t_ptr->cost += 10000L;
 		  t_ptr->cost *= 2;
 		  break;
 		case 2:	/* Defender	 */
@@ -3937,30 +4018,30 @@ int x, level, good, not_unique;
 		  /* the value in p1 is used for stealth */
 		  t_ptr->p1    = randint(3);
 		  t_ptr->cost += t_ptr->p1*500;
-		  t_ptr->cost += 7500;
+		  t_ptr->cost += 7500L;
 		  t_ptr->cost *= 2;
 		  break;
 		case 3: case 4:   /* Flame Tongue  */
 		  if (((randint(2) == 1) || (good == 666)) && !not_unique &&
 		      unique_weapon(t_ptr)) break;
 		  rating += 20;
-		  t_ptr->flags |= (TR_FLAME_TONGUE|TR_RES_FIRE);
+		  t_ptr->flags |= TR_FLAME_TONGUE|TR_RES_FIRE;
 		  if (peek) msg_print("Flame");
 		  t_ptr->tohit += 2;
 		  t_ptr->todam += 3;
 		  t_ptr->name2 = SN_FT;
-		  t_ptr->cost += 3000;
+		  t_ptr->cost += 3000L;
 		  break;
 		case 5: case 6:   /* Frost Brand   */
 		  if (((randint(2) == 1) || (good == 666)) && !not_unique &&
 		      unique_weapon(t_ptr)) break;
 		  if (peek) msg_print("Frost");
 		  rating += 20;
-		  t_ptr->flags |= (TR_FROST_BRAND|TR_RES_COLD);
+		  t_ptr->flags |= TR_FROST_BRAND|TR_RES_COLD;
 		  t_ptr->tohit+=2;
 		  t_ptr->todam+=2;
 		  t_ptr->name2 = SN_FB;
-		  t_ptr->cost += 2200;
+		  t_ptr->cost += 2200L;
 		  break;
 		case 7: case 8:	 /* Slay Animal  */
 		  t_ptr->flags |= TR_SLAY_ANIMAL;
@@ -3969,7 +4050,7 @@ int x, level, good, not_unique;
 		  t_ptr->tohit += 3;
 		  t_ptr->todam += 3;
 		  t_ptr->name2 = SN_SA;
-		  t_ptr->cost += 2000;
+		  t_ptr->cost += 2000L;
 		  break;
 		case 9: case 10:	/* Slay Dragon	 */
 		  t_ptr->flags |= TR_SLAY_DRAGON;
@@ -3978,7 +4059,7 @@ int x, level, good, not_unique;
 		  t_ptr->tohit += 3;
 		  t_ptr->todam += 3;
 		  t_ptr->name2 = SN_SD;
-		  t_ptr->cost += 4000;
+		  t_ptr->cost += 4000L;
 		  break;
 		case 11: case 12:	/* Slay Evil   */
 		  t_ptr->flags |= TR_SLAY_EVIL;
@@ -3987,7 +4068,7 @@ int x, level, good, not_unique;
 		  t_ptr->tohit += 3;
 		  t_ptr->todam += 3;
 		  t_ptr->name2 = SN_SE;
-		  t_ptr->cost += 4000;
+		  t_ptr->cost += 4000L;
 		  break;
 		case 13: case 14:	 /* Slay Undead	  */
 		  t_ptr->flags |= (TR_SEE_INVIS|TR_SLAY_UNDEAD);
@@ -3996,7 +4077,7 @@ int x, level, good, not_unique;
 		  t_ptr->tohit += 2;
 		  t_ptr->todam += 2;
 		  t_ptr->name2 = SN_SU;
-		  t_ptr->cost += 3000;
+		  t_ptr->cost += 3000L;
 		  break;
 		case 15: case 16: case 17: /* Slay Orc */
 		  t_ptr->flags2 |= TR_SLAY_ORC;
@@ -4005,7 +4086,7 @@ int x, level, good, not_unique;
 		  t_ptr->tohit+=2;
 		  t_ptr->todam+=2;
 		  t_ptr->name2 = SN_SO;
-		  t_ptr->cost += 1200;
+		  t_ptr->cost += 1200L;
 		  break;
 		case 18: case 19: case 20: /* Slay Troll */
 		  t_ptr->flags2 |= TR_SLAY_TROLL;
@@ -4014,7 +4095,7 @@ int x, level, good, not_unique;
 		  t_ptr->tohit+=2;
 		  t_ptr->todam+=2;
 		  t_ptr->name2 = SN_ST;
-		  t_ptr->cost += 1200;
+		  t_ptr->cost += 1200L;
 		  break;
 	        case 21: case 22: case 23:
 		  t_ptr->flags2 |= TR_SLAY_GIANT;
@@ -4023,7 +4104,7 @@ int x, level, good, not_unique;
 		  t_ptr->tohit+=2;
 		  t_ptr->todam+=2;
 		  t_ptr->name2 = SN_SG;
-		  t_ptr->cost += 1200;
+		  t_ptr->cost += 1200L;
 		  break;
 		case 24: case 25: case 26:
 		  t_ptr->flags2 |= TR_SLAY_DEMON;
@@ -4032,7 +4113,7 @@ int x, level, good, not_unique;
 		  t_ptr->tohit+=2;
 		  t_ptr->todam+=2;
 		  t_ptr->name2 = SN_SDEM;
-		  t_ptr->cost += 1200;
+		  t_ptr->cost += 1200L;
 		  break;
 		}
 	    }
@@ -4049,7 +4130,7 @@ int x, level, good, not_unique;
 	      t_ptr->toac  = -10;
 	      t_ptr->weight += 100;
 	    }
-	    t_ptr->cost = 0;
+	    t_ptr->cost = 0L;
 	  }
 	  break;
 
@@ -4074,7 +4155,7 @@ int x, level, good, not_unique;
 		      t_ptr->flags |= (TR_STEALTH|TR_DEX);
 		      t_ptr->flags2 |= (TR_ARTIFACT);
 		      t_ptr->ident |= ID_SHOW_P1;
-		      t_ptr->cost = 25000;
+		      t_ptr->cost = 25000L;
 		      BELEG = 1;
 		      break;
 		    case 2:
@@ -4086,7 +4167,7 @@ int x, level, good, not_unique;
 		      t_ptr->p1 = 3;
 		      t_ptr->flags |= (TR_FREE_ACT|TR_DEX);
 		      t_ptr->flags2 |= (TR_ARTIFACT);
-		      t_ptr->cost = 20000;
+		      t_ptr->cost = 20000L;
 		      BARD = 1;
 		      break;
 		    }
@@ -4104,7 +4185,7 @@ int x, level, good, not_unique;
 		  t_ptr->flags |= (TR_SPEED|TR_RES_FIRE);
 		  t_ptr->flags2 |= (TR_ACTIVATE|TR_ARTIFACT);
 		  t_ptr->ident |= ID_SHOW_P1;
-		  t_ptr->cost = 38000;
+		  t_ptr->cost = 38000L;
 		  CUBRAGOL = 1;
 		  break;
 		}
@@ -4127,7 +4208,7 @@ int x, level, good, not_unique;
 	    t_ptr->tohit -= m_bonus(1, 50, level);
 	    t_ptr->todam -= m_bonus(1, 30, level); /* add damage. -CJS- */
 	    t_ptr->flags |= TR_CURSED;
-	    t_ptr->cost = 0;
+	    t_ptr->cost = 0L;
 	  }
 	  break;
 
@@ -4142,7 +4223,7 @@ int x, level, good, not_unique;
 	      {
 		/* a cursed digging tool */
 		t_ptr->p1 = -m_bonus(1, 30, level);
-		t_ptr->cost = 0;
+		t_ptr->cost = 0L;
 		t_ptr->flags |= TR_CURSED;
 	      }
 	  }
@@ -4166,7 +4247,7 @@ int x, level, good, not_unique;
 		rating += 11;
 		t_ptr->flags |= TR_FREE_ACT;
 		t_ptr->name2 = SN_FREE_ACTION;
-		t_ptr->cost += 1000;
+		t_ptr->cost += 1000L;
 		break;
 	      case 4: case 5: case 6:
 		t_ptr->ident |= ID_SHOW_HITDAM;
@@ -4250,7 +4331,7 @@ int x, level, good, not_unique;
 			rating += 30;
 			t_ptr->ident |= ID_SHOW_P1;
 			t_ptr->p1 = 1;
-			t_ptr->cost += 1000000;
+			t_ptr->cost += 1000000L;
 		      }
 		    }
 		  else /* 2 - 5 */
@@ -4366,7 +4447,7 @@ int x, level, good, not_unique;
 			    rating += 20;
 			    t_ptr->flags2 |= TR_TELEPATHY;
 			    t_ptr->name2 = SN_TELEPATHY;
-			    t_ptr->cost += 50000;
+			    t_ptr->cost += 50000L;
 			  }
 			}
 		    }
@@ -4724,7 +4805,7 @@ int x, level, good, not_unique;
 			  t_ptr->flags |= (TR_RES_FIRE|TR_RES_COLD|
 					   TR_RES_LIGHT|TR_RES_ACID);
 			  t_ptr->flags2 |= (TR_ACTIVATE|TR_ARTIFACT);
-			  t_ptr->cost = 10000;
+			  t_ptr->cost = 10000L;
 			  made_art_cloak=1;
 			  COLLUIN = 1;
 			  break;
@@ -4740,7 +4821,7 @@ int x, level, good, not_unique;
 					   TR_RES_ACID);
 			  t_ptr->flags2 |= (TR_ACTIVATE|TR_ARTIFACT);
 			  t_ptr->ident |= ID_SHOW_P1;
-			  t_ptr->cost = 13000;
+			  t_ptr->cost = 13000L;
 			  made_art_cloak=1;
 			  HOLCOLLETH = 1;
 			  break;
@@ -4752,9 +4833,9 @@ int x, level, good, not_unique;
 			  t_ptr->toac += 18;
     			  t_ptr->flags = (TR_DEX|TR_CHR|TR_RES_FIRE|
 				    TR_RES_ACID|TR_RES_COLD|TR_FREE_ACT);
-			  t_ptr->flags2 = (TR_ACTIVATE|TR_ARTIFACT);
+			  t_ptr->flags2 |= (TR_ARTIFACT|TR_ACTIVATE);
 			  t_ptr->p1 = 3;
-			  t_ptr->cost = 35000;
+			  t_ptr->cost = 35000L;
 			  made_art_cloak=1;
 			  THINGOL = 1;
                           break;
@@ -4768,7 +4849,7 @@ int x, level, good, not_unique;
 			  t_ptr->flags = (TR_SEE_INVIS|TR_FREE_ACT|
 					  TR_RES_ACID);
 			  t_ptr->flags2 |= (TR_ARTIFACT);
-			  t_ptr->cost = 8000;
+			  t_ptr->cost = 8000L;
 			  made_art_cloak=1;
 			  THORONGIL = 1;
 			  break;
@@ -4783,7 +4864,7 @@ int x, level, good, not_unique;
 			  t_ptr->flags2 |= (TR_ACTIVATE|TR_ARTIFACT);
 			  t_ptr->p1 = 3;
 			  t_ptr->ident |= ID_SHOW_P1;
-			  t_ptr->cost = 11000;
+			  t_ptr->cost = 11000L;
 			  made_art_cloak=1;
 			  COLANNON = 1;
 			  break;
@@ -4802,9 +4883,9 @@ int x, level, good, not_unique;
 			     t_ptr->toac += 20;
 			     t_ptr->flags = (TR_RES_FIRE|TR_RES_COLD|
 					TR_INT|TR_WIS|TR_CHR|TR_RES_ACID);
-			     t_ptr->flags2 = (TR_ACTIVATE|TR_ARTIFACT);
+			     t_ptr->flags2 |= (TR_ARTIFACT|TR_ACTIVATE);
 			     t_ptr->p1 = 2;
-			     t_ptr->cost = 45000;
+			     t_ptr->cost = 45000L;
 			     made_art_cloak = 1;
 			     LUTHIEN = 1;
 			     break;
@@ -4819,7 +4900,7 @@ int x, level, good, not_unique;
 			     t_ptr->flags2 |= (TR_ARTIFACT);
 			     t_ptr->p1 = 4;
 			     t_ptr->ident = ID_SHOW_P1;
-			     t_ptr->cost = 35000;
+			     t_ptr->cost = 35000L;
 			     made_art_cloak = 1;
 			     TUOR = 1;
 			     break;
@@ -4831,7 +4912,7 @@ int x, level, good, not_unique;
 			      t_ptr->name2 = SN_PROTECTION;
 			      t_ptr->toac += m_bonus(2, 40, level);
 			      t_ptr->toac += (5 + randint(3));
-			      t_ptr->cost += 250;
+			      t_ptr->cost += 250L;
 			      rating += 8;
 			  }
 		      else if (randint(10) < 10)
@@ -5056,7 +5137,7 @@ int x, level, good, not_unique;
   }
 }
 
-static struct opt_desc { char *o_prompt; int *o_var; } options[] = {
+static struct opt_desc { char *o_prompt; int8u *o_var; } options[] = {
   { "Running: cut known corners",		&find_cut },
   { "Running: examine potential corners",	&find_examine },
   { "Running: print self during run",		&find_prself },
@@ -5066,6 +5147,10 @@ static struct opt_desc { char *o_prompt; int *o_var; } options[] = {
   { "Rogue like commands",			&rogue_like_commands },
   { "Show weights in inventory",		&show_weight_flag },
   { "Highlight and notice mineral seams",	&highlight_seams },
+#ifdef MSDOS
+  { "Beep for invalid character",		&sound_beep_flag },
+  { "Turn off haggling",			&no_haggle_flag },
+#endif
   { 0, 0 } };
 
 

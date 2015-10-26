@@ -6,11 +6,66 @@
    not for profit purposes provided that this copyright and statement are
    included in all such copies. */
 
+/* TURBOC wants full prototypes, or it bitches... */
+#ifdef __TURBOC__
+#define ARG_VOID void
+#define ARG_INT int
+#define ARG_INT8U int8u
+#define ARG_INT16U int16u
+#define ARG_INT32U int32u
+#define ARG_INT8 int8
+#define ARG_INT16 int16
+#define ARG_INT32 int32
+#define ARG_CHAR_PTR char *
+#define ARG_CHAR char
+#define ARG_INV_PTR inven_type *
+#define ARG_INT_PTR int *
+#define ARG_INT32U_PTR int32u *
+#define ARG_INT8U_PTR int8u *
+#define ARG_INT_FN int (*)()
+#define ARG_INT_FN_PTR int (**)()
+#define ARG_INT16_PTR int16 *
+#define ARG_MON_PTR monster_type *
+#define ARG_CTR_PTR creature_type *
+#define ARG_INT32_PTR int32 * 
+#define ARG_INT16U_PTR int16u *
+#define ARG_UNIQ_PTR struct unique_mon *
+#define ARG_VOID_PTR void *
+#define ARG_COMMA ,
+#else
+#define ARG_VOID
+#define ARG_INT
+#define ARG_INT8U
+#define ARG_INT16U
+#define ARG_INT32U
+#define ARG_INT8
+#define ARG_INT16
+#define ARG_INT32
+#define ARG_CHAR_PTR
+#define ARG_CHAR
+#define ARG_INV_PTR
+#define ARG_INT_PTR
+#define ARG_INT32U_PTR
+#define ARG_INT8U_PTR
+#define ARG_INT_FN
+#define ARG_INT_FN_PTR
+#define ARG_INT16_PTR
+#define ARG_MON_PTR
+#define ARG_CTR_PTR
+#define ARG_INT32_PTR
+#define ARG_INT16U_PTR
+#define ARG_UNIQ_PTR
+#define ARG_VOID_PTR
+#define ARG_COMMA
+#endif
+
 /* many systems don't define these anywhere */
+#ifndef MSDOS
 #if defined(USG) || defined(DGUX) || defined(atarist)
 extern int sprintf();
 #else
 extern char *sprintf();
+#endif
 #endif
 
 #ifndef MSDOS
@@ -20,7 +75,11 @@ extern int errno;
 extern char *copyright[5];
 
 extern int player_uid;
+#ifdef MSDOS
+extern int8u NO_SAVE;
+#else
 extern int NO_SAVE;
+#endif
 
 /* horrible hack: needed because compact_monster() can be called from deep
    within creatures() via place_monster() and summon_monster() */
@@ -31,6 +90,19 @@ extern vtype died_from;
 extern vtype savefile;			/* The save file. -CJS- */
 
 /* These are options, set with set_options command -CJS- */
+#ifdef MSDOS
+extern int8u rogue_like_commands;
+extern int8u find_cut;			/* Cut corners on a run */
+extern int8u find_examine;		/* Check corners on a run */
+extern int8u find_prself;			/* Print yourself on a run (slower) */
+extern int8u find_bound;			/* Stop run when the map shifts */
+extern int8u prompt_carry_flag;		/* Prompt to pick something up */
+extern int8u show_weight_flag;		/* Display weights in inventory */
+extern int8u highlight_seams;		/* Highlight magma and quartz */
+extern int8u find_ignore_doors;		/* Run through open doors */
+extern int8u sound_beep_flag;	/* shut up bell() ! -CFT */
+extern int8u no_haggle_flag; /* for those who find it tedious -CFT */
+#else
 extern int rogue_like_commands;
 extern int find_cut;			/* Cut corners on a run */
 extern int find_examine;		/* Check corners on a run */
@@ -40,9 +112,15 @@ extern int prompt_carry_flag;		/* Prompt to pick something up */
 extern int show_weight_flag;		/* Display weights in inventory */
 extern int highlight_seams;		/* Highlight magma and quartz */
 extern int find_ignore_doors;		/* Run through open doors */
+#endif
 
 /* Unique artifact weapon flags */
-extern int GROND, RINGIL, AEGLOS, ARUNRUTH, MORMEGIL, ANGRIST, GURTHANG,
+#ifdef MSDOS
+extern int8u
+#else
+extern int
+#endif
+	GROND, RINGIL, AEGLOS, ARUNRUTH, MORMEGIL, ANGRIST, GURTHANG,
   CALRIS, ANDURIL, STING, ORCRIST, GLAMDRING, DURIN, AULE, THUNDERFIST,
   BLOODSPIKE, DOOMCALLER, NARTHANC, NIMTHANC, DETHANC, GILETTAR, RILIA,
   BELANGIL, BALLI, LOTHARANG, FIRESTAR, ERIRIL, CUBRAGOL, BARD, COLLUIN,
@@ -53,7 +131,12 @@ extern int GROND, RINGIL, AEGLOS, ARUNRUTH, MORMEGIL, ANGRIST, GURTHANG,
   EONWE, THEODEN, ULMO, OSONDIR, TURMIL, TIL, DEATHWREAKER, AVAVIR, TARATOL;
 
 /* Unique artifact armour flags */
-extern int DOR_LOMIN, NENYA, NARYA, VILYA, BELEGENNON, FEANOR, ISILDUR,
+#ifdef MSDOS
+extern int8u
+#else
+extern int
+#endif
+	DOR_LOMIN, NENYA, NARYA, VILYA, BELEGENNON, FEANOR, ISILDUR,
 SOULKEEPER, FINGOLFIN, ANARION, POWER, PHIAL, BELEG, DAL, PAURHACH,
 PAURNIMMEN, PAURAEGEN, PAURNEN, CAMMITHRIM, CAMBELEG, INGWE, CARLAMMAS,
 HOLHENNETH, AEGLIN, CAMLOST, NIMLOTH, NAR, BERUTHIEL, GORLIM, ELENDIL,
@@ -63,12 +146,33 @@ TULKAS, NECKLACE, BARAHIR, CASPANION, RAZORBACK, BLADETURNER;
 /* Brand new extra effecient and kind way to add unique monsters... HOORAY!! */
 extern struct unique_mon u_list[MAX_CREATURES];
 
+#ifdef MSDOS
+extern int16 quests[MAX_QUESTS];
+#else
 extern int quests[MAX_QUESTS];
-
+#endif
 
 /* global flags */
-extern int good_item_flag;      /* True if an artifact has been created... */
 extern int LOAD;
+#ifdef MSDOS
+extern int8u good_item_flag;      /* True if an artifact has been created... */
+extern int8u new_level_flag;	  /* Next level when true  */
+extern int8u search_flag;	      /* Player is searching   */
+extern int8u teleport_flag;	/* Handle teleport traps  */
+extern int8u eof_flag;		/* Used to handle eof/HANGUP */
+extern int8u player_light;      /* Player carrying light */
+extern int8u find_flag;	/* Used in MORIA	      */
+extern int8u free_turn_flag;	/* Used in MORIA	      */
+extern int8u weapon_heavy;	/* Flag if the weapon too heavy -CJS- */
+extern int8u pack_heavy;		/* Flag if the pack too heavy -CJS- */
+extern char doing_inven;	/* Track inventory commands */
+extern int8u screen_change;	/* Screen changes (used in inven_commands) */
+extern int8u be_nasty;
+
+extern int8u character_generated;	 /* don't save score until char gen finished */
+extern int8u character_saved;	 /* prevents save on kill after save_char() */
+#else
+extern int good_item_flag;      /* True if an artifact has been created... */
 extern int new_level_flag;	  /* Next level when true  */
 extern int search_flag;	      /* Player is searching   */
 extern int teleport_flag;	/* Handle teleport traps  */
@@ -84,10 +188,17 @@ extern int be_nasty;
 
 extern int character_generated;	 /* don't save score until char gen finished */
 extern int character_saved;	 /* prevents save on kill after save_char() */
+#endif
+
 extern int highscore_fd;	/* High score file descriptor */
 extern int command_count;	/* Repetition of commands. -CJS- */
+#ifdef MSDOS
+extern int8u default_dir;		/* Use last direction in repeated commands */
+extern int16u noscore;		/* Don't score this game. -CJS- */
+#else
 extern int default_dir;		/* Use last direction in repeated commands */
 extern int16 noscore;		/* Don't score this game. -CJS- */
+#endif
 extern int32u randes_seed;    /* For encoding colors */
 extern int32u town_seed;	    /* Seed for town genera*/
 extern int16 dun_level;	/* Cur dungeon level   */
@@ -95,16 +206,27 @@ extern int16 missile_ctr;	/* Counter for missiles */
 extern int msg_flag;	/* Set with first msg  */
 extern vtype old_msg[MAX_SAVE_MSG];	/* Last messages -CJS- */
 extern int16 last_msg;			/* Where in the array is the last */
-extern int death;	/* True if died	      */
 extern int32 turn;	/* Cur trun of game    */
+#ifdef MSDOS
+extern int8u death;	/* True if died	      */
+extern int8u wizard;	/* Wizard flag	      */
+extern int8u to_be_wizard;
+extern int16u panic_save; /* this is true if playing from a panic save */
+extern int8u wait_for_more;
+#else
+extern int death;	/* True if died	      */
 extern int wizard;	/* Wizard flag	      */
 extern int to_be_wizard;
 extern int16 panic_save; /* this is true if playing from a panic save */
-
 extern int wait_for_more;
+#endif
 
 extern char days[7][29];
+#ifdef MSDOS
+extern int8u closing_flag;	/* Used for closing   */
+#else
 extern int closing_flag;	/* Used for closing   */
+#endif
 
 extern int16 cur_height, cur_width;	/* Cur dungeon size    */
 /*  Following are calculated from max dungeon sizes		*/
@@ -229,6 +351,14 @@ extern char *metals[MAX_METALS];
 extern char *rocks[MAX_ROCKS];
 extern char *amulets[MAX_AMULETS];
 extern char *syllables[MAX_SYLLABLES];
+#ifdef TC_COLOR
+extern int8u tccolors[MAX_COLORS];
+extern int8u tcmushrooms[MAX_MUSH];
+extern int8u tcwoods[MAX_WOODS];
+extern int8u tcmetals[MAX_METALS];
+extern int8u tcrocks[MAX_ROCKS];
+extern int8u tcamulets[MAX_AMULETS];
+#endif
 #endif
 
 extern int8u blows_table[11][12];
@@ -242,7 +372,11 @@ extern int16u normal_table[NORMAL_TABLE_SIZE];
 extern char last_command;  /* Memory of previous command. */
 /* moria1.c */
 /* Track if temporary light about player.  */
-extern int light_flag;
+#ifdef MSDOS
+extern int8u light_flag;
+#else
+extern int8u light_flag;
+#endif
 
 #ifdef MSDOS
 extern int8u	floorsym, wallsym;
@@ -535,7 +669,7 @@ void bash(void);
 /* ms_misc.c */
 char *getlogin(void);
 #ifdef __TURBOC__
-void sleep(int);
+void sleep(unsigned);
 #else
 unsigned int sleep(int );
 #endif
@@ -678,6 +812,7 @@ void destroy_area(int, int);
 int enchant(int16 *);
 int remove_curse(void);
 int restore_level(void);
+void self_knowledge(void);
 
 /* staffs.c */
 void use(void);
@@ -726,56 +861,68 @@ void artifact_check(void);
 #else
 
 /* create.c */
-void create_character();
+void create_character(ARG_VOID);
+void rerate(ARG_VOID);
 
 /* creature.c */
-void update_mon();
-int movement_rate();
-void creatures();
+void update_mon(ARG_INT);
+int movement_rate(ARG_INT16);
+void creatures(ARG_INT);
+int multiply_monster(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
 
 /* death.c */
-void exit_game();
+void exit_game(ARG_VOID);
+void display_scores(ARG_INT ARG_COMMA ARG_INT);
+int delete_entry(ARG_INT);
 
 /* desc.c */
-int is_a_vowel();
-void magic_init();
-void known1();
-int known1_p();
-void known2();
-int known2_p();
-void clear_known2();
-void clear_empty();
-void store_bought();
-int store_bought_p();
-void sample();
-void identify();
-void unmagic_name();
-void objdes();
-void scribe_object();
-void add_inscribe(); 
-void inscribe();
-void invcopy();
-void desc_charges();
-void desc_remain();
+int is_a_vowel(ARG_CHAR);
+void magic_init(ARG_VOID);
+void known1(ARG_INV_PTR);
+int known1_p(ARG_INV_PTR);
+void known2(ARG_INV_PTR);
+int known2_p(ARG_INV_PTR);
+void clear_known2(ARG_INV_PTR);
+void clear_empty(ARG_INV_PTR);
+void store_bought(ARG_INV_PTR);
+int store_bought_p(ARG_INV_PTR);
+void sample(ARG_INV_PTR);
+void identify(ARG_INT_PTR);
+void unmagic_name(ARG_INV_PTR);
+void objdes(ARG_CHAR_PTR ARG_COMMA ARG_INV_PTR ARG_COMMA ARG_INT);
+/* void scribe_object();  apperently moved to misc2.c -CFT */
+/* void add_inscribe(); apperently moved to misc2.c -CFT */
+/* void inscribe(); apperently moved to misc2.c -CFT */
+void invcopy(ARG_INV_PTR ARG_COMMA ARG_INT);
+void desc_charges(ARG_INT);
+void desc_remain(ARG_INT);
+int16 object_offset(ARG_INV_PTR);
 
 /* dungeon.c */
-void dungeon();
+void dungeon(ARG_VOID);
+int is_quest(ARG_INT);
+int special_check(ARG_INV_PTR);
+char *value_check(ARG_INV_PTR);
+int ruin_stat(ARG_INT);
+int special_check(ARG_INV_PTR);
 
 /* eat.c */
-void eat();
+void eat(ARG_VOID);
 
 /* files.c */
-void read_times();
-void helpfile();
-void print_objects();
-int file_character();
+void read_times(ARG_VOID);
+void helpfile(ARG_CHAR_PTR);
+void print_objects(ARG_VOID);
+int file_character(ARG_CHAR_PTR);
+int init_scorefile(ARG_VOID);
 
 /* generate.c */
-void generate_cave();
+void generate_cave(ARG_VOID);
 
 /* help.c */
-void ident_char();
+void ident_char(ARG_VOID);
 
+#ifndef USING_TCIO
 /* io.c */
 #ifdef SIGTSTP
 int suspend();
@@ -806,359 +953,475 @@ void save_screen();
 void restore_screen();
 void bell();
 void screen_map();
+#endif
 
 /* magic.c */
-void cast();
+void cast(ARG_VOID);
 
 /* main.c */
 int main();
 
 /* misc1.c */
-void init_seeds();
-void set_seed();
-void reset_seed();
-int check_time();
-int randint();
-int randnor();
-int bit_pos();
-int in_bounds();
-int distance();
-int next_to_walls();
-int next_to_corr();
-int damroll();
-int pdamroll();
-int los();
-unsigned char loc_symbol();
-int test_light();
-void prt_map();
-void add_food();
-int popm();
-int max_hp();
-void place_monster();
-void place_win_monster();
-int get_mons_num();
-void alloc_monster();
-int summon_monster();
-int summon_undead();
-int popt();
-void pusht();
-int magik();
-int m_bonus();
-void magic_treasure();
+void set_options(ARG_VOID); /* apperently moved from moria1.c -CFT */
+void panel_bounds(ARG_VOID); /* apperently moved from moria1.c -CFT */
+int get_panel(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+	 /* apperently moved from moria1.c -CFT */
+int panel_contains(ARG_INT ARG_COMMA ARG_INT);
+	 /* apperently moved from moria1.c -CFT */
+void init_seeds(ARG_INT32U);
+void set_seed(ARG_INT32U);
+void reset_seed(ARG_VOID);
+int check_time(ARG_VOID);
+int randint(ARG_INT);
+int randnor(ARG_INT ARG_COMMA ARG_INT);
+int bit_pos(ARG_INT32U_PTR);
+int in_bounds(ARG_INT ARG_COMMA ARG_INT);
+int distance(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+int next_to_walls(ARG_INT ARG_COMMA ARG_INT);
+int next_to_corr(ARG_INT ARG_COMMA ARG_INT);
+int damroll(ARG_INT ARG_COMMA ARG_INT);
+int pdamroll(ARG_INT8U_PTR);
+int los(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+unsigned char loc_symbol(ARG_INT ARG_COMMA ARG_INT);
+int test_light(ARG_INT ARG_COMMA ARG_INT);
+void prt_map(ARG_VOID);
+void add_food(ARG_INT);
+int popm(ARG_VOID);
+int max_hp(ARG_INT8U_PTR);
+void place_monster(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT
+		ARG_COMMA ARG_INT);
+void place_win_monster(ARG_VOID);
+int get_mons_num(ARG_INT);
+void alloc_monster(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+int summon_monster(ARG_INT_PTR ARG_COMMA ARG_INT_PTR ARG_COMMA ARG_INT);
+int summon_undead(ARG_INT_PTR ARG_COMMA ARG_INT_PTR);
+int popt(ARG_VOID);
+void pusht(ARG_INT8U);
+int magik(ARG_INT);
+int m_bonus(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+void magic_treasure(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT
+		ARG_COMMA ARG_INT);
+void set_ghost(ARG_CTR_PTR ARG_COMMA ARG_CHAR_PTR ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+int test_place(ARG_INT ARG_COMMA ARG_INT);
+void place_group(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+int unique_armour(ARG_INV_PTR);
+int unique_weapon(ARG_INV_PTR);
+int get_nmons_num(ARG_INT);
+int place_ghost(ARG_VOID);
+int summon_demon(ARG_INT ARG_COMMA ARG_INT_PTR ARG_COMMA ARG_INT_PTR);
+int summon_dragon(ARG_INT_PTR ARG_COMMA ARG_INT_PTR);
+int summon_angel(ARG_INT_PTR ARG_COMMA ARG_INT_PTR);
+int summon_spider(ARG_INT_PTR ARG_COMMA ARG_INT_PTR);
+int summon_hound(ARG_INT_PTR ARG_COMMA ARG_INT_PTR);
+int summon_wraith(ARG_INT_PTR ARG_COMMA ARG_INT_PTR);
+int summon_gundead(ARG_INT_PTR ARG_COMMA ARG_INT_PTR);
+int summon_reptile(ARG_INT_PTR ARG_COMMA ARG_INT_PTR);
+int summon_ant(ARG_INT_PTR ARG_COMMA ARG_INT_PTR);
+int summon_unique(ARG_INT_PTR ARG_COMMA ARG_INT_PTR);
+int summon_jabberwock(ARG_INT_PTR ARG_COMMA ARG_INT_PTR);
+int summon_ancientd(ARG_INT_PTR ARG_COMMA ARG_INT_PTR);
+int lose_all_info(ARG_VOID);
 
 /* misc2.c */
-void place_trap();
-void place_rubble();
-void place_gold();
-int get_obj_num();
-void place_object();
-void alloc_object();
-void random_object();
-void cnv_stat();
-void prt_stat();
-void prt_field();
-int stat_adj();
-int chr_adj();
-int con_adj();
-char *title_string();
-void prt_title();
-void prt_level();
-void prt_cmana();
-void prt_mhp();
-void prt_chp();
-void prt_pac();
-void prt_gold();
-void prt_depth();
-void prt_hunger();
-void prt_blind();
-void prt_confused();
-void prt_afraid();
-void prt_poisoned();
-void prt_state();
-void prt_speed();
-void prt_study();
-void prt_winner();
-int16u modify_stat();
-void set_use_stat();
-int inc_stat();
-int dec_stat();
-int res_stat();
-void bst_stat();
-int tohit_adj();
-int toac_adj();
-int todis_adj();
-int todam_adj();
-void prt_stat_block();
-void draw_cave();
-void put_character();
-void put_stats();
-char *likert();
-void put_misc1();
-void put_misc2();
-void put_misc3();
-void display_char();
-void get_name();
-void change_name();
-void inven_destroy();
-void take_one_item();
-void inven_drop();
-int inven_damage();
-int weight_limit();
-int inven_check_num();
-int inven_check_weight();
-void check_strength();
-int inven_carry();
-int spell_chance();
-void print_spells();
-int get_spell();
-void calc_spells();
-void gain_spells();
-void calc_mana();
-void prt_experience();
-void calc_hitpoints();
-void insert_str();
-void insert_lnum();
-int enter_wiz_mode();
-int attack_blows();
-int tot_dam();
-int critical_blow();
-int mmove();
-int player_saves();
-int find_range();
-void teleport();
-void check_view();
+void scribe_object(ARG_VOID);  /* apperently moved from desc.c -CFT */
+void check_strength(ARG_VOID); /* apparently moved from moria1.c -CFT */
+void add_inscribe(ARG_INV_PTR ARG_COMMA ARG_INT8U);
+	 /* apperently moved from desc.c -CFT */
+void inscribe(ARG_INV_PTR ARG_COMMA ARG_CHAR_PTR);
+	  /* apperently moved from desc.c -CFT */
+void place_trap(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+void place_rubble(ARG_INT ARG_COMMA ARG_INT);
+void place_gold(ARG_INT ARG_COMMA ARG_INT);
+int get_obj_num(ARG_INT ARG_COMMA ARG_INT);
+void place_object(ARG_INT ARG_COMMA ARG_INT);
+void alloc_object(ARG_INT_FN ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+void random_object(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+void cnv_stat(ARG_INT16U ARG_COMMA ARG_CHAR_PTR);
+void prt_stat(ARG_INT);
+void prt_field(ARG_CHAR_PTR ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+int stat_adj(ARG_INT);
+int chr_adj(ARG_VOID);
+int con_adj(ARG_VOID);
+char *title_string(ARG_VOID);
+void prt_title(ARG_VOID);
+void prt_level(ARG_VOID);
+void prt_cmana(ARG_VOID);
+void prt_mhp(ARG_VOID);
+void prt_chp(ARG_VOID);
+void prt_pac(ARG_VOID);
+void prt_gold(ARG_VOID);
+void prt_depth(ARG_VOID);
+void prt_hunger(ARG_VOID);
+void prt_blind(ARG_VOID);
+void prt_confused(ARG_VOID);
+void prt_afraid(ARG_VOID);
+void prt_poisoned(ARG_VOID);
+void prt_state(ARG_VOID);
+void prt_speed(ARG_VOID);
+void prt_study(ARG_VOID);
+void prt_winner(ARG_VOID);
+int16u modify_stat(ARG_INT ARG_COMMA ARG_INT16U);
+void set_use_stat(ARG_INT);
+int inc_stat(ARG_INT);
+int dec_stat(ARG_INT);
+int res_stat(ARG_INT);
+void bst_stat(ARG_INT ARG_COMMA ARG_INT);
+int tohit_adj(ARG_VOID);
+int toac_adj(ARG_VOID);
+int todis_adj(ARG_VOID);
+int todam_adj(ARG_VOID);
+void prt_stat_block(ARG_VOID);
+void draw_cave(ARG_VOID);
+void put_character(ARG_VOID);
+void put_stats(ARG_VOID);
+char *likert(ARG_INT ARG_COMMA ARG_INT);
+void put_misc1(ARG_VOID);
+void put_misc2(ARG_VOID);
+void put_misc3(ARG_VOID);
+void display_char(ARG_VOID);
+void get_name(ARG_VOID);
+void change_name(ARG_VOID);
+void inven_destroy(ARG_INT);
+void take_one_item(ARG_INV_PTR ARG_COMMA ARG_INV_PTR);
+void inven_drop(ARG_INT ARG_COMMA ARG_INT);
+int inven_damage(ARG_INT_FN ARG_COMMA ARG_INT);
+int weight_limit(ARG_VOID);
+int inven_check_num(ARG_INV_PTR);
+int inven_check_weight(ARG_INV_PTR);
+void check_strength(ARG_VOID);
+int inven_carry(ARG_INV_PTR);
+int spell_chance(ARG_INT);
+void print_spells(ARG_INT_PTR ARG_COMMA ARG_INT ARG_COMMA ARG_INT
+		ARG_COMMA ARG_INT);
+int get_spell(ARG_INT_PTR ARG_COMMA ARG_INT ARG_COMMA
+		ARG_INT_PTR ARG_COMMA ARG_INT_PTR ARG_COMMA
+		ARG_CHAR_PTR ARG_COMMA ARG_INT);
+void calc_spells(ARG_INT);
+void gain_spells(ARG_VOID);
+void calc_mana(ARG_INT);
+void prt_experience(ARG_VOID);
+void calc_hitpoints(ARG_VOID);
+void insert_str(ARG_CHAR_PTR ARG_COMMA ARG_CHAR_PTR ARG_COMMA
+		ARG_CHAR_PTR);
+void insert_lnum(ARG_CHAR_PTR ARG_COMMA ARG_CHAR_PTR ARG_COMMA
+		ARG_INT32 ARG_COMMA ARG_INT);
+int enter_wiz_mode(ARG_VOID);
+int attack_blows(ARG_INT ARG_COMMA ARG_INT_PTR);
+int tot_dam(ARG_INV_PTR ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+int critical_blow(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA
+		ARG_INT);
+int mmove(ARG_INT ARG_COMMA ARG_INT_PTR ARG_COMMA ARG_INT_PTR);
+int player_saves(ARG_VOID);
+int find_range(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT_PTR ARG_COMMA
+		ARG_INT_PTR);
+void teleport(ARG_INT);
+void check_view(ARG_VOID);
+int special_place_object(ARG_INT ARG_COMMA ARG_INT);
+void place_special(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT32U);
+void prt_cut(ARG_VOID);
+void prt_stun(ARG_VOID);
+void cut_player(ARG_INT);
+void stun_player(ARG_INT);
+void special_random_object(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+
 
 /* monsters.c */
 
 /* moria1.c */
-void change_speed();
-void py_bonuses();
-void calc_bonuses();
-int show_inven();
-char *describe_use();
-int show_equip();
-void takeoff();
-void check_strength();
-int verify();
-void inven_command();
-int get_item();
-void panel_bounds();
-int get_panel();
-int panel_contains();
-int no_light();
-int get_dir();
-int get_alldir();
-void move_rec();
-void light_room();
-void lite_spot();
-void move_light();
-void disturb();
-void search_on();
-void search_off();
-void rest();
-void rest_off();
-int test_hit();
-void take_hit();
-void change_trap();
-void search();
-void set_options();
-void find_init();
-void find_run();
-void end_find();
-void area_affect();
-int minus_ac();
-void corrode_gas();
-void poison_gas();
-void fire_dam();
-void cold_dam();
-void light_dam();
-void acid_dam();
+void change_speed(ARG_INT);
+void py_bonuses(ARG_INV_PTR ARG_COMMA ARG_INT);
+void calc_bonuses(ARG_VOID);
+int show_inven(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA
+		ARG_INT ARG_COMMA ARG_INT_FN);
+char *describe_use(ARG_INT);
+int show_equip(ARG_INT ARG_COMMA ARG_INT);
+void takeoff(ARG_INT ARG_COMMA ARG_INT);
+/* void check_strength(); apparently moved to misc2.c -CFT */
+int verify(ARG_CHAR_PTR ARG_COMMA ARG_INT);
+void inven_command(ARG_CHAR);
+int get_item(ARG_INT_PTR ARG_COMMA ARG_CHAR_PTR ARG_COMMA ARG_INT ARG_COMMA
+		ARG_INT ARG_COMMA ARG_INT_FN);
+/* void panel_bounds(); apperently moved to misc1.c -CFT */
+/* int get_panel(); apperently moved to misc1.c -CFT */
+/* int panel_contains(); apperently moved to misc1.c -CFT */
+int no_light(ARG_VOID);
+int get_dir(ARG_CHAR_PTR ARG_COMMA ARG_INT_PTR);
+int get_alldir(ARG_CHAR_PTR ARG_COMMA ARG_INT_PTR);
+void move_rec(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+void light_room(ARG_INT ARG_COMMA ARG_INT);
+void lite_spot(ARG_INT ARG_COMMA ARG_INT);
+void move_light(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+void disturb(ARG_INT ARG_COMMA ARG_INT);
+void search_on(ARG_VOID);
+void search_off(ARG_VOID);
+void rest(ARG_VOID);
+void rest_off(ARG_VOID);
+int test_hit(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA
+		ARG_INT ARG_COMMA ARG_INT);
+void take_hit(ARG_INT ARG_COMMA ARG_CHAR_PTR);
+void change_trap(ARG_INT ARG_COMMA ARG_INT);
+void search(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+/* void set_options(); apperently moved to misc1.c -CFT */
+void find_init(ARG_INT);
+void find_run(ARG_VOID);
+void end_find(ARG_VOID);
+void area_affect(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+int minus_ac(ARG_INT32U);
+void corrode_gas(ARG_CHAR_PTR);
+void poison_gas(ARG_INT ARG_COMMA ARG_CHAR_PTR);
+void fire_dam(ARG_INT ARG_COMMA ARG_CHAR_PTR);
+void cold_dam(ARG_INT ARG_COMMA ARG_CHAR_PTR);
+void light_dam(ARG_INT ARG_COMMA ARG_CHAR_PTR);
+void acid_dam(ARG_INT ARG_COMMA ARG_CHAR_PTR);
+void darken_room(ARG_INT ARG_COMMA ARG_INT);
 
 /* moria2.c */
-int cast_spell();
-void delete_monster();
-void fix1_delete_monster();
-void fix2_delete_monster();
-int multiply_monster();
-int delete_object();
-int32u monster_death();
-int mon_take_hit();
-void move_char();
-void openobject();
-void closeobject();
-int twall();
-void tunnel();
-void disarm_trap();
-void look();
-void throw_object();
-void bash();
+int cast_spell(ARG_CHAR_PTR ARG_COMMA ARG_INT ARG_COMMA ARG_INT_PTR
+		ARG_COMMA ARG_INT_PTR);
+void delete_monster(ARG_INT);
+void fix1_delete_monster(ARG_INT);
+void fix2_delete_monster(ARG_INT);
+int delete_object(ARG_INT ARG_COMMA ARG_INT);
+int32u monster_death(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT32U ARG_COMMA ARG_INT32U ARG_COMMA ARG_INT32U);
+int mon_take_hit(ARG_INT ARG_COMMA ARG_INT);
+void move_char(ARG_INT ARG_COMMA ARG_INT);
+void openobject(ARG_VOID);
+void closeobject(ARG_VOID);
+int twall(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+void tunnel(ARG_INT);
+void disarm_trap(ARG_VOID);
+void look(ARG_VOID);
+void throw_object(ARG_VOID);
+void bash(ARG_VOID);
+void delete_unique(ARG_VOID);
+void carry(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+void special_random_object(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+void check_unique(ARG_MON_PTR);
+
 
 #ifdef MSDOS
 /* ms_misc.c */
-char *getlogin();
+char *getlogin(ARG_VOID);
+void msdos_init(ARG_VOID);
+void user_name(ARG_CHAR_PTR);
 #ifdef __TURBOC__
-void sleep();
+void sleep(unsigned);
 #else
-unsigned int sleep();
+unsigned int sleep(ARG_INT );
 #endif
-void error();
-void warn();
-void msdos_init();
-void msdos_raw();
-void msdos_noraw();
-int bios_getch();
-int msdos_getch();
-void bios_clear();
-void msdos_intro();
-void msdos_print_map();
-void bios_clear();
+void error(ARG_CHAR_PTR ARG_COMMA ...);
+void warn(ARG_CHAR_PTR ARG_COMMA ...);
+void msdos_init(ARG_VOID);
+void msdos_raw(ARG_VOID);
+void msdos_noraw(ARG_VOID);
+int bios_getch(ARG_VOID);
+int msdos_getch(ARG_VOID);
+void bios_clear(ARG_VOID);
+/* void msdos_intro(void); old code... -CFT */
+void bios_clear(ARG_VOID);
 #endif
 
 /* potions.c */
-void quaff();
+void quaff(ARG_VOID);
 
 /* prayer.c */
-void pray();
+void pray(ARG_VOID);
 
 /* recall.c */
-int bool_roff_recall();
-int roff_recall();
+int bool_roff_recall(ARG_INT);
+int roff_recall(ARG_INT);
 
 /* rnd.c */
-int32u get_rnd_seed();
-void set_rnd_seed();
-int32 rnd();
+int32u get_rnd_seed(ARG_VOID);
+void set_rnd_seed(ARG_INT32U);
+int32 rnd(ARG_VOID);
+
+/* rods.c */
+void activate_rod(ARG_VOID);
 
 /* save.c */
-int save_char();
-int _save_char();
-int get_char();
+#ifdef MAC
+int save_char(ARG_INT);
+#else
+int save_char(ARG_VOID);
+#endif
+int _save_char(ARG_CHAR_PTR);
+int get_char(ARG_INT_PTR);
 
 /* scrolls.c */
-void read_scroll();
+void read_scroll(ARG_VOID);
 
 /* sets.c */
-int set_room();
-int set_corr();
-int set_floor();
-int set_corrodes();
-int set_flammable();
-int set_frost_destroy();
-int set_acid_affect();
-int set_lightning_destroy();
-int set_null();
-int set_acid_destroy();
-int set_fire_destroy();
-int general_store();
-int armory();
-int weaponsmith();
-int temple();
-int alchemist();
-int magic_shop();
+int set_room(ARG_INT);
+int set_corr(ARG_INT);
+int set_floor(ARG_INT);
+int set_corrodes(ARG_INV_PTR);
+int set_flammable(ARG_INV_PTR);
+int set_frost_destroy(ARG_INV_PTR);
+int set_acid_affect(ARG_INV_PTR);
+int set_lightning_destroy(ARG_INV_PTR);
+int set_null(ARG_INV_PTR);
+int set_acid_destroy(ARG_INV_PTR);
+int set_fire_destroy(ARG_INV_PTR);
+int general_store(ARG_INT);
+int armory(ARG_INT);
+int weaponsmith(ARG_INT);
+int temple(ARG_INT);
+int alchemist(ARG_INT);
+int magic_shop(ARG_INT);
 #ifdef MAC
-int store_buy();
+int store_buy(ARG_INT ARG_COMMA ARG_INT);
 #endif
 
 /* signals.c */
-void nosignals();
-void signals();
-void init_signals();
-void ignore_signals();
-void default_signals();
-void restore_signals();
+void nosignals(ARG_VOID);
+void signals(ARG_VOID);
+void init_signals(ARG_VOID);
+void ignore_signals(ARG_VOID);
+void default_signals(ARG_VOID);
+void restore_signals(ARG_VOID);
 
 /* spells.c */
-void monster_name();
-void lower_monster_name();
-int sleep_monsters1();
-int detect_treasure();
-int detect_object();
-int detect_trap();
-int detect_sdoor();
-int detect_invisible();
-int light_area();
-int unlight_area();
-void map_area();
-int ident_spell();
-int aggravate_monster();
-int trap_creation();
-int door_creation();
-int td_destroy();
-int detect_monsters();
-void light_line();
-void starlite();
-int disarm_all();
-void get_flags();
-void fire_bolt();
-void fire_ball();
-void breath();
-int recharge();
-int hp_monster();
-int drain_life();
-int speed_monster();
-int confuse_monster();
-int sleep_monster();
-int wall_to_mud();
-int td_destroy2();
-int poly_monster();
-int build_wall();
-int clone_monster();
-void teleport_away();
-void teleport_to();
-int teleport_monster();
-int mass_genocide();
-int genocide();
-int speed_monsters();
-int sleep_monsters2();
-int mass_poly();
-int detect_evil();
-int hp_player();
-int cure_confusion();
-int cure_blindness();
-int cure_poison();
-int remove_fear();
-void earthquake();
-int protect_evil();
-void create_food();
-int dispel_creature();
-int turn_undead();
-void warding_glyph();
-void lose_str();
-void lose_int();
-void lose_wis();
-void lose_dex();
-void lose_con();
-void lose_chr();
-void lose_exp();
-int slow_poison();
-void bless();
-void detect_inv2();
-void destroy_area();
-int enchant();
-int remove_curse();
-int restore_level();
-void self_knowledge();
+void monster_name(ARG_CHAR_PTR ARG_COMMA ARG_MON_PTR ARG_COMMA ARG_CTR_PTR);
+void lower_monster_name(ARG_CHAR_PTR ARG_COMMA ARG_MON_PTR ARG_COMMA ARG_CTR_PTR);
+int sleep_monsters1(ARG_INT ARG_COMMA ARG_INT);
+int detect_treasure(ARG_VOID);
+int detect_object(ARG_VOID);
+int detect_trap(ARG_VOID);
+int detect_sdoor(ARG_VOID);
+int detect_invisible(ARG_VOID);
+int light_area(ARG_INT ARG_COMMA ARG_INT);
+int unlight_area(ARG_INT ARG_COMMA ARG_INT);
+void map_area(ARG_VOID);
+int ident_spell(ARG_VOID);
+int aggravate_monster(ARG_INT);
+int trap_creation(ARG_VOID);
+int door_creation(ARG_VOID);
+int td_destroy(ARG_VOID);
+int detect_monsters(ARG_VOID);
+void light_line(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+void starlite(ARG_INT ARG_COMMA ARG_INT);
+int disarm_all(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+void get_flags(ARG_INT ARG_COMMA ARG_INT32U_PTR ARG_COMMA ARG_INT32U_PTR ARG_COMMA ARG_INT_FN_PTR);
+void fire_bolt(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_CHAR_PTR);
+void fire_ball(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_CHAR_PTR);
+void breath(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_CHAR_PTR ARG_COMMA ARG_INT);
+int recharge(ARG_INT);
+int hp_monster(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+int drain_life(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+int speed_monster(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+int confuse_monster(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+int sleep_monster(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+int wall_to_mud(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+int td_destroy2(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+int poly_monster(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+int build_wall(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+int clone_monster(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+void teleport_away(ARG_INT ARG_COMMA ARG_INT);
+void teleport_to(ARG_INT ARG_COMMA ARG_INT);
+int teleport_monster(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+int mass_genocide(ARG_INT);
+int genocide(ARG_INT);
+int speed_monsters(ARG_INT);
+int sleep_monsters2(ARG_VOID);
+int mass_poly(ARG_VOID);
+int detect_evil(ARG_VOID);
+int hp_player(ARG_INT);
+int cure_confusion(ARG_VOID);
+int cure_blindness(ARG_VOID);
+int cure_poison(ARG_VOID);
+int remove_fear(ARG_VOID);
+void earthquake(ARG_VOID);
+int protect_evil(ARG_VOID);
+void create_food(ARG_VOID);
+int dispel_creature(ARG_INT32U ARG_COMMA ARG_INT);
+int turn_undead(ARG_VOID);
+void warding_glyph(ARG_VOID);
+void lose_str(ARG_VOID);
+void lose_int(ARG_VOID);
+void lose_wis(ARG_VOID);
+void lose_dex(ARG_VOID);
+void lose_con(ARG_VOID);
+void lose_chr(ARG_VOID);
+void lose_exp(ARG_INT32);
+int slow_poison(ARG_VOID);
+void bless(ARG_INT);
+void detect_inv2(ARG_INT);
+void destroy_area(ARG_INT ARG_COMMA ARG_INT);
+int enchant(ARG_INT16_PTR);
+int remove_curse(ARG_VOID);
+int restore_level(ARG_VOID);
+int probing(ARG_VOID);
+int detection(ARG_VOID);
+void starball(ARG_INT ARG_COMMA ARG_INT);
+int bolt(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_CHAR_PTR ARG_COMMA ARG_MON_PTR ARG_COMMA ARG_INT);
+int chaos(ARG_MON_PTR);
+int stair_creation(ARG_VOID);
+void tele_level(ARG_VOID);
+int detect_enchantment(ARG_VOID);
+void identify_pack(ARG_VOID);
+int banish_creature(ARG_INT32U ARG_COMMA ARG_INT);
+int remove_all_curse(ARG_VOID);
+char *pain_message(ARG_INT ARG_COMMA ARG_INT);
+void self_knowledge(ARG_VOID);
 
 /* staffs.c */
-void use();
+void use(ARG_VOID);
 
 /* store1.c */
-int32 item_value();
-int32 sell_price();
-int store_check_num();
-void store_carry();
-void store_destroy();
-void store_init();
-void store_maint();
-int noneedtobargain();
-void updatebargain();
+int32 item_value(ARG_INV_PTR);
+int32 sell_price(ARG_INT ARG_COMMA ARG_INT32_PTR ARG_COMMA ARG_INT32_PTR ARG_COMMA ARG_INV_PTR);
+int store_check_num(ARG_INV_PTR ARG_COMMA ARG_INT);
+void store_carry(ARG_INT ARG_COMMA ARG_INT_PTR ARG_COMMA ARG_INV_PTR);
+void store_destroy(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+void store_init(ARG_VOID);
+void store_maint(ARG_VOID);
+int noneedtobargain(ARG_INT ARG_COMMA ARG_INT32);
+void updatebargain(ARG_INT ARG_COMMA ARG_INT32 ARG_COMMA ARG_INT32);
 
 /* store2.c */
-void enter_store();
+void enter_store(ARG_INT);
+
+#ifdef USING_TCIO
+/* tcio.c */
+#ifdef SIGTSTP
+int suspend();
+#endif
+void init_curses(ARG_VOID);
+/* void moriaterm(); old -CFT */
+void put_buffer(ARG_CHAR_PTR ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+void put_qio(ARG_VOID);
+void restore_term(ARG_VOID);
+void shell_out(ARG_VOID);
+char inkey(ARG_VOID);
+void flush(ARG_VOID);
+void erase_line(ARG_INT ARG_COMMA ARG_INT);
+void clear_screen(ARG_VOID);
+void clear_from(ARG_INT);
+void print(ARG_CHAR ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+void move_cursor_relative(ARG_INT ARG_COMMA ARG_INT);
+void count_msg_print(ARG_CHAR_PTR);
+void prt(ARG_CHAR_PTR ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+void move_cursor(ARG_INT ARG_COMMA ARG_INT);
+void msg_print(ARG_CHAR_PTR);
+int get_check(ARG_CHAR_PTR);
+int get_com(ARG_CHAR_PTR ARG_COMMA ARG_CHAR_PTR);
+int get_string(ARG_CHAR_PTR ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+void pause_line(ARG_INT);
+void pause_exit(ARG_INT ARG_COMMA ARG_INT);
+void save_screen(ARG_VOID);
+void restore_screen(ARG_VOID);
+void bell(ARG_VOID);
+void screen_map(ARG_VOID);
+#endif
 
 /* treasur1.c */
 
 /* treasur2.c */
+
+/* undef.c */
+void init_files(ARG_VOID);
+int _new_log(ARG_VOID);
 
 #ifdef unix
 /* unix.c */
@@ -1179,14 +1442,34 @@ int topen();
 /* variable.c */
 
 /* wands.c */
-void aim();
+void aim(ARG_VOID);
 
 /* wizard.c */
-void wizard_light();
-void change_character();
-void wizard_create();
-void artifact_check();
+int is_wizard(ARG_INT);
+void wizard_light(ARG_INT);
+void change_character(ARG_VOID);
+void wizard_create(ARG_VOID);
+void artifact_check(ARG_VOID);
 
+#endif
+
+#ifdef MSDOS /* need to define delay() function somewhere : acts like
+		usleep(), but with millisecs not usecs -CFT */
+void delay(unsigned);
+
+/* misc. prototypes... */
+int abs(ARG_INT);
+int close(ARG_INT);
+void exit(ARG_INT);
+#ifdef __TURBOC__
+#define atoi(s) ((int) atol(s)) /* stolen form stdlib.h -CFT */
+long atol(const char *);
+int open(const char *, int, ...);
+int sprintf(char *, const char *, ...);
+#ifdef TC_COLOR
+void textcolor(int);
+#endif
+#endif
 #endif
 
 #ifdef unix

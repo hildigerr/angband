@@ -12,7 +12,11 @@
 #include "types.h"
 #include "externs.h"
 
-static void roff();
+#include <stdio.h>
+
+static void roff(ARG_CHAR_PTR);
+int strlen(ARG_CHAR_PTR);
+
 
 static char *desc_atype[] = {
   "do something undefined",
@@ -193,8 +197,8 @@ static int roffpline;		/* Place to print line now being loaded. */
 #define knowdamage(l,a,d)	((4 + (l))*(a) > 80 * (d))
 
 /* use slightly different tests for unique monsters to hasten learning -CFT */
-#define knowuniqarmor(l,d)    ((d) > 304 / (38 + (5*(l))/4))
-#define knowuniqdamage(l,a,d) ((4 +(long)(l))*(2*(long)(a)) > 80 * (d))
+#define knowuniqarmor(l,d)	((d) > 304 / (38 + (5*(l))/4))
+#define knowuniqdamage(l,a,d)	((4 +(long)(l))*(2*(long)(a)) > 80 * (d))
 
 /* Do we know anything about this monster? */
 int bool_roff_recall(mon_num)
@@ -224,13 +228,20 @@ int mon_num;
   vtype temp;
   register recall_type *mp;
   register creature_type *cp;
-  register int i, k;
+  register int32 i, k; /* changed from int, to avoid PC's 16bit ints -CFT */
   int32u j;
   int mspeed;
   int32u rcmove, rspells, rspells2, rspells3;
-  int32u rcdefense;
+  int32u rcdefense;  /* this was int16u, but c_recall[] uses int32u -CFT */
   recall_type save_mem;
   int breath=FALSE, magic=FALSE;
+#ifdef MSDOS
+/* added to allow external description file -CFT */
+  FILE *descfile;
+#define MAX_DESC_LEN 1024 /* even morgorth's fits... -CFT */
+  char buf[MAX_DESC_LEN];
+  long skptr; /* used to seek into file with... -CFT */
+#endif  
 
   cp = &c_list[mon_num];
 
@@ -271,42 +282,71 @@ int mon_num;
     (void) sprintf(temp, "The %s:\n", cp->name);
   roff(temp);
   /* Conflict history. */
-  /* changed to act better for unique monsters -CFT */
-    if (cp->cdefense & UNIQUE) { /* treat unique differently... -CFT */
-      if (mp->r_deaths) { /* We've been killed... */
-       (void) sprintf(temp, "It has slain %d of your ancestors", mp->r_deaths);
-        roff(temp);
-        if (u_list[mon_num].dead) { /* but we've also killed it */
-        roff(", but you have avenged them!");
-          }
-        }        
-      else if (u_list[mon_num].dead) { /* we killed it w/o dying... yet! */
-        roff("You have slain this foe.");
-        }
-      }      
-    else if (mp->r_deaths) { /* not unique.... */
-    (void) sprintf(temp,
-                   "%d of ancestors %s",
-                   mp->r_deaths, plural(mp->r_deaths, "has", "have") );
+/* changed to act better for unique monsters -CFT */
+  if (cp->cdefense & UNIQUE) { /* treat unique differently... -CFT */
+    if (mp->r_deaths) { /* We've been killed... */
+      (void) sprintf(temp, "It has slain %d of your ancestors", mp->r_deaths);
       roff(temp);
-      roff(" been killed by this creature, and ");
-      if (mp->r_kills == 0)
-        roff("it is not ever known to have been defeated.");
-      else {
-        (void) sprintf(temp,
-                       "at least %d of the beasts %s been exterminated.",
-                       mp->r_kills, plural(mp->r_kills, "has", "have") );
-        roff(temp);
+      if (u_list[mon_num].dead) { /* but we've also killed it */
+	roff(", but you have avenged them!");
+        }
+      }        
+    else if (u_list[mon_num].dead) { /* we killed it w/o dying... yet! */
+      roff("You have slain this foe.");
+      }
+    }      
+  else if (mp->r_deaths) { /* not unique.... */
+  (void) sprintf(temp,
+		   "%d of ancestors %s",
+		   mp->r_deaths, plural(mp->r_deaths, "has", "have") );
+    roff(temp);
+    roff(" been killed by this creature, and ");
+    if (mp->r_kills == 0)
+      roff("it is not ever known to have been defeated.");
+    else {
+      (void) sprintf(temp,
+		       "at least %d of the beasts %s been exterminated.",
+		       mp->r_kills, plural(mp->r_kills, "has", "have") );
+      roff(temp);
       }
     }
-    else if (mp->r_kills) {
-      (void) sprintf(temp, "At least %d of these creatures %s",
-                     mp->r_kills, plural(mp->r_kills, "has", "have") );
-      roff(temp);
-      roff(" been killed by your ancestors.");
+  else if (mp->r_kills) {
+    (void) sprintf(temp, "At least %d of these creatures %s",
+		     mp->r_kills, plural(mp->r_kills, "has", "have") );
+    roff(temp);
+    roff(" been killed by your ancestors.");
     }
-     else roff("No battles to the death are recalled.");
+   else roff("No battles to the death are recalled.");
   /* Immediately obvious. */
+#ifdef MSDOS
+/* begin my external description code.  It'll be slow as hell if you're
+   looking up a lot of monsters, but it'll fit inside PC's stupid 640K
+   memory limit MUCH better... -CFT */
+  if ( (descfile = fopen(ANGBAND_DESC, "rb")) == NULL ) {
+    roff(" You feel you know it, and it knows you. This can only mean trouble.");
+  } else { /* found desc file... */  
+    fseek(descfile, (long)(mon_num * sizeof(long)), SEEK_SET);
+    fread(&skptr, sizeof(skptr), 1, descfile); /* get index into file */
+    fseek(descfile, skptr, SEEK_SET); /* go to desc. */
+    fgets(buf, MAX_DESC_LEN, descfile); /* read it */
+    fclose(descfile); /* and we're done w/ descfile... */
+    buf[MAX_DESC_LEN-1] = 0; /* just-in-case null termination... -CFT */
+    if (strlen(buf))
+      buf[strlen(buf) - 1] = 0; /* insure null term, and rem final \n */
+    roff(" ");
+    roff(buf);
+    roff(".");
+  }    
+#else /* non-MSDOS systems, just use orig code... */
+/* This is the original description code.  It uses sequential search! Yuck!
+   Is there some way we can better this?  Maybe make the desc file sorted
+   by mon name, then use binary search?  Maybe make the desc file match
+   order with monsters.c, then just use mon_num to index direct?  Both of
+   those require work to re-order desc file, and I don't feel up to it
+   just now... Plus they make it a pain to add new monsters, so I doubt
+   I should do it in an alpha phase...  On the other hand, sequential
+   search of data in memory is probably orders of magnitude faster than my
+   (above) direct indexed file read, so it's not THAT bad... -CFT */
   for (k=0; k<MAX_CREATURES; k++) {
     if (!strcmp(desc_list[k].name, cp->name)) {
       if (strlen(desc_list[k].desc) != 0) {
@@ -319,6 +359,8 @@ int mon_num;
   }
   if (k==MAX_CREATURES)
     roff(" You feel you know it, and it knows you. This can only mean trouble.");
+#endif
+
   k = FALSE;
   if (cp->level == 0)
     {
@@ -390,8 +432,8 @@ int mon_num;
      The quality of being a dragon is obvious. */
   if (mp->r_kills)
     {
-      roff(" A kill of this"); /* elses removed because animal/evil/undead
-				        aren't mutually exclusive -CFT */
+      roff(" A kill of this");  /* elses removed because animal/evil/undead
+      				   aren't mutually exclusive -CFT */
       if (cp->cdefense & ANIMAL)
 	roff(" natural");
       if (cp->cdefense & EVIL)
@@ -418,7 +460,7 @@ int mon_num;
       j = (((long)cp->mexp * cp->level % py.misc.lev) * (long)1000 /
 	   py.misc.lev+5) / 10;
 
-      (void) sprintf(temp, " is worth %d.%02ld point%s", i,
+      (void) sprintf(temp, " is worth %ld.%02ld point%s", i,
 		     j, (i == 1 && j == 0 ? "" : "s"));
       roff(temp);
 
@@ -434,7 +476,7 @@ int mon_num;
       i = py.misc.lev;
       if ((i == 8) || (i == 11) || (i == 18)) q = "n";
       else				q = "";
-      (void) sprintf(temp, " for a%s %d%s level character.", q, i, p);
+      (void) sprintf(temp, " for a%s %ld%s level character.", q, i, p);
       roff(temp);
       if (cp->cdefense & GROUP)
 	roff(" It usually appears in groups.");
@@ -548,7 +590,7 @@ int mon_num;
     roff(".");
   }
   /* Do we know how hard they are to kill? Armor class, hit die. */
-  if (knowarmor(cp->level, mp->r_kills) || /* hasten learning  of uniques -CFT */
+  if (knowarmor(cp->level, mp->r_kills) || /* hasten learning of uniques -CFT */
       ((cp->cdefense & UNIQUE) && knowuniqarmor(cp->level, mp->r_kills)))
     {
       (void) sprintf(temp, " It has an armor rating of %d", cp->ac);
@@ -561,15 +603,15 @@ int mon_num;
   /* Do we know how clever they are? Special abilities. */
   k = TRUE;
   j = rcmove;
-    if (rcdefense & BREAK_WALL) { /* I wonder why this wasn't here before? -CFT */
-      roff(" It can bore through rock");
-      k = FALSE;
-      }
+  if (rcdefense & BREAK_WALL) { /* I wonder why this wasn't here before? -CFT */
+    roff(" It can bore through rock");
+    k = FALSE;
+    }
   for (i = 0; j & CM_SPECIAL; i++) {
     if (j & (CM_INVISIBLE << i)) {
       j &= ~(CM_INVISIBLE << i);
       if (k) {
-	roff(" It can ");
+        roff(" It can ");
 	k = FALSE;
       }
       else if (j & CM_SPECIAL)
@@ -753,9 +795,9 @@ int mon_num;
 	  roff(desc_atype[att_type]);
 	  if (d1 && d2)
 	    {
-              if (knowdamage(cp->level, mp->r_attacks[i], (int)d1*(int)d2) ||
-                 ((cp->cdefense & UNIQUE) && /* learn uniques faster -CFT */
-                 knowuniqdamage(cp->level, mp->r_attacks[i], (int)d1*(int)d2)))
+	      if (knowdamage(cp->level, mp->r_attacks[i], (int)d1*(int)d2) ||
+	         ((cp->cdefense & UNIQUE) && /* learn uniques faster -CFT */
+	          knowuniqdamage(cp->level, mp->r_attacks[i], (int)d1*(int)d2)))
 		{
 		  if (att_type == 19)	/* Loss of experience */
 		    roff(" by");

@@ -11,11 +11,15 @@
 #define WIZARD	"Sean"
 /* wizard password and wizard uid no longer used */
 
+/* Only define this for PC's using the tcio routines instead of curses. -CFT */
+#define USING_TCIO
+
 
 /* files used by moria, set these to valid pathnames */
-
 /* probably unix */
-#define ANGBAND_TST       LIBDIR"/test"
+#ifndef MSDOS
+
+#define ANGBAND_TST       LIBDIR"/est"
 #define ANGBAND_HOU       LIBDIR"/files/hours"
 #define ANGBAND_MOR       LIBDIR"/files/news"
 #define ANGBAND_TOP       LIBDIR"/files/newscores"
@@ -31,8 +35,30 @@
 #define ANGBAND_WIZ       LIBDIR"/files/wizards"
 #define ANGBAND_SAV       LIBDIR"/save"
 
+#else /* MSDOS def'd */
+
+#define ANGBAND_TST       "est"
+#define ANGBAND_HOU       "hours"
+#define ANGBAND_MOR       "news"
+#define ANGBAND_TOP       "newscores"
+#define ANGBAND_BONES     "bones\\"
+#define ANGBAND_HELP      "roglcmds.hlp"
+#define ANGBAND_ORIG_HELP "origcmds.hlp"
+#define ANGBAND_WIZ_HELP  "rwizcmds.hlp"
+#define ANGBAND_OWIZ_HELP "owizcmds.hlp"
+#define ANGBAND_WELCOME   "welcome.hlp"
+#define ANGBAND_LOG       "ANGBAND.log"
+#define ANGBAND_VER       "version.hlp"
+#define ANGBAND_LOAD      "loadcheck"
+#define ANGBAND_WIZ       "wizards"
+#define ANGBAND_SAV       "save"
+#define ANGBAND_CNF_NAME  "angband.cnf" /* added -CFT */
+#define ANGBAND_DESC	"mon_desc.dat" /* added -CFT */
+
+#endif
+
 /*#define ANNOY 142*/
-/* #define SET_UID */
+/*#define SET_UID*/
 
 /* this sets the default user interface */
 /* to use the original key bindings (keypad for movement) set ROGUE_LIKE

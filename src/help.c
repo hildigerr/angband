@@ -100,7 +100,8 @@ void ident_char()
       case 'e': prt("e - Floating Eye.", 0, 0); break;
       case 'f': prt("f - Felines", 0, 0); break;
       case 'g': prt("g - Golem.", 0, 0); break;
-      case 'h': prt("h - Demi-humans.", 0, 0); break; 
+        /* case 'h': prt("h - Harpy.", 0, 0); break; */
+      case 'h': prt("h - Humanoid (Dwarf, Elf, Halfling)",0,0); break; /* -CFT */
       case 'i': prt("i - Icky Thing.", 0, 0); break;
       case 'j': prt("j - Jelly.", 0, 0); break;
       case 'k': prt("k - Kobold.", 0, 0); break;

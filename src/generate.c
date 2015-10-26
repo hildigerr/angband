@@ -33,6 +33,55 @@ static void build_type2();
 
 int rating;
 
+/* prototypes: ARG_* will collapse to nothing except on TURBOC -CFT */
+static void place_broken_door(ARG_INT ARG_COMMA ARG_INT);
+static void place_open_door(ARG_INT ARG_COMMA ARG_INT);
+static void place_closed_door(ARG_INT ARG_COMMA ARG_INT);
+static void place_stuck_door(ARG_INT ARG_COMMA ARG_INT);
+static void place_locked_door(ARG_INT ARG_COMMA ARG_INT);
+static void place_secret_door(ARG_INT ARG_COMMA ARG_INT);
+static void place_up_stairs(ARG_INT ARG_COMMA ARG_INT);
+static void place_down_stairs(ARG_INT ARG_COMMA ARG_INT);
+static void vault_monster(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+static void vault_trap(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+static void vault_jelly(ARG_INT ARG_COMMA ARG_INT);
+static void vault_orc(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+static void vault_troll(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+static void vault_undead(ARG_INT ARG_COMMA ARG_INT);
+static void vault_dragon(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+static void vault_demon(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+static void vault_nasty(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+static void correct_dir(ARG_INT_PTR ARG_COMMA ARG_INT_PTR ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+static void rand_dir(ARG_INT_PTR ARG_COMMA ARG_INT_PTR);
+static int next_to(ARG_INT ARG_COMMA ARG_INT);
+static void special_pit(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+static void build_type1(ARG_INT ARG_COMMA ARG_INT);
+static void build_type2(ARG_INT ARG_COMMA ARG_INT);
+static void build_type3(ARG_INT ARG_COMMA ARG_INT);
+static void build_type5(ARG_INT ARG_COMMA ARG_INT);
+static void build_pit(ARG_INT ARG_COMMA ARG_INT);
+static void build_room(ARG_INT ARG_COMMA ARG_INT);
+static void build_tunnel(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+static void fill_cave(ARG_INT);
+static void place_streamer(ARG_INT ARG_COMMA ARG_INT);
+static void place_boundry(ARG_VOID);
+static void try_door(ARG_INT ARG_COMMA ARG_INT);
+static void place_stairs(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+static void new_spot(ARG_INT16_PTR ARG_COMMA ARG_INT16_PTR);
+static void build_store(ARG_INT ARG_COMMA ARG_INT ARG_COMMA ARG_INT);
+static void tlink(ARG_VOID);
+static void mlink(ARG_VOID);
+static void blank_cave(ARG_VOID);
+static void town_gen(ARG_VOID);
+static void cave_gen(ARG_VOID);
+static void place_boundary(ARG_VOID);
+static void place_door(ARG_INT ARG_COMMA ARG_INT);
+
+/* misc. prototypes */
+void *malloc(ARG_INT16U);
+void free(ARG_VOID_PTR);
+int strcmp(ARG_CHAR_PTR ARG_COMMA ARG_CHAR_PTR);
+
 
 /* Always picks a correct direction		*/
 static void correct_dir(rdir, cdir, y1, x1, y2, x2)
