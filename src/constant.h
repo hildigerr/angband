@@ -25,14 +25,22 @@
  * constants at your own risk.
  */
 
-/* Current version number of Angband: 2.6.1
+#ifndef _CONSTANT_H_
+#define _CONSTANT_H_
+
+/* include before constant.h because param.h defines NULL incorrectly */
+#if !(defined(USG) || defined(MSDOS))
+#include <sys/param.h>
+#endif
+
+/* Current version number of Angband: 2.6.2
  *
  * Note that 5.2 must never be used, as it was used in Angband 2.4-2.5.
  */
 
 #define CUR_VERSION_MAJ 2
 #define CUR_VERSION_MIN 6
-#define PATCH_LEVEL 1
+#define PATCH_LEVEL 2
 
 /* Basics */
 
@@ -49,10 +57,6 @@
 #define MAX_UCHAR       255
 #define MAX_SHORT       32767           /* maximum short/long signed ints */
 #define MAX_LONG        0xFFFFFFFFL
-
-#ifndef MAXHOSTNAMELEN					/* may not be defined -b. eck */
-#define MAXHOSTNAMELEN  64
-#endif
 
 /* Changing values below this line may be hazardous to your health! */
 
@@ -107,6 +111,8 @@
 #define STORE_MIN_INVEN  10     /* Min diff objs in stock for auto sell  */
 #define STORE_TURN_AROUND 9     /* Amount of buying and selling normally */
 #define COST_ADJ         100    /* Adjust prices for buying and selling  */
+#define SHUFFLE_STORE_OWNERS_CHANGE 100
+                                /* Chance of a store owner changing -CWS */
 
 #define MAX_QUESTS        4     /* only 1 defined anyway --CFT */
 #define DEFINED_QUESTS    1 
@@ -224,6 +230,7 @@
 #define MAX_SYLLABLES  158      /* Used with scrolls      */
 
 /* Player constants                                             */
+#define MAX_MAX_PLAYER_LEVEL 99 /* Max possible value of MAX_PLAYER_LEVEL -CWS */
 #define MAX_PLAYER_LEVEL    50  /* Maximum possible character level        */
 #define MAX_EXP      99999999L  /* Maximum amount of experience -CJS-      */
 #define MAX_RACES           10  /* Number of defined races                 */
@@ -292,9 +299,9 @@
 
 #ifdef __STDC__
 #define NULL ((void *)0)
-#else
+#else /* not __STDC__ */
 #define NULL (char *)0
-#endif /* __STDC__ */
+#endif /* not __STDC__ */
 
 #endif /* NULL */
 
@@ -961,3 +968,5 @@
 #define ENCH_TOHIT   1
 #define ENCH_TODAM   2
 #define ENCH_TOAC    4
+
+#endif /* _CONSTANT_H_ */

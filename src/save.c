@@ -10,10 +10,7 @@
 
 #include <stdio.h>
 
-#include "constant.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
+#include "angband.h"
 #include "monster.h"
 
 #ifndef USG
@@ -125,7 +122,7 @@ register struct unique_mon *item;
 static int 
 sv_write()
 {
-    int32u              l;
+    int32u              l, m;
     register int        i, j;
     int                 count;
     int8u               char_tmp, prev_char;
@@ -148,7 +145,7 @@ sv_write()
     if (eof_flag)
 	death = FALSE;
 
-    l = 0;
+    m = l = 0;
     if (find_cut)
 	l |= 1;
     if (find_examine)
@@ -194,6 +191,15 @@ sv_write()
 	l |= 0x40000000L;
     if (death)
 	l |= 0x80000000L;	/* Sign bit */
+    if (always_throw)           /* Don't confirm when throwing worthful */
+	m |= 0x001L; 		/* thingsies.  -Abby- */
+    if (ring_bell)              /* Don't ring the bell -Abby- */
+	m |= 0x002L;
+    if (shuffle_store_owners)  /* can store owners change during the game -CWS */
+	m |= 0x004L;
+    if (new_screen_layout)  /* can store owners change during the game -CWS */
+	m |= 0x008L;
+
     wr_long(GROND);
     wr_long(RINGIL);
     wr_long(AEGLOS);
@@ -337,8 +343,8 @@ sv_write()
 
     wr_short((int16u) log_index);
     wr_long(l);
+    wr_long(m);
     wr_long(l);	/* added some duplicates, for future flags expansion -CWS */
-    wr_long(l);
     wr_long(l);
 
     m_ptr = &py.misc;
@@ -488,7 +494,8 @@ sv_write()
     wr_short((int16u) panic_save);
     wr_short((int16u) total_winner);
     wr_short((int16u) noscore);
-    wr_shorts(player_hp, MAX_PLAYER_LEVEL);
+/* now can have up to 99 player levels -CWS */
+    wr_shorts(player_hp, MAX_MAX_PLAYER_LEVEL);
 
 
     for (i = 0; i < MAX_STORES; i++) {
@@ -762,7 +769,7 @@ get_char(generate)
 int *generate;
 {
     int                    i, j, fd, c, ok, total_count;
-    int32u                 l, age, time_saved;
+    int32u                 l, m, foo, age, time_saved;
     vtype                  temp;
     int16u                 int16u_tmp;
     register cave_type    *c_ptr;
@@ -1004,9 +1011,9 @@ int *generate;
 	rd_short((int16u *) & log_index);
         rd_long(&l);
 	if ((version_maj >= 2) && (version_min >= 6)) {
-	  rd_long(&l);
-	  rd_long(&l);
-	  rd_long(&l);
+	  rd_long(&m);
+	  rd_long(&foo);
+	  rd_long(&foo);
 	}
 
 	if (to_be_wizard)
@@ -1225,8 +1232,11 @@ int *generate;
 	    rd_long((int32u *) & turn);
 	    if ((version_maj >= 2) && (version_min >= 6))
 	      rd_long((int32u *) & old_turn);
-	    else
-	      old_turn = turn;	/* best we can do... -CWS */
+	    else {
+                old_turn = turn;	/* best we can do... -CWS */
+                unfelt = TRUE;
+                fprintf(stderr, "Old_turn = %d\n", old_turn);
+            }
 
 	    rd_short((int16u *) & inven_ctr);
 	    if (inven_ctr > INVEN_WIELD) {
@@ -1256,7 +1266,10 @@ int *generate;
 	    rd_short((int16u *) & panic_save);
 	    rd_short((int16u *) & total_winner);
 	    rd_short((int16u *) & noscore);
-	    rd_shorts(player_hp, MAX_PLAYER_LEVEL);
+	    if ((version_maj >= 2) && (version_min >= 6) && (patch_level >= 2))
+		rd_shorts(player_hp, MAX_MAX_PLAYER_LEVEL);
+	    else
+		rd_shorts(player_hp, MAX_PLAYER_LEVEL);
 
 	    for (i = 0; i < MAX_STORES; i++) {
 	      st_ptr = &store[i];
@@ -1346,7 +1359,29 @@ int *generate;
 	    prt("ERROR in ungetc", 11, 0);
 	    goto error;
 	}
-	prt("Restoring Character...", 0, 0);
+	
+	if (m & 0x001L)        /* How do we throw? -Abby- */
+	    always_throw = TRUE;
+	else
+	    always_throw = FALSE;
+        
+	if (m & 0x002L)        /* Ringing? -Abby- */
+	    ring_bell = TRUE;
+	else
+	    ring_bell = FALSE;
+
+	if (m & 0x004L)        /* can store owners change during the game -CWS */
+	    shuffle_store_owners = TRUE;
+	else
+	    shuffle_store_owners = FALSE;
+
+
+        if (m & 0x008L)        /* use new screen layout -CWS */
+	    new_screen_layout = TRUE;
+	else
+	    new_screen_layout = FALSE;
+
+prt("Restoring Character...", 0, 0);
 	put_qio();
 
     /* only level specific info should follow, not present for dead characters */

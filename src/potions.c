@@ -8,10 +8,7 @@
  * included in all such copies. 
  */
 
-#include "constant.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
+#include "angband.h"
 
 #ifdef USG
 #include <string.h>
@@ -230,6 +227,7 @@ quaff()
 		    if (!(f_ptr->poison_im || f_ptr->poison_resist ||
 			  f_ptr->resist_poison)) {
 			msg_print("You feel very sick.");
+                        dec_stat(A_CON, 10, TRUE);
 			f_ptr->poisoned += randint(15) + 10;
 		    } else
 			msg_print("The poison has no effect.");
@@ -424,12 +422,12 @@ quaff()
 		    break;
 		  case 53:	   /* Ruination */
 		    take_hit(damroll(10, 10), "a potion of Ruination");
-		    ruin_stat(A_DEX);
-		    ruin_stat(A_WIS);
-		    ruin_stat(A_CON);
-		    ruin_stat(A_STR);
-		    ruin_stat(A_CHR);
-		    ruin_stat(A_INT);
+		    dec_stat(A_DEX, 25, TRUE);
+		    dec_stat(A_WIS, 25, TRUE);
+		    dec_stat(A_CON, 25, TRUE);
+		    dec_stat(A_STR, 25, TRUE);
+		    dec_stat(A_CHR, 25, TRUE);
+		    dec_stat(A_INT, 25, TRUE);
 		    ident = TRUE;
 		    msg_print("Your nerves and muscles feel weak and lifeless! ");
 		    break;

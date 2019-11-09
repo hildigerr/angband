@@ -1,4 +1,4 @@
-/* externs.h: declarations for global variables and initialized data
+ /* externs.h: declarations for global variables and initialized data
 
    Copyright (c) 1989 James E. Wilson, Robert A. Koeneke
 
@@ -6,27 +6,16 @@
    not for profit purposes provided that this copyright and statement are
    included in all such copies. */
 
-#define get_Yn get_check
+#ifndef _EXTERNS_H_
+#define _EXTERNS_H_
 
 #include <stdio.h>
-
-/* many systems don't define these anywhere */
-#if defined(USG) || defined(DGUX) || defined(atarist)
-#if !(defined(HPUX) || defined(linux))
-extern int sprintf();
-#endif
-#else
-#if !(defined(MSDOS) || defined(NeXT) || defined(ultrix) || defined(linux) \
-|| defined(__386BSD__) || defined(SOLARIS))
-extern char *sprintf();
-#endif
-#endif
 
 #ifndef MSDOS
 extern int errno;
 #endif
 
-extern char *copyright[5];
+extern const char *copyright[5];
 
 extern int player_uid;
 extern int NO_SAVE;
@@ -46,6 +35,7 @@ extern int find_examine;		/* Check corners on a run */
 extern int find_prself;			/* Print yourself on a run (slower) */
 extern int find_bound;			/* Stop run when the map shifts */
 extern int prompt_carry_flag;	/* auto-pickupobjects */
+extern int always_throw;	/* Never confirm -Abby- */
 extern int show_weight_flag;	/* Display weights in inventory */
 extern int show_equip_weight_flag;	/* Display weights in equip list -CWS */
 extern int highlight_seams;		/* Highlight magma and quartz */
@@ -62,6 +52,9 @@ extern int quick_messages;		/* do quick messages -CWS */
 extern int equippy_chars;		/* do equipment characters -CWS */
 extern int coin_type;			/* remember Creeping _xxx_ coin type -CWS */
 extern int opening_chest;		/* do not generate another chest -CWS */
+extern int ring_bell;		/* ring bell on error -Abby- */
+extern int shuffle_store_owners; /* can have store owners randomly change -CWS */
+extern int new_screen_layout;   /* Use the new screen layout -CWS */
 
 /* Unique artifact weapon flags */
 extern int32 GROND, RINGIL, AEGLOS, ARUNRUTH, MORMEGIL, ANGRIST, GURTHANG,
@@ -163,11 +156,11 @@ extern cave_type cave[MAX_HEIGHT][MAX_WIDTH];
 /* Following are player variables				*/
 extern player_type py;
 #ifdef MACGAME
-extern char *(*player_title)[MAX_PLAYER_LEVEL];
+extern const char *(*player_title)[MAX_PLAYER_LEVEL];
 extern race_type *race;
 extern background_type *background;
 #else
-extern char *player_title[MAX_CLASS][MAX_PLAYER_LEVEL];
+extern const char *player_title[MAX_CLASS][MAX_PLAYER_LEVEL];
 extern race_type race[MAX_RACES];
 extern background_type background[MAX_BACKGROUND];
 #endif
@@ -365,7 +358,6 @@ void dungeon(void);
 int special_check(inven_type *);
 int is_quest(int);
 void rerate(void);
-int ruin_stat(int);
 
 /* eat.c */
 void eat(void);
@@ -514,7 +506,7 @@ void prt_winner(void);
 int16u modify_stat(int, int);
 void set_use_stat(int);
 int inc_stat(int);
-int dec_stat(int);
+int dec_stat(int, int, int);
 int res_stat(int);
 void bst_stat(int, int);
 int tohit_adj(void);
@@ -669,7 +661,7 @@ int roff_recall(int);
 /* random.c */
 #if !(defined(linux) || defined(__osf__))
 long random(void);
-#if !(defined(__MINT__) || defined(__386BSD__))
+#if !(defined(__MINT__) || defined(__386BSD__) || defined(AMIGA) || defined(__bsdi__))
 void srandom(int);
 #endif
 char *initstate(unsigned int, char *, int);
@@ -840,7 +832,7 @@ void enter_store(int);
 void init_files(void);
 int _new_log(void);
 
-#ifdef unix
+#if defined(unix) || defined(AMIGA)
 /* unix.c */
 int check_input(int);
 #if 0
@@ -920,7 +912,6 @@ void dungeon();
 int special_check();
 int is_quest();
 void rerate();
-int ruin_stat();
 
 /* eat.c */
 void eat();
@@ -1323,7 +1314,7 @@ int enchant();
 int remove_curse();
 int restore_level();
 void self_knowledge();
-char *pain_message()
+char *pain_message();
 void line_spell();
 
 /* staffs.c */
@@ -1389,4 +1380,7 @@ void artifact_check();
 void artifact_check_no_file();
 void check_uniques();
 int is_wizard();
+
 #endif      /* __STDC__ */
+
+#endif /* _EXTERNS_H_ */

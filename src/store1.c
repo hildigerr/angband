@@ -8,10 +8,7 @@
  * included in all such copies. 
  */
 
-#include "constant.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
+#include "angband.h"
 
 #ifdef USG
 #ifndef ATARIST_MWC
@@ -474,6 +471,20 @@ store_maint()
 {
     register int         i, j;
     register store_type *s_ptr;
+
+/* can now change store owners every once in a while -CWS */
+
+    if ((shuffle_store_owners) && (randint(SHUFFLE_STORE_OWNERS_CHANGE) == 1)) {
+	i = MAX_OWNERS / MAX_STORES;
+	j = randint(MAX_STORES) - 1;
+	s_ptr = &store[j];
+	s_ptr->owner = MAX_STORES * (randint(i) - 1) + j;
+	s_ptr->insult_cur = 0;
+	s_ptr->store_open = 0;
+	s_ptr->store_ctr = 0;
+	s_ptr->good_buy = 0;
+	s_ptr->bad_buy = 0;
+    }
 
     for (i = 0; i < (MAX_STORES - 1); i++) {
 	s_ptr = &store[i];

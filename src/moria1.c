@@ -11,10 +11,7 @@
 #include <stdio.h>
 #include <ctype.h>
 
-#include "constant.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
+#include "angband.h"
 #include "monster.h"
 
 #ifdef USG
@@ -86,30 +83,46 @@ register int         factor;
 	    if ((1 << i) & t_ptr->flags)
 		bst_stat(i, amount);
     }
+
     if (TR_SEARCH & t_ptr->flags) {
 	py.misc.srh += amount;
 	py.misc.fos -= amount;
     }
+
     if (TR_STEALTH & t_ptr->flags)
 	py.misc.stl += amount;
-    if (TR_SPEED & t_ptr->flags) {
-	if ((t_ptr->tval == TV_RING) &&
-	    !stricmp("Speed",
-		     object_list[t_ptr->index].name) &&
-	    (t_ptr->p1 > 0))
-	    if ((inventory[INVEN_RIGHT].tval == TV_RING) &&
-		!stricmp("Speed",
-			 object_list[inventory[INVEN_RIGHT].index].name) &&
-		(inventory[INVEN_RIGHT].p1 > 0) &&
-		(inventory[INVEN_LEFT].tval == TV_RING) &&
-		!stricmp("Speed",
-			 object_list[inventory[INVEN_LEFT].index].name) &&
-		(inventory[INVEN_RIGHT].p1 > 0))
-		return;
-	change_speed(-amount);
-    }
+    
     if (TR_INFRA & t_ptr->flags)
 	py.flags.see_infra += amount;
+
+    if (TR_SPEED & t_ptr->flags) {
+	if ((t_ptr->tval == TV_RING) &&
+	    !stricmp("Speed", object_list[t_ptr->index].name))
+
+/* If we are changing a Ring of Speed, do special checking */
+	    if ((inventory[INVEN_RIGHT].tval == TV_RING) &&
+		!stricmp("Speed", object_list[inventory[INVEN_RIGHT].index].name) &&
+		(inventory[INVEN_LEFT].tval == TV_RING) &&
+		!stricmp("Speed", object_list[inventory[INVEN_LEFT].index].name)) {
+                int p1_left = inventory[INVEN_LEFT].p1;
+                int p1_right = inventory[INVEN_RIGHT].p1;
+
+/* Uncursed Rings of Speed are not cumulative.  If both rings have the same
+ * plusses, NO change in speed.  If the ring being handled is RoS +1, then NO
+ * change in speed.  If the ring being handled is RoS +2, then only change speed
+ * by plus or minus 1.  -CWS
+ */
+                if (p1_left > 0 && p1_right > 0) {
+                    if (p1_left == p1_right)
+                        amount = 0;
+                    else if (t_ptr->p1 == 2)
+                        amount = factor;
+                    else
+                        amount = 0;
+                }
+            }
+	change_speed(-amount);
+    }
 }
 
 /* Recalculate the effect of all the stuff we use.		  -CJS- */
@@ -1302,9 +1315,9 @@ int command;
 
 /* replace a check for in_bounds2 every loop with 4 quick computations -CWS */
 	min_i = MY_MAX(0, (char_row - light_rad));
-	max_i = MY_MIN(cur_height, (char_row + light_rad));
+	max_i = MY_MIN(cur_height - 1, (char_row + light_rad));
 	min_j = MY_MAX(0, (char_col - light_rad));
-	max_j = MY_MIN(cur_width, (char_col + light_rad));
+	max_j = MY_MIN(cur_width - 1, (char_col + light_rad));
 
 	for (i = min_i; i <= max_i; i++)
 	    for (j = min_j; j <= max_j; j++)
@@ -1325,9 +1338,9 @@ int command;
 
 	if (!py.flags.blind) {
 	    min_i = MY_MAX(0, (char_row - light_rad));
-	    max_i = MY_MIN(cur_height, (char_row + light_rad));
+	    max_i = MY_MIN(cur_height - 1, (char_row + light_rad));
 	    min_j = MY_MAX(0, (char_col - light_rad));
-	    max_j = MY_MIN(cur_width, (char_col + light_rad));
+	    max_j = MY_MIN(cur_width - 1, (char_col + light_rad));
 
 	    for (i = min_i; i <= max_i; i++)
 		for (j = min_j; j <= max_j; j++)
@@ -1337,9 +1350,9 @@ int command;
 	}
 
 	min_i = MY_MAX(0, (char_row - tmp2));
-	max_i = MY_MIN(cur_height, (char_row + tmp2));
+	max_i = MY_MIN(cur_height - 1, (char_row + tmp2));
 	min_j = MY_MAX(0, (char_col - tmp2));
-	max_j = MY_MIN(cur_width, (char_col + tmp2));
+	max_j = MY_MIN(cur_width - 1, (char_col + tmp2));
 	for (i = min_i; i <= max_i; i++)
 	    for (j = min_j; j <= max_j; j++)
 		lite_spot(i, j);
@@ -1893,8 +1906,15 @@ void
 lite_spot(y, x)
     register int        y, x;
 {
+    cave_type *cave_ptr;
+    int        old_flag;
+
+    cave_ptr = &cave[y][x];
+    old_flag = find_flag;
+    find_flag = find_flag && (cave_ptr->cptr == 1);
     if (panel_contains(y, x))
-	print(loc_symbol(y, x), y, x);
+        print(loc_symbol(y, x), y, x);
+    find_flag = old_flag;
 }
 
 /* Normal movement					 */
@@ -1918,9 +1938,9 @@ int y1, y2;
 
 /* replace a check for in_bounds2 every loop with 4 quick computations -CWS */
     min_i = MY_MAX(0, (y2 - light_rad));
-    max_i = MY_MIN(cur_height, (y2 + light_rad));
+    max_i = MY_MIN(cur_height - 1, (y2 + light_rad));
     min_j = MY_MAX(0, (x2 - light_rad));
-    max_j = MY_MIN(cur_width, (x2 + light_rad));
+    max_j = MY_MIN(cur_width - 1, (x2 + light_rad));
     for (i = min_i; i <= max_i; i++)
 	for (j = min_j; j <= max_j; j++)
 	    if (los(y2, x2, i, j) && distance(i, j, y2, x2) <= light_rad) {
@@ -1990,9 +2010,9 @@ int y1, x1;
 
 /* replace a check for in_bounds2 every loop with 4 quick computations -CWS */
     min_i = MY_MAX(0, (y1 - rad));
-    max_i = MY_MIN(cur_height, (y1 + rad));
+    max_i = MY_MIN(cur_height - 1, (y1 + rad));
     min_j = MY_MAX(0, (x1 - rad));
-    max_j = MY_MIN(cur_width, (x1 + rad));
+    max_j = MY_MIN(cur_width - 1, (x1 + rad));
 
     for (i = min_i; i <= max_i; i++)
         for (j = min_j; j <= max_j; j++) {
@@ -2148,7 +2168,7 @@ const char *hit_from;
 	damage = 0;
     py.misc.chp -= damage;
     if (py.misc.chp < 0) {
-	if ((wizard) && !(get_Yn("Die?"))) {
+	if ((wizard) && !(get_check("Die?"))) {
 	    py.misc.chp=py.misc.mhp;
 	    death=FALSE;
 	    prt_chp();
@@ -2380,9 +2400,11 @@ int dir;
 
     darken_player(char_row, char_col);
     old_rad = light_rad;
+
+#if 0 /* dbd says this doesn't help */
     if (light_rad >= 0)
 	light_rad = 1;
-
+#endif
     row = char_row;
     col = char_col;
     if (!mmove(dir, &row, &col))
@@ -2470,7 +2492,7 @@ end_find()
 {
     if (find_flag) {
 	find_flag = FALSE;
-	light_rad = old_rad;
+/*	light_rad = old_rad; [dbd] */
 	move_light(char_row, char_col, char_row, char_col);
     }
 }
@@ -2741,7 +2763,17 @@ const char *kb_str;
     if (!py.flags.acid_im)
 	if (!minus_ac((int32u) TR_RES_ACID))
 	    take_hit(randint(8), kb_str);
-    inven_damage(set_corrodes, 5);
+
+    if (!py.flags.acid_im &&
+        (!py.flags.resist_acid || randint(10) == 1)) {
+        inven_damage(set_corrodes, 5);
+        
+        /* corrosion attacks may now reduce your charisma -CWS */
+        if (randint(4) == 1) {
+            msg_print("Your features are twisted!");
+            dec_stat(A_CHR, 10, FALSE);
+        }
+    }
 }
 
 
@@ -2759,8 +2791,13 @@ const char *kb_str;
 	dam = 1;
     take_hit(dam, kb_str);
     if (!(py.flags.poison_resist || py.flags.resist_poison
-	  || py.flags.poison_im))
+	  || py.flags.poison_im)) {
 	py.flags.poisoned += 12 + randint(dam);
+        if (randint(6) == 1) {
+            msg_print("You have damaged your health!");
+            dec_stat(A_CON, 10, FALSE);
+        }
+    }
 }
 
 
@@ -2771,13 +2808,20 @@ int dam;
 const char *kb_str;
 {
     if (py.flags.fire_resist)
-	dam = dam / 3;
+	dam /= 3;
     if (py.flags.resist_heat > 0)
-	dam = dam / 3;
+	dam /= 3;
     if (py.flags.fire_im)
 	dam = 1;
     take_hit(dam, kb_str);
-    inven_damage(set_flammable, 3);
+    if (!py.flags.fire_im && !py.flags.resist_heat &&
+        (!py.flags.fire_resist || randint(10) == 1)) {
+        inven_damage(set_flammable, 3);
+        if (randint(5) == 1) {
+            msg_print("You feel weaker.");
+            dec_stat(A_STR, 10, FALSE);
+        }
+    }
 }
 
 
@@ -2788,13 +2832,20 @@ int dam;
 const char *kb_str;
 {
     if (py.flags.cold_resist)
-	dam = dam / 3;
+	dam /= 3;
     if (py.flags.resist_cold > 0)
-	dam = dam / 3;
+	dam /= 3;
     if (py.flags.cold_im)
 	dam = 1;
     take_hit(dam, kb_str);
-    inven_damage(set_frost_destroy, 5);
+    if (!py.flags.cold_im && !py.flags.resist_cold &&
+        (!py.flags.cold_resist || randint(10) == 1)) {
+        inven_damage(set_frost_destroy, 5);
+        if (randint(5) == 1) {
+            msg_print("You feel more clumsy.");
+            dec_stat(A_DEX, 10, FALSE);
+        }
+    }
 }
 
 
@@ -2805,13 +2856,20 @@ int dam;
 const char *kb_str;
 {
     if (py.flags.resist_light)
-	dam = dam / 3;
+	dam /= 3;
     if (py.flags.lght_resist)
-	dam = dam / 3;
+	dam /= 3;
     if (py.flags.light_im)
 	dam = 1;
     take_hit(dam, kb_str);
-    inven_damage(set_lightning_destroy, 3);
+    if (!py.flags.light_im && !py.flags.resist_light &&
+        (!py.flags.lght_resist || randint(10) == 1)) {
+        inven_damage(set_lightning_destroy, 3);
+        if (randint(5) == 1) {
+            msg_print("You feel more clumsy.");
+            dec_stat(A_DEX, 10, FALSE);
+        }
+    }
 }
 
 
@@ -2821,19 +2879,22 @@ acid_dam(dam, kb_str)
 int dam;
 const char *kb_str;
 {
-    register int flag;
-
     if (py.flags.acid_resist > 0)
-	dam = dam / 3;
+	dam /= 3;
     if (py.flags.resist_acid > 0)
-	dam = dam / 3;
+	dam /= 3;
     if (py.flags.acid_im)
 	dam = 1;
-    flag = 0;
-    if (!py.flags.resist_acid)
-	if (minus_ac((int32u) TR_RES_ACID))
-	    flag = 1;
-    if (py.flags.acid_resist)
-	flag += 2;
-    inven_damage(set_acid_affect, 3);
+    take_hit(dam, kb_str);
+
+    if (!py.flags.acid_im && !py.flags.resist_acid) {
+	(void) minus_ac((int32u) TR_RES_ACID);
+        inven_damage(set_acid_affect, 3);
+
+    /* acid attacks may now reduce your charisma -CWS */
+        if (!py.flags.acid_resist || randint(20) == 1) {
+            msg_print("Your features are twisted!");
+	    dec_stat(A_CHR, 10, FALSE);
+        }
+    }
 }

@@ -8,10 +8,7 @@
  * included in all such copies. 
  */
 
-#include "constant.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
+#include "angband.h"
 
 /* Lets do all prototypes correctly.... -CWS */
 #ifndef NO_LINT_ARGS
@@ -353,7 +350,8 @@ cast()
 		    p_ptr->cmana_frac = 0;
 		    if (randint(3) == 1) {
 			msg_print("You have damaged your health!");
-			(void)dec_stat(A_CON);
+			(void)dec_stat(A_CON, 15 + randint(10),
+                                       (randint(3) == 1 ? TRUE : FALSE));
 		    }
 		} else
 		    p_ptr->cmana -= m_ptr->smana;

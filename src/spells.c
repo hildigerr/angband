@@ -9,11 +9,8 @@
  * included in all such copies. 
  */
 
-#include "constant.h"
-#include "config.h"
-#include "types.h"
+#include "angband.h"
 #include "monster.h"
-#include "externs.h"
 
 #ifdef USG
 #ifndef ATARIST_MWC
@@ -31,14 +28,16 @@
 static char bolt_char(int, int, int, int);
 static void ball_destroy(int, int (**) ());
 static void pause_if_screen_full(int *, int);
-static void spell_hit_monster(monster_type *, int, int *, int, int *, int *, int8u);
+static void spell_hit_monster(monster_type *, int, int *, int, int *, int *, int);
 static void replace_spot(int, int, int);
+static char inven_letter(inven_type *);
 #else
 static char bolt_char();
 static void ball_destroy();
 static void pause_if_screen_full();
 static void spell_hit_monster();
 static void replace_spot();
+static char inven_letter();
 #endif
 #endif
 
@@ -448,12 +447,13 @@ door_creation()
 		if (c_ptr->fval <= MAX_CAVE_FLOOR) {
 		    if ((c_ptr->tptr == 0) ||
 			((t_list[c_ptr->tptr].tval != TV_UP_STAIR) 
-				/* if not stairs or a store */
-			 &&(t_list[c_ptr->tptr].tval != TV_DOWN_STAIR)
-			 && (t_list[c_ptr->tptr].tval != TV_STORE_DOOR)) ||
-			(t_list[c_ptr->tptr].tval < TV_MIN_WEAR) ||
-			(t_list[c_ptr->tptr].tval > TV_MAX_WEAR) ||
-			!(t_list[c_ptr->tptr].flags2 & TR_ARTIFACT)) {
+			 /* if not stairs or a store */
+			 && (t_list[c_ptr->tptr].tval != TV_DOWN_STAIR)
+			 && (t_list[c_ptr->tptr].tval != TV_STORE_DOOR)
+			 /* if no artifact here -CFT */
+			 && !((t_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
+			      (t_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
+			      (t_list[c_ptr->tptr].flags2 & TR_ARTIFACT)))) {
 				/* if no artifact here -CFT */
 			door = TRUE;
 			if (c_ptr->tptr != 0)
@@ -1343,14 +1343,14 @@ int           monptr;
 				vtype               t1, t2;
 
 				objdes(t1, &inventory[t], FALSE);
-				if (chance != 1)
+				if (disenchant)
 				    sprintf(t2, "Your %s (%c) %s disenchanted!", t1,
-					    i + 'a' - INVEN_WIELD,
-					    (inventory[i].number != 1) ? "were" : "was");
+					    inven_letter(i_ptr),
+					    (i_ptr->number != 1) ? "were" : "was");
 				else
 				    sprintf(t2, "Your %s (%c) %s disenchantment!", t1,
-					    i + 'a' - INVEN_WIELD,
-					    (inventory[i].number != 1) ?
+					    inven_letter(i_ptr),
+					    (i_ptr->number != 1) ?
 					    "resist" : "resists");
 				msg_print(t2);
 				calc_bonuses();
@@ -1407,8 +1407,8 @@ int           monptr;
 			    dam_hp *= 4;	/* these 2 lines give avg dam
 						 * of .444, ranging from */
 			    dam_hp /= (randint(6) + 6);	/* .556 to .333 -CFT */
-			} else {
-			    if (!blind && !py.flags.blindness_resist) {
+			} else if (!py.flags.blindness_resist) {
+			    if (!blind) {
 				msg_print("The darkness prevents you from seeing!");
 				py.flags.blind += randint(5) + 2;
 			    }
@@ -2075,16 +2075,16 @@ int   monptr;
 				    vtype               t1, t2;
 
 				    objdes(t1, &inventory[t], FALSE);
-				    if (chance != 1)
+				    if (disenchant)
 					sprintf(t2, "Your %s (%c) %s disenchanted!", t1,
-						i + 'a' - INVEN_WIELD,
-						(inventory[i].number != 1) ?
+					        inven_letter(i_ptr),
+						(i_ptr->number != 1) ?
 						"were" : "was");
 				    else
 					sprintf(t2, "Your %s (%c) %s disenchantment!",
 						t1,
-						i + 'a' - INVEN_WIELD,
-						(inventory[i].number != 1) ?
+					        inven_letter(i_ptr),
+						(i_ptr->number != 1) ?
 						"resist" : "resists");
 				    msg_print(t2);
 				    calc_bonuses();
@@ -2189,11 +2189,12 @@ int   monptr;
 			    if (py.flags.dark_resist) {
 				dam *= 4;
 				dam /= (randint(6) + 6);
-			    } else {
-				if (!blind) 
+			    } else
+				if (!blind && !py.flags.blindness_resist) {
 				    msg_print("The darkness prevents you from seeing!");
-				py.flags.blind += randint(5) + 2;
+				    py.flags.blind += randint(5) + 2;
 			    }
+
 			    unlight_area(char_row, char_col);
 			    take_hit(dam, ddesc);
 			    break;
@@ -2713,7 +2714,7 @@ int dir, y, x;
 		    place_object(y,x);
 		    lite_spot(y,x);
 		    (void) sprintf(out_val,
-				   "The %s turns into mud, revealing an object!",\
+			   "The %s turns into mud, revealing an object!",
 				   tmp_str);
 		}
 		else {
@@ -2721,6 +2722,7 @@ int dir, y, x;
 		    (void) sprintf(out_val, "The %s turns into mud.", tmp_str);
 		}
 		msg_print(out_val);
+		check_view();
 		wall = TRUE;
 	    }
 	}
@@ -2792,7 +2794,8 @@ int dir, y, x;
    as deadly as chaos poly is.  This still makes polymorphing a bad
    idea, but it won't be automatically fatal. -CFT */
 static int
-poly(int mnum)
+poly(mnum)
+int mnum;
 {
     register creature_type *c_ptr = &c_list[m_list[mnum].mptr];
     int y, x;
@@ -2949,6 +2952,9 @@ int dir, y, x;
 	    flag = TRUE;
 	else if (c_ptr->cptr > 1) {
 	    m_list[c_ptr->cptr].csleep = 0;
+            m_list[c_ptr->cptr].hp = m_list[c_ptr->cptr].maxhp;
+            if (randint(3) == 1)
+                m_list[c_ptr->cptr].cspeed += 1;
 	/* monptr of 0 is safe here, since can't reach here from creatures */
 	    return multiply_monster(y, x, (int)m_list[c_ptr->cptr].mptr, 0);
 	}
@@ -3103,7 +3109,7 @@ int spell;
     vtype                   out_val;
 
     killed = FALSE;
-    if (get_com("Which type of creature do you wish exterminated?", &typ))
+    if (get_com("Which type of creature do you wish exterminated?", &typ)) {
 	for (i = mfptr - 1; i >= MIN_MONIX; i--) {
 	    m_ptr = &m_list[i];
 	    r_ptr = &c_list[m_ptr->mptr];
@@ -3134,6 +3140,8 @@ int spell;
 		    msg_print(out_val);
 		}
 	}
+    } else
+	free_turn_flag = TRUE;
     return (killed);
 }
 
@@ -3657,7 +3665,7 @@ void
 lose_str()
 {
     if (!py.flags.sustain_str) {
-	(void)dec_stat(A_STR);
+	(void)dec_stat(A_STR, 10, FALSE);
 	msg_print("You feel very weak.");
     } else
 	msg_print("You feel weak for a moment;  it passes.");
@@ -3669,7 +3677,7 @@ void
 lose_int()
 {
     if (!py.flags.sustain_int) {
-	(void)dec_stat(A_INT);
+	(void)dec_stat(A_INT, 10, FALSE);
 	msg_print("You become very dizzy.");
     } else
 	msg_print("You become dizzy for a moment;  it passes.");
@@ -3681,7 +3689,7 @@ void
 lose_wis()
 {
     if (!py.flags.sustain_wis) {
-	(void)dec_stat(A_WIS);
+	(void)dec_stat(A_WIS, 10, FALSE);
 	msg_print("You feel very naive.");
     } else
 	msg_print("You feel naive for a moment;  it passes.");
@@ -3693,7 +3701,7 @@ void
 lose_dex()
 {
     if (!py.flags.sustain_dex) {
-	(void)dec_stat(A_DEX);
+	(void)dec_stat(A_DEX, 10, FALSE);
 	msg_print("You feel very sore.");
     } else
 	msg_print("You feel sore for a moment;  it passes.");
@@ -3705,7 +3713,7 @@ void
 lose_con()
 {
     if (!py.flags.sustain_con) {
-	(void)dec_stat(A_CON);
+	(void)dec_stat(A_CON, 10, FALSE);
 	msg_print("You feel very sick.");
     } else
 	msg_print("You feel sick for a moment;  it passes.");
@@ -3717,7 +3725,7 @@ void
 lose_chr()
 {
     if (!py.flags.sustain_chr) {
-	(void)dec_stat(A_CHR);
+	(void)dec_stat(A_CHR, 10, FALSE);
 	msg_print("Your skin starts to itch.");
     } else
 	msg_print("Your skin starts to itch, but feels better now.");
@@ -3882,17 +3890,88 @@ register int y, x;
     }
 }
 
+
+
+#if 0
+void
+enchant_armor()
+{
+    int k = 0, l = 0, i, chosen, first;
+    int which[INVEN_ARRAY_SIZE];
+
+/* enchant cursed items first without asking */    
+    if (TR_CURSED & inventory[INVEN_BODY].flags)
+	l = INVEN_BODY;
+    else if (TR_CURSED & inventory[INVEN_ARM].flags)
+	l = INVEN_ARM;
+    else if (TR_CURSED & inventory[INVEN_OUTER].flags)
+	l = INVEN_OUTER;
+    else if (TR_CURSED & inventory[INVEN_HEAD].flags)
+	l = INVEN_HEAD;
+    else if (TR_CURSED & inventory[INVEN_HANDS].flags)
+	l = INVEN_HANDS;
+    else if (TR_CURSED & inventory[INVEN_FEET].flags)
+	l = INVEN_FEET;
+
+    if (!l) {                /* if no cursed items, let player select which */
+	int num = 0, flag = FALSE;
+	for (i = INVEN_WIELD; i < INVEN_ARRAY_SIZE; i++)
+	    which[i] = FALSE;
+	if (inventory[INVEN_BODY].tval != TV_NOTHING)
+	    which[INVEN_BODY] = TRUE;
+	if (inventory[INVEN_ARM].tval != TV_NOTHING)
+	    which[INVEN_ARM] = TRUE;
+	if (inventory[INVEN_OUTER].tval != TV_NOTHING)
+	    which[INVEN_OUTER] = TRUE;
+	if (inventory[INVEN_HANDS].tval != TV_NOTHING)
+	    which[INVEN_HANDS] = TRUE;
+	if (inventory[INVEN_HEAD].tval != TV_NOTHING)
+	    which[INVEN_HEAD] = TRUE;
+	if (inventory[INVEN_FEET].tval != TV_NOTHING)
+	    which[INVEN_FEET] = TRUE;
+	for (i = INVEN_WIELD; i < INVEN_ARRAY_SIZE; i++)
+	    if (which[i]) {
+		num++;
+		if (!flag)
+		    first = i;
+		flag = TRUE;
+	    }
+
+	if (!flag)
+	    return;
+
+	show_equip(FALSE, 0);
+	
+    }
+	
+    if (l > 0) {
+	char                out_val[100], tmp_str[100];
+	
+	I_ptr = &inventory[l];
+	objdes(tmp_str, i_ptr, FALSE);
+	sprintf(out_val, "Your %s glows faintly!", tmp_str);
+	msg_print(out_val);
+	if (!enchant(i_ptr, randint(3)+1, ENCH_TOAC))
+	    msg_print("The enchantment fails.");
+    }
+}
+#endif
+
+
 /* Revamped!  Now takes item pointer, number of times to try enchanting,
  * and a flag of what to try enchanting.  Artifacts resist enchantment
  * some of the time, and successful enchantment to at least +0 might
  * break a curse on the item.  -CFT */
 /* Enchants a plus onto an item.                        -RAK-   */
 int
-enchant(inven_type *i_ptr, int n, int8u eflag)
+enchant(i_ptr, n, eflag)
+inven_type *i_ptr;
+int n;
+int8u eflag;
 {
-    register int chance, res = FALSE, i, a = i_ptr->flags2 & TR_ARTIFACT;
-    int table[13] = {  10,  50, 100, 200, 300, 400,
-                           500, 700, 950, 990, 992, 995, 997 };
+    int chance, res = FALSE, i, a = i_ptr->flags2 & TR_ARTIFACT;
+    static int table[13] = {  10,  50, 100, 200, 300, 400,
+			      500, 700, 950, 990, 992, 995, 997 };
     for(i=0; i<n; i++){
 	chance = 0;
 	if (eflag & ENCH_TOHIT) {
@@ -3966,7 +4045,7 @@ int monptr, dam;
     newhp = m_ptr->hp;
     oldhp = newhp + dam;
 #endif
-    percentage = (newhp * 100) / oldhp;
+    percentage = (newhp * 100L) / oldhp;
 
     if ((c_ptr->cchar == 'j') ||   /* Non-verbal creatures like molds */
 	(c_ptr->cchar == 'Q') || (c_ptr->cchar == 'v') ||
@@ -3978,12 +4057,19 @@ int monptr, dam;
 	    return "%s flinches.";
 	if (percentage > 50)
 	    return "%s squelches.";
+
+#if 1
+	if (percentage > 35)
+		return "%s quivers in pain.";
+#else
 	if (percentage > 35) {
 	    if (randint(4) == 1) /* thanks to dbd@panacea.phys.utk.edu -CWS */
 		return "%s quivers in pain.";
 	    else
 		return "%s imitates Bill Cosby in pain.";
 	}
+#endif
+
 	if (percentage > 20)
 	    return "%s writhes about.";
 	if (percentage > 10)
@@ -4513,8 +4599,7 @@ self_knowledge()
 static void
 spell_hit_monster(m_ptr, typ, dam, rad, y, x, by_player)
 monster_type *m_ptr;
-int           typ, *dam, rad, *y, *x;
-int8u         by_player;
+int           typ, *dam, rad, *y, *x, by_player;
 {
     register creature_type *r_ptr;
     int blind = (py.flags.status & PY_BLIND) ? 1 : 0;
@@ -5004,3 +5089,30 @@ int typ, dir, y, x, dam;
 	} /* for each piece */
     } /* if !blind */
 }  
+
+/* Given a pointer to an worn item, return the letter
+   it is indexed by as shown with the 'e' command. Just
+   return a blank if we're given a bad pointer (i.e., something
+   which isn't being worn).
+
+   Note that returning
+		target - &inventory[INVEN_WIELD] + 'a'
+   doesn't work since the player may not have all of the
+   equipment slots filled.
+*/
+
+static char inven_letter(target)
+inven_type *target;
+{
+	char c = 'a';
+	inven_type *iptr;
+
+	if (target < &inventory[INVEN_WIELD] ||
+            target > &inventory[INVEN_AUX] ||
+	    target->tval == TV_NOTHING)
+		return ' ';
+	for (iptr = &inventory[INVEN_WIELD]; iptr < target; ++iptr)
+		if (iptr->tval != TV_NOTHING)
+			++c; /* avoid c++ */
+	return c;
+}

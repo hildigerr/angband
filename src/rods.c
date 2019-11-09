@@ -8,10 +8,7 @@
  * I will sucker! ~Ludwig 
  */
 
-#include "constant.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
+#include "angband.h"
 
 #ifdef USG
 #ifndef ATARIST_MWC
@@ -206,13 +203,14 @@ activate_rod()
 		i_ptr->timeout = 99;
 		break;
 	      case RD_IDENT:
-		ident_spell();
+		if (!ident_spell())
+                    goto no_charge;
 		ident = TRUE;
 		i_ptr->timeout = 10;
 		break;
 	      case RD_CURE:
-		if ((cure_blindness()) || (cure_poison()) ||
-		    (cure_confusion()) || (py.flags.stun > 0) || (py.flags.cut > 0))
+		if ((cure_blindness()) | (cure_poison()) |
+		    (cure_confusion()) | (py.flags.stun > 0) | (py.flags.cut > 0))
 		    ident = TRUE;
 		if (py.flags.stun > 0) {
 		    if (py.flags.stun > 50) {

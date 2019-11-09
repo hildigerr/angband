@@ -9,10 +9,7 @@
  * included in all such copies. 
  */
 
-#include "constant.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
+#include "angband.h"
 #include "monster.h"
 
 #ifdef ibm032
@@ -1201,7 +1198,6 @@ int yval, xval;
  * much to gehring@pib1.physik.uni-bonn.edu for pointing this bug out... -CFT
  */
     char               *t;
-    char                buf[50];
     int8u               floor;
     int8u               wall;
     register cave_type *c_ptr;
@@ -2749,7 +2745,7 @@ town_gen()
 	}
 	alloc_monster(MIN_MALLOC_TD, 3, TRUE);
     }
-    store_maint();
+/*  store_maint(); -- this is open to abuse by repeatedly saving/restoring -CWS */ 
     place_ghost();
 }
 
@@ -2785,10 +2781,10 @@ generate_cave()
 	max_panel_cols = (cur_width / SCREEN_WIDTH) * 2 - 2;
 	panel_row = max_panel_rows;
 	panel_col = max_panel_cols;
+        unfelt = TRUE;
 	cave_gen();
     }
 
-    unfelt = TRUE;
     feeling = 0;
     if (rating > 100)
 	feeling = 2;

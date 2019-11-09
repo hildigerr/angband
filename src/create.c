@@ -8,10 +8,7 @@
  * included in all such copies. 
  */
 
-#include "constant.h"
-#include "types.h"
-#include "config.h"
-#include "externs.h"
+#include "angband.h"
 
 #ifdef USG
 #ifndef ATARIST_MWC
@@ -832,12 +829,19 @@ create_character()
 	    if (autoroll) {
 		put_auto_stats();
 		auto_round++;
-		sprintf(inp, "auto-rolling round #%lu.", (long)auto_round);
+		sprintf(inp, "Auto-rolling round #%lu.", (long)auto_round);
 		put_buffer(inp, 20, 2);
 #if defined(unix) && defined(NICE)
 		usleep((long)100000L);
 #endif
 		put_qio();
+#if defined(NICE)                
+                if (auto_round >= 10000) {
+                    msg_print("This is taking too long.  I give up.");
+                    msg_print(NULL);
+                    exit_game();
+                }
+#endif                
 	    } else
 		put_stats();
 	} while ((autoroll) &&
@@ -858,12 +862,13 @@ create_character()
     );
 #endif				   /* character checks */
 #endif				   /* AUTOROLLER main looping section */
-       get_history();	           /* Common stuff */
-       get_ahw();
+	get_history();	           /* Common stuff */
+	get_ahw();
 
 	calc_bonuses();
 	print_history();
 	put_misc1();
+	put_stats();
 	clear_from(20);
 
 	do {			   /* Input loop */

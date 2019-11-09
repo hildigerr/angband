@@ -1,8 +1,6 @@
 /* variable.c: Global variables */
 
-#include "constant.h"
-#include "config.h"
-#include "types.h"
+#include "angband.h"
 
 const char *copyright[5] = {
 "Copyright (c) 1989 James E. Wilson, Robert A. Keoneke",
@@ -69,6 +67,7 @@ int find_examine = TRUE;
 int find_bound = FALSE;
 int find_prself = FALSE;
 int prompt_carry_flag = FALSE;
+int always_throw = FALSE;       /* Do you really want to throw PDSM? -Abby- */
 int show_weight_flag = FALSE;
 int show_equip_weight_flag = FALSE;
 int highlight_seams = FALSE;
@@ -83,7 +82,10 @@ int quick_messages = FALSE;     /* quick messages -CWS */
 int equippy_chars = FALSE;      /* do equipment characters -CWS */
 char doing_inven = FALSE;	/* Track inventory commands. -CJS- */
 int screen_change = FALSE;	/* Track screen updates for inven_commands. */
+int ring_bell = TRUE;           /* Ring bell on error -Abby- */
 char last_command = ' ';  	/* Memory of previous command. */
+int shuffle_store_owners = FALSE; /* can store owners change during the game -CWS */
+int new_screen_layout = TRUE;   /* Use the new screen layout -CWS */
 
 /* these used to be in dungeon.c */
 int new_level_flag;		/* Next level when true	 */

@@ -6,9 +6,7 @@
    not for profit purposes provided that this copyright and statement are
    included in all such copies. */
 
-#include "constant.h"
-#include "config.h"
-#include "types.h"
+#include "angband.h"
 
 /* Following are treasure arrays	and variables			*/
 
@@ -96,11 +94,11 @@ treasure_type object_list[MAX_OBJECTS] = {
 {"Restore Constitution"		,0x00010000L,	TV_FOOD, ',',	/* 11*/
   500,	 350,	75,   1,   1,	0,   0,	 0,   0, {0,0}	, 20, 0, 0x0L},
 {"Restoring"			,0x001F8040L,	TV_FOOD, ',',	/* 12*/
-  500,	1000,	79,   1,   1,	0,   0,	 0,   0, {0,0}	, 20, 0, 0x0L},
+  500,	1000,	79,   1,   1,	0,   0,	 0,   0, {0,0}	, 20, 10, 0x0L},
 {"Restoring"			,0x001F8040L,	TV_FOOD, ',',	/* 13*/
-  500,	1000,	79,   1,   1,	0,   0,	 0,   0, {0,0}	, 30, 0, 0x0L},
+  500,	1000,	79,   1,   1,	0,   0,	 0,   0, {0,0}	, 30, 10, 0x0L},
 {"Restoring"			,0x001F8040L,	TV_FOOD, ',',	/* 14*/
-  500,	1000,	79,   1,   1,	0,   0,	 0,   0, {0,0}	, 40, 0, 0x0L},
+  500,	1000,	79,   1,   1,	0,   0,	 0,   0, {0,0}	, 40, 10, 0x0L},
 {"Poison"			,0x00000001L,	TV_FOOD, ',',	/* 15*/
  1200,	   0,	80,   1,   1,	0,   0,	 0,   0, {0,0}	, 15, 0, 0x0L},
 {"Poison"			,0x00000001L,	TV_FOOD, ',',	/* 16*/

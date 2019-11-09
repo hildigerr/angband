@@ -8,10 +8,7 @@
  * included in all such copies. 
  */
 
-#include "constant.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
+#include "angband.h"
 
 /* For those systems that don't have stricmp. -hmj */
 
@@ -77,3 +74,14 @@ unsigned long microSeconds;
 }
 
 #endif
+
+#ifdef NEEDS_BZERO
+void
+my_bzero (sp, len)
+char *sp;
+int  len;
+{
+   while (len--) 
+      *sp++ = '\0';
+}
+#endif /* NEEDS_BZERO */

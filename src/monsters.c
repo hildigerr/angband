@@ -6,9 +6,7 @@
    not for profit purposes provided that this copyright and statement are
    included in all such copies. */
 
-#include "constant.h"
-#include "config.h"
-#include "types.h"
+#include "angband.h"
 #include "monster.h"
 
 /*
@@ -188,7 +186,7 @@ creature_type c_list[MAX_CREATURES] = {
 			    ,(NONE8),(NONE8)
 			    ,5,10,20,16,11,'k',{3,7},{5,0,0,0},1,1,'n'},
 
-{"White worm mass"	    ,(MULTIPLY|MV_75|MV_ATT_NORM),(NONE8)
+{"White worms"	            ,(MULTIPLY|MV_75|MV_ATT_NORM),(NONE8)
 			    ,(ANIMAL|HURT_LIGHT|IM_POISON|MINDLESS)
 			    ,(NONE8),(NONE8)
 			    ,2,10,7,1,10,'w',{4,4},{173,0,0,0},1,1,'p'},
@@ -275,7 +273,7 @@ creature_type c_list[MAX_CREATURES] = {
 			      CHARM_SLEEP|ANIMAL),(NONE8),(NONE8)
 			     ,30,0,30,30,12,'C',{5,5},{27,0,0,0},2,1,'n'},
 
-{"Green worm mass"	    ,(MULTIPLY|MV_75|MV_ATT_NORM),(NONE8)
+{"Green worms"    	    ,(MULTIPLY|MV_75|MV_ATT_NORM),(NONE8)
 			    ,(ANIMAL|HURT_LIGHT|IM_ACID|MINDLESS),(NONE8)
 			    ,(NONE8),3,10,7,3,10,'w',{6,4},{140,0,0,0},2,1,'p'},
 
@@ -344,11 +342,11 @@ creature_type c_list[MAX_CREATURES] = {
 {"Metallic red centipede"   ,(MV_ATT_NORM|MV_20),(NONE8),(ANIMAL),(NONE8)
 			    ,(NONE8),12,20,8,9,12,'c',{4,8},{69,0,0,0},3,1,'n'},
 
-{"Yellow worm mass"	    ,(MULTIPLY|MV_75|MV_ATT_NORM),(NONE8)
+{"Yellow worms"  	    ,(MULTIPLY|MV_75|MV_ATT_NORM),(NONE8)
 			    ,(ANIMAL|HURT_LIGHT|MINDLESS),(NONE8),(NONE8)
 			    ,4,10,7,4,10,'w',{4,8},{182,0,0,0},3,2,'p'},
 
-{"Clear worm mass"	    ,(MULTIPLY|MV_INVIS|MV_75|MV_ATT_NORM),(NONE8)
+{"Clear worms"  	    ,(MULTIPLY|MV_INVIS|MV_75|MV_ATT_NORM),(NONE8)
 			    ,(ANIMAL|HURT_LIGHT|IM_POISON|MINDLESS),(NONE8),(NONE8)
 			    ,4,10,7,1,10,'w',{4,4},{173,0,0,0},3,2,'p'},
 
@@ -383,7 +381,7 @@ creature_type c_list[MAX_CREATURES] = {
 			    ,(NONE8),(NONE8)
 			    ,1,30,8,7,11,'r',{2,2},{153,0,0,0},4,1,'n'},
 
-{"Blue worm mass"	    ,(MULTIPLY|MV_ATT_NORM|MV_75),(NONE8)
+{"Blue worms"   	    ,(MULTIPLY|MV_ATT_NORM|MV_75),(NONE8)
 			    ,(ANIMAL|HURT_LIGHT|IM_FROST|NO_INFRA|MINDLESS),(NONE8)
 			    ,(NONE8),5,10,7,12,10,'w',{5,8},{129,0,0,0},4,1,'p'},
 
@@ -435,7 +433,7 @@ creature_type c_list[MAX_CREATURES] = {
 			    ,(ANIMAL|HURT_LIGHT),(NONE8),(NONE8)
 			    ,20,10,2,10,10,'e',{7,8},{207,0,0,0},5,2,'n'},
 
-{"Red worm mass"	    ,(MULTIPLY|MV_ATT_NORM|MV_75),(NONE8)
+{"Red worms"    	    ,(MULTIPLY|MV_ATT_NORM|MV_75),(NONE8)
 			    ,(ANIMAL|HURT_LIGHT|IM_FIRE|MINDLESS),(NONE8),(NONE8)
 			    ,6,10,7,12,10,'w',{5,8},{111,0,0,0},5,1,'p'},
 
@@ -754,7 +752,7 @@ creature_type c_list[MAX_CREATURES] = {
 			    ,(HURT_LIGHT|CHARM_SLEEP|IM_POISON|MINDLESS),(NONE8)
 			  ,(NONE8),60,99,2,1,11,'j',{52,8},{186,0,0,0},12,3,'n'},
 
-{"Nether worm mass"	    ,(MULTIPLY|MV_ATT_NORM|MV_75),(NONE8)
+{"Nether worms"  	    ,(MULTIPLY|MV_ATT_NORM|MV_75),(NONE8)
 			    ,(ANIMAL|HURT_LIGHT|MINDLESS),(NONE8),(NONE8)
 			    ,6,3,10,15,10,'w',{5,8},{186,0,0,0},12,3,'p'},
 
@@ -1333,7 +1331,7 @@ creature_type c_list[MAX_CREATURES] = {
 			    ,(DARKNESS),(NONE8)
 			    ,100,30,20,50,11,'T',{23,13},{7,7,41,0},25,1,'m'},
 
-{"Wereworm"		    ,(MV_ATT_NORM),(NONE8),(IM_ACID|ANIMAL)
+{"Wereworm"		    ,(MV_ATT_NORM),(NONE8),(IM_ACID|ANIMAL|EVIL)
 			    ,(NONE8),(NONE8)
 			    ,300,20,15,70,11,'w',{100,11},{32,139,224,156},
 								    25,3,'n'},
@@ -1538,6 +1536,10 @@ creature_type c_list[MAX_CREATURES] = {
 			    ,(DRAGON|MAX_HP|CHARM_SLEEP)
 			    ,(BREATH_CO),(NONE8)
 			    ,310,150,20,63,11,'d',{34,8},{52,52,29,0},29,3,'n'},
+#if 0
+{"Dhole"        ,(MV_ATT_NORM),(0x9L|BREATH_A),(IM_ACID|ANIMAL|BREAK_WALL|EVIL)
+                ,(NONE8),(NONE8),500,30,14,65,11,'w',{65,8},{7,113,166,92},29,3,
+#endif
 
 {"Mithril golem"	    ,(MV_ATT_NORM|CARRY_GOLD|HAS_2D2),(NONE8)
 			    ,(IM_FROST|IM_FIRE|IM_LIGHTNING|IM_POISON|MINDLESS

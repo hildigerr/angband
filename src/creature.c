@@ -8,11 +8,8 @@
  * included in all such copies. 
  */
 
-#include "constant.h"
+#include "angband.h"
 #include "monster.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
 
 #ifdef USG
 #ifndef ATARIST_MWC
@@ -119,7 +116,7 @@ int monptr;
 	if (los(char_row, char_col, (int)m_ptr->fy, (int)m_ptr->fx)) {
 	    c_ptr = &cave[m_ptr->fy][m_ptr->fx];
 
-#ifdef GROSS_HACK
+#if 1   /* GROSS_HACK */
 	/* Try to debug invis monsters...this is not 'fixed', per se
 	 * but it will correct the observed problem and also give me
 	 * a chance to trap the thing with a debugger.   -CWS
@@ -127,15 +124,18 @@ int monptr;
          * This should no longer be necessary, but it's harmless  -CWS
          */
 	    if (c_ptr->cptr != monptr) {
-		char                BUF[100];
-
-		sprintf(BUF, "Help! cptr = %d / monptr = %d, x = %d, y = %d",
-			c_ptr->cptr, monptr, m_ptr->fx, m_ptr->fy);
-		if (wizard)
-		    msg_print(BUF);
 		c_ptr->cptr = monptr;
+		if (wizard) {
+		    char BUF[100];
+
+		    sprintf(BUF,
+			    "Help! cptr = %d / monptr = %d, x = %d, y = %d",
+			    c_ptr->cptr, monptr, m_ptr->fx, m_ptr->fy);
+		    msg_print(BUF);
+		}
 	    }
 #endif  /* GROSS_HACK */
+
 	    r_ptr = &c_list[m_ptr->mptr];
 	/* moved here to allow infra to see invis -CFT */
 	    if ((py.flags.see_infra > 0) &&
@@ -265,6 +265,38 @@ check_mon_lite(y, x)
 }
 
 
+
+/* Returns whether a given monster will try to run from the player. */
+
+static int
+mon_will_run(monptr)
+int monptr;
+{
+/* Keep immobile monsters from trying to run away, and monsters too far away */
+    if ((c_list[(m_list[monptr].mptr)].cmove & CM_ATTACK_ONLY) ||
+        (m_list[monptr].cdis > MAX_SIGHT + 5))
+        return FALSE;
+    
+/* Algorithm for when monsters get afraid of high-level characters:
+ *
+ * lvl  1..15 always afraid, 16..22 some, based on maxhp % 8 :
+ * lvl  16    7 of 8 monsters afraid  [  this is for a 50th  ]
+ * lvl  22    1 of 8 monsters afraid  [  level player, lower ]
+ * lvl  23++  no afraid monsters      [ level=less afraid m. ]
+ */
+    
+    if (((py.misc.lev - 34 - c_list[(m_list[monptr]).mptr].level +
+         ((m_list[monptr].maxhp) % 8)) > 0) &&
+        (m_list[monptr].cdis > 5))
+            return TRUE;
+
+    if (m_list[monptr].monfear)
+	return TRUE;
+    else
+        return FALSE;
+}
+
+
 /* Choose correct directions for monster movement	-RAK-	 */
 static void 
 get_moves(monptr, mm)
@@ -272,20 +304,11 @@ get_moves(monptr, mm)
     register int *mm;
 {
     int y, ay, x, ax, move_val;
-
     y = m_list[monptr].fy - char_row;
     x = m_list[monptr].fx - char_col;
 
-/* lvl  1..15 always afraid, 16..22 some, based on maxhp %8 :
- * lvl  16    7 of 8 monsters afraid  [  this is for a 50th  ]
- * lvl  22    1 of 8 monsters afraid  [  level player, lower ]
- * lvl  23++  no afraid monsters      [ level=less afraid m. ]
- */
-
-    if (((int16)(py.misc.lev - 34 - c_list[(m_list[monptr]).mptr].level +
-		 ((m_list[monptr].maxhp) % 8)) > 0)
-	|| m_list[monptr].monfear) { /* Run away!  Run away! -DGK */
-	y = (-y);     /* FIXME: make monsters running away more intelligent */
+    if (mon_will_run(monptr)) {
+	y = (-y);
 	x = (-x);
     }
 
@@ -832,7 +855,7 @@ int monptr;
 		    msg_print("You feel weaker for a moment, but it passes.");
 		else if (randint(2) == 1) {
 		    msg_print("You feel weaker.");
-		    (void)dec_stat(A_STR);
+		    (void)dec_stat(A_STR, 15, FALSE);
 		} else
 		    notice = FALSE;
 		break;
@@ -991,7 +1014,7 @@ int monptr;
 		    msg_print("You feel clumsy for a moment, but it passes.");
 		else {
 		    msg_print("You feel more clumsy.");
-		    (void)dec_stat(A_DEX);
+		    (void)dec_stat(A_DEX, 15, FALSE);
 		}
 		break;
 	      case 16:		   /* Lose constitution */
@@ -1001,7 +1024,7 @@ int monptr;
 		    msg_print("Your body resists the effects of the disease.");
 		else {
 		    msg_print("Your health is damaged!");
-		    (void)dec_stat(A_CON);
+		    (void)dec_stat(A_CON, 15, FALSE);
 		}
 		break;
 	      case 17:		   /* Lose intelligence */
@@ -1011,7 +1034,7 @@ int monptr;
 		if (f_ptr->sustain_int)
 		    msg_print("But your mind quickly clears.");
 		else
-		    (void)dec_stat(A_INT);
+		    (void)dec_stat(A_INT, 15, FALSE);
 		break;
 	      case 18:		   /* Lose wisdom	   */
 		f_ptr = &py.flags;
@@ -1020,7 +1043,7 @@ int monptr;
 		    msg_print("Your wisdom is sustained.");
 		else {
 		    msg_print("Your wisdom is drained.");
-		    (void)dec_stat(A_WIS);
+		    (void)dec_stat(A_WIS, 15, FALSE);
 		}
 		break;
 	      case 19:		   /* Lose experience  */
@@ -1154,36 +1177,36 @@ int monptr;
 		    msg_print("You feel weaker for a moment, but it passes.");
 		else {
 		    msg_print("You feel weaker.");
-		    (void)dec_stat(A_STR);
+		    (void)dec_stat(A_STR, 15, FALSE);
 		}
 		if (f_ptr->sustain_dex)
 		    msg_print("You feel clumsy for a moment, but it passes.");
 		else {
 		    msg_print("You feel more clumsy.");
-		    (void)dec_stat(A_DEX);
+		    (void)dec_stat(A_DEX, 15, FALSE);
 		}
 		if (f_ptr->sustain_con)
 		    msg_print("Your body resists the effects of the disease.");
 		else {
 		    msg_print("Your health is damaged!");
-		    (void)dec_stat(A_CON);
+		    (void)dec_stat(A_CON, 15, FALSE);
 		}
 		msg_print("You have trouble thinking clearly.");
 		if (f_ptr->sustain_int)
 		    msg_print("But your mind quickly clears.");
 		else
-		    (void)dec_stat(A_INT);
+		    (void)dec_stat(A_INT, 15, FALSE);
 		if (f_ptr->sustain_wis)
 		    msg_print("Your wisdom is sustained.");
 		else {
 		    msg_print("Your wisdom is drained.");
-		    (void)dec_stat(A_WIS);
+		    (void)dec_stat(A_WIS, 15, FALSE);
 		}
 		if (f_ptr->sustain_chr)
 		    msg_print("You keep your good looks.");
 		else {
 		    msg_print("Your features are twisted.");
-		    (void)dec_stat(A_CHR);
+		    (void)dec_stat(A_CHR, 15, FALSE);
 		}
 		break;
 	      case 99:
@@ -1670,7 +1693,7 @@ int monptr, *took_turn;
 	    thrown_spell = spell_choice[randint(k) - 1];
 	thrown_spell++;
     /* all except teleport_away() and drain mana spells always disturb */
-	if (thrown_spell > 6 && thrown_spell != 7)
+	if (thrown_spell > 6 && thrown_spell != 17)
 	    disturb(1, 0);
     /* Cast the spell.			     */
 	switch (thrown_spell) {
@@ -2136,8 +2159,7 @@ int monptr, *took_turn;
 		(void)sprintf(outval, "%smumbles to itself.", cdesc);
 	    msg_print(outval);
 	    monster_is_afraid = 0;
-	    if (m_ptr->maxhp == 0) {	/* then we're just going to fix it!
-					 * -CFT */
+	    if (m_ptr->maxhp == 0) {	/* then we're just going to fix it! -CFT */
 		if ((c_list[m_ptr->mptr].cdefense & MAX_HP) || be_nasty)
 		    m_ptr->maxhp = max_hp(c_list[m_ptr->mptr].hd);
 		else
@@ -2154,7 +2176,7 @@ int monptr, *took_turn;
 /* need >= because, if we recalc-ed maxhp, we might have gotten a low roll,
  * which could be below hp -CFT
  */
-		(void)strcat(cdesc, "looks as healthy as can be.");
+		(void)strcat(cdesc, "as healthy as can be.");
 		msg_print(cdesc);
 		if (m_ptr->monfear > 0) {	/* can't be afraid at max hp's */
 		    m_ptr->monfear = 0;
@@ -2165,17 +2187,15 @@ int monptr, *took_turn;
 		if (m_ptr->hp > m_ptr->maxhp)
 		    m_ptr->hp = m_ptr->maxhp;
 		if (m_ptr->hp == m_ptr->maxhp) {
-		    (void)strcat(cdesc, "looks REALLY healthy!");
-		    if (m_ptr->monfear > 0) {	/* can't be afraid at max
-						 * hp's */
+		    (void)strcat(cdesc, "REALLY healthy!");
+		    if (m_ptr->monfear > 0) {	/* can't be afraid at max hp's */
 			m_ptr->monfear = 0;
 			monster_is_afraid = (-1);
 		    }
 		} else {
-		    (void)strcat(cdesc, "looks healthier.");
+		    (void)strcat(cdesc, "healthier.");
 		    if ((m_ptr->monfear > 0) && (m_ptr->maxhp / (m_ptr->hp + 1) < 3)) {
-			m_ptr->monfear = 0;	/* has recovered 33% of it's
-						 * hit points */
+			m_ptr->monfear = 0;	/* has recovered 33% of hit points */
 			monster_is_afraid = (-1);
 		    }
 		}
@@ -2697,9 +2717,9 @@ int y, x, cr_index, monptr;
     do {
 	j = y - 2 + randint(3);
 	k = x - 2 + randint(3);
-    /*
-     * don't create a new creature on top of the old one, that causes
-     * invincible/invisible creatures to appear 
+        
+    /* Don't create a new creature on top of the old one, that causes
+     * invincible/invisible creatures to appear...
      */
 	if (in_bounds(j, k) && (j != y || k != x)) {
 	    c_ptr = &cave[j][k];
@@ -2711,7 +2731,7 @@ int y, x, cr_index, monptr;
 		/* Check the experience level -CJS- */
 			&& c_list[cr_index].mexp >=
 			c_list[m_list[c_ptr->cptr].mptr].mexp) {
-		    /* It ate an already processed monster.Handle normally. */
+		    /* It ate an already processed monster. Handle normally. */
 			if (monptr < c_ptr->cptr)
 			    delete_monster((int)c_ptr->cptr);
 		    /*

@@ -5,6 +5,10 @@
    This software may be copied and distributed for educational, research, and
    not for profit purposes provided that this copyright and statement are
    included in all such copies. */
+
+#ifndef _TYPES_H_
+#define _TYPES_H_
+
 #if !defined(__alpha)
 typedef unsigned long  int32u;
 typedef long	       int32;
@@ -26,6 +30,13 @@ typedef char vtype[VTYPESIZ];
    always be called with a bigvtype as the first paramter */
 typedef char bigvtype[BIGVTYPESIZ];
 typedef char stat_type[8];
+
+/* tolerate old compilers */
+#if !(defined(__GNUC__) || defined(__STDC__))
+#if !defined(const))
+#define const
+#endif
+#endif
 
 /* Many of the character fields used to be fixed length, which greatly
    increased the size of the executable.  I have replaced many fixed
@@ -422,3 +433,5 @@ typedef struct high_scores
   int8u pclass;
   int8u prace;
 } high_scores;
+
+#endif /* _TYPES_H_ */

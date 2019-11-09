@@ -8,10 +8,7 @@
  * included in all such copies. 
  */
 
-#include "constant.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
+#include "angband.h"
 #include "monster.h"
 
 #ifdef USG
@@ -67,6 +64,7 @@ dungeon()
     register struct misc  *p_ptr;
     register inven_type   *i_ptr;
     register struct flags *f_ptr;
+    static int             inited = FALSE; /* for restarting a game -CWS */
 
 /* Main procedure for dungeon.			-RAK-	 */
 /* Note: There is a lot of preliminary magic going on here at first */
@@ -94,15 +92,15 @@ dungeon()
 	p_ptr->max_dlv = dun_level;
 
 /* Reset flags and initialize variables  */
-    command_count  = 0;
-    eof_flag       = FALSE;
-    find_count     = 0;
-    new_level_flag = FALSE;
-    find_flag      = FALSE;
-    teleport_flag  = FALSE;
-    mon_tot_mult   = 0;
     old_rad        = (-1);
+    mon_tot_mult   = 0;
     coin_type      = 0;
+    command_count  = 0;
+    find_count     = 0;
+    find_flag      = FALSE;
+    new_level_flag = FALSE;
+    eof_flag       = FALSE;
+    teleport_flag  = FALSE;
     opening_chest  = FALSE;
 
 #ifdef TARGET
@@ -146,17 +144,27 @@ dungeon()
  */
     if (py.flags.status & PY_SEARCH)
 	search_off();
-/* Light,  but do not move critters	    */
+
+/* Light, but do not move critters */
     creatures(FALSE);
-/* Print the depth			   */
+
+/* Print the depth */
     prt_depth();
 
-/* FIXME: figure this out */
+/* Only print a feeling if not on town level, and have been on the old level
+ * for 50 to 100 turns.  Only reset old_turn to turn the second time going
+ * through this code, as the first time is when you restore from a saved
+ * game.  -CWS
+ */
     if (((turn - old_turn) > randint(50) + 50) && dun_level) {
 	unfelt = FALSE;
 	print_feeling();
     }
-    old_turn = turn;
+
+    if (inited)
+        old_turn = turn;
+    else
+        inited = TRUE;
 
 /* Loop until dead,  or new level		 */
     do {
@@ -964,6 +972,8 @@ dungeon()
 		if ((old_rad >= 0) && (!find_flag)) {
 		    light_rad = old_rad;
 		    old_rad = (-1);
+		    move_light(char_row, char_col, char_row, char_col);
+		    
 		}
 		if (find_flag) {
 		    find_run();
@@ -1083,6 +1093,7 @@ dungeon()
 			command_count = 0;
 		}
 	    /* End of commands				     */
+		move_light(char_row, char_col, char_row, char_col);
 	    }
 	    while (free_turn_flag && !new_level_flag && !eof_flag);
 	} else {
@@ -1510,8 +1521,8 @@ char com_val;
     switch (com_val) {
       case 'Q':			/* (Q)uit		(^K)ill */
 	flush();
-	if ((!total_winner) ? get_Yn("Do you really want to quit?")
-	    : get_Yn("Do you want to retire?")) {
+	if ((!total_winner) ? get_check("Do you really want to quit?")
+	    : get_check("Do you want to retire?")) {
 	    new_level_flag = TRUE;
 	    death = TRUE;
 	    (void)strcpy(died_from, "Quitting");
@@ -1701,6 +1712,7 @@ char com_val;
       case 'v':   /* score patch originally by Mike Welsh mikewe@acacia.cs.pdx.edu */
 	sprintf(prt1,"Your current score is: %ld", total_points());
 	msg_print(prt1);
+	free_turn_flag = TRUE;
 	break;
 #endif
       case 'f':			/* (f)orce		(B)ash */
@@ -2234,34 +2246,6 @@ int percent;
 
 
 
-int 
-ruin_stat(stat)
-register int stat;
-{
-    register int tmp_stat;
-
-    tmp_stat = py.stats.cur_stat[stat];
-    if (tmp_stat > 3) {
-	if (tmp_stat > 6) {
-	    if (tmp_stat < 19) {
-		tmp_stat -= 3;
-	    } else {
-		tmp_stat /= 2;
-		if (tmp_stat < 18)
-		    tmp_stat = 18;
-	    }
-	} else
-	    tmp_stat--;
-
-	py.stats.cur_stat[stat] = tmp_stat;
-	py.stats.max_stat[stat] = tmp_stat;
-	set_use_stat(stat);
-	prt_stat(stat);
-	return TRUE;
-    } else
-	return FALSE;
-}
-
 static void 
 activate()
 {
@@ -2553,8 +2537,8 @@ activate()
 		break;
 	      case (54):
 		if (inventory[i].name2 == SN_ERIRIL) {
-		    ident_spell();
-		    inventory[i].timeout = 10;
+		    if (ident_spell())
+                        inventory[i].timeout = 10;
 		} else if (inventory[i].name2 == SN_OLORIN) {
 		    probing();
 		    inventory[i].timeout = 20;
@@ -2650,6 +2634,11 @@ activate()
 		    msg_print("Your armour glows a bright white...");
 		    msg_print("You feel much better...");
 		    hp_player(1000);
+		    if (py.flags.cut > 0) {
+			py.flags.cut = 0;
+			msg_print("Your wounds heal.");
+		    }
+
 		    inventory[i].timeout = 888;
 		}
 		break;
@@ -2821,11 +2810,15 @@ activate()
 		if (inventory[i].name2 == SN_GONDOR) {
 		    msg_print("You feel a warm tingling inside...");
 		    hp_player(500);
+		    if (py.flags.cut > 0) {
+			py.flags.cut = 0;
+			msg_print("Your wounds heal.");
+		    }
 		    inventory[i].timeout = 500;
 		}
 		break;
 	      case (SPECIAL_OBJ - 1):	/* Narya */
-		msg_print("The ring glows deep red...");
+		msg_print("The Ring glows deep red...");
 		if (get_dir(NULL, &dir)) {
 		    if (py.flags.confused > 0) {
 			msg_print("You are confused.");
@@ -2838,7 +2831,7 @@ activate()
 		}
 		break;
 	      case (SPECIAL_OBJ): /* Nenya */
-		msg_print("The ring glows bright white...");
+		msg_print("The Ring glows bright white...");
 		if (get_dir(NULL, &dir)) {
 		    if (py.flags.confused > 0) {
 			msg_print("You are confused.");
@@ -2851,7 +2844,7 @@ activate()
 		}
 		break;
 	      case (SPECIAL_OBJ + 1):	/* Vilya */
-		msg_print("The ring glows deep blue...");
+		msg_print("The Ring glows deep blue...");
 		if (get_dir(NULL, &dir)) {
 		    if (py.flags.confused > 0) {
 			msg_print("You are confused.");
@@ -2864,7 +2857,7 @@ activate()
 		}
 		break;
 	      case (SPECIAL_OBJ + 2):	/* Power */
-		msg_print("The ring glows intensely black...");
+		msg_print("The One Ring glows intensely black...");
 		switch (randint(17) + (8 - py.misc.lev / 10)) {
 		  case 5:
 		    dispel_creature(0xFFFFFFFL, 1000);
@@ -2879,12 +2872,12 @@ activate()
 		       (player_exp[m_ptr->lev - 2] * m_ptr->expfact / 100));
 		    m_ptr->max_exp = m_ptr->exp;
 		    prt_experience();
-		    ruin_stat(A_STR);
-		    ruin_stat(A_INT);
-		    ruin_stat(A_WIS);
-		    ruin_stat(A_DEX);
-		    ruin_stat(A_CON);
-		    ruin_stat(A_CHR);
+		    dec_stat(A_STR, 50, TRUE);
+		    dec_stat(A_INT, 50, TRUE);
+		    dec_stat(A_WIS, 50, TRUE);
+		    dec_stat(A_DEX, 50, TRUE);
+		    dec_stat(A_CON, 50, TRUE);
+		    dec_stat(A_CHR, 50, TRUE);
 		    calc_hitpoints();
 		    if (class[m_ptr->pclass].spell == MAGE) {
 			calc_spells(A_INT);
@@ -3126,6 +3119,7 @@ activate()
 		    py.flags.resist_cold += randint(50) + 50;
 		    py.flags.resist_light += randint(50) + 50;
 		    py.flags.resist_acid += randint(50) + 50;
+		    py.flags.resist_poison += randint(50) + 50;
 		    inventory[i].timeout = 400;
 		} else {
 		    msg_print("You breathe the elements...");

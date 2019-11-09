@@ -8,30 +8,68 @@
  * included in all such copies. 
  */
 
+
+#include "angband.h"
 #include "monster.h"
-
-/* include before constant.h because param.h defines NULL incorrectly */
-#ifndef USG
-#include <sys/types.h>
-#include <sys/param.h>
-#endif
-
-#include "constant.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
-
 #include <ctype.h>
 
 #ifdef USG
+
 #ifndef ATARIST_MWC
 #include <string.h>
 #else
 char               *index();
 #endif
-#else
+
+#else /* not USG */
+#include <sys/types.h>
 #include <strings.h>
-#endif
+#endif /* not USG */
+
+#define NEW_SCREEN_LAYOUT
+
+/* constants for screen positioning */
+#ifdef NEW_SCREEN_LAYOUT
+
+#define RACE_ROW 1
+#define CLASS_ROW 2
+#define TITLE_ROW 3
+#define LEVEL_ROW 4
+#define EXP_ROW 5
+
+#define STAT_ROW 7
+
+#define AC_ROW 14
+#define CURHP_ROW 15
+#define MAXHP_ROW 16
+#define MANA_ROW 17
+#define GOLD_ROW 18
+
+#define WINNER_ROW 19
+#define EQUIPPY_CHAR_ROW 20
+#define CUT_ROW 21
+#define STUN_ROW 22
+
+#else /* NEW_SCREEN_LAYOUT */
+
+#define RACE_ROW 1
+#define CLASS_ROW 2
+#define TITLE_ROW 3
+#define EQUIPPY_CHAR_ROW 4
+#define STAT_ROW 5
+#define LEVEL_ROW 12
+#define EXP_ROW 13
+#define MANA_ROW 14
+#define MAXHP_ROW 15
+#define CURHP_ROW 16
+#define AC_ROW 17
+#define GOLD_ROW 18
+
+#define WINNER_ROW 20
+#define CUT_ROW 21
+#define STUN_ROW 22
+
+#endif /* NEW_SCREEN_LAYOUT */
 
 /* Lets do all prototypes correctly.... -CWS */
 #ifndef NO_LINT_ARGS
@@ -48,9 +86,6 @@ static void prt_int();
 #endif
 static void gain_level();
 #endif
-
-static const char *stat_names[] = { "STR: ", "INT: ", "WIS: ",
-					"DEX: ", "CON: ", "CHR: "};
 
 #define BLANK_LENGTH	24
 static char blank_string[] = "                        ";
@@ -714,6 +749,12 @@ char *out_val;
 
 
 /* Print character stat in given row, column		-RAK-	 */
+static const char *stat_names[] = { "STR: ", "INT: ", "WIS: ",
+                                    "DEX: ", "CON: ", "CHR: "};
+
+static const char *stat_names_reduced[] = { "Str: ", "Int: ", "Wis: ",
+                                            "Dex: ", "Con: ", "Chr: "};
+
 void 
 prt_stat(stat)
 int stat;
@@ -721,8 +762,12 @@ int stat;
     vtype out_val1;
 
     cnv_stat(py.stats.use_stat[stat], out_val1);
-    put_buffer(stat_names[stat], 5 + stat, STAT_COLUMN);
-    put_buffer(out_val1, 5 + stat, STAT_COLUMN + 6);
+    if (py.stats.max_stat[stat] > py.stats.cur_stat[stat])
+        put_buffer(stat_names_reduced[stat], STAT_ROW + stat, STAT_COLUMN);
+    else
+        put_buffer(stat_names[stat], STAT_ROW + stat, STAT_COLUMN);
+
+    put_buffer(out_val1, STAT_ROW + stat, STAT_COLUMN + 6);
 }
 
 
@@ -737,7 +782,7 @@ int         row, column;
     put_buffer(info, row, column);
 }
 
-/* Print long number with header at given row, column */
+/* Print long number with header at given row, column.  Header must be 4 chars. */
 static void 
 prt_lnum(header, num, row, column)
 const char *header;
@@ -746,11 +791,11 @@ int         row, column;
 {
     vtype out_val;
 
-    (void)sprintf(out_val, "%s%9ld", header, (long)num);
+    (void)sprintf(out_val, "%s%8ld", header, (long)num);
     put_buffer(out_val, row, column);
 }
 
-/* Print number with header at given row, column	-RAK-	 */
+/* Print number with header at given row, column.  Header must be 6 chars long. */
 static void 
 prt_num(header, num, row, column)
 const char *header;
@@ -758,7 +803,7 @@ int         num, row, column;
 {
     vtype out_val;
 
-    (void)sprintf(out_val, "%s   %6d", header, num);
+    (void)sprintf(out_val, "%s%6d", header, num);
     put_buffer(out_val, row, column);
 }
 
@@ -962,7 +1007,7 @@ title_string()
 void 
 prt_title()
 {
-    prt_field(title_string(), 3, STAT_COLUMN);
+    prt_field(title_string(), TITLE_ROW, STAT_COLUMN);
 }
 
 
@@ -970,15 +1015,34 @@ prt_title()
 void 
 prt_level()
 {
-    prt_int((int)py.misc.lev, 12, STAT_COLUMN + 6);
+    prt_int((int)py.misc.lev, LEVEL_ROW, STAT_COLUMN + 6);
 }
 
 
-/* Prints players current mana points.		 -RAK-	 */
+/* Print both current & max mana points   -Abby- */
+/* Is it possible one of them goes over 1000? If not, code could be speed up */
 void 
-prt_cmana()
+prt_cmana ()
 {
-    prt_int(py.misc.cmana, 14, STAT_COLUMN + 6);
+    vtype ctmp, mtmp, line;
+
+    if (py.misc.cmana < 0) {
+	put_buffer("---", MANA_ROW, STAT_COLUMN + 9);
+	return;
+    }
+    
+    if (py.misc.cmana >= 1000)
+	sprintf (ctmp, "***");
+    else
+	sprintf (ctmp, "%d", py.misc.cmana);
+    
+    if (py.misc.mana >= 1000)
+	sprintf (mtmp, "***");
+    else
+	sprintf (mtmp, "%d", py.misc.mana);
+    
+    sprintf (line, "  %s/%s", ctmp, mtmp);
+    put_buffer (line, MANA_ROW, (STAT_COLUMN + 12 - strlen(line)));
 }
 
 
@@ -986,7 +1050,7 @@ prt_cmana()
 void 
 prt_mhp()
 {
-    prt_int(py.misc.mhp, 15, STAT_COLUMN + 6);
+    prt_int(py.misc.mhp, MAXHP_ROW, STAT_COLUMN + 6);
 }
 
 
@@ -994,7 +1058,7 @@ prt_mhp()
 void 
 prt_chp()
 {
-    prt_int(py.misc.chp, 16, STAT_COLUMN + 6);
+    prt_int(py.misc.chp, CURHP_ROW, STAT_COLUMN + 6);
 }
 
 
@@ -1002,7 +1066,7 @@ prt_chp()
 void 
 prt_pac()
 {
-    prt_int(py.misc.dis_ac, 18, STAT_COLUMN + 6);
+    prt_int(py.misc.dis_ac, AC_ROW, STAT_COLUMN + 6);
 }
 
 
@@ -1010,7 +1074,10 @@ prt_pac()
 void 
 prt_gold()
 {
-    prt_long(py.misc.au, 19, STAT_COLUMN + 3);
+    if (py.misc.au > 9999999)
+        put_buffer("Gold: ******", GOLD_ROW, STAT_COLUMN);
+    else
+        prt_lnum("Gold", py.misc.au, GOLD_ROW, STAT_COLUMN);
 }
 
 
@@ -1185,21 +1252,21 @@ prt_cut()
     int c = py.flags.cut;
 
     if (c > 900)
-	put_buffer("Mortal wound", 21, 0);
+	put_buffer("Mortal wound", CUT_ROW, 0);
     else if (c > 300)
-	put_buffer("Deep gash   ", 21, 0);
+	put_buffer("Deep gash   ", CUT_ROW, 0);
     else if (c > 200)
-	put_buffer("Severe cut  ", 21, 0);
+	put_buffer("Severe cut  ", CUT_ROW, 0);
     else if (c > 45)
-	put_buffer("Nasty cut   ", 21, 0);
+	put_buffer("Nasty cut   ", CUT_ROW, 0);
     else if (c > 15)
-	put_buffer("Bad cut     ", 21, 0);
+	put_buffer("Bad cut     ", CUT_ROW, 0);
     else if (c > 5)
-	put_buffer("Light cut   ", 21, 0);
+	put_buffer("Light cut   ", CUT_ROW, 0);
     else if (c > 0)
-	put_buffer("Graze       ", 21, 0);
+	put_buffer("Graze       ", CUT_ROW, 0);
     else
-	put_buffer("            ", 21, 0);
+	put_buffer("            ", CUT_ROW, 0);
 }
 
 void 
@@ -1257,13 +1324,13 @@ prt_stun()
 
     if (!py.flags.sound_resist) {
 	if (s > 100)
-	    put_buffer("Knocked out ", 22, 0);
+	    put_buffer("Knocked out ", STUN_ROW, 0);
 	else if (s > 50)
-	    put_buffer("Heavy stun  ", 22, 0);
+	    put_buffer("Heavy stun  ", STUN_ROW, 0);
 	else if (s > 0)
-	    put_buffer("Stun        ", 22, 0);
+	    put_buffer("Stun        ", STUN_ROW, 0);
 	else
-	    put_buffer("            ", 22, 0);
+	    put_buffer("            ", STUN_ROW, 0);
     }
 }
 
@@ -1272,11 +1339,11 @@ void
 prt_winner()
 {
     if (wizard)
-	put_buffer("Wizard", 20, 0);
+	put_buffer("Wizard", WINNER_ROW, 0);
     else if (total_winner)
-	put_buffer("Winner", 20, 0);
+	put_buffer("Winner", WINNER_ROW, 0);
     else
-	put_buffer("       ", 20, 0);
+	put_buffer("       ", WINNER_ROW, 0);
 }
 
 
@@ -1365,26 +1432,52 @@ register int stat;
 }
 
 
-/* Decreases a stat by one randomized level		-RAK-	 */
+/* Decreases a stat by an amount indended to vary from 0 to 100 percent.
+ * Amount could be a little higher in extreme cases to mangle very high
+ * stats from massive assaults.  -CWS
+ */
 int 
-dec_stat(stat)
-register int stat;
+dec_stat(stat, amount, permanent)
+int stat, amount, permanent;
 {
-    register int tmp_stat, loss;
+    int tmp_stat, loss;
 
     tmp_stat = py.stats.cur_stat[stat];
-    if (tmp_stat > 3) {
-	if (tmp_stat < 19)
-	    tmp_stat--;
-	else if (tmp_stat < 117) {
-	    loss = (((118 - tmp_stat) >> 1) + 1) >> 1;
-	    tmp_stat += -randint(loss) - loss;
-	    if (tmp_stat < 18)
-		tmp_stat = 18;
-	} else
-	    tmp_stat--;
+    if (tmp_stat > 3) {         /* if the stat can be damaged */
+	if (tmp_stat < 19) {
+            if (amount > 90)
+                tmp_stat--;
+            if (amount > 50)
+                tmp_stat--;
+            if (amount > 20)
+                tmp_stat--;
+            tmp_stat--;
+        } else {
+            tmp_stat -= 18;     /* only deal with 18/xxx part */
 
+/* Decrement by a random amount between one-quarter and one-half of the stat
+ * times the percentage, with a minimum damage of half the percentage. -CWS
+ */
+	    loss = ((tmp_stat >> 1) + 1) >> 1;
+	    loss = (int) ((randint(loss) + loss) * (amount / 100.0));
+            amount /= 2;
+            if (amount > loss)
+                loss = amount;
+            tmp_stat -= loss;
+            
+	    if ((tmp_stat < 0) && (amount > 10)) /* can reduce stat to 17 */
+		tmp_stat = -1;
+            
+            tmp_stat += 18;     /* restore 18/xxx part back */
+        }
+        
+        if (tmp_stat < 3)       /* safety checking */
+            tmp_stat = 3;
+
+/* Actually set the stat to its new value (and change the max if appropriate */
 	py.stats.cur_stat[stat] = tmp_stat;
+        if (permanent)
+            py.stats.max_stat[stat] = tmp_stat;
 	set_use_stat(stat);
 	prt_stat(stat);
 	return TRUE;
@@ -1570,24 +1663,41 @@ prt_stat_block()
     register int          i;
 
     m_ptr = &py.misc;
-    prt_field(race[py.misc.prace].trace, 1, STAT_COLUMN);
-    prt_field(class[py.misc.pclass].title, 2, STAT_COLUMN);
-    prt_field(title_string(), 3, STAT_COLUMN);
+    prt_field(race[py.misc.prace].trace, RACE_ROW, STAT_COLUMN);
+    prt_field(class[py.misc.pclass].title, CLASS_ROW, STAT_COLUMN);
+    prt_field(title_string(), TITLE_ROW, STAT_COLUMN);
+    prt_equippy_chars();    
+
+    /* print all stats */
     for (i = 0; i < 6; i++)
 	prt_stat(i);
-    prt_num("LEV", (int)m_ptr->lev, 12, STAT_COLUMN);
-    prt_lnum("EXP", m_ptr->exp, 13, STAT_COLUMN);
-    prt_num("MNA", m_ptr->cmana, 14, STAT_COLUMN);
-    prt_num("MHP", m_ptr->mhp, 15, STAT_COLUMN);
-    prt_num("CHP", m_ptr->chp, 16, STAT_COLUMN);
+
+    prt_num("Level ", (int)m_ptr->lev, LEVEL_ROW, STAT_COLUMN);
+    prt_lnum("Exp:", m_ptr->exp, EXP_ROW, STAT_COLUMN);
+
+    /* if not a warrior, so can get mana */
+    if (py.misc.pclass) {
+        put_buffer ("Mana       ", MANA_ROW, STAT_COLUMN);
+        prt_cmana ();
+    }
+
+    /* this will overwrite hp, in color, if needed. -CFT */
+    prt_num("Max HP", m_ptr->mhp, MAXHP_ROW, STAT_COLUMN);
+    prt_num("Cur HP", m_ptr->chp, CURHP_ROW, STAT_COLUMN);
     prt_chp();			   /* this will overwrite hp, in color, if
 				    * needed. -CFT */
-    prt_num("AC ", m_ptr->dis_ac, 18, STAT_COLUMN);
-    prt_lnum("AU ", m_ptr->au, 19, STAT_COLUMN);
+    prt_num("AC    ", m_ptr->dis_ac, AC_ROW, STAT_COLUMN);
+
+    if (m_ptr->au > 9999999)
+        put_buffer("Gold: ******", GOLD_ROW, STAT_COLUMN);
+    else
+        prt_lnum("Gold", m_ptr->au, GOLD_ROW, STAT_COLUMN);
+
     prt_winner();
     prt_cut();
     prt_stun();
     prt_study();
+
     status = py.flags.status;
     if ((PY_HUNGRY | PY_WEAK) & status)
 	prt_hunger();
@@ -1601,11 +1711,10 @@ prt_stat_block()
 	prt_poisoned();
     if ((PY_SEARCH | PY_REST) & status)
 	prt_state();
+    
 /* if speed non zero, print it, modify speed if Searching */
     if (py.flags.speed - ((PY_SEARCH & status) >> 8) != 0)
 	prt_speed();
-
-	prt_equippy_chars();
 }
 
 /* EQUIPMENT CHARACTER HANDLER  - DGK */
@@ -1630,7 +1739,7 @@ prt_equippy_chars()
 	else                                             
 	    out_val[0] = (int)(i_ptr->tchar);                
 	
-	put_buffer(out_val, 4, j);
+	put_buffer(out_val, EQUIPPY_CHAR_ROW, j);
     }
 }
 
@@ -1680,9 +1789,9 @@ put_stats()
 	cnv_stat(py.stats.use_stat[i], buf);
 	put_buffer(stat_names[i], 2 + i, 61);
 	put_buffer(buf, 2 + i, 66);
+
+/* modify_stat() only looks at cur_stat -CFT */
 	if (py.stats.max_stat[i] > py.stats.cur_stat[i]) {
-	    /* this looks silly, but it happens because modify_stat() only
-	     * looks at cur_stat -CFT */
 	    temp = py.stats.cur_stat[i];
 	    py.stats.cur_stat[i] = py.stats.max_stat[i];
 	    cnv_stat (modify_stat(i,py.stats.mod_stat[i]), buf);
@@ -2862,6 +2971,7 @@ int stat;
     register int          i;
     register inven_type  *i_ptr;
     int                   amrwgt, maxwgt;
+    static char           heavy_known = FALSE, gloved_known = FALSE;
 
     p_ptr = &py.misc;
     if (spell_learned != 0 || spell_learned2 != 0) {
@@ -2926,6 +3036,14 @@ int stat;
 
 	    &&(py.misc.pclass == 1 || py.misc.pclass == 3 || py.misc.pclass == 4)) {
 	    new_mana = (3 * new_mana) / 4;
+	    if (!gloved_known) {
+		msg_print("Your covered hands interfere with your spellcasting.");
+		gloved_known  = TRUE;
+	    }
+	}
+        else if (gloved_known) {
+	    msg_print("Your uncovered hands feel more suitable for spellcasting.");
+	    gloved_known = FALSE;
 	}
     /* Start of **NEW ENCUMBRANCE CALCULATION**    -DGK- */
 	amrwgt = 0;
@@ -2960,8 +3078,17 @@ int stat;
 	  default:
 	    maxwgt = 0;
 	}
-	if (amrwgt > maxwgt)
+	if (amrwgt > maxwgt) {
 	    new_mana -= ((amrwgt - maxwgt) / 10);
+	    if (!heavy_known) {
+		msg_print("The weight of your armor seems to interfere with your ability to move freely.");
+		heavy_known = TRUE;
+	    }
+	}
+	else if (heavy_known) {
+	    msg_print("You feel able to more more freely.");
+	    heavy_known = FALSE;
+	}
     /* end of new mana calc */
 
     /* if low int/wis, gloves, and lots of heavy armor, new_mana could be
@@ -3057,7 +3184,7 @@ prt_experience()
     if (p_ptr->exp > p_ptr->max_exp)
 	p_ptr->max_exp = p_ptr->exp;
     (void) sprintf(out_val, "%8ld", (long)p_ptr->exp);
-    put_buffer(out_val, 13, STAT_COLUMN+4);
+    put_buffer(out_val, EXP_ROW, STAT_COLUMN+4);
 }
 
 
@@ -3182,8 +3309,8 @@ enter_wiz_mode()
 	return FALSE;
     if (!noscore) {
 	msg_print("Wizard mode is for debugging and experimenting.");
-	answer = get_Yn(
-			"The game will not be scored if you enter wizard mode. Are you sure?");
+	answer = get_check(
+	"The game will not be scored if you enter wizard mode. Are you sure?");
     }
     if (noscore || answer) {
 	noscore |= 0x2;
@@ -3446,7 +3573,7 @@ mmove(dir, y, x)
 int                 dir;
 register int       *y, *x;
 {
-    register int new_row = 0, new_col = 0;
+    int new_row = 0, new_col = 0;
     int          boolflag;
 
     switch (dir) {

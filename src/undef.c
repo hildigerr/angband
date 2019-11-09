@@ -1,10 +1,8 @@
 /* undef.c: undefined routines */
 
-#include "constant.h"
-#include "config.h"
-#include "types.h"
+#include "angband.h"
 
-#if defined(SOLARIS)
+#ifdef USG
 #include <string.h>
 #else
 #include <strings.h>

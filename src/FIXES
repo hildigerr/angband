@@ -333,7 +333,7 @@ fixed a bug with multiple missile weapons' damage bonus accumulating
 fixed some minor problems with heavy weapons and BLESSED_BLADES [dbd]
 undid new lighting to avoid dbd's wrath :-)
 fix bug with '|' (see uniques) command  [ken wigle@niktow.canisius.edu (kw)]
-**fixed running with wide-area light bug (very cool!)
+fixed running with wide-area light bug (very cool!)
 fixed bugs with spellbooks [kw]
 incorperated new attacks/round table [cft]
 fixed messaging punctuation
@@ -375,3 +375,65 @@ many one-liners: Belthronding, Rohirrim, CURBRAGOL, chr_adj, todis_adj [jk]
 fixed bugs with blindness resistance [rh]
 fixed bug with Satisfy Hunger/Create Food names in spell books
 fixed prototype for my_stricmp [jk]
+
+Angband 2.6.2 (12/11/94)
+ fixed typos with 'Quarterstraff', 'staisfy hunger', 'Beleg', monster gender
+added support for DEC OSF/1, fixed my_stricmp declaration [tl]
+removed declaration for sprintf -- yell if this causes you problems
+renamed all calls to 'get_Yn' to 'get_check'
+renamed 'worm mass' to 'worm' to match its plural nature
+fixed bug when falling through a trap door into a spiked pit [jn]
+don't ask direction if not needed when opening/closing/disarming [jn]
+made header files idempotent, made all .c's include the global .h's, added
+   precompiled header support for NeXT (speed up my development)
+general Makefile cleanup and improvement
+ifdef'ed out "Bill Cosby" message
+added support for systems lacking the bzero() call
+removed GROSS_HACK
+added support for SGI machines running IRIX
+fixed a bug with the prototyping of spell_hit_monster()
+display max mana [ Martian <abigail@xs4all.nl>, Abby ]
+added options for throw confirmation and disabling the bell [Abby]
+fixed possible bug restoring flag values [Abby]
+  "   bug initialize curses when printing out the usage message [jn]
+  "    "  with cursed gloves [jn]
+store inventories no longer get shuffled on save/restore on town level [jk]
+Soulkeeper, Gondor heal wounds, Bladeturner does a full Resistance spell [jk]
+updated docs for (HA), mentioned '~' and '|' keys
+fixed bug relighting after darkness
+rods and staves of curing now heal all ailments, not just the first one [rh]
+fixed problems with compatibility with pure K&R C compilers
+made Mushrooms of Restoring 10 times less common
+made acid/corrosion attacks have a chance of reducing charisma if not RA
+fixed radius checking, updated wizard command listing, thrown_spell,
+   pain_message [kr]
+fix more problems with const declarations, prototyping, disenchantment
+   messages, blinding when RB, not lose mana when aborting genocide [rh]
+immobile monsters no longer run away
+incorperated support for Amiga [cjmcgee1@unity.ncsu.edu (Christopher Mcgee)]
+character generation now shows stat-dependant bonuses
+can use space bar to browse in shops ala 'more'
+checking score, not throwing an item no longer take a turn
+added some POSIX/BSDI compliance [pb]
+can no longer target '.' monsters, blindness resist & GF_DARK [kr]
+added some bounds-checking for m_bonus() so that crazy items won't be
+   created at (excessive) levels in wizard mode
+Rangers again get multiple shots, but only a max of 3 per turn
+   (except that Crossbows now always only can produce one shot)
+fixed a bug checking view after stone-to-mud [dbd]
+now inform player of manaloss due to gloves/armor weight [rh]
+incorperated dbd's new "running w/ wide-area light fixes"
+all bows are no longer always excellent; Artifact bows are much harder to
+   generate [ desj@ccr-p.ida.org (David desJardins) dj]
+m_bonus bug fixed, wand of frost, store pricing update [dj]
+patches for aborting using up charges on staves, etc [rh]
+updated resistances code, made only normal spellbooks flammable
+various attacks now have a chance of damaging player's physical
+   characteristics (ie, STR, CON, DEX, CHA)
+fixed multiple Rings of Speed; check comments in moria1.c, line #100
+auto-rolling now exits after 10000 rounds if #define'd NICE to keep people
+   from rolling forever on shared machines
+multiple characters now work better
+updated wizard command set and documentation in LIBDIR
+cloning monsters now heals the cloned monster, and may speed it up
+fixed bugs displaying max mana

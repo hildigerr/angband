@@ -6,15 +6,14 @@
    not for profit purposes provided that this copyright and statement are
    included in all such copies. */
 
-#include "constant.h"
-#include "config.h"
-#include "types.h"
+#include "angband.h"
 
 /* Player record for most player related info */
 player_type py;
 /* player location in dungeon */
 int16 char_row;
 int16 char_col;
+
 /* calculated base hp values for player at each level, store them so that
    drain life + restore life does not affect hit points */
 int16u player_hp[MAX_PLAYER_LEVEL];
@@ -26,28 +25,31 @@ const char *(*player_title)[MAX_PLAYER_LEVEL];
 const char *player_title[MAX_CLASS][MAX_PLAYER_LEVEL] = {
 	/* Warrior	 */
 {"Rookie","Private","Soldier","Mercenary","Veteran(1st)","Veteran(2nd)",
-"Veteran(3rd)","Warrior(1st)","Warrior(2nd)","Warrior(3rd)","Warrior(4th)",
-"Swordsman-1","Swordsman-2","Swordsman-3","Hero","Swashbuckler","Myrmidon",
-"Champion-1","Champion-2","Champion-3","Superhero","Knight","Superior Knt",
-"Gallant Knt","Knt Errant","Guardian Knt","Baron","Duke","Lord (1st)",
-"Lord (2nd)","Lord (3rd)","Lord (4th)","Lord (5th)","Lord (6th)","Lord (7th)",
-"Lord (8th)","Lord (9th)","Lord (10th)","Lord (11th)","Lord (12th)",
-"Lord (13th)","Lord (14th)","Lord (15th)","Lord (16th)","Lord (17th)",
-"Lord (18th)","Lord (19th)","Lord Gallant","Lord Keeper","Lord Noble"},
+ "Veteran(3rd)","Warrior(1st)","Warrior(2nd)","Warrior(3rd)","Warrior(4th)",
+ "Swordsman-1","Swordsman-2","Swordsman-3","Hero","Swashbuckler","Myrmidon",
+ "Champion-1","Champion-2","Champion-3","Superhero","Knight(1st)",
+ "Knight(2nd)","Knight(3rd)","Knight(4th)","Superior Knt","Gallant Knt",
+ "Knt Errant","Guardian Knt","Lord (1st)","Lord (2nd)","Lord (3rd)",
+ "Lord (4th)","Lord (5th)","Lord (6th)","Lord (7th)","Lord (8th)",
+ "Lord (9th)","Lord (10th)","Lord (11th)","Lord (12th)","Lord (13th)",
+ "Lord Gallant","Lord Keeper","Lord Noble","Baron","Viscount",
+ "Earl","Marquess","Duke"},
+
 	/* Mage		 */
 {"Novice","Apprentice","Trickster-1","Trickster-2","Trickster-3","Cabalist-1",
-"Cabalist-2","Cabalist-3","Visionist","Phantasmist","Shadowist","Spellbinder",
-"Illusionist","Evoker (1st)","Evoker (2nd)","Evoker (3rd)","Evoker (4th)",
-"Conjurer","Theurgist","Thaumaturge","Magician","Enchanter","Warlock",
-"Sorcerer","Necromancer","Mage (1st)","Mage (2nd)","Mage (3rd)","Mage (4th)",
-"Mage (5th)","Wizard (1st)","Wizard (2nd)","Wizard (3rd)","Wizard (4th)",
-"Wizard (5th)","Wizard (6th)","Wizard (7th)","Wizard (8th)","Wizard (9th)",
-"Wizard (10th)","Wizard (11th)","Wizard (12th)","Wizard (13th)",
-"Wizard (14th)","Wizard (15th)","Wizard (16th)","Wizard (17th)",
-"Wizard (18th)","Wizard (19th)","Wizard Lord"},
+ "Cabalist-2","Cabalist-3","Visionist","Phantasmist","Shadowist","Spellbinder",
+ "Illusionist","Evoker (1st)","Evoker (2nd)","Evoker (3rd)","Evoker (4th)",
+ "Conjurer","Theurgist","Thaumaturge","Magician","Enchanter","Warlock",
+ "Sorcerer","Necromancer","Mage (1st)","Mage (2nd)","Mage (3rd)","Mage (4th)",
+ "Mage (5th)","Wizard (1st)","Wizard (2nd)","Wizard (3rd)","Wizard (4th)",
+ "Wizard (5th)","Wizard (6th)","Wizard (7th)","Wizard (8th)","Wizard (9th)",
+ "Wizard (10th)","Wizard (11th)","Wizard (12th)","Wizard (13th)",
+ "Wizard (14th)","Wizard (15th)","Wizard (16th)","Wizard (17th)",
+ "Wizard (18th)","Wizard (19th)","Wizard Lord"},
+
 	/* Priests	 */
 {"Believer","Acolyte(1st)","Acolyte(2nd)","Acolyte(3rd)","Adept (1st)",
-"Adept (2nd)","Adept (3rd)","Priest (1st)","Priest (2nd)","Priest (3rd)",
+ "Adept (2nd)","Adept (3rd)","Priest (1st)","Priest (2nd)","Priest (3rd)",
 "Priest (4th)","Priest (5th)","Priest (6th)","Priest (7th)","Priest (8th)",
 "Priest (9th)","Curate (1st)","Curate (2nd)","Curate (3rd)","Curate (4th)",
 "Curate (5th)","Curate (6th)","Curate (7th)","Curate (8th)","Curate (9th)",
@@ -756,7 +758,7 @@ const char *spell_names[127] = {
   "Confusion",	"Lightning Bolt",  "Trap/Door Destruction", "Sleep I",
   "Cure Poison",  "Teleport Self",  "Spear of Light",  "Frost Bolt",
 #ifdef SATISFY_HUNGER
-  "Turn Stone to Mud",	"Staisfy Hunger",	"Recharge Item I",  "Sleep II",
+  "Turn Stone to Mud",	"Satisfy Hunger",	"Recharge Item I",  "Sleep II",
 #else
   "Turn Stone to Mud",	"Create Food",	"Recharge Item I",  "Sleep II",
 #endif

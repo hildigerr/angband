@@ -8,10 +8,7 @@
  * included in all such copies. 
  */
 
-#include "constant.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
+#include "angband.h"
 
 int 
 set_room(element)
@@ -285,6 +282,12 @@ inven_type *e;
       case TV_OPEN_DOOR:
       case TV_CLOSED_DOOR:
 	return (TRUE);
+      case TV_MAGIC_BOOK:
+      case TV_PRAYER_BOOK:
+        if (e->subval >= 68)    /* "special" books are immune to fire -CWS */
+            return (FALSE);
+        else
+            return (TRUE);
       case TV_LIGHT:
 	if (e->subval >= 192)	   /* only torches... -CFT */
 	    return (TRUE);

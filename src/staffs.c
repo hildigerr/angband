@@ -8,11 +8,8 @@
  * included in all such copies. 
  */
 
-#include "constant.h"
+#include "angband.h"
 #include "monster.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
 
 #ifdef USG
 #include <string.h>
@@ -54,7 +51,6 @@ use()
 	else if (i_ptr->p1 > 0) {
 	    i = i_ptr->flags;
 	    ident = FALSE;
-	    (i_ptr->p1)--;
 	    switch (i) {
 	      case ST_HEALING:
 		ident = hp_player(300);
@@ -78,6 +74,13 @@ use()
 		break;
 	      case ST_GENOCIDE:
 		genocide(FALSE);
+/* genocide() sets free_turn_flag to TRUE if the player aborts.
+   Since genocide()'s return value indicates whether or not
+   creatures were exterminated, we can't use that here.
+   (None of the creatures may have been present on the level.)
+ */
+                if (free_turn_flag)
+                    return;
 		ident = TRUE;
 		break;
 	      case ST_PROBE:
@@ -85,7 +88,8 @@ use()
 		ident = TRUE;
 		break;
 	      case ST_IDENTIFY:
-		ident_spell();
+		if (!ident_spell())
+                    return;
 		ident = TRUE;
 		break;
 	      case ST_HOLYNESS:
@@ -211,8 +215,8 @@ use()
 		ident = detect_evil();
 		break;
 	      case ST_CURING:
-		if ((cure_blindness()) || (cure_poison()) ||
-		    (cure_confusion()) || (py.flags.stun > 0) || (py.flags.cut > 0))
+		if ((cure_blindness()) | (cure_poison()) |
+		    (cure_confusion()) | (py.flags.stun > 0) | (py.flags.cut > 0))
 		    ident = TRUE;
 		if (py.flags.stun > 0) {
 		    if (py.flags.stun > 50) {
@@ -239,6 +243,11 @@ use()
 		msg_print("Internal error in staffs()");
 		break;
 	    }
+            
+/* Delay decrementing charges until here so players won't be
+   charged for aborting staffs such as Genocide and Perceptions. */
+
+            (i_ptr->p1)--;
 	    if (ident) {
 		if (!known1_p(i_ptr)) {
 		    m_ptr = &py.misc;

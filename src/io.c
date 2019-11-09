@@ -17,6 +17,8 @@
 #include <process.h>
 #endif
 
+#include "angband.h"
+
 #if defined(NLS) && defined(lint)
 /* for AIX, don't let curses include the NL stuff */
 #undef NLS
@@ -41,11 +43,6 @@
 long                wgetch();
 char               *getenv();
 #endif
-
-#include "constant.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
 
 #include <ctype.h>
 
@@ -317,6 +314,7 @@ init_curses()
     moriaterm();
 
 /* check tab settings, exit with error if they are not 8 spaces apart */
+#ifndef AMIGA
 #ifdef ATARIST_MWC
     move(0, 0);
 #else
@@ -332,10 +330,13 @@ init_curses()
 	if (y != 0 || x != i * 8)
 	    break;
     }
+#if 0
     if (i != 10) {
 	msg_print("Tabs must be set 8 spaces apart.");
 	exit_game();
     }
+#endif
+#endif
 }
 
 #endif
@@ -1400,6 +1401,7 @@ void
 bell()
 {
     put_qio();
+    if (ring_bell) /* -Abby- */
 #ifdef MAC
     mac_beep();
 #else

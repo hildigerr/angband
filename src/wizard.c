@@ -9,10 +9,7 @@
  */
 
 #include <stdio.h>
-#include "constant.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
+#include "angband.h"
 #include "monster.h"
 
 #ifdef USG
@@ -1584,7 +1581,7 @@ artifact_check_no_file()
 	artifact_screen_full(&i, j);
     }
     if (OLORIN) {
-	prt("The Quarterstraff of Olorin", i++, j);
+	prt("The Quarterstaff of Olorin", i++, j);
 	artifact_screen_full(&i, j);
     }
     if (ORCRIST) {
@@ -1651,14 +1648,15 @@ artifact_check_no_file()
 	prt("The Two-Handed Sword 'Zarcuthra'", i++, j);
 	artifact_screen_full(&i, j);
     }
-/* missle weapons */
+
+/* missile weapons */
 
     if (BARD) {
 	prt("The Longbow of Bard", i++, j);
 	artifact_screen_full(&i, j);
     }
     if (BELEG) {
-	prt("The Longbow of Beleg Cuthalion", i++, j);
+	prt("The Longbow 'Belthronding'", i++, j);
 	artifact_screen_full(&i, j);
     }
     if (CUBRAGOL) {

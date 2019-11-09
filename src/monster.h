@@ -1,3 +1,6 @@
+#ifndef _MONSTER_H_
+#define _MONSTER_H_
+
 #define NONE8       	0x00000000L
 #define MV_ONLY_ATT    	0x00000001L
 #define MV_ATT_NORM 	0x00000002L
@@ -127,3 +130,5 @@
 #define INTELLIGENT     0x01000000L /* casts spells intelligently   */
 #define MINDLESS        0x02000000L /* does not have a mind -CWS    */
 #define UNIQUE          0x80000000L /* unique monster */
+
+#endif /* _MONSTER_H_ */

@@ -15,10 +15,8 @@
 
 #include <stdio.h>
 #include <signal.h>
-#include "config.h"
-#include "constant.h"
-#include "types.h"
-#include "externs.h"
+
+#include "angband.h"
 
 #ifdef Pyramid
 #include <sys/time.h>
@@ -27,7 +25,6 @@
 #endif
 
 #include <ctype.h>
-#include "config.h"
 
 #ifndef USG
 /* only needed for Berkeley UNIX */
@@ -185,9 +182,15 @@ int from, to;
 			  race[score.prace].trace, class[score.pclass].title,
 			  (int)score.lev);
 	strncpy(list[i], hugebuffer, 127);
-	(void)sprintf(hugebuffer,
-		      "             Killed by %s on Dungeon Level %d.",
-		      score.died_from, score.dun_level);
+        if (score.dun_level)
+            (void)sprintf(hugebuffer,
+                          "             Killed by %s on Dungeon Level %d.",
+                          score.died_from, score.dun_level);
+        else
+            (void)sprintf(hugebuffer,
+                          "             Killed by %s on the Town Level.",
+                          score.died_from);
+            
 	strncpy(list[i + 1], hugebuffer, 127);
 	i += 2;
 	if (i >= (MAX_SAVE_HISCORES * 2))

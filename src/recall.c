@@ -8,13 +8,10 @@
  * included in all such copies. 
  */
 
-#include "constant.h"
-#include "config.h"
-#include "monster.h"
-#include "types.h"
-#include "externs.h"
-
 #include <stdio.h>
+
+#include "angband.h"
+#include "monster.h"
 
 #ifndef NO_LINT_ARGS
 #ifdef __STDC__
@@ -455,8 +452,8 @@ int mon_num;
 	j = (((long)cp->mexp * cp->level % py.misc.lev) * (long)1000 /
 	     py.misc.lev + 5) / 10;
 
-	(void)sprintf(temp, " is worth %lu.%02lu point%s", i,
-		      (unsigned long)j, (unsigned long)(i == 1 && j == 0 ? "" : "s"));
+	(void)sprintf(temp, " is worth %lu.%02lu point%s", (unsigned long)i,
+		      (unsigned long)j, (i == 1 && j == 0 ? "" : "s"));
 	roff(temp);
 
 	if ((py.misc.lev / 10) == 1)

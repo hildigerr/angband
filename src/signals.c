@@ -38,76 +38,60 @@ init_signals()
 #define SIGBUS SIGUSR1
 #endif
 
-
-#ifdef ATARIST_MWC
-/*
- * need these for atari st, but for unix, must include signals.h first, or
+/* need these for atari st, but for unix, must include signals.h first, or
  * else suspend won't be properly declared 
  */
-#include "constant.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
+#ifdef ATARIST_MWC
+#include "angband.h"
 #endif
 
 /* skip most of the file on an ATARI ST */
 #ifndef ATARIST_MWC
 
-/* to get the SYS_V def if needed */
-#include "config.h"
+/* must include before externs.h, because that uses SIGTSTP */
+#include <signal.h>
+#include "angband.h"
 
-#if defined(SYS_V) && defined(lint)
+# if defined(AIX) && defined(lint)
 /*
  * for AIX, prevent hundreds of unnecessary lint errors, define before
  * signal.h is included 
  */
-#define _h_IEEETRAP
-typedef struct {
-    int                 stuff;
-}                   fpvmach;
+# define _h_IEEETRAP
+ typedef struct {
+     int                 stuff;
+ } fpvmach;
 
-#endif
-
-/* must include before externs.h, because that uses SIGTSTP */
-#include <signal.h>
-
-#include "constant.h"
-#include "types.h"
-#include "externs.h"
-
-#ifndef USG
-/* only needed for Berkeley UNIX */
-#include <sys/types.h>
-#include <sys/param.h>
-#endif
+# endif /* AIX & lint */
 
 #ifdef USG
-#ifndef ATARIST_MWC
-#include <string.h>
-#endif
-#else
-#ifndef VMS
-#include <strings.h>
-#endif
-#endif
+# ifndef ATARIST_MWC
+#  include <string.h>
+# endif /* ATARIST_MWC */
+#else /* not USG */
 
-#ifdef USG
-void                exit();
+# include <sys/types.h>
+# include <sys/param.h>
+# ifndef VMS
+#  include <strings.h>
+# endif /* VMS */
 
-#ifdef __TURBOC__
-void                sleep();
+# ifdef __TURBOC__
+  void sleep();
+# else /* not __TURBOC__ */
+#  ifndef NeXT
+   unsigned sleep();
+#  endif
+# endif /* not __TURBOC__ */
 
-#else
-unsigned            sleep();
+#endif /* not USG */
 
-#endif
-#endif
-
-static int          error_sig = (-1);
-static int          signal_count = 0;
+static int error_sig = (-1);
+static int signal_count = 0;
 
 /* ARGSUSED */
 #ifndef USG
+
 static void 
 signal_handler(sig, code, scp)
     int                 sig, code;
@@ -116,18 +100,22 @@ signal_handler(sig, code, scp)
     int                 smask;
 
     smask = sigsetmask(0) | (1 << sig);
-#else
-#ifdef __TURBOC__
-static void 
-signal_handler(sig)
-#else
-static void 
-signal_handler(sig)
-#endif
+
+#else /* USG */
+
+# ifdef __TURBOC__
+  static void 
+  signal_handler(sig)
+# else /* not __TURBOC__ */
+  static void 
+  signal_handler(sig)
+# endif /* not __TURBOC__ */
+
     int                 sig;
 {
 
-#endif
+#endif /* USG */
+
     if (error_sig >= 0) {	   /* Ignore all second signals. */
 	if (++signal_count > 10)   /* Be safe. We will die if persistent
 				    * enough. */
@@ -138,6 +126,7 @@ signal_handler(sig)
 
 /* Allow player to think twice. Wizard may force a core dump. */
     if (sig == SIGINT
+
 #ifndef MSDOS
 	|| sig == SIGQUIT
 #endif
@@ -145,8 +134,8 @@ signal_handler(sig)
 	if (death)
 	    (void)signal(sig, SIG_IGN);	/* Can't quit after death. */
 	else if (!character_saved && character_generated) {
-	    if ((!total_winner) ? (!get_Yn("Really commit *Suicide*?"))
-		: (!get_Yn("Do you want to retire?"))) {
+	    if ((!total_winner) ? (!get_check("Really commit *Suicide*?"))
+		: (!get_check("Do you want to retire?"))) {
 		if (turn > 0)
 		    disturb(1, 0);
 		erase_line(0, 0);
@@ -155,13 +144,14 @@ signal_handler(sig)
 #ifdef USG
 #ifdef linux
 		      (void) signal(sig, (void (*)()) signal_handler);
-#else
-		      (void) signal(sig, signal_handler);/* Have to restore handler.*/
-#endif
+#else /* not linux */
+		      /* Have to restore handler.*/
+		      (void) signal(sig, signal_handler);
+#endif /* not linux */
 
-#else
+#else /* not USG */
 		(void)sigsetmask(smask);
-#endif
+#endif /* not USG */
 	    /* in case control-c typed during msg_print */
 		if (wait_for_more)
 		    put_buffer(" -more-", MSG_LINE, 0);
@@ -222,16 +212,16 @@ nosignals()
 #ifdef SIGTSTP
 #ifdef linux
   (void) signal(SIGTSTP, (void (*)()) suspend);
-#else
+#else /* not linux */
     (void)signal(SIGTSTP, SIG_IGN);
-#endif
+#endif /* not linux */
 #ifndef USG
     mask = sigsetmask(0);
 #endif
-#endif
+#endif /* SIGTSTP */
     if (error_sig < 0)
 	error_sig = 0;
-#endif
+#endif /* not ATARIST_MWC */
 }
 
 void 

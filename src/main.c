@@ -49,25 +49,17 @@
 /*									 */
 
 #include <stdio.h>
+#include "angband.h"
 
-/* include before constant, because param.h defines NULL incorrectly */
 #ifndef USG
 #include <sys/types.h>
 #include <sys/param.h>
 #include <sys/time.h>
 #include <sys/resource.h>
-#endif
-
-#include "constant.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
-
-#ifdef USG
-#include <string.h>
-#else
 #include <strings.h>
-#endif
+#else /* USG */
+#include <string.h>
+#endif /* USG */
 
 #ifdef ultrix
 #include <sys/stat.h>
@@ -146,6 +138,9 @@ char *argv[];
     int force_rogue_like = FALSE;
     int force_keys_to = FALSE;
 #ifndef __MINT__
+#ifndef MAXHOSTNAMELEN			/* may not be defined -b. eck */
+#define MAXHOSTNAMELEN  64
+#endif
     char temphost[MAXHOSTNAMELEN+1], thishost[MAXHOSTNAMELEN+1], discard[120];
 #endif
     char string[80];
@@ -201,7 +196,11 @@ char *argv[];
     user_name(py.misc.name);
 #endif
     
-#if defined(SET_UID) && !defined(SECURE)
+#if defined(SET_UID) && !defined(SECURE) && !defined(POSIX)
+/* POSIX does not allow non-root setuid(geteuid) calls, and you don't */
+/* need them because having an euid is sufficient to give you write   */
+/* access.  You shouldn't run setuid root anyway -- run setuid games  */
+/*							--pgb	      */
     if (setuid(geteuid()) != 0) {
 	perror("Can't set permissions correctly!  Setuid call failed.\n");
 	exit(0);
@@ -250,7 +249,10 @@ char *argv[];
 	    else goto usage;
 	    break;
 	  case 'N':
-	  case 'n': new_game = TRUE; break;
+	  case 'n':
+            new_game = TRUE;
+            py.misc.name[0] = '\0';
+            break;
 	  case 'O':
 	  case 'o':
 	    /* rogue_like_commands may be set in get_char(), so delay this
@@ -310,6 +312,7 @@ char *argv[];
 	    break;
 	  default:
 	  usage:
+	    restore_term();
 	    if (is_wizard(player_uid)) {
 #ifdef MSDOS
 		puts("Usage: angband [-afnorw] [-s<num>] [-d<num>] <file>");
@@ -383,6 +386,7 @@ char *argv[];
        hence, this code is not necessary */
 #endif
 
+    
     (void) sprintf(savefile, "%s/%d%s", ANGBAND_SAV, player_uid, py.misc.name);
 
  /* This restoration of a saved character may get ONLY the monster memory. In
@@ -533,8 +537,13 @@ char *argv[];
 	    u_list[i].exist=0, u_list[i].dead=0;
 	create_character();
 
-	/* if we're creating a new character, change the savefile name */
-    (void) sprintf(savefile, "%s/%d%s", ANGBAND_SAV, player_uid, py.misc.name);
+/* We're creating a new character, so change the savefile name if
+ * there is no savefile named after the player's uid/name. -CWS
+ */
+        if (access(savefile, 0) == 0)
+            (void) sprintf(savefile, "%s/%d%s",
+                           ANGBAND_SAV, player_uid, py.misc.name);
+        
 	char_inven_init();
 	py.flags.food = 7500;
 	py.flags.food_digested = 2;
@@ -696,7 +705,7 @@ char *a;
 {
     while (*a)
 	if (iscntrl(*a)) {
-	    msg_print("Yuch! No control characters, Thankyou!");
+	    msg_print("Yuch! No control characters, Thank You!");
 	    exit_game();
 	} else a++;
     return (0);

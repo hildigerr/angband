@@ -8,12 +8,8 @@
  * included in all such copies. 
  */
 
-#include "constant.h"
+#include "angband.h"
 #include "monster.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
-
 
 /* Pray like HELL.					-RAK-	 */
 void 
@@ -317,7 +313,7 @@ pray()
 		    if (1) {
 			int                 k = 0;
 			int                 l = 0;
-			int                 tmp[100];
+			int                 tmp[10];
 
 			if (inventory[INVEN_BODY].tval != TV_NOTHING)
 			    tmp[k++] = INVEN_BODY;
@@ -449,7 +445,8 @@ pray()
 		    m_ptr->cmana_frac = 0;
 		    if (randint(3) == 1) {
 			msg_print("You have damaged your health!");
-			(void)dec_stat(A_CON);
+			(void)dec_stat(A_CON, 15 + randint(10),
+                                       (randint(3) == 1 ? TRUE : FALSE));
 		    }
 		} else
 		    m_ptr->cmana -= s_ptr->smana;

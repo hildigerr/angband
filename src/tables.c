@@ -6,9 +6,7 @@
    not for profit purposes provided that this copyright and statement are
    included in all such copies. */
 
-#include "constant.h"
-#include "config.h"
-#include "types.h"
+#include "angband.h"
 
 #if defined(CHECKHOURS)
 /* Operating hours for ANGBAND				-RAK-	*/

@@ -10,15 +10,7 @@
 
 #include <stdio.h>
 #include <errno.h>
-
-#ifndef MSDOS
-#include <sys/param.h>
-#endif
-
-#include "constant.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
+#include "angband.h"
 
 #ifdef ibm032
 #include <ctype.h>
@@ -97,23 +89,17 @@ void get_file_paths()
 #endif
 
     char *angband_path;
+    int angband_path_allocated = FALSE;
 
 /* Find the path to our files...  if the ANGBAND_PATH environment var
  * isn't set, use DEFAULT_PATH to look for the files.  If your system
  * can't do environment variables, you'll have to kludge this.  [cjh]
  */
-
     angband_path = getenv( "ANGBAND_PATH" );
     if (angband_path == NULL) {
-
-#if 0 /* I don't think this is appropriate, particularly since this may
-       * well be set by a system-wide games administrator.  -CWS */
-
-       fprintf(stderr, "Warning: ANGBAND_PATH not set!\n" );
-       fprintf(stderr, "Warning: Using %s for ANGBAND_PATH.\n", DEFAULT_PATH );
-#endif
-	angband_path = (char *)malloc( strlen( DEFAULT_PATH ) + 1 );
-	strcpy( angband_path, DEFAULT_PATH );
+       angband_path = (char *)malloc( strlen( DEFAULT_PATH ) + 1 );
+       strcpy( angband_path, DEFAULT_PATH );
+       angband_path_allocated = TRUE;
     }
 
     ANGBAND_TST = (char *)malloc( MAXPATHLEN );
@@ -232,6 +218,9 @@ void get_file_paths()
     strcat( ANGBAND_SAV, PATH_SEP );
     strcat( ANGBAND_SAV, "save" );
     ANGBAND_SAV = (char *)realloc( ANGBAND_SAV, strlen( ANGBAND_SAV ) + 1 );
+
+    if (angband_path_allocated)
+	free(angband_path);
 
     return;
 }
@@ -566,7 +555,7 @@ char *filename1;
     fd = my_topen(filename1, O_WRONLY | O_CREAT | O_EXCL, 0644);
     if (fd < 0 && errno == EEXIST) {
 	(void)sprintf(out_val, "Replace existing file %s?", filename1);
-	if (get_Yn(out_val))
+	if (get_check(out_val))
 	    fd = my_topen(filename1, O_WRONLY, 0644);
     }
     if (fd >= 0) {

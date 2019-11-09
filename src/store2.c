@@ -8,10 +8,7 @@
  * included in all such copies. 
  */
 
-#include "constant.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
+#include "angband.h"
 
 #ifdef USG
 #ifndef ATARIST_MWC
@@ -599,6 +596,13 @@ inven_type *item;
 	cur_ask = min_sell;
 	
     }
+
+/* let's make it impossible (at least, harder)
+ * to make a profit from the stores -CWS */
+
+    if (min_sell < cost)
+	min_sell = cost;
+
     do {
 	do {
 	    loop_flag = TRUE;
@@ -750,6 +754,18 @@ inven_type *item;
 		cur_ask = final_ask;
 	    }
 	}
+
+/* let's make it impossible (at least, harder)
+ * to make a profit from the stores -CWS */
+
+	if (final_ask > cost) {
+	    if (cost < 10)
+		final_ask = cost;
+	    else if (cost < 200)
+		final_ask = cost - randint(2);
+	    else final_ask = cost - randint(cost / 100);
+	}
+	
 	min_offer = max_sell;
 	last_offer = min_offer;
 	new_offer = 0;
@@ -879,6 +895,7 @@ int *cur_top;
 			prt_comment1();
 			decrease_insults(store_num);
 			py.misc.au -= price;
+                        store_prt_gold();
 			item_new = inven_carry(&sell_obj);
 			i = s_ptr->store_ctr;
 			store_destroy(store_num, item_val, TRUE);
@@ -1158,7 +1175,7 @@ int store_num;
 	    msg_flag = FALSE;
 	    if (get_com(NULL, &command)) {
 		switch (command) {
-		  case 'b':
+		case ' ': case 'b':
 		    if (cur_top == 0)
 			if (s_ptr->store_ctr > 12) {
 			    cur_top = 12;

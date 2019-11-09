@@ -8,10 +8,7 @@
  * included in all such copies. 
  */
 
-#include "constant.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
+#include "angband.h"
 
 #ifdef USG
 #ifndef ATARIST_MWC
@@ -123,9 +120,9 @@ aim()
 			break;
 		      case WD_FT_BLTS:	/* Frost */
 			if (randint(6)==1)
-			    line_spell(GF_LIGHTNING,dir,k,l,damroll(3,8));
+			    line_spell(GF_FROST,dir,k,l,damroll(3,8));
 			else
-			    fire_bolt(GF_LIGHTNING, dir, k, l, damroll(3, 8));
+			    fire_bolt(GF_FROST, dir, k, l, damroll(3, 8));
 			ident = TRUE;
 			done_effect = 1;
 			break;

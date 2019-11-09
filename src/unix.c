@@ -8,12 +8,25 @@
  * included in all such copies. 
  */
 
-#if defined(unix) || defined(__MINT__)
+#if defined(unix) || defined(__MINT__) || defined(_AIX) || defined(AMIGA)
 
 /* defines NULL */
 #include <stdio.h>
 /* defines CTRL */
 #include <sys/ioctl.h>
+
+#if defined(AIX) && defined(lint)
+/* for AIX, prevent hundreds of unnecessary lint errors, must define before
+ * signal.h is included 
+ */
+#define _h_IEEETRAP
+typedef struct {
+    int                 stuff;
+}                   fpvmach;
+#endif
+
+#include <signal.h>
+#include "angband.h"
 
 /* defines TRUE and FALSE */
 #ifdef linux
@@ -23,23 +36,6 @@
 #endif
 
 #include <pwd.h>
-#include "constant.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
-
-#if defined(SYS_V) && defined(lint)
-/* for AIX, prevent hundreds of unnecessary lint errors, must define before
- * signal.h is included 
- */
-#define _h_IEEETRAP
-typedef struct {
-    int                 stuff;
-}                   fpvmach;
-
-#endif
-
-#include <signal.h>
 
 #ifdef M_XENIX
 #include <sys/select.h>

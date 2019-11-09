@@ -8,14 +8,12 @@
  * included in all such copies. 
  */
 
-#ifndef FSCALE
-#define FSCALE (1<<8)
-#endif
-
 #if defined(Pyramid) || defined(NeXT) || defined(sun) || \
-defined(NCR3K) || defined(linux) || defined(ibm032) || defined (__osf__)
+defined(NCR3K) || defined(linux) || defined(ibm032) || defined (__osf__) \
+|| defined(_AIX)
 #include <sys/time.h>
 #else
+#error
 #include <time.h>
 #endif
 
@@ -28,11 +26,9 @@ defined(NCR3K) || defined(linux) || defined(ibm032) || defined (__osf__)
 #endif
 
 #include <stdio.h>
-#include "constant.h"
+
+#include "angband.h"
 #include "monster.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
 
 #ifdef USG
 #ifndef ATARIST_MWC
@@ -81,6 +77,9 @@ static void compact_objects();
 extern int peek;
 extern int rating;
 
+#ifndef FSCALE
+#define FSCALE (1<<8)
+#endif
 
 /* gets a new random seed for the random number generator */
 void
@@ -161,21 +160,6 @@ check_time()
     return TRUE;
 }
 
-#ifdef RI
-/* Generates a random integer x where 1<=X<=MAXVAL	-RAK-	 */
-int 
-randint(maxval)
-int maxval;
-{
-    register long randval;
-
-    if (maxval < 1)
-	return 1;
-    randval = random();
-    return ((randval % maxval) + 1);
-}
-
-#endif
 
 /* Generates a random integer number of NORMAL distribution -RAK- */
 int 
@@ -594,6 +578,7 @@ int y, x;
 {
     register cave_type    *cave_ptr;
     register struct flags *f_ptr;
+    int unlit = FALSE;
 
     cave_ptr = &cave[y][x];
     f_ptr = &py.flags;
@@ -606,27 +591,31 @@ int y, x;
 	return randint(95) + 31;
     if ((cave_ptr->cptr > 1) && (m_list[cave_ptr->cptr].ml))
 	return c_list[m_list[cave_ptr->cptr].mptr].cchar;
-    if (!cave_ptr->pl && !cave_ptr->tl && !cave_ptr->fm)
-	return ' ';
-    if ((cave_ptr->tptr != 0)
-	&& (t_list[cave_ptr->tptr].tval != TV_INVIS_TRAP))
-	return t_list[cave_ptr->tptr].tchar;
-    if (cave_ptr->fval <= MAX_CAVE_FLOOR)
-	return '.';
-    if (cave_ptr->fval == GRANITE_WALL || cave_ptr->fval == BOUNDARY_WALL
-	|| highlight_seams == FALSE) {
+    if (!cave_ptr->pl && !cave_ptr->tl && !cave_ptr->fm) {
+        unlit = TRUE;
+        if (!find_flag) return ' ';
+    }
+    if ((cave_ptr->tptr != 0) &&
+        (t_list[cave_ptr->tptr].tval != TV_INVIS_TRAP) && !unlit)
+        return t_list[cave_ptr->tptr].tchar;
+    if (!unlit || find_flag) {
+        if (cave_ptr->fval <= MAX_CAVE_FLOOR)
+            return '.';
+        if (cave_ptr->fval == GRANITE_WALL || cave_ptr->fval == BOUNDARY_WALL
+            || highlight_seams == FALSE) {
 #ifdef MSDOS
-	return wallsym;
+            return wallsym;
 #else
 #ifndef ATARIST_MWC
-	return '#';
+            return '#';
 #else
-	return (unsigned char)240;
+            return (unsigned char)240;
 #endif
 #endif
-    } else   /* Originally set highlight bit, but that is not portable,
-	      * now use the percent sign instead. */
-	return '%';
+        } else   /* Originally set highlight bit, but that is not portable,
+                  * now use the percent sign instead. */
+            return '%';
+    } else return ' ';
 }
 
 
@@ -651,6 +640,8 @@ prt_map()
 {
     register int           i, j, k;
     register unsigned char tmp_char;
+    int old_flag = find_flag;
+    find_flag = FALSE;
 
     k = 0;
     for (i = panel_row_min; i <= panel_row_max; i++) {	/* Top to bottom */
@@ -663,6 +654,7 @@ prt_map()
 		print(tmp_char, i, j);
 	}
     }
+    find_flag = old_flag;
 }
 
 
@@ -2514,17 +2506,27 @@ int base, limit, level;
     register int x, stand_dev, tmp, diff = limit - base;
 
 /* standard deviation twice as wide at bottom of Angband as top */
-    stand_dev = (OBJ_STD_ADJ * (1 + level / 100)) + OBJ_STD_MIN;
+    stand_dev = (OBJ_STD_ADJ * (1 + level / 100.0)) + OBJ_STD_MIN;
 /* check for level > max_std to check for overflow... */
     if (stand_dev > 40)
 	stand_dev = 40;
 /* abs may be a macro, don't call it with randnor as a parameter */
     tmp = randnor(0, stand_dev);
-    x = (tmp * diff / 150) + (level * limit / 200) + base;
-    if (x < base)
+    x = (tmp * diff / 150.0) + (level * limit / 200.0) + base;
+
+    if (x < base)			/* x is too small */
 	return (base);
-    else
+    else if (x < limit)			/* x is in range */
 	return (x);
+    else {
+	int diff = MY_ABS(limit - base);
+	if (diff < 5)
+	    return (limit);
+	else if (diff < 10)
+	    return (limit + (random() & 1));
+	else
+	    return (limit + randint(diff / 5));
+    }
 }
 
 int 
@@ -2693,8 +2695,8 @@ inven_type *t_ptr;
 	    t_ptr->tohit = 20;
 	    t_ptr->todam = 12;
 	    t_ptr->damage[0] = 3;
-	    t_ptr->flags = (TR_FFALL | TR_DEX |
-			    TR_FREE_ACT | TR_SLOW_DIGEST);
+	    t_ptr->flags = (TR_FFALL | TR_DEX | TR_FREE_ACT | TR_SLOW_DIGEST |
+			    TR_RES_COLD);
 	    t_ptr->flags2 |= (TR_SLAY_DEMON | TR_SLAY_ORC | TR_ACTIVATE | TR_ARTIFACT);
 	    t_ptr->p1 = 4;
 	    t_ptr->cost = 50000L;
@@ -4684,8 +4686,8 @@ int x, level, good, not_unique;
 	    t_ptr->tohit = randint(3) + m_bonus(0, 10, level);
 	    t_ptr->todam = randint(3) + m_bonus(0, 10, level);
 	    switch (randint(15)) {
-	      case 1: case 2: case 3:
-		if (((randint(3)==1)||(good==666)) && !not_unique &&
+	      case 1:
+		if ((magik(special) || (good==666)) && !not_unique &&
 		    !stricmp(object_list[t_ptr->index].name, "& Long Bow") &&
 		    (((i=randint(2))==1 && !BELEG) || (i==2 && !BARD))) {
 		    switch (i) {
@@ -4727,7 +4729,7 @@ int x, level, good, not_unique;
 		    }
 		    break;
 		}
-		if (((randint(5) == 1) || (good == 666)) && !not_unique &&
+		if ((magik(special) || (good == 666)) && !not_unique &&
 		    !stricmp(object_list[t_ptr->index].name, "& Light Crossbow")
 		    && !CUBRAGOL) {
 		    if (CUBRAGOL)
@@ -4753,7 +4755,7 @@ int x, level, good, not_unique;
 		t_ptr->tohit += 5;
 		t_ptr->todam += 10;
 		break;
-	      case 4: case 5: case 6: case 7: case 8:
+	      case 2: case 3: case 4: case 5:
 		t_ptr->name2 = SN_MIGHT;
 		if (peek) msg_print("Bow of Might");
 		rating += 11;
@@ -4761,8 +4763,7 @@ int x, level, good, not_unique;
 		t_ptr->todam += 12;
 		break;
 
-	      case 9: case 10: case 11: case 12:
-	      case 13: case 14: case 15:
+	      case 6: case 7: case 8: case 9:
 		t_ptr->name2 = SN_ACCURACY;
 		rating += 11;
 		if (peek)
@@ -4770,6 +4771,12 @@ int x, level, good, not_unique;
 		t_ptr->tohit += 12;
 		t_ptr->todam += 5;
 		break;
+              default:
+                if (randint(2) == 1)
+                    t_ptr->tohit += m_bonus(0, 5, level);
+                else
+                    t_ptr->todam += m_bonus(0, 5, level);
+                break;
 	    }
 	} else if (magik(cursed)) {
 	    t_ptr->tohit = (-m_bonus(5, 30, level));
@@ -4876,7 +4883,7 @@ int x, level, good, not_unique;
 		    t_ptr->flags |= TR_STR;
 		    t_ptr->name2 = SN_WEAKNESS;
 		}
-		t_ptr->p1 = (randint(3) - m_bonus(0, 10, level));
+		t_ptr->p1 = (- randint(3) - m_bonus(0, 10, level));
 	    }
 	    t_ptr->toac = (-m_bonus(1, 20, level));
 	    t_ptr->flags |= TR_CURSED;
@@ -5153,9 +5160,10 @@ int x, level, good, not_unique;
 		    if (peek)
 			msg_print("Ring of Speed");
 		    rating += 35;
-		    if (randint(888) == 1)
+		    if (randint(888) == 1) {
 			t_ptr->p1 = 2;
-		    else
+			t_ptr->cost *= 3;
+		    } else
 			t_ptr->p1 = 1;
 		}
 		break;
@@ -5785,6 +5793,7 @@ static struct opt_desc {
     { "Running: run through open doors", 	&find_ignore_doors},
     { "(g)et-key to pickup objects", 		&prompt_carry_flag},
     { "Prompt before pickup", 			&carry_query_flag},
+    { "Always throw",                           &always_throw},
     { "Rogue like commands", 			&rogue_like_commands},
     { "Show weights in inventory", 		&show_weight_flag},
     { "Show weights in equipment list",		&show_equip_weight_flag},
@@ -5792,7 +5801,10 @@ static struct opt_desc {
     { "Disable haggling in stores",		&no_haggle_flag},
     { "Plain object descriptions",		&plain_descriptions},
     { "Quick messages",		                &quick_messages},
+    { "Use new screen layout",                  &new_screen_layout},
     { "Equippy chars",		                &equippy_chars},
+    { "Ring bell on error",                     &ring_bell},
+    { "Shuffle store owners",                   &shuffle_store_owners},
     { "Low hitpoint warning",			&hitpoint_warn},
     { "Delay speed", 				&delay_spd},
     { (char *)0, 				(int *)0}
