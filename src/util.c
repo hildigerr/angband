@@ -45,18 +45,18 @@ const char *c2;
 #include <sys/time.h>
 
 /* for those systems that don't have usleep */
-/* grabbed from the inl netrek server -cba */
+/* grabbed from the inl netrek server -cba  */
 
 int
 microsleep(microSeconds)
-    unsigned long       microSeconds;
+unsigned long microSeconds;
 {
     unsigned int        Seconds, uSec;
     int                 nfds, readfds, writefds, exceptfds;
     struct timeval      Timer;
 
     nfds = readfds = writefds = exceptfds = 0;
-
+    
     if (microSeconds > (unsigned long)4000000) {
 	errno = ERANGE;		   /* value out of range */
 	perror("usleep time out of range ( 0 -> 4000000 ) ");

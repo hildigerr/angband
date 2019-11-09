@@ -24,16 +24,16 @@
 #endif
 
 #ifndef linux
-long                atol();
+long atol();
 #endif
 
 int
 is_wizard(uid)
-    int                 uid;
+int uid;
 {
-    FILE               *fp;
-    char                buf[100];
-    int                 test;
+    FILE *fp;
+    char  buf[100];
+    int   test;
 
     if ((fp = my_tfopen(ANGBAND_WIZ, "r")) == NULL) {
 	fprintf(stderr, "Can't get wizard check...");
@@ -56,8 +56,8 @@ is_wizard(uid)
 void
 artifact_check()
 {
-    FILE               *file1;
-    vtype               filename;
+    FILE *file1;
+    vtype filename;
 
     prt("Checking for artifacts that have been seen... ", 0, 0);
     prt("File name: ", 0, 0);
@@ -302,7 +302,7 @@ artifact_check()
 /* Light up the dungeon					-RAK-	 */
 void
 wizard_light(light)
-    int                 light;
+int light;
 {
     register cave_type *c_ptr;
     register int        k, l, i, j;
@@ -334,10 +334,10 @@ wizard_light(light)
 void
 change_character()
 {
-    register int        tmp_val;
-    register int32      tmp_lval;
-    int16u             *a_ptr;
-    vtype               tmp_str;
+    register int          tmp_val;
+    register int32        tmp_lval;
+    int16u               *a_ptr;
+    vtype                 tmp_str;
     register struct misc *m_ptr;
 
     a_ptr = py.stats.max_stat;
@@ -536,16 +536,16 @@ change_character()
 void
 wizard_create()
 {
-    register int        tmp_val;
-    int                 i, j, k;
-    int32               tmp_lval;
-    char                tmp_str[100];
+    register int         tmp_val;
+    int                  i, j, k;
+    int32                tmp_lval;
+    char                 tmp_str[100];
     register inven_type *i_ptr;
-    treasure_type       t_type, *t_ptr;
-    inven_type          forge;
-    register cave_type *c_ptr;
-    char                ch;
-    int                 more = FALSE;
+    treasure_type        t_type, *t_ptr;
+    inven_type           forge;
+    register cave_type  *c_ptr;
+    char                 ch;
+    int                  more = FALSE;
 
     t_ptr = &t_type;
     i_ptr = &forge;
@@ -1020,11 +1020,8 @@ again:
 
     save_screen();
     if ((i_ptr->tval <= TV_MAX_WEAR) && (i_ptr->tval >= TV_MIN_WEAR)) {
-    /*
-     * only then bother with TR_* flags, since otherwise they are
-     * meaningless... -CFT 
-     */
 
+    /* only then bother with TR_* flags, since otherwise they are meaningless... -CFT */
 	if ((i_ptr->tval == TV_SWORD) ||
 	    (i_ptr->tval == TV_HAFTED) ||
 	    (i_ptr->tval == TV_POLEARM) ||
@@ -1395,9 +1392,11 @@ end:
 /* pause if screen fills up while printint up artifacts - cba */
 
 void
-artifact_screen_full(int *i, int j)
+artifact_screen_full(i, j)
+int *i;
+int  j;
 {
-    int                 t;
+    int t;
 
 /* is screen full? */
     if (*i == 22) {
@@ -1413,9 +1412,9 @@ artifact_screen_full(int *i, int j)
 /* Print out the artifacts seen without using a file - cba */
 
 void
-artifact_check_no_file(void)
+artifact_check_no_file()
 {
-    int                 i, j;
+    int i, j;
 
     save_screen();
     j = 15;
@@ -1904,9 +1903,11 @@ artifact_check_no_file(void)
 /* print out the status of uniques - cba */
 
 void
-unique_screen_full(int *i, int j)
+unique_screen_full(i, j)
+int *i;
+int  j;
 {
-    int                 t;
+    int t;
 
 /* is screen full? */
     if (*i == 22) {
@@ -1920,7 +1921,7 @@ unique_screen_full(int *i, int j)
 }
 
 void
-check_uniques(void)
+check_uniques()
 {
     int      i, j, k;
     bigvtype msg;

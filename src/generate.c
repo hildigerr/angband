@@ -1,3 +1,4 @@
+
 /*
  * generate.c: initialize/create a dungeon or town level 
  *
@@ -73,68 +74,68 @@ static void new_spot(int16 *, int16 *);
 static void build_pit(int, int);
 static void build_store(int, int, int);
 #else
-static void         correct_dir();
-static void         rand_dir();
-static void         fill_cave();
-static void         place_streamer();
+static void correct_dir();
+static void rand_dir();
+static void fill_cave();
+static void place_streamer();
 static cave_type *test_place_obj();
-static void         place_open_door();
-static void         place_broken_door();
-static void         place_closed_door();
-static void         place_locked_door();
-static void         place_stuck_door();
-static void         place_secret_door();
-static void         place_door();
-static void         place_up_stairs();
-static void         place_down_stairs();
-static void         place_stairs();
-static void         vault_trap();
-static void         vault_monster();
-static void         vault_jelly();
-static void         vault_orc();
-static void         vault_troll();
-static void         vault_undead();
-static void         vault_dragon();
-static void         vault_demon();
-static void         vault_giant();
-static void         build_room();
-static void         build_type1();
-static void         build_type5();
-static void         build_type2();
-static void         build_type3();
-static void         vault_nasty();
-static void         special_pit();
-static int          next_to();
-static void         try_door();
-static void         new_spot();
-static void         build_pit();
-static void         build_store();
+static void place_open_door();
+static void place_broken_door();
+static void place_closed_door();
+static void place_locked_door();
+static void place_stuck_door();
+static void place_secret_door();
+static void place_door();
+static void place_up_stairs();
+static void place_down_stairs();
+static void place_stairs();
+static void vault_trap();
+static void vault_monster();
+static void vault_jelly();
+static void vault_orc();
+static void vault_troll();
+static void vault_undead();
+static void vault_dragon();
+static void vault_demon();
+static void vault_giant();
+static void build_room();
+static void build_type1();
+static void build_type5();
+static void build_type2();
+static void build_type3();
+static void vault_nasty();
+static void special_pit();
+static int  next_to();
+static void try_door();
+static void new_spot();
+static void build_pit();
+static void build_store();
 #endif
 
-static void         place_boundary();
-static void         place_destroyed();
-static void         blank_cave();
-static void         cave_gen();
-static void         tlink();
-static void         mlink();
-static void         town_gen();
+static void place_boundary();
+static void place_destroyed();
+static void blank_cave();
+static void cave_gen();
+static void tlink();
+static void mlink();
+static void town_gen();
 #endif
 
 typedef struct coords {
-    int                 x, y;
-}                   coords;
+    int x, y;
+} coords;
 
-static coords       doorstk[100];
-static int          doorindex;
+static coords doorstk[100];
+static int    doorindex;
 
-extern int          rating;
-extern int          peek;
+extern int    rating;
+extern int    peek;
 
 /* Always picks a correct direction		 */
 static void 
 correct_dir(rdir, cdir, y1, x1, y2, x2)
-    int                *rdir, *cdir;
-    register int        y1, x1, y2, x2;
+int         *rdir, *cdir;
+register int y1, x1, y2, x2;
 {
     if (y1 < y2)
 	*rdir = 1;
@@ -160,9 +161,9 @@ correct_dir(rdir, cdir, y1, x1, y2, x2)
 /* Chance of wandering direction			 */
 static void 
 rand_dir(rdir, cdir)
-    int                *rdir, *cdir;
+int *rdir, *cdir;
 {
-    register int        tmp;
+    register int tmp;
 
     tmp = randint(4);
     if (tmp < 3) {
@@ -196,7 +197,7 @@ blank_cave()
 /* Note: 9 is a temporary value.				 */
 static void 
 fill_cave(fval)
-    register int        fval;
+register int fval;
 {
     register int        i, j;
     register cave_type *c_ptr;
@@ -251,8 +252,7 @@ place_boundary()
 /* Places "streamers" of rock through dungeon		-RAK-	 */
 static void 
 place_streamer(fval, treas_chance)
-    int                 fval;
-    int                 treas_chance;
+int fval, treas_chance;
 {
     register int        i, tx, ty;
     int                 y, x, t1, t2, dir;
@@ -285,10 +285,12 @@ place_streamer(fval, treas_chance)
     }
     while (mmove(dir, &y, &x));
 }
+
+
 void 
 repl_spot(y, x, typ)		   /* copied verbatim from spells.c - damn
 				    * thing won't find it. :( :( -DGK */
-    int                 y, x, typ;
+int y, x, typ;
 {
     register cave_type *c_ptr;
 
@@ -328,9 +330,9 @@ repl_spot(y, x, typ)		   /* copied verbatim from spells.c - damn
 static void 
 place_destroyed()
 {
-    register int        y, x;
-    register int        i, j, k;
-    int                 n;
+    register int y, x;
+    register int i, j, k;
+    int          n;
 
     for (n = 1; n <= randint(5); n++) {
 	x = randint(cur_width - 32) + 15;
@@ -385,7 +387,7 @@ int y, x;
 
 static void 
 place_open_door(y, x)
-    int                 y, x;
+int y, x;
 {
     register int        cur_pos;
     register cave_type *c_ptr;
@@ -400,7 +402,7 @@ place_open_door(y, x)
 
 static void 
 place_broken_door(y, x)
-    int                 y, x;
+int y, x;
 {
     register int        cur_pos;
     register cave_type *c_ptr;
@@ -416,7 +418,7 @@ place_broken_door(y, x)
 
 static void 
 place_closed_door(y, x)
-    int                 y, x;
+int y, x;
 {
     register int        cur_pos;
     register cave_type *c_ptr;
@@ -431,7 +433,7 @@ place_closed_door(y, x)
 
 static void 
 place_locked_door(y, x)
-    int                 y, x;
+int y, x;
 {
     register int        cur_pos;
     register cave_type *c_ptr;
@@ -447,7 +449,7 @@ place_locked_door(y, x)
 
 static void 
 place_stuck_door(y, x)
-    int                 y, x;
+int y, x;
 {
     register int        cur_pos;
     register cave_type *c_ptr;
@@ -463,7 +465,7 @@ place_stuck_door(y, x)
 
 static void 
 place_secret_door(y, x)
-    int                 y, x;
+int y, x;
 {
     register int        cur_pos;
     register cave_type *c_ptr;
@@ -478,7 +480,7 @@ place_secret_door(y, x)
 
 static void 
 place_door(y, x)
-    int                 y, x;
+int y, x;
 {
     register int        tmp;
 
@@ -504,7 +506,7 @@ place_door(y, x)
 /* Place an up staircase at given y, x			-RAK-	 */
 static void 
 place_up_stairs(y, x)
-    int                 y, x;
+int y, x;
 {
     register int        cur_pos;
     register cave_type *c_ptr;
@@ -520,7 +522,7 @@ place_up_stairs(y, x)
 /* Place a down staircase at given y, x			-RAK-	 */
 static void 
 place_down_stairs(y, x)
-    int                 y, x;
+int y, x;
 {
     register int        cur_pos;
     register cave_type *c_ptr;
@@ -541,7 +543,7 @@ place_down_stairs(y, x)
 /* Places a staircase 1=up, 2=down			-RAK-	 */
 static void 
 place_stairs(typ, num, walls)
-    int                 typ, num, walls;
+int typ, num, walls;
 {
     register cave_type *cave_ptr;
     int                 i, j, flag;
@@ -552,8 +554,7 @@ place_stairs(typ, num, walls)
 	do {
 	    j = 0;
 	    do {
-	    /*
-	     * Note: don't let y1/x1 be zero, and don't let y2/x2 be equal to
+	    /* Note: don't let y1/x1 be zero, and don't let y2/x2 be equal to
 	     * cur_height-1/cur_width-1, these values are always
 	     * BOUNDARY_ROCK. 
 	     */
@@ -593,7 +594,7 @@ place_stairs(typ, num, walls)
 /* Place a trap with a given displacement of point	-RAK-	 */
 static void 
 vault_trap(y, x, yd, xd, num)
-    int                 y, x, yd, xd, num;
+int y, x, yd, xd, num;
 {
     register int        count, y1, x1;
     int                 i, flag;
@@ -623,10 +624,10 @@ vault_trap(y, x, yd, xd, num)
 /* Place a monster with a given displacement of point	-RAK-	 */
 static void 
 vault_monster(y, x, num)
-    int                 y, x, num;
+int y, x, num;
 {
-    register int        i;
-    int                 y1, x1;
+    register int i;
+    int          y1, x1;
 
     for (i = 0; i < num; i++) {
 	y1 = y;
@@ -637,9 +638,9 @@ vault_monster(y, x, num)
 
 static void 
 vault_jelly(y, x)
-    int                 y, x;
+int y, x;
 {
-    int                 l, m, summon;
+    int l, m, summon;
 
     summon = FALSE;
     l = m_level[MAX_MONS_LEVEL];
@@ -656,9 +657,9 @@ vault_jelly(y, x)
 
 static void 
 vault_orc(y, x, rank)
-    int                 y, x, rank;
+int y, x, rank;
 {
-    register int        i;
+    register int i;
 
     i = 0;
     switch (rank) {
@@ -699,9 +700,9 @@ vault_orc(y, x, rank)
 
 static void 
 vault_troll(y, x, rank)
-    int                 y, x, rank;
+int y, x, rank;
 {
-    register int        i;
+    register int i;
 
     i = 0;
     switch (rank) {
@@ -754,10 +755,10 @@ vault_troll(y, x, rank)
 
 static void 
 vault_undead(y, x)
-    int                 y, x;
+int y, x;
 {
-    int                 l, m, summon;
-
+    int l, m, summon;
+    
     summon = FALSE;
     l = m_level[MAX_MONS_LEVEL];
     do {
@@ -772,11 +773,10 @@ vault_undead(y, x)
 
 static void 
 vault_dragon(y, x, rank, type)
-    int                 y, x, rank, type;
+int y, x, rank, type;
 {
-    register int        i;
+    register int i = 0;
 
-    i = 0;
     switch (rank) {
       case 1:
       case 2:
@@ -926,11 +926,10 @@ vault_dragon(y, x, rank, type)
 
 static void 
 vault_demon(y, x, rank)
-    int                 y, x, rank;
+int y, x, rank;
 {
-    register int        i;
+    register int i = 0;
 
-    i = 0;
     switch (rank) {
       case 1:
 	while (i < MAX_CREATURES) {
@@ -982,11 +981,10 @@ vault_demon(y, x, rank)
 
 static void 
 vault_giant(y, x, rank)
-    int                 y, x, rank;
+int y, x, rank;
 {
-    register int        i;
+    register int i = 0;
 
-    i = 0;
     switch (rank) {
       case 1:
 	while (i < MAX_CREATURES) {
@@ -1039,7 +1037,7 @@ vault_giant(y, x, rank)
 /* Builds a room at a row, column coordinate		-RAK-	 */
 static void 
 build_room(yval, xval)
-    int                 yval, xval;
+int yval, xval;
 {
     register int        i, j, y_depth, x_right;
     int                 y_height, x_left;
@@ -1056,8 +1054,7 @@ build_room(yval, xval)
     x_left = xval - randint(11);
     x_right = xval + randint(11);
 
-/*
- * for paranoia's sake: bounds-check!  Memory errors caused by accessing
+/* for paranoia's sake: bounds-check!  Memory errors caused by accessing
  * cave[][] out-of-bounds are nearly impossible to spot!  -CFT 
  */
     if (y_height < 1)
@@ -1069,8 +1066,7 @@ build_room(yval, xval)
     if (x_right >= (cur_width - 1))
 	x_right = cur_width - 2;
 
-/*
- * the x dim of rooms tends to be much larger than the y dim, so don't bother
+/* the x dim of rooms tends to be much larger than the y dim, so don't bother
  * rewriting the y loop 
  */
     for (i = y_height; i <= y_depth; i++) {
@@ -1119,7 +1115,7 @@ build_room(yval, xval)
 /* Type 1 unusual rooms are several overlapping rectangular ones	 */
 static void 
 build_type1(yval, xval)
-    int                 yval, xval;
+int yval, xval;
 {
     int                 y_height, y_depth;
     int                 x_left, x_right, limit;
@@ -1138,8 +1134,7 @@ build_type1(yval, xval)
 	x_left = xval - randint(11);
 	x_right = xval + randint(11);
 
-    /*
-     * for paranoia's sake: bounds-check!  Memory errors caused by accessing
+    /* for paranoia's sake: bounds-check!  Memory errors caused by accessing
      * cave[][] out-of-bounds are nearly impossible to spot!  -CFT 
      */
 	if (y_height < 1)
@@ -1151,8 +1146,7 @@ build_type1(yval, xval)
 	if (x_right >= (cur_width - 1))
 	    x_right = cur_width - 2;
 
-    /*
-     * the x dim of rooms tends to be much larger than the y dim, so don't
+    /* the x dim of rooms tends to be much larger than the y dim, so don't
      * bother rewriting the y loop 
      */
 
@@ -1197,27 +1191,25 @@ build_type1(yval, xval)
 
 static void 
 build_type5(yval, xval)
-    int                 yval, xval;
+int yval, xval;
 {
     register int        x, y, x1, y1, vault;
     int                 width = 0, height = 0;
     char               *template = NULL;
-    char               *t;	   /* use t to avoid changing template in
-				    * loop.  This should fix some memory
-				    * troubles, because now we aren't
-				    * free()ing with a bad pointer.  Thanks
-				    * much to
-				    * gehring@pib1.physik.uni-bonn.edu for
-				    * pointing this bug out... -CFT */
+/* use t to avoid changing template in loop.  This should fix some memory
+ * troubles, because now we aren't free()ing with a bad pointer.  Thanks
+ * much to gehring@pib1.physik.uni-bonn.edu for pointing this bug out... -CFT
+ */
+    char               *t;
     char                buf[50];
     int8u               floor;
     int8u               wall;
     register cave_type *c_ptr;
 
     if (dun_level <= randint(25))
-	floor = LIGHT_FLOOR;	   /* Floor with light	 */
+	floor = LIGHT_FLOOR;	   /* Floor with light */
     else
-	floor = DARK_FLOOR;	   /* Dark floor		 */
+	floor = DARK_FLOOR;	   /* Dark floor       */
 
 
     vault = 0;
@@ -1500,8 +1492,7 @@ build_type5(yval, xval)
 		c_ptr->lr = TRUE;
 		break;
 	      case '%':	   /* lit up wall */
-		c_ptr->fval = GRANITE_WALL;	/* Not temp, since this may
-						 * have doors in */
+		c_ptr->fval = GRANITE_WALL; /* Not temp, since this may have doors in */
 		c_ptr->lr = TRUE;
 		break;
 	      case '.':	   /* lit up/ not lit up floor */
@@ -1618,16 +1609,19 @@ build_type5(yval, xval)
     free(template);
 }
 
-/* Builds an unusual room at a row, column coordinate	-RAK-	 */
-/* Type 2 unusual rooms all have an inner room:			 */
-/* 1 - Just an inner room with one door			 */
-/* 2 - An inner room within an inner room			 */
-/* 3 - An inner room with pillar(s)				 */
-/* 4 - Inner room has a maze					 */
-/* 5 - A set of four inner rooms				 */
+/* Builds an unusual room at a row, column coordinate	-RAK-
+ *
+ * Type 2 unusual rooms all have an inner room:
+ * 1 - Just an inner room with one door
+ * 2 - An inner room within an inner room
+ * 3 - An inner room with pillar(s)
+ * 4 - Inner room has a maze
+ * 5 - A set of four inner rooms
+ */
+
 static void 
 build_type2(yval, xval)
-    int                 yval, xval;
+int yval, xval;
 {
     register int        i, j, y_height, x_left;
     int                 y_depth, x_right, tmp;
@@ -1643,8 +1637,7 @@ build_type2(yval, xval)
     x_left = xval - 11;
     x_right = xval + 11;
 
-/*
- * paranoia bounds-check...   if the room can't fit in the cave, punt out and
+/* paranoia bounds-check...   if the room can't fit in the cave, punt out and
  * build a simpler room type (type1 is already bounds-checked) This should
  * help solve MORE memory troubles! -CFT 
  */
@@ -1652,8 +1645,8 @@ build_type2(yval, xval)
 	build_type1(yval, xval);
 	return;
     }
-/*
- * the x dim of rooms tends to be much larger than the y dim, so don't bother
+
+/* the x dim of rooms tends to be much larger than the y dim, so don't bother
  * rewriting the y loop 
  */
 
@@ -1741,8 +1734,7 @@ build_type2(yval, xval)
 
 	tmp = randint(4);	   /* Place a door	 */
 	if (tmp < 3)
-	    place_locked_door(yval - 3 + (tmp << 1), xval);	/* 1 -> yval-1; 2 ->
-								 * yval+1 */
+	    place_locked_door(yval - 3 + (tmp << 1), xval); /* 1 -> yval-1; 2 -> yval+1 */
 	else
 	    place_locked_door(yval, xval - 7 + (tmp << 1));
 
@@ -1893,7 +1885,7 @@ build_type2(yval, xval)
 /* Type 3 unusual rooms are cross shaped			 */
 static void 
 build_type3(yval, xval)
-    int                 yval, xval;
+int yval, xval;
 {
     int                 y_height, y_depth;
     int                 x_left, x_right;
@@ -1901,8 +1893,7 @@ build_type3(yval, xval)
     int8u               floor;
     register cave_type *c_ptr;
 
-/*
- * quick, basic bounds-check... If too close, then this is better suited to a
+/* quick, basic bounds-check... If too close, then this is better suited to a
  * simpler room type. -CFT 
  */
     if (!in_bounds(yval - 3, xval - 3) || !in_bounds(yval + 3, xval + 3)) {
@@ -1918,8 +1909,8 @@ build_type3(yval, xval)
     y_depth = yval + tmp;
     x_left = xval - 1;
     x_right = xval + 1;
-/*
- * for paranoia's sake: bounds-check!  Memory errors caused by accessing
+
+/* for paranoia's sake: bounds-check!  Memory errors caused by accessing
  * cave[][] out-of-bounds are nearly impossible to spot!  -CFT 
  */
     if (y_height < 1)
@@ -1953,8 +1944,8 @@ build_type3(yval, xval)
     y_depth = yval + 1;
     x_left = xval - tmp;
     x_right = xval + tmp;
-/*
- * for paranoia's sake: bounds-check!  Memory errors caused by accessing
+
+/* for paranoia's sake: bounds-check!  Memory errors caused by accessing
  * cave[][] out-of-bounds are nearly impossible to spot!  -CFT 
  */
 
@@ -2061,7 +2052,7 @@ build_type3(yval, xval)
 
 static void 
 vault_nasty(j, i, type, rank, colour)
-    int                 j, i, type, rank, colour;
+int j, i, type, rank, colour;
 {
     switch (type) {
       case 1:
@@ -2090,7 +2081,7 @@ vault_nasty(j, i, type, rank, colour)
 
 static void 
 special_pit(yval, xval, type)
-    int                 yval, xval, type;
+int yval, xval, type;
 {
     register int        i, j, y_height, x_left;
     int                 y_depth, x_right, colour;
@@ -2115,8 +2106,7 @@ special_pit(yval, xval, type)
 	if ((randint(dun_level*dun_level + 1) < 300) && (dun_level <= 40))
 	    good_item_flag = TRUE;
 
-/*
- * the x dim of rooms tends to be much larger than the y dim, so don't bother
+/* the x dim of rooms tends to be much larger than the y dim, so don't bother
  * rewriting the y loop 
  */
 
@@ -2290,7 +2280,7 @@ special_pit(yval, xval, type)
 /* Constructs a tunnel between two points		 */
 static void 
 build_tunnel(row1, col1, row2, col2)
-    int                 row1, col1, row2, col2;
+int row1, col1, row2, col2;
 {
     register int        tmp_row, tmp_col, i, j;
     register cave_type *c_ptr;
@@ -2351,8 +2341,8 @@ build_tunnel(row1, col1, row2, col2)
 	    d_ptr = &cave[tmp_row + row_dir][tmp_col + col_dir];
 	    if ((d_ptr->fval == GRANITE_WALL) || (d_ptr->fval == TMP2_WALL))
 		c_ptr->fval = TMP2_WALL;
-	/*
-	 * if can not pass completely through wall don't try... And mark as
+
+	/* if can not pass completely through wall don't try... And mark as
 	 * impassible for future -KOC 
 	 */
 	    else {
@@ -2386,11 +2376,11 @@ build_tunnel(row1, col1, row2, col2)
 		}
 		door_flag = TRUE;
 	    }
-	    if (randint(100) > DUN_TUN_CON) {
-	    /*
-	     * make sure that tunnel has gone a reasonable distance before
+
+	    /* make sure that tunnel has gone a reasonable distance before
 	     * stopping it, this helps prevent isolated rooms 
 	     */
+	    if (randint(100) > DUN_TUN_CON) {
 		tmp_row = row1 - start_row;
 		if (tmp_row < 0)
 		    tmp_row = (-tmp_row);
@@ -2430,9 +2420,9 @@ build_tunnel(row1, col1, row2, col2)
 
 static int 
 next_to(y, x)
-    register int        y, x;
+register int y, x;
 {
-    register int        next;
+    register int next;
 
     if (!in_bounds(y, x))
 	return 0;		   /* abort! -CFT */
@@ -2453,7 +2443,7 @@ next_to(y, x)
 /* Places door at y, x position if at least 2 walls found	 */
 static void 
 try_door(y, x)
-    register int        y, x;
+register int y, x;
 {
     if (!in_bounds(y, x))
 	return;			   /* abort! -CFT */
@@ -2466,7 +2456,7 @@ try_door(y, x)
 /* Returns random co-ordinates				-RAK-	 */
 static void 
 new_spot(y, x)
-    int16              *y, *x;
+int16 *y, *x;
 {
     register int        i, j;
     register cave_type *c_ptr;
@@ -2485,9 +2475,9 @@ new_spot(y, x)
 
 static void 
 build_pit(yval, xval)
-    int                 yval, xval;
+int yval, xval;
 {
-    int                 tmp;
+    int tmp;
 
     tmp = randint(dun_level > 80 ? 80 : dun_level);
     rating += 10;
@@ -2512,15 +2502,15 @@ static void
 cave_gen()
 {
     struct spot_type {
-	int                 endx;
-	int                 endy;
+	int endx;
+	int endy;
     };
-    int                 room_map[20][20];
-    register int        i, j, k;
-    int                 y1, x1, y2, x2, pick1, pick2, tmp;
-    int                 row_rooms, col_rooms, alloc_level;
-    int16               yloc[400], xloc[400];
-    int                 pit_ok, spec_level;
+    int          room_map[20][20];
+    register int i, j, k;
+    int          y1, x1, y2, x2, pick1, pick2, tmp;
+    int          row_rooms, col_rooms, alloc_level;
+    int16        yloc[400], xloc[400];
+    int          pit_ok, spec_level;
 
     rating = 0;
     spec_level = 0;
@@ -2629,8 +2619,7 @@ cave_gen()
     if (place_ghost())
 	good_item_flag = TRUE;
     else if (spec_level == SPEC_DEST) {
-	int                 flag, counter = 0;
-
+	int flag, counter = 0;
 	do {
 	    flag = place_ghost();
 	    counter++;
@@ -2646,7 +2635,7 @@ cave_gen()
 /* Builds a store at a row, column coordinate			 */
 static void 
 build_store(store_num, y, x)
-    int                 store_num, y, x;
+int store_num, y, x;
 {
     int                 yval, y_height, y_depth;
     int                 xval, x_left, x_right;
@@ -2689,7 +2678,7 @@ build_store(store_num, y, x)
 static void 
 tlink()
 {
-    register int        i;
+    register int i;
 
     for (i = 0; i < MAX_TALLOC; i++)
 	invcopy(&t_list[i], OBJ_NOTHING);
@@ -2701,7 +2690,7 @@ tlink()
 static void 
 mlink()
 {
-    register int        i;
+    register int i;
 
     for (i = 0; i < MAX_MALLOC; i++)
 	if (m_list[i].mptr)

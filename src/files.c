@@ -54,7 +54,7 @@ char               *strcat();
 
 #ifndef VMS
 #if defined(ultrix) || defined(USG)
-void                exit();
+void exit();
 
 #endif
 #endif
@@ -272,9 +272,9 @@ init_scorefile()
 void 
 read_times()
 {
-    register int        i;
-    vtype               in_line;
-    FILE               *file1;
+    register int i;
+    vtype        in_line;
+    FILE        *file1;
 
 #ifdef CHECKHOURS
 /* Attempt to read hours.dat.	 If it does not exist,	   */
@@ -332,12 +332,12 @@ read_times()
  */
 void 
 helpfile(filename)
-    const char         *filename;
+const char *filename;
 {
-    bigvtype            tmp_str;
-    FILE               *file;
-    char                input;
-    int                 i;
+    bigvtype tmp_str;
+    FILE    *file;
+    char     input;
+    int      i;
 
     file = my_tfopen(filename, "r");
     if (file == NULL) {
@@ -368,11 +368,11 @@ helpfile(filename)
 void 
 print_objects()
 {
-    register int        i;
-    int                 nobj, j, level;
-    vtype               filename1;
-    bigvtype            tmp_str;
-    register FILE      *file1;
+    register int         i;
+    int                  nobj, j, level;
+    vtype                filename1;
+    bigvtype             tmp_str;
+    register FILE       *file1;
     register inven_type *i_ptr;
 
     prt("Produce objects on what level?: ", 0, 0);
@@ -550,18 +550,18 @@ print_objects()
 /* Print the character to a file or device		-RAK-	 */
 int 
 file_character(filename1)
-    char               *filename1;
+char *filename1;
 {
-    register int        i;
-    int                 j, xbth, xbthb, xfos, xsrh, xstl, xdis, xsave, xdev;
-    vtype               xinfra;
-    int                 fd;
-    register FILE      *file1;
-    bigvtype            prt2;
+    register int          i;
+    int                   j, xbth, xbthb, xfos, xsrh, xstl, xdis, xsave, xdev;
+    vtype                 xinfra;
+    int                   fd;
+    register FILE        *file1;
+    bigvtype              prt2;
     register struct misc *p_ptr;
-    register inven_type *i_ptr;
-    vtype               out_val, prt1;
-    const char          *p, *colon, *blank;
+    register inven_type  *i_ptr;
+    vtype                 out_val, prt1;
+    const char           *p, *colon, *blank;
 
     fd = my_topen(filename1, O_WRONLY | O_CREAT | O_EXCL, 0644);
     if (fd < 0 && errno == EEXIST) {

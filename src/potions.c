@@ -23,11 +23,11 @@
 void 
 quaff()
 {
-    int32u              i, l;
-    int                 j, k, item_val;
-    int                 ident;
-    register inven_type *i_ptr;
-    register struct misc *m_ptr;
+    int32u i, l;
+    int    j, k, item_val;
+    int    ident;
+    register inven_type   *i_ptr;
+    register struct misc  *m_ptr;
     register struct flags *f_ptr;
 
     free_turn_flag = TRUE;

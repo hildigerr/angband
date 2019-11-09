@@ -63,11 +63,11 @@ static void rd_monster();
 #ifdef MAC
 #include <time.h>
 #else
-long                time();
+long time();
 
 #endif
 #else
-char               *malloc();
+char *malloc();
 
 #endif
 
@@ -93,12 +93,12 @@ static int8u        version_maj, version_min, patch_level;
 /* and completely rewritten again! for portability by -JEW- */
 
 
-static char        *
+static char *
 basename(a)
-    char               *a;
+char *a;
 {
-    char               *b;
-    char               *strrchr();
+    char *b;
+    char *strrchr();
 
     if ((b = strrchr(a, (int)'/')) == (char *)0)
 	return a;
@@ -107,7 +107,7 @@ basename(a)
 
 static void 
 wr_unique(item)
-    register struct unique_mon *item;
+register struct unique_mon *item;
 {
     wr_long((int32u) item->exist);
     wr_long((int32u) item->dead);
@@ -115,7 +115,7 @@ wr_unique(item)
 
 static void 
 rd_unique(item)
-    register struct unique_mon *item;
+register struct unique_mon *item;
 {
     rd_long((int32u *) & item->exist);
     rd_long((int32u *) & item->dead);
@@ -129,20 +129,19 @@ sv_write()
     register int        i, j;
     int                 count;
     int8u               char_tmp, prev_char;
-    register cave_type *c_ptr;
+    register cave_type   *c_ptr;
     register recall_type *r_ptr;
-    struct stats       *s_ptr;
+    struct stats         *s_ptr;
 
 #ifdef MSDOS
-    inven_type         *t_ptr;
+    inven_type           *t_ptr;
 
 #endif
     register struct flags *f_ptr;
-    store_type         *st_ptr;
-    struct misc        *m_ptr;
+    store_type  *st_ptr;
+    struct misc *m_ptr;
 
-/*
- * clear the death flag when creating a HANGUP save file, so that player can
+/* clear the death flag when creating a HANGUP save file, so that player can
  * see tombstone when restart 
  */
 
@@ -334,8 +333,7 @@ sv_write()
 	    wr_bytes(r_ptr->r_attacks, MAX_MON_NATTACK);
 	}
     }
-    wr_short((int16u) 0xFFFF);	   /* sentinel to indicate no more monster
-				    * info */
+    wr_short((int16u) 0xFFFF);	   /* sentinel to indicate no more monster info */
 
     wr_short((int16u) log_index);
     wr_long(l);
@@ -510,8 +508,8 @@ sv_write()
 
 /* save the current time in the savefile */
     l = time((long *)0);
-/*
- * if (l < start_time) { someone is messing with the clock!, assume that we
+
+/* if (l < start_time) { someone is messing with the clock!, assume that we
  * have been playing for 1 day l = start_time + 86400L; } 
  */
     wr_long(l);
@@ -519,8 +517,7 @@ sv_write()
 /* starting with 5.2, put died_from string in savefile */
     wr_string(died_from);
 
-/*
- * only level specific info follows, this allows characters to be
+/* only level specific info follows, this allows characters to be
  * resurrected, the dungeon level info is not needed for a resurrection 
  */
     if (death) {
@@ -557,8 +554,8 @@ sv_write()
 	    }
 	}
     wr_byte(0xFF);		   /* marks end of tptr info */
-/*
- * must set counter to zero, note that code may write out two bytes
+
+/* must set counter to zero, note that code may write out two bytes
  * unnecessarily 
  */
     count = 0;
@@ -581,8 +578,8 @@ sv_write()
     wr_byte(prev_char);
 
 #ifdef MSDOS
-/*
- * must change graphics symbols for walls and floors back to default chars,
+
+/* must change graphics symbols for walls and floors back to default chars,
  * this is necessary so that if the user changes the graphics line, the
  * program will be able change all existing walls/floors to the new symbol 
  */
@@ -611,18 +608,14 @@ sv_write()
     wr_long((int32u) c_list[MAX_CREATURES - 1].spells);
     wr_long((int32u) c_list[MAX_CREATURES - 1].cdefense);
     {
-	int16u              temp;  /* fix player ghost's exp bug.  The mexp
-				    * field is really an int32u, but the
-				    * savefile was writing/ reading an
-				    * int16u.  Since I don't want to change
-				    * the savefile format, this insures that
-				    * the low bits of mexp are written (No
-				    * ghost should be worth more than 64K
-				    * (Melkor is only worth 60k!), but we
-				    * check anyway).  Using temp insures that
-				    * the low bits are all written, and works
-				    * perfectly with a similar fix when
-				    * loading a character. -CFT */
+	int16u temp;
+/* fix player ghost's exp bug.  The mexp field is really an int32u, but the
+ * savefile was writing/reading an int16u.  Since I don't want to change
+ * the savefile format, this insures that the low bits of mexp are written (No
+ * ghost should be worth more than 64K (Melkor is only worth 60k!), but we
+ * check anyway).  Using temp insures that the low bits are all written, and works
+ * perfectly with a similar fix when* loading a character. -CFT
+ */
 
 	if (c_list[MAX_CREATURES - 1].mexp > (int32u) 0xff00)
 	    temp = (int16u) 0xff00;
@@ -647,8 +640,8 @@ sv_write()
 int 
 save_char()
 {
-    vtype               temp;
-    char               *tmp2;
+    vtype temp;
+    char *tmp2;
 
 #ifdef SECURE
     beGames();
@@ -674,11 +667,11 @@ save_char()
 
 int 
 _save_char(fnam)
-    char               *fnam;
+char *fnam;
 {
-    vtype               temp;
-    int                 ok, fd;
-    int8u               char_tmp;
+    vtype temp;
+    int   ok, fd;
+    int8u char_tmp;
 
     if (log_index < 0)
 	return TRUE;		   /* Nothing to save. */
@@ -766,22 +759,21 @@ _save_char(fnam)
 
 int 
 get_char(generate)
-    int                *generate;
+int *generate;
 {
-    int        i, j, fd, c, ok, total_count;
-    int32u              l, age, time_saved;
-    vtype               temp;
-    int16u              int16u_tmp;
-    register cave_type *c_ptr;
-    register recall_type *r_ptr;
-    struct misc        *m_ptr;
-    struct stats       *s_ptr;
+    int                    i, j, fd, c, ok, total_count;
+    int32u                 l, age, time_saved;
+    vtype                  temp;
+    int16u                 int16u_tmp;
+    register cave_type    *c_ptr;
+    register recall_type  *r_ptr;
+    struct misc           *m_ptr;
+    struct stats          *s_ptr;
     register struct flags *f_ptr;
-    store_type         *st_ptr;
-    int8u               char_tmp, ychar, xchar, count;
+    store_type            *st_ptr;
+    int8u char_tmp, ychar, xchar, count;
 
-    free_turn_flag = TRUE;	   /* So a feeling isn't generated upon
-				    * reloading -DGK */
+    free_turn_flag = TRUE;	   /* So a feeling isn't generated upon reloading -DGK */
     nosignals();
     *generate = TRUE;
     fd = (-1);
@@ -1334,10 +1326,8 @@ get_char(generate)
 		    py.flags.word_recall = 0;
 		dun_level = 0;	   /* Resurrect on the town level. */
 		character_generated = 1;
-	    /*
-	     * set noscore to indicate a resurrection, and don't enter wizard
-	     * mode 
-	     */
+
+	    /* set noscore to indicate a resurrection, and don't enter wizard mode */
 		to_be_wizard = FALSE;
 		noscore |= 0x1;
 	    } else {
@@ -1346,8 +1336,7 @@ get_char(generate)
 		old_turn = (-1);
 	    }
 	    put_qio();
-	/*
-	 * The log_index of the previous incarnation is here if later version
+	/* The log_index of the previous incarnation is here if later version
 	 * want to use it. For now, throw it away and get a new log. 
 	 */
 	    log_index = (-1);
@@ -1360,10 +1349,7 @@ get_char(generate)
 	prt("Restoring Character...", 0, 0);
 	put_qio();
 
-    /*
-     * only level specific info should follow, not present for dead
-     * characters 
-     */
+    /* only level specific info should follow, not present for dead characters */
 
 	rd_short((int16u *) & dun_level);
 	rd_short((int16u *) & char_row);
@@ -1469,16 +1455,13 @@ get_char(generate)
 	rd_long((int32u *) & (c_list[MAX_CREATURES - 1].spells));
 	rd_long((int32u *) & (c_list[MAX_CREATURES - 1].cdefense));
 	{
-	    int16u              t1;/* fix player ghost's exp bug.  The mexp
-				    * field is really an int32u, but the
-				    * savefile was writing/ reading an
-				    * int16u.  Since I don't want to change
-				    * the savefile format, this insures that
-				    * the mexp field is loaded, and that the
-				    * "high bits" of mexp do not contain
-				    * garbage values which could mean that
-				    * player ghost are worth millions of exp.
-				    * -CFT */
+	    int16u t1;
+/* fix player ghost's exp bug.  The mexp field is really an int32u, but the
+ * savefile was writing/ reading an int16u.  Since I don't want to change
+ * the savefile format, this insures that the mexp field is loaded, and that
+ * the "high bits" of mexp do not contain garbage values which could mean that
+ * player ghost are worth millions of exp. -CFT
+ */
 
 	    rd_short((int16u *) & t1);
 	    c_list[MAX_CREATURES - 1].mexp = (int32u) t1;
@@ -1501,11 +1484,12 @@ get_char(generate)
 
 	rd_byte((int8u *) & (c_list[MAX_CREATURES - 1].speed));
 	rd_byte((int8u *) & (c_list[MAX_CREATURES - 1].cchar));
+
 	rd_bytes((int8u *) (c_list[MAX_CREATURES - 1].hd), 2);
+
 	rd_bytes((int8u *) (c_list[MAX_CREATURES - 1].damage), sizeof(attid) * 4);
 	rd_short((int16u *) & (c_list[MAX_CREATURES - 1].level));
-	*generate = FALSE;	   /* We have restored a cave - no need to
-				    * generate. */
+	*generate = FALSE;	   /* We have restored a cave - no need to generate. */
 
 	if ((version_min == 1 && patch_level < 3)
 	    || (version_min == 0))
@@ -1585,10 +1569,8 @@ closefiles:
 		for (i = 0; i < age; i++)
 		    store_maint();
 	    }
-	/*
-	 * if (noscore) msg_print("This save file cannot be used to get on
-	 * the score board."); 
-	 */
+
+/* if (noscore) msg_print("This save file cannot be used to get on the score board."); */
 
 	    if (version_maj != CUR_VERSION_MAJ
 		|| version_min != CUR_VERSION_MIN) {
@@ -1611,8 +1593,7 @@ closefiles:
 		unlink(savefile);
 		return TRUE;
 	    } else {
-		return FALSE;	   /* Only restored options and monster
-				    * memory. */
+		return FALSE;	   /* Only restored options and monster memory. */
 	    }
 	}
     }
@@ -1631,7 +1612,7 @@ closefiles:
 
 static void 
 wr_byte(c)
-    int8u               c;
+int8u c;
 {
     xor_byte ^= c;
     (void)putc((int)xor_byte, fileptr);
@@ -1639,7 +1620,7 @@ wr_byte(c)
 
 static void 
 wr_short(s)
-    int16u              s;
+int16u s;
 {
     xor_byte ^= (s & 0xFF);
     (void)putc((int)xor_byte, fileptr);
@@ -1649,7 +1630,7 @@ wr_short(s)
 
 static void 
 wr_long(l)
-    register int32u     l;
+register int32u l;
 {
     xor_byte ^= (l & 0xFF);
     (void)putc((int)xor_byte, fileptr);
@@ -1663,11 +1644,11 @@ wr_long(l)
 
 static void 
 wr_bytes(c, count)
-    int8u              *c;
-    register int        count;
+int8u       *c;
+register int count;
 {
-    register int        i;
-    register int8u     *ptr;
+    register int    i;
+    register int8u *ptr;
 
     ptr = c;
     for (i = 0; i < count; i++) {
@@ -1678,7 +1659,7 @@ wr_bytes(c, count)
 
 static void 
 wr_string(str)
-    register char      *str;
+register char *str;
 {
     while (*str != '\0') {
 	xor_byte ^= *str++;
@@ -1690,8 +1671,8 @@ wr_string(str)
 
 static void 
 wr_shorts(s, count)
-    int16u             *s;
-    register int        count;
+int16u      *s;
+register int count;
 {
     register int        i;
     register int16u    *sptr;
@@ -1707,7 +1688,7 @@ wr_shorts(s, count)
 
 static void 
 wr_item(item)
-    register inven_type *item;
+register inven_type *item;
 {
     wr_short(item->index);
     wr_byte(item->name2);
@@ -1733,7 +1714,7 @@ wr_item(item)
 
 static void 
 wr_monster(mon)
-    register monster_type *mon;
+register monster_type *mon;
 {
     wr_short((int16u) mon->hp);
     wr_short((int16u) mon->maxhp); /* added -CWS */
@@ -1751,9 +1732,9 @@ wr_monster(mon)
 
 static void 
 rd_byte(ptr)
-    int8u              *ptr;
+int8u *ptr;
 {
-    int8u               c;
+    int8u c;
 
     c = getc(fileptr) & 0xFF;
     *ptr = c ^ xor_byte;
@@ -1762,10 +1743,10 @@ rd_byte(ptr)
 
 static void 
 rd_short(ptr)
-    int16u             *ptr;
+int16u *ptr;
 {
-    int8u               c;
-    int16u              s;
+    int8u  c;
+    int16u s;
 
     c = (getc(fileptr) & 0xFF);
     s = c ^ xor_byte;
@@ -1776,10 +1757,10 @@ rd_short(ptr)
 
 static void 
 rd_long(ptr)
-    int32u             *ptr;
+int32u *ptr;
 {
-    register int32u     l;
-    register int8u      c;
+    register int32u l;
+    register int8u  c;
 
     c = (getc(fileptr) & 0xFF);
     l = c ^ xor_byte;
@@ -1794,12 +1775,11 @@ rd_long(ptr)
 
 static void 
 rd_bytes(ptr, count)
-    int8u              *ptr;
-    int                 count;
+int8u *ptr;
+int    count;
 {
-    int                 i;
-    int8u               c;
-    int8u               nc;
+    int   i;
+    int8u c, nc;
 
     for (i = 0; i < count; i++) {
 	c = (getc(fileptr) & 0xFF);
@@ -1812,9 +1792,9 @@ rd_bytes(ptr, count)
 
 static void 
 rd_string(str)
-    char               *str;
+char *str;
 {
-    register int8u      c;
+    register int8u c;
 
     do {
 	c = (getc(fileptr) & 0xFF);
@@ -1826,8 +1806,8 @@ rd_string(str)
 
 static void 
 rd_shorts(ptr, count)
-    int16u             *ptr;
-    register int        count;
+int16u      *ptr;
+register int count;
 {
     register int        i;
     register int16u    *sptr;
@@ -1846,7 +1826,7 @@ rd_shorts(ptr, count)
 
 static void 
 rd_item(item)
-    register inven_type *item;
+register inven_type *item;
 {
     rd_short(&item->index);
     rd_byte(&item->name2);
@@ -1872,7 +1852,7 @@ rd_item(item)
 
 static void 
 rd_monster(mon)
-    register monster_type *mon;
+register monster_type *mon;
 {
     rd_short((int16u *) & mon->hp);
     if ((version_maj >= 2) && (version_min >= 6))

@@ -19,12 +19,12 @@
 void 
 pray()
 {
-    int                 i, j, item_val, dir;
-    int                 choice, chance, result;
-    register spell_type *s_ptr;
-    register struct misc *m_ptr;
+    int i, j, item_val, dir;
+    int choice, chance, result;
+    register spell_type  *s_ptr;
+    register struct misc  *m_ptr;
     register struct flags *f_ptr;
-    register inven_type *i_ptr;
+    register inven_type   *i_ptr;
 
     free_turn_flag = TRUE;
     if (py.flags.blind > 0)

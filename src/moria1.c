@@ -21,8 +21,8 @@
 #ifndef ATARIST_MWC
 #include <string.h>
 #else
-char               *strcat();
-int                 strlen();
+char *strcat();
+int   strlen();
 
 #endif
 #else
@@ -39,29 +39,27 @@ static void sub3_move_light(int, int, int, int);
 static int see_wall(int, int, int);
 static int see_nothing(int, int, int);
 #else
-static void         inven_screen();
-static char         map_roguedir();
-static void         sub1_move_light();
-static void         sub3_move_light();
-static int          see_wall();
-static int          see_nothing();
+static void inven_screen();
+static char map_roguedir();
+static void sub1_move_light();
+static void sub3_move_light();
+static int  see_wall();
+static int  see_nothing();
 #endif
 #endif
 
 
-
-/* Changes speed of monsters relative to player		-RAK-	 */
-/* Note: When the player is sped up or slowed down, I simply	 */
-/* change the speed of all the monsters.	This greatly	 */
-/* simplified the logic.				       */
-/*
+/* Changes speed of monsters relative to player		-RAK-
+ * Note: When the player is sped up or slowed down, I simply change the
+ * speed of all the monsters.  This greatly simplified the logic.
+ *****
  * No LONGER!  A change in player speed only affect player's speed.  The new
  * code in movement_rate() allows monsters to have attacks in correct
  * proportions, and still uses only int math -CFT 
  */
 void 
 change_speed(num)
-    register int        num;
+register int num;
 {
     py.flags.speed += num;
     py.flags.status |= PY_SPEED;
@@ -69,18 +67,18 @@ change_speed(num)
 
 
 /* Player bonuses					-RAK-	 */
-/* When an item is worn or taken off, this re-adjusts the player */
-/* bonuses.  Factor=1 : wear; Factor=-1 : removed		 */
-/*
+/* When an item is worn or taken off, this re-adjusts the player
+ * bonuses.  Factor=1 : wear; Factor=-1 : removed  
+ *****
  * Only calculates properties with cumulative effect.  Properties that depend
  * on everything being worn are recalculated by calc_bonuses() -CJS - 
  */
 void 
 py_bonuses(t_ptr, factor)
-    register inven_type *t_ptr;
-    register int        factor;
+register inven_type *t_ptr;
+register int         factor;
 {
-    register int        i, amount;
+    register int i, amount;
 
     amount = t_ptr->p1 * factor;
     if (t_ptr->flags & TR_STATS) {
@@ -119,13 +117,13 @@ py_bonuses(t_ptr, factor)
 void 
 calc_bonuses()
 {
-    register int32u     item_flags;
-    register int32u     item_flags2;
-    int                 old_dis_ac;
+    register int32u        item_flags;
+    register int32u        item_flags2;
+    int                    old_dis_ac;
     register struct flags *p_ptr;
-    register struct misc *m_ptr;
-    register inven_type *i_ptr;
-    register int        i;
+    register struct misc  *m_ptr;
+    register inven_type   *i_ptr;
+    register int           i;
 
     p_ptr = &py.flags;
     m_ptr = &py.misc;
@@ -215,14 +213,13 @@ calc_bonuses()
 		m_ptr->dis_ac += i_ptr->ac;
 	    }
 	    m_ptr->ptohit += i_ptr->tohit;
-	    if (i_ptr->tval != TV_BOW)	/* Bows can't damage. -CJS- */
+	    if (i_ptr->tval != TV_BOW)            	/* Bows can't damage. -CJS- */
 		m_ptr->ptodam += i_ptr->todam;
 	    m_ptr->ptoac += i_ptr->toac;
 	    if (known2_p(i_ptr)) {
 		m_ptr->dis_th += i_ptr->tohit;
 		if (i_ptr->tval != TV_BOW)
-		    m_ptr->dis_td += i_ptr->todam;	/* Bows can't damage.
-							 * -CJS- */
+		    m_ptr->dis_td += i_ptr->todam;	/* Bows can't damage. -CJS- */
 		m_ptr->dis_tac += i_ptr->toac;
 	    }
 	}
@@ -427,15 +424,14 @@ calc_bonuses()
  */
 int 
 show_inven(r1, r2, weight, col, test)
-    register int        r1, r2;
-    int                 weight, col;
-    int                 (*test) ();
-
+register int r1, r2;
+int weight, col;
+int (*test) ();
 {
-    register int        i, j, k;
-    int                 total_weight, len, l, lim;
-    bigvtype            tmp_val;
-    vtype               out_val[23];
+    register int i, j, k;
+    int          total_weight, len, l, lim;
+    bigvtype     tmp_val;
+    vtype        out_val[23];
 
     len = 79 - col;
     if (weight)
@@ -501,11 +497,11 @@ show_inven(r1, r2, weight, col, test)
 
 
 /* Return a string describing how a given equipment item is carried. -CJS- */
-const char               *
+const char *
 describe_use(i)
-    register int        i;
+register int i;
 {
-    register const char      *p;
+    register const char *p;
 
     switch (i) {
       case INVEN_WIELD:
@@ -556,13 +552,13 @@ describe_use(i)
 /* Keep display as far right as possible. -CJS- */
 int 
 show_equip(weight, col)
-    int                 weight, col;
+int weight, col;
 {
-    register int        i, line;
-    int                 total_weight, l, len, lim;
+    register int         i, line;
+    int                  total_weight, l, len, lim;
     register const char *prt1;
-    bigvtype            prt2;
-    vtype               out_val[INVEN_ARRAY_SIZE - INVEN_WIELD];
+    bigvtype             prt2;
+    vtype                out_val[INVEN_ARRAY_SIZE - INVEN_WIELD];
     register inven_type *i_ptr;
 
     line = 0;
@@ -659,10 +655,10 @@ show_equip(weight, col)
 /* Remove item from equipment list		-RAK-	 */
 void 
 takeoff(item_val, posn)
-    int                 item_val, posn;
+int item_val, posn;
 {
     register const char *p;
-    bigvtype            out_val, prt2;
+    bigvtype             out_val, prt2;
     register inven_type *t_ptr;
 
     equip_ctr--;
@@ -689,15 +685,13 @@ takeoff(item_val, posn)
 }
 
 
-/*
- * Used to verify if this really is the item we wish to wear or read. 
- */
+/* Used to verify if this really is the item we wish to wear or read. */
 int 
 verify(prompt, item)
-    const char          *prompt;
-    int                 item;
+const char *prompt;
+int         item;
 {
-    bigvtype            out_str, object;
+    bigvtype out_str, object;
 
     objdes(object, &inventory[item], TRUE);
     (void)sprintf(out_str, "%s %s? ", prompt, object);
@@ -742,15 +736,15 @@ verify(prompt, item)
 #define WRONG_SCR	5
 
 /* Keep track of the state of the inventory screen. */
-static int          scr_state, scr_left, scr_base;
-static int          wear_low, wear_high;
+static int scr_state, scr_left, scr_base;
+static int wear_low, wear_high;
 
 /* Draw the inventory screen. */
 static void 
 inven_screen(new_scr)
-    int                 new_scr;
+int new_scr;
 {
-    register int        line = 0;
+    register int line = 0;
 
     if (new_scr != scr_state) {
 	scr_state = new_scr;
@@ -796,22 +790,21 @@ inven_screen(new_scr)
 /* This does all the work. */
 void 
 inven_command(command)
-    int                command;
+int command;
 {
-    register int        slot = 0, item;
-    int                 tmp, tmp2, selecting, from, to, light_chg = FALSE;
+    register int         slot = 0, item;
+    int                  tmp, tmp2, selecting, from, to, light_chg = FALSE;
     const char          *prompt, *swap, *disp, *string;
-    char                which, query;
-    bigvtype            prt1, prt2;
+    char                 which, query;
+    bigvtype             prt1, prt2;
     register inven_type *i_ptr;
-    inven_type          tmp_obj;
+    inven_type           tmp_obj;
 
     free_turn_flag = TRUE;
     save_screen();
 /* Take up where we left off after a previous inventory command. -CJS- */
     if (doing_inven) {
-    /*
-     * If the screen has been flushed, we need to redraw. If the command is a
+    /* If the screen has been flushed, we need to redraw. If the command is a
      * simple ' ' to recover the screen, just quit. Otherwise, check and see
      * what the user wants. 
      */
@@ -854,8 +847,7 @@ inven_command(command)
 	  case 't':		   /* Take off	   */
 	    if (equip_ctr == 0)
 		msg_print("You are not using any equipment.");
-	/*
-	 * don't print message restarting inven command after taking off
+	/* don't print message restarting inven command after taking off
 	 * something, it is confusing 
 	 */
 	    else if (inven_ctr >= INVEN_WIELD && !doing_inven)
@@ -922,6 +914,7 @@ inven_command(command)
 		    msg_print(strcat(prt1, prt2));
 		} else
 		    msg_print("No primary weapon.");
+
 	    /* this is a new weapon, so clear the heavy flag */
 /* no, don't; the check_strength will clear it if it needs to be cleared
 		weapon_heavy = FALSE; */
@@ -940,8 +933,7 @@ inven_command(command)
 	    break;
 	}
 
-    /*
-     * Clear the doing_inven flag here, instead of at beginning, so that can
+    /* Clear the doing_inven flag here, instead of at beginning, so that can
      * use it to control when messages above appear. 
      */
 	doing_inven = 0;
@@ -1047,10 +1039,9 @@ inven_command(command)
 				light_chg = TRUE;
 			if (command == 'r') {
 			    inven_drop(item, TRUE);
-			/*
-			 * As a safety measure, set the player's inven weight
-			 * to 0, when the last object is dropped 
-			 */
+
+			    /* As a safety measure, set the player's inven weight to 0,
+			     * when the last object is dropped */
 			    if (inven_ctr == 0 && equip_ctr == 0)
 				inven_weight = 0;
 			} else if (item >= 0) {
@@ -1062,10 +1053,8 @@ inven_command(command)
 			if (command == 'r')
 			    selecting = FALSE;
 		    } else if (command == 'w') {
-		    /*
-		     * Wearing. Go to a bit of trouble over replacing
-		     * existing equipment. 
-		     */
+
+    /* Wearing. Go to a bit of trouble over replacing existing equipment. */
 			if (isupper((int)which) && !verify(prompt, item))
 			    item = (-1);
 			else
@@ -1158,10 +1147,7 @@ inven_command(command)
 			    } else if (inventory[item].subval == ITEM_GROUP_MIN &&
 				       inventory[item].number > 1 &&
 				       !inven_check_num(&inventory[slot])) {
-			    /*
-			     * this can happen if try to wield a torch, and
-			     * have more than one in your inventory 
-			     */
+ /* this can happen if try to wield a torch, and have more than one in your inventory */
 				msg_print("You will have to drop something first.");
 				item = (-1);
 			    }
@@ -1187,18 +1173,12 @@ inven_command(command)
 			    inven_weight += i_ptr->weight * i_ptr->number;
 			    inven_destroy(item);	/* Subtracts weight */
 
-			/*
-			 * second, add old item to inv and remove from
-			 * equipment list, if necessary 
-			 */
+/* second, add old item to inv and remove from equipment list, if necessary */
 			    i_ptr = &inventory[slot];
 			    if (i_ptr->tval != TV_NOTHING) {
 				tmp2 = inven_ctr;
 				tmp = inven_carry(i_ptr);
-			    /*
-			     * if item removed did not stack with anything in
-			     * inventory, then increment wear_high 
-			     */
+/* if item removed did not stack with anything in inventory, then increment wear_high */
 				if (inven_ctr != tmp2)
 				    wear_high++;
 				takeoff(slot, tmp);
@@ -1255,10 +1235,8 @@ inven_command(command)
 			    check_strength();
 			}
 			selecting = FALSE;
-		    /*
-		     * As a safety measure, set the player's inven weight to
-		     * 0, when the last object is dropped.  
-		     */
+			/* As a safety measure, set the player's inven weight to 0,
+			 * when the last object is dropped. */
 			if (inven_ctr == 0 && equip_ctr == 0)
 			    inven_weight = 0;
 		    }
@@ -1377,16 +1355,16 @@ inven_command(command)
 /* Get the ID of an item and return the CTR value of it	-RAK-	 */
 int 
 get_item(com_val, pmt, i, j, test)
-    int                *com_val;
-    const char         *pmt;
-    int                 i, j;
-    int                 (*test) ();
+int        *com_val;
+const char *pmt;
+int         i, j;
+int       (*test) ();
 
 {
-    vtype               out_val;
-    char                which;
-    register int        test_flag, item;
-    int                 full, i_scr, redraw;
+    vtype        out_val;
+    char         which;
+    register int test_flag, item;
+    int          full, i_scr, redraw;
 
     int on_floor, ih;
     cave_type *c_ptr;
@@ -1480,6 +1458,7 @@ get_item(com_val, pmt, i, j, test)
 				j = inven_ctr - 1;
 			    }
 			}
+
 		    }
 		    break;
 		  case '*':
@@ -1558,9 +1537,9 @@ no_light()
 /* map rogue_like direction commands into numbers */
 static char 
 map_roguedir(my_comval)
-    register int        my_comval;
+register int my_comval;
 {
-    char                comval = (char)my_comval;
+    char comval = (char)my_comval;
 
     switch (comval) {
       case 'h':
@@ -1599,12 +1578,12 @@ map_roguedir(my_comval)
 /* Direction memory added, for repeated commands.  -CJS */
 int 
 get_dir(prompt, dir)
-    const char         *prompt;
-    int                *dir;
+const char *prompt;
+int        *dir;
 {
-    char                command;
-    int                 save;
-    static char         prev_dir;  /* Direction memory. -CJS- */
+    char        command;
+    int         save;
+    static char prev_dir;  /* Direction memory. -CJS- */
 
     if (default_dir) {		   /* used in counted commands. -CJS- */
 	*dir = prev_dir;
@@ -1666,10 +1645,10 @@ get_dir(prompt, dir)
  */
 int 
 get_alldir(prompt, dir)
-    const char         *prompt;
-    int                *dir;
+const char *prompt;
+int *dir;
 {
-    char                command;
+    char command;
 
     for (;;) {
 #ifdef MAC
@@ -1695,9 +1674,9 @@ get_alldir(prompt, dir)
 /* Moves creature record from one space to another	-RAK-	 */
 void 
 move_rec(y1, x1, y2, x2)
-    register int        y1, x1, y2, x2;
+register int y1, x1, y2, x2;
 {
-    int                 tmp;
+    int tmp;
 
 /* this always works correctly, even if y1==y2 and x1==x2 */
     tmp = cave[y1][x1].cptr;
@@ -1922,13 +1901,13 @@ lite_spot(y, x)
 /* When FIND_FLAG,  light only permanent features	 */
 static void 
 sub1_move_light(y1, x1, y2, x2)
-    register int        x1, x2;
-    int                 y1, y2;
+register int x1, x2;
+int y1, y2;
 {
     register int        i, j;
     register cave_type *c_ptr;
     int                 tval, top, left, bottom, right;
-    int                 min_i, max_i, min_j, max_j;
+    int          min_i, max_i, min_j, max_j;
 
     if (light_flag) {
 	darken_player(y1, x1);
@@ -1983,8 +1962,8 @@ sub1_move_light(y1, x1, y2, x2)
 /* With no light,  movement becomes involved.		 */
 static void 
 sub3_move_light(y1, x1, y2, x2)
-    register int        y1, x1;
-    int                 y2, x2;
+register int y1, x1;
+int y2, x2;
 {
     if (light_flag) {
 	darken_player(y1, x1);
@@ -2026,7 +2005,7 @@ int y1, x1;
 /* Four cases : Normal, Finding, Blind, and Nolight	 -RAK-	 */
 void 
 move_light(y1, x1, y2, x2)
-    int                 y1, x1, y2, x2;
+int y1, x1, y2, x2;
 {
     if (py.flags.blind > 0 || !player_light)
 	sub3_move_light(y1, x1, y2, x2);
@@ -2042,7 +2021,7 @@ move_light(y1, x1, y2, x2)
  */
 void 
 disturb(s, l)
-    int                 s, l;
+int s, l;
 {
     command_count = 0;
     if (s && (py.flags.status & PY_SEARCH))
@@ -2084,8 +2063,8 @@ search_off()
 void 
 rest()
 {
-    int                 rest_num;
-    vtype               rest_str;
+    int   rest_num;
+    vtype rest_str;
 
     if (command_count > 0) {
 	rest_num = command_count;
@@ -2140,9 +2119,9 @@ rest_off()
 /* Attacker's level and plusses,  defender's AC		-RAK-	 */
 int 
 test_hit(bth, level, pth, ac, attack_type)
-    int                 bth, level, pth, ac, attack_type;
+int bth, level, pth, ac, attack_type;
 {
-    register int        i, die;
+    register int i, die;
 
     disturb(1, 0);
     i = bth + pth * BTH_PLUS_ADJ
@@ -2162,8 +2141,8 @@ test_hit(bth, level, pth, ac, attack_type)
 /* -RAK-	 */
 void 
 take_hit(damage, hit_from)
-    int                 damage;
-    const char         *hit_from;
+int damage;
+const char *hit_from;
 {
     if (py.flags.invuln > 0 && damage < 9000)
 	damage = 0;
@@ -2190,14 +2169,14 @@ take_hit(damage, hit_from)
     }
 }
 
-
+    
 /* Change a trap from invisible to visible		-RAK-	 */
 /* Note: Secret doors are handled here				 */
 void 
 change_trap(y, x)
-    register int        y, x;
+register int y, x;
 {
-    register cave_type *c_ptr;
+    register cave_type  *c_ptr;
     register inven_type *t_ptr;
 
     c_ptr = &cave[y][x];
@@ -2218,13 +2197,13 @@ change_trap(y, x)
 /* Searches for hidden things.			-RAK-	 */
 void 
 search(y, x, chance)
-    int                 y, x, chance;
+int y, x, chance;
 {
-    register int        i, j;
-    register cave_type *c_ptr;
-    register inven_type *t_ptr;
+    register int           i, j;
+    register cave_type    *c_ptr;
+    register inven_type   *t_ptr;
     register struct flags *p_ptr;
-    bigvtype            tmp_str, tmp_str2;
+    bigvtype               tmp_str, tmp_str2;
 
     p_ptr = &py.flags;
     if (p_ptr->confused > 0)
@@ -2269,111 +2248,135 @@ search(y, x, chance)
 }
 
 
-/*
- * The running algorithm:			-CJS- 
- *
- * Overview: You keep moving until something interesting happens. If you are in
- * an enclosed space, you follow corners. This is the usual corridor scheme.
- * If you are in an open space, you go straight, but stop before entering
- * enclosed space. This is analogous to reaching doorways. If you have
- * enclosed space on one side only (that is, running along side a wall) stop
- * if your wall opens out, or your open space closes in. Either case
- * corresponds to a doorway. 
- *
- * What happens depends on what you can really SEE. (i.e. if you have no light,
- * then running along a dark corridor is JUST like running in a dark room.)
- * The algorithm works equally well in corridors, rooms, mine tailings,
- * earthquake rubble, etc, etc. 
- *
- * These conditions are kept in static memory: find_openarea	 You are in
- * the open on at least one side. find_breakleft	 You have a wall on
- * the left, and will stop if it opens find_breakright	 You have a wall on
- * the right, and will stop if it opens 
- *
- * To initialize these conditions is the task of find_init. If moving from the
- * square marked @ to the square marked . (in the two diagrams below), then
- * two adjacent sqares on the left and the right (L and R) are considered. If
- * either one is seen to be closed, then that side is considered to be
- * closed. If both sides are closed, then it is an enclosed (corridor) run. 
- *
- * LL		L @.	       L.R RR	       @R 
- *
- * Looking at more than just the immediate squares is significant. Consider the
- * following case. A run along the corridor will stop just before entering
- * the center point, because a choice is clearly established. Running in any
- * of three available directions will be defined as a corridor run. Note that
- * a minor hack is inserted to make the angled corridor entry (with one side
- * blocked near and the other side blocked further away from the runner) work
- * correctly. The runner moves diagonally, but then saves the previous
- * direction as being straight into the gap. Otherwise, the tail end of the
- * other entry would be perceived as an alternative on the next move. 
- *
- * #.# ##.## .@... ##.## #.# 
- *
- * Likewise, a run along a wall, and then into a doorway (two runs) will work
- * correctly. A single run rightwards from @ will stop at 1. Another run
- * right and down will enter the corridor and make the corner, stopping at
- * the 2. 
- *
- * #@	  1 ########### ###### 2	    # ############# # 
- *
- * After any move, the function area_affect is called to determine the new
- * surroundings, and the direction of subsequent moves. It takes a location
- * (at which the runner has just arrived) and the previous direction (from
- * which the runner is considered to have come). Moving one square in some
- * direction places you adjacent to three or five new squares (for straight
- * and diagonal moves) to which you were not previously adjacent. 
- *
- * ...!	  ...	       EG Moving from 1 to 2. .12!	  .1.!		  .
- * means previously adjacent ...!	  ..2!		  ! means newly
- * adjacent !!! 
- *
- * You STOP if you can't even make the move in the chosen direction. You STOP if
- * any of the new squares are interesting in any way: usually containing
- * monsters or treasure. You STOP if any of the newly adjacent squares seem
- * to be open, and you are also looking for a break on that side. (i.e.
- * find_openarea AND find_break) You STOP if any of the newly adjacent
- * squares do NOT seem to be open and you are in an open area, and that side
- * was previously entirely open. 
- *
- * Corners: If you are not in the open (i.e. you are in a corridor) and there is
- * only one way to go in the new squares, then turn in that direction. If
- * there are more than two new ways to go, STOP. If there are two ways to go,
- * and those ways are separated by a square which does not seem to be open,
- * then STOP. 
- *
- * Otherwise, we have a potential corner. There are two new open squares, which
- * are also adjacent. One of the new squares is diagonally located, the other
- * is straight on (as in the diagram). We consider two more squares further
- * out (marked below as ?). .X @.? #? If they are both seen to be closed,
- * then it is seen that no benefit is gained from moving straight. It is a
- * known corner. To cut the corner, go diagonally, otherwise go straight, but
- * pretend you stepped diagonally into that next location for a full view
- * next time. Conversely, if one of the ? squares is not seen to be closed,
- * then there is a potential choice. We check to see whether it is a
- * potential corner or an intersection/room entrance. If the square two
- * spaces straight ahead, and the space marked with 'X' are both blank, then
- * it is a potential corner and enter if find_examine is set, otherwise must
- * stop because it is not a corner. 
- */
+/* The running algorithm:			-CJS-
+
+   Overview: You keep moving until something interesting happens.
+   If you are in an enclosed space, you follow corners. This is
+   the usual corridor scheme. If you are in an open space, you go
+   straight, but stop before entering enclosed space. This is
+   analogous to reaching doorways. If you have enclosed space on
+   one side only (that is, running along side a wall) stop if
+   your wall opens out, or your open space closes in. Either case
+   corresponds to a doorway.
+
+   What happens depends on what you can really SEE. (i.e. if you
+   have no light, then running along a dark corridor is JUST like
+   running in a dark room.) The algorithm works equally well in
+   corridors, rooms, mine tailings, earthquake rubble, etc, etc.
+
+   These conditions are kept in static memory:
+	find_openarea	 You are in the open on at least one
+			 side.
+	find_breakleft	 You have a wall on the left, and will
+			 stop if it opens
+	find_breakright	 You have a wall on the right, and will
+			 stop if it opens
+
+   To initialize these conditions is the task of find_init. If
+   moving from the square marked @ to the square marked . (in the
+   two diagrams below), then two adjacent sqares on the left and
+   the right (L and R) are considered. If either one is seen to
+   be closed, then that side is considered to be closed. If both
+   sides are closed, then it is an enclosed (corridor) run.
+
+	 LL		L
+	@.	       L.R
+	 RR	       @R
+
+   Looking at more than just the immediate squares is
+   significant. Consider the following case. A run along the
+   corridor will stop just before entering the center point,
+   because a choice is clearly established. Running in any of
+   three available directions will be defined as a corridor run.
+   Note that a minor hack is inserted to make the angled corridor
+   entry (with one side blocked near and the other side blocked
+   further away from the runner) work correctly. The runner moves
+   diagonally, but then saves the previous direction as being
+   straight into the gap. Otherwise, the tail end of the other
+   entry would be perceived as an alternative on the next move.
+
+	   #.#
+	  ##.##
+	  .@...
+	  ##.##
+	   #.#
+
+   Likewise, a run along a wall, and then into a doorway (two
+   runs) will work correctly. A single run rightwards from @ will
+   stop at 1. Another run right and down will enter the corridor
+   and make the corner, stopping at the 2.
+
+	#@	  1
+	########### ######
+	2	    #
+	#############
+	#
+
+   After any move, the function area_affect is called to
+   determine the new surroundings, and the direction of
+   subsequent moves. It takes a location (at which the runner has
+   just arrived) and the previous direction (from which the
+   runner is considered to have come). Moving one square in some
+   direction places you adjacent to three or five new squares
+   (for straight and diagonal moves) to which you were not
+   previously adjacent.
+
+       ...!	  ...	       EG Moving from 1 to 2.
+       .12!	  .1.!		  . means previously adjacent
+       ...!	  ..2!		  ! means newly adjacent
+		   !!!
+
+   You STOP if you can't even make the move in the chosen
+   direction. You STOP if any of the new squares are interesting
+   in any way: usually containing monsters or treasure. You STOP
+   if any of the newly adjacent squares seem to be open, and you
+   are also looking for a break on that side. (i.e. find_openarea
+   AND find_break) You STOP if any of the newly adjacent squares
+   do NOT seem to be open and you are in an open area, and that
+   side was previously entirely open.
+
+   Corners: If you are not in the open (i.e. you are in a
+   corridor) and there is only one way to go in the new squares,
+   then turn in that direction. If there are more than two new
+   ways to go, STOP. If there are two ways to go, and those ways
+   are separated by a square which does not seem to be open, then
+   STOP.
+
+   Otherwise, we have a potential corner. There are two new open
+   squares, which are also adjacent. One of the new squares is
+   diagonally located, the other is straight on (as in the
+   diagram). We consider two more squares further out (marked
+   below as ?).
+	  .X
+	 @.?
+	  #?
+   If they are both seen to be closed, then it is seen that no
+   benefit is gained from moving straight. It is a known corner.
+   To cut the corner, go diagonally, otherwise go straight, but
+   pretend you stepped diagonally into that next location for a
+   full view next time. Conversely, if one of the ? squares is
+   not seen to be closed, then there is a potential choice. We check
+   to see whether it is a potential corner or an intersection/room entrance.
+   If the square two spaces straight ahead, and the space marked with 'X'
+   are both blank, then it is a potential corner and enter if find_examine
+   is set, otherwise must stop because it is not a corner. */
 
 /*
  * The cycle lists the directions in anticlockwise order, for	-CJS- over
  * two complete cycles. The chome array maps a direction on to its position
  * in the cycle. 
  */
-static int          cycle[] = {1, 2, 3, 6, 9, 8, 7, 4, 1, 2, 3, 6, 9, 8, 7, 4, 1};
-static int          chome[] = {-1, 8, 9, 10, 7, -1, 11, 6, 5, 4};
-static int          find_openarea, find_breakright, find_breakleft, find_prevdir;
-static int          find_direction;/* Keep a record of which way we are
-				    * going. */
+static int cycle[] = {1, 2, 3, 6, 9, 8, 7, 4, 1, 2, 3, 6, 9, 8, 7, 4, 1};
+static int chome[] = {-1, 8, 9, 10, 7, -1, 11, 6, 5, 4};
+static int find_openarea, find_breakright, find_breakleft, find_prevdir;
+static int find_direction;/* Keep a record of which way we are going. */
 
 void 
 find_init(dir)
-    int                 dir;
+int dir;
 {
-    int                 row, col, deepleft, deepright;
-    register int        i, shortleft, shortright;
+    int          row, col, deepleft, deepright;
+    register int i, shortleft, shortright;
 
     darken_player(char_row, char_col);
     old_rad = light_rad;
@@ -2415,8 +2418,7 @@ find_init(dir)
 		    else if (deepright && !deepleft)
 			find_prevdir = cycle[i + 1];
 		}
-	    /*
-	     * else if there is a wall two spaces ahead and seem to be in a
+	    /* else if there is a wall two spaces ahead and seem to be in a
 	     * corridor, then force a turn into the side corridor, must be
 	     * moving straight into a corridor here 
 	     */
@@ -2430,6 +2432,7 @@ find_init(dir)
 		find_openarea = TRUE;
 	}
     }
+
 /*
  * We must erase the player symbol '@' here, because sub3_move_light() does
  * not erase the previous location of the player when in find mode and when
@@ -2475,9 +2478,9 @@ end_find()
 /* Do we see a wall? Used in running.		-CJS- */
 static int 
 see_wall(dir, y, x)
-    int                 dir, y, x;
+int dir, y, x;
 {
-    char                c;
+    char c;
 
     if (!mmove(dir, &y, &x))	   /* check to see if movement there possible */
 	return TRUE;
@@ -2512,10 +2515,10 @@ see_nothing(dir, y, x)
 /* Determine the next direction for a run, or if we should stop.  -CJS- */
 void 
 area_affect(dir, y, x)
-    int                 dir, y, x;
+int dir, y, x;
 {
-    int                 newdir = 0, t, inv, check_dir = 0, row, col;
-    register int        i, max, option, option2;
+    int                  newdir = 0, t, inv, check_dir = 0, row, col;
+    register int         i, max, option, option2;
     register cave_type *c_ptr;
 
     if (py.flags.blind < 1) {
@@ -2541,8 +2544,7 @@ area_affect(dir, y, x)
 			}
 		    }
 		/* Also Creatures		 */
-		/*
-		 * the monster should be visible since update_mon() checks
+		/* the monster should be visible since update_mon() checks
 		 * for the special case of being in find mode 
 		 */
 		    if (c_ptr->cptr > 1 && m_list[c_ptr->cptr].ml) {
@@ -2551,7 +2553,7 @@ area_affect(dir, y, x)
 		    }
 		    inv = FALSE;
 		} else
-		    inv = TRUE;	   /* Square unseen. Treat as open. */
+		    inv = TRUE;		/* Square unseen. Treat as open. */
 
 		if (c_ptr->fval <= MAX_OPEN_SPACE || inv) {
 		    if (find_openarea) {
@@ -2569,14 +2571,13 @@ area_affect(dir, y, x)
 		    } else if (option == 0)
 			option = newdir;	/* The first new direction. */
 		    else if (option2 != 0) {
-			end_find();/* Three new directions. STOP. */
+			end_find();             /* Three new directions. STOP. */
 			return;
 		    } else if (option != cycle[chome[dir] + i - 1]) {
 			end_find();/* If not adjacent to prev, STOP */
 			return;
 		    } else {
-		    /*
-		     * Two adjacent choices. Make option2 the diagonal, and
+		    /* Two adjacent choices. Make option2 the diagonal, and
 		     * remember the other diagonal adjacent to the first
 		     * option. 
 		     */
@@ -2590,10 +2591,7 @@ area_affect(dir, y, x)
 			}
 		    }
 		} else if (find_openarea) {
-		/*
-		 * We see an obstacle. In open area, STOP if on a side
-		 * previously open. 
-		 */
+	    /* We see an obstacle. In open area, STOP if on a side previously open. */
 		    if (i < 0) {
 			if (find_breakleft) {
 			    end_find();
@@ -2613,8 +2611,7 @@ area_affect(dir, y, x)
 
 	if (find_openarea == FALSE) {	/* choose a direction. */
 	    if (option2 == 0 || (find_examine && !find_cut)) {
-	    /*
-	     * There is only one option, or if two, then we always examine
+	    /* There is only one option, or if two, then we always examine
 	     * potential corners and never cut known corners, so you step
 	     * into the straight option. 
 	     */
@@ -2670,12 +2667,12 @@ area_affect(dir, y, x)
 /* can detect the damage.					 */
 int 
 minus_ac(typ_dam)
-    int32u              typ_dam;
+int32u typ_dam;
 {
-    register int        i, j;
-    int                 tmp[6], minus, do_damage;
+    register int         i, j;
+    int                  tmp[6], minus, do_damage;
     register inven_type *i_ptr;
-    bigvtype            out_val, tmp_str;
+    bigvtype             out_val, tmp_str;
 
     i = 0;
     if (inventory[INVEN_BODY].tval != TV_NOTHING) {
@@ -2739,7 +2736,7 @@ minus_ac(typ_dam)
 /* Corrode the unsuspecting person's armor		 -RAK-	 */
 void 
 corrode_gas(kb_str)
-    const char               *kb_str;
+const char *kb_str;
 {
     if (!py.flags.acid_im)
 	if (!minus_ac((int32u) TR_RES_ACID))
@@ -2751,8 +2748,8 @@ corrode_gas(kb_str)
 /* Poison gas the idiot.				-RAK-	 */
 void 
 poison_gas(dam, kb_str)
-    int                 dam;
-    const char          *kb_str;
+int dam;
+const char *kb_str;
 {
     if (py.flags.resist_poison > 0)
 	dam = 2 * dam / 3;
@@ -2770,8 +2767,8 @@ poison_gas(dam, kb_str)
 /* Burn the fool up.					-RAK-	 */
 void 
 fire_dam(dam, kb_str)
-    int                 dam;
-    const char          *kb_str;
+int dam;
+const char *kb_str;
 {
     if (py.flags.fire_resist)
 	dam = dam / 3;
@@ -2787,8 +2784,8 @@ fire_dam(dam, kb_str)
 /* Freeze him to death.				-RAK-	 */
 void 
 cold_dam(dam, kb_str)
-    int                 dam;
-    const char          *kb_str;
+int dam;
+const char *kb_str;
 {
     if (py.flags.cold_resist)
 	dam = dam / 3;
@@ -2804,8 +2801,8 @@ cold_dam(dam, kb_str)
 /* Lightning bolt the sucker away.			-RAK-	 */
 void 
 light_dam(dam, kb_str)
-    int                 dam;
-    const char          *kb_str;
+int dam;
+const char *kb_str;
 {
     if (py.flags.resist_light)
 	dam = dam / 3;
@@ -2821,10 +2818,10 @@ light_dam(dam, kb_str)
 /* Throw acid on the hapless victim			-RAK-	 */
 void 
 acid_dam(dam, kb_str)
-    int                 dam;
-    const char          *kb_str;
+int dam;
+const char *kb_str;
 {
-    register int        flag;
+    register int flag;
 
     if (py.flags.acid_resist > 0)
 	dam = dam / 3;

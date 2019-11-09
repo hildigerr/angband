@@ -25,11 +25,11 @@
 void 
 use()
 {
-    int32u              i;
-    int                 j, k, item_val, chance, y, x;
-    register int        ident;
+    int32u                i;
+    int                   j, k, item_val, chance, y, x;
+    register int          ident;
     register struct misc *m_ptr;
-    register inven_type *i_ptr;
+    register inven_type  *i_ptr;
 
     free_turn_flag = TRUE;
     if (inven_ctr == 0)

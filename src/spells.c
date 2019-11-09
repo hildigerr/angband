@@ -58,10 +58,10 @@ int y, x, ny, nx;
     return '/';
 }
 
-/*
- * return the appropriate item destroy test to the typ.  All that's left of
+/* return the appropriate item destroy test to the typ.  All that's left of
  * get_flags().  -CFT 
  */
+
 /*
  * add new destroys?  maybe GF_FORCE destroy potions, GF_PLASMA as lightning,
  * GF_SHARDS and GF_ICE maybe break things (potions?), and GF_METEOR breaks
@@ -69,8 +69,8 @@ int y, x, ny, nx;
  */
 static void 
 ball_destroy(typ, destroy)
-    int                 typ;
-    int                 (**destroy) ();
+int typ;
+int (**destroy) ();
 
 {
     switch (typ) {
@@ -127,9 +127,9 @@ ball_destroy(typ, destroy)
 
 void 
 monster_name(m_name, m_ptr, r_ptr)
-    char               *m_name;
-    monster_type       *m_ptr;
-    creature_type      *r_ptr;
+char               *m_name;
+monster_type       *m_ptr;
+creature_type      *r_ptr;
 {
     if (!m_ptr->ml)
 	(void)strcpy(m_name, "It");
@@ -143,9 +143,9 @@ monster_name(m_name, m_ptr, r_ptr)
 
 void 
 lower_monster_name(m_name, m_ptr, r_ptr)
-    char               *m_name;
-    monster_type       *m_ptr;
-    creature_type      *r_ptr;
+char               *m_name;
+monster_type       *m_ptr;
+creature_type      *r_ptr;
 {
     if (!m_ptr->ml)
 	(void)strcpy(m_name, "it");
@@ -175,14 +175,14 @@ tele_level()
 /* Sleep creatures adjacent to player			-RAK-	 */
 int 
 sleep_monsters1(y, x)
-    int                 y, x;
+int y, x;
 {
-    register int        i, j;
-    register cave_type *c_ptr;
-    register monster_type *m_ptr;
+    register int            i, j;
+    register cave_type     *c_ptr;
+    register monster_type  *m_ptr;
     register creature_type *r_ptr;
-    int                 sleep;
-    vtype               out_val, m_name;
+    int                     sleep;
+    vtype                   out_val, m_name;
 
     sleep = FALSE;
     for (i = y - 1; i <= y + 1; i++)
@@ -259,18 +259,18 @@ detect_treasure()
     return (detect);
 }
 
-/*
- * This will light up all spaces with "magic" items, including potions,
+/* This will light up all spaces with "magic" items, including potions,
  * scrolls, rods, wands, staves, amulets, rings, and "enchanted" items. This
  * excludes all foods and spell books. -- JND  
  */
+
 int 
 detect_magic()
 {
-    register int        i, j, detect;
-    register cave_type *c_ptr;
+    register int         i, j, detect;
+    register cave_type  *c_ptr;
     register inven_type *t_ptr;
-    int                 Tval;
+    int                  Tval;
 
     detect = FALSE;
     for (i = panel_row_min; i <= panel_row_max; i++)
@@ -303,7 +303,7 @@ detect_enchantment()
 {
     register int i, j, detect, tv;
     register cave_type *c_ptr;
-
+    
     detect = FALSE;
     for (i = panel_row_min; i <= panel_row_max; i++)
 	for (j = panel_col_min; j <= panel_col_max; j++) {
@@ -322,13 +322,13 @@ detect_enchantment()
 		detect = TRUE;
 	    }
 	}
-    return (detect);
+    return(detect);
 }
 
 int 
 detection()
 {
-    register int        i, detect;
+    register int           i, detect;
     register monster_type *m_ptr;
 
     detect_treasure();
@@ -382,9 +382,9 @@ detect_object()
 int 
 detect_trap()
 {
-    register int        i, j;
-    int                 detect;
-    register cave_type *c_ptr;
+    register int         i, j;
+    int                  detect;
+    register cave_type  *c_ptr;
     register inven_type *t_ptr;
 
     detect = FALSE;
@@ -505,7 +505,7 @@ detect_sdoor()
 int 
 detect_invisible()
 {
-    register int        i, flag;
+    register int           i, flag;
     register monster_type *m_ptr;
 
     flag = FALSE;
@@ -533,13 +533,13 @@ detect_invisible()
 /* Split out of light_line.       -DGK */
 void 
 mon_light_dam(y, x, dam)
-    int                 y, x, dam;
+int y, x, dam;
 {
-    register cave_type *c_ptr;
-    register monster_type *m_ptr;
+    register cave_type     *c_ptr;
+    register monster_type  *m_ptr;
     register creature_type *r_ptr;
-    vtype               out_val, m_name;
-    int                 i;
+    vtype                   out_val, m_name;
+    int                     i;
 
     c_ptr = &cave[y][x];
     if (c_ptr->cptr > 1) {
@@ -566,10 +566,10 @@ mon_light_dam(y, x, dam)
 
 int 
 light_area(y, x, dam, rad)	   /* Expanded -DGK */
-    register int        y, x, dam, rad;
+register int y, x, dam, rad;
 {
-    register int        i, j;
-    int                 min_i, max_i, min_j, max_j;
+    register int i, j;
+    int          min_i, max_i, min_j, max_j;
 
     if (rad < 1) rad = 1;	/* sanity check -CWS */
     if (py.flags.blind < 1)
@@ -604,7 +604,7 @@ light_area(y, x, dam, rad)	   /* Expanded -DGK */
 /* Darken an area, opposite of light area		-RAK-	 */
 int 
 unlight_area(y, x)
-    int                 y, x;
+int y, x;
 {
     register int        i, j, unlight;
     register cave_type *c_ptr;
@@ -613,10 +613,10 @@ unlight_area(y, x)
     unlight = FALSE;
     if (cave[y][x].lr && (dun_level > 0)) {
 	darken_room(y, x);
-	unlight = TRUE;		   /* this isn't really good, as it returns
-				    * true, even if rm was already dark, but
-				    * at least scrolls of darkness will be
-				    * IDed when used -CFT */
+	unlight = TRUE;
+/* this isn't really good, as it returns true, even if rm was already dark, but
+ * at least scrolls of darkness will be IDed when used -CFT
+ */
     } else {
 	min_i = MY_MAX(0, (y - 3));
 	max_i = MY_MIN(cur_height - 1, (y + 3));
@@ -729,9 +729,9 @@ ident_spell()
 /* Get all the monsters on the level pissed off.	-RAK-	 */
 int 
 aggravate_monster(dis_affect)
-    int                 dis_affect;
+int dis_affect;
 {
-    register int        i, aggravate;
+    register int           i, aggravate;
     register monster_type *m_ptr;
 
     aggravate = FALSE;
@@ -853,7 +853,7 @@ detect_monsters()
 /* hurt creatures.				       -RAK-   */
 void 
 light_line(dir, y, x)
-    int                 dir, y, x;
+int dir, y, x;
 {
     register cave_type *c_ptr;
     int                 dist, flag;
@@ -887,9 +887,9 @@ light_line(dir, y, x)
 /* Light line in all directions				-RAK-	 */
 void 
 starlite(y, x)
-    register int        y, x;
+register int y, x;
 {
-    register int        i;
+    register int i;
 
     if (py.flags.blind < 1)
 	msg_print("The end of the staff bursts into a blue shimmering light.");
@@ -901,11 +901,11 @@ starlite(y, x)
 /* Disarms all traps/chests in a given direction	-RAK-	 */
 int 
 disarm_all(dir, y, x)
-    int                 dir, y, x;
+int dir, y, x;
 {
-    register cave_type *c_ptr;
+    register cave_type  *c_ptr;
     register inven_type *t_ptr;
-    register int        disarm, dist;
+    register int         disarm, dist;
 
     disarm = FALSE;
     dist = (-1);
@@ -913,8 +913,8 @@ disarm_all(dir, y, x)
     /* put mmove at end, in case standing on a trap */
 	dist++;
 	c_ptr = &cave[y][x];
-    /*
-     * note, must continue upto and including the first non open space,
+
+    /* note, must continue upto and including the first non open space,
      * because secret doors have fval greater than MAX_OPEN_SPACE 
      */
 	if (c_ptr->tptr != 0) {
@@ -923,8 +923,7 @@ disarm_all(dir, y, x)
 		if (delete_object(y, x))
 		    disarm = TRUE;
 	    } else if (t_ptr->tval == TV_CLOSED_DOOR)
-		t_ptr->p1 = 0;	   /* Locked or jammed doors become merely
-				    * closed. */
+		t_ptr->p1 = 0;	   /* Locked or jammed doors become merely closed. */
 	    else if (t_ptr->tval == TV_SECRET_DOOR) {
 		c_ptr->fm = TRUE;
 		change_trap(y, x);
@@ -1037,8 +1036,7 @@ int typ, dir, y, x, dam_hp;
 #endif
     }
     while (!flag);
-    lite_spot(oldy, oldx);	   /* just in case, clear any leftover bolt
-				    * images -CFT */
+    lite_spot(oldy, oldx);	   /* just in case, clear any leftover bolt images -CFT */
 }
 
 
@@ -1046,16 +1044,16 @@ int typ, dir, y, x, dam_hp;
 /* heavily modified to include exotic bolts -CFT */
 void 
 bolt(typ, y, x, dam_hp, ddesc, ptr, monptr)
-    int                 typ, y, x, dam_hp;
-    char               *ddesc;
-    monster_type       *ptr;
-    int                 monptr;
+int           typ, y, x, dam_hp;
+char         *ddesc;
+monster_type *ptr;
+int           monptr;
 {
     int                 i = ptr->fy, j = ptr->fx;
     int                 dam;
     int32u              tmp, treas;
-    register cave_type *c_ptr;
-    register monster_type *m_ptr;
+    register cave_type     *c_ptr;
+    register monster_type  *m_ptr;
     register creature_type *r_ptr;
     char                bolt_char;
     int                 blind = (py.flags.status & PY_BLIND) ? 1 : 0;
@@ -1563,15 +1561,14 @@ int typ, dir, y, x, dam_hp, max_dis;
 	    c_ptr = &cave[y][x];
 	/* targeting code stolen from Morgul -CFT */
 
-	/*
-	 * This test has been overhauled (twice):  basically, it now says: if
+	/* This test has been overhauled (twice):  basically, it now says: if
 	 * ((spell hits a wall) OR ((spell hits a creature) and ((not
 	 * targetting) or (at the target anyway) or (no line-of-sight to
 	 * target, so aiming unusable) or ((aiming at a monster) and (that
 	 * monster is unseen, so aiming unusable)))) OR ((we are targetting)
-	 * and (at the target location))) THEN the ball explodes...                     
-	 * -CFT  
+	 * and (at the target location))) THEN the ball explodes... -CFT  
 	 */
+
 #ifndef TARGET
 	    if ((c_ptr->fval >= MIN_CLOSED_SPACE) ||
 		((c_ptr->cptr > 1))) {
@@ -1607,9 +1604,9 @@ int typ, dir, y, x, dam_hp, max_dis;
 #endif
 			    print('*', i, j);
 #ifdef TC_COLOR
+			    /* prob don't need here, but... -CFT */
 			    if (!no_color_flag)
-				textcolor(LIGHTGRAY);	/* prob don't need here,
-							 * but... -CFT */
+				textcolor(LIGHTGRAY);
 #endif
 			}
 		if (py.flags.blind < 1) {
@@ -1620,8 +1617,8 @@ int typ, dir, y, x, dam_hp, max_dis;
 		    usleep(25000 * delay_spd);	/* useconds */
 #endif
 		}
-	    /*
-	     * now erase the ball, since effects below may use msg_print, and
+
+	    /* now erase the ball, since effects below may use msg_print, and
 	     * pause indefinitely, so we want ball gone before then -CFT 
 	     */
 		for (i = y - max_dis; i <= y + max_dis; i++)
@@ -1633,8 +1630,8 @@ int typ, dir, y, x, dam_hp, max_dis;
 			    lite_spot(i, j);	/* draw what is below the '*' */
 			}
 		put_qio();
-	    /*
-	     * First go over the area of effect, and destroy items...  Any
+
+	    /* First go over the area of effect, and destroy items...  Any
 	     * preexisting items will be affected, but items dropped by
 	     * killed monsters are assummed to have been "shielded" from the
 	     * effects the the monster's corpse.  This means that you no
@@ -1646,9 +1643,8 @@ int typ, dir, y, x, dam_hp, max_dis;
 			if (in_bounds(i, j) && (distance(y, x, i, j) <= max_dis)
 			    && los(y, x, i, j) && (cave[i][j].tptr != 0) &&
 			    (*destroy) (&t_list[cave[i][j].tptr]))
-			    (void)delete_object(i, j);	/* burn/corrode or OW
-							 * destroy items in area
-							 * of effect */
+			    (void)delete_object(i, j);
+		/* burn/corrode or OW destroy items in area of effect */
 	    /* now go over area of affect and DO something to monsters... */
 		for (i = y - max_dis; i <= y + max_dis; i++)
 		    for (j = x - max_dis; j <= x + max_dis; j++)
@@ -1678,8 +1674,7 @@ int typ, dir, y, x, dam_hp, max_dis;
 
 				    thit++;
 				    if (dam < 1)
-					dam = 1;	/* protect vs neg damage
-							 * -CFT */
+					dam = 1;	/* protect vs neg damage -CFT */
 				    k = mon_take_hit((int)c_ptr->cptr, dam, TRUE);
 				    if (k >= 0)
 					tkill++;
@@ -1743,16 +1738,16 @@ starball(y, x)
 /* Note the area affect.                              -RAK-   */
 void 
 breath(typ, y, x, dam_hp, ddesc, monptr)
-    int                 typ, y, x, dam_hp;
-    char               *ddesc;
-    int                 monptr;
+int   typ, y, x, dam_hp;
+char *ddesc;
+int   monptr;
 {
     register int        i, j;
     int                 dam, max_dis;
     int32u              tmp, treas;
     int                 (*destroy) ();
-    register cave_type *c_ptr;
-    register monster_type *m_ptr;
+    register cave_type     *c_ptr;
+    register monster_type  *m_ptr;
     register creature_type *r_ptr;
     int                 ny, nx;
     int                 blind = (py.flags.status & PY_BLIND) ? 1 : 0;
@@ -1782,8 +1777,7 @@ breath(typ, y, x, dam_hp, ddesc, monptr)
 		    print('*', i, j);
 #ifdef TC_COLOR
 		    if (!no_color_flag)
-			textcolor(LIGHTGRAY);	/* prob don't need here,
-						 * but... -CFT */
+			textcolor(LIGHTGRAY);	/* prob don't need here, but... -CFT */
 #endif
 		}
 	put_qio();
@@ -1793,8 +1787,7 @@ breath(typ, y, x, dam_hp, ddesc, monptr)
 	usleep(25000 * delay_spd); /* useconds */
 #endif
  
-/*
- * now erase the ball, since effects below may use msg_print, and pause
+/* now erase the ball, since effects below may use msg_print, and pause
  * indefinitely, so we want ball gone before then -CFT 
  */
 	for (i = y - max_dis; i <= y + max_dis; i++)
@@ -1805,8 +1798,8 @@ breath(typ, y, x, dam_hp, ddesc, monptr)
 		    lite_spot(i, j);   /* draw what is below the '*' */
 	put_qio();
     }
-/*
- * first, go over area of affect and destroy preexisting items. This change
+
+/* first, go over area of affect and destroy preexisting items. This change
  * means that any treasure dropped by killed monsters is safe from the effects
  * of this ball (but not from any later balls/breathes, even if they happen
  * before the player gets a chance to pick up that scroll of *Acquirement*). 
@@ -1874,17 +1867,13 @@ breath(typ, y, x, dam_hp, ddesc, monptr)
 				c_recall[m_ptr->mptr].r_cmove = treas |
 				    (c_recall[m_ptr->mptr].r_cmove & ~CM_TREASURE);
 			    }
-			/*
-			 * It ate an already processed monster.Handle
-			 * normally. 
-			 */
+			/* It ate an already processed monster.  Handle normally. */
 			    if (monptr < c_ptr->cptr)
 				delete_monster((int)c_ptr->cptr);
-			/*
-			 * If it eats this monster, an already processed
-			 * monster will take its place, causing all kinds of
-			 * havoc. Delay the kill a bit. 
-			 */
+
+/* If it eats this monster, an already processed monster will take its place,
+ * causing all kinds of havoc. Delay the kill a bit.
+ */
 			    else
 				fix1_delete_monster((int)c_ptr->cptr);
 			}
@@ -2103,9 +2092,8 @@ breath(typ, y, x, dam_hp, ddesc, monptr)
 			    }
 			    take_hit(dam, ddesc);
 			    break;
-			  case GF_NEXUS:	/* no spec. effects from
-						 * nexus bolt, only breath
-						 * -CFT */
+			  case GF_NEXUS:
+			    /* no spec. effects from nexus bolt, only breath -CFT */
 			    if (py.flags.nexus_resist) {
 				dam *= 6;	/* these 2 lines give avg dam
 						 * of .655, ranging from */
@@ -2334,7 +2322,7 @@ breath(typ, y, x, dam_hp, ddesc, monptr)
 
 int 
 recharge(num)
-    register int        num;
+register int num;
 {
     int                 i, j, k, l, item_val;
     register int        res;
@@ -2353,8 +2341,8 @@ recharge(num)
 		      (k > -1) ? k : i, (j > -1) ? j : l, 0)) {
 	i_ptr = &inventory[item_val];
 	res = TRUE;
-	if (i_ptr->tval == TV_ROD) {	/* now allow players to speed up
-					 * recharge time of rods -CFT */
+	if (i_ptr->tval == TV_ROD) {
+	    /* now allow players to speed up recharge time of rods -CFT */
 	    int16u              t_o = i_ptr->timeout, t;
 
 	    if (randint((100 - i_ptr->level + num) / 5) == 1) {	/* not today... */
@@ -2371,12 +2359,10 @@ recharge(num)
 	}
 	 /* if recharge rod... */ 
 	else {			   /* recharge wand/staff */
-	/* recharge I = recharge(20) = 1/6 failure for empty 10th level wand */
-	/*
-	 * recharge II = recharge(60) = 1/10 failure for empty 10th level
-	 * wand 
-	 */
-	/* make it harder to recharge high level, and highly charged wands */
+	/* recharge I = recharge(20) = 1/6 failure for empty 10th level wand   */
+	/* recharge II = recharge(60) = 1/10 failure for empty 10th level wand */
+	/* make it harder to recharge high level, and highly charged wands     */
+
 	    if (randint((num + 100 - (int)i_ptr->level - (10 * i_ptr->p1)) / 15) == 1) {
 		msg_print("There is a bright flash of light.");
 		inven_destroy(item_val);
@@ -2395,7 +2381,7 @@ recharge(num)
 /* Increase or decrease a creatures hit points		-RAK-	 */
 int 
 hp_monster(dir, y, x, dam)
-    int                 dir, y, x, dam;
+int dir, y, x, dam;
 {
     register int        i;
     int                 flag, dist, monster;
@@ -2493,13 +2479,13 @@ int dir, y, x, dam;
 /* NOTE: cannot slow a winning creature (BALROG)		 */
 int 
 speed_monster(dir, y, x, spd)
-    int                 dir, y, x, spd;
+int dir, y, x, spd;
 {
-    int                 flag, dist, speed;
-    register cave_type *c_ptr;
-    register monster_type *m_ptr;
+    int                    flag, dist, speed;
+    register cave_type     *c_ptr;
+    register monster_type  *m_ptr;
     register creature_type *r_ptr;
-    vtype               out_val, m_name;
+    vtype                   out_val, m_name;
 
     speed = FALSE;
     flag = FALSE;
@@ -2544,13 +2530,13 @@ speed_monster(dir, y, x, spd)
 /* Confuse a creature					-RAK-	 */
 int 
 confuse_monster(dir, y, x, lvl)
-    int                 dir, y, x, lvl;
+int dir, y, x, lvl;
 {
-    int                 flag, dist, confuse;
-    register cave_type *c_ptr;
-    register monster_type *m_ptr;
+    int                     flag, dist, confuse;
+    register cave_type     *c_ptr;
+    register monster_type  *m_ptr;
     register creature_type *r_ptr;
-    vtype               out_val, m_name;
+    vtype                   out_val, m_name;
 
     confuse = FALSE;
     flag = FALSE;
@@ -2593,13 +2579,13 @@ confuse_monster(dir, y, x, lvl)
 /* Scare a creature -DGK */
 int 
 fear_monster(dir, y, x, lvl)
-    int                 dir, y, x, lvl;
+int dir, y, x, lvl;
 {
-    int                 flag, dist, fear;
-    register cave_type *c_ptr;
-    register monster_type *m_ptr;
+    int                     flag, dist, fear;
+    register cave_type     *c_ptr;
+    register monster_type  *m_ptr;
     register creature_type *r_ptr;
-    vtype               out_val, m_name;
+    vtype                   out_val, m_name;
 
     fear = FALSE;
     flag = FALSE;
@@ -2640,13 +2626,13 @@ fear_monster(dir, y, x, lvl)
 /* Sleep a creature.					-RAK-	 */
 int 
 sleep_monster(dir, y, x)
-    int                 dir, y, x;
+int dir, y, x;
 {
-    int                 flag, dist, sleep;
-    register cave_type *c_ptr;
-    register monster_type *m_ptr;
+    int                     flag, dist, sleep;
+    register cave_type     *c_ptr;
+    register monster_type  *m_ptr;
     register creature_type *r_ptr;
-    vtype               out_val, m_name;
+    vtype                   out_val, m_name;
 
     sleep = FALSE;
     flag = FALSE;
@@ -2660,8 +2646,6 @@ sleep_monster(dir, y, x)
 	else if (c_ptr->cptr > 1) {
 	    m_ptr = &m_list[c_ptr->cptr];
 	    r_ptr = &c_list[m_ptr->mptr];
-
-
 
 	    flag = TRUE;
 	    monster_name(m_name, m_ptr, r_ptr);
@@ -2688,15 +2672,15 @@ sleep_monster(dir, y, x)
 /* Turn stone to mud, delete wall.			-RAK-	 */
 int 
 wall_to_mud(dir, y, x)
-    int                 dir, y, x;
+int dir, y, x;
 {
-    int                 i, wall, dist;
-    bigvtype            out_val, tmp_str;
-    register int        flag;
-    register cave_type *c_ptr;
-    register monster_type *m_ptr;
+    int                     i, wall, dist;
+    bigvtype                out_val, tmp_str;
+    register int            flag;
+    register cave_type     *c_ptr;
+    register monster_type  *m_ptr;
     register creature_type *r_ptr;
-    vtype               m_name;
+    vtype                   m_name;
 
     wall = FALSE;
     flag = FALSE;
@@ -2722,7 +2706,7 @@ wall_to_mud(dir, y, x)
 	    }
 	} else if ((c_ptr->tptr != 0) && (c_ptr->fval >= MIN_CLOSED_SPACE)) {
 	    flag = TRUE;
-	    if (panel_contains(y, x) && test_light(y, x)) {
+	    if (panel_contains(y, x) && test_light(y, x)) {		
 		objdes(tmp_str, &t_list[c_ptr->tptr], FALSE);
 		if ((t_list[c_ptr->tptr].tval == TV_RUBBLE) && (randint(10)==1)) {
 		    delete_object(y,x);
@@ -2740,6 +2724,7 @@ wall_to_mud(dir, y, x)
 		wall = TRUE;
 	    }
 	}
+	
 	if (c_ptr->cptr > 1) {
 	    m_ptr = &m_list[c_ptr->cptr];
 	    r_ptr = &c_list[m_ptr->mptr];
@@ -2752,8 +2737,7 @@ wall_to_mud(dir, y, x)
 			c_recall[i].r_cdefense |= HURT_ROCK;
 			(void)sprintf(out_val, "%s dissolves!", m_name);
 			msg_print(out_val);
-			prt_experience();	/* print msg before calling
-						 * prt_exp */
+			prt_experience();	/* print msg before calling prt_exp */
 		    } else {
 			c_recall[m_ptr->mptr].r_cdefense |= HURT_ROCK;
 			(void)sprintf(out_val, "%s grunts in pain!", m_name);
@@ -2772,10 +2756,10 @@ wall_to_mud(dir, y, x)
 /* Destroy all traps and doors in a given direction	-RAK-	 */
 int 
 td_destroy2(dir, y, x)
-    int                 dir, y, x;
+int dir, y, x;
 {
-    register int        destroy2, dist;
-    register cave_type *c_ptr;
+    register int         destroy2, dist;
+    register cave_type  *c_ptr;
     register inven_type *t_ptr;
 
     destroy2 = FALSE;
@@ -2847,7 +2831,7 @@ int dir, y, x;
     flag2= FALSE;
     dist = 0;
     do {
-	(void)mmove(dir, &y, &x);
+	(void) mmove(dir, &y, &x);
 	dist++;
 	c_ptr = &cave[y][x];
 	if ((dist > OBJ_BOLT_RANGE) || c_ptr->fval >= MIN_CLOSED_SPACE)
@@ -2861,8 +2845,8 @@ int dir, y, x;
 		if (panel_contains(y, x) && (c_ptr->tl || c_ptr->pl))
 		    p = TRUE;
 	    } else {
-		monster_name(m_name, m_ptr, r_ptr);
-		(void)sprintf(out_val, "%s is unaffected.", m_name);
+		monster_name (m_name, m_ptr, r_ptr);
+		(void) sprintf(out_val, "%s is unaffected.", m_name);
 		msg_print(out_val);
 	    }
 	}
@@ -2875,14 +2859,14 @@ int dir, y, x;
 /* Create a wall.					-RAK-	 */
 int 
 build_wall(dir, y, x)
-    int                 dir, y, x;
+int dir, y, x;
 {
-    register int        i;
-    int                 build, damage, dist, flag;
-    register cave_type *c_ptr;
-    register monster_type *m_ptr;
+    register int            i;
+    int                     build, damage, dist, flag;
+    register cave_type     *c_ptr;
+    register monster_type  *m_ptr;
     register creature_type *r_ptr;
-    vtype               m_name, out_val;
+    vtype                   m_name, out_val;
 
     build = FALSE;
     dist = 0;
@@ -2950,7 +2934,7 @@ build_wall(dir, y, x)
 /* Replicate a creature					-RAK-	 */
 int 
 clone_monster(dir, y, x)
-    int                 dir, y, x;
+int dir, y, x;
 {
     register cave_type *c_ptr;
     register int        dist, flag;
@@ -2977,9 +2961,9 @@ clone_monster(dir, y, x)
 /* Move the creature record to a new location		-RAK-	 */
 void 
 teleport_away(monptr, dis)
-    int                 monptr, dis;
+int monptr, dis;
 {
-    register int        yn, xn, ctr;
+    register int           yn, xn, ctr;
     register monster_type *m_ptr;
 
     m_ptr = &m_list[monptr];
@@ -3001,8 +2985,8 @@ teleport_away(monptr, dis)
     lite_spot((int)m_ptr->fy, (int)m_ptr->fx);
     m_ptr->fy = yn;
     m_ptr->fx = xn;
-/*
- * this is necessary, because the creature is not currently visible in its
+
+/* this is necessary, because the creature is not currently visible in its
  * new position 
  */
     m_ptr->ml = FALSE;
@@ -3014,7 +2998,7 @@ teleport_away(monptr, dis)
 /* Teleport player to spell casting creature		-RAK-	 */
 void 
 teleport_to(ny, nx)
-    int                 ny, nx;
+int ny, nx;
 {
     int dis, ctr, y, x;
 
@@ -3046,7 +3030,7 @@ teleport_to(ny, nx)
 /* Teleport all creatures in a given direction away	-RAK-	 */
 int 
 teleport_monster(dir, y, x)
-    int                 dir, y, x;
+int dir, y, x;
 {
     register int        flag, result, dist;
     register cave_type *c_ptr;
@@ -3075,7 +3059,7 @@ teleport_monster(dir, y, x)
 /* NOTE : Winning creatures cannot be genocided			 */
 int 
 mass_genocide(spell)
-    int                 spell;
+int spell;
 {
     register int        i, result;
     register monster_type *m_ptr;
@@ -3110,13 +3094,13 @@ mass_genocide(spell)
 /* NOTE : Winning creatures can not be genocided. */
 int 
 genocide(spell)
-    int                 spell;
+int spell;
 {
-    register int        i, killed;
-    char                typ;
-    register monster_type *m_ptr;
+    register int            i, killed;
+    char                    typ;
+    register monster_type  *m_ptr;
     register creature_type *r_ptr;
-    vtype               out_val;
+    vtype                   out_val;
 
     killed = FALSE;
     if (get_com("Which type of creature do you wish exterminated?", &typ))
@@ -3138,8 +3122,8 @@ genocide(spell)
 		    }
 		    killed = TRUE;
 		} else {
-		/*
-		 * genocide is a powerful spell, so we will let the player
+
+		/* genocide is a powerful spell, so we will let the player
 		 * know the names of the creatures he did not destroy, this
 		 * message makes no sense otherwise 
 		 */
@@ -3158,7 +3142,7 @@ genocide(spell)
 /* NOTE: cannot slow a winning creature (BALROG)		 */
 int 
 speed_monsters(spd)
-    int                 spd;
+int spd;
 {
     register int        i, speed;
     register monster_type *m_ptr;
@@ -3261,7 +3245,7 @@ mass_poly()
 	    }
 	}
     }
-    return (mass);
+    return(mass);
 }
 
 
@@ -3297,9 +3281,9 @@ detect_evil()
 /* Change players hit points in some manner		-RAK-	 */
 int 
 hp_player(num)
-    int                 num;
+int num;
 {
-    register int        res;
+    register int          res;
     register struct misc *m_ptr;
 
     res = FALSE;
@@ -3334,7 +3318,7 @@ hp_player(num)
 int 
 cure_confusion()
 {
-    register int        cure;
+    register int           cure;
     register struct flags *f_ptr;
 
     cure = FALSE;
@@ -3351,7 +3335,7 @@ cure_confusion()
 int 
 cure_blindness()
 {
-    register int        cure;
+    register int           cure;
     register struct flags *f_ptr;
 
     cure = FALSE;
@@ -3368,7 +3352,7 @@ cure_blindness()
 int 
 cure_poison()
 {
-    register int        cure;
+    register int           cure;
     register struct flags *f_ptr;
 
     cure = FALSE;
@@ -3385,7 +3369,7 @@ cure_poison()
 int 
 remove_fear()
 {
-    register int        result;
+    register int           result;
     register struct flags *f_ptr;
 
     result = FALSE;
@@ -3438,10 +3422,7 @@ earthquake()
 			/* monster can not move to escape the wall */
 			    kill = TRUE;
 			else {
-			/*
-			 * only kill if there is nowhere for the monster to
-			 * escape to 
-			 */
+			/* only kill if there is nowhere for the monster to escape to */
 			    kill = TRUE;
 			    for (y = i - 1; y <= i + 1; y++)
 				for (x = j - 1; x <= j + 1; x++)
@@ -3488,7 +3469,7 @@ earthquake()
 int 
 protect_evil()
 {
-    register int        res;
+    register int           res;
     register struct flags *f_ptr;
 
     f_ptr = &py.flags;
@@ -3501,7 +3482,7 @@ protect_evil()
 }
 
 
-/* Create some high quality mush for the player.	-RAK-	 */
+/* Create some high quality mush for the player.	-RAK-	    */
 /* Nope, let's just fill him up and save everybody time... -CWS */
 void 
 create_food()
@@ -3520,11 +3501,11 @@ create_food()
 
 int 
 banish_creature(cflag, dist)
-    int32u              cflag;
-    int                 dist;
+int32u cflag;
+int    dist;
 {
-    register int        i;
-    int                 dispel;
+    register int           i;
+    int                    dispel;
     register monster_type *m_ptr;
 
     dispel = FALSE;
@@ -3544,12 +3525,12 @@ banish_creature(cflag, dist)
 int 
 probing()
 {
-    register int        i;
-    int                 probe;
-    register monster_type *m_ptr;
+    register int            i;
+    int                     probe;
+    register monster_type  *m_ptr;
     register creature_type *r_ptr;
     register recall_type   *mp;
-    vtype               out_val, m_name;
+    vtype                   out_val, m_name;
 
     msg_print("Probing...");
     probe = FALSE;
@@ -3586,14 +3567,14 @@ probing()
 /* the creatures level VS. the player's level		 -RAK-	 */
 int 
 dispel_creature(cflag, damage)
-    int                 cflag;
-    int                 damage;
+int cflag;
+int damage;
 {
     register int            i;
     int                     k, dispel;
     register monster_type  *m_ptr;
     register creature_type *r_ptr;
-    vtype               out_val, m_name;
+    vtype                   out_val, m_name;
 
     dispel = FALSE;
     for (i = mfptr - 1; i >= MIN_MONIX; i--) {
@@ -3623,10 +3604,10 @@ dispel_creature(cflag, damage)
 int 
 turn_undead()
 {
-    register int        i, turn_und;
-    register monster_type *m_ptr;
+    register int            i, turn_und;
+    register monster_type  *m_ptr;
     register creature_type *r_ptr;
-    vtype               out_val, m_name;
+    vtype                   out_val, m_name;
 
     turn_und = FALSE;
     for (i = mfptr - 1; i >= MIN_MONIX; i--) {
@@ -3746,11 +3727,11 @@ lose_chr()
 /* Lose experience					-RAK-	 */
 void 
 lose_exp(amount)
-    int32               amount;
+int32 amount;
 {
-    register int        i;
+    register int          i;
     register struct misc *m_ptr;
-    register class_type *c_ptr;
+    register class_type  *c_ptr;
 
     m_ptr = &py.misc;
     if (amount > m_ptr->exp)
@@ -3789,7 +3770,7 @@ lose_exp(amount)
 int 
 slow_poison()
 {
-    register int        slow;
+    register int           slow;
     register struct flags *f_ptr;
 
     slow = FALSE;
@@ -3808,7 +3789,7 @@ slow_poison()
 /* Bless						-RAK-	 */
 void 
 bless(amount)
-    int                 amount;
+int amount;
 {
     py.flags.blessed += amount;
 }
@@ -3817,7 +3798,7 @@ bless(amount)
 /* Detect Invisible for period of time			-RAK-	 */
 void 
 detect_inv2(amount)
-    int                 amount;
+int amount;
 {
     py.flags.detect_inv += amount;
 }
@@ -3825,7 +3806,7 @@ detect_inv2(amount)
 
 static void 
 replace_spot(y, x, typ)
-    int                 y, x, typ;
+int y, x, typ;
 {
     register cave_type *c_ptr;
 
@@ -3868,9 +3849,9 @@ replace_spot(y, x, typ)
 /* game.						       */
 void 
 destroy_area(y, x)
-    register int        y, x;
+register int y, x;
 {
-    register int        i, j, k;
+    register int i, j, k;
 
     msg_print("There is a searing blast of light!");
     if (!py.flags.blindness_resist && !py.flags.light_resist)
@@ -3893,8 +3874,9 @@ destroy_area(y, x)
 			replace_spot(i, j, randint(9));
 		}
     }
-    if (py.flags.blindness_resist || py.flags.light_resist) {	/* We need to redraw the
-								 * screen. -DGK */
+
+    /* We need to redraw the screen. -DGK */
+    if (py.flags.blindness_resist || py.flags.light_resist) {
 	draw_cave();
 	creatures(FALSE);	   /* draw monsters */
     }
@@ -3964,10 +3946,9 @@ enchant(inven_type *i_ptr, int n, int8u eflag)
 }
 
 
-
-const char               *
+const char *
 pain_message(monptr, dam)
-    int                 monptr, dam;
+int monptr, dam;
 {
     register monster_type *m_ptr;
     creature_type      *c_ptr;
@@ -4061,7 +4042,7 @@ pain_message(monptr, dam)
 int 
 remove_curse()
 {
-    register int        i, result;
+    register int         i, result;
     register inven_type *i_ptr;
 
     result = FALSE;
@@ -4087,7 +4068,7 @@ remove_curse()
 int 
 remove_all_curse()
 {
-    register int        i, result;
+    register int         i, result;
     register inven_type *i_ptr;
 
     result = FALSE;
@@ -4114,7 +4095,7 @@ remove_all_curse()
 int 
 restore_level()
 {
-    register int        restore;
+    register int          restore;
     register struct misc *m_ptr;
 
     restore = FALSE;
@@ -4132,16 +4113,13 @@ restore_level()
 }
 
 
-/*
- * this fn only exists to avoid duplicating this code in the selfknowledge
- * fn. -CFT 
- */
+/* this fn only exists to avoid duplicating this code in the selfknowledge fn. -CFT */
 static void 
 pause_if_screen_full(i, j)
-    int                *i;
-    int                 j;
+int *i;
+int  j;
 {
-    int                 t;
+    int t;
 
     if (*i == 22) {		   /* is screen full? */
 	prt("-- more --", *i, j);
@@ -4153,8 +4131,7 @@ pause_if_screen_full(i, j)
     }
 }
 
-/*
- * self-knowledge... idea from nethack.  Useful for determining powers and
+/* self-knowledge... idea from nethack.  Useful for determining powers and
  * resistences of items.  It saves the screen, clears it, then starts listing
  * attributes, a screenful at a time.  (There are a LOT of attributes to
  * list.  It will probably take 2 or 3 screens for a powerful character whose
@@ -4164,8 +4141,8 @@ pause_if_screen_full(i, j)
 void 
 self_knowledge()
 {
-    int                 i, j;
-    int32u              f = 0L, f2 = 0L;
+    int    i, j;
+    int32u f = 0L, f2 = 0L;
 
     for (i = INVEN_WIELD; i <= INVEN_LIGHT; i++) {	/* get flags from items */
 	if (inventory[i].tval != TV_NOTHING) {
@@ -4179,9 +4156,10 @@ self_knowledge()
 
     save_screen();
 
-    j = 15;			   /* map starts at 13, but I want a couple
-				    * of spaces.  This means must start by
-				    * erasing map... */
+/* map starts at 13, but I want a couple of spaces.
+ * This means must start by erasing map...
+ */
+    j = 15;
     for (i = 1; i < 23; i++)
 	erase_line(i, j - 2);	   /* erase a couple of spaces to left */
 
@@ -4364,8 +4342,7 @@ self_knowledge()
     }
 
 #if 0
-/*
- * Are these needed?  The player can see this...  For now, in here for
+/* Are these needed?  The player can see this...  For now, in here for
  * completeness... -CFT 
  */
     if (f & TR_STR) {
@@ -4392,6 +4369,7 @@ self_knowledge()
 	prt("You are magically popular.", i++, j);
 	pause_if_screen_full(&i, j);
     }
+
 #endif
 
     if (py.flags.sustain_str) {
@@ -4531,6 +4509,7 @@ self_knowledge()
  * should be a 0 (this flags off some of the messages).  dam is changed
  * to reflect resistances and range. -CFT
  */
+
 static void
 spell_hit_monster(m_ptr, typ, dam, rad, y, x, by_player)
 monster_type *m_ptr;
@@ -4553,7 +4532,8 @@ int8u         by_player;
 	    sprintf(cdesc, "%s ", r_ptr->name);
 	else
 	    sprintf(cdesc, "The %s ", r_ptr->name);
-    } else
+    }
+    else
 	strcpy(cdesc, "It ");
 
     res = NO_RES;		/* assume until we know different -CFT */

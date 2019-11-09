@@ -27,16 +27,16 @@ static void special_offer(inven_type *);
 static void insert_store(int, int, int32, struct inven_type *);
 static void store_create(int);
 #else
-static void         special_offer();
-static void         insert_store();
-static void         store_create();
+static void special_offer();
+static void insert_store();
+static void store_create();
 #endif
 #endif
 
 /* Returns the value for any given object		-RAK-	 */
 int32 
 item_value(i_ptr)
-    register inven_type *i_ptr;
+register inven_type *i_ptr;
 {
     register int32      value;
 
@@ -76,8 +76,8 @@ item_value(i_ptr)
 	    else if (i_ptr->toac < 0)
 		value = 0;
 	    else
-	    /*
-	     * use 5, because missiles generally appear in groups of 20, so
+
+	    /* use 5, because missiles generally appear in groups of 20, so
 	     * 20 * 5 == 100, which is comparable to weapon bonus above 
 	     */
 		value = i_ptr->cost + (i_ptr->tohit + i_ptr->todam + i_ptr->toac) * 5;
@@ -93,12 +93,11 @@ item_value(i_ptr)
 	    value = 1;
 				/* Rings and amulets */
     } else if ((i_ptr->tval == TV_AMULET) || (i_ptr->tval == TV_RING)) {
-	if (!known1_p(i_ptr))
 	/* player does not know what type of ring/amulet this is */
+	if (!known1_p(i_ptr))
 	    value = 45;
 	else if (!known2_p(i_ptr))
-	/*
-	 * player knows what type of ring, but does not know whether it is
+	/* player knows what type of ring, but does not know whether it is
 	 * cursed or not, if refuse to buy cursed objects here, then player
 	 * can use this to 'identify' cursed objects 
 	 */
@@ -122,8 +121,8 @@ item_value(i_ptr)
 	    if (i_ptr->p1 < 0)
 		value = 0;
 	    else {
-	    /*
-	     * some digging tools start with non-zero p1 values, so only
+
+	    /* some digging tools start with non-zero p1 values, so only
 	     * multiply the plusses by 100, make sure result is positive 
 	     * no longer; have adjusted costs in treasure.c -CWS
 	     */
@@ -189,8 +188,8 @@ store_check_num(t_ptr, store_num)
     else if (t_ptr->subval >= ITEM_SINGLE_STACK_MIN)
 	for (i = 0; i < s_ptr->store_ctr; i++) {
 	    i_ptr = &s_ptr->store_inven[i].sitem;
-	/*
-	 * note: items with subval of gte ITEM_SINGLE_STACK_MAX only stack if
+
+	/* note: items with subval of gte ITEM_SINGLE_STACK_MAX only stack if
 	 * their subvals match 
 	 */
 	    if (i_ptr->tval == t_ptr->tval && i_ptr->subval == t_ptr->subval
@@ -199,10 +198,8 @@ store_check_num(t_ptr, store_num)
 		    || (i_ptr->p1 == t_ptr->p1)))
 		store_check = TRUE;
 	}
-/*
- * But, wait.  If at home, don't let player drop 25th item, or he will lose
- * it. -CFT 
- */
+
+/* But, wait.  If at home, don't let player drop 25th item, or he will lose it. -CFT */
     if (is_home && (t_ptr->subval >= ITEM_SINGLE_STACK_MIN))
 	for (i = 0; i < s_ptr->store_ctr; i++) {
 	    i_ptr = &s_ptr->store_inven[i].sitem;
@@ -323,18 +320,17 @@ store_carry(store_num, ipos, t_ptr)
 /* "one_of" is false, an entire slot is destroyed	-RAK-	 */
 void 
 store_destroy(store_num, item_val, one_of)
-    int                 store_num, item_val;
-    int                 one_of;
+int store_num, item_val;
+int one_of;
 {
-    register int        j, number;
+    register int         j, number;
     register store_type *s_ptr;
     register inven_type *i_ptr;
 
     s_ptr = &store[store_num];
     i_ptr = &s_ptr->store_inven[item_val].sitem;
 
-/*
- * for single stackable objects, only destroy one half on average, this will
+/* for single stackable objects, only destroy one half on average, this will
  * help ensure that general store and alchemist have reasonable selection of
  * objects 
  */
@@ -386,10 +382,10 @@ store_init()
 /* Creates an item and inserts it into store's inven	-RAK-	 */
 static void 
 store_create(store_num)
-    int                 store_num;
+int store_num;
 {
-    register int        i, tries;
-    int                 cur_pos, dummy;
+    register int         i, tries;
+    int                  cur_pos, dummy;
     register store_type *s_ptr;
     register inven_type *t_ptr;
 
@@ -406,10 +402,8 @@ store_create(store_num)
 	    if (store_check_num(t_ptr, store_num)) {
 		if ((t_ptr->cost > 0) &&	/* Item must be good	 */
 		    (t_ptr->cost < owners[s_ptr->owner].max_cost)) {
-		/*
-		 * equivalent to calling ident_spell(), except will not
-		 * change the object_ident array 
-		 */
+
+/* equivalent to calling ident_spell(), except will not change the object_ident array */
 		    store_bought(t_ptr);
 		    special_offer(t_ptr);
 		    store_carry(store_num, &dummy, t_ptr);
@@ -443,7 +437,7 @@ store_create(store_num)
 
 static void 
 special_offer(i_ptr)
-    inven_type         *i_ptr;
+inven_type *i_ptr;
 {
     int32 orig_cost = i_ptr->cost;
 
@@ -478,7 +472,7 @@ special_offer(i_ptr)
 void 
 store_maint()
 {
-    register int        i, j;
+    register int         i, j;
     register store_type *s_ptr;
 
     for (i = 0; i < (MAX_STORES - 1); i++) {
@@ -504,10 +498,10 @@ store_maint()
 /* eliminate need to bargain if player has haggled well in the past   -DJB- */
 int 
 noneedtobargain(store_num, minprice)
-    int                 store_num;
-    int32               minprice;
+int store_num;
+int32 minprice;
 {
-    register int        flagnoneed;
+    register int         flagnoneed;
     register store_type *s_ptr;
 
     if (no_haggle_flag)
@@ -523,8 +517,8 @@ noneedtobargain(store_num, minprice)
 /* update the bargin info					-DJB- */
 void 
 updatebargain(store_num, price, minprice)
-    int                 store_num;
-    int32               price, minprice;
+int   store_num;
+int32 price, minprice;
 {
     register store_type *s_ptr;
 

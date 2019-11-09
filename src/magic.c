@@ -15,20 +15,20 @@
 
 /* Lets do all prototypes correctly.... -CWS */
 #ifndef NO_LINT_ARGS
-int                 door_creation();
-int                 detect_magic();
-int                 stair_creation();
+int door_creation();
+int detect_magic();
+int stair_creation();
 #endif
 
 /* Throw a magic spell					-RAK-	 */
 void 
 cast()
 {
-    int                 i, j, item_val, dir;
-    int                 choice, chance, result;
+    int                    i, j, item_val, dir;
+    int                    choice, chance, result;
     register struct flags *f_ptr;
-    register struct misc *p_ptr;
-    register spell_type *m_ptr;
+    register struct misc  *p_ptr;
+    register spell_type   *m_ptr;
 
     free_turn_flag = TRUE;
     if (py.flags.blind > 0)

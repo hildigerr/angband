@@ -1,23 +1,17 @@
- /* config.h: configuration definitions
-
-   Copyright (c) 1989 James E. Wilson
-
-   This software may be copied and distributed for educational, research, and
-   not for profit purposes provided that this copyright and statement are
-   included in all such copies. */
-
-/* Person to bother if something goes wrong. */
-/* Recompile files.c and misc2.c if these change. */
-#define WIZARD	"root"
-
-/* Note that any reasonably modern compiler does better when you *don't* use
- * "register".  I've hacked it out here because I don't want to change every
- * arg list in the game.  You might want to undo this if your compiler sucks.
- *                   -CWS
+/* config.h: configuration definitions
+ *
+ * Copyright (c) 1989 James E. Wilson
+ *
+ * This software may be copied and distributed for educational, research, and
+ * not for profit purposes provided that this copyright and statement are
+ * included in all such copies.
  */
 
-#define register
+/* Person to bother if something goes wrong.
+ * Recompile files.c and misc2.c if these change.
+ */
 
+#define WIZARD	"root"
 
 /* There's a bug that results in invisible monsters for some reason.  I have a
  * workaround that may fix this, but it is a HACK and may result in other
@@ -35,11 +29,11 @@
  * wishes.
  */
 
-#define SET_UID		         /* define on multi-user systems */
-#undef CHECKHOURS            /* define if checking the 'hours' file */
-#define ALLOW_FIDDLING       /* Allow the players to copy save files */
-#define ALLOW_SCORE          /* Allow the user to check his score (v-key) */
-#define ALLOW_ARTIFACT_CHECK /* Allow the user to check artifacts */
+#define SET_UID		         /* define on multi-user systems                 */
+#undef CHECKHOURS            /* define if checking the 'hours' file          */
+#define ALLOW_FIDDLING       /* Allow the players to copy save files         */
+#define ALLOW_SCORE          /* Allow the user to check his score (v-key)    */
+#define ALLOW_ARTIFACT_CHECK /* Allow the user to check artifacts            */
 #define ALLOW_CHECK_UNIQUES  /* Allow player to check (dead) unique monsters */
 #define TARGET               /* Enable targeting mode                        */
 #define AUTOROLLER           /* Allow autorolling of characters              */
@@ -112,13 +106,22 @@
 #define ROGUE_LIKE TRUE
 
 
-/* for the ANDREW distributed file system, define this to ensure that
+/* for the AFS distributed file system, define this to ensure that
    the program is secure with respect to the setuid code, this prohibits
    inferior shells, also does not relinquish setuid priviledges at the start,
-   but instead calls the ANDREW library routines bePlayer(), beGames(),
+   but instead calls the AFS library routines bePlayer(), beGames(),
    and Authenticate() */
 
 /* #define SECURE */
+
+
+/* Note that any reasonably modern compiler does better when you *don't* use
+ * "register".  I've hacked it out here because I don't want to change every
+ * arg list in the game.  You might want to undo this if your compiler sucks.
+ *                   -CWS
+ */
+
+#define register
 
 
 /* this allows intelligent compilers to do better, as they know more
@@ -208,6 +211,7 @@
 #define NEEDS_STRICMP
 #endif
 
+
 /* this takes care of almost all "implicit declaration" warnings -CWS */
 
 #if defined(NeXT)
@@ -223,8 +227,8 @@
 #endif
 
 
-/* fix systems lacking usleep() -CWS (thanks to cba) */
-/*
+/* fix systems lacking usleep() -CWS 
+ *
  * Note that Solaris 2.x users without the BSD compatibilty kit need to
  * define this as well.
  */
@@ -243,6 +247,7 @@ int microsleep();
 #endif /* __STDC__ */
 
 #endif
+
 
 /* substitute strchr for index on USG versions of UNIX */
 #if defined(SYS_V) || defined(MSDOS) || defined(MAC)
@@ -308,6 +313,7 @@ extern int PlayerUID;
 #define geteuid() PlayerUID
 #endif
 
+
 /*****************************************************************************/
 
 /* Here's some functions that've been macroized rather than being called
@@ -318,27 +324,37 @@ extern int PlayerUID;
 #define MY_MAX(a,b) ((a) > (b) ? (a) : (b))
 #define MY_MIN(a,b) ((a) < (b) ? (a) : (b))
 
+
 /* Checks a co-ordinate for in bounds status		-RAK-	*/
+
 #define in_bounds(y, x) \
    ((((y) > 0) && ((y) < cur_height-1) && ((x) > 0) && ((x) < cur_width-1)) ? \
     (TRUE) : (FALSE))
+
 
 /* Checks if we can see this point (includes map edges) -CWS */
 #define in_bounds2(y, x) \
    ((((y) >= 0) && ((y) < cur_height) && ((x) >= 0) && ((x) < cur_width)) ? \
     (TRUE) : (FALSE))
 
-/* Tests a given point to see if it is within the screen -RAK-	*/
-/* boundaries.							  */
+
+/* Tests a given point to see if it is within the screen -RAK-
+ * boundaries.
+ */
+
 #define panel_contains(y, x) \
   ((((y) >= panel_row_min) && ((y) <= panel_row_max) && \
     ((x) >= panel_col_min) && ((x) <= panel_col_max)) ? (TRUE) : (FALSE))
 
+
 /* Generates a random integer X where 1<=X<=MAXVAL	-RAK-	*/
+
 #define randint(maxval) (((maxval) < 1) ? (1) : ((random() % (maxval)) + 1))
 
 /* You would think that most compilers can do an integral abs() quickly,
- * wouldn't you?  Nope.  [But fabs is a lot worse on most machines!] -CWS */
+ * wouldn't you?  Nope.  [But fabs is a lot worse on most machines!] -CWS
+ */
+
 #define MY_ABS(x) (((x)<0) ? (-x) : (x))
 
 /*****************************************************************************/

@@ -24,12 +24,12 @@
 void 
 read_scroll()
 {
-    int32u              i;
-    int                 j, k, item_val, y, x;
-    int                 tmp[6], used_up;
-    bigvtype            out_val, tmp_str;
-    register int        ident, l;
-    register inven_type *i_ptr;
+    int32u                i;
+    int                   j, k, item_val, y, x;
+    int                   tmp[6], used_up;
+    bigvtype              out_val, tmp_str;
+    register int          ident, l;
+    register inven_type  *i_ptr;
     register struct misc *m_ptr;
 
     free_turn_flag = TRUE;
@@ -78,7 +78,7 @@ read_scroll()
 			msg_print("The enchantment fails. ");
 		    ident = TRUE;
 		}
-		break;
+		break;		
 	      case 3:
 		k = 0;
 		l = 0;
@@ -121,14 +121,14 @@ read_scroll()
 		    ident = TRUE;
 		}
 		break;
+		
 	      case 4:
 		msg_print("This is an identify scroll.");
 		ident = TRUE;
 		used_up = ident_spell();
 
-	    /*
-	     * The identify may merge objects, causing the identify scroll to
-	     * move to a different place.	Check for that here.  It can
+	    /* The identify may merge objects, causing the identify scroll to
+	     * move to a different place.  Check for that here.  It can
 	     * move arbitrarily far if an identify scroll was used on another
 	     * identify scroll, but it always moves down. 
 	     */
@@ -256,6 +256,7 @@ read_scroll()
 		    ident = TRUE;
 		}
 		break;
+		
 	      case 34:
 		i_ptr = &inventory[INVEN_WIELD];
 		if (i_ptr->tval != TV_NOTHING) {
@@ -369,8 +370,7 @@ read_scroll()
 		    } else {	   /* not artifact or failed save... */
 		(void)sprintf(out_val, "A terrible black aura blasts your %s!", tmp_str);
 			msg_print(out_val);
-			py_bonuses(i_ptr, -1);	/* take off current bonuses
-						 * -CFT */
+			py_bonuses(i_ptr, -1);	/* take off current bonuses -CFT */
 			i_ptr->name2 = SN_BLASTED;
 			i_ptr->flags = TR_CURSED;
 			i_ptr->flags2 = 0;

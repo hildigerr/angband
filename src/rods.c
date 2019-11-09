@@ -32,7 +32,7 @@ static int          direction();
 
 static int 
 direction(dir)
-    int                *dir;
+int *dir;
 {
     if (get_dir(NULL, dir)) {
 	if (py.flags.confused > 0) {

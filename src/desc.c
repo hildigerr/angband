@@ -26,7 +26,7 @@
 #ifdef __STDC__
 static void unsample(inven_type *);
 #else
-static void         unsample();
+static void unsample();
 #endif
 #endif
 
@@ -36,7 +36,7 @@ char                titles[MAX_TITLES][10];
 
 int 
 is_a_vowel(ch)
-    int                ch;
+int ch;
 {
     switch (ch & 127) {
       case 'a':
@@ -59,9 +59,9 @@ is_a_vowel(ch)
 void 
 magic_init()
 {
-    register int        h, i, j, k;
-    register const char      *tmp;
-    vtype               string;
+    register int         h, i, j, k;
+    register const char *tmp;
+    vtype                string;
 
     set_seed(randes_seed);
 
@@ -122,7 +122,7 @@ magic_init()
 
 int16 
 object_offset(t_ptr)
-    inven_type         *t_ptr;
+inven_type *t_ptr;
 {
     switch (t_ptr->tval) {
       case TV_ROD:
@@ -153,10 +153,10 @@ object_offset(t_ptr)
 /* Remove "Secret" symbol for identity of object			 */
 void 
 known1(i_ptr)
-    inven_type         *i_ptr;
+inven_type *i_ptr;
 {
-    int16               offset;
-    int8u               indexx;
+    int16 offset;
+    int8u indexx;
 
     if ((offset = object_offset(i_ptr)) < 0)
 	return;
@@ -169,13 +169,12 @@ known1(i_ptr)
 
 int 
 known1_p(i_ptr)
-    inven_type         *i_ptr;
+inven_type *i_ptr;
 {
-    int16               offset;
-    int8u               indexx;
+    int16 offset;
+    int8u indexx;
 
-/*
- * Items which don't have a 'color' are always known1, so that they can be
+/* Items which don't have a 'color' are always known1, so that they can be
  * carried in order in the inventory.  
  */
     if ((offset = object_offset(i_ptr)) < 0)
@@ -187,47 +186,52 @@ known1_p(i_ptr)
     return (object_ident[offset + indexx] & OD_KNOWN1);
 }
 
+
 /* Remove "Secret" symbol for identity of plusses			 */
 void 
 known2(i_ptr)
-    inven_type         *i_ptr;
+inven_type *i_ptr;
 {
     unsample(i_ptr);
     i_ptr->ident |= ID_KNOWN2;
 }
 
+
 int 
 known2_p(i_ptr)
-    inven_type         *i_ptr;
+inven_type *i_ptr;
 {
     return (i_ptr->ident & ID_KNOWN2);
 }
 
+
 void 
 clear_known2(i_ptr)
-    inven_type         *i_ptr;
+inven_type *i_ptr;
 {
     i_ptr->ident &= ~ID_KNOWN2;
 }
 
+
 void 
 clear_empty(i_ptr)
-    inven_type         *i_ptr;
+inven_type *i_ptr;
 {
     i_ptr->ident &= ~ID_EMPTY;
 }
 
 void 
 store_bought(i_ptr)
-    inven_type         *i_ptr;
+inven_type *i_ptr;
 {
     i_ptr->ident |= ID_STOREBOUGHT;
     known2(i_ptr);
 }
 
+
 int 
 store_bought_p(i_ptr)
-    inven_type         *i_ptr;
+inven_type *i_ptr;
 {
     return (i_ptr->ident & ID_STOREBOUGHT);
 }
@@ -235,10 +239,10 @@ store_bought_p(i_ptr)
 /* Remove an automatically generated inscription.	-CJS- */
 static void 
 unsample(i_ptr)
-    inven_type         *i_ptr;
+inven_type *i_ptr;
 {
-    int16               offset;
-    int8u               indexx;
+    int16 offset;
+    int8u indexx;
 
 /* used to clear ID_DAMD flag, but I think it should remain set */
     i_ptr->ident &= ~(ID_MAGIK | ID_EMPTY);
@@ -254,10 +258,10 @@ unsample(i_ptr)
 /* Somethings been sampled -CJS- */
 void 
 sample(i_ptr)
-    inven_type         *i_ptr;
+inven_type *i_ptr;
 {
-    int16               offset;
-    int8u               indexx;
+    int16 offset;
+    int8u indexx;
 
     if ((offset = object_offset(i_ptr)) < 0)
 	return;
@@ -273,10 +277,10 @@ sample(i_ptr)
  */
 void 
 identify(item)
-    int                *item;
+int *item;
 {
-    register int        i, x1, x2;
-    int                 j;
+    register int         i, x1, x2;
+    int                  j;
     register inven_type *i_ptr, *t_ptr;
 
     i_ptr = &inventory[*item];
@@ -321,10 +325,11 @@ identify(item)
  */
 void 
 unmagic_name(i_ptr)
-    inven_type         *i_ptr;
+inven_type *i_ptr;
 {
     i_ptr->name2 = SN_NULL;
 }
+
 
 /* defines for p1_use, determine how the p1 field is printed */
 #define IGNORED  0		/* never show (+x) */
@@ -334,27 +339,28 @@ unmagic_name(i_ptr)
 #define FLAGS    4		/* show p1 as (+x of yyy) */
 #define Z_PLUSSES 5             /* always show p1 as (+x), even if x==0 -CWS */
 
-/* Returns a description of item for inventory			 */
-/* pref indicates that there should be an article added (prefix) */
-/*
+
+/* Returns a description of item for inventory
+ * pref indicates that there should be an article added (prefix)
+ *
  * note that since out_val can easily exceed 80 characters, objdes must
  * always be called with a bigvtype as the first paramter 
- */
-/*
+ *****
  * Note that objdes now never returns a description ending with punctuation
  * (ie, "."'s) -CWS 
  */
+
 void 
 objdes(out_val, i_ptr, pref)
-    char               *out_val;
-    register inven_type *i_ptr;
-    int                 pref;
+char                *out_val;
+register inven_type *i_ptr;
+int                  pref;
 {
 /* base name, modifier string */
-    register const char      *basenm, *modstr;
-    bigvtype            tmp_val;
-    vtype               tmp_str, damstr;
-    int                 indexx, p1_use, modify, append_name;
+    register const char *basenm, *modstr;
+    bigvtype             tmp_val;
+    vtype                tmp_str, damstr;
+    int                  indexx, p1_use, modify, append_name;
 
     indexx = i_ptr->subval & (ITEM_SINGLE_STACK_MIN - 1);
     basenm = object_list[i_ptr->index].name;
@@ -522,8 +528,7 @@ objdes(out_val, i_ptr, pref)
 	    else if (indexx <= 20)
 		basenm = "& Hairy %s Mold~";
 	    else
-		append_name = FALSE;	/* Ordinary food has no name
-					 * appended. */
+		append_name = FALSE;	/* Ordinary food has no name appended. */
 	    if (indexx <= 20)
 		modstr = mushrooms[indexx];
 	} else {
@@ -550,9 +555,9 @@ objdes(out_val, i_ptr, pref)
       case TV_SECRET_DOOR:
       case TV_RUBBLE:
 	break;
+      case TV_GOLD:
       case TV_INVIS_TRAP:
       case TV_VIS_TRAP:
-      case TV_GOLD:
       case TV_UP_STAIR:
       case TV_DOWN_STAIR:
 	(void)strcpy(out_val, object_list[i_ptr->index].name);
@@ -760,8 +765,8 @@ objdes(out_val, i_ptr, pref)
 
 void 
 invcopy(to, from_index)
-    register inven_type *to;
-    int                 from_index;
+register inven_type *to;
+int                  from_index;
 {
     register treasure_type *from;
 
@@ -792,10 +797,10 @@ invcopy(to, from_index)
 /* Describe number of remaining charges.		-RAK-	 */
 void 
 desc_charges(item_val)
-    int                 item_val;
+int item_val;
 {
-    register int        rem_num;
-    vtype               out_val;
+    register int rem_num;
+    vtype        out_val;
 
     if (known2_p(&inventory[item_val])) {
 	rem_num = inventory[item_val].p1;
@@ -808,9 +813,9 @@ desc_charges(item_val)
 /* Describe amount of item remaining.			-RAK-	 */
 void 
 desc_remain(item_val)
-    int                 item_val;
+int item_val;
 {
-    bigvtype            out_val, tmp_str;
+    bigvtype             out_val, tmp_str;
     register inven_type *i_ptr;
 
     i_ptr = &inventory[item_val];

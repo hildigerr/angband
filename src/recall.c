@@ -77,6 +77,7 @@ static const char  *desc_amethod[] = {
 				      "engulf",
 				      "moan"
 };
+
 static const char  *desc_howmuch[] = {
 				      " not at all",
 				      " a bit",
@@ -94,6 +95,7 @@ static const char  *desc_move[] = {
 				   "kill weaker creatures",
 				   "pick up objects",
 				   "breed explosively"};
+
 static const char  *desc_spell[] = {
 				    "1",
 				    "2",
@@ -177,10 +179,12 @@ static const char  *desc_spell[] = {
 				    "summon greater undead",
 				    "summon ancient dragons",
 };
+
 static const char  *desc_weakness[] = {
 				       "bright light",
 				       "rock remover"
 };
+
 static const char  *desc_immune[] = {
 				     "frost",
 				     "fire",
@@ -199,8 +203,8 @@ static int          roffpline;	   /* Place to print line now being loaded. */
 
 /* the higher the level of the monster, the fewer the kills you need */
 #define knowarmor(l,d)		((d) > 304 / (4 + (l)))
-/*
- * the higher the level of the monster, the fewer the attacks you need, the
+
+/* the higher the level of the monster, the fewer the attacks you need, the
  * more damage an attack does, the more attacks you need 
  */
 #define knowdamage(l,a,d)	((4 + (l))*(a) > 80 * (d))
@@ -212,10 +216,10 @@ static int          roffpline;	   /* Place to print line now being loaded. */
 /* Do we know anything about this monster? */
 int 
 bool_roff_recall(mon_num)
-    int                 mon_num;
+int mon_num;
 {
     register recall_type *mp;
-    register int        i;
+    register int          i;
 
     if (wizard)
 	return TRUE;
@@ -232,20 +236,18 @@ bool_roff_recall(mon_num)
 /* Print out what we have discovered about this monster. */
 int 
 roff_recall(mon_num)
-    int                 mon_num;
+int mon_num;
 {
-    const char               *p, *q;
-    attid              *pu;
-    vtype               temp;
-    register recall_type *mp;
+    const char             *p, *q;
+    attid                  *pu;
+    vtype                   temp;
+    register recall_type   *mp;
     register creature_type *cp;
-    register int32u     i, k;	   /* changed from int, to avoid PC's 16bit
-				    * ints -CFT */
+    register int32u         i, k;   /* changed from int, to avoid PC's 16bit ints -CFT */
     int32u              j;
     int                 mspeed;
     int32u              rcmove, rspells, rspells2, rspells3;
-    int32u              rcdefense; /* this was int16u, but c_recall[] uses
-				    * int32u -CFT */
+    int32u              rcdefense; /* this was int16u, but c_recall[] uses int32u -CFT */
     recall_type         save_mem;
     int                 breath = FALSE, magic = FALSE;
     char                sex;
@@ -415,8 +417,7 @@ roff_recall(mon_num)
     }
     if (k)
 	roff(".  ");
-/*
- * Kill it once to know experience, and quality (evil, undead, monsterous).
+/* Kill it once to know experience, and quality (evil, undead, monsterous).
  * The quality of being a dragon is obvious. 
  */
     if (mp->r_kills) {
@@ -447,8 +448,8 @@ roff_recall(mon_num)
 
     /* calculate the integer exp part */
 	i = (long)cp->mexp * cp->level / py.misc.lev;
-    /*
-     * calculate the fractional exp part scaled by 100, must use long
+
+    /* calculate the fractional exp part scaled by 100, must use long
      * arithmetic to avoid overflow 
      */
 	j = (((long)cp->mexp * cp->level % py.misc.lev) * (long)1000 /
@@ -479,7 +480,7 @@ roff_recall(mon_num)
 	(void)sprintf(temp, " for a%s %lu%s level character.  ", q, (long)i, p);
 	roff(temp);
 	if (cp->cdefense & GROUP) {
-	    sprintf(temp, "%s usually appears in groups. ",
+	    sprintf(temp, "%s usually appears in groups.  ",
 		    (sex == 'm' ? "He" : sex == 'f' ? "She" :
 		     sex == 'p' ? "They" : "It"));
 	    roff(temp);
@@ -617,9 +618,9 @@ roff_recall(mon_num)
 	}
 	roff(".  ");
     }
+
 /* Do we know how hard they are to kill? Armor class, hit die. */
-    if (knowarmor(cp->level, mp->r_kills) ||	/* hasten learning  of
-						 * uniques -CFT */
+    if (knowarmor(cp->level, mp->r_kills) ||	/* hasten learning of uniques -CFT */
 	((cp->cdefense & UNIQUE) && knowuniqarmor(cp->level, mp->r_kills))) {
 	(void)sprintf(temp, "%s an armor rating of %d",
 		      (sex == 'm' ? "He has" : sex == 'f' ? "She has" :
@@ -634,8 +635,7 @@ roff_recall(mon_num)
 /* Do we know how clever they are? Special abilities. */
     k = TRUE;
     j = rcmove;
-    if (rcdefense & BREAK_WALL) {  /* I wonder why this wasn't here before?
-				    * -CFT */
+    if (rcdefense & BREAK_WALL) {  /* I wonder why this wasn't here before? -CFT */
 	roff((sex == 'm' ? "He can bore through rock" :
 	      sex == 'f' ? "She can bore through rock" :
 	      sex == 'p' ? "They can bore through rock" :
@@ -795,6 +795,7 @@ roff_recall(mon_num)
 	else
 	    roff(" treasure.  ");
     }
+
 /* We know about attacks it has used on us, and maybe the damage they do. */
 /* k is the total number of known attacks, used for punctuation */
     k = 0;
@@ -873,10 +874,10 @@ roff_recall(mon_num)
 /* Print out strings, filling up lines as we go. */
 static void 
 roff(p)
-    register const char *p;
+register const char *p;
 {
-    register char      *q, *r;
-    register int        linesize;
+    register char *q, *r;
+    register int   linesize;
 
     linesize = sizeof(roffbuf);
     if (linesize > 80)

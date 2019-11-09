@@ -18,8 +18,8 @@
 #ifndef ATARIST_MWC
 #include <string.h>
 #else
-char               *strcat();
-char               *strcpy();
+char *strcat();
+char *strcpy();
 #endif
 #else
 #include <strings.h>
@@ -28,9 +28,9 @@ char               *strcpy();
 /* Lets do all prototypes correctly.... -CWS */
 #ifndef NO_LINT_ARGS
 #ifdef __STDC__
-static int check_mon_lite(int, int);
+static int  check_mon_lite(int, int);
 static void get_moves(int, int *);
-static int monster_critical(int, int, int);
+static int  monster_critical(int, int, int);
 static void make_attack(int);
 static void make_move(int, int *, int32u *);
 static void mon_cast_spell(int, int *);
@@ -38,30 +38,30 @@ static void mon_move(int, int32u *);
 static void shatter_quake(int, int);
 static void br_wall(int, int);
 #else
-static int          check_mon_lite();
-static void         get_moves();
-static int          monster_critical();
-static void         make_attack();
-static void         make_move();
-static void         mon_cast_spell();
-static void         mon_move();
-static void         shatter_quake();
-static void         br_wall();
+static int  check_mon_lite();
+static void get_moves();
+static int  monster_critical();
+static void make_attack();
+static void make_move();
+static void mon_cast_spell();
+static void mon_move();
+static void shatter_quake();
+static void br_wall();
 #endif
 #endif
 
 /* Updates screen when monsters move about		-RAK-	 */
 void 
 update_mon(monptr)
-    int                 monptr;
+int monptr;
 {
-    register int        flag;
-    register cave_type *c_ptr;
-    register monster_type *m_ptr;
+    register int           flag;
+    register cave_type     *c_ptr;
+    register monster_type  *m_ptr;
     register creature_type *r_ptr;
 
 #ifdef ATARIST_MWC
-    int32u              holder;
+    int32u                 holder;
 
 #endif
 
@@ -73,6 +73,7 @@ update_mon(monptr)
     /* Wizard sight.	     */
 	if (wizard)
 	    flag = TRUE;
+
     /* if not mindless, telepathy sees -CWS */
 	if (py.flags.telepathy) {
 	    char c = c_list[m_ptr->mptr].cchar;
@@ -134,7 +135,7 @@ update_mon(monptr)
 		    msg_print(BUF);
 		c_ptr->cptr = monptr;
 	    }
-#endif				   /* GROSS_HACK */
+#endif  /* GROSS_HACK */
 	    r_ptr = &c_list[m_ptr->mptr];
 	/* moved here to allow infra to see invis -CFT */
 	    if ((py.flags.see_infra > 0) &&
@@ -250,9 +251,9 @@ int monnum;
 /* Makes sure a new creature gets lit up.			-CJS- */
 static int 
 check_mon_lite(y, x)
-    int                 y, x;
+    int y, x;
 {
-    register int        monptr;
+    register int monptr;
 
     monptr = cave[y][x].cptr;
     if (monptr <= 1)
@@ -267,10 +268,10 @@ check_mon_lite(y, x)
 /* Choose correct directions for monster movement	-RAK-	 */
 static void 
 get_moves(monptr, mm)
-    int                 monptr;
-    register int       *mm;
+    int          monptr;
+    register int *mm;
 {
-    int                 y, ay, x, ax, move_val;
+    int y, ay, x, ax, move_val;
 
     y = m_list[monptr].fy - char_row;
     x = m_list[monptr].fx - char_col;
@@ -287,6 +288,7 @@ get_moves(monptr, mm)
 	y = (-y);     /* FIXME: make monsters running away more intelligent */
 	x = (-x);
     }
+
     if (y < 0) {
 	move_val = 8;
 	ay = (-y);
@@ -299,6 +301,7 @@ get_moves(monptr, mm)
 	ax = x;
     } else
 	ax = (-x);
+
 /* this has the advantage of preventing the diamond maneuvre, also faster */
     if (ay > (ax << 1))
 	move_val += 2;
@@ -426,10 +429,10 @@ get_moves(monptr, mm)
 
 static int 
 monster_critical(dice, sides, dam)
-    int                 dice, sides, dam;
+int dice, sides, dam;
 {
-    int                 total = dice * sides;
-    int                 max = 0;
+    int total = dice * sides;
+    int max = 0;
 
     if (dam == total && dam > 20)
 	max = 1;
@@ -455,24 +458,24 @@ monster_critical(dice, sides, dam)
 /* Make an attack on the player (chuckle.)		-RAK-	 */
 static void 
 make_attack(monptr)
-    int                 monptr;
+int monptr;
 {
-    int                 attype, adesc, adice, asides;
-    int                 i, j, damage, flag, attackn, notice, visible;
-    int                 shatter = FALSE;
-    int                 CUT = FALSE, STUN = FALSE;
-    int32               gold;
-    attid              *attstr, *attstr_orig;
-    vtype               cdesc, tmp_str, ddesc;
+    int                    attype, adesc, adice, asides;
+    int                    i, j, damage, flag, attackn, notice, visible;
+    int                    shatter = FALSE;
+    int                    CUT = FALSE, STUN = FALSE;
+    int32                  gold;
+    attid                  *attstr, *attstr_orig;
+    vtype                  cdesc, tmp_str, ddesc;
     register creature_type *r_ptr;
-    monster_type       *m_ptr;
-    register struct misc *p_ptr;
-    register struct flags *f_ptr;
-    register inven_type *i_ptr;
-    int8u               blinked = 0;	/* flag to see if blinked away (after
+    monster_type           *m_ptr;
+    register struct misc   *p_ptr;
+    register struct flags  *f_ptr;
+    register inven_type    *i_ptr;
+    int8u                  blinked = 0;	/* flag to see if blinked away (after
 					 * steal) -CFT */
 
-    if (death)			   /* don't beat a dead body! */
+    if (death)			        /* don't beat a dead body! */
 	return;
 
     m_ptr = &m_list[monptr];
@@ -502,8 +505,10 @@ make_attack(monptr)
     attackn = 0;
     attstr = r_ptr->damage;
     attstr_orig = attstr;
+
  /* if has no attacks (*attstr starts off 0), still loop once to accumulate
-    notices that it has no attacks - dbd */
+  * notices that it has no attacks - dbd
+  */
     while ((*attstr != 0 || attstr == attstr_orig) && !death && !blinked) {
 	attype = monster_attacks[*attstr].attack_type;
 	adesc = monster_attacks[*attstr].attack_desc;
@@ -652,7 +657,7 @@ make_attack(monptr)
 	  case 99:
 	    flag = TRUE;
 	    break;
-	  case 0:		/* Monster has no physical attacks - dbd */
+	  case 0:		   /* Monster has no physical attacks - dbd */
 	    flag = TRUE;
 	    break;
 	  default:
@@ -1070,21 +1075,21 @@ make_attack(monptr)
 			    chance = randint(5);
 			if ((i_ptr->tohit > 0) && (chance < 3)){
 			    i_ptr->tohit -= randint(2);
-			/* don't send it below zero */
+			    /* don't send it below zero */
 			    if (i_ptr->tohit < 0)
 				i_ptr->tohit = 0;
 			    flag = TRUE;
 			}
 			if ((i_ptr->todam > 0) && (chance < 3)) {
 			    i_ptr->todam -= randint(2);
-			/* don't send it below zero */
+			    /* don't send it below zero */
 			    if (i_ptr->todam < 0)
 				i_ptr->todam = 0;
 			    flag = TRUE;
 			}
 			if ((i_ptr->toac > 0) && (chance < 3)) {
-			    i_ptr->toac -= randint(2);
-			/* don't send it below zero */
+			    i_ptr->toac  -= randint(2);
+			    /* don't send it below zero */
 			    if (i_ptr->toac < 0)
 				i_ptr->toac = 0;
 			    flag = TRUE;
@@ -1246,10 +1251,7 @@ make_attack(monptr)
 		break;
 	    }
 
-	/*
-	 * moved here from mon_move, so that monster only confused if it
-	 * actually hits 
-	 */
+/* moved here from mon_move, so that monster only confused if it actually hits */
 	    if (!attype) {	/* if no attacks, monster can't get confused -dbd */
 		if (py.flags.confuse_monster && py.flags.protevil <= 0) {
 		    msg_print("Your hands stop glowing.");
@@ -1299,15 +1301,14 @@ make_attack(monptr)
 /* Make the move if possible, five choices		-RAK-	 */
 static void 
 make_move(monptr, mm, rcmove)
-    int                 monptr;
-    int                *mm;
-    int32u             *rcmove;
+int     monptr, *mm;
+int32u *rcmove;
 {
-    int                 i, newy, newx, do_turn, do_move, stuck_door;
-    int32u              movebits;
-    register cave_type *c_ptr;
+    int                   i, newy, newx, do_turn, do_move, stuck_door;
+    int32u                movebits;
+    register cave_type    *c_ptr;
     register monster_type *m_ptr;
-    register inven_type *t_ptr;
+    register inven_type   *t_ptr;
 
 #ifdef ATARIST_MWC
     int32u              holder;
@@ -1325,7 +1326,7 @@ make_move(monptr, mm, rcmove)
 	(void)mmove(mm[i], &newy, &newx);
 	c_ptr = &cave[newy][newx];
 
-	if ((i == 4) && (m_ptr->monfear) &&                  /* cornered (or things in the way!) -CWS */
+	if ((i == 4) && (m_ptr->monfear) &&  /* cornered (or things in the way!) -CWS */
 	    ((c_ptr->fval > MAX_OPEN_SPACE) || (c_ptr->cptr > 1))) {
 	    creature_type      *r_ptr = &c_list[m_ptr->mptr];
 	    vtype               m_name, out_val;
@@ -1353,14 +1354,14 @@ make_move(monptr, mm, rcmove)
 		do_move = TRUE;
 		c_recall[m_ptr->mptr].r_cdefense |= BREAK_WALL;
 		if ((t_ptr->tval == TV_CLOSED_DOOR) ||
-		    (t_ptr->tval == TV_SECRET_DOOR)) {	/* break the door -CFT */
+		    (t_ptr->tval == TV_SECRET_DOOR)) {	/* break the door -CFT  */
 		    invcopy(t_ptr, OBJ_OPEN_DOOR);
-		    t_ptr->p1 = (-1);/* make it broken, not just open */
-		    c_ptr->fval = CORR_FLOOR;	/* change floor setting */
-		    lite_spot(newy, newx);	/* show broken door */
+		    t_ptr->p1 = (-1);          /* make it broken, not just open */
+		    c_ptr->fval = CORR_FLOOR;	        /* change floor setting */
+		    lite_spot(newy, newx);	        /* show broken door     */
 		    msg_print("You hear a door burst open!");
 		    disturb(1, 0);
-		} else		   /* otherwise, break those walls! -CFT */
+		} else		          /* otherwise, break those walls! -CFT */
 		    (void)twall(newy, newx, 1, 0);
 	    }
 	/* Creature can open doors?	   */
@@ -1370,15 +1371,15 @@ make_move(monptr, mm, rcmove)
 		    stuck_door = FALSE;
 		    if (t_ptr->tval == TV_CLOSED_DOOR) {
 			do_turn = TRUE;
-			if ((m_ptr->monfear) && randint(2) == 1) /* afraid */
+			if ((m_ptr->monfear) && randint(2) == 1) /* afraid       */
 			    t_ptr->p1 = 0;
-			if (t_ptr->p1 == 0)             /* Closed door */
+			if (t_ptr->p1 == 0)                      /* Closed door  */
 			    do_move = TRUE;
-			else if (t_ptr->p1 > 0) {	/* Locked doors	 */
+			else if (t_ptr->p1 > 0) {	         /* Locked doors */
 			    if (randint((m_ptr->hp + 1) * (50 + t_ptr->p1)) <
 				40 * (m_ptr->hp - 10 - t_ptr->p1))
 				t_ptr->p1 = 0;
-			} else if (t_ptr->p1 < 0) {	/* Stuck doors	 */
+			} else if (t_ptr->p1 < 0) {	         /* Stuck doors  */
 			    if (randint((m_ptr->hp + 1) * (50 - t_ptr->p1)) <
 				40 * (m_ptr->hp - 10 + t_ptr->p1)) {
 				msg_print("You hear a door burst open!");
@@ -1400,8 +1401,7 @@ make_move(monptr, mm, rcmove)
 			*rcmove |= CM_OPEN_DOOR;
 			do_move = FALSE;
 		    }
-		} else {	   /* Creature can not open doors, must bash
-				    * them   */
+		} else {	   /* Creature can not open doors, must bash them   */
 		    if (t_ptr->tval == TV_CLOSED_DOOR) {
 			do_turn = TRUE;
 			if (randint((m_ptr->hp + 1) * (80 + MY_ABS(t_ptr->p1))) <
@@ -1427,9 +1427,8 @@ make_move(monptr, mm, rcmove)
 		    (void)delete_object(newy, newx);
 		} else {
 		    do_move = FALSE;
-		/* If the creature moves only to attack, */
-		/* don't let it move if the glyph prevents */
-		/* it from attacking */
+/* If the creature moves only to attack, don't let it move if the glyph
+ * prevents it from attacking */
 		    if (movebits & CM_ATTACK_ONLY)
 			do_turn = TRUE;
 		}
@@ -1499,9 +1498,8 @@ make_move(monptr, mm, rcmove)
 		if (movebits & CM_PICKS_UP)
 #endif
 		{
-		    int32u              t;	/* used in code to prevent
-						 * orcs from picking up Slay
-						 * Orc weapons, etc -CFT */
+/* used in code to prevent orcs from picking up Slay Orc weapons, etc -CFT */
+		    int32u t;
 
 		    c_ptr = &cave[newy][newx];
 
@@ -1537,8 +1535,7 @@ make_move(monptr, mm, rcmove)
 			    vtype               m_name, out_val, i_name;
 			    int                 ii, split = (-1);
 
-			    update_mon(monptr);	/* make sure ml see right
-						 * -CFT */
+			    update_mon(monptr);	/* make sure ml see right -CFT */
 			    if ((m_ptr->ml) && los(char_row, char_col, m_ptr->fy,
 						   m_ptr->fx)) {
 			    /* if we can see it, tell us what happened -CFT */
@@ -1555,13 +1552,13 @@ make_move(monptr, mm, rcmove)
 				    out_val[split] = 0;
 				    msg_print(out_val);
 				    msg_print(&out_val[split + 1]);
-				} else	/* if ii <= 71, then it'll fit nicely
-					 * in 1 line. Or, we found no space
-					 * to split at... -CFT */
+				} else
+			   /* if ii <= 71, then it'll fit nicely in 1 line.
+			    * Or, we found no space to split at... -CFT */
 				    msg_print(out_val);
 			    } /* if can see */
 			}
-			 /* if shouldn't pick up */ 
+			      /* if shouldn't pick up */ 
 			else
 			    (void)delete_object(newy, newx);
 		    }
@@ -1580,21 +1577,19 @@ make_move(monptr, mm, rcmove)
 /* took_turn  = true if creature casts a spell		 */
 static void 
 mon_cast_spell(monptr, took_turn)
-    int                 monptr;
-    int                *took_turn;
+int monptr, *took_turn;
 {
-    int32u              i;
-    int                 y, x, chance, thrown_spell, r1;
-    register int        k;
-    int                 spell_choice[64], desperate = FALSE;
-    vtype               cdesc, outval, ddesc;
-    register struct flags *f_ptr;
-    register monster_type *m_ptr;
+    int32u                 i;
+    int                    y, x, chance, thrown_spell, r1;
+    register int           k;
+    int                    spell_choice[64], desperate = FALSE;
+    vtype                  cdesc, outval, ddesc;
+    register struct flags  *f_ptr;
+    register monster_type  *m_ptr;
     register creature_type *r_ptr;
-    char                sex;
-
-    int                 blind = (py.flags.blind > 0);	/* alter msgs if player
-							 * can't see -CFT */
+    char                   sex;
+    int                    blind = (py.flags.blind > 0);
+/* alter msgs if player can't see -CFT */
 
     if (death)
 	return;
@@ -2161,8 +2156,7 @@ mon_cast_spell(monptr, took_turn)
  */
 		(void)strcat(cdesc, "looks as healthy as can be.");
 		msg_print(cdesc);
-		if (m_ptr->monfear > 0) {	/* can't be afraid at max
-						 * hp's */
+		if (m_ptr->monfear > 0) {	/* can't be afraid at max hp's */
 		    m_ptr->monfear = 0;
 		    monster_is_afraid = (-1);
 		}
@@ -2607,7 +2601,8 @@ mon_cast_spell(monptr, took_turn)
 	    if (!blind)
 		(void)strcat(cdesc, "summons special opponents!");
 	    else
-		(void)strcat(cdesc, "mumbles, and you're worried by the things you hear nearby.");
+		(void)strcat(cdesc,
+			     "mumbles, and you're worried by the things you hear nearby.");
 	    msg_print(cdesc);
 	    y = char_row;
 	    x = char_col;
@@ -2665,8 +2660,7 @@ mon_cast_spell(monptr, took_turn)
 	    msg_print(cdesc);
 	}
     /* End of spells				       */
-	if ((m_ptr->ml)		   /* this won't work if we've been moved,
-				    * so... */
+	if ((m_ptr->ml)		   /* this won't work if we've been moved, so... */
 	    ||(thrown_spell == 45) /* add teleport away, */
 	    ||(thrown_spell == 57) /* and teleport lv -CFT */
 	    ) {
@@ -2689,8 +2683,7 @@ mon_cast_spell(monptr, took_turn)
 /* Rats and Flys are fun!					 */
 int 
 multiply_monster(y, x, cr_index, monptr)
-    int                 y, x, cr_index;
-    int                 monptr;
+int y, x, cr_index, monptr;
 {
     register int        i, j, k;
     register cave_type *c_ptr;
@@ -2762,22 +2755,22 @@ multiply_monster(y, x, cr_index, monptr)
 /* Move the critters about the dungeon			-RAK-	 */
 static void 
 mon_move(monptr, rcmove)
-    int                 monptr;
-    int32u             *rcmove;
+int                 monptr;
+int32u             *rcmove;
 {
-    register int        i, j;
-    int                 k, move_test, dir;
+    register int           i, j;
+    int                    k, move_test, dir;
     register creature_type *r_ptr;
-    register monster_type *m_ptr;
-    int                 mm[9];
-    bigvtype            out_val, m_name;
+    register monster_type  *m_ptr;
+    int                    mm[9];
+    bigvtype               out_val, m_name;
 
     m_ptr = &m_list[monptr];
     r_ptr = &c_list[m_ptr->mptr];
 
 /* reduce fear, tough monsters can unfear faster -CFT, hacked by DGK */
     if (m_ptr->monfear) {
-	int t = (int)m_ptr->monfear; /* use int so avoid unsigned wraparound -CFT */
+	int t = (int)m_ptr->monfear;    /* use int so avoid unsigned wraparound -CFT */
 	t -= randint(c_list[m_ptr->mptr].level / 10);
 	if (t <= 0) {
 	    t = 0;
@@ -2798,8 +2791,7 @@ mon_move(monptr, rcmove)
 	    for (j = (int)m_ptr->fx - 1; j <= (int)m_ptr->fx + 1; j++)
 		if (in_bounds(i, j) && (cave[i][j].cptr > 1))
 		    k++;
-    /*
-     * can't call randint with a value of zero, increment counter to allow
+    /* can't call randint with a value of zero, increment counter to allow
      * creature multiplication 
      */
 	if (k == 0)
@@ -2814,8 +2806,8 @@ mon_move(monptr, rcmove)
 /* if in wall, must immediately escape to a clear area */
     if (!(r_ptr->cmove & CM_PHASE) &&
 	(cave[m_ptr->fy][m_ptr->fx].fval >= MIN_CAVE_WALL)) {
-    /*
-     * If the monster is already dead, don't kill it again! This can happen
+
+    /* If the monster is already dead, don't kill it again! This can happen
      * for monsters moving faster than the player.  They will get multiple
      * moves, but should not if they die on the first move.  This is only a
      * problem for monsters stuck in rock.  
@@ -2842,15 +2834,12 @@ mon_move(monptr, rcmove)
 	    make_move(monptr, mm, rcmove);
 	/* this can only fail if mm[0] has a rune of protection */
 	}
-    /*
-     * if still in a wall, let it dig itself out, but also apply some more
-     * damage 
-     */
+
+/* if still in a wall, let it dig itself out, but also apply some more damage */
 	if (cave[m_ptr->fy][m_ptr->fx].fval >= MIN_CAVE_WALL) {
-	/*
-	 * in case the monster dies, may need to call fix1_delete_monster()
-	 * instead of delete_monsters() 
-	 */
+/* in case the monster dies, may need to call fix1_delete_monster()
+ * instead of delete_monsters() 
+ */
 	    hack_monptr = monptr;
 	    i = mon_take_hit(monptr, damroll(8, 8), FALSE);
 	    hack_monptr = (-1);
@@ -2868,12 +2857,13 @@ mon_move(monptr, rcmove)
 	mm[2] = randint(9);
 	mm[3] = randint(9);
 	mm[4] = randint(9);
-    /* don't move him if he is not supposed to move! */
+/* don't move him if he is not supposed to move! */
 	if (!(r_ptr->cmove & CM_ATTACK_ONLY)) {
 	    *rcmove |= CM_ATTACK_ONLY;
 	    make_move(monptr, mm, rcmove);
 	}
-    /* reduce conf, tough monsters can unconf faster -CFT */
+
+/* reduce conf, tough monsters can unconf faster -CFT */
 	{			/* use int so avoid unsigned wraparound -CFT */
 	    int t = (int)m_ptr->confused;
 
@@ -2884,6 +2874,7 @@ mon_move(monptr, rcmove)
 	}
 	move_test = TRUE;
     }
+
 /* Creature may cast a spell */
     else if (r_ptr->spells != 0) {
 	mon_cast_spell(monptr, &move_test);
@@ -2939,10 +2930,9 @@ mon_move(monptr, rcmove)
 	    make_move(monptr, mm, rcmove);
 	} else if ((r_ptr->cmove & CM_ALL_MV_FLAGS) == 0 &&
 		   (m_ptr->cdis < 2)) {
-	/*
-	 * little hack for Quylthulgs, so that will eventually notice that
-	 * they have no physical attacks 
-	 */
+
+	    /* little hack for Quylthulgs, so that will eventually notice
+	     * that they have no physical attacks */
 	    if (c_recall[m_ptr->mptr].r_attacks[0] < MAX_UCHAR)
 		c_recall[m_ptr->mptr].r_attacks[0]++;
 	}
@@ -2953,20 +2943,19 @@ mon_move(monptr, rcmove)
 /* Creatures movement and attacking are done from here	-RAK-	 */
 void 
 creatures(attack)
-    int                 attack;
+int attack;
 {
-    register int        i, k;
+    register int          i, k;
     register monster_type *m_ptr;
-    recall_type        *r_ptr;
-    int32u              notice, rcmove;
-    int                 wake, ignore;
-    vtype               cdesc;
+    recall_type           *r_ptr;
+    int32u                notice, rcmove;
+    int                   wake, ignore;
+    vtype                 cdesc;
 
 /* Process the monsters  */
     for (i = mfptr - 1; i >= MIN_MONIX && !death; i--) {
 	m_ptr = &m_list[i];
-    /*
-     * Get rid of an eaten/breathed on monster.  Note: Be sure not to process
+    /* Get rid of an eaten/breathed on monster.  Note: Be sure not to process
      * this monster. This is necessary because we can't delete monsters while
      * scanning the m_list here. 
      */
@@ -3019,10 +3008,7 @@ creatures(attack)
 				}
 			    }
 			if (m_ptr->stunned != 0) {
-			/*
-			 * NOTE: Balrog = 100*100 = 10000, it always recovers
-			 * instantly 
-			 */
+/* NOTE: Balrog = 100*100 = 10000, it always recovers instantly */
 			    if (randint(5000) < c_list[m_ptr->mptr].level
 				* c_list[m_ptr->mptr].level)
 				m_ptr->stunned = 0;
@@ -3060,8 +3046,7 @@ creatures(attack)
 	} else
 	    update_mon(i);
 
-    /*
-     * Get rid of an eaten/breathed on monster.  This is necessary because we
+    /* Get rid of an eaten/breathed on monster.  This is necessary because we
      * can't delete monsters while scanning the m_list here.  This monster
      * may have been killed during mon_move(). 
      */
@@ -3079,16 +3064,15 @@ creatures(attack)
 /* them into walls.  An "Earthquake" effect.	       -LVB-   */
 static void 
 shatter_quake(mon_y, mon_x)
-    int                 mon_y;
-    int                 mon_x;
+int mon_y, mon_x;
 {
-    register int        i, j, k, l;
-    register cave_type *c_ptr;
-    register monster_type *m_ptr;
+    register int           i, j, k, l;
+    register cave_type     *c_ptr;
+    register monster_type  *m_ptr;
     register creature_type *r_ptr;
-    int                 kill, damage = 0, tmp, y, x = 0;
-    vtype               out_val, m_name;
-    int                 monptr = cave[mon_y][mon_x].cptr;
+    int                    kill, damage = 0, tmp, y, x = 0;
+    vtype                  out_val, m_name;
+    int                    monptr = cave[mon_y][mon_x].cptr;
     /* needed when we kill another monster */
 
     for (i = mon_y - 8; i <= mon_y + 8; i++)
@@ -3108,10 +3092,7 @@ shatter_quake(mon_y, mon_x)
 			/* monster can not move to escape the wall */
 			    kill = TRUE;
 			else {
-			/*
-			 * only kill if there is nowhere for the monster to
-			 * escape to 
-			 */
+/* only kill if there is nowhere for the monster to escape to */
 			    kill = TRUE;
 			    for (y = i - 1; y <= i + 1; y++) {
 				for (x = j - 1; x <= j + 1; x++) {
@@ -3244,9 +3225,8 @@ shatter_quake(mon_y, mon_x)
 		    c_ptr->pl = FALSE;
 		    c_ptr->fm = FALSE;
 		} else if ((c_ptr->fval <= MAX_CAVE_FLOOR) && (c_ptr->tptr == 0)
-			   && (c_ptr->cptr != 1)) {	/* don't bury player, it
-							 * made him unattackable
-							 * -CFT */
+			   && (c_ptr->cptr != 1)) {
+		    /* don't bury player, it made him unattackable -CFT */
 		    tmp = randint(10);
 		    if (tmp < 6)
 			c_ptr->fval = QUARTZ_WALL;
@@ -3266,8 +3246,7 @@ shatter_quake(mon_y, mon_x)
 /* them into walls.  An "Earthquake" effect.	       -LVB-   */
 static void 
 br_wall(mon_y, mon_x)
-    int                 mon_y;
-    int                 mon_x;
+int mon_y, mon_x;
 {
     register int        k, l;
     register cave_type *c_ptr;

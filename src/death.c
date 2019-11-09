@@ -12,6 +12,7 @@
  * some incorrectly define NULL as integer constant, so load this before
  * local includes 
  */
+
 #include <stdio.h>
 #include <signal.h>
 #include "config.h"
@@ -91,22 +92,22 @@ struct passwd      *getpwuid();
 /* Lets do all prototypes correctly.... -CWS */
 #ifndef NO_LINT_ARGS
 #ifdef __STDC__
-static void         date(char *);
-static char        *center_string(char *, const char *);
-static void 	    print_tomb(void);
-static void         kingly(void);
+static void  date(char *);
+static char *center_string(char *, const char *);
+static void  print_tomb(void);
+static void  kingly(void);
 
 #else
-static void         date();
-static char        *center_string();
-static void         print_tomb();
-static void         kingly();
+static void  date();
+static char *center_string();
+static void  print_tomb();
+static void  kingly();
 
 #endif
 #endif
 
 #ifndef MAC
-char               *getlogin();
+char        *getlogin();
 #endif
 
 #if !defined(time_t)
@@ -115,9 +116,9 @@ char               *getlogin();
 
 static void 
 date(day)
-    char               *day;
+char *day;
 {
-    register char      *tmp;
+    register char *tmp;
     time_t         c;
 
     c = time((time_t *)0);
@@ -127,12 +128,12 @@ date(day)
 }
 
 /* Centers a string within a 31 character string		-JWT-	 */
-static char        *
+static char *
 center_string(centered_str, in_str)
-    char               *centered_str;
-    const char               *in_str;
+char       *centered_str;
+const char *in_str;
 {
-    register int        i, j;
+    register int i, j;
 
     i = strlen(in_str);
     j = 15 - i / 2;
@@ -144,18 +145,18 @@ center_string(centered_str, in_str)
 /* Not touched for Mac port */
 void 
 display_scores(from, to)
-    int                 from, to;
+int from, to;
 {
-    register int        i = 0, j, k, l;
-    int                 fd;
-    high_scores         score;
+    register int i = 0, j, k, l;
+    int          fd;
+    high_scores  score;
 
 /* MAX_SAVE_HISCORES scores, 2 lines per score */
-    char                list[2 * MAX_SAVE_HISCORES][128];
-    char                hugebuffer[10000];
-    char                string[100];
+    char         list[2 * MAX_SAVE_HISCORES][128];
+    char         hugebuffer[10000];
+    char         string[100];
 
-    vtype               tmp_str;
+    vtype        tmp_str;
 
     if (to < 0)
 	to = 20;
@@ -225,7 +226,7 @@ display_scores(from, to)
 /* Pauses for user response before returning		-RAK-	 */
 int 
 look_line(prt_line)
-    int                 prt_line;
+int prt_line;
 {
     prt("[Press ESC to quit, any other key to continue.]", prt_line, 17);
     if (inkey() == ESCAPE) {
@@ -243,11 +244,11 @@ look_line(prt_line)
 static void 
 print_tomb()
 {
-    vtype               str, tmp_str;
-    register int        i;
-    char                day[11];
-    register const char      *p;
-    FILE               *fp;
+    vtype                str, tmp_str;
+    register int         i;
+    char                 day[11];
+    register const char *p;
+    FILE                *fp;
 
     if (stricmp(died_from, "Interrupting") && !wizard) {
 	sprintf(str, "%s/%d", ANGBAND_BONES, dun_level);
@@ -502,10 +503,10 @@ top_twenty()
 /* Enters a players name on the hi-score table     SM	 */
 void 
 delete_entry(which)
-    int                 which;
+int which;
 {
-    register int        i;
-    high_scores         scores[MAX_SAVE_HISCORES];
+    register int i;
+    high_scores  scores[MAX_SAVE_HISCORES];
 
 /* added usg lockf call - cba */
 #ifdef USG
