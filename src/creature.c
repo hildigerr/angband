@@ -74,20 +74,61 @@ update_mon(monptr)
 	if (wizard)
 	    flag = TRUE;
     /* if not mindless, telepathy sees -CWS */
-	if ((py.flags.telepathy) && !(c_list[m_ptr->mptr].cdefense & MINDLESS))
-	    flag = TRUE;
-    /* Normal sight.	     */
+	if (py.flags.telepathy) {
+	    char c = c_list[m_ptr->mptr].cchar;
+	    const char *n = c_list[m_ptr->mptr].name;
+	    if (strchr("EMXgjvz.",c));
+    /* don't show these ever (elementals & golems & vorticies & xorns
+     * "minds" are too different) -CFT */
+
+	    else if (strchr("FKaclt",c)) {
+		if (randint(5)==1)
+		    flag = TRUE;
+    /* once in a while we see these almost mindless insects... -CFT */
+
+	    } else if (c=='S' && strncmp(n, "Drider", 6) &&
+		     !(c_list[m_ptr->mptr].cdefense & UNIQUE)) {
+		if (randint(5)==1) flag = TRUE;
+    /* once in a while show spiders, scops.  But DO show drider,
+     * Shelob, and Ungol. -CFT */
+
+	    } else if (c=='m' && strncmp(n, "Death", 5));
+    /* don't show any molds, except the Death mold -CFT */
+
+	    else if (c=='s' && !strstr(n, "ruj") &&
+		     strncmp(n, "Cantor", 6));
+    /* don't show skeletons, but DO show druj and Cantoras -CFT */
+
+	    else if (c=='i' && strncmp(n, "Blue", 4));
+    /* don't show icky things, except Blue icky things.. -CFT */
+
+	    else if (c=='w' && strncmp(n, "Were", 4) && strncmp(n, "Gian", 4)) {
+		if (randint(5)==1) flag = TRUE;
+    /* occas. show worms, except Purple worms and Wereworms -CFT */
+
+	    } else if (c==',' && strncmp(n, "Magic", 5));
+    /* don't show mushrooms, except magic 'shrooms -CFT */
+
+	    else if (!(c_list[m_ptr->mptr].cdefense & MINDLESS))
+		flag = TRUE;
+    /* if not mindless, they show up -CWS */
+	}
+
+	/* Normal sight.	     */
 	if (los(char_row, char_col, (int)m_ptr->fy, (int)m_ptr->fx)) {
 	    c_ptr = &cave[m_ptr->fy][m_ptr->fx];
 
 #ifdef GROSS_HACK
-	/* try to debug invis monsters...this is not 'fixed', per se */
-	/* but it will correct the observed problem and also give me */
-	/* a chance to trap the thing with a debugger -CWS....       */
+	/* Try to debug invis monsters...this is not 'fixed', per se
+	 * but it will correct the observed problem and also give me
+	 * a chance to trap the thing with a debugger.   -CWS
+         *******
+         * This should no longer be necessary, but it's harmless  -CWS
+         */
 	    if (c_ptr->cptr != monptr) {
 		char                BUF[100];
 
-		sprintf(BUF, "Help! cptr = %d/monptr = %d, x = %d, y = %d",
+		sprintf(BUF, "Help! cptr = %d / monptr = %d, x = %d, y = %d",
 			c_ptr->cptr, monptr, m_ptr->fx, m_ptr->fy);
 		if (wizard)
 		    msg_print(BUF);
@@ -98,14 +139,14 @@ update_mon(monptr)
 	/* moved here to allow infra to see invis -CFT */
 	    if ((py.flags.see_infra > 0) &&
 		(m_ptr->cdis <= py.flags.see_infra)) {
-		if (NO_INFRA & r_ptr->cdefense)	/* changed to act sensibly
-						 * -CFT */
+		if (NO_INFRA & r_ptr->cdefense)	/* changed to act sensibly -CFT */
 		    c_recall[m_ptr->mptr].r_cdefense |= NO_INFRA;
 		else
 		    flag = TRUE;   /* only can see if not NO_INFRA... */
 	    }
 	    if (c_ptr->pl || c_ptr->tl ||
-		(find_flag && m_ptr->cdis <= player_light)) {
+		(find_flag && m_ptr->cdis <= light_rad && player_light)) {
+
 #ifdef ATARIST_MWC
 		holder = CM_INVISIBLE;
 		if ((holder & r_ptr->cmove) == 0)
@@ -148,55 +189,62 @@ update_mon(monptr)
 
 
 /* Given speed,  returns number of moves this turn.     -RAK-   */
-/* NOTE: Player must always move at least once per iteration,     */
-/* a slowed player is handled by moving monsters faster    */
-int 
-movement_rate(speed)
-    register int      speed;
-{
-    int                 player_speed = 1 - py.flags.speed;
-/* this makes normal = 1, fast = 2, v.fast = 3, slow = 0, v.slow = -1 -CFT */
+/* NOTE: Player must always move at least once per iteration,
+ *       a slowed player is handled by moving monsters faster
+ *
+ * monnum = index in m_list[] now passed in, so (turn+monnum) can
+ *          be used to vary when monsters move. -CFT
+ */
 
-    if (player_speed > 0) {
-	if (speed > 0) {
-	    if (py.flags.rest > 0 || py.flags.rest == -1 ||
-		py.flags.rest == -2)
-		return 1;
-	    else		   /* this gives the monster
-				    * speed/player_speed.  Since integer math
-				    * is used, I use the turn counter to add
-				    * in the extra moves when the monster
-				    * deserves them -CFT */
-		return (speed + turn % player_speed) / player_speed;
-	} else			   /* for speeds less than normal, it only
-				    * moves once in a while.  This is further
-				    * reduced by how fast the player is
-				    * going.  This means that a fast or
-				    * v.fast player is going to have a LOT of
-				    * attacks vs. a slow or v.slow monster,
-				    * but since they're easy to kill anyways,
-				    * I don't feel that this is bad -CFT */
-	    return ((turn % ((2 - speed) * player_speed)) == 0);
-    } else {			   /* player speed <= 0 */
-	if (speed > 0) {
-	    if (py.flags.rest > 0 || py.flags.rest == -1 || py.flags.rest == -2)
-		return 1;
-	    else		   /* monster gets lots of moves vs slow
-				    * player -CFT */
-		return speed * (2 - player_speed);
-	} else {		   /* monster also slow... */
-	    player_speed = 2 - player_speed;	/* these are recipricols: 0 =
-						 * 1/2, */
-	    speed = 2 - speed;	   /* -1 = 1/3, etc. -CFT */
-	/*
-	 * again, I use integer math, with the turn variable to pick up the
-	 * slack... -CFT 
-	 */
-	    return (player_speed + turn % speed) / speed;
-	}
-    }
-    printf("HELP!!!");
-    return (1);			   /* should never occur */
+int
+movement_rate(monnum)
+int monnum;
+{
+  register int ps, ms, tm, i;
+
+  ps = 1 - py.flags.speed;	/* this makes normal = 1, fast = 2,
+                                 * v.fast = 3, slow = 0, v.slow = -1 -CFT */
+  ms = m_list[monnum].cspeed;
+  
+  i = (int)(turn & 0xFF) + (int)monnum; /* 0xFF to prevent negative values -CFT */
+
+  if (ps == ms)
+      return 1;			/* same spd as player -CFT */
+
+  if (ps<1 && ms<1) {		/* both slow, swap "reciprocals" -CFT */
+      tm = 2 - ps;
+      ps = 2 - ms;
+      ms = tm;
+  }
+
+  if (ps < 1)			/* then mon must be fast, or above would */
+      return ms * (2 - ps);	/* have happened -CFT */
+
+  if (ms<1)			/* then player fast... move once in a while -CFT */
+    return !(i % (ps * (2 - ms)));
+
+/* player faster.         
+ * This formula is not intuitive, but it effectively uses the turn counter
+ * (offset by the monster index, so not every monster moves at same time)
+ * to compute factional parts of movement ratios.. so that a monster 2/3 the
+ * player's spd will move twice every 3 turns.  An earlier version of this
+ * equation performed the same result on average, but it was prone to "clumps"
+ * of speed... if the player was spd 4, and the monster spd 2, then for each
+ * 4 turn cycle, the monster would move 0,0,1,1.  This equation will result
+ * in 0,1,0,1, which is better. -CFT
+ */
+
+  if (ps>ms)
+    return (((i*ms) % ps) < ms);
+
+  if (!(tm = (ms % ps)))	/* divides evenly, simple case -CFT */
+    return (ms / ps);
+
+  /* Like the player-faster formula, this is NOT intuitive.  However, it
+   * effectively uses the turn counter & monster index to decide when a
+   *  monster should get an "extra" move.  It also prevents "clumps". -CFT
+   */
+  return ((ms / ps) + (((i*tm) % ps) < tm));
 }
 
 /* Makes sure a new creature gets lit up.			-CJS- */
@@ -226,8 +274,17 @@ get_moves(monptr, mm)
 
     y = m_list[monptr].fy - char_row;
     x = m_list[monptr].fx - char_col;
-    if (m_list[monptr].monfear) {  /* Run away!  Run away! -DGK */
-	y = (-y);
+
+/* lvl  1..15 always afraid, 16..22 some, based on maxhp %8 :
+ * lvl  16    7 of 8 monsters afraid  [  this is for a 50th  ]
+ * lvl  22    1 of 8 monsters afraid  [  level player, lower ]
+ * lvl  23++  no afraid monsters      [ level=less afraid m. ]
+ */
+
+    if (((int16)(py.misc.lev - 34 - c_list[(m_list[monptr]).mptr].level +
+		 ((m_list[monptr].maxhp) % 8)) > 0)
+	|| m_list[monptr].monfear) { /* Run away!  Run away! -DGK */
+	y = (-y);     /* FIXME: make monsters running away more intelligent */
 	x = (-x);
     }
     if (y < 0) {
@@ -601,11 +658,8 @@ make_attack(monptr)
 	  default:
 	    break;
 	}
+/* can not strcat to cdesc because the creature may have multiple attacks */
 	if (flag) {
-	/*
-	 * can not strcat to cdesc because the creature may have multiple
-	 * attacks 
-	 */
 	    disturb(1, 0);
 	    (void)strcpy(tmp_str, cdesc);
 	    CUT = STUN = FALSE;
@@ -753,9 +807,9 @@ make_attack(monptr)
 	    damage = damroll(adice, asides);
 	    switch (attype) {
 	      case 0: /* No physical attacks */
-/* need to put something here to notice if monster *has* no physical attacks,
- *  no take_hit or description needed though - dbd */
-		if (!randint(5))
+
+/* put something here to notice if monster *has* no physical attacks -CWS */
+		if (!randint(10))
 		    notice = TRUE;
 		break;
 
@@ -863,14 +917,14 @@ make_attack(monptr)
 		else {		   /* make this more sane.... -CWS */
 		    vtype               t1;
 
-		    gold = (p_ptr->au / 10) + randint(50);
+		    gold = (p_ptr->au / 10) + randint(25);
 		    if (gold > 5000)
-			gold = 2500 + randint(5000);
+			gold = 2000 + randint(1000) + (p_ptr->au / 20);
 		    if (gold > p_ptr->au)
 			gold = p_ptr->au;
 		    p_ptr->au -= gold;
 		    msg_print("Your purse feels lighter.");
-		    sprintf(t1, "%ld coin%s stolen!", gold,
+		    sprintf(t1, "%ld coin%s stolen!", (long)gold,
 			    (gold > 1L) ? "s were" : " was");
 		    msg_print(t1);
 		    prt_gold();
@@ -983,7 +1037,7 @@ make_attack(monptr)
 		break;
 	      case 21:		   /* Disenchant	   */
 		if (!py.flags.disenchant_resist) {
-		    int8u               chance;
+		    int8u               chance = 0;
 
 		    take_hit(damage, ddesc);
 		    flag = FALSE;
@@ -1011,50 +1065,47 @@ make_attack(monptr)
 			break;
 		    }
 		    i_ptr = &inventory[i];
-		    chance = 1;
-		    if (i_ptr->flags2 & TR_ARTIFACT)  /* Artifacts have 2/3 */
-			chance = randint(3);	   /* chance to resist -DGK */
-
-		    if (chance == 1) {
-			if (i_ptr->tohit > 0) {
+		    if (i_ptr->tval != TV_NOTHING) {
+			if (i_ptr->flags2 & TR_ARTIFACT)
+			    chance = randint(5);
+			if ((i_ptr->tohit > 0) && (chance < 3)){
 			    i_ptr->tohit -= randint(2);
 			/* don't send it below zero */
 			    if (i_ptr->tohit < 0)
 				i_ptr->tohit = 0;
 			    flag = TRUE;
 			}
-			if (i_ptr->todam > 0) {
+			if ((i_ptr->todam > 0) && (chance < 3)) {
 			    i_ptr->todam -= randint(2);
 			/* don't send it below zero */
 			    if (i_ptr->todam < 0)
 				i_ptr->todam = 0;
 			    flag = TRUE;
 			}
-			if (i_ptr->toac > 0) {
+			if ((i_ptr->toac > 0) && (chance < 3)) {
 			    i_ptr->toac -= randint(2);
 			/* don't send it below zero */
 			    if (i_ptr->toac < 0)
 				i_ptr->toac = 0;
 			    flag = TRUE;
 			}
-		    }
-		    if ((flag) || (chance != 1)) {
-			vtype               t1, t2;
-
-			objdes(t1, &inventory[i], FALSE);
-			if (chance == 1)
-			    sprintf(t2, "Your %s (%c) %s disenchanted!", t1,
-				    i + 'a' - INVEN_WIELD,
-			       (inventory[i].number != 1) ? "were" : "was");
+			if (flag || (chance > 2)) {
+			    vtype t1, t2;
+			    objdes(t1, &inventory[i], FALSE);
+			    if (chance < 3)
+				sprintf(t2, "Your %s (%c) %s disenchanted!", t1,
+					i+'a'-INVEN_WIELD,
+					(inventory[i].number != 1) ? "were":"was");
+			    else
+				sprintf(t2, "Your %s (%c) %s disenchantment!", t1,
+					i+'a'-INVEN_WIELD,
+					(inventory[i].number != 1) ? "resist":"resists");
+			    msg_print (t2);
+			    calc_bonuses ();
+			}
 			else
-			    sprintf(t2, "Your %s (%c) %s disenchantment!", t1,
-				    i + 'a' - INVEN_WIELD,
-				    (inventory[i].number != 1) ?
-				    "resist" : "resists");
-			msg_print(t2);
-			calc_bonuses();
-		    } else
-			notice = FALSE;
+			    notice = FALSE;
+		    }
 		}
 		break;
 	      case 22:		   /* Eat food	   */
@@ -1353,8 +1404,8 @@ make_move(monptr, mm, rcmove)
 				    * them   */
 		    if (t_ptr->tval == TV_CLOSED_DOOR) {
 			do_turn = TRUE;
-			if (randint((m_ptr->hp + 1) * (80 + abs(t_ptr->p1))) <
-			    40 * (m_ptr->hp - 20 - abs(t_ptr->p1))) {
+			if (randint((m_ptr->hp + 1) * (80 + MY_ABS(t_ptr->p1))) <
+			    40 * (m_ptr->hp - 20 - MY_ABS(t_ptr->p1))) {
 			    invcopy(t_ptr, OBJ_OPEN_DOOR);
 			/* 50% chance of breaking door */
 			    t_ptr->p1 = 1 - randint(2);
@@ -1475,11 +1526,13 @@ make_move(monptr, mm, rcmove)
 			    t |= GIANT;
 			if (t_list[c_ptr->tptr].flags2 & TR_SLAY_ORC)
 			    t |= ORC;
-		    /* if artifact, or hurts this monster */
-			if (((t_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
-			     (t_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
-			     (t_list[c_ptr->tptr].flags2 & TR_ARTIFACT)) ||
-			    (c_list[m_ptr->mptr].cdefense & t)) {
+		    /* if artifact, or wearable & hurts this monster -CWS */
+			if ((t_list[c_ptr->tptr].flags2 & TR_ARTIFACT) ||
+			    ( (t_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
+			      (t_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
+			      (c_list[m_ptr->mptr].cdefense & t) )) {
+
+/* FIXME: should use new line-splitting code */
 
 			    vtype               m_name, out_val, i_name;
 			    int                 ii, split = (-1);
@@ -2095,11 +2148,17 @@ mon_cast_spell(monptr, took_turn)
 		else
 		    m_ptr->maxhp = pdamroll(c_list[m_ptr->mptr].hd);
 	    }
-	    if (m_ptr->hp >= m_ptr->maxhp) {	/* need >= because, if we
-						 * recalc-ed maxhp, we might
-						 * have gotten a low roll,
-						 * which could be below hp
-						 * -CFT */
+	    if (!blind) /* if we bother to say "mumbles" above, then shouldn't
+                         * see it heal itself -CFT
+			 */
+		strcat(cdesc, "looks ");
+	    else
+		strcat(cdesc, "sounds ");
+
+	    if (m_ptr->hp >= m_ptr->maxhp) {
+/* need >= because, if we recalc-ed maxhp, we might have gotten a low roll,
+ * which could be below hp -CFT
+ */
 		(void)strcat(cdesc, "looks as healthy as can be.");
 		msg_print(cdesc);
 		if (m_ptr->monfear > 0) {	/* can't be afraid at max
@@ -2199,7 +2258,7 @@ mon_cast_spell(monptr, took_turn)
 		(void)strcat(cdesc, "mumbles.");
 	    msg_print(cdesc);
 	    bolt(GF_NETHER, char_row, char_col,
-		 30 + damroll(5, 5) + (c_list[m_ptr->mptr].level / 4),
+		 30 + damroll(5, 5) + (c_list[m_ptr->mptr].level * 3) / 2,
 		 ddesc, m_ptr, monptr);
 	    break;
 	  case 52:
@@ -2795,13 +2854,10 @@ mon_move(monptr, rcmove)
 	    hack_monptr = monptr;
 	    i = mon_take_hit(monptr, damroll(8, 8), FALSE);
 	    hack_monptr = (-1);
-	    if (i >= 0) {
+	    if (i >= 0)
 		msg_print("You hear a scream muffled by rock!");
-	    /* prt_experience(); */
-	    } else {
-/*		msg_print("A creature digs itself out from the rock!"); */
+	    else
 		(void)twall((int)m_ptr->fy, (int)m_ptr->fx, 1, 0);
-	    }
 	}
 	return;			   /* monster movement finished */
     }
@@ -2922,7 +2978,7 @@ creatures(attack)
 	m_ptr->cdis = distance(char_row, char_col,
 			       (int)m_ptr->fy, (int)m_ptr->fx);
 	if (attack) {		   /* Attack is argument passed to CREATURE */
-	    k = movement_rate(m_ptr->cspeed);
+	    k = movement_rate(i);
 	    if (k <= 0)
 		update_mon(i);
 	    else
@@ -2931,11 +2987,12 @@ creatures(attack)
 		    wake = FALSE;
 		    ignore = FALSE;
 		    rcmove = 0;
-		    if (m_ptr->ml || (m_ptr->cdis <= c_list[m_ptr->mptr].aaf)
-		/*
-		 * Monsters trapped in rock must be given a turn also, so
-		 * that they will die/dig out immediately.  
-		 */
+		    if ((m_ptr->ml && /* check los so telepathy won't wake lice -CFT */
+			 los(char_row, char_col, (int)m_ptr->fy, (int)m_ptr->fx)) ||
+			(m_ptr->cdis <= c_list[m_ptr->mptr].aaf)
+
+			/* Monsters trapped in rock must be given a turn also,
+			 * so that they will die/dig out immediately.  */
 #ifdef ATARIST_MWC
 		    || ((!(c_list[m_ptr->mptr].cmove & (holder = CM_PHASE)))
 #else
@@ -3046,7 +3103,7 @@ shatter_quake(mon_y, mon_x)
 
 		    if (!(r_ptr->cmove & CM_PHASE) &&
 			!(r_ptr->cdefense & BREAK_WALL)) {
-			if ((movement_rate(m_ptr->cspeed) == 0) ||
+			if ((movement_rate(c_ptr->cptr) == 0) ||
 			    (r_ptr->cmove & CM_ATTACK_ONLY))
 			/* monster can not move to escape the wall */
 			    kill = TRUE;
@@ -3078,19 +3135,14 @@ shatter_quake(mon_y, mon_x)
 		    /* kill monster "by hand", so player doesn't get exp -CFT */
 			m_ptr->hp = m_ptr->hp - damage;
 			m_ptr->csleep = 0;
+
+/* prevent unique monster from death by other monsters.  It causes trouble
+ * (monster not marked as dead, quest monsters don't satisfy quest, etc).
+ * So, we let then live, but extremely wimpy.  This isn't great, because
+ * monster might heal itself before player's next swing... -CFT
+ */
 			if ((r_ptr->cdefense & UNIQUE) && (m_ptr->hp < 0))
-			    m_ptr->hp = 0;	/* prevent unique monster
-						 * from death by other
-						 * monsters.  It causes
-						 * trouble (monster not
-						 * marked as dead, quest
-						 * monsters don't satisfy
-						 * quest, etc).  So, we let
-						 * then live, but extremely
-						 * wimpy.  This isn't great,
-						 * because monster might heal
-						 * itself before player's
-						 * next swing... -CFT */
+			    m_ptr->hp = 0;
 			if (m_ptr->hp < 0) {
 			    int32u              temp, treas;
 
@@ -3140,7 +3192,8 @@ shatter_quake(mon_y, mon_x)
 			break;
 		    }
 		    if (kill) {
-			msg_print("You are trapped, crushed and cannot move!");
+	msg_print("You are trapped and cannot move!  You are crushed beneath rock!");
+	msg_print(NULL);
 			damage = 320;
 		    } else {
 			switch (randint(3)) {
@@ -3271,10 +3324,9 @@ br_wall(mon_y, mon_x)
 	((c_ptr->tptr == 0) || ((t_list[c_ptr->tptr].tval != TV_UP_STAIR) &&
 			      (t_list[c_ptr->tptr].tval != TV_DOWN_STAIR) &&
 			      (t_list[c_ptr->tptr].tval != TV_STORE_DOOR) &&
-			      !((t_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&	/* is artifact? */
+			      !((t_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
 				(t_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
 			    (t_list[c_ptr->tptr].flags2 & TR_ARTIFACT))))) {
-
 	    if (c_ptr->tptr)
 		delete_object(char_row, char_col);
 	    tmp = randint(10);

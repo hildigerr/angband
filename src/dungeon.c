@@ -27,7 +27,6 @@
 #ifdef __STDC__
 static void regenhp(int);
 static void regenmana(int);
-/* static int enchanted(inven_type *); */
 static const char *value_check(inven_type *);
 #else
 static void         regenhp();
@@ -100,6 +99,10 @@ dungeon()
     find_flag = FALSE;
     teleport_flag = FALSE;
     mon_tot_mult = 0;
+    old_rad        = (-1);
+    coin_type      = 0;
+    opening_chest  = FALSE;
+
 #ifdef TARGET
     target_mode = FALSE; /* target code taken from Morgul -CFT */
 #endif
@@ -147,6 +150,7 @@ dungeon()
 /* Print the depth			   */
     prt_depth();
 
+/* FIXME: figure this out */
     if (((turn - old_turn) > randint(50) + 50) && dun_level) {
 	unfelt = FALSE;
 	print_feeling();
@@ -256,8 +260,9 @@ dungeon()
 	}
     /* Food consumption	 */
     /* Note: Speeded up characters really burn up the food!  */
-	if (f_ptr->speed < 0)
-	    f_ptr->food -= f_ptr->speed * f_ptr->speed;
+    /* now summation, not square, since spd less powerful -CFT */
+       if (f_ptr->speed < 0)
+	   f_ptr->food -=  (f_ptr->speed*f_ptr->speed - f_ptr->speed) / 2;
 	f_ptr->food -= f_ptr->food_digested;
 	if (f_ptr->food < 0) {
 	    take_hit(-f_ptr->food / 16, "starvation");	/* -CJS- */
@@ -331,21 +336,21 @@ dungeon()
 	}
     /* Cut */
 	if (f_ptr->cut > 0) {
-	    if (f_ptr->cut > 1000) {
+	    if (f_ptr->cut>1000) {
+		take_hit(3 , "a fatal wound");
+		disturb(1,0);
+	    } else if (f_ptr->cut>200) {
 		take_hit(3, "a fatal wound");
-		disturb(1, 0);
-	    } else if (f_ptr->cut > 200) {
-		take_hit(3, "a fatal wound");
-		f_ptr->cut -= con_adj() + 1;
-		disturb(1, 0);
-	    } else if (f_ptr->cut > 100) {
+		f_ptr->cut-=(con_adj()<0?1:con_adj())+1;
+		disturb(1,0);
+	    } else if (f_ptr->cut>100) {
 		take_hit(2, "a fatal wound");
-		f_ptr->cut -= con_adj() + 1;
-		disturb(1, 0);
+		f_ptr->cut-=(con_adj()<0?1:con_adj())+1;
+		disturb(1,0);
 	    } else {
 		take_hit(1, "a fatal wound");
-		f_ptr->cut -= con_adj() + 1;
-		disturb(1, 0);
+		f_ptr->cut-=(con_adj()<0?1:con_adj())+1;
+		disturb(1,0);
 	    }
 	    prt_cut();
 	    if (f_ptr->cut <= 0) {
@@ -744,10 +749,10 @@ dungeon()
 		f_ptr->word_recall = 0;
 		if (dun_level > 0) {
 		    dun_level = 0;
-		    msg_print("You feel yourself yanked upwards!");
+		    msg_print("You feel yourself yanked upwards! ");
 		} else if (py.misc.max_dlv != 0) {
 		    dun_level = py.misc.max_dlv;
-		    msg_print("You feel yourself yanked downwards!");
+		    msg_print("You feel yourself yanked downwards! ");
 		}
 	    } else
 		f_ptr->word_recall--;
@@ -815,13 +820,13 @@ dungeon()
 		i_ptr = &inventory[i];
 	    /*
 	     * if in inventory, succeed 1 out of 50 times, if in equipment
-	     * list, success 1 out of 10 times, unless your a priest or
+	     * list, success 1 out of 10 times, unless you're a priest or
 	     * rogue... 
 	     */
-		if ((i_ptr->tval != TV_NOTHING) && special_check(i_ptr) &&
+		if (((i_ptr->tval >= TV_MIN_WEAR) && (i_ptr->tval <= TV_MAX_WEAR)) &&
+		    special_check(i_ptr) &&
 		    ((py.misc.pclass == 2 || py.misc.pclass == 3) ?
-		     (randint(i < 22 ? 5 : 1) == 1)
-		     :
+		     (randint(i < 22 ? 5 : 1) == 1) :
 		     (randint(i < 22 ? 50 : 10) == 1))) {
 
 		    if (py.misc.pclass == 0 || py.misc.pclass == 3 ||
@@ -953,6 +958,10 @@ dungeon()
 		default_dir = FALSE;
 		free_turn_flag = FALSE;
 
+		if ((old_rad >= 0) && (!find_flag)) {
+		    light_rad = old_rad;
+		    old_rad = (-1);
+		}
 		if (find_flag) {
 		    find_run();
 		    find_count--;
@@ -1063,6 +1072,9 @@ dungeon()
 		    if (find_flag) {
 			find_count = command_count;
 			command_count = 0;
+		    } else if (old_rad >= 0) {
+			light_rad = old_rad;
+			old_rad = (-1);
 		    }
 		    if (free_turn_flag)
 			command_count = 0;
@@ -1362,6 +1374,11 @@ special_check(t_ptr)
 	return 0;
     if (t_ptr->tohit > 0 || t_ptr->todam > 0 || t_ptr->toac > 0)
 	return 1;
+    if ((t_ptr->tval == TV_DIGGING) && /* digging tools will pseudo ID, either
+					  as {good} or {average} -CFT */
+	(t_ptr->flags & TR_TUNNEL))
+	return 1;
+
     return 0;
 }
 
@@ -1388,8 +1405,13 @@ value_check(t_ptr)
 	return "worthless";
     if (t_ptr->flags & TR_CURSED && t_ptr->name2 != SN_NULL)
 	return "terrible";
-    if ((t_ptr->tohit <= 0 && t_ptr->todam <= 0 && t_ptr->toac <= 0) &&
-	t_ptr->name2 == SN_NULL)
+    if ((t_ptr->tval == TV_DIGGING) &&  /* also, good digging tools -CFT */
+	(t_ptr->flags & TR_TUNNEL) &&
+	(t_ptr->p1 > object_list[t_ptr->index].p1)) /* better than normal for this
+						       type of shovel/pick? -CFT */
+	return "good";
+    if ((t_ptr->tohit<=0 && t_ptr->todam<=0 && t_ptr->toac<=0) &&
+	t_ptr->name2==SN_NULL)  /* normal shovels will also reach here -CFT */
 	return "average";
     if (t_ptr->name2 == SN_NULL)
 	return "good";
@@ -1879,12 +1901,16 @@ do_command(com_val)
       case 'X':		   /* e(X)change weapons	e(x)change */
 	inven_command('x');
 	break;
-#ifdef ALLOW_ARTIFACT_CHECK
+#ifdef ALLOW_ARTIFACT_CHECK /* -CWS */
       case '~':
-	artifact_check_no_file();
+	if ((!wizard) && (dun_level != 0)) {
+	    msg_print("You need to be on the town level to check artifacts!");
+	    msg_print(NULL);		/* make sure can see the message -CWS */
+	} else
+	    artifact_check_no_file();
 	break;
 #endif
-#ifdef ALLOW_CHECK_UNIQUES
+#ifdef ALLOW_CHECK_UNIQUES /* -CWS */
       case '|':
 	check_uniques();
 	break;
@@ -2207,30 +2233,6 @@ regenmana(percent)
 }
 
 
-#if 0 /* no longer used? -CWS */
-/* Is an item an enchanted weapon or armor and we don't know?  -CJS- */
-/* only returns true if it is a good enchantment */
-static int 
-enchanted(t_ptr)
-    register inven_type *t_ptr;
-{
-    if (t_ptr->tval < TV_MIN_ENCHANT || t_ptr->tval > TV_MAX_ENCHANT
-	|| t_ptr->flags & TR_CURSED)
-	return FALSE;
-    if (known2_p(t_ptr))
-	return FALSE;
-    if (t_ptr->ident & ID_MAGIK)
-	return FALSE;
-    if (t_ptr->tohit > 0 || t_ptr->todam > 0 || t_ptr->toac > 0)
-	return TRUE;
-    if ((0x4000107fL & t_ptr->flags) && t_ptr->p1 > 0)
-	return TRUE;
-    if (0x07ffe980L & t_ptr->flags)
-	return TRUE;
-
-    return FALSE;
-}
-#endif
 
 int 
 ruin_stat(stat)
@@ -2263,7 +2265,7 @@ ruin_stat(stat)
 static void 
 activate()
 {
-    int                 i, a, flag, first, num, j, redraw, dir;
+    int                 i, a, flag, first, num, j, redraw, dir, test = FALSE;
     char                out_str[200], tmp[200], tmp2[200], choice;
     inven_type         *i_ptr;
     struct misc        *m_ptr;
@@ -2288,10 +2290,12 @@ activate()
     sprintf(out_str, "Activate which item? (%c-%c, * to list, ESC to exit) ?",
 	    'a', 'a' + (num - 1));
     flag = FALSE;
-    while (!flag && get_com(out_str, &choice)) {
-	if ((choice == '*') && !redraw) {	/* don't save screen again if
-						 * it's already listed, OW it
-						 * doesn't clear -CFT */
+    while (!flag){
+	if (!get_com(out_str, &choice))  /* on escape, get_com returns false: */
+	    choice = '\033';             /* so it's set here to ESC.  Wierd huh? -CFT */
+
+	if ((choice=='*') && !redraw) {  /* don't save screen again if it's already
+					  * listed, OW it doesn't clear -CFT */
 	    save_screen();
 	    j = 0;
 	    if (!redraw) {
@@ -2318,8 +2322,10 @@ activate()
 		continue;
 	    }
 	} else {
-	    if (choice >= 'A' && choice <= ('A' + (num - 1)))
+	    if (choice >= 'A' && choice <= ('A' + (num - 1))) {
 		choice -= 'A';
+		test = TRUE; /* test to see if he means it */
+	    }
 	    else if (choice >= 'a' && choice <= ('a' + (num - 1)))
 		choice -= 'a';
 	    else if (choice == '\033') {
@@ -2349,6 +2355,15 @@ activate()
 		    j++;
 		}
 	    }
+
+	    if ( (test && verify("Activate", i)) || !test)
+		flag = TRUE;
+	    else {
+		flag = TRUE;           /* exit loop, he didn't want to try it... */
+		free_turn_flag = TRUE; /* but he didn't do anything either */
+		continue;
+	    }
+
 	    if (inventory[i].timeout > 0) {
 		msg_print("It whines, glows and fades...");
 		break;
@@ -2373,8 +2388,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_bolt(GF_FIRE, dir, char_row, char_col, damroll(9, 8),
-				  "Fire Bolt");
+			fire_bolt(GF_FIRE, dir, char_row, char_col, damroll(9, 8));
 			inventory[i].timeout = 5 + randint(10);
 		    }
 		} else if (inventory[i].name2 == SN_NIMTHANC) {
@@ -2386,8 +2400,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_bolt(GF_FROST, dir, char_row, char_col, damroll(6, 8),
-				  "Frost Bolt");
+			fire_bolt(GF_FROST, dir, char_row, char_col, damroll(6, 8));
 			inventory[i].timeout = 4 + randint(8);
 		    }
 		} else if (inventory[i].name2 == SN_DETHANC) {
@@ -2399,8 +2412,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_bolt(GF_LIGHTNING, dir, char_row, char_col, damroll(4, 8),
-				  "Lightning Bolt");
+			fire_bolt(GF_LIGHTNING, dir, char_row, char_col, damroll(4, 8));
 			inventory[i].timeout = 3 + randint(7);
 		    }
 		} else if (inventory[i].name2 == SN_RILIA) {
@@ -2412,8 +2424,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_ball(GF_POISON_GAS, dir, char_row, char_col, 12, 3,
-				  "Stinking Cloud");
+			fire_ball(GF_POISON_GAS, dir, char_row, char_col, 12, 3);
 			inventory[i].timeout = 3 + randint(3);
 		    }
 		} else if (inventory[i].name2 == SN_BELANGIL) {
@@ -2425,8 +2436,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_ball(GF_FROST, dir, char_row, char_col, 48, 2,
-				  "Frost Ball");
+			fire_ball(GF_FROST, dir, char_row, char_col, 48, 2);
 			inventory[i].timeout = 3 + randint(7);
 		    }
 		}
@@ -2450,8 +2460,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_ball(GF_FROST, dir, char_row, char_col, 100, 2,
-				  "Storm of Ice");
+			fire_ball(GF_FROST, dir, char_row, char_col, 100, 2);
 			inventory[i].timeout = 300;
 		    }
 		} else if (inventory[i].name2 == SN_ANDURIL) {
@@ -2463,8 +2472,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_ball(GF_FIRE, dir, char_row, char_col, 72, 2,
-				  "huge ball of Fire");
+			fire_ball(GF_FIRE, dir, char_row, char_col, 72, 2);
 			inventory[i].timeout = 400;
 		    }
 		}
@@ -2479,8 +2487,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_ball(GF_FIRE, dir, char_row, char_col, 72, 3,
-				  "huge ball of Fire");
+			fire_ball(GF_FIRE, dir, char_row, char_col, 72, 3);
 			inventory[i].timeout = 100;
 		    }
 		}
@@ -2579,16 +2586,18 @@ activate()
 	      case (75):
 		if (inventory[i].name2 == SN_CUBRAGOL) {
 		    for (a = 0; a < INVEN_WIELD; a++)
-			if (inventory[a].tval == TV_BOLT)
+/* search for bolts that are not cursed and are not already named -CWS */
+			if ((inventory[a].tval == TV_BOLT) &&
+			    !(inventory[a].flags & TR_CURSED) &&
+			    (inventory[a].name2 == SN_NULL))
 			    break;
-		    if (a < INVEN_WIELD && (inventory[a].name2 == SN_NULL)) {
+		    if (a < INVEN_WIELD) {
 			i_ptr = &inventory[a];
 			msg_print("Your bolts are covered in a fiery aura!");
 			i_ptr->name2 = SN_FIRE;
-			i_ptr->flags |= TR_FLAME_TONGUE;
-			i_ptr->tohit += 3 + randint(3);
-			i_ptr->todam += 3 + randint(3);
+			i_ptr->flags |= (TR_FLAME_TONGUE|TR_RES_FIRE);
 			i_ptr->cost += 25;
+			enchant(i_ptr, 3+randint(3), ENCH_TOHIT|ENCH_TODAM);
 			calc_bonuses();
 		    } else {
 			msg_print("The fiery enchantment fails.");
@@ -2607,8 +2616,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_bolt(GF_FROST, dir, char_row, char_col, damroll(12, 8),
-				  "bolt of Frost");
+			fire_bolt(GF_FROST, dir, char_row, char_col, damroll(12, 8));
 			inventory[i].timeout = 500;
 		    }
 		}
@@ -2623,8 +2631,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_ball(GF_FROST, dir, char_row, char_col, 100, 2,
-				  "huge ball of Frost");
+			fire_ball(GF_FROST, dir, char_row, char_col, 100, 2);
 			inventory[i].timeout = 500;
 		    }
 		} else if (inventory[i].name2 == SN_OROME) {
@@ -2716,8 +2723,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_ball(GF_CONFUSION, dir, char_row, char_col, 30, 3,
-				  "blast of Confusion");
+			confuse_monster(dir, char_row, char_col, 20);
 			inventory[i].timeout = 15;
 		    }
 		}
@@ -2733,7 +2739,7 @@ activate()
 			    } while (dir == 5);
 			}
 			fire_bolt(GF_MAGIC_MISSILE, dir, char_row, char_col,
-				  damroll(2, 6), "Magic Missile");
+				  damroll(2, 6));
 			inventory[i].timeout = 2;
 		    }
 		}
@@ -2748,8 +2754,10 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_bolt(GF_FIRE, dir, char_row, char_col, damroll(9, 8),
-				  "Fire Bolt");
+			if (randint(4)==1)
+			    line_spell(GF_FIRE, dir, char_row, char_col, damroll(9,8));
+			else
+			    fire_bolt(GF_FIRE, dir, char_row, char_col, damroll(9,8));
 			inventory[i].timeout = 5 + randint(10);
 		    }
 		} else if (inventory[i].name2 == SN_PAURNIMMEN) {
@@ -2761,8 +2769,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_bolt(GF_FROST, dir, char_row, char_col, damroll(6, 8),
-				  "Frost Bolt");
+			fire_bolt(GF_FROST, dir, char_row, char_col, damroll(6, 8));
 			inventory[i].timeout = 4 + randint(8);
 		    }
 		} else if (inventory[i].name2 == SN_PAURAEGEN) {
@@ -2774,8 +2781,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_bolt(GF_LIGHTNING, dir, char_row, char_col, damroll(4, 8),
-				  "Lightning Bolt");
+			fire_bolt(GF_LIGHTNING, dir, char_row, char_col, damroll(4, 8));
 			inventory[i].timeout = 3 + randint(7);
 		    }
 		} else if (inventory[i].name2 == SN_PAURNEN) {
@@ -2787,8 +2793,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_bolt(GF_ACID, dir, char_row, char_col, damroll(5, 8),
-				  "Acid Bolt");
+			fire_bolt(GF_ACID, dir, char_row, char_col, damroll(5, 8));
 			inventory[i].timeout = 4 + randint(7);
 		    }
 		}
@@ -2803,8 +2808,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_bolt(GF_ARROW, dir, char_row, char_col, 150,
-				  "set of spikes");
+			fire_bolt(GF_ARROW, dir, char_row, char_col, 150);
 			inventory[i].timeout = 88 + randint(88);
 		    }
 		}
@@ -2832,8 +2836,7 @@ activate()
 			    dir = randint(9);
 			} while (dir == 5);
 		    }
-		    fire_ball(GF_FIRE, dir, char_row, char_col, 120, 3,
-			      "huge ball of Fire");
+		    fire_ball(GF_FIRE, dir, char_row, char_col, 120, 3);
 		    inventory[i].timeout = 222 + randint(222);
 		}
 		break;
@@ -2846,8 +2849,7 @@ activate()
 			    dir = randint(9);
 			} while (dir == 5);
 		    }
-		    fire_ball(GF_FROST, dir, char_row, char_col, 200, 3,
-			      "huge ball of Frost");
+		    fire_ball(GF_FROST, dir, char_row, char_col, 200, 3);
 		    inventory[i].timeout = 222 + randint(333);
 		}
 		break;
@@ -2860,8 +2862,7 @@ activate()
 			    dir = randint(9);
 			} while (dir == 5);
 		    }
-		    fire_ball(GF_LIGHTNING, dir, char_row, char_col, 250, 3,
-			      "huge ball of Lightning");
+		    fire_ball(GF_LIGHTNING, dir, char_row, char_col, 250, 3);
 		    inventory[i].timeout = 222 + randint(444);
 		}
 		break;
@@ -2909,8 +2910,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_ball(GF_MANA, dir, char_row, char_col, 300, 3,
-				  "huge ball of Raw Mana");
+			fire_ball(GF_MANA, dir, char_row, char_col, 300, 3);
 		    }
 		    break;
 		  default:
@@ -2921,8 +2921,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_bolt(GF_MANA, dir, char_row, char_col, 250,
-				  "bolt of Raw Mana");
+			fire_bolt(GF_MANA, dir, char_row, char_col, 250);
 		    }
 		}
 		inventory[i].timeout = 444 + randint(444);
@@ -2936,8 +2935,7 @@ activate()
 			    dir = randint(9);
 			} while (dir == 5);
 		    }
-		    fire_ball(GF_LIGHTNING, dir, char_row, char_col, 100, 2,
-			      "huge ball of Lightning");
+		    fire_ball(GF_LIGHTNING, dir, char_row, char_col, 100, 2);
 		    inventory[i].timeout = 444 + randint(444);
 		}
 		break;
@@ -2950,8 +2948,7 @@ activate()
 			    dir = randint(9);
 			} while (dir == 5);
 		    }
-		    fire_ball(GF_FROST, dir, char_row, char_col, 110, 2,
-			      "huge ball of Frost");
+		    fire_ball(GF_FROST, dir, char_row, char_col, 110, 2);
 		    inventory[i].timeout = 444 + randint(444);
 		}
 		break;
@@ -2964,8 +2961,7 @@ activate()
 			    dir = randint(9);
 			} while (dir == 5);
 		    }
-		    fire_ball(GF_ACID, dir, char_row, char_col, 130, 2,
-			      "huge ball of Acid");
+		    fire_ball(GF_ACID, dir, char_row, char_col, 130, 2);
 		    inventory[i].timeout = 444 + randint(444);
 		}
 		break;
@@ -2978,8 +2974,7 @@ activate()
 			    dir = randint(9);
 			} while (dir == 5);
 		    }
-		    fire_ball(GF_POISON_GAS, dir, char_row, char_col, 150, 2,
-			      "huge cloud of Poison Gas");
+		    fire_ball(GF_POISON_GAS, dir, char_row, char_col, 150, 2);
 		    inventory[i].timeout = 444 + randint(444);
 		}
 		break;
@@ -2992,8 +2987,7 @@ activate()
 			    dir = randint(9);
 			} while (dir == 5);
 		    }
-		    fire_ball(GF_FIRE, dir, char_row, char_col, 200, 2,
-			      "huge ball of Fire");
+		    fire_ball(GF_FIRE, dir, char_row, char_col, 200, 2);
 		    inventory[i].timeout = 444 + randint(444);
 		}
 		break;
@@ -3017,18 +3011,11 @@ activate()
 				  ((choice == 3) ? "acid" :
 				((choice == 4) ? "poison gas" : "fire")))));
 			msg_print(tmp2);
-			sprintf(tmp2, "huge %s of %s",
-				((choice == 4) ? "cloud" : "ball"),
-				((choice == 1) ? "Lightning" :
-				 ((choice == 2) ? "Frost" :
-				  ((choice == 3) ? "Acid" :
-				((choice == 4) ? "Poison Gas" : "Fire")))));
 			fire_ball(((choice == 1) ? GF_LIGHTNING :
 				   ((choice == 2) ? GF_FROST :
 				    ((choice == 3) ? GF_ACID :
 			       ((choice == 4) ? GF_POISON_GAS : GF_FIRE)))),
-				  dir, char_row, char_col, 250, 2,
-				  tmp2);
+				  dir, char_row, char_col, 250, 2);
 			inventory[i].timeout = 222 + randint(222);
 		    }
 		}
@@ -3042,8 +3029,7 @@ activate()
 			    dir = randint(9);
 			} while (dir == 5);
 		    }
-		    fire_ball(GF_CONFUSION, dir, char_row, char_col, 120, 2,
-			      "huge blast of Confusion");
+		    fire_ball(GF_CONFUSION, dir, char_row, char_col, 120, 2);
 		    inventory[i].timeout = 444 + randint(444);
 		}
 		break;
@@ -3056,8 +3042,7 @@ activate()
 			    dir = randint(9);
 			} while (dir == 5);
 		    }
-		    fire_ball(GF_SOUND, dir, char_row, char_col, 130, 2,
-			      "huge blast of Sound");
+		    fire_ball(GF_SOUND, dir, char_row, char_col, 130, 2);
 		    inventory[i].timeout = 444 + randint(444);
 		}
 		break;
@@ -3073,10 +3058,8 @@ activate()
 		    sprintf(tmp2, "You breathe %s...",
 			    ((choice == 1 ? "chaos" : "disenchantment")));
 		    msg_print(tmp2);
-		    sprintf(tmp2, "huge ball of %s",
-			    ((choice == 1 ? "Chaos" : "Disenchantment")));
 		    fire_ball((choice == 1 ? GF_CHAOS : GF_DISENCHANT), dir,
-			      char_row, char_col, 220, 2, tmp2);
+			      char_row, char_col, 220, 2);
 		    inventory[i].timeout = 300 + randint(300);
 		}
 		break;
@@ -3092,10 +3075,8 @@ activate()
 		    sprintf(tmp2, "You breathe %s...",
 			    ((choice == 1 ? "sound" : "shards")));
 		    msg_print(tmp2);
-		    sprintf(tmp2, "huge %s of %s", ((choice == 1) ? "blast" : "ball"),
-			    ((choice == 1 ? "Sound" : "Shards")));
 		    fire_ball((choice == 1 ? GF_SOUND : GF_SHARDS), dir,
-			      char_row, char_col, 230, 2, tmp2);
+			      char_row, char_col, 230, 2);
 		    inventory[i].timeout = 300 + randint(300);
 		}
 		break;
@@ -3113,14 +3094,10 @@ activate()
 			     ((choice == 2) ? "disenchantment" :
 			      ((choice == 3) ? "sound" : "shards"))));
 		    msg_print(tmp2);
-		    sprintf(tmp2, "huge %s of %s", ((choice == 3) ? "blast" : "ball"),
-			    ((choice == 1) ? "Chaos" :
-			     ((choice == 2) ? "Disenchantment" :
-			      ((choice == 3) ? "Sound" : "Shards"))));
 		    fire_ball(((choice == 1) ? GF_CHAOS :
 			       ((choice == 2) ? GF_DISENCHANT :
 				((choice == 3) ? GF_SOUND : GF_SHARDS))),
-			      dir, char_row, char_col, 250, 2, tmp2);
+			      dir, char_row, char_col, 250, 2);
 		    inventory[i].timeout = 300 + randint(300);
 		}
 		break;
@@ -3136,10 +3113,8 @@ activate()
 		    sprintf(tmp2, "You breathe %s...",
 			    ((choice == 1 ? "light" : "darkness")));
 		    msg_print(tmp2);
-		    sprintf(tmp2, "huge %s of %s", ((choice == 1) ? "flash" : "sphere"),
-			    ((choice == 1 ? "Light" : "Darkness")));
 		    fire_ball((choice == 1 ? GF_LIGHT : GF_DARK), dir,
-			      char_row, char_col, 200, 2, tmp2);
+			      char_row, char_col, 200, 2);
 		    inventory[i].timeout = 300 + randint(300);
 		}
 		break;
@@ -3164,8 +3139,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_ball(GF_MAGIC_MISSILE, dir, char_row, char_col, 300, 2,
-				  "massive ball of the Elements");
+			fire_ball(GF_MAGIC_MISSILE, dir, char_row, char_col, 300, 2);
 			inventory[i].timeout = 300 + randint(300);
 		    }
 		}
@@ -3195,6 +3169,8 @@ activate()
 	      case (SPECIAL_OBJ + 7):
 		msg_print("The stone glows a deep green");
 		wizard_light(TRUE);
+		(void)detect_sdoor();
+		(void)detect_trap();
 		inventory[i].timeout = 100 + randint(100);
 		break;
 	      case (SPECIAL_OBJ + 8):
@@ -3300,13 +3276,13 @@ go_up()
 	    if (dun_level == Q_PLANE) {
 		dun_level = 0;
 		new_level_flag = TRUE;
-		msg_print("You enter an inter-dimensional staircase.");
+		msg_print("You enter an inter-dimensional staircase. ");
 	    } else {
 		dun_level--;
 		new_level_flag = TRUE;
 		if (dun_level > 0)
 		    create_down_stair = TRUE;
-		msg_print("You enter a maze of up staircases.");
+		msg_print("You enter a maze of up staircases. ");
 	    }
 	} else
 	    no_stairs = TRUE;
@@ -3333,12 +3309,12 @@ go_down()
 	    if (dun_level == Q_PLANE) {
 		dun_level = 0;
 		new_level_flag = TRUE;
-		msg_print("You enter an inter-dimensional staircase.");
+		msg_print("You enter an inter-dimensional staircase. ");
 	    } else {
 		dun_level++;
 		new_level_flag = TRUE;
 		create_up_stair = TRUE;
-		msg_print("You enter a maze of down staircases.");
+		msg_print("You enter a maze of down staircases. ");
 	    }
 	} else
 	    no_stairs = TRUE;
@@ -3361,7 +3337,7 @@ jamdoor()
     register inven_type *t_ptr, *i_ptr;
     char                tmp_str[80];
 #ifdef TARGET
-    int temp = target_mode; /* targetting will scrwe up get_dir.. -CFT */
+    int temp = target_mode; /* targetting will screw up get_dir.. -CFT */
 #endif /* TARGET */
 
     free_turn_flag = TRUE;
@@ -3388,9 +3364,10 @@ jamdoor()
 		     */
 			t_ptr->p1 -= 1 + 190 / (10 - t_ptr->p1);
 			i_ptr = &inventory[i];
-			if (i_ptr->number > 1)
+			if (i_ptr->number > 1) {
 			    i_ptr->number--;
-			else
+			    inven_weight -= i_ptr->weight;
+			} else
 			    inven_destroy(i);
 		    } else
 			msg_print("But you have no spikes.");

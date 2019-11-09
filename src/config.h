@@ -23,6 +23,9 @@
  * workaround that may fix this, but it is a HACK and may result in other
  * problems, as I have not tested it enough.  Comment out the
  * "#define GROSS_HACK" to disable this.  (this is in creature.c at line 73)
+ ******
+ * This should no longer be needed for Angband 2.6, but it doesn't hurt to
+ * leave it in. -CWS
  */
 
 #define GROSS_HACK
@@ -38,11 +41,37 @@
 #define ALLOW_SCORE          /* Allow the user to check his score (v-key) */
 #define ALLOW_ARTIFACT_CHECK /* Allow the user to check artifacts */
 #define ALLOW_CHECK_UNIQUES  /* Allow player to check (dead) unique monsters */
-#define TARGET               /* Targeting mode */
-#define AUTOROLLER           /* Allow autorolling of characters */
+#define TARGET               /* Enable targeting mode                        */
+#define AUTOROLLER           /* Allow autorolling of characters              */
+#undef NICE		             /* Be nice to other users during autorolling    */
+#define SATISFY_HUNGER		 /* Do 'satisfy hunger' rather then 'create food'
+								to reduce the tedium for handling food. -CWS */
 
 
-/* files used by moria, set these to valid pathnames */
+/*****************************************************
+ * files used by moria, set these to valid pathnames *
+ *****************************************************/
+
+/* Define OLD_FILEPATHS to use the old, nasty way of putting complete
+ * paths directly into Angband.  Define NEW_FILEPATHS to use the new,
+ * studly method (which uses the ANGBAND_PATH environment variable to
+ * look for the files).                                         [cjh]
+ */
+
+#undef  OLD_FILEPATHS
+#define NEW_FILEPATHS
+
+
+/* Change this to something sensible, if necessary.  Angband will look
+ * in this directory if the ANGBAND_PATH environment variable isn't   
+ * set, or if the files aren't found in ANGBAND_PATH.            [cjh]
+ */
+
+#ifdef NEW_FILEPATHS
+#define DEFAULT_PATH "/User/games/lib/angband"
+#endif
+
+#ifdef OLD_FILEPATHS
 
 /* Try to fix filename inclusion in a portable fashion.
  * John Whitly@cs.Buffalo.edu says this works under gcc 2.5.5, but my
@@ -71,6 +100,7 @@
 #define ANGBAND_LOAD      LIBDIR(files/loadcheck)
 #define ANGBAND_WIZ       LIBDIR(files/wizards)
 #define ANGBAND_SAV       LIBDIR(save)
+#endif /* OLD_FILEPATHS */
 
 
 /* this sets the default user interface
@@ -107,6 +137,11 @@
 #define ultrix
 #endif */
 
+#if defined(SOLARIS)
+#define SYS_V
+#include <netdb.h>
+#endif
+
 /* if you are compiling on a SYS V version of UNIX, define this */
 /* #define SYS_V */
 
@@ -128,16 +163,49 @@
  * compilation, you might want to check the defines below.                  *
  ****************************************************************************/
 
+/* For the NEW_FILEPATHS option, we'll use PATH_SEP as the path separator;
+ * this will help make at least one section of Angband more portable.  If
+ * you don't seem something sensible here, either add a section for your
+ * filesystem, or just define PATH_SEP to something useful.          [cjh]
+ */
+
+/* NOTE: This is 100% untested on all but Atari, UNIX, and OS/2...  I'm
+ *       guessing at the Mac and VMS PATH_SEP values!                [cjh]
+ */
+
+#if defined(ultrix) || defined(SYS_V) || defined(SYS_III) \
+ || defined(__MINT__) || defined(HPUX) || defined(unix) \
+ || defined(BSD)
+#  define PATH_SEP "/"
+#else
+#  if defined(__EMX__) || defined(MSDOS) || defined(OS2) || defined(WINNT) \
+   || defined(ATARIST_MWC) || defined(ATARI) || defined(ATARIST)
+#    define PATH_SEP "\\"
+#  else
+#    ifdef MAC
+#      define PATH_SEP ":" /* or is it "::"? */
+#    else
+#      ifdef VMS
+#        define PATH_SEP "."
+#      endif /* VMS */
+#    endif /* Mac */
+#  endif /* DOS filesystems */
+#endif /* UNIX filesystems */
+
+
 /* Note that you'll be happier if you have a case-insensitive string
- * comparision routine on your system.  I'd imagine that a lot of subtle
- * things will go wrong without one.  Define stricmp to something appropriate,
- * and send me mail about what that is and what system you have so that this
- * can get adjusted correctly on all systems. -CWS
+ * comparision routine on your system.  If your system lacks this,
+ * you're still in luck, as we now provide one.  -CWS
  */
 
 #if defined (NeXT) || defined(HPUX) || defined(ultrix) \
-|| defined(NCR3K) || defined(linux)
+|| defined(NCR3K) || defined(linux) || defined(ibm032) \
+|| defined(__386BSD__) || defined(SOLARIS) || defined (__osf__)
 #define stricmp strcasecmp
+#else
+/* Let's make this work on systems lacking a such a routine. */
+#define stricmp my_stricmp
+#define NEEDS_STRICMP
 #endif
 
 /* this takes care of almost all "implicit declaration" warnings -CWS */
@@ -156,6 +224,10 @@
 
 
 /* fix systems lacking usleep() -CWS (thanks to cba) */
+/*
+ * Note that Solaris 2.x users without the BSD compatibilty kit need to
+ * define this as well.
+ */
 
 #if defined(HPUX) || defined(ultrix)
 #define NEEDS_USLEEP
@@ -265,19 +337,8 @@ extern int PlayerUID;
 /* Generates a random integer X where 1<=X<=MAXVAL	-RAK-	*/
 #define randint(maxval) (((maxval) < 1) ? (1) : ((random() % (maxval)) + 1))
 
-#if 0
 /* You would think that most compilers can do an integral abs() quickly,
  * wouldn't you?  Nope.  [But fabs is a lot worse on most machines!] -CWS */
 #define MY_ABS(x) (((x)<0) ? (-x) : (x))
-
-/* Distance between two points				-RAK-	*/
-/* common subexpression elimination'll have a field day with this when you
- * optimize; it'll be loads faster than a function call.... -CWS */
-
-#define distance(y1, x1, y2, x2) \
-   (( ((MY_ABS((y1) - (y2)) + MY_ABS((x1) - (x2))) << 1) - \
-     ( (MY_ABS((y1) - (y2)) > MY_ABS((x1) - (x2))) ? MY_ABS((x1) - (x2)) : \
-      MY_ABS((y1) - (y2)))) >> 1)
-#endif
 
 /*****************************************************************************/

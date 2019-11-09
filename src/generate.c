@@ -14,6 +14,10 @@
 #include "externs.h"
 #include "monster.h"
 
+#ifdef ibm032
+#include <sys/types.h>
+#endif
+
 #ifdef USG
 #if !defined(ATARIST_MWC)
 #ifndef __TURBOC__
@@ -35,6 +39,7 @@ static void correct_dir(int *, int *, int, int, int, int);
 static void rand_dir(int *, int *);
 static void fill_cave(int);
 static void place_streamer(int, int);
+static cave_type *test_place_obj(int, int);
 static void place_open_door(int, int);
 static void place_broken_door(int, int);
 static void place_closed_door(int, int);
@@ -72,6 +77,7 @@ static void         correct_dir();
 static void         rand_dir();
 static void         fill_cave();
 static void         place_streamer();
+static cave_type *test_place_obj();
 static void         place_open_door();
 static void         place_broken_door();
 static void         place_closed_door();
@@ -347,6 +353,36 @@ place_destroyed()
     }
 }
 
+/* Chris Tate (fixer@faxcsl.dcrt.nih.gov) - optimize this code for size!
+ * This code performs the common test in all of the place_* functions,
+ * and returns c_ptr if we can go ahead and place the object, or NULL
+ * if we can't.
+ */
+
+static cave_type *
+test_place_obj(y, x)
+int y, x;
+{
+    cave_type *t;
+    int        tv;
+    
+    if (!in_bounds(y,x))
+	return NULL;
+    t = &cave[y][x];
+    tv = t_list[t->tptr].tval;
+    
+    if (t->tptr != 0)
+	if (((tv <= TV_MAX_WEAR) && (tv >= TV_MIN_WEAR) &&
+	     (t_list[t->tptr].flags2 & TR_ARTIFACT)) ||
+	    (tv == TV_UP_STAIR) || (tv == TV_DOWN_STAIR) ||
+	    (tv == TV_STORE_DOOR))
+	    return NULL;
+	else
+	    delete_object(y,x); /* waste it, it's not important */
+    return t;
+}
+
+
 static void 
 place_open_door(y, x)
     int                 y, x;
@@ -354,19 +390,7 @@ place_open_door(y, x)
     register int        cur_pos;
     register cave_type *c_ptr;
 
-    if (!in_bounds(y, x))
-	return;			   /* abort! -CFT */
-    c_ptr = &cave[y][x];
-    if (c_ptr->tptr != 0)
-	if (((t_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
-	     (t_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
-	     (t_list[c_ptr->tptr].flags2 & TR_ARTIFACT)) ||
-	    (t_list[c_ptr->tptr].tval == TV_UP_STAIR) ||
-	    (t_list[c_ptr->tptr].tval == TV_DOWN_STAIR) ||
-	    (t_list[c_ptr->tptr].tval == TV_STORE_DOOR))
-	    return;		   /* abort! */
-	else
-	    delete_object(y, x);
+    if (!(c_ptr = test_place_obj(y,x))) return;
     cur_pos = popt();
     c_ptr->tptr = cur_pos;
     invcopy(&t_list[cur_pos], OBJ_OPEN_DOOR);
@@ -381,19 +405,7 @@ place_broken_door(y, x)
     register int        cur_pos;
     register cave_type *c_ptr;
 
-    if (!in_bounds(y, x))
-	return;			   /* abort! -CFT */
-    c_ptr = &cave[y][x];
-    if (c_ptr->tptr != 0)
-	if (((t_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
-	     (t_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
-	     (t_list[c_ptr->tptr].flags2 & TR_ARTIFACT)) ||
-	    (t_list[c_ptr->tptr].tval == TV_UP_STAIR) ||
-	    (t_list[c_ptr->tptr].tval == TV_DOWN_STAIR) ||
-	    (t_list[c_ptr->tptr].tval == TV_STORE_DOOR))
-	    return;		   /* abort! */
-	else
-	    delete_object(y, x);
+    if (!(c_ptr = test_place_obj(y,x))) return;
     cur_pos = popt();
     c_ptr->tptr = cur_pos;
     invcopy(&t_list[cur_pos], OBJ_OPEN_DOOR);
@@ -409,19 +421,7 @@ place_closed_door(y, x)
     register int        cur_pos;
     register cave_type *c_ptr;
 
-    if (!in_bounds(y, x))
-	return;			   /* abort! -CFT */
-    c_ptr = &cave[y][x];
-    if (c_ptr->tptr != 0)
-	if (((t_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
-	     (t_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
-	     (t_list[c_ptr->tptr].flags2 & TR_ARTIFACT)) ||
-	    (t_list[c_ptr->tptr].tval == TV_UP_STAIR) ||
-	    (t_list[c_ptr->tptr].tval == TV_DOWN_STAIR) ||
-	    (t_list[c_ptr->tptr].tval == TV_STORE_DOOR))
-	    return;		   /* abort! */
-	else
-	    delete_object(y, x);
+    if (!(c_ptr = test_place_obj(y,x))) return;
     cur_pos = popt();
     c_ptr->tptr = cur_pos;
     invcopy(&t_list[cur_pos], OBJ_CLOSED_DOOR);
@@ -436,19 +436,7 @@ place_locked_door(y, x)
     register int        cur_pos;
     register cave_type *c_ptr;
 
-    if (!in_bounds(y, x))
-	return;			   /* abort! -CFT */
-    c_ptr = &cave[y][x];
-    if (c_ptr->tptr != 0)
-	if (((t_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
-	     (t_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
-	     (t_list[c_ptr->tptr].flags2 & TR_ARTIFACT)) ||
-	    (t_list[c_ptr->tptr].tval == TV_UP_STAIR) ||
-	    (t_list[c_ptr->tptr].tval == TV_DOWN_STAIR) ||
-	    (t_list[c_ptr->tptr].tval == TV_STORE_DOOR))
-	    return;		   /* abort! */
-	else
-	    delete_object(y, x);
+    if (!(c_ptr = test_place_obj(y,x))) return;
     cur_pos = popt();
     c_ptr->tptr = cur_pos;
     invcopy(&t_list[cur_pos], OBJ_CLOSED_DOOR);
@@ -464,19 +452,7 @@ place_stuck_door(y, x)
     register int        cur_pos;
     register cave_type *c_ptr;
 
-    if (!in_bounds(y, x))
-	return;			   /* abort! -CFT */
-    c_ptr = &cave[y][x];
-    if (c_ptr->tptr != 0)
-	if (((t_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
-	     (t_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
-	     (t_list[c_ptr->tptr].flags2 & TR_ARTIFACT)) ||
-	    (t_list[c_ptr->tptr].tval == TV_UP_STAIR) ||
-	    (t_list[c_ptr->tptr].tval == TV_DOWN_STAIR) ||
-	    (t_list[c_ptr->tptr].tval == TV_STORE_DOOR))
-	    return;		   /* abort! */
-	else
-	    delete_object(y, x);
+    if (!(c_ptr = test_place_obj(y,x))) return;
     cur_pos = popt();
     c_ptr->tptr = cur_pos;
     invcopy(&t_list[cur_pos], OBJ_CLOSED_DOOR);
@@ -492,19 +468,7 @@ place_secret_door(y, x)
     register int        cur_pos;
     register cave_type *c_ptr;
 
-    if (!in_bounds(y, x))
-	return;			   /* abort! -CFT */
-    c_ptr = &cave[y][x];
-    if (c_ptr->tptr != 0)
-	if (((t_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
-	     (t_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
-	     (t_list[c_ptr->tptr].flags2 & TR_ARTIFACT)) ||
-	    (t_list[c_ptr->tptr].tval == TV_UP_STAIR) ||
-	    (t_list[c_ptr->tptr].tval == TV_DOWN_STAIR) ||
-	    (t_list[c_ptr->tptr].tval == TV_STORE_DOOR))
-	    return;		   /* abort! */
-	else
-	    delete_object(y, x);
+    if (!(c_ptr = test_place_obj(y,x))) return;
     cur_pos = popt();
     c_ptr->tptr = cur_pos;
     invcopy(&t_list[cur_pos], OBJ_SECRET_DOOR);
@@ -545,19 +509,7 @@ place_up_stairs(y, x)
     register int        cur_pos;
     register cave_type *c_ptr;
 
-    if (!in_bounds(y, x))
-	return;			   /* abort! -CFT */
-    c_ptr = &cave[y][x];
-    if (c_ptr->tptr != 0)
-	if (((t_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
-	     (t_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
-	     (t_list[c_ptr->tptr].flags2 & TR_ARTIFACT)) ||
-	    (t_list[c_ptr->tptr].tval == TV_UP_STAIR) ||
-	    (t_list[c_ptr->tptr].tval == TV_DOWN_STAIR) ||
-	    (t_list[c_ptr->tptr].tval == TV_STORE_DOOR))
-	    return;		   /* abort! */
-	else
-	    delete_object(y, x);
+    if (!(c_ptr = test_place_obj(y,x))) return;
     cur_pos = popt();
     c_ptr->tptr = cur_pos;
     invcopy(&t_list[cur_pos], OBJ_UP_STAIR);
@@ -577,22 +529,12 @@ place_down_stairs(y, x)
 	place_up_stairs(y, x);
 	return;
     }
-    if (!in_bounds(y, x))
-	return;			   /* abort! -CFT */
-    c_ptr = &cave[y][x];
-    if (c_ptr->tptr != 0)
-	if (((t_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
-	     (t_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
-	     (t_list[c_ptr->tptr].flags2 & TR_ARTIFACT)) ||
-	    (t_list[c_ptr->tptr].tval == TV_UP_STAIR) ||
-	    (t_list[c_ptr->tptr].tval == TV_DOWN_STAIR) ||
-	    (t_list[c_ptr->tptr].tval == TV_STORE_DOOR))
-	    return;		   /* abort! */
-	else
-	    delete_object(y, x);
+    if (!(c_ptr = test_place_obj(y,x))) return;
     cur_pos = popt();
     c_ptr->tptr = cur_pos;
     invcopy(&t_list[cur_pos], OBJ_DOWN_STAIR);
+    if (dun_level == 0)			/* on town level -CWS */
+	c_ptr->pl = TRUE;
 }
 
 
@@ -738,7 +680,7 @@ vault_orc(y, x, rank)
       case 4:
       case 5:
 	while (i < MAX_CREATURES) {
-	    if (!stricmp(c_list[i].name, "Uruk"))
+	    if (!stricmp(c_list[i].name, "Uruk-Hai"))
 		break;
 	    i++;
 	}
@@ -800,7 +742,7 @@ vault_troll(y, x, rank)
 	break;
       case 6:
 	while (i < MAX_CREATURES) {
-	    if (!stricmp(c_list[i].name, "Olog"))
+	    if (!stricmp(c_list[i].name, "Olog-Hai"))
 		break;
 	    i++;
 	}
@@ -1538,7 +1480,9 @@ build_type5(yval, xval)
 	return;
     }
 
-    good_item_flag = TRUE;	/* this is more like it.... -CWS */
+    if ((dun_level <= 40) ||
+	(randint((dun_level - 30)*(dun_level - 30) + 1) < 400))
+	good_item_flag = TRUE; 	/* this is more like it.... -CWS */
 
     t = template;		/* this avoids memory troubles... see above -CFT */
     for (y = 0; y < height; y++) {
@@ -1582,6 +1526,42 @@ build_type5(yval, xval)
 		place_secret_door(y1, x1);
 		c_ptr->lr = TRUE;
 		break;
+	      case '^':
+		c_ptr->fval = floor;
+		place_trap(y1, x1, randint(MAX_TRAP) - 1);
+		c_ptr->lr = TRUE;
+		break;
+	      case ' ':
+		break;
+	      case '&': case '@': case '8': case 'O': case ',':
+		/* do nothing for now... cannot place monster until whole
+		 * area is built, OW group monsters screw things up by being
+		 * placed where walls will be placed on top of them  -CFT
+		 */
+		break;
+	      default:
+#if 0
+		sprintf(buf, "Cockup='%c'", *t);
+		msg_print(buf);
+#endif
+		break;
+	    }
+	}
+    }
+    /* now we go back and place the monsters, hopefully this makes
+     * everything happy... -CFT */
+    t = template; /* this avoids memory troubles... see above -CFT */
+    for (y=0; y<height; y++) {
+	for (x=0; x<width; x++) {
+	    x1=xval-(width/2)+x;
+	    y1=yval-(height/2)+y;
+	    c_ptr = &cave[y1][x1];
+	    switch (*t++) {
+	      case '#': case 'X': case '%': case '*':
+	      case '+': case '^': case '.':
+		/* we already placed all of these... -CFT */
+		break;
+
 	      case '&':	   /* Monster */
 		c_ptr->fval = floor;
 		place_monster(y1, x1,
@@ -1608,7 +1588,9 @@ build_type5(yval, xval)
 		place_monster(y1, x1,
 			      get_nmons_num(dun_level + MON_SUMMON_ADJ + 40),
 			      TRUE);
-		place_special(y1, x1, 666);
+		object_level = dun_level + MON_SUMMON_ADJ + 20;
+		place_special(y1, x1, SPECIAL);
+		object_level = dun_level + 7;
 		c_ptr->lr = TRUE;
 		break;
 	      case ',':	   /* Monster/object */
@@ -1617,21 +1599,18 @@ build_type5(yval, xval)
 		    place_monster(y1, x1,
 		    get_mons_num(dun_level + MON_SUMMON_ADJ + vault), TRUE);
 		if (randint(2) == 1) {
-		    object_level = dun_level;
+		    object_level = dun_level + 7;
 		    place_object(y1, x1);
 		}
-		c_ptr->lr = TRUE;
-		break;
-	      case '^':
-		c_ptr->fval = floor;
-		place_trap(y1, x1, randint(MAX_TRAP) - 1);
 		c_ptr->lr = TRUE;
 		break;
 	      case ' ':
 		break;
 	      default:
+#if 0
 		sprintf(buf, "Cockup='%c'", *t);
 		msg_print(buf);
+#endif
 		break;
 	    }
 	}
@@ -2124,18 +2103,17 @@ special_pit(yval, xval, type)
     x_left = xval - 11;
     x_right = xval + 11;
 
-/*
- * for paranoia's sake: bounds-check!  Memory errors caused by accessing
- * cave[][] out-of-bounds are nearly impossible to spot!  -CFT 
- */
-    if (y_height < 1)
-	y_height = 1;
-    if (y_depth >= (cur_height - 1))
-	y_depth = cur_height - 2;
-    if (x_left < 1)
-	x_left = 1;
-    if (x_right >= (cur_width - 1))
-	x_right = cur_width - 2;
+    /* for paranoia's sake: bounds-check!  Memory errors caused by
+     * accessing cave[][] out-of-bounds are nearly impossible to
+     * spot!  -CFT */
+    if ((y_height < 1) || (y_depth >= (cur_height-1)) ||
+	(x_left < 1) || (x_right >= (cur_width-1))) {
+	build_type1(yval,xval); /* type1 is heavily bounds-checked, and considered
+				 * safe to use as a fall-back room type -CFT */
+	return;
+    } else
+	if ((randint(dun_level*dun_level + 1) < 300) && (dun_level <= 40))
+	    good_item_flag = TRUE;
 
 /*
  * the x dim of rooms tends to be much larger than the y dim, so don't bother
@@ -2511,8 +2489,6 @@ build_pit(yval, xval)
 {
     int                 tmp;
 
-/*    if (randint((dun_level * dun_level * dun_level) + 1) < 25000)
-	good_item_flag = TRUE;                      pits aren't very special.... */
     tmp = randint(dun_level > 80 ? 80 : dun_level);
     rating += 10;
     if (tmp < 10)
@@ -2659,6 +2635,8 @@ cave_gen()
 	    flag = place_ghost();
 	    counter++;
 	} while (!flag && counter < 10);
+	if (flag)
+	    good_item_flag = TRUE;
     }
     if (randint(5) < 4 && dun_level >= WIN_MON_APPEAR)
 	place_win_monster();
@@ -2801,7 +2779,8 @@ generate_cave()
     tlink();
     mlink();
     blank_cave();
-
+	object_level = dun_level; /* prevent great 50' levels with chars who
+							   * have gone much deeper -CWS */
     if (dun_level == 0) {
 	cur_height = SCREEN_HEIGHT;
 	cur_width = SCREEN_WIDTH;

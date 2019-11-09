@@ -89,8 +89,6 @@ set_flammable(e)		   /* changed -CFT */
       case TV_SCROLL1:
       case TV_SCROLL2:
       case TV_FLASK:
-      case TV_MAGIC_BOOK:
-      case TV_PRAYER_BOOK:
 	return (TRUE);
       case TV_LIGHT:
 	if (e->subval >= 192)	   /* only torches... -CFT */
@@ -215,7 +213,6 @@ set_lightning_destroy(e)	   /* changed -CFT */
 }
 
 
-/* ARGSUSED *//* to shut up lint about unused argument */
 int 
 set_null(e)
     inven_type         *e;
@@ -288,8 +285,6 @@ set_fire_destroy(e)		   /* changed -CFT */
       case TV_FOOD:
       case TV_OPEN_DOOR:
       case TV_CLOSED_DOOR:
-      case TV_MAGIC_BOOK:
-      case TV_PRAYER_BOOK:
 	return (TRUE);
       case TV_LIGHT:
 	if (e->subval >= 192)	   /* only torches... -CFT */

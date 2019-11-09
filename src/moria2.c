@@ -340,7 +340,7 @@ carry(y, x, pickup)
 	    objdes(tmp_str, i_ptr, TRUE);
 	    (void)sprintf(out_val,
 			  "You have found %ld gold pieces worth of %s.",
-			  i_ptr->cost, tmp_str);
+			  (long)i_ptr->cost, tmp_str);
 	    prt_gold();
 	    (void)delete_object(y, x);
 	    msg_print(out_val);
@@ -417,11 +417,13 @@ delete_monster(j)
     if (j != mfptr - 1) {
 #ifdef TARGET
 	/* This targetting code stolen from Morgul -CFT */
-	if (j==target_mon) target_mode = FALSE;   /* Targetted monster dead or
-						     compacted.      CDW */
-	if (target_mon==mfptr-1) target_mon = j;  /* Targetted monster moved
-						     to replace dead or
-						     compacted monster   CDW */
+	/* Targetted monster dead or compacted.      CDW */
+	if (j==target_mon)
+	    target_mode = FALSE;
+
+	/* Targetted monster moved to replace dead or compacted monster   CDW */
+	if (target_mon==mfptr-1)
+	    target_mon = j;
 #endif
 	m_ptr = &m_list[mfptr - 1];
 	cave[m_ptr->fy][m_ptr->fx].cptr = j;
@@ -454,12 +456,13 @@ fix1_delete_monster(j)
     if (j < 2)
 	return;			   /* trouble? abort! -CFT */
 #ifdef TARGET
-    /* This targetting code stolen from Morgul -CFT */
-    if (j==target_mon) target_mode = FALSE;   /* Targetted monster dead or
-						 compacted.      CDW */
-    if (target_mon==mfptr-1) target_mon = j;  /* Targetted monster moved
-						 to replace dead or
-						 compacted monster   CDW */
+    /* Targetted monster dead or compacted.      CDW */
+    if (j==target_mon)
+	target_mode = FALSE;
+
+    /* Targetted monster moved to replace dead or compacted monster   CDW */
+    if (target_mon==mfptr-1)
+	target_mon = j;
 #endif
     m_ptr = &m_list[j];
     if (c_list[m_ptr->mptr].cdefense & UNIQUE)
@@ -489,8 +492,18 @@ fix2_delete_monster(j)
 
     if (j < 2)
 	return;			   /* trouble? abort! -CFT */
-    m_ptr = &m_list[j];		   /* Fixed from a c_list ptr to a m_list
-				    * ptr. -CFT */
+    
+#ifdef TARGET
+    /* Targetted monster dead or compacted. CDW */
+    if (j==target_mon)
+	target_mode = FALSE;
+
+    /* Targetted monster moved to replace dead or compacted monster   CDW */
+    if (target_mon==mfptr-1)
+	target_mon = j; 
+#endif
+
+    m_ptr = &m_list[j];		   /* Fixed from a c_list ptr to a m_list ptr. -CFT */
     if (c_list[m_ptr->mptr].cdefense & UNIQUE)
 	check_unique(m_ptr);
     if (j != mfptr - 1) {
@@ -603,7 +616,7 @@ monster_death(y, x, flags, good, win)
     int32u              holder;	   /* avoid a compiler bug */
 #endif
 
-    if (win & CM_WIN) {		   /* MORGOTH */
+    if (win) {		   /* MORGOTH */
 	register int        j, k;
 	register cave_type *c_ptr;
 	int                 crown = FALSE, grond = FALSE;
@@ -883,10 +896,13 @@ mon_take_hit(monptr, dam, print_fear)
 	    } /* if found */
 	} /* if quest monster */
 	object_level = (dun_level + c_ptr->level) >> 1;
+	coin_type = 0;
+	get_coin_type(c_ptr);
 	i = monster_death((int)m_ptr->fy, (int)m_ptr->fx,
 			  c_list[m_ptr->mptr].cmove,
 			  (c_list[m_ptr->mptr].cdefense & (SPECIAL | GOOD)),
 			  (c_list[m_ptr->mptr].cmove & WINNER));
+	coin_type = 0;
 	if ((py.flags.blind < 1 && m_ptr->ml) ||
 	    (c_list[m_ptr->mptr].cmove & CM_WIN) ||
 	    (c_list[m_ptr->mptr].cdefense & UNIQUE)) { /* recall even invisible uniques */
@@ -915,6 +931,10 @@ mon_take_hit(monptr, dam, print_fear)
 	    p_ptr->exp_frac = new_exp_frac;
 
 	p_ptr->exp += new_exp;
+	if (p_ptr->exp < p_ptr->max_exp) /* If player is drained, let him get
+                                          * something: 10% is better than nothing -CFT */
+	    p_ptr->max_exp += new_exp/10;
+
     /*
      * can't call prt_experience() here, as that would result in "new level"
      * message appearing before "monster dies" message 
@@ -1106,6 +1126,16 @@ py_attack(y, x)
     while (blows >= 1);
 
 /* redo fear messages to only print at the end -CWS */
+
+    if (!m_list[crptr].ml)
+	(void)strcpy(m_name, "It");
+    else {
+	if (c_list[monptr].cdefense & UNIQUE)
+	    (void)sprintf(m_name, "%s", c_list[monptr].name);
+	else
+	    (void)sprintf(m_name, "The %s", c_list[monptr].name);
+    }
+
     if (monster_is_afraid == 1) {
 	sprintf(out_val, "%s flees in terror!", m_name);
 	msg_print(out_val);
@@ -1362,6 +1392,9 @@ openobject()
 		    i = p_ptr->disarm + 2 * todis_adj() + stat_adj(A_INT)
 			+ (class_level_adj[p_ptr->pclass][CLA_DISARM]
 			   * p_ptr->lev / 3);
+	/* give a 1/50 chance of opening anything, anyway -CWS */
+		    if ((i - t_ptr->p1) < 2)
+			i = t_ptr->p1 + 2;
 		    if (py.flags.confused > 0)
 			msg_print("You are too confused to pick the lock.");
 		    else if ((i - t_ptr->p1) > randint(100)) {
@@ -1433,11 +1466,14 @@ openobject()
 
 		    if (object_level < 0) /* perform some sanity checking -CWS */
 			object_level = 0;
-		    if (object_level > 101)
-			object_level = 101;
+		    if (object_level > MAX_OBJ_LEVEL)
+			object_level = MAX_OBJ_LEVEL;
 
+		    coin_type = 0;
+		    opening_chest = TRUE; /* don't generate another chest -CWS */
 		    (void)monster_death(y, x, t_list[c_ptr->tptr].flags, 0, 0);
 		    t_list[c_ptr->tptr].flags = 0;
+		    opening_chest = FALSE;
 		}
 	    } else
 		no_object = TRUE;
@@ -1527,11 +1563,28 @@ twall(y, x, t1, t2)
     res = FALSE;
     if (t1 > t2) {
 	c_ptr = &cave[y][x];
+	if (c_ptr->tptr) { /* secret door or rubble or gold -CFT */
+	    if (t_list[c_ptr->tptr].tval == TV_RUBBLE) {
+		delete_object(y,x); /* blow it away... */
+		if (randint(10)==1){
+		    place_object(y,x); /* and drop a goodie! */
+		}
+	    }
+	    else if (t_list[c_ptr->tptr].tval >= TV_MIN_DOORS)
+		delete_object(y,x); /* no more door... */
+	} /* if object there.... */
+	
+	c_ptr->fm = FALSE;
+	if (panel_contains(y, x))
+	    if ((c_ptr->tl || c_ptr->pl) && c_ptr->tptr != 0) {
+		msg_print("You have found something!");
+		c_ptr->fm = TRUE;
+	    }		
+	
+/* should become a room space, check to see whether it should be
+ * LIGHT_FLOOR or DARK_FLOOR
+ */
 	if (c_ptr->lr) {
-	/*
-	 * should become a room space, check to see whether it should be
-	 * LIGHT_FLOOR or DARK_FLOOR 
-	 */
 	    found = FALSE;
 	    for (i = y - 1; i <= y + 1; i++)
 		for (j = x - 1; j <= x + 1; j++)
@@ -1550,10 +1603,6 @@ twall(y, x, t1, t2)
 	    c_ptr->fval = CORR_FLOOR;
 	    c_ptr->pl = FALSE;
 	}
-	c_ptr->fm = FALSE;
-	if (panel_contains(y, x))
-	    if ((c_ptr->tl || c_ptr->pl) && c_ptr->tptr != 0)
-		msg_print("You have found something!");
 	lite_spot(y, x);
 	res = TRUE;
     }
@@ -2108,11 +2157,17 @@ look_see(x, y, transparent)
     out_val[0] = 0;
     if (gl_rock == 0 && c_ptr->cptr > 1 && m_list[c_ptr->cptr].ml) {
 	j = m_list[c_ptr->cptr].mptr;
-	(void)sprintf(out_val, "%s %s %s (%s).  [(r)ecall]",
-		      dstring,
-		      is_a_vowel(c_list[j].name[0]) ? "an" : "a",
-		      c_list[j].name,
-		      look_mon_desc((int)c_ptr->cptr));
+	if (c_list[j].cdefense & UNIQUE)
+	    (void)sprintf(out_val, "%s %s (%s).  [(r)ecall]",
+			  dstring,
+			  c_list[j].name,
+			  look_mon_desc((int)c_ptr->cptr));
+	else
+	    (void)sprintf(out_val, "%s %s %s (%s).  [(r)ecall]",
+			  dstring,
+			  (is_a_vowel(c_list[j].name[0]) ? "an" : "a"),
+			  c_list[j].name,
+			  look_mon_desc((int)c_ptr->cptr));
 	dstring = "It is on";
 	prt(out_val, 0, 0);
 	move_cursor_relative(y, x);
@@ -2203,7 +2258,6 @@ facts(i_ptr, tbth, tpth, tdam, tdis, thits)
     int                *tbth, *tpth, *tdam, *tdis, *thits;
 {
     register int        tmp_weight;
-    int                 tmp_tohit; /* Just a dummy -EAM */
 
     if (i_ptr->weight < 1)
 	tmp_weight = 1;
@@ -2246,6 +2300,15 @@ facts(i_ptr, tbth, tpth, tdam, tdis, thits)
 		*tdis = 20;
 	    }
 	    break;
+	  case 21:
+	    if (i_ptr->tval == TV_SLING_AMMO){ /* Sling of Might and ammo */
+		*tbth = py.misc.bthb;
+		*tpth += 2 * inventory[INVEN_WIELD].tohit;
+		*tdam += inventory[INVEN_WIELD].todam;
+		*tdam = *tdam * 3;
+		*tdis = 20;
+	    }
+	    break;
 	  case 1:
 	    if (i_ptr->tval == TV_ARROW) {	/* Short Bow and Arrow	 */
 		*tbth = py.misc.bthb;
@@ -2253,9 +2316,6 @@ facts(i_ptr, tbth, tpth, tdam, tdis, thits)
 		*tdam += inventory[INVEN_WIELD].todam;
 		*tdam = *tdam * 2;
 		*tdis = 25;
-		if (py.misc.pclass == 4)
-		    *thits = attack_blows((int)inventory[INVEN_WIELD].weight,
-					  &tmp_tohit);
 	    }
 	    break;
 	  case 2:
@@ -2265,25 +2325,26 @@ facts(i_ptr, tbth, tpth, tdam, tdis, thits)
 		*tdam += inventory[INVEN_WIELD].todam;
 		*tdam = *tdam * 3;
 		*tdis = 30;
-		if (py.misc.pclass == 4)
-		    *thits = attack_blows((int)inventory[INVEN_WIELD].weight,
-					  &tmp_tohit);
 	    }
 	    break;
-#if 0
-	  case 4:
-	    if (i_ptr->tval == TV_ARROW) {	/* Composite Bow and Arrow */
+	  case 3:
+	    if (i_ptr->tval == TV_ARROW){   /* C Bow, BARD, L bow of M and Arrow*/
 		*tbth = py.misc.bthb;
 		*tpth += 2 * inventory[INVEN_WIELD].tohit;
 		*tdam += inventory[INVEN_WIELD].todam;
 		*tdam = *tdam * 4;
 		*tdis = 35;
-		if (py.misc.pclass == 4)
-		    *thits = attack_blows((int)inventory[INVEN_WIELD].weight,
-					  &tmp_tohit);
 	    }
 	    break;
-#endif				   /* 0 */
+	  case 4:
+	    if (i_ptr->tval == TV_ARROW){   /* C Bow of M, BELEG and Arrow*/
+		*tbth = py.misc.bthb;
+		*tpth += 2 * inventory[INVEN_WIELD].tohit;
+		*tdam += inventory[INVEN_WIELD].todam;
+		*tdam = *tdam * 5;
+		*tdis = 35;
+	    }
+	    break;	    
 	  case 10:
 	    if (i_ptr->tval == TV_BOLT) {	/* Light Crossbow and Bolt */
 		*tbth = py.misc.bthb;
@@ -2302,6 +2363,16 @@ facts(i_ptr, tbth, tpth, tdam, tdis, thits)
 		*tdis = 35;
 	    }
 	    break;
+	  case 12:
+	    if (i_ptr->tval == TV_BOLT){    /* H xbow of M and Bolt*/
+		*tbth = py.misc.bthb;
+		*tpth += 2 * inventory[INVEN_WIELD].tohit;
+		*tdam += inventory[INVEN_WIELD].todam;
+		*tdam = *tdam * 5;
+		*tdis = 35;
+	    }
+	    break;
+	    
 	}
 }
 
@@ -2320,8 +2391,7 @@ drop_throw(y, x, t_ptr)
     i = y;
     j = x;
     k = 0;
-    if (randint(10) > 1 || t_ptr->flags2 & TR_ARTIFACT) {	/* no artifact arrows
-								 * yet */
+    if (randint(5) > 1) {
 	do {
 	    if (in_bounds(i, j)) {
 		c_ptr = &cave[i][j];
@@ -2336,50 +2406,73 @@ drop_throw(y, x, t_ptr)
 	}
 	while ((!flag) && (k <= 9));
     }
-    if (!flag && t_ptr->flags2 & TR_ARTIFACT) {
-	flag = FALSE;
-	i = y;
-	j = x;
-	k = 0;
-	do {
-	    if (in_bounds(i, j)) {
-		c_ptr = &cave[i][j];
-		if (c_ptr->fval <= MAX_OPEN_SPACE &&
-		    !(((t_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
-		       (t_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
-		       (t_list[c_ptr->tptr].flags2 & TR_ARTIFACT))
-		      || (t_list[c_ptr->tptr].tval == TV_UP_STAIR)
-		      || (t_list[c_ptr->tptr].tval == TV_DOWN_STAIR)
-		      || (t_list[c_ptr->tptr].tval == TV_STORE_DOOR)))
-		    flag = TRUE;
-	    }
-	    if (!flag) {
-		int                 newi, newj;
-
-		do {
-		    newi = i + randint(3) - 2;
-		    newj = j + randint(3) - 2;
-		} while (!in_bounds(newi, newj) ||
-			 (cave[newi][newj].fval > MAX_OPEN_SPACE));
-		i = newi;
-		j = newj;
-		k++;
-	    }
-	} while ((!flag) && (k <= 50));
-	if (flag && (cave[i][j].tptr != 0))
-	    (void)delete_object(i, j);
-    }
-    if (flag) {
+    if (!flag && (t_ptr->tval >= TV_MIN_WEAR) &&
+	(t_ptr->tval <= TV_MAX_WEAR) && (t_ptr->flags2 & TR_ARTIFACT)) {
+	k = 0;  i = y;  j = x;
+	do {		/* pick place w/o an object, unless doesn't seem to be one */
+	    y = i;  x = j;
+	    do {		/* pick place in bounds and not in wall */
+		i = y + randint(3) -2;
+		j = x + randint(3) -2;
+	    } while (!in_bounds(i,j) || cave[i][j].fval > MAX_OPEN_SPACE);
+	    k++;
+	    if (!(cur_pos = cave[i][j].tptr) || (k>64))
+		flag = TRUE;
+	    if (flag && (((t_list[cur_pos].flags2 & TR_ARTIFACT) &&
+			  ((cur_pos = t_list[cur_pos].tval) >= TV_MIN_WEAR) &&
+			  (cur_pos <= TV_MAX_WEAR)) ||
+			 (cur_pos == TV_STORE_DOOR) ||
+			 (cur_pos == TV_UP_STAIR) ||
+			 (cur_pos == TV_DOWN_STAIR)))
+		flag = FALSE;
+/* the above may seem convoluted, but it basically says: try up to 64 spaces,
+ * if an open one, place the item.  If none, clobber the item at 64th, but keep looking
+ * if that item is an artifact, store door, or stairs -CFT
+ */
+	    
+	    if (k>888) flag = TRUE; /* if this many tries, TOO BAD! -CFT */
+	} while (!flag);
+    } /* if not flag and is artifact */
+    if (flag)
+    {
+	if (cave[i][j].tptr)	/* we must have crushed something; waste it -CFT */
+	    delete_object(i,j);
 	cur_pos = popt();
 	cave[i][j].tptr = cur_pos;
 	t_list[cur_pos] = *t_ptr;
 	lite_spot(i, j);
     } else {
 	objdes(tmp_str, t_ptr, FALSE);
-	(void)sprintf(out_val, "The %s disappears.", tmp_str);
+	(void) sprintf(out_val, "The %s disappears.", tmp_str);
 	msg_print(out_val);
     }
 }
+
+/* This is another adaptation of DGK's Fangband code to help throw item
+   stay around (like Artifacts!) -CFT */
+static int
+stays_when_throw(i_ptr)
+inven_type *i_ptr;
+{
+  if ((i_ptr->tval >= TV_MIN_WEAR) && (i_ptr->tval <= TV_MAX_WEAR) &&
+      (i_ptr->flags2 & TR_ARTIFACT))
+    return TRUE;
+
+  /* for non-artifacts, drop_throw() still loses 20% of them... */
+  if ((i_ptr->tval >= TV_BOW) && (i_ptr->tval <= TV_STAFF))
+    return TRUE;
+  switch (i_ptr->tval){
+    case TV_CHEST: case TV_SLING_AMMO: case TV_ROD: case TV_FOOD:
+    case TV_MAGIC_BOOK: case TV_PRAYER_BOOK:
+      return TRUE;
+    case TV_MISC: case TV_SPIKE: case TV_WAND: case TV_BOLT:
+    case TV_ARROW: case TV_LIGHT: case TV_SCROLL1: case TV_SCROLL2:
+      return (randint(2)==1);
+  }
+  return FALSE;
+}
+
+
 
 /* Throw an object across the dungeon.		-RAK-	 */
 /* Note: Flasks of oil do fire damage				 */
@@ -2393,6 +2486,7 @@ throw_object()
     int                 y, x, oldy, oldx, cur_dis, dir;
     int                 flag, visible;
     int                 thits, max_shots;
+    int ok_throw = FALSE; /* used to prompt user with, so doesn't throw wrong thing */
     bigvtype            out_val, tmp_str;
     inven_type          throw_obj;
     register cave_type *c_ptr;
@@ -2404,6 +2498,49 @@ throw_object()
 	msg_print("But you are not carrying anything.");
 	free_turn_flag = TRUE;
     } else if (get_item(&item_val, "Fire/Throw which one?", 0, inven_ctr - 1, 0)) {
+	inven_type *t = &inventory[item_val];
+	
+	if ((t->tval == TV_FLASK) || (t->tval == TV_SLING_AMMO) ||
+	    (t->tval == TV_ARROW) || (t->tval == TV_BOLT) ||
+	    (t->tval == TV_SPIKE) || (t->tval == TV_MISC))
+	    ok_throw = TRUE;
+	else if (((t->tval == TV_FOOD) || (t->tval == TV_POTION1) ||
+		  (t->tval == TV_POTION2)) && known1_p(t) &&
+		 /* almost all potions do 1d1 damage when thrown.  I want the code
+		    to ask before throwing away potions of DEX, *Healing*, etc.
+		    This also means it will ask before throwing potions of slow
+		    poison, and other low value items that the player is likely to
+		    not care about.  This code will mean that mushrooms/molds of
+		    unhealth, potions of detonations and death are the only
+		    always-throwable food/potions.  (plus known bad ones, in a
+		    later test...) -CFT */
+		 (t->damage[0] > 1) && (t->damage[1] > 1))
+	    ok_throw = TRUE; /* if it's a mushroom or potion that does
+                                damage when thrown... */
+	else if (!known2_p(t) && (t->ident & ID_DAMD))
+	    ok_throw = TRUE;  /* Not IDed, but user knows it's cursed... */
+	else if ((t->tval >= TV_MIN_WEAR) && (t->tval <= TV_MAX_WEAR) &&
+		 (t->flags & TR_CURSED) && known2_p(t))
+	    ok_throw = TRUE; /* if user wants to throw cursed, let him */
+	else if ((object_list[t->index].cost <= 0) && known1_p(t) &&
+		 !(known2_p(t) && (t->cost > 0)))
+	    ok_throw = TRUE;
+	else if ((t->cost <= 0) && known2_p(t))
+	    ok_throw = TRUE; /* it's junk, let him throw it */
+	else if ((t->tval >= TV_HAFTED) &&
+		 (t->tval <= TV_DIGGING) && !(t->name2))
+	    ok_throw = TRUE; /* non ego/art weapons are okay to just throw, since
+				they are damaging (Moral of story: wield your weapon
+				if you're worried that you might throw it away!) */
+	else { /* otherwise double-check with user before throwing -CFT */
+	    objdes(tmp_str, t, TRUE);
+	    sprintf(out_val, "Really throw %s?", tmp_str);
+	    ok_throw = get_check(out_val);
+	}
+    } /* if selected an item to throw */
+
+    if (ok_throw) { /* can only be true if selected item, and it either looked
+		     * okay, or user said yes... */
 	if (get_dir(NULL, &dir)) {
 	    desc_remain(item_val);
 	    if (py.flags.confused > 0) {
@@ -2509,6 +2646,9 @@ throw_object()
 				    }
 				    prt_experience();
 				}
+				if (stays_when_throw(&throw_obj))
+/* should it land on floor?  Or else vanish forever? */
+				    drop_throw(oldy, oldx, &throw_obj);
 			    } else
 				drop_throw(oldy, oldx, &throw_obj);
 			} else {   /* do not test c_ptr->fm here */
@@ -2545,6 +2685,15 @@ throw_object()
 			inven_throw(item_val, &throw_obj);
 		    }
 		}
+
+                /* If we're going to fire again, reroll damage for the
+                   next missile. This makes each missile's damage more
+                   random, AND it doesn't allow damage bonuses to accumulate!
+                */
+		if (thits > 0) {
+                    int dummy; /* ignore everything except tdam */
+                    facts(&throw_obj, &dummy, &dummy, &tdam, &dummy, &dummy);
+                }
 	    }
 	} /* EAM end loop over multiple shots */
     }
@@ -2693,8 +2842,8 @@ bash()
 		count_msg_print("You smash into the door!");
 		tmp = py.stats.use_stat[A_STR] + py.misc.wt / 2;
 	    /* Use (roughly) similar method as for monsters. */
-		if (randint(tmp * (20 + abs((int) t_ptr->p1))) <
-			10 * (tmp - abs((int) t_ptr->p1))) {
+		if (randint(tmp * (20 + MY_ABS(t_ptr->p1))) <
+			10 * (tmp - MY_ABS(t_ptr->p1))) {
 		    msg_print("The door crashes open!");
 		    invcopy(&t_list[c_ptr->tptr], OBJ_OPEN_DOOR);
 		    t_ptr->p1 = 1 - randint(2);	/* 50% chance of breaking door */
@@ -2744,9 +2893,14 @@ look_mon_desc(mnum)
 {
     monster_type       *m = &m_list[mnum];
     int32               thp, tmax, perc;
-    int8u               living = !((c_list[m->mptr].cdefense & (UNDEAD | DEMON)) ||
-				   c_list[m->mptr].cchar == 'E');
+    int8u               living;
 
+    living = !((c_list[m->mptr].cdefense & (UNDEAD|DEMON)) ||
+	       ((c_list[m->mptr].cchar == 'E') ||
+		(c_list[m->mptr].cchar == 'g') ||
+		(c_list[m->mptr].cchar == 'v') ||
+		(c_list[m->mptr].cchar == 'X')));
+    
     if (m->maxhp == 0) {	   /* then we're just going to fix it! -CFT */
 	if ((c_list[m->mptr].cdefense & MAX_HP) || be_nasty)
 	    m->maxhp = max_hp(c_list[m->mptr].hd);

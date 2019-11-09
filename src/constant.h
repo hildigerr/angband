@@ -1,4 +1,4 @@
-/* constants.h: global constants used by Moria
+ /* constants.h: global constants used by Angband
 
    Copyright (c) 1989 James E. Wilson, Robert A. Koeneke
 
@@ -21,11 +21,20 @@
   uses the number, the program may stop working correctly.  Modify the
   constants at your own risk. */
 
-/* Current version number of Moria				*/
-#define CUR_VERSION_MAJ 5 /* version 5.2 */
-#define CUR_VERSION_MIN 2
-#define PATCH_LEVEL 8
+/* Current version number of Angband: 2.6.1
+ *
+ * Note that 5.2 must never be used, as it was used in Angband 2.4-2.5.
+ */
 
+#define CUR_VERSION_MAJ 2
+#define CUR_VERSION_MIN 6
+#define PATCH_LEVEL 1
+
+/* Basics */
+
+#ifndef FUZZY
+#define FUZZY 2
+#endif
 #ifndef TRUE
 #define TRUE 1
 #endif
@@ -33,9 +42,13 @@
 #define FALSE 0
 #endif
 
-#define MAX_UCHAR	255
-#define MAX_SHORT	32767		/* maximum short/long signed ints */
-#define MAX_LONG	0x7FFFFFFFL
+#define MAX_UCHAR       255
+#define MAX_SHORT       32767           /* maximum short/long signed ints */
+#define MAX_LONG        0xFFFFFFFFL
+
+#ifndef MAXHOSTNAMELEN					/* may not be defined -b. eck */
+#define MAXHOSTNAMELEN  64
+#endif
 
 /* Changing values below this line may be hazardous to your health! */
 
@@ -137,7 +150,7 @@
 /* Magic Treasure Generation constants				*/
 /* Note: Number of special objects, and degree of enchantments	 */
 /*	 can be adjusted here.					 */
-#define OBJ_STD_ADJ	 15  /* Adjust STD per level * 100	       */
+#define OBJ_STD_ADJ	 125  /* Adjust STD per level * 100	       */
 #define OBJ_STD_MIN	 7    /* Minimum STD			       */
 #define OBJ_TOWN_LEVEL	 5    /* Town object generation level	       */
 #define OBJ_BASE_MAGIC	 15   /* Base amount of magic		       */
@@ -893,3 +906,8 @@
 #define ST_SURROUND	28L
 #define ST_HEALING	29L
 #define ST_PROBE        30L
+
+/* bit flags used in my revamped enchant() code -CFT */
+#define ENCH_TOHIT   1
+#define ENCH_TODAM   2
+#define ENCH_TOAC    4

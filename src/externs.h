@@ -16,7 +16,8 @@
 extern int sprintf();
 #endif
 #else
-#if !(defined(MSDOS) || defined(NeXT) || defined(ultrix) || defined(linux))
+#if !(defined(MSDOS) || defined(NeXT) || defined(ultrix) || defined(linux) \
+|| defined(__386BSD__) || defined(SOLARIS))
 extern char *sprintf();
 #endif
 #endif
@@ -59,9 +60,11 @@ extern int plain_descriptions;          /* don't add color to any obj -CWS */
 extern int no_haggle_flag;              /* does the player have to haggle? -CWS */
 extern int quick_messages;		/* do quick messages -CWS */
 extern int equippy_chars;	        /* do equipment characters -CWS */
+extern int coin_type;			/* remember Creeping _xxx_ coin type -CWS */
+extern int opening_chest;		/* do not generate another chest -CWS */
 
 /* Unique artifact weapon flags */
-extern int GROND, RINGIL, AEGLOS, ARUNRUTH, MORMEGIL, ANGRIST, GURTHANG,
+extern int32 GROND, RINGIL, AEGLOS, ARUNRUTH, MORMEGIL, ANGRIST, GURTHANG,
   CALRIS, ANDURIL, STING, ORCRIST, GLAMDRING, DURIN, AULE, THUNDERFIST,
   BLOODSPIKE, DOOMCALLER, NARTHANC, NIMTHANC, DETHANC, GILETTAR, RILIA,
   BELANGIL, BALLI, LOTHARANG, FIRESTAR, ERIRIL, CUBRAGOL, BARD, COLLUIN,
@@ -72,7 +75,7 @@ extern int GROND, RINGIL, AEGLOS, ARUNRUTH, MORMEGIL, ANGRIST, GURTHANG,
   EONWE, THEODEN, ULMO, OSONDIR, TURMIL, TIL, DEATHWREAKER, AVAVIR, TARATOL;
 
 /* Unique artifact armour flags */
-extern int DOR_LOMIN, NENYA, NARYA, VILYA, BELEGENNON, FEANOR, ISILDUR,
+extern int32 DOR_LOMIN, NENYA, NARYA, VILYA, BELEGENNON, FEANOR, ISILDUR,
 SOULKEEPER, FINGOLFIN, ANARION, POWER, PHIAL, BELEG, DAL, PAURHACH,
 PAURNIMMEN, PAURAEGEN, PAURNEN, CAMMITHRIM, CAMBELEG, INGWE, CARLAMMAS,
 HOLHENNETH, AEGLIN, CAMLOST, NIMLOTH, NAR, BERUTHIEL, GORLIM, ELENDIL,
@@ -93,7 +96,7 @@ extern int new_level_flag;	/* Next level when true  */
 extern int teleport_flag;	/* Handle teleport traps  */
 extern int eof_flag;		/* Used to handle eof/HANGUP */
 extern int player_light;        /* Player carrying light */
-extern int light_rad;           /* Light radius */
+extern int light_rad,old_rad;           /* Light radius */
 extern int find_flag;        	/* Used in MORIA	      */
 extern int free_turn_flag;	/* Used in MORIA	      */
 extern int weapon_heavy;	/* Flag if the weapon too heavy -CJS- */
@@ -117,13 +120,13 @@ extern char *dummy_state;        /* dummy state array so that town/colors look
                                   * the same -CWS */
 
 extern int16 dun_level;         /* Cur dungeon level   */
-extern int16 object_level;    /* used to generate out-of-depth objects -CWS */
+extern int16 object_level;		/* used to generate objects -CWS */
 extern int16 missile_ctr;	 /* Counter for missiles */
 extern int msg_flag;	         /* Set with first msg  */
 extern vtype old_msg[MAX_SAVE_MSG];	/* Last messages -CJS- */
 extern int16 last_msg;			/* Where in the array is the last */
 extern int death;	/* True if died	      */
-extern int32 turn;	/* Cur trun of game    */
+extern int32 turn;				/* Cur turn of game    */
 extern int32 old_turn;	/* last turn feeling was felt */
 extern int wizard;	/* Wizard flag	      */
 extern int to_be_wizard;
@@ -291,6 +294,28 @@ extern int	ansi, saveprompt;
 extern char	moriatop[], moriasav[];
 #endif
 
+
+/* If you use NEW_FILEPATHS, we need these externs; if you use OLD_FILEPATHS */
+/* these are #define'd to something, so they aren't variables.         [cjh] */
+#ifdef NEW_FILEPATHS
+extern char *ANGBAND_TST;		/* was LIBDIR(test)					*/
+extern char *ANGBAND_HOU;		/* was LIBDIR(files/hours)			*/
+extern char *ANGBAND_MOR;		/* was LIBDIR(files/news)			*/
+extern char *ANGBAND_TOP;		/* was LIBDIR(files/newscores)		*/
+extern char *ANGBAND_BONES;		/* was LIBDIR(bones)				*/
+extern char *ANGBAND_HELP;		/* was LIBDIR(files/roglcmds.hlp)	*/
+extern char *ANGBAND_ORIG_HELP;	/* was LIBDIR(files/origcmds.hlp)	*/
+extern char *ANGBAND_WIZ_HELP;	/* was LIBDIR(files/rwizcmds.hlp)	*/
+extern char *ANGBAND_OWIZ_HELP;	/* was LIBDIR(files/owizcmds.hlp)	*/
+extern char *ANGBAND_WELCOME;	/* was LIBDIR(files/welcome.hlp)	*/
+extern char *ANGBAND_LOG;		/* was LIBDIR(files/ANGBAND.log)	*/
+extern char *ANGBAND_VER;		/* was LIBDIR(files/version.hlp)	*/
+extern char *ANGBAND_LOAD;		/* was LIBDIR(files/loadcheck)		*/
+extern char *ANGBAND_WIZ;		/* was LIBDIR(files/wizards)		*/
+extern char *ANGBAND_SAV;		/* was LIBDIR(save)					*/
+#endif /* NEW_FILEPATHS */
+
+
 /* function return values */
 /* only extern functions declared here, static functions declared inside
    the file that defines them */
@@ -355,6 +380,9 @@ int file_character(void)
 #else
 int file_character(char *);
 #endif
+#ifdef NEW_FILEPATHS
+void get_file_paths( void );
+#endif
 
 /* generate.c */
 void generate_cave(void);
@@ -400,7 +428,7 @@ void cast(void);
 int main(int, char **);
 
 /* misc1.c */
-void init_seeds(int32u);
+void init_seeds();
 void set_seed(int32u);
 void reset_seed(void);
 int check_time(void);
@@ -538,7 +566,8 @@ void prt_stun(void);
 void special_random_object(int, int, int);
 void cut_player(int);
 void stun_player(int);
-extern void prt_equippy_chars(void);
+void prt_equippy_chars(void);
+void get_coin_type(creature_type *);
 
 /* monsters.c */
 
@@ -579,6 +608,7 @@ void fire_dam(int, const char *);
 void cold_dam(int, const char *);
 void light_dam(int, const char *);
 void acid_dam(int, const char *);
+void darken_player(int, int);
 
 /* moria2.c */
 int cast_spell(const char * ,int, int *, int *);
@@ -636,9 +666,9 @@ int roff_recall(int);
 
 /* rnd.c is unused now -CWS */
 /* random.c */
-#ifndef linux
+#if !(defined(linux) || defined(__osf__))
 long random(void);
-#ifndef __MINT__
+#if !(defined(__MINT__) || defined(__386BSD__))
 void srandom(int);
 #endif
 char *initstate(unsigned int, char *, int);
@@ -718,8 +748,8 @@ void frost_line(int, int, int, int);
 void starlite(int, int);
 int disarm_all(int, int, int);
 void get_flags(int, int32u *, int32u *, int (**)());
-void fire_bolt(int, int, int, int, int, const char *);
-void fire_ball(int, int, int, int, int, int, const char *);
+void fire_bolt(int, int, int, int, int);
+void fire_ball(int, int, int, int, int, int);
 void breath(int, int, int, int, char *, int);
 int recharge(int);
 int hp_monster(int, int, int, int);
@@ -763,7 +793,7 @@ int slow_poison(void);
 void bless(int);
 void detect_inv2(int);
 void destroy_area(int, int);
-int enchant(int16 *, int);
+int enchant(inven_type *, int, int8u);
 void elemental_brand(void);
 int remove_curse(void);
 int restore_level(void);
@@ -781,6 +811,7 @@ int remove_all_curse(void);
 void darken_room(int, int);
 void lite_spot(int, int);
 const char *pain_message(int, int);
+void line_spell(int, int, int, int, int);
 
 /* staffs.c */
 void use(void);
@@ -817,6 +848,14 @@ void user_name(char *, int);
 int tilde(const char *, char *);
 FILE *my_tfopen(const char *, const char *);
 int my_topen(const char *, int, int);
+#endif
+
+/* util.c */
+#ifdef NEEDS_STRICMP
+int my_stricmp(const char *, const char *);
+#endif
+#ifdef NEEDS_USLEEP
+int microsleep(unsigned long);
 #endif
 
 /* variable.c */
@@ -891,6 +930,9 @@ void read_times();
 void helpfile();
 void print_objects();
 int file_character();
+#ifdef NEW_FILEPATHS
+void get_file_paths();
+#endif
 
 /* generate.c */
 void generate_cave();
@@ -1056,6 +1098,7 @@ void special_random_object();
 void cut_player();
 void stun_player();
 extern void prt_equippy_chars();
+void get_coin_type();
 
 /* monsters.c */
 
@@ -1101,6 +1144,7 @@ void cold_dam();
 void light_dam();
 void acid_dam();
 void lite_spot();
+void darken_player();
 
 /* moria2.c */
 int cast_spell();
@@ -1157,10 +1201,12 @@ int roff_recall();
 
 /* rnd.c is unused now -CWS */
 /* random.c */
+#if !(defined(linux) || defined(__osf__))
 long random();
 void srandom();
 char *initstate();
 char *setstate();
+#endif
 
 /* save.c */
 int save_char();
@@ -1182,6 +1228,10 @@ int set_lightning_destroy();
 int set_null();
 int set_acid_destroy();
 int set_fire_destroy();
+int set_plasma_destroy();
+int set_meteor_destroy();
+int set_holy_destroy();
+int set_mana_destroy();
 int general_store();
 int armory();
 int weaponsmith();
@@ -1271,7 +1321,8 @@ int enchant();
 int remove_curse();
 int restore_level();
 void self_knowledge();
-char *pain_message();
+char *pain_message()
+void line_spell();
 
 /* staffs.c */
 void use();
@@ -1312,6 +1363,14 @@ int tilde();
 FILE *my_tfopen();
 #endif
 int my_topen();
+#endif
+
+/* util.c */
+#ifdef NEEDS_STRICMP
+int my_stricmp();
+#endif
+#ifdef NEEDS_USLEEP
+int microsleep();
 #endif
 
 /* variable.c */

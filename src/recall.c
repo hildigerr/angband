@@ -347,11 +347,12 @@ roff_recall(mon_num)
     }
 #endif
     k = mon_num;
-    if (k == MAX_CREATURES)
-	roff("You feel you know it, and it knows you.  This can only mean trouble.");
-    else
+    if (k == MAX_CREATURES - 1)
+	roff("You feel you know it, and it knows you.  This can only mean trouble.  ");
+    else {
 	roff(desc_list[k].desc);
-    roff("  ");
+	roff("  ");
+    }
     k = FALSE;
     if (cp->level == 0) {
 	sprintf(temp, "%s in the town",
@@ -419,7 +420,10 @@ roff_recall(mon_num)
  * The quality of being a dragon is obvious. 
  */
     if (mp->r_kills) {
-	roff((sex == 'p' ? "A kill of these" : "A kill of this"));
+	if (cp->cdefense & UNIQUE)
+	    roff("Killing this");
+	else
+	    roff((sex == 'p' ? "A kill of these" : "A kill of this"));
 
 	if (cp->cdefense & ANIMAL)
 	    roff(" natural");
@@ -451,7 +455,7 @@ roff_recall(mon_num)
 	     py.misc.lev + 5) / 10;
 
 	(void)sprintf(temp, " is worth %lu.%02lu point%s", i,
-		      j, (i == 1 && j == 0 ? "" : "s"));
+		      (unsigned long)j, (unsigned long)(i == 1 && j == 0 ? "" : "s"));
 	roff(temp);
 
 	if ((py.misc.lev / 10) == 1)
@@ -472,7 +476,7 @@ roff_recall(mon_num)
 	    q = "n";
 	else
 	    q = "";
-	(void)sprintf(temp, " for a%s %lu%s level character.  ", q, i, p);
+	(void)sprintf(temp, " for a%s %lu%s level character.  ", q, (long)i, p);
 	roff(temp);
 	if (cp->cdefense & GROUP) {
 	    sprintf(temp, "%s usually appears in groups. ",
@@ -764,13 +768,18 @@ roff_recall(mon_num)
 				(CM_60_RANDOM | CM_90_RANDOM)))
 	    roff(" often");
 	roff(" carry");
-	p = " objects";
+	if (cp->cdefense & SPECIAL) /* it'll tell you who has better treasure -CFT */
+	    p = (j==1?"n exceptional object":" exceptional objects");
+	else if (cp->cdefense & GOOD)
+	    p = (j==1?" good object":" good objects");
+	else
+	    p = (j==1?"n object":" objects");
 	if (j == 1)
 	    p = " an object";
 	else if (j == 2)
 	    roff(" one or two");
 	else {
-	    (void)sprintf(temp, " up to %lu", j);
+	    (void)sprintf(temp, " up to %lu", (long)j);
 	    roff(temp);
 	}
 	if (rcmove & CM_CARRY_OBJ) {
@@ -878,6 +887,8 @@ roff(p)
 	if (*p == '\n' || roffp >= roffbuf + linesize) {
 	    q = roffp;
 	    if (*p != '\n') {
+		if (*q == ' ')
+		    q--;
 		if (*q == ' ')
 		    q--;
 		while (*q != ' ')

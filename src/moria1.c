@@ -15,6 +15,7 @@
 #include "config.h"
 #include "types.h"
 #include "externs.h"
+#include "monster.h"
 
 #ifdef USG
 #ifndef ATARIST_MWC
@@ -97,15 +98,15 @@ py_bonuses(t_ptr, factor)
 	if ((t_ptr->tval == TV_RING) &&
 	    !stricmp("Speed",
 		     object_list[t_ptr->index].name) &&
-	    (t_ptr->p1 == 1))
+	    (t_ptr->p1 > 0))
 	    if ((inventory[INVEN_RIGHT].tval == TV_RING) &&
 		!stricmp("Speed",
 			 object_list[inventory[INVEN_RIGHT].index].name) &&
-		(inventory[INVEN_RIGHT].p1 == 1) &&
+		(inventory[INVEN_RIGHT].p1 > 0) &&
 		(inventory[INVEN_LEFT].tval == TV_RING) &&
 		!stricmp("Speed",
 			 object_list[inventory[INVEN_LEFT].index].name) &&
-		(inventory[INVEN_RIGHT].p1 == 1))
+		(inventory[INVEN_RIGHT].p1 > 0))
 		return;
 	change_speed(-amount);
     }
@@ -494,6 +495,7 @@ show_inven(r1, r2, weight, col, test)
 	    j++;
 	}
     }
+    erase_line(1+j,col);
     return col;
 }
 
@@ -913,7 +915,7 @@ inven_command(command)
 		    scr_left = show_equip(show_weight_flag, scr_left);
 		py_bonuses(&inventory[INVEN_AUX], -1);	/* Subtract bonuses */
 		py_bonuses(&inventory[INVEN_WIELD], 1);	/* Add bonuses    */
-		check_strength();
+
 		if (inventory[INVEN_WIELD].tval != TV_NOTHING) {
 		    (void)strcpy(prt1, "Primary weapon   : ");
 		    objdes(prt2, &inventory[INVEN_WIELD], TRUE);
@@ -921,7 +923,8 @@ inven_command(command)
 		} else
 		    msg_print("No primary weapon.");
 	    /* this is a new weapon, so clear the heavy flag */
-		weapon_heavy = FALSE;
+/* no, don't; the check_strength will clear it if it needs to be cleared
+		weapon_heavy = FALSE; */
 		check_strength();
 	    }
 	    break;
@@ -1221,9 +1224,7 @@ inven_command(command)
 			    (void)sprintf(prt1, "%s %s. (%c)", string, prt2,
 					  'a' + item);
 			    msg_print(prt1);
-			/* this is a new weapon, so clear the heavy flag */
-			    if (slot == INVEN_WIELD)
-				weapon_heavy = FALSE;
+			/* check_str will clear the heavy flag if necessary */
 			    check_strength();
 			    if (i_ptr->flags & TR_CURSED) {
 				msg_print("Oops! It feels deathly cold!");
@@ -1387,6 +1388,19 @@ get_item(com_val, pmt, i, j, test)
     register int        test_flag, item;
     int                 full, i_scr, redraw;
 
+    int on_floor, ih;
+    cave_type *c_ptr;
+ 
+    /* check we're a) identifying and b) on the floor is an object
+     * and c) it is a object wich could be picked up
+     */
+
+    c_ptr = &cave[char_row][char_col];
+    ih = t_list[c_ptr->tptr].tval;
+    on_floor = ( (strcmp("Item you wish identified?",pmt) == 0) &&
+		 !( (c_ptr->tptr == 0) || ih == TV_NOTHING
+		    || ih > TV_MAX_PICK_UP) );
+
     item = FALSE;
     redraw = FALSE;
     *com_val = 0;
@@ -1411,8 +1425,9 @@ get_item(com_val, pmt, i, j, test)
 	    }
 	    if (full)
 		(void)sprintf(out_val,
-			      "(%s: %c-%c,%s / for %s, or ESC) %s",
-			  (i_scr > 0 ? "Inven" : "Equip"), i + 'a', j + 'a',
+			      "(%s: %c-%c,%s%s / for %s, or ESC) %s",
+			     (i_scr > 0 ? "Inven" : "Equip"), i + 'a', j + 'a',
+			      (on_floor ? " - floor," : ""),
 			      (redraw ? "" : " * to see,"),
 			      (i_scr > 0 ? "Equip" : "Inven"), pmt);
 	    else
@@ -1474,6 +1489,14 @@ get_item(com_val, pmt, i, j, test)
 			redraw = TRUE;
 		    }
 		    break;
+		case '-':
+		/* not identified from INVEN or EQU but not aborted */
+		    if (on_floor) {
+			item = FUZZY;
+			test_flag = TRUE;
+			i_scr = -1;
+			break;
+		    }
 		  default:
 		    if (isupper((int)which))
 			*com_val = which - 'A';
@@ -1682,16 +1705,127 @@ move_rec(y1, x1, y2, x2)
     cave[y2][x2].cptr = tmp;
 }
 
+static void
+flood_light(y,x)
+int y,x;
+{
+    register cave_type *c_ptr;
+    register int temp;
+    c_ptr = &cave[y][x];
+    if (c_ptr->lr) {
+	temp=c_ptr->tl;
+	c_ptr->tl = TRUE;
+	if (c_ptr->fval<MIN_CLOSED_SPACE && temp==FALSE) {
+	    flood_light(y+1,x);
+	    flood_light(y-1,x);
+	    flood_light(y,x+1);
+	    flood_light(y,x-1);
+	    flood_light(y+1,x+1);
+	    flood_light(y-1,x-1);
+	    flood_light(y-1,x+1);
+	    flood_light(y+1,x-1);
+	}
+    }
+}
+
+static void flood_permanent(y,x)
+int y,x;
+{
+    register cave_type *c_ptr;
+    c_ptr = &cave[y][x];
+    if (c_ptr->tl) {
+	c_ptr->tl = FALSE;
+	c_ptr->pl = TRUE;
+	if (c_ptr->fval==NT_DARK_FLOOR)
+	    c_ptr->fval=NT_LIGHT_FLOOR;
+	else if (c_ptr->fval==DARK_FLOOR)
+	    c_ptr->fval=LIGHT_FLOOR;
+#ifdef MSDOS
+	lite_spot(y,x); /* this does all that; plus color-safe -CFT */
+#else
+	if ((y-panel_row_prt)<23 && (y-panel_row_prt)>0 &&
+	    (x-panel_col_prt)>12 && (x-panel_col_prt)<80)
+	    print(loc_symbol(y, x), y, x);
+#endif
+	if (c_ptr->fval<MIN_CLOSED_SPACE) {
+	    flood_permanent(y+1,x);
+      flood_permanent(y-1,x);
+	    flood_permanent(y,x+1);
+	    flood_permanent(y,x-1);
+	    flood_permanent(y+1,x+1);
+	    flood_permanent(y-1,x-1);
+	    flood_permanent(y-1,x+1);
+	    flood_permanent(y+1,x-1);
+	}
+    }
+}
+
+static void
+flood_permanent_dark(y,x)
+int y,x;
+{
+    register cave_type *c_ptr;
+    c_ptr = &cave[y][x];
+    if (c_ptr->tl) {
+	c_ptr->tl = FALSE;
+	if (c_ptr->fval==NT_LIGHT_FLOOR)
+	    c_ptr->fval=NT_DARK_FLOOR;
+	else if (c_ptr->fval==LIGHT_FLOOR)
+	    c_ptr->fval=DARK_FLOOR;
+#ifdef MSDOS
+	if (panel_contains(y,x)) {
+	    if (c_ptr->fval < MIN_CLOSED_SPACE){
+		c_ptr->pl = FALSE;
+		flood_permanent_dark(y+1,x);
+		flood_permanent_dark(y-1,x);
+		flood_permanent_dark(y,x+1);
+		flood_permanent_dark(y,x-1);
+		flood_permanent_dark(y+1,x+1);
+		flood_permanent_dark(y-1,x-1);
+		flood_permanent_dark(y-1,x+1);
+		flood_permanent_dark(y+1,x-1);
+	    }
+	    lite_spot(y,x);
+	}
+#else
+	if ((y-panel_row_prt)<23 && (y-panel_row_prt)>0 &&
+	    (x-panel_col_prt)>12 && (x-panel_col_prt)<80)
+	    if (c_ptr->fval<MIN_CLOSED_SPACE) {
+		c_ptr->pl = FALSE;
+		flood_permanent_dark(y+1,x);
+		flood_permanent_dark(y-1,x);
+		flood_permanent_dark(y,x+1);
+		flood_permanent_dark(y,x-1);
+		flood_permanent_dark(y+1,x+1);
+		flood_permanent_dark(y-1,x-1);
+		flood_permanent_dark(y-1,x+1);
+		flood_permanent_dark(y+1,x-1);
+	    }
+	print(loc_symbol(y, x), y, x);
+#endif
+    }
+}
+
 void 
 light_room(y, x)
     int                 y, x;
 {
     register cave_type *c_ptr;
+    register monster_type  *m_ptr;
 
     c_ptr = &cave[y][x];
     if (!c_ptr->pl && c_ptr->lr) {
 	c_ptr->pl = TRUE;
-	c_ptr->fm = TRUE;	/* UM 5.5 fix to light doors against unlighting -CWS */
+	m_ptr = &m_list[c_ptr->cptr];
+
+/* Monsters that are intelligent wake up all the time; non-MINDLESS monsters wake
+ * up 1/3 the time, and MINDLESS monsters wake up 1/10 the time -CWS
+ */
+	if ((c_list[m_ptr->mptr].cdefense & INTELLIGENT) ||
+	    (!(c_list[m_ptr->mptr].cdefense & MINDLESS) && (randint(3) == 1)) ||
+	    (randint(10) == 1))
+	    m_ptr->csleep = 0;
+
 	if (c_ptr->fval == NT_DARK_FLOOR)
 	    c_ptr->fval = NT_LIGHT_FLOOR;
 	else if (c_ptr->fval == DARK_FLOOR)
@@ -1796,16 +1930,8 @@ sub1_move_light(y1, x1, y2, x2)
     int                 tval, top, left, bottom, right;
     int                 min_i, max_i, min_j, max_j;
 
-    /* replace a check for in_bounds2 every loop with 4 quick computations -CWS */
     if (light_flag) {
-	min_i = MY_MAX(0, (y1 - light_rad));
-	max_i = MY_MIN(cur_height, (y1 + light_rad));
-	min_j = MY_MAX(0, (x1 - light_rad));
-	max_j = MY_MIN(cur_width, (x1 + light_rad));
-
-	for (i = min_i; i <= max_i; i++)
-	    for (j = min_j; j <= max_j; j++)
-		cave[i][j].tl = FALSE;	/* Turn off light */
+	darken_player(y1, x1);
 	if (find_flag && !find_prself)
 	    light_flag = FALSE;
     } else if (!find_flag || find_prself)
@@ -1860,21 +1986,8 @@ sub3_move_light(y1, x1, y2, x2)
     register int        y1, x1;
     int                 y2, x2;
 {
-    register int        i, j;
-    int                 min_i, max_i, min_j, max_j;
-
     if (light_flag) {
-    /* replace a check for in_bounds2 every loop with 4 quick computations -CWS */
-	min_i = MY_MAX(0, (y1 - light_rad));
-	max_i = MY_MIN(cur_height, (y1 + light_rad));
-	min_j = MY_MAX(0, (x1 - light_rad));
-	max_j = MY_MIN(cur_width, (x1 + light_rad));
-
-	for (i = min_i; i <= max_i; i++)
-	    for (j = min_j; j <= max_j; j++) {
-		cave[i][j].tl = FALSE;	/* Turn off light */
-		lite_spot(i, j);
-	    }
+	darken_player(y1, x1);
 	light_flag = FALSE;
     } else if (!find_flag || find_prself)	/* um55 change -CFT */
 	lite_spot(y1, x1);
@@ -1888,6 +2001,26 @@ sub3_move_light(y1, x1, y2, x2)
 	print('@', y2, x2);
 }
 
+void
+darken_player(y1, x1)
+int y1, x1;
+{
+    int min_i, max_i, min_j, max_j, rad, i, j;
+
+    rad = MY_MAX(light_rad, old_rad);
+
+/* replace a check for in_bounds2 every loop with 4 quick computations -CWS */
+    min_i = MY_MAX(0, (y1 - rad));
+    max_i = MY_MIN(cur_height, (y1 + rad));
+    min_j = MY_MAX(0, (x1 - rad));
+    max_j = MY_MIN(cur_width, (x1 + rad));
+
+    for (i = min_i; i <= max_i; i++)
+        for (j = min_j; j <= max_j; j++) {
+	    cave[i][j].tl = FALSE;  /* Turn off light */
+	    lite_spot(i, j);
+        }
+}
 
 /* Package for moving the character's light about the screen	 */
 /* Four cases : Normal, Finding, Blind, and Nolight	 -RAK-	 */
@@ -1991,6 +2124,7 @@ rest()
     }
 }
 
+
 void 
 rest_off()
 {
@@ -2035,12 +2169,19 @@ take_hit(damage, hit_from)
 	damage = 0;
     py.misc.chp -= damage;
     if (py.misc.chp < 0) {
-	if (!death) {
-	    death = TRUE;
-	    (void)strcpy(died_from, hit_from);
-	    total_winner = FALSE;
+	if ((wizard) && !(get_Yn("Die?"))) {
+	    py.misc.chp=py.misc.mhp;
+	    death=FALSE;
+	    prt_chp();
+	    msg_print("OK, so you don't die.");
+	} else {	    
+	    if (!death) {
+		death = TRUE;
+		(void)strcpy(died_from, hit_from);
+		total_winner = FALSE;
+	    }
+	    new_level_flag = TRUE;
 	}
-	new_level_flag = TRUE;
     } else
 	prt_chp();
     if (py.misc.chp <= py.misc.mhp * hitpoint_warn / 10) {
@@ -2234,6 +2375,11 @@ find_init(dir)
     int                 row, col, deepleft, deepright;
     register int        i, shortleft, shortright;
 
+    darken_player(char_row, char_col);
+    old_rad = light_rad;
+    if (light_rad >= 0)
+	light_rad = 1;
+
     row = char_row;
     col = char_col;
     if (!mmove(dir, &row, &col))
@@ -2321,6 +2467,7 @@ end_find()
 {
     if (find_flag) {
 	find_flag = FALSE;
+	light_rad = old_rad;
 	move_light(char_row, char_col, char_row, char_col);
     }
 }
@@ -2408,7 +2555,6 @@ area_affect(dir, y, x)
 
 		if (c_ptr->fval <= MAX_OPEN_SPACE || inv) {
 		    if (find_openarea) {
-		    /* Have we found a break? */
 			if (i < 0) {
 			    if (find_breakright) {
 				end_find();
@@ -2469,7 +2615,7 @@ area_affect(dir, y, x)
 	    if (option2 == 0 || (find_examine && !find_cut)) {
 	    /*
 	     * There is only one option, or if two, then we always examine
-	     * potential corners and never cur known corners, so you step
+	     * potential corners and never cut known corners, so you step
 	     * into the straight option. 
 	     */
 		if (option != 0)
@@ -2563,8 +2709,8 @@ minus_ac(typ_dam)
 	i_ptr = &inventory[j];
 	switch (typ_dam) {
 	  case TR_RES_ACID:
-	    if ((i_ptr->flags2 & TR_ARTIFACT && randint(3) > 1) ||
-	     ((i_ptr->flags & TR_RES_ACID) || (i_ptr->flags2 & TR_IM_ACID)))
+	    if ((i_ptr->flags & TR_RES_ACID) || (i_ptr->flags2 & TR_IM_ACID) ||
+		((i_ptr->flags2 & TR_ARTIFACT) && (randint(5)>2)))
 		do_damage = FALSE;
 	    else
 		do_damage = TRUE;
@@ -2598,8 +2744,7 @@ corrode_gas(kb_str)
     if (!py.flags.acid_im)
 	if (!minus_ac((int32u) TR_RES_ACID))
 	    take_hit(randint(8), kb_str);
-    if (!py.flags.acid_im && !py.flags.resist_acid)
-	inven_damage(set_corrodes, 5);
+    inven_damage(set_corrodes, 5);
 }
 
 
@@ -2635,8 +2780,7 @@ fire_dam(dam, kb_str)
     if (py.flags.fire_im)
 	dam = 1;
     take_hit(dam, kb_str);
-    if (!py.flags.fire_im && !py.flags.resist_heat)
-	inven_damage(set_flammable, 3);
+    inven_damage(set_flammable, 3);
 }
 
 
@@ -2653,8 +2797,7 @@ cold_dam(dam, kb_str)
     if (py.flags.cold_im)
 	dam = 1;
     take_hit(dam, kb_str);
-    if (!py.flags.cold_im && !py.flags.resist_cold)
-	inven_damage(set_frost_destroy, 5);
+    inven_damage(set_frost_destroy, 5);
 }
 
 
@@ -2671,8 +2814,7 @@ light_dam(dam, kb_str)
     if (py.flags.light_im)
 	dam = 1;
     take_hit(dam, kb_str);
-    if (!py.flags.light_im && !py.flags.resist_light)
-	inven_damage(set_lightning_destroy, 3);
+    inven_damage(set_lightning_destroy, 3);
 }
 
 
@@ -2694,7 +2836,7 @@ acid_dam(dam, kb_str)
     if (!py.flags.resist_acid)
 	if (minus_ac((int32u) TR_RES_ACID))
 	    flag = 1;
-    take_hit(dam / (flag + 1), kb_str);
-    if (!py.flags.acid_im && !py.flags.resist_acid)
-	inven_damage(set_acid_affect, 3);
+    if (py.flags.acid_resist)
+	flag += 2;
+    inven_damage(set_acid_affect, 3);
 }

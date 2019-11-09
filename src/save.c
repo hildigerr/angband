@@ -38,23 +38,26 @@
 #include <stat.h>		/* chmod() */
 #endif
 
-static int          sv_write();
-static void         wr_byte();
-static void         wr_short();
-static void         wr_long();
-static void         wr_bytes();
-static void         wr_string();
-static void         wr_shorts();
-static void         wr_item();
-static void         wr_monster();
-static void         rd_byte();
-static void         rd_short();
-static void         rd_long();
-static void         rd_bytes();
-static void         rd_string();
-static void         rd_shorts();
-static void         rd_item();
-static void         rd_monster();
+/* Lets do all prototypes correctly.... -CWS */
+#ifndef NO_LINT_ARGS
+static int sv_write();
+static void wr_byte();
+static void wr_short();
+static void wr_long();
+static void wr_bytes();
+static void wr_string();
+static void wr_shorts();
+static void wr_item();
+static void wr_monster();
+static void rd_byte();
+static void rd_short();
+static void rd_long();
+static void rd_bytes();
+static void rd_string();
+static void rd_shorts();
+static void rd_item();
+static void rd_monster();
+#endif
 
 #if !defined(ATARIST_MWC)
 #ifdef MAC
@@ -80,6 +83,7 @@ static FILE        *fileptr;
 static int8u        xor_byte;
 static int          from_savefile; /* can overwrite old savefile when save */
 static int32u       start_time;	   /* time that play started */
+static int8u        version_maj, version_min, patch_level;
 
 /*
  * This save package was brought to by			-JWT- and
@@ -335,6 +339,9 @@ sv_write()
 
     wr_short((int16u) log_index);
     wr_long(l);
+    wr_long(l);	/* added some duplicates, for future flags expansion -CWS */
+    wr_long(l);
+    wr_long(l);
 
     m_ptr = &py.misc;
     wr_string(m_ptr->name);
@@ -453,9 +460,11 @@ sv_write()
     wr_byte(f_ptr->nexus_resist);
     wr_byte(f_ptr->blindness_resist);
     wr_byte(f_ptr->nether_resist);
+    wr_byte(f_ptr->fear_resist); /* added -CWS */
 
     wr_short((int16u) missile_ctr);
     wr_long((int32u) turn);
+    wr_long((int32u) old_turn);	/* added -CWS */
     wr_short((int16u) inven_ctr);
     for (i = 0; i < inven_ctr; i++)
 	wr_item(&inventory[i]);
@@ -534,7 +543,7 @@ sv_write()
 	    if (c_ptr->cptr != 0) {
 		wr_byte((int8u) i);
 		wr_byte((int8u) j);
-		wr_byte(c_ptr->cptr);
+		wr_short((int16u) c_ptr->cptr); /* was wr_byte -CWS */
 	    }
 	}
     wr_byte((int8u) 0xFF);	   /* marks end of cptr info */
@@ -621,9 +630,9 @@ sv_write()
 	    temp = (int16u) c_list[MAX_CREATURES - 1].mexp;
 	wr_short((int16u) temp);
     }
-    wr_byte((int8u) c_list[MAX_CREATURES - 1].sleep);
+    wr_short((int8u) c_list[MAX_CREATURES - 1].sleep);
     wr_byte((int8u) c_list[MAX_CREATURES - 1].aaf);
-    wr_byte((int8u) c_list[MAX_CREATURES - 1].ac);
+    wr_short((int8u) c_list[MAX_CREATURES - 1].ac);
     wr_byte((int8u) c_list[MAX_CREATURES - 1].speed);
     wr_byte((int8u) c_list[MAX_CREATURES - 1].cchar);
     wr_bytes(c_list[MAX_CREATURES - 1].hd, 2);
@@ -642,7 +651,7 @@ save_char()
     char               *tmp2;
 
 #ifdef SECURE
-    bePlayer();
+    beGames();
 #endif
     if (death && NO_SAVE)
 	return TRUE;
@@ -658,7 +667,7 @@ save_char()
 	return FALSE;
     }
 #ifdef SECURE
-    beGames();
+    bePlayer();
 #endif
     return TRUE;
 }
@@ -759,8 +768,7 @@ int
 get_char(generate)
     int                *generate;
 {
-    register int        i, j;
-    int                 fd, c, ok, total_count;
+    int        i, j, fd, c, ok, total_count;
     int32u              l, age, time_saved;
     vtype               temp;
     int16u              int16u_tmp;
@@ -771,7 +779,6 @@ get_char(generate)
     register struct flags *f_ptr;
     store_type         *st_ptr;
     int8u               char_tmp, ychar, xchar, count;
-    int8u               version_maj, version_min, patch_level;
 
     free_turn_flag = TRUE;	   /* So a feeling isn't generated upon
 				    * reloading -DGK */
@@ -832,12 +839,19 @@ get_char(generate)
 	xor_byte = 0;
 	rd_byte(&xor_byte);
 
-    /* COMPAT support savefiles from 5.0.14 to 5.0.17 */
-    /* support savefiles from 5.1.0 to present */
+/* This boneheadedness is a direct result of the fact that Angband 2.4
+ * had version constants of 5.2, not 2.4.  2.5 inherited this.  2.6 fixes
+ * the problem.  Note that there must never be a 5.2.x version of Angband,
+ * or else this code will get confused. -CWS
+ */
+	if ((version_maj == 5) && (version_min == 2)) {
+	  version_maj = 2;
+	  version_min = 5;
+	}
+
 	if ((version_maj != CUR_VERSION_MAJ)
 	    || (version_min > CUR_VERSION_MIN)
-	    || (version_min == CUR_VERSION_MIN && patch_level > PATCH_LEVEL)
-	    || (version_min == 0 && patch_level < 14)) {
+	    || (version_min == CUR_VERSION_MIN && patch_level > PATCH_LEVEL)) {
 	    prt("Sorry. This savefile is from a different version of Angband.",
 		2, 0);
 	    goto error;
@@ -996,7 +1010,13 @@ get_char(generate)
 	    prt("Loaded Recall Memory", 6, 0);
 	put_qio();
 	rd_short((int16u *) & log_index);
-	rd_long(&l);
+        rd_long(&l);
+	if ((version_maj >= 2) && (version_min >= 6)) {
+	  rd_long(&l);
+	  rd_long(&l);
+	  rd_long(&l);
+	}
+
 	if (to_be_wizard)
 	    prt("Loaded Options Memory", 7, 0);
 	put_qio();
@@ -1127,7 +1147,7 @@ get_char(generate)
 
 	    s_ptr = &py.stats;
 	    rd_shorts(s_ptr->max_stat, 6);
-	    if (version_maj <= 5 && version_min <=2 && patch_level <= 6)
+	    if (version_maj <= 2 && version_min <=5 && patch_level <= 6)
 		rd_shorts(s_ptr->cur_stat, 6);
 	    else
 		rd_bytes(s_ptr->cur_stat, 6);                   /* -TL */
@@ -1204,10 +1224,17 @@ get_char(generate)
 	    rd_byte(&f_ptr->nexus_resist);
 	    rd_byte(&f_ptr->blindness_resist);
 	    rd_byte(&f_ptr->nether_resist);
+	    if ((version_maj >= 2) && (version_min >= 6))
+		rd_byte(&f_ptr->fear_resist);
+	    else
+		f_ptr->fear_resist = 0;	/* sigh */
 
 	    rd_short((int16u *) & missile_ctr);
 	    rd_long((int32u *) & turn);
-	    old_turn = turn;	/* best we can do... -CWS */
+	    if ((version_maj >= 2) && (version_min >= 6))
+	      rd_long((int32u *) & old_turn);
+	    else
+	      old_turn = turn;	/* best we can do... -CWS */
 
 	    rd_short((int16u *) & inven_ctr);
 	    if (inven_ctr > INVEN_WIELD) {
@@ -1239,29 +1266,25 @@ get_char(generate)
 	    rd_short((int16u *) & noscore);
 	    rd_shorts(player_hp, MAX_PLAYER_LEVEL);
 
-	    if ((version_min >= 2)
-		|| (version_min == 1 && patch_level >= 3))
-		for (i = 0; i < MAX_STORES; i++) {
-		    st_ptr = &store[i];
-		    rd_long((int32u *) & st_ptr->store_open);
-		    rd_short((int16u *) & st_ptr->insult_cur);
-		    rd_byte(&st_ptr->owner);
-		    rd_byte(&st_ptr->store_ctr);
-		    rd_short(&st_ptr->good_buy);
-		    rd_short(&st_ptr->bad_buy);
-		    if (st_ptr->store_ctr > STORE_INVEN_MAX) {
-			prt("ERROR in store_ctr", 9, 0);
-			goto error;
-		    }
-		    for (j = 0; j < st_ptr->store_ctr; j++) {
-			rd_long((int32u *) & st_ptr->store_inven[j].scost);
-			rd_item(&st_ptr->store_inven[j].sitem);
-		    }
-		}
+	    for (i = 0; i < MAX_STORES; i++) {
+	      st_ptr = &store[i];
+	      rd_long((int32u *) & st_ptr->store_open);
+	      rd_short((int16u *) & st_ptr->insult_cur);
+	      rd_byte(&st_ptr->owner);
+	      rd_byte(&st_ptr->store_ctr);
+	      rd_short(&st_ptr->good_buy);
+	      rd_short(&st_ptr->bad_buy);
+	      if (st_ptr->store_ctr > STORE_INVEN_MAX) {
+		prt("ERROR in store_ctr", 9, 0);
+		goto error;
+	      }
+	      for (j = 0; j < st_ptr->store_ctr; j++) {
+		rd_long((int32u *) & st_ptr->store_inven[j].scost);
+		rd_item(&st_ptr->store_inven[j].sitem);
+	      }
+	    }
 
-	    if ((version_min >= 2)
-		|| (version_min == 1 && patch_level >= 3)) {
-		rd_long(&time_saved);
+	    rd_long(&time_saved);
 #ifndef SET_UID
 #ifndef ALLOW_FIDDLING
 		if (!to_be_wizard) {
@@ -1273,9 +1296,7 @@ get_char(generate)
 		}
 #endif
 #endif
-	    }
-	    if (version_min >= 2)
-		rd_string(died_from);
+	    rd_string(died_from);
 	}
 	if ((c = getc(fileptr)) == EOF || (l & 0x80000000L)) {
 	    if ((l & 0x80000000L) == 0) {
@@ -1358,7 +1379,15 @@ get_char(generate)
 	while (char_tmp != 0xFF) {
 	    ychar = char_tmp;
 	    rd_byte(&xchar);
-	    rd_byte(&char_tmp);
+
+    /* let's correctly fix the invisible monster bug  -CWS */
+	    if ((version_maj >= 2) && (version_min >= 6)) {
+		rd_short((int16u *) & int16u_tmp);
+		cave[ychar][xchar].cptr = int16u_tmp;
+	    } else {
+		rd_byte((int8u *) & char_tmp);
+		cave[ychar][xchar].cptr = char_tmp;
+	    }
 	    if (xchar > MAX_WIDTH || ychar > MAX_HEIGHT) {
 		vtype               t1;
 
@@ -1367,7 +1396,6 @@ get_char(generate)
 			(unsigned) xchar, (unsigned) ychar, (unsigned) char_tmp);
 		prt(t1, 11, 0);
 	    }
-	    cave[ychar][xchar].cptr = char_tmp;
 	    rd_byte(&char_tmp);
 	}
     /* read in the treasure ptr info */
@@ -1420,15 +1448,6 @@ get_char(generate)
 	}
 	for (i = MIN_MONIX; i < mfptr; i++) {
 	    rd_monster(&m_list[i]);
-	/* let's fix the infamous monster heal bug -CWS */
-	    if ((c_list[m_list[i].mptr].cdefense & MAX_HP) || be_nasty)
-		m_list[i].maxhp = max_hp(c_list[m_list[i].mptr].hd);
-	    else
-		m_list[i].maxhp = pdamroll(c_list[m_list[i].mptr].hd);
-	    if (m_list[i].hp > m_list[i].maxhp)
-		m_list[i].maxhp = m_list[i].maxhp;
-
-	    m_list[i].monfear = 0; /* this is not saved either -CWS */
 	}
 #ifdef MSDOS
     /* change walls and floors to graphic symbols */
@@ -1464,9 +1483,22 @@ get_char(generate)
 	    rd_short((int16u *) & t1);
 	    c_list[MAX_CREATURES - 1].mexp = (int32u) t1;
 	}
-	rd_byte((int8u *) & (c_list[MAX_CREATURES - 1].sleep));
+
+/* more stupid size bugs that would've never been needed if these variables
+ * had been given enough space in the first place -CWS
+ */
+	if ((version_maj >= 2) && (version_min >= 6))
+	    rd_short((int16u *) & (c_list[MAX_CREATURES - 1].sleep));
+	else
+	    rd_byte((int8u *) & (c_list[MAX_CREATURES - 1].sleep));
+
 	rd_byte((int8u *) & (c_list[MAX_CREATURES - 1].aaf));
-	rd_byte((int8u *) & (c_list[MAX_CREATURES - 1].ac));
+
+	if ((version_maj >= 2) && (version_min >= 6))
+	    rd_short((int16u *) & (c_list[MAX_CREATURES - 1].ac));
+	else
+	    rd_byte((int8u *) & (c_list[MAX_CREATURES - 1].ac));
+
 	rd_byte((int8u *) & (c_list[MAX_CREATURES - 1].speed));
 	rd_byte((int8u *) & (c_list[MAX_CREATURES - 1].cchar));
 	rd_bytes((int8u *) (c_list[MAX_CREATURES - 1].hd), 2);
@@ -1496,10 +1528,7 @@ get_char(generate)
 	    }
 
     /* read the time that the file was saved */
-	if (version_min == 0 && patch_level < 16)
-	    time_saved = 0;	   /* no time in file, clear to zero */
-	else if (version_min == 1 && patch_level < 3)
-	    rd_long(&time_saved);
+	rd_long(&time_saved);
 
 	if (ferror(fileptr)) {
 	    prt("FILE ERROR", 17, 0);
@@ -1707,6 +1736,7 @@ wr_monster(mon)
     register monster_type *mon;
 {
     wr_short((int16u) mon->hp);
+    wr_short((int16u) mon->maxhp); /* added -CWS */
     wr_short((int16u) mon->csleep);
     wr_short((int16u) mon->cspeed);
     wr_short(mon->mptr);
@@ -1716,6 +1746,7 @@ wr_monster(mon)
     wr_byte(mon->ml);
     wr_byte(mon->stunned);
     wr_byte(mon->confused);
+    wr_byte(mon->monfear);	/* added -CWS */
 }
 
 static void 
@@ -1844,6 +1875,13 @@ rd_monster(mon)
     register monster_type *mon;
 {
     rd_short((int16u *) & mon->hp);
+    if ((version_maj >= 2) && (version_min >= 6))
+	rd_short((int16u *) & mon->maxhp);
+    else {
+	/* let's fix the infamous monster heal bug -CWS */
+	mon->maxhp = mon->hp;
+    }
+
     rd_short((int16u *) & mon->csleep);
     rd_short((int16u *) & mon->cspeed);
     rd_short(&mon->mptr);
@@ -1853,4 +1891,8 @@ rd_monster(mon)
     rd_byte(&mon->ml);
     rd_byte(&mon->stunned);
     rd_byte(&mon->confused);
+    if ((version_maj >= 2) && (version_min >= 6))
+	rd_byte((int8u *) & mon->monfear);
+    else
+	mon->monfear = 0; /* this is not saved either -CWS */
 }

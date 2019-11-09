@@ -139,7 +139,7 @@ check_input(microsec)
     struct timeval      tbuf;
     int                 ch;
 
-#if defined(BSD4_3) || defined(M_XENIX)
+#if defined(BSD4_3) || defined(M_XENIX) || defined(linux)
     fd_set              smask;
 
 #else
@@ -152,7 +152,7 @@ check_input(microsec)
 #if !defined(USG) || defined(M_XENIX)
     tbuf.tv_sec = 0;
     tbuf.tv_usec = microsec;
-#if defined(BSD4_3) || defined(M_XENIX)
+#if defined(BSD4_3) || defined(M_XENIX) || defined(linux)
     FD_ZERO(&smask);
     FD_SET(fileno(stdin), &smask);
     if (select(1, &smask, (fd_set *) 0, (fd_set *) 0, &tbuf) == 1)

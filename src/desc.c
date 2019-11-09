@@ -384,18 +384,22 @@ objdes(out_val, i_ptr, pref)
       case TV_SPIKE:
 	break;
       case TV_BOW:
-	if (!stricmp("& Light Crossbow", object_list[i_ptr->index].name))
-	    (void)strcpy(damstr, " (x3)");
-	else if (!stricmp("& Heavy Crossbow", object_list[i_ptr->index].name))
-	    (void)strcpy(damstr, " (x4)");
-	else if (!stricmp("& Sling", object_list[i_ptr->index].name))
-	    (void)strcpy(damstr, " (x2)");
-	else if (!stricmp("& Short Bow", object_list[i_ptr->index].name))
-	    (void)strcpy(damstr, " (x2)");
-	else if (!stricmp("& Long Bow", object_list[i_ptr->index].name))
-	    (void)strcpy(damstr, " (x3)");
-	else if (!stricmp("& Composite Bow", object_list[i_ptr->index].name))
-	    (void)strcpy(damstr, " (x4)");
+	switch(i_ptr->subval) { /* whole new code -CFT */
+	  case 20: case 1: /* sling, sh. bow */
+	    strcpy(damstr, " (x2)");
+	    break;
+	  case 21: case 2: case 10: /* sling of M, s bow of M, l bow, l xbow */
+	    strcpy(damstr, " (x3)");
+	    break;
+	  case 3: case 11: /* l bow of M, l xbow of M, h xbow, BARD, CUBRAGOL */
+	    strcpy(damstr, " (x4)");
+	    break;
+	  case 4: case 12:        /* h xbow of M, BELEG */
+	    strcpy(damstr, " (x5)");
+	    break;
+	  default:        /* just in case... */
+	    strcpy(damstr, " (unknown mult.)");
+	}
 	if (i_ptr->flags2 & TR_ARTIFACT)	/* only show p1 for artifacts... */
 	    p1_use = FLAGS;
 	break;
@@ -594,14 +598,14 @@ objdes(out_val, i_ptr, pref)
 	/* originally used %+d, but several machines don't support it */
 	    if (i_ptr->ident & ID_SHOW_HITDAM)
 		(void)sprintf(tmp_str, " (%c%d,%c%d)",
-			  (i_ptr->tohit < 0) ? '-' : '+', abs((int) i_ptr->tohit),
-			 (i_ptr->todam < 0) ? '-' : '+', abs((int) i_ptr->todam));
+			  (i_ptr->tohit < 0) ? '-' : '+', MY_ABS( i_ptr->tohit),
+			 (i_ptr->todam < 0) ? '-' : '+', MY_ABS(i_ptr->todam));
 	    else if (i_ptr->tohit != 0)
 		(void)sprintf(tmp_str, " (%c%d)",
-			 (i_ptr->tohit < 0) ? '-' : '+', abs((int) i_ptr->tohit));
+			 (i_ptr->tohit < 0) ? '-' : '+', MY_ABS(i_ptr->tohit));
 	    else if (i_ptr->todam != 0)
 		(void)sprintf(tmp_str, " (%c%d)",
-			 (i_ptr->todam < 0) ? '-' : '+', abs((int) i_ptr->todam));
+			 (i_ptr->todam < 0) ? '-' : '+', MY_ABS(i_ptr->todam));
 	    else
 		tmp_str[0] = '\0';
 	    (void)strcat(tmp_val, tmp_str);
@@ -613,14 +617,14 @@ objdes(out_val, i_ptr, pref)
 	    if (known2_p(i_ptr)) {
 	    /* originally used %+d, but several machines don't support it */
 		(void)sprintf(tmp_str, ",%c%d",
-			   (i_ptr->toac < 0) ? '-' : '+', abs((int) i_ptr->toac));
+			   (i_ptr->toac < 0) ? '-' : '+', MY_ABS(i_ptr->toac));
 		(void)strcat(tmp_val, tmp_str);
 	    }
 	    (void)strcat(tmp_val, "]");
 	} else if ((i_ptr->toac != 0) && known2_p(i_ptr)) {
 	/* originally used %+d, but several machines don't support it */
 	    (void)sprintf(tmp_str, " [%c%d]",
-			  (i_ptr->toac < 0) ? '-' : '+', abs((int) i_ptr->toac));
+			  (i_ptr->toac < 0) ? '-' : '+', MY_ABS(i_ptr->toac));
 	    (void)strcat(tmp_val, tmp_str);
 	}
 
@@ -647,44 +651,44 @@ objdes(out_val, i_ptr, pref)
 
 	    else if (p1_use == Z_PLUSSES) /* (+0) digging implements -CWS */
 		    (void)sprintf(tmp_str, " (%c%d)",
-				  (i_ptr->p1 < 0) ? '-' : '+', abs((int) i_ptr->p1));
+				  (i_ptr->p1 < 0) ? '-' : '+', MY_ABS(i_ptr->p1));
 
 	    else if (i_ptr->p1 != 0) {
 		if (p1_use == PLUSSES)
 		    (void)sprintf(tmp_str, " (%c%d)",
-				  (i_ptr->p1 < 0) ? '-' : '+', abs((int) i_ptr->p1));
+				  (i_ptr->p1 < 0) ? '-' : '+', MY_ABS(i_ptr->p1));
 		else if (i_ptr->ident & ID_NOSHOW_TYPE)
 		    (void)sprintf(tmp_str, " (%c%d)",
-				  (i_ptr->p1 < 0) ? '-' : '+', abs((int) i_ptr->p1));
+				  (i_ptr->p1 < 0) ? '-' : '+', MY_ABS(i_ptr->p1));
 
 		else if (p1_use == FLAGS) {
 		    if ((i_ptr->flags & TR_SPEED) &&
 			     (i_ptr->name2 != SN_SPEED))
 			(void)sprintf(tmp_str, " (%c%d to speed)",
-				      (i_ptr->p1 < 0) ? '-' : '+', abs((int) i_ptr->p1));
+				      (i_ptr->p1 < 0) ? '-' : '+', MY_ABS(i_ptr->p1));
 		    else if (i_ptr->flags & TR_SEARCH)
 			/*			&& (i_ptr->name2 != SN_SEARCH)) */
 			(void)sprintf(tmp_str, " (%c%d to searching)",
-				      (i_ptr->p1 < 0) ? '-' : '+', abs((int) i_ptr->p1));
+				      (i_ptr->p1 < 0) ? '-' : '+', MY_ABS(i_ptr->p1));
 		    else if ((i_ptr->flags & TR_STEALTH) &&
 			     (i_ptr->name2 != SN_STEALTH))
 			(void)sprintf(tmp_str, " (%c%d to stealth)",
-				      (i_ptr->p1 < 0) ? '-' : '+', abs((int) i_ptr->p1));
+				      (i_ptr->p1 < 0) ? '-' : '+', MY_ABS(i_ptr->p1));
 		    else if ((i_ptr->flags & TR_INFRA) &&
 			     (i_ptr->name2 != SN_INFRAVISION))
 			(void)sprintf(tmp_str, " (%c%d to infravision)",
-				      (i_ptr->p1 < 0) ? '-' : '+', abs((int) i_ptr->p1));
+				      (i_ptr->p1 < 0) ? '-' : '+', MY_ABS(i_ptr->p1));
 		    else if (i_ptr->flags2 & TR_ATTACK_SPD) {
-			if (abs(i_ptr->p1) == 1)
+			if (MY_ABS(i_ptr->p1) == 1)
 			    (void)sprintf(tmp_str, " (%c%d attack)",
-					  (i_ptr->p1 < 0) ? '-' : '+', abs((int) i_ptr->p1));
+					  (i_ptr->p1 < 0) ? '-' : '+', MY_ABS(i_ptr->p1));
 			else
 			    (void)sprintf(tmp_str, " (%c%d attacks)",
-					  (i_ptr->p1 < 0) ? '-' : '+', abs((int) i_ptr->p1));
+					  (i_ptr->p1 < 0) ? '-' : '+', MY_ABS(i_ptr->p1));
 		    } /* attack speed */
 		    else
 			(void)sprintf(tmp_str, " (%c%d)",
-				      (i_ptr->p1 < 0) ? '-' : '+', abs((int) i_ptr->p1));
+				      (i_ptr->p1 < 0) ? '-' : '+', MY_ABS(i_ptr->p1));
 		}     /* p1_use == FLAGS */
 	    }         /* p1 != 0 */
 	}             /* if known2_p (fully identified) */

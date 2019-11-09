@@ -28,12 +28,12 @@ long                atol();
 #endif
 
 static const char        *comment1[14] = {
-    "Done!", "Accepted!", "Fine.", "Agreed!", "Ok.", "Taken!",
-    "You drive a hard bargain, but taken.",
-    "You'll force me bankrupt, but it's a deal.", "Sigh.  I'll take it.",
-    "My poor sick children may starve, but done!", "Finally!  I accept.",
-    "Robbed again.", "A pleasure to do business with you!",
-    "My spouse will skin me, but accepted."
+    "Done! ", "Accepted! ", "Fine. ", "Agreed! ", "Ok. ", "Taken! ",
+    "You drive a hard bargain, but taken. ",
+    "You'll force me bankrupt, but it's a deal. ", "Sigh.  I'll take it. ",
+    "My poor sick children may starve, but done! ", "Finally!  I accept. ",
+    "Robbed again. ", "A pleasure to do business with you! ",
+    "My spouse will skin me, but accepted. "
 };
 
 static const char        *comment2a[3] = {
@@ -297,9 +297,9 @@ display_inventory(store_num, start)
 		value = value * chr_adj() / 100;
 		if (value <= 0)
 		    value = 1;
-		(void)sprintf(out_val2, "%9ld", (int32) value);
+		(void)sprintf(out_val2, "%9ld", (long) value);
 	    } else {
-		(void)sprintf(out_val2, "%9ld [Fixed]", (int32) x);
+		(void)sprintf(out_val2, "%9ld [Fixed]", (long) x);
 	    }
 	    prt(out_val2, i + 5, 59);
 	}
@@ -331,10 +331,10 @@ display_cost(store_num, pos)
     if (s_ptr->store_inven[pos].scost < 0) {
 	j = (- (s_ptr->store_inven[pos]).scost);
 	j = j * chr_adj() / 100;
-	(void)sprintf(out_val, "%ld", (int32) j);
+	(void)sprintf(out_val, "%ld", (long) j);
     } else
 	(void)sprintf(out_val, "%9ld [Fixed]",
-		      (int32) (s_ptr->store_inven[pos]).scost);
+		      (long) (s_ptr->store_inven[pos]).scost);
     prt(out_val, i + 5, 59);
 }
 
@@ -345,7 +345,7 @@ store_prt_gold()
 {
     vtype               out_val;
 
-    (void)sprintf(out_val, "Gold Remaining : %ld", py.misc.au);
+    (void)sprintf(out_val, "Gold Remaining : %ld", (long)py.misc.au);
     prt(out_val, 18, 17);
 }
 
@@ -471,7 +471,7 @@ get_haggle(comment, new_offer, num_offer, price, final)
     flag = TRUE;
     if (last_inc && !final)
 	(void)sprintf(buf, "%s [%c%ld] ", comment, (last_inc < 0) ? '-' : '+',
-		      (last_inc < 0) ? -last_inc : last_inc);
+		      (last_inc < 0) ? (long)-last_inc : (long)last_inc);
     else
 	(void)sprintf(buf, "%s [accept] ", comment);
     clen = strlen(buf);
@@ -590,8 +590,7 @@ purchase_haggle(store_num, price, item)
     min_offer = max_buy;
     last_offer = min_offer;
     new_offer = 0;
-    num_offer = 0;		   /* this prevents incremental haggling on
-				    * first try */
+    num_offer = 0;	  /* this prevents incremental haggling on first try */
     comment = "Asking";
 
 /* go right to final price if player has bargained well */
@@ -606,7 +605,7 @@ purchase_haggle(store_num, price, item)
     do {
 	do {
 	    loop_flag = TRUE;
-	    (void)sprintf(out_val, "%s :  %ld", comment, cur_ask);
+	    (void)sprintf(out_val, "%s :  %ld", comment, (long)cur_ask);
 	    put_buffer(out_val, 1, 0);
 	    purchase = receive_offer(store_num, "What do you offer? ",
 				     &new_offer, last_offer, num_offer,
@@ -663,7 +662,7 @@ purchase_haggle(store_num, price, item)
 		last_offer = new_offer;
 		num_offer++;	   /* enable incremental haggling */
 		erase_line(1, 0);
-		(void)sprintf(out_val, "Your last offer : %ld", last_offer);
+		(void)sprintf(out_val, "Your last offer : %ld", (long)last_offer);
 		put_buffer(out_val, 1, 39);
 		prt_comment2(last_offer, cur_ask, final_flag);
 	    }
@@ -686,10 +685,10 @@ sell_haggle(store_num, price, item)
     int32              *price;
     inven_type         *item;
 {
-    int32               max_sell, max_buy, min_buy;
-    int32               cost, cur_ask, final_ask = 0, min_offer;
-    int32               last_offer, new_offer;
-    int32               max_gold;
+    int32               max_sell = 0, max_buy = 0, min_buy = 0;
+    int32               cost = 0, cur_ask = 0, final_ask = 0, min_offer = 0;
+    int32               last_offer = 0, new_offer = 0;
+    int32               max_gold = 0;
     int32               x1, x2, x3;
     int32               min_per, max_per;
     register int        flag, loop_flag;
@@ -757,14 +756,13 @@ sell_haggle(store_num, price, item)
 	min_offer = max_sell;
 	last_offer = min_offer;
 	new_offer = 0;
-	num_offer = 0;		   /* this prevents incremental haggling on
-				    * first try */
+	num_offer = 0;		   /* this prevents incremental haggling on first try */
 	if (cur_ask < 1)
 	    cur_ask = 1;
 	do {
 	    do {
 		loop_flag = TRUE;
-		(void)sprintf(out_val, "%s :  %ld", comment, cur_ask);
+		(void)sprintf(out_val, "%s :  %ld", comment, (long)cur_ask);
 		put_buffer(out_val, 1, 0);
 		sell = receive_offer(store_num, "What price do you ask? ",
 				     &new_offer, last_offer, num_offer,
@@ -821,7 +819,7 @@ sell_haggle(store_num, price, item)
 		    last_offer = new_offer;
 		    num_offer++;   /* enable incremental haggling */
 		    erase_line(1, 0);
-		    (void)sprintf(out_val, "Your last bid %ld", last_offer);
+		    (void)sprintf(out_val, "Your last bid %ld", (long)last_offer);
 		    put_buffer(out_val, 1, 39);
 		    prt_comment3(cur_ask, last_offer, final_flag);
 		}
@@ -931,11 +929,15 @@ store_purchase(store_num, cur_top)
 		    display_inventory(store_num, *cur_top);
 		} else {
 		    r_ptr = &s_ptr->store_inven[item_val];
-		/*
-		 * if (i == s_ptr->store_ctr) { if (r_ptr->scost < 0) {
-		 * r_ptr->scost = price; display_cost(store_num, item_val); }
-		 * } else 
-		 */
+
+#if 0
+			if (i == s_ptr->store_ctr) {
+				if (r_ptr->scost < 0) {
+					r_ptr->scost = price;
+					display_cost(store_num, item_val);
+				}
+			} else 
+#endif
 		    display_inventory(store_num, item_val);
 		}
 	    }
@@ -1003,7 +1005,7 @@ store_sell(store_num, cur_top)
 
 			inven_destroy(item_val);
 			objdes(tmp_str, &sold_obj, TRUE);
-			(void)sprintf(out_val, "You've sold %s", tmp_str);
+			(void)sprintf(out_val, "You've sold %s. ", tmp_str);
 			msg_print(out_val);
 
 			if (real == 0) {

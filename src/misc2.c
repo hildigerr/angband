@@ -66,6 +66,9 @@ place_trap(y, x, subval)
 
     if (!in_bounds(y, x))
 	return;			   /* abort! -CFT */
+    if (cave[y][x].cptr >= MIN_MONIX)
+	return;	       /* don't put rubble under monsters, it's annoying -CFT */
+
     if (cave[y][x].tptr != 0)
 	if ((t_list[cave[y][x].tptr].tval == TV_STORE_DOOR) ||
 	    (t_list[cave[y][x].tptr].tval == TV_UP_STAIR) ||
@@ -109,6 +112,31 @@ place_rubble(y, x)
     invcopy(&t_list[cur_pos], OBJ_RUBBLE);
 }
 
+/* if killed a 'Creeping _xxx_ coins'... -CWS */
+void
+get_coin_type(c_ptr)
+creature_type *c_ptr;
+{
+    if (!stricmp(c_ptr->name, "Creeping copper coins")) {
+	coin_type = 2;
+    }
+
+    if (!stricmp(c_ptr->name, "Creeping silver coins")) {
+	coin_type = 5;
+    }
+
+    if (!stricmp(c_ptr->name, "Creeping gold coins")) {
+	coin_type = 10;
+    }
+
+    if (!stricmp(c_ptr->name, "Creeping mithril coins")) {
+	coin_type = 16;
+    }
+
+    if (!stricmp(c_ptr->name, "Creeping adamantite coins")) {
+	coin_type = 17;
+    }
+}
 
 /* Places a treasure (Gold or Gems) at given row, column -RAK-	 */
 void 
@@ -136,10 +164,21 @@ place_gold(y, x)
 	i += randint(object_level + 1);
     if (i >= MAX_GOLD)
 	i = MAX_GOLD - 1;
+    if (coin_type) {			/* if killed a Creeping _xxx_ coins... */
+	if (coin_type > MAX_GOLD - 1)
+	    coin_type = 0;		/* safety check -CWS */
+	i = coin_type;
+    }
     cave[y][x].tptr = cur_pos;
     invcopy(&t_list[cur_pos], OBJ_GOLD_LIST + i);
     t_ptr = &t_list[cur_pos];
     t_ptr->cost += (8L * (long)randint((int)t_ptr->cost)) + randint(8);
+
+/* average the values to make Creeping _xxx_ coins not give too great treasure drops */
+    if (coin_type)
+	t_ptr->cost = ((8L * (long)randint((int)object_list[OBJ_GOLD_LIST + i].cost))
+		       + (t_ptr->cost)) >> 1;
+					  
     if (cave[y][x].cptr == 1)
 	msg_print("You feel something roll beneath your feet.");
 }
@@ -436,7 +475,6 @@ place_object(y, x)
     int                 y, x;
 {
     register int        cur_pos, tmp;
-    register inven_type *t_ptr;
 
     if (!in_bounds(y, x))
 	return;			   /* abort! -CFT */
@@ -451,26 +489,29 @@ place_object(y, x)
 	else
 	    delete_object(y, x);
 
-    if (randint(MAX_OBJECTS) > SPECIAL_OBJ && randint(10) == 1)
-	if (special_place_object(y, x) == (-1))
+    if (randint(MAX_OBJECTS)>SPECIAL_OBJ && randint(10)==1)
+	if (special_place_object(y,x)==(-1))
 	    return;
     cur_pos = popt();
     cave[y][x].tptr = cur_pos;
-    tmp = get_obj_num(object_level, FALSE);
-    t_ptr = &t_list[cur_pos];
-    invcopy(t_ptr, sorted_objects[tmp]);
-    magic_treasure(cur_pos, object_level, FALSE, 0);
-    if (object_list[sorted_objects[tmp]].level > object_level)
-	rating += object_list[sorted_objects[tmp]].level - object_level;
-    if (peek) {
-	if (object_list[sorted_objects[tmp]].level > object_level) {
-	    char                buf[200];
-	    int8u               t;
 
-	    t = t_ptr->ident;
-	    t_ptr->ident |= ID_STOREBOUGHT;
-	    objdes(buf, t_ptr, TRUE);
-	    t_ptr->ident = t;
+    do {	   /* don't generate another chest if opening_chest is true -CWS */
+	tmp = get_obj_num(dun_level, FALSE);
+    } while (opening_chest && (object_list[sorted_objects[tmp]].tval == TV_CHEST));
+	
+    invcopy(&t_list[cur_pos], sorted_objects[tmp]);
+    magic_treasure(cur_pos, dun_level, FALSE, 0);
+    if (object_list[sorted_objects[tmp]].level > dun_level)
+	rating += object_list[sorted_objects[tmp]].level - dun_level;
+    if (peek) {
+	if (object_list[sorted_objects[tmp]].level > dun_level) {
+	    char buf[200];
+	    int8u temp;
+	    
+	    temp=t_list[cur_pos].ident;
+	    t_list[cur_pos].ident |= ID_STOREBOUGHT;
+	    objdes(buf, &t_list[cur_pos], TRUE);
+	    t_list[cur_pos].ident = temp;
 	    msg_print(buf);
 	}
     }
@@ -680,7 +721,7 @@ void
 prt_stat(stat)
     int                 stat;
 {
-    stat_type           out_val1;
+    vtype out_val1;
 
     cnv_stat(py.stats.use_stat[stat], out_val1);
     put_buffer(stat_names[stat], 5 + stat, STAT_COLUMN);
@@ -708,7 +749,7 @@ prt_lnum(header, num, row, column)
 {
     vtype               out_val;
 
-    (void)sprintf(out_val, "%s%9ld", header, num);
+    (void)sprintf(out_val, "%s%9ld", header, (long)num);
     put_buffer(out_val, row, column);
 }
 
@@ -732,7 +773,7 @@ prt_long(num, row, column)
 {
     vtype               out_val;
 
-    (void)sprintf(out_val, "%9ld", num);
+    (void)sprintf(out_val, "%9ld", (long)num);
     put_buffer(out_val, row, column);
 }
 
@@ -856,7 +897,7 @@ chr_adj()
 	  case 3:
 	    return (130);
 	  default:
-	    return (100);
+	    return (140);
 	}
 }
 
@@ -1179,24 +1220,34 @@ stun_player(s)
 	    if (t == 0) {
 		py.misc.ptohit -= 20;
 		py.misc.ptodam -= 20;
+		py.misc.dis_th -= 20;
+		py.misc.dis_td -= 20;
 	    } else if (t <= 50) {
 		py.misc.ptohit -= 15;
 		py.misc.ptodam -= 15;
+		py.misc.dis_th -= 15;
+		py.misc.dis_td -= 15;
 	    }
 	} else if (s > 50) {
 	    msg_print("You've been heavily stunned.");
 	    if (t == 0) {
 		py.misc.ptohit -= 20;
 		py.misc.ptodam -= 20;
+		py.misc.dis_th -=20;
+		py.misc.dis_td -=20;
 	    } else if (t <= 50) {
 		py.misc.ptohit -= 15;
 		py.misc.ptodam -= 15;
+                py.misc.dis_th -= 15;
+                py.misc.dis_td -= 15;
 	    }
 	} else if (s > 0) {
 	    msg_print("You've been stunned.");
 	    if (t == 0) {
 		py.misc.ptohit -= 5;
 		py.misc.ptodam -= 5;
+                py.misc.dis_th -= 5;
+                py.misc.dis_td -= 5;
 	    }
 	}
     }
@@ -1294,9 +1345,10 @@ inc_stat(stat)
     res_stat(stat);
     tmp_stat = py.stats.cur_stat[stat];
     if (tmp_stat < 118) {
-	if (tmp_stat < 18)
-	    tmp_stat += randint(2);
-	else if (tmp_stat < 116) {
+	if (tmp_stat < 18) {	   
+	    gain = randint(2);		/* let's be able to monitor the increase -CWS */
+	    tmp_stat += gain;
+	} else if (tmp_stat < 116) {
 	/* stat increases by 1/6 to 1/3 of difference from max */
 	    gain = ((118 - tmp_stat) / 2 + 3) >> 1;
 	    tmp_stat += randint(gain) + gain / 2;
@@ -1384,85 +1436,46 @@ tohit_adj()
     register int        total, stat;
 
     stat = py.stats.use_stat[A_DEX];
-    if (stat < 4)
-	total = (-3);
-    else if (stat < 6)
-	total = (-2);
-    else if (stat < 8)
-	total = (-1);
-    else if (stat < 16)
-	total = 0;
-    else if (stat < 17)
-	total = 1;
-    else if (stat < 18)
-	total = 2;
-    else if (stat < 69)
-	total = 3;
-    else if (stat < 118)
-	total = 4;
-    else if (stat == 118)
-	total = 5;
-    else if (stat < 128)
-	total = 6;
-    else if (stat < 138)
-	total = 7;
-    else if (stat < 148)
-	total = 8;
-    else if (stat < 158)
-	total = 9;
-    else if (stat < 168)
-	total = 10;
-    else if (stat < 178)
-	total = 11;
-    else if (stat < 188)
-	total = 12;
-    else if (stat < 198)
-	total = 13;
-    else if (stat < 218)
-	total = 14;
-    else if (stat < 228)
-	total = 15;
-    else
-	total = 17;
+    if      (stat <   4)  total = -3;
+    else if (stat <   6)  total = -2;
+    else if (stat <   8)  total = -1;
+    else if (stat <  16)  total =  0;
+    else if (stat <  17)  total =  1;
+    else if (stat <  18)  total =  2;
+    else if (stat <  69)  total =  3;
+    else if (stat < 108)  total =  4; /* 18/51 to 18/89 -CFT */
+    else if (stat < 118)  total =  5; /* 18/90 to 18/99 -CFT */
+    else if (stat < 128)  total =  6; /* 18/100 to 18/109 -CFT */
+    else if (stat < 138)  total =  7;
+    else if (stat < 148)  total =  8;
+    else if (stat < 158)  total =  9;
+    else if (stat < 168)  total = 10;
+    else if (stat < 178)  total = 11;
+    else if (stat < 188)  total = 12;
+    else if (stat < 198)  total = 13;
+    else if (stat < 218)  total = 14;
+    else if (stat < 228)  total = 15;
+    else total = 17;
     stat = py.stats.use_stat[A_STR];
-    if (stat < 4)
-	total -= 3;
-    else if (stat < 5)
-	total -= 2;
-    else if (stat < 7)
-	total -= 1;
-    else if (stat < 18)
-	total -= 0;
-    else if (stat < 94)
-	total += 1;
-    else if (stat < 109)
-	total += 2;
-    else if (stat < 117)
-	total += 3;
-    else if (stat < 119)
-	total += 4;
-    else if (stat < 128)
-	total += 5;
-    else if (stat < 138)
-	total += 6;
-    else if (stat < 148)
-	total += 7;
-    else if (stat < 158)
-	total += 8;
-    else if (stat < 168)
-	total += 9;
-    else if (stat < 178)
-	total += 10;
-    else if (stat < 188)
-	total += 11;
-    else if (stat < 198)
-	total += 12;
-    else if (stat < 218)
-	total += 13;
-    else if (stat < 228)
-	total += 14;
-    else
-	total += 16;
+    if      (stat <   4)  total -= 3;
+    else if (stat <   5)  total -= 2;
+    else if (stat <   7)  total -= 1;
+    else if (stat <  18)  total -= 0;
+    else if (stat <  88)  total += 1; /* 18 to 18/69 -CFT */
+    else if (stat <  98)  total += 2; /* 18/70 to 18/79 -CFT */
+    else if (stat < 108)  total += 3; /* 18/80 to 18/89 -CFT */
+    else if (stat < 118)  total += 4; /* 18/90 to 18/99 -CFT */
+    else if (stat < 128)  total += 5; /* 18/100 to 18/109 -CFT */
+    else if (stat < 138)  total += 6;
+    else if (stat < 148)  total += 7;
+    else if (stat < 158)  total += 8;
+    else if (stat < 168)  total += 9;
+    else if (stat < 178)  total +=10;
+    else if (stat < 188)  total +=11;
+    else if (stat < 198)  total +=12;
+    else if (stat < 218)  total +=13;
+    else if (stat < 228)  total +=14;
+    else total += 16;
     return (total);
 }
 
@@ -1474,48 +1487,27 @@ toac_adj()
     register int        stat;
 
     stat = py.stats.use_stat[A_DEX];
-    if (stat < 4)
-	return (-4);
-    else if (stat == 4)
-	return (-3);
-    else if (stat == 5)
-	return (-2);
-    else if (stat == 6)
-	return (-1);
-    else if (stat < 15)
-	return (0);
-    else if (stat < 18)
-	return (1);
-    else if (stat < 59)
-	return (2);
-    else if (stat < 94)
-	return (3);
-    else if (stat < 117)
-	return (4);
-    else if (stat <= 118)
-	return (5);
-    else if (stat < 128)
-	return (6);
-    else if (stat < 138)
-	return (7);
-    else if (stat < 148)
-	return (8);
-    else if (stat < 158)
-	return (9);
-    else if (stat < 168)
-	return (10);
-    else if (stat < 178)
-	return (11);
-    else if (stat < 188)
-	return (12);
-    else if (stat < 198)
-	return (13);
-    else if (stat < 218)
-	return (14);
-    else if (stat < 228)
-	return (15);
-    else
-	return (17);
+    if      (stat <   4)  return(-4);
+    else if (stat ==  4)  return(-3);
+    else if (stat ==  5)  return(-2);
+    else if (stat ==  6)  return(-1);
+    else if (stat <  15)  return( 0);
+    else if (stat <  18)  return( 1);
+    else if (stat <  58)  return( 2); /* 18 to 18/49 -CFT */
+    else if (stat <  98)  return( 3); /* 18/50 to 18/79 -CFT */
+    else if (stat < 108)  return( 4); /* 18/80 to 18/89 -CFT */
+    else if (stat < 118)  return( 5); /* 18/90 to /99 -CFT */
+    else if (stat < 128)  return( 6); /* /100 to /109 -CFT */
+    else if (stat < 138)  return( 7);
+    else if (stat < 148)  return( 8);
+    else if (stat < 158)  return( 9);
+    else if (stat < 168)  return(10);
+    else if (stat < 178)  return(11);
+    else if (stat < 188)  return(12);
+    else if (stat < 198)  return(13);
+    else if (stat < 218)  return(14);
+    else if (stat < 228)  return(15);
+    else                  return(17);
 }
 
 
@@ -1526,30 +1518,19 @@ todis_adj()
     register int        stat;
 
     stat = py.stats.use_stat[A_DEX];
-    if (stat < 3)
-	return (-8);
-    else if (stat == 4)
-	return (-6);
-    else if (stat == 5)
-	return (-4);
-    else if (stat == 6)
-	return (-2);
-    else if (stat == 7)
-	return (-1);
-    else if (stat < 13)
-	return (0);
-    else if (stat < 16)
-	return (1);
-    else if (stat < 18)
-	return (2);
-    else if (stat < 59)
-	return (4);
-    else if (stat < 94)
-	return (5);
-    else if (stat < 117)
-	return (6);
-    else
-	return (8);
+    if      (stat <=  3)  return(-8);
+    else if (stat ==  4)  return(-6);
+    else if (stat ==  5)  return(-4);
+    else if (stat ==  6)  return(-2);
+    else if (stat ==  7)  return(-1);
+    else if (stat <  13)  return( 0);
+    else if (stat <  16)  return( 1);
+    else if (stat <  18)  return( 2);
+    else if (stat <  58)  return( 4); /* 18 to 18/49 -CFT */
+    else if (stat <  88)  return( 5); /* 18/50 to 18/69 -CFT */
+    else if (stat < 108)  return( 6); /* 18/70 to 18/89 -CFT */
+    else if (stat < 118)  return( 7); /* 18/90 to 18/99 -CFT */
+    else                  return( 8); /* 18/100 and over -CFT */
 }
 
 
@@ -1560,46 +1541,26 @@ todam_adj()
     register int        stat;
 
     stat = py.stats.use_stat[A_STR];
-    if (stat < 4)
-	return (-2);
-    else if (stat < 5)
-	return (-1);
-    else if (stat < 16)
-	return (0);
-    else if (stat < 17)
-	return (1);
-    else if (stat < 18)
-	return (2);
-    else if (stat < 94)
-	return (3);
-    else if (stat < 109)
-	return (4);
-    else if (stat < 117)
-	return (5);
-    else if (stat <= 118)
-	return (5);
-    else if (stat < 128)
-	return (6);
-    else if (stat < 138)
-	return (7);
-    else if (stat < 148)
-	return (8);
-    else if (stat < 158)
-	return (9);
-    else if (stat < 168)
-	return (10);
-    else if (stat < 178)
-	return (11);
-    else if (stat < 188)
-	return (12);
-    else if (stat < 198)
-	return (13);
-    else if (stat < 218)
-	return (14);
-    else if (stat < 228)
-	return (16);
-    else
-	return (20);
+    if      (stat <   4)  return(-2);
+    else if (stat <   5)  return(-1);
+    else if (stat <  16)  return( 0);
+    else if (stat <  17)  return( 1);
+    else if (stat <  18)  return( 2);
+    else if (stat <  88)  return( 3); /* 18 to 18/69 -CFT */
+    else if (stat <  98)  return( 4); /* 18/70 to 18/79 -CFT */
+    else if (stat < 108)  return( 5); /* 18/80 to 18/89 -CFT */
+    else if (stat < 118)  return( 5); /* 18/90 to 18/99 -CFT */
+    else if (stat < 128)  return( 6); /* 18/100 to /109 -CFT */
+    else if (stat < 138)  return( 7);
+    else if (stat < 148)  return( 8);
+    else if (stat < 158)  return( 9);
+    else if (stat < 168)  return(10);
+    else if (stat < 178)  return(11);
+    else if (stat < 188)  return(12);
+    else if (stat < 198)  return(13);
+    else if (stat < 218)  return(14);
+    else if (stat < 228)  return(16);
+    else                  return(20);
 }
 
 
@@ -1714,7 +1675,7 @@ void
 put_stats()
 {
     register struct misc *m_ptr;
-    register int        i;
+    register int        i, temp;
     vtype               buf;
 
     m_ptr = &py.misc;
@@ -1723,7 +1684,12 @@ put_stats()
 	put_buffer(stat_names[i], 2 + i, 61);
 	put_buffer(buf, 2 + i, 66);
 	if (py.stats.max_stat[i] > py.stats.cur_stat[i]) {
-	    cnv_stat(py.stats.max_stat[i], buf);
+	    /* this looks silly, but it happens because modify_stat() only
+	     * looks at cur_stat -CFT */
+	    temp = py.stats.cur_stat[i];
+	    py.stats.cur_stat[i] = py.stats.max_stat[i];
+	    cnv_stat (modify_stat(i,py.stats.mod_stat[i]), buf);
+	    py.stats.cur_stat[i] = temp; /* DON'T FORGET! -CFT */
 	    put_buffer(buf, 2 + i, 73);
 	}
     }
@@ -1739,11 +1705,10 @@ const char               *
 likert(x, y)
     int                 x, y;
 {
-    switch ((x / y)) {
-      case -3:
-      case -2:
-      case -1:
+    if ((x/y) < 0)
 	return ("Very Bad");
+
+    switch ((x / y)) {
       case 0:
       case 1:
 	return ("Bad");
@@ -1763,14 +1728,15 @@ likert(x, y)
       case 10:
       case 11:
       case 12:
-	return ("Superb");
       case 13:
+	return ("Superb");
       case 14:
       case 15:
       case 16:
+      case 17:
 	return ("Heroic");
       default:
-	return ("Godly");
+	return ("Legendary");
     }
 }
 
@@ -2158,6 +2124,8 @@ check_strength()
 	weapon_heavy = FALSE;
 	if (i_ptr->tval != TV_NOTHING)
 	    msg_print("You are strong enough to wield your weapon.");
+	else
+	    msg_print("You feel relieved to put down your heavy weapon.");
 	calc_bonuses();
     }
     i = weight_limit();
@@ -2175,11 +2143,20 @@ check_strength()
     }
     py.flags.status &= ~PY_STR_WGT;
     if (py.misc.pclass == 2 && !notlike) {
-	if ((i_ptr->tval == TV_SWORD || i_ptr->tval == TV_POLEARM)
-	    && ((i_ptr->flags2 & TR_BLESS_BLADE) == 0)) {
-	    notlike = TRUE;
-	    msg_print("You do not feel comfortable with your weapon.");
-	}
+        if ((i_ptr->tval == TV_SWORD || i_ptr->tval == TV_POLEARM)
+            && ((i_ptr->flags2 & TR_BLESS_BLADE) == 0)) {
+            notlike = TRUE;
+            msg_print("You do not feel comfortable with your weapon.");
+        }
+    } else if (py.misc.pclass == 2 && notlike) {
+        if (i_ptr->tval == TV_NOTHING) {
+            notlike = FALSE;
+            msg_print("You feel comfortable again after removing that weapon.");
+        } else if (!(i_ptr->tval == TV_SWORD || i_ptr->tval == TV_POLEARM)
+		   || !((i_ptr->flags2 & TR_BLESS_BLADE) == 0)) {
+            notlike = FALSE;
+            msg_print("You feel comfortable with your weapon once more.");
+        }
     }
 }
 
@@ -2892,10 +2869,10 @@ calc_mana(stat)
 {
     register int        new_mana, levels;
     register struct misc *p_ptr;
-    register int32      value;
-    register int        i;
-    register inven_type *i_ptr;
-    int                 amrwgt, maxwgt;
+    register int32        value;
+    register int          i;
+    register inven_type  *i_ptr;
+    int                   amrwgt, maxwgt;
 
     p_ptr = &py.misc;
     if (spell_learned != 0 || spell_learned2 != 0) {
@@ -2954,11 +2931,10 @@ calc_mana(stat)
 	if ((inventory[INVEN_HANDS].tval != TV_NOTHING) &&
 	    !((inventory[INVEN_HANDS].flags & TR_FREE_ACT) ||
 	      ((inventory[INVEN_HANDS].flags & TR_DEX) &&
-	       (inventory[INVEN_HANDS].p1 > 0)))	/* gauntlets of dex (or
-							 * free action - DGK)
-							 * can hardly interfere
-							 * w/ spellcasting! But
-							 * cursed ones can! -CFT */
+	       (inventory[INVEN_HANDS].p1 > 0)))
+/* gauntlets of dex (or free action - DGK) can hardly interfere w/ spellcasting!
+ * But cursed ones can! -CFT */
+
 	    &&(py.misc.pclass == 1 || py.misc.pclass == 3 || py.misc.pclass == 4)) {
 	    new_mana = (3 * new_mana) / 4;
 	}
@@ -3044,10 +3020,6 @@ calc_mana(stat)
 static void 
 gain_level()
 {
-#if 0
-    register int32      dif_exp, need_exp;
-
-#endif
     vtype               out_val;
     register struct misc *p_ptr;
     register class_type *c_ptr;
@@ -3057,17 +3029,6 @@ gain_level()
     (void)sprintf(out_val, "Welcome to level %d.", (int)p_ptr->lev);
     msg_print(out_val);
     calc_hitpoints();
-
-#if 0				   /* This is silly.  If a player works hard
-				    * and gets lucky, he deserves every ounce
-				    * of exp...  -CFT */
-    need_exp = player_exp[p_ptr->lev - 1] * p_ptr->expfact / 100;
-    if (p_ptr->exp > need_exp) {
-    /* lose some of the 'extra' exp when gain a level */
-	dif_exp = p_ptr->exp - need_exp;
-	p_ptr->exp = need_exp + (dif_exp / 2);
-    }
-#endif
     prt_level();
     prt_title();
     c_ptr = &class[p_ptr->pclass];
@@ -3090,15 +3051,25 @@ prt_experience()
     p_ptr = &py.misc;
     if (p_ptr->exp > MAX_EXP)
 	p_ptr->exp = MAX_EXP;
-    if (p_ptr->lev < MAX_PLAYER_LEVEL) {
-	while ((player_exp[p_ptr->lev - 1] * p_ptr->expfact / 100) <= p_ptr->exp
-	       && p_ptr->lev < MAX_PLAYER_LEVEL)
+    if (p_ptr->lev < MAX_PLAYER_LEVEL)
+    {
+	while ((player_exp[p_ptr->lev-1] * p_ptr->expfact / 100) <= p_ptr->exp
+	       && p_ptr->lev < MAX_PLAYER_LEVEL){
 	    gain_level();
+	    if (p_ptr->exp > p_ptr->max_exp) {
+		/* level was actually gained, not restored:
+		 * this 300 is arbitrary, but it makes human ages work okay,
+		 * and I chose the other racial age adjs based on this as well -CFT
+		 */
+		p_ptr->age += randint((int16u)class[p_ptr->pclass].age_adj *
+				      (int16u)race[p_ptr->prace].m_age)/300;
+	    }
+	}
     }
     if (p_ptr->exp > p_ptr->max_exp)
 	p_ptr->max_exp = p_ptr->exp;
-    (void)sprintf(out_val, "%8ld", p_ptr->exp);
-    put_buffer(out_val, 13, STAT_COLUMN + 4);
+    (void) sprintf(out_val, "%8ld", (long)p_ptr->exp);
+    put_buffer(out_val, 13, STAT_COLUMN+4);
 }
 
 
@@ -3176,48 +3147,6 @@ insert_str(object_str, mtc_str, insert)
 }
 
 
-#if 0
-/* this is no longer used anywhere */
-/* Inserts a number into a string				 */
-void 
-insert_num(object_str, mtc_str, number, show_sign)
-    char               *object_str;
-    register char      *mtc_str;
-    int                 number;
-    int                 show_sign;
-{
-    int                 mlen;
-    vtype               str1, str2;
-    register char      *string, *tmp_str;
-    int                 flag;
-
-    flag = 1;
-    mlen = strlen(mtc_str);
-    tmp_str = object_str;
-    do {
-	string = index(tmp_str, mtc_str[0]);
-	if (string == NULL)
-	    flag = 0;
-	else {
-	    flag = strncmp(string, mtc_str, mlen);
-	    if (flag)
-		tmp_str = string + 1;
-	}
-    }
-    while (flag);
-    if (string) {
-	(void)strncpy(str1, object_str, string - object_str);
-	str1[string - object_str] = '\0';
-	(void)strcpy(str2, string + mlen);
-	if ((number >= 0) && (show_sign))
-	    (void)sprintf(object_str, "%s+%d%s", str1, number, str2);
-	else
-	    (void)sprintf(object_str, "%s%d%s", str1, number, str2);
-    }
-}
-
-#endif
-
 void 
 insert_lnum(object_str, mtc_str, number, show_sign)
     char               *object_str;
@@ -3249,9 +3178,9 @@ insert_lnum(object_str, mtc_str, number, show_sign)
 	str1[(int)(string - object_str)] = '\0';
 	(void)strcpy(str2, string + mlen);
 	if ((number >= 0) && (show_sign))
-	    (void)sprintf(object_str, "%s+%ld%s", str1, number, str2);
+	    (void)sprintf(object_str, "%s+%ld%s", str1, (long)number, str2);
 	else
-	    (void)sprintf(object_str, "%s%ld%s", str1, number, str2);
+	    (void)sprintf(object_str, "%s%ld%s", str1, (long)number, str2);
     }
 }
 
@@ -3318,7 +3247,28 @@ attack_blows(weight, wtohit)
 	    dex_index = 10;
 	else
 	    dex_index = 11;
-	adj_weight = ((s * 10) / ((weight < 30) ? 30 : weight));
+
+	switch (py.misc.pclass) { /* new class-based weight penalties -CWS */
+	case 0:				/* Warriors */
+	    adj_weight = ((s * 10) / ((weight < 30) ? 30 : weight));
+	    break;
+	case 1:				/* Mages */
+	    adj_weight = ((s * 4) / ((weight < 40) ? 40 : weight));
+	    break;
+	case 2:				/* Priests */
+	    adj_weight = ((s * 7) / ((weight < 35) ? 35 : weight));
+	    break;
+	case 3:				/* Rogues */
+	    adj_weight = ((s * 6) / ((weight < 30) ? 30 : weight));
+	    break;
+	case 4:				/* Rangers */
+	    adj_weight = ((s * 8) / ((weight < 35) ? 35 : weight));
+	    break;
+	default:			/* Paladins */
+	    adj_weight = ((s * 8) / ((weight < 30) ? 30 : weight));
+	    break;
+	}
+
 	if (adj_weight < 2)
 	    str_index = 0;
 	else if (adj_weight < 3)
@@ -3341,14 +3291,22 @@ attack_blows(weight, wtohit)
 	    str_index = 9;
 	else
 	    str_index = 10;
-	s = 0;
+
+	s = 0;				/* do Weapons of Speed */
 	for (d = INVEN_WIELD; d < INVEN_AUX; d++)
 	    if (inventory[d].flags2 & TR_ATTACK_SPD)
 		s += inventory[d].p1;
-	if (py.misc.pclass == 1)   /* Mage attack penalty */
-	    d = ((((int)blows_table[str_index][dex_index] + 1) / 2) + s);
-	else
-	    d = ((int)blows_table[str_index][dex_index] + s);
+
+	d = (int)blows_table[str_index][dex_index];
+	
+	if (py.misc.pclass != 0)	/* Non-warrior attack penalty */
+	    if (d > 5)
+		d = 5;
+	if (py.misc.pclass == 1)
+	    if (d > 4)
+		d = 4;
+
+	d += s;
 	return ((d < 1) ? 1 : d);
     }
 }
@@ -3363,7 +3321,7 @@ tot_dam(i_ptr, tdam, monster)
 {
     register creature_type *m_ptr;
     register recall_type *r_ptr;
-    int reduced = FALSE;	/* don't resist more than one thing.... */
+    int reduced = FALSE;	/* don't resist more than one thing.... -CWS */
 
     if ((((i_ptr->tval >= TV_SLING_AMMO) && (i_ptr->tval <= TV_ARROW)) ||
 	 ((i_ptr->tval >= TV_HAFTED) && (i_ptr->tval <= TV_SWORD)) ||
@@ -3616,8 +3574,7 @@ void
 teleport(dis)
     int                 dis;
 {
-    register int        y, x, i, j, count;
-    int                 min_i, max_i, min_j, max_j;
+    register int        y, x, count;
 
     do {
 
@@ -3642,21 +3599,8 @@ teleport(dis)
 
     move_rec(char_row, char_col, y, x);
 
-				/* unlight area teleported from */
-    min_i = MY_MAX(0, (char_row - light_rad));
-    max_i = MY_MIN(cur_height, (char_row + light_rad));
-    min_j = MY_MAX(0, (char_col - light_rad));
-    max_j = MY_MIN(cur_width, (char_col + light_rad));
-
-    /*
-     * replace a check for in_bounds2 every loop with 4 quick computations
-     * -CWS 
-     */
-    for (i = min_i; i <= max_i; i++)
-	for (j = min_j; j <= max_j; j++) {
-	    cave[i][j].tl = FALSE;
-	    lite_spot(i, j);
-	}
+    /* unlight area teleported from */
+    darken_player(char_row, char_col);
 
     char_row = y;
     char_col = x;

@@ -86,19 +86,20 @@ typedef struct {
 #include <string.h>
 #else
 #include "string.h"
-#endif
+#endif /* !ATARIST_MWC */
 #if !defined(MAC) && !defined(MSDOS) && !defined(ATARIST_MWC) && !defined(__MINT__)
 #include <termio.h>
 #endif
 #else
 #ifndef VMS
 #include <strings.h>
-#if defined(atarist) && defined(__GNUC__) && !defined(__MINT__)
-/* doesn't have sys/wait.h */
-#else
 #include <sys/wait.h>
-#endif
-#endif
+#endif /* !VMS */
+#endif /* USG */
+
+/* ARGH!  This is driving me up the wall!  Brute force never hurt... [cjh] */
+#if defined(__MINT__) && !defined(_WAIT_H)
+#include <wait.h>
 #endif
 
 #if defined(SYS_V) && defined(lint)

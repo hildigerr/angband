@@ -75,17 +75,8 @@
 
 #include <ctype.h>
 
+#ifndef ibm032
 #include <time.h>
-
-#ifdef ultrix
-time_t time();
-#else
-long time();
-#endif
-
-/* To hell with prototyping getuid() & getgid().  Too much of a pain... -CWS */
-#if 0
-uid_t getuid(), getgid();
 #endif
 
 #if defined(ultrix) || defined(USG)
@@ -112,18 +103,17 @@ static void char_inven_init();
 #if (COST_ADJ != 100)
 static void price_adjust();
 #endif
-int light_rad=0;
-int unfelt=TRUE;
-int be_nasty=FALSE;
-int rating=0;
-int peek=FALSE;
+int unfelt    = TRUE;
+int be_nasty  = FALSE;
+int rating    = 0;
+int peek      = FALSE;
 int player_uid;
 int quests[MAX_QUESTS];
 creature_type ghost;
 
 
 /* Unique artifact weapon flags, even though some are in the wrong place!*/
-int GROND, RINGIL, AEGLOS, ARUNRUTH, MORMEGIL, ANGRIST, GURTHANG,
+int32 GROND, RINGIL, AEGLOS, ARUNRUTH, MORMEGIL, ANGRIST, GURTHANG,
   CALRIS, ANDURIL, STING, ORCRIST, GLAMDRING, DURIN, AULE, THUNDERFIST,
   BLOODSPIKE, DOOMCALLER, NARTHANC, NIMTHANC, DETHANC, GILETTAR, RILIA,
   BELANGIL, BALLI, LOTHARANG, FIRESTAR, ERIRIL, CUBRAGOL, BARD, COLLUIN,
@@ -134,26 +124,30 @@ int GROND, RINGIL, AEGLOS, ARUNRUTH, MORMEGIL, ANGRIST, GURTHANG,
   EONWE, THEODEN, ULMO, OSONDIR, TURMIL, TIL, DEATHWREAKER, AVAVIR, TARATOL;
 
 /* Unique artifact armor flags */
-int DOR_LOMIN, NENYA, NARYA, VILYA, BELEGENNON, FEANOR, ISILDUR, SOULKEEPER,
+int32 DOR_LOMIN, NENYA, NARYA, VILYA, BELEGENNON, FEANOR, ISILDUR, SOULKEEPER,
 FINGOLFIN, ANARION, POWER, PHIAL, BELEG, DAL, PAURHACH, PAURNIMMEN, PAURAEGEN,
 PAURNEN, CAMMITHRIM, CAMBELEG, INGWE, CARLAMMAS, HOLHENNETH, AEGLIN, CAMLOST,
 NIMLOTH, NAR, BERUTHIEL, GORLIM, ELENDIL, THORIN, CELEGORM, THRAIN,
 GONDOR, THINGOL, THORONGIL, LUTHIEN, TUOR, ROHAN, TULKAS, NECKLACE, BARAHIR,
 CASPANION, RAZORBACK, BLADETURNER;
 
-/* Unique Monster Flags */
 /* Initialize, restore, and get the ball rolling.	-RAK-	*/
-int main(argc, argv)
+int
+main(argc, argv)
 int argc;
 char *argv[];
 {
   int generate, i;
   int result=FALSE, FIDDLE=FALSE;
+#ifndef __MINT__
   FILE *fp;
+#endif
   int new_game = FALSE;
   int force_rogue_like = FALSE;
   int force_keys_to = FALSE;
+#ifndef __MINT__
   char temphost[MAXHOSTNAMELEN+1], thishost[MAXHOSTNAMELEN+1], discard[120];
+#endif
   char string[80];
   struct rlimit rlp;
 
@@ -182,6 +176,11 @@ char *argv[];
 #ifdef MSDOS /* -CFT */
   msdos_init(); /* set up some screen stuff + get cnf file */
 #endif
+    
+#ifdef NEW_FILEPATHS
+    /* This looks like a good spot to check for our files. - [cjh] */
+    get_file_paths();
+#endif
 
   /* call this routine to grab a file pointer to the highscore file */
   /* and prepare things to relinquish setuid privileges */
@@ -202,7 +201,7 @@ char *argv[];
   user_name(py.misc.name);
 #endif
 
-#ifdef SET_UID
+#if defined(SET_UID) && !defined(SECURE)
   if (setuid(geteuid()) != 0) {
     perror("Can't set permissions correctly!  Setuid call failed.\n");
     exit(0);
@@ -218,7 +217,7 @@ char *argv[];
   be_nasty=FALSE;
 #endif
 
-#ifndef MSDOS
+#if !defined(MSDOS) && !defined(__MINT__)
   (void)gethostname(thishost, (sizeof thishost) - 1);	/* get host */
   if ((fp=my_tfopen(ANGBAND_LOAD, "r")) == NULL) {
     perror("Can't get load-check.\n");
@@ -237,6 +236,9 @@ char *argv[];
 
   fclose(fp);
 #endif
+
+    /* use curses */
+    init_curses();
 
   /* check for user interface option */
   for (--argc, ++argv; argc > 0 && argv[0][0] == '-'; --argc, ++argv)
@@ -350,47 +352,23 @@ char *argv[];
       exit(1);
     }
 
-  /* use curses */
-  init_curses();
+    /* catch those nasty signals */
+    /* must come after init_curses as some of the signal handlers use curses */
+    init_signals();
 
-  /* catch those nasty signals */
-  /* must come after init_curses as some of the signal handlers use curses */
-  init_signals();
+    /* Check operating hours			*/
+    /* If not wizard  No_Control_Y	        */
+    read_times();
 
-  /* Check operating hours			*/
-  /* If not wizard  No_Control_Y	        */
-  read_times();
-
-  /* Some necessary initializations		*/
-  /* all made into constants or initialized in variables.c */
+    /* Some necessary initializations		*/
+    /* all made into constants or initialized in variables.c */
 
 #if (COST_ADJ != 100)
-  price_adjust();
+    price_adjust();
 #endif
 
-  old_state = (char *) malloc(260);       /* state array initialized by time */
-  dummy_state = (char *) malloc(260);     /* dummy state array -CWS          */
-
-                 /* if malloc choked on 540 bytes, we're dead anyways */
-  if (!old_state || !dummy_state) {
-      puts("\nError initializing; unable to malloc space for RNG arrays...\n");
-      exit(2);
-  }  
-
-#ifdef unix
-  /* Grab a random seed from the clock & PID... */
-  (void) initstate(time(NULL), dummy_state, 256);
-  (void) initstate(((getpid() << 1) * (time(NULL) >> 3)), old_state, 256);
-#else 
-  /* ...else just grab a random seed from the clock. -CWS */
-  (void) initstate(time(NULL), dummy_state, 256);
-  (void) initstate(random(), old_state, 256);
-#endif /* unix */
-
-  /* These'll only apply the first time, as the code in save.c will restore
-   * these values whenever a saved game gets loaded.... -CWS */
-  town_seed = random();
-  randes_seed = random();
+    /* Grab a random seed from the clock          */
+    init_seeds();
 
   /* Init monster and treasure levels for allocate */
   init_m_level();
@@ -554,6 +532,8 @@ char *argv[];
       for (i=0; i<MAX_CREATURES; i++)
 	u_list[i].exist=0, u_list[i].dead=0;
       create_character();
+	/* if we're creating a new character, change the savefile name */
+    (void) sprintf(savefile, "%s/%d%s", ANGBAND_SAV, player_uid, py.misc.name);
       char_inven_init();
       py.flags.food = 7500;
       py.flags.food_digested = 2;

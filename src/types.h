@@ -5,9 +5,13 @@
    This software may be copied and distributed for educational, research, and
    not for profit purposes provided that this copyright and statement are
    included in all such copies. */
-
+#if !defined(__alpha)
 typedef unsigned long  int32u;
 typedef long	       int32;
+#else
+typedef unsigned int   int32u;
+typedef int            int32;
+#endif
 typedef unsigned short int16u;
 typedef short	       int16;
 typedef unsigned char  int8u;
@@ -21,7 +25,7 @@ typedef char vtype[VTYPESIZ];
 /* note that since its output can easily exceed 80 characters, objdes must
    always be called with a bigvtype as the first paramter */
 typedef char bigvtype[BIGVTYPESIZ];
-typedef char stat_type[7];
+typedef char stat_type[8];
 
 /* Many of the character fields used to be fixed length, which greatly
    increased the size of the executable.  I have replaced many fixed
@@ -39,23 +43,23 @@ typedef int16u attid;
 
 typedef struct creature_type
 {
-  const char *name;	/* Descrip of creature	*/
-  int32u cmove;		/* Bit field		*/
-  int32u spells;	/* Creature spells	*/
-  int32u cdefense;	/* Bit field		*/
-  int32u spells2;	/* More creature spells */
-  int32u spells3;	/* Yes! even More creature spells */
-  int32u mexp;		/* Exp value for kill	*/
-  int8u sleep;		/* Inactive counter/10	*/
-  int8u aaf;		/* Area affect radius	*/
-  int8u ac;		/* AC			*/
-  int8u speed;		/* Movement speed+10	*/
-  int8u cchar;		/* Character rep.	*/
-  int8u hd[2];		/* Creatures hit die	*/
-  attid damage[4];	/* Type attack and damage*/
-  int16u level;		/* Level of creature	*/
-  int8u rarity;		/* Rarity of creature	*/
-  char gender;         /* one of 'm','f','n','p' added to genderize monsters -CWS */
+  const char *name;		    /* Descrip of creature    */
+  int32u cmove;			    /* Bit field	      */
+  int32u spells;		    /* Creature spells	      */
+  int32u cdefense;		    /* Bit field	      */
+  int32u spells2;		    /* More creature spells   */
+  int32u spells3;		    /* Yes! even More creature spells */
+  int32u mexp;			    /* Exp value for kill     */
+  int16u sleep;			    /* Inactive counter/10    */
+  int8u aaf;			    /* Area affect radius     */
+  int16u ac;			    /* AC		      */
+  int8u speed;			    /* Movement speed+10      */
+  int8u cchar;			    /* Character rep.	      */
+  int8u hd[2];			    /* Creatures hit die      */
+  attid damage[4];		    /* Type attack and damage */
+  int16u level;			    /* Level of creature      */
+  int8u rarity;			    /* Rarity of creature     */
+  char gender;			    /* one of 'm','f','n','p' to genderize monsters -CWS */
 } creature_type;
 
 typedef struct m_attack_type	/* Monster attack and damage types */
@@ -79,14 +83,14 @@ typedef struct recall_type	/* Monster memories. -CJS- */
   } recall_type;
 
 struct unique_mon {
-  int exist;
-  int dead;
+  int32 exist;
+  int32 dead;
 };
 
 typedef struct describe_mon_type {
   const char *name;
   const char *desc;
-  char gender;   /* one of 'm','f','n','p' added to genderize monsters -CWS */
+  char gender;			    /* one of 'm','f','n','p' to genderize monsters -CWS */
 } describe_mon_type;
 
 typedef struct monster_type
@@ -329,24 +333,25 @@ typedef struct race_type
 
 typedef struct class_type
 {
-  const char *title;		/* type of class		*/
-  int8u adj_hd;		/* Adjust hit points		*/
-  int8u mdis;		/* mod disarming traps		*/
-  int8u msrh;		/* modifier to searching	*/
-  int8u mstl;		/* modifier to stealth		*/
-  int8u mfos;		/* modifier to freq-of-search	*/
-  int8u mbth;		/* modifier to base to hit	*/
-  int8u mbthb;		/* modifier to base to hit - bows*/
-  int8u msav;		/* Class modifier to save	*/
-  int16 madj_str;	/* Class modifier for strength	*/
-  int16 madj_int;	/* Class modifier for intelligence*/
-  int16 madj_wis;	/* Class modifier for wisdom	*/
-  int16 madj_dex;	/* Class modifier for dexterity */
-  int16 madj_con;	/* Class modifier for constitution*/
-  int16 madj_chr;	/* Class modifier for charisma	*/
-  int8u spell;		/* class use mage spells	*/
-  int8u m_exp;		/* Class experience factor	*/
-  int8u first_spell_lev;/* First level where class can use spells. */
+  const char *title;		    /* type of class		       */
+  int8u adj_hd;			    /* Adjust hit points	       */
+  int8u mdis;			    /* mod disarming traps	       */
+  int8u msrh;			    /* modifier to searching	       */
+  int8u mstl;			    /* modifier to stealth	       */
+  int8u mfos;			    /* modifier to freq-of-search      */
+  int8u mbth;			    /* modifier to base to hit	       */
+  int8u mbthb;			    /* modifier to base to hit - bows  */
+  int8u msav;			    /* Class modifier to save	       */
+  int16 madj_str;		    /* Class modifier for strength     */
+  int16 madj_int;		    /* Class modifier for intelligence */
+  int16 madj_wis;		    /* Class modifier for wisdom       */
+  int16 madj_dex;		    /* Class modifier for dexterity    */
+  int16 madj_con;		    /* Class modifier for constitution */
+  int16 madj_chr;		    /* Class modifier for charisma     */
+  int8u spell;			    /* class use mage spells	       */
+  int8u m_exp;			    /* Class experience factor	       */
+  int8u first_spell_lev;	    /* First level where class can use spells.	       */
+  int8u age_adj;		    /* %age, warrior =100, so diff classes age faster. */
 } class_type;
 
 typedef struct background_type

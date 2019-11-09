@@ -224,7 +224,7 @@ artifact_check()
 	    if (PAURNIMMEN)
 		fprintf(file1, "Paurnimmen\n");
 	    if (PAURAEGEN)
-		fprintf(file1, "Pauragen\n");
+		fprintf(file1, "Pauraegen\n");
 	    if (PAURNEN)
 		fprintf(file1, "Paurnen\n");
 	    if (CAMMITHRIM)
@@ -427,7 +427,7 @@ change_character()
     } else
 	return;
 
-    (void)sprintf(tmp_str, "Current=%ld  Gold = ", m_ptr->au);
+    (void)sprintf(tmp_str, "Current=%ld  Gold = ", (long)m_ptr->au);
     tmp_val = strlen(tmp_str);
     prt(tmp_str, 0, 0);
     if (get_string(tmp_str, 0, tmp_val, 7)) {
@@ -438,7 +438,7 @@ change_character()
 	}
     } else
 	return;
-    (void)sprintf(tmp_str, "Current=%ld  Max Exp = ", m_ptr->max_exp);
+    (void)sprintf(tmp_str, "Current=%ld  Max Exp = ", (long)m_ptr->max_exp);
     tmp_val = strlen(tmp_str);
     prt(tmp_str, 0, 0);
     if (get_string(tmp_str, 0, tmp_val, 7)) {
@@ -1395,14 +1395,7 @@ end:
 /* pause if screen fills up while printint up artifacts - cba */
 
 void
-#ifdef __STDC__
 artifact_screen_full(int *i, int j)
-#else
-artifact_screen_full(i, j)
-    int                *i;
-    int                 j;
-
-#endif
 {
     int                 t;
 
@@ -1420,11 +1413,7 @@ artifact_screen_full(i, j)
 /* Print out the artifacts seen without using a file - cba */
 
 void
-#ifdef __STDC__
 artifact_check_no_file(void)
-#else
-artifact_check_no_file()
-#endif
 {
     int                 i, j;
 
@@ -1567,6 +1556,10 @@ artifact_check_no_file()
 	prt("The Battle Axe 'Lotharang'", i++, j);
 	artifact_screen_full(&i, j);
     }
+    if (MAEDHROS) {
+	prt("The Main Gauche of Maedhros", i++, j);
+	artifact_screen_full(&i, j);
+    }
     if (MORMEGIL) {
 	prt("The Two-Handed Sword 'Mormegil'", i++, j);
 	artifact_screen_full(&i, j);
@@ -1589,6 +1582,10 @@ artifact_check_no_file()
     }
     if (NIMTHANC) {
 	prt("The Dagger 'Nimthanc'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (OLORIN) {
+	prt("The Quarterstraff of Olorin", i++, j);
 	artifact_screen_full(&i, j);
     }
     if (ORCRIST) {
@@ -1776,7 +1773,7 @@ artifact_check_no_file()
 	artifact_screen_full(&i, j);
     }
     if (HITHLOMIR) {
-	prt("The Soft Leather Armor 'Hithlomir'", i++, j);
+	prt("The Soft Leather Armour 'Hithlomir'", i++, j);
 	artifact_screen_full(&i, j);
     }
     if (HOLHENNETH) {
@@ -1784,11 +1781,11 @@ artifact_check_no_file()
 	artifact_screen_full(&i, j);
     }
     if (ISILDUR) {
-	prt("The Full Plate Armor of Isildur", i++, j);
+	prt("The Full Plate Armour of Isildur", i++, j);
 	artifact_screen_full(&i, j);
     }
     if (PAURAEGEN) {
-	prt("The Gauntlets 'Pauragen'", i++, j);
+	prt("The Gauntlets 'Pauraegen'", i++, j);
 	artifact_screen_full(&i, j);
     }
     if (PAURHACH) {
@@ -1808,7 +1805,7 @@ artifact_check_no_file()
 	artifact_screen_full(&i, j);
     }
     if (ROHAN) {
-	prt("The Metal Brigandine Armor of Rohan", i++, j);
+	prt("The Metal Brigandine Armor of the Rohirrim", i++, j);
 	artifact_screen_full(&i, j);
     }
     if (SOULKEEPER) {
@@ -1907,14 +1904,7 @@ artifact_check_no_file()
 /* print out the status of uniques - cba */
 
 void
-#ifdef __STDC__
 unique_screen_full(int *i, int j)
-#else
-unique_screen_full(i, j)
-    int                *i;
-    int                 j;
-
-#endif
 {
     int                 t;
 
@@ -1930,14 +1920,10 @@ unique_screen_full(i, j)
 }
 
 void
-#ifdef __STDC__
 check_uniques(void)
-#else
-check_uniques()
-#endif
 {
-    int                 i, j, k;
-    bigvtype            msg;
+    int      i, j, k;
+    bigvtype msg;
 
     save_screen();
     j = 15;
@@ -1948,15 +1934,15 @@ check_uniques()
     i = 1;
     prt("Uniques:", i++, j + 5);
 
-    for (k = 0; k < MAX_CREATURES; k++) {
-	if (strlen(c_list[k].name) > 0) {
+    for (k = 0; k < (MAX_CREATURES - 1); k++) {
+	if ((strlen(c_list[k].name) > 0) && (c_list[k].cdefense & UNIQUE)) {
 	    if (wizard) {
-		sprintf(msg, "%s is %s", c_list[k].name,
-			(u_list[k].dead) ? "DEAD" : "ALIVE");
+		sprintf(msg, "%s is %s.", c_list[k].name,
+			(u_list[k].dead) ? "dead" : "alive");
 		prt(msg, i++, j);
 		unique_screen_full(&i, j);
 	    } else if (u_list[k].dead) {
-		sprintf(msg, "%s is DEAD", c_list[k].name);
+		sprintf(msg, "%s is dead.", c_list[k].name);
 		prt(msg, i++, j);
 		unique_screen_full(&i, j);
 	    }

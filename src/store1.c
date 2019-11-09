@@ -252,56 +252,72 @@ store_carry(store_num, ipos, t_ptr)
     int32               icost, dummy;
     register inven_type *i_ptr;
     register store_type *s_ptr;
+    int stacked = FALSE; /* from inven_carry() -CFT */
 
-    *ipos = (-1);
-    if (sell_price(store_num, &icost, &dummy, t_ptr) > 0 || is_home) {
+    *ipos = -1;
+    if (sell_price(store_num, &icost, &dummy, t_ptr) > 0 || is_home)
+    {
 	s_ptr = &store[store_num];
 	item_val = 0;
 	item_num = t_ptr->number;
 	flag = FALSE;
-	typ = t_ptr->tval;
+	typ  = t_ptr->tval;
 	subt = t_ptr->subval;
-	do {
-	    i_ptr = &s_ptr->store_inven[item_val].sitem;
-	    if (typ == i_ptr->tval) {
-		if (subt == i_ptr->subval &&	/* Adds to other item	 */
-		    subt >= ITEM_SINGLE_STACK_MIN
-		    && (subt < ITEM_GROUP_MIN || i_ptr->p1 == t_ptr->p1)) {
-		    *ipos = item_val;
-		    i_ptr->number += item_num;
-		/*
-		 * must set new scost for group items, do this only for items
-		 * strictly greater than group_min, not for torches, this
-		 * must be recalculated for entire group 
-		 */
-		    if (subt > ITEM_GROUP_MIN) {
-			(void)sell_price(store_num, &icost, &dummy, i_ptr);
-			s_ptr->store_inven[item_val].scost = (-icost);
+	if (subt >= ITEM_SINGLE_STACK_MIN) { /* try to stack in store's inven */
+	    do {
+		i_ptr = &s_ptr->store_inven[item_val].sitem;
+		if (typ == i_ptr->tval)
+		{
+		    if (subt == i_ptr->subval && /* Adds to other item        */
+			subt >= ITEM_SINGLE_STACK_MIN
+			&& (subt < ITEM_GROUP_MIN || i_ptr->p1 == t_ptr->p1))
+		    {
+			stacked = TRUE; /* remember that we did stack it... -CFT */
+			*ipos = item_val;
+			i_ptr->number += item_num;
+			/* must set new scost for group items, do this only for items
+			   strictly greater than group_min, not for torches, this
+			   must be recalculated for entire group */
+			if (subt > ITEM_GROUP_MIN)
+			{
+			    (void) sell_price (store_num, &icost, &dummy, i_ptr);
+			    s_ptr->store_inven[item_val].scost = -icost;
+			}
+			/* must let group objects (except torches) stack over 24
+			   since there may be more than 24 in the group */
+			else if (i_ptr->number > 24)
+			    i_ptr->number = 24;
+			flag = TRUE;
 		    }
-		/*
-		 * must let group objects (except torches) stack over 24
-		 * since there may be more than 24 in the group 
-		 */
-		    else if (i_ptr->number > 24)
-			i_ptr->number = 24;
-		    flag = TRUE;
 		}
-	    } else if (((typ == i_ptr->tval) && (subt < i_ptr->tval)
-			&& (object_offset(t_ptr) == -1))
-		       || (typ > i_ptr->tval)) {	/* Insert into list */
-		insert_store(store_num, item_val, icost, t_ptr);
-		flag = TRUE;
-		*ipos = item_val;
-	    }
-	    item_val++;
-	}
-	while ((item_val < s_ptr->store_ctr) && (!flag));
-	if (!flag) {		   /* Becomes last item in list	 */
+		item_val ++;
+	    } while (!stacked && (item_val < s_ptr->store_ctr));
+	} /* if might stack... -CFT */
+	if (!stacked) {		/* either never stacks, or didn't find a place to stack */
+	    item_val = 0;
+	    do {
+		i_ptr = &s_ptr->store_inven[item_val].sitem;
+		if ((typ > i_ptr->tval) || /* sort by desc tval, */
+		    ((typ == i_ptr->tval) &&
+		     ((t_ptr->level < i_ptr->level) || /* then by inc level, */
+		      ((t_ptr->level == i_ptr->level) &&
+		       (subt < i_ptr->subval))))) /* and finally by inc subval -CFT */
+		{		/* Insert into list             */
+		    insert_store(store_num, item_val, icost, t_ptr);
+		    flag = TRUE;
+		    *ipos = item_val;
+		}
+		item_val++;
+	    } while ((item_val < s_ptr->store_ctr) && (!flag));
+	} /* if didn't already stack it... */
+	if (!flag)		/* Becomes last item in list    */
+	{
 	    insert_store(store_num, (int)s_ptr->store_ctr, icost, t_ptr);
 	    *ipos = s_ptr->store_ctr - 1;
 	}
     }
 }
+
 
 /* Destroy an item in the stores inventory.  Note that if	 */
 /* "one_of" is false, an entire slot is destroyed	-RAK-	 */
@@ -347,7 +363,7 @@ store_destroy(store_num, item_val, one_of)
 void 
 store_init()
 {
-    register int        i, j, k;
+    register int         i, j, k;
     register store_type *s_ptr;
 
     i = MAX_OWNERS / MAX_STORES;
@@ -380,7 +396,7 @@ store_create(store_num)
     tries = 0;
     cur_pos = popt();
     s_ptr = &store[store_num];
-    object_level = 1;
+    object_level = OBJ_TOWN_LEVEL;
     do {
 	if (store_num != 6) {
 	    i = store_choice[store_num][randint(STORE_CHOICES) - 1];
@@ -429,26 +445,32 @@ static void
 special_offer(i_ptr)
     inven_type         *i_ptr;
 {
+    int32 orig_cost = i_ptr->cost;
+
     if (randint(30) == 1) {
 	i_ptr->cost = (i_ptr->cost * 3) / 4;
 	if (i_ptr->cost < 1)
 	    i_ptr->cost = 1;
-	inscribe(i_ptr, "25% discount");
+	if (i_ptr->cost < orig_cost)
+	    inscribe(i_ptr, "25% discount");
     } else if (randint(150) == 1) {
 	i_ptr->cost /= 2;
 	if (i_ptr->cost < 1)
 	    i_ptr->cost = 1;
-	inscribe(i_ptr, "50% discount");
+	if (i_ptr->cost < orig_cost)
+	    inscribe(i_ptr, "50% discount");
     } else if (randint(300) == 1) {
 	i_ptr->cost /= 4;
 	if (i_ptr->cost < 1)
 	    i_ptr->cost = 1;
-	inscribe(i_ptr, "75% discount");
+	if (i_ptr->cost < orig_cost)
+	    inscribe(i_ptr, "75% discount");
     } else if (randint(500) == 1) {
 	i_ptr->cost /= 10;
 	if (i_ptr->cost < 1)
 	    i_ptr->cost = 1;
-	inscribe(i_ptr, "to clear");
+	if (i_ptr->cost < orig_cost)
+	    inscribe(i_ptr, "to clear");
     }
 }
 
