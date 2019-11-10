@@ -180,7 +180,7 @@
 #define OBJ_DIV_CURSED   13     /* 10*magic_chance/# cursed items    */
 
 /* Constants describing limits of certain objects */
-#define OBJ_LAMP_MAX    15000   /* Maximum amount that lamp can be filled  */
+#define FUEL_LAMP    15000   /* Maximum amount that lamp can be filled  */
 #define OBJ_BOLT_RANGE     18   /* Maximum range of bolts and balls        */
 #define OBJ_BREAK_GLYPH     550   /* Rune of protection resistance           */
 
