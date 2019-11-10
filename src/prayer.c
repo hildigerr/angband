@@ -118,8 +118,8 @@ pray()
 		    break;
 		  case 16:
 		    f_ptr = &py.flags;
-		    f_ptr->resist_heat += randint(10) + 10;
-		    f_ptr->resist_cold += randint(10) + 10;
+		    f_ptr->oppose_fire += randint(10) + 10;
+		    f_ptr->oppose_cold += randint(10) + 10;
 		    break;
 		  case 17:
 		    (void)cure_poison();

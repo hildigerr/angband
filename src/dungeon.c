@@ -395,7 +395,7 @@ dungeon()
 	    }
 	    f_ptr->poisoned--;
 	    if (f_ptr->poisoned == 0 || f_ptr->immune_pois ||
-		f_ptr->poison_resist || f_ptr->resist_poison) {
+		f_ptr->poison_resist || f_ptr->oppose_pois) {
 		f_ptr->poisoned = 0;
 		f_ptr->status &= ~PY_POISONED;
 		prt_poisoned();
@@ -652,33 +652,33 @@ dungeon()
 	    }
 	}
     /* Resist Heat   */
-	if (f_ptr->resist_heat > 0) {
-	    f_ptr->resist_heat--;
-	    if (f_ptr->resist_heat == 0)
+	if (f_ptr->oppose_fire > 0) {
+	    f_ptr->oppose_fire--;
+	    if (f_ptr->oppose_fire == 0)
 		msg_print("You no longer feel safe from flame.");
 	}
     /* Resist Cold   */
-	if (f_ptr->resist_cold > 0) {
-	    f_ptr->resist_cold--;
-	    if (f_ptr->resist_cold == 0)
+	if (f_ptr->oppose_cold > 0) {
+	    f_ptr->oppose_cold--;
+	    if (f_ptr->oppose_cold == 0)
 		msg_print("You no longer feel safe from cold.");
 	}
     /* Resist Acid   */
-	if (f_ptr->resist_acid > 0) {
-	    f_ptr->resist_acid--;
-	    if (f_ptr->resist_acid == 0)
+	if (f_ptr->oppose_acid > 0) {
+	    f_ptr->oppose_acid--;
+	    if (f_ptr->oppose_acid == 0)
 		msg_print("You no longer feel safe from acid.");
 	}
     /* Resist Lightning   */
-	if (f_ptr->resist_light > 0) {
-	    f_ptr->resist_light--;
-	    if (f_ptr->resist_light == 0)
+	if (f_ptr->oppose_elec > 0) {
+	    f_ptr->oppose_elec--;
+	    if (f_ptr->oppose_elec == 0)
 		msg_print("You no longer feel safe from lightning.");
 	}
     /* Resist Poison   */
-	if (f_ptr->resist_poison > 0) {
-	    f_ptr->resist_poison--;
-	    if (f_ptr->resist_poison == 0)
+	if (f_ptr->oppose_pois > 0) {
+	    f_ptr->oppose_pois--;
+	    if (f_ptr->oppose_pois == 0)
 		msg_print("You no longer feel safe from poison.");
 	}
     /* Timeout Artifacts  */
@@ -2691,11 +2691,11 @@ activate()
 		if (inventory[i].name2 == SN_COLLUIN) {
 		    msg_print("Your cloak glows many colours...");
 		    msg_print("You feel you can resist anything.");
-		    py.flags.resist_heat += randint(20) + 20;
-		    py.flags.resist_cold += randint(20) + 20;
-		    py.flags.resist_light += randint(20) + 20;
-		    py.flags.resist_poison += randint(20) + 20;
-		    py.flags.resist_acid += randint(20) + 20;
+		    py.flags.oppose_fire += randint(20) + 20;
+		    py.flags.oppose_cold += randint(20) + 20;
+		    py.flags.oppose_elec += randint(20) + 20;
+		    py.flags.oppose_pois += randint(20) + 20;
+		    py.flags.oppose_acid += randint(20) + 20;
 		    inventory[i].timeout = 111;
 		} else if (inventory[i].name2 == SN_HOLCOLLETH) {
 		    msg_print("You momentarily disappear...");
@@ -3122,10 +3122,10 @@ activate()
 		    py.flags.hero += randint(50) + 50;
 		    py.flags.shero += randint(50) + 50;
 		    bless(randint(50) + 50);
-		    py.flags.resist_heat += randint(50) + 50;
-		    py.flags.resist_cold += randint(50) + 50;
-		    py.flags.resist_light += randint(50) + 50;
-		    py.flags.resist_acid += randint(50) + 50;
+		    py.flags.oppose_fire += randint(50) + 50;
+		    py.flags.oppose_cold += randint(50) + 50;
+		    py.flags.oppose_elec += randint(50) + 50;
+		    py.flags.oppose_acid += randint(50) + 50;
 		    inventory[i].timeout = 400;
 		} else {
 		    msg_print("You breathe the elements...");

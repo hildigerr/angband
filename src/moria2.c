@@ -126,7 +126,7 @@ int y, x;
 		if (randint(3) == 1) {
 		    msg_print("The spikes are poisoned!");
 		    if (!(py.flags.immune_pois || py.flags.poison_resist ||
-			  py.flags.resist_poison))
+			  py.flags.oppose_pois))
 			dam *= 2;  /* more damage from poison!  :-)  -CFT */
 		    else
 			msg_print("You are unaffected by the poison.");
@@ -197,7 +197,7 @@ int y, x;
 	break;
       case 14:			   /* Poison gas */
 	if (!(py.flags.immune_pois || py.flags.poison_resist ||
-	      py.flags.resist_poison))
+	      py.flags.oppose_pois))
 	    poison_gas(dam, "a poison gas trap");
 	msg_print("A pungent green gas surrounds you!");
 	break;
@@ -1307,7 +1307,7 @@ int y, x;
     if (CH_POISON & t_ptr->flags) {
 	msg_print("A small needle has pricked you!");
 	take_hit(damroll(1, 6), "a poison needle");
-	if (!(py.flags.poison_resist || py.flags.resist_poison ||
+	if (!(py.flags.poison_resist || py.flags.oppose_pois ||
 	      py.flags.immune_pois))
 	    py.flags.poisoned += 10 + randint(20);
     }

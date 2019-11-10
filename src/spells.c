@@ -4257,50 +4257,50 @@ self_knowledge()
     if (py.flags.immune_fire) {
 	prt("You are completely immune to fire.", i++, j);
 	pause_if_screen_full(&i, j);
-    } else if ((py.flags.fire_resist) && (py.flags.resist_heat)) {
+    } else if ((py.flags.fire_resist) && (py.flags.oppose_fire)) {
 	prt("You resist fire exceptionally well.", i++, j);
 	pause_if_screen_full(&i, j);
-    } else if ((py.flags.fire_resist) || (py.flags.resist_heat)) {
+    } else if ((py.flags.fire_resist) || (py.flags.oppose_fire)) {
 	prt("You are resistant to fire.", i++, j);
 	pause_if_screen_full(&i, j);
     }
     if (py.flags.immune_cold) {
 	prt("You are completely immune to cold.", i++, j);
 	pause_if_screen_full(&i, j);
-    } else if ((py.flags.cold_resist) && (py.flags.resist_cold)) {
+    } else if ((py.flags.cold_resist) && (py.flags.oppose_cold)) {
 	prt("You resist cold exceptionally well.", i++, j);
 	pause_if_screen_full(&i, j);
-    } else if ((py.flags.cold_resist) || (py.flags.resist_cold)) {
+    } else if ((py.flags.cold_resist) || (py.flags.oppose_cold)) {
 	prt("You are resistant to cold.", i++, j);
 	pause_if_screen_full(&i, j);
     }
     if (py.flags.immune_acid) {
 	prt("You are completely immune to acid.", i++, j);
 	pause_if_screen_full(&i, j);
-    } else if ((py.flags.acid_resist) && (py.flags.resist_acid)) {
+    } else if ((py.flags.acid_resist) && (py.flags.oppose_acid)) {
 	prt("You resist acid exceptionally well.", i++, j);
 	pause_if_screen_full(&i, j);
-    } else if ((py.flags.acid_resist) || (py.flags.resist_acid)) {
+    } else if ((py.flags.acid_resist) || (py.flags.oppose_acid)) {
 	prt("You are resistant to acid.", i++, j);
 	pause_if_screen_full(&i, j);
     }
     if (py.flags.immune_pois) {
 	prt("You are completely immune to poison.", i++, j);
 	pause_if_screen_full(&i, j);
-    } else if ((py.flags.poison_resist) && (py.flags.resist_poison)) {
+    } else if ((py.flags.poison_resist) && (py.flags.oppose_pois)) {
 	prt("You resist poison exceptionally well.", i++, j);
 	pause_if_screen_full(&i, j);
-    } else if ((py.flags.poison_resist) || (py.flags.resist_poison)) {
+    } else if ((py.flags.poison_resist) || (py.flags.oppose_pois)) {
 	prt("You are resistant to poison.", i++, j);
 	pause_if_screen_full(&i, j);
     }
     if (py.flags.immune_elec) {
 	prt("You are completely immune to lightning.", i++, j);
 	pause_if_screen_full(&i, j);
-    } else if ((py.flags.lght_resist) && (py.flags.resist_light)) {
+    } else if ((py.flags.lght_resist) && (py.flags.oppose_elec)) {
 	prt("You resist lightning exceptionally well.", i++, j);
 	pause_if_screen_full(&i, j);
-    } else if ((py.flags.lght_resist) || (py.flags.resist_light)) {
+    } else if ((py.flags.lght_resist) || (py.flags.oppose_elec)) {
 	prt("You are resistant to lightning.", i++, j);
 	pause_if_screen_full(&i, j);
     }

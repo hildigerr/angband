@@ -239,11 +239,11 @@ typedef struct player_type
       s16b shero;		    /* Super Heroism	   */
       s16b shield;		    /* Shield Spell	   */
       s16b blessed;		    /* Blessed		   */
-      s16b resist_heat;	    /* Timed heat resist   */
-      s16b resist_cold;	    /* Timed cold resist   */
-      s16b resist_acid;	    /* Timed acid resist   */
-      s16b resist_light;	    /* Timed light resist  */
-      s16b resist_poison;	    /* Timed poison resist */
+      s16b oppose_fire;	    /* Timed heat resist   */
+      s16b oppose_cold;	    /* Timed cold resist   */
+      s16b oppose_acid;	    /* Timed acid resist   */
+      s16b oppose_elec;	    /* Timed light resist  */
+      s16b oppose_pois;	    /* Timed poison resist */
       s16b detect_inv;		    /* Timed see invisible */
       s16b word_recall;	    /* Timed teleport level*/
       s16b see_infra;		    /* See warm creatures  */

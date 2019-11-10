@@ -228,7 +228,7 @@ quaff()
 		  case 22:
 		    f_ptr = &py.flags;
 		    if (!(f_ptr->immune_pois || f_ptr->poison_resist ||
-			  f_ptr->resist_poison)) {
+			  f_ptr->oppose_pois)) {
 			msg_print("You feel very sick.");
 			f_ptr->poisoned += randint(15) + 10;
 		    } else
@@ -325,15 +325,15 @@ quaff()
 		    break;
 		  case 41:
 		    f_ptr = &py.flags;
-		    if (f_ptr->resist_heat == 0)
+		    if (f_ptr->oppose_fire == 0)
 			ident = TRUE;
-		    f_ptr->resist_heat += randint(10) + 10;
+		    f_ptr->oppose_fire += randint(10) + 10;
 		    break;
 		  case 42:
 		    f_ptr = &py.flags;
-		    if (f_ptr->resist_cold == 0)
+		    if (f_ptr->oppose_cold == 0)
 			ident = TRUE;
-		    f_ptr->resist_cold += randint(10) + 10;
+		    f_ptr->oppose_cold += randint(10) + 10;
 		    break;
 		  case 43:
 		    if (py.flags.detect_inv == 0)

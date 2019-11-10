@@ -282,23 +282,23 @@ cast()
 		    (void)mass_genocide(TRUE);
 		    break;
 		  case 50:
-		    py.flags.resist_heat += randint(20) + 20;
+		    py.flags.oppose_fire += randint(20) + 20;
 		    break;
 		  case 51:
-		    py.flags.resist_cold += randint(20) + 20;
+		    py.flags.oppose_cold += randint(20) + 20;
 		    break;
 		  case 52:
-		    py.flags.resist_acid += randint(20) + 20;
+		    py.flags.oppose_acid += randint(20) + 20;
 		    break;
 		  case 53:
-		    py.flags.resist_poison += randint(20) + 20;
+		    py.flags.oppose_pois += randint(20) + 20;
 		    break;
 		  case 54:
-		    py.flags.resist_heat += randint(20) + 20;
-		    py.flags.resist_cold += randint(20) + 20;
-		    py.flags.resist_light += randint(20) + 20;
-		    py.flags.resist_poison += randint(20) + 20;
-		    py.flags.resist_acid += randint(20) + 20;
+		    py.flags.oppose_fire += randint(20) + 20;
+		    py.flags.oppose_cold += randint(20) + 20;
+		    py.flags.oppose_elec += randint(20) + 20;
+		    py.flags.oppose_pois += randint(20) + 20;
+		    py.flags.oppose_acid += randint(20) + 20;
 		    break;
 		  case 55:
 		    py.flags.hero += randint(25) + 25;

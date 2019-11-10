@@ -2751,14 +2751,14 @@ poison_gas(dam, kb_str)
 int dam;
 const char *kb_str;
 {
-    if (py.flags.resist_poison > 0)
+    if (py.flags.oppose_pois > 0)
 	dam = 2 * dam / 3;
     if (py.flags.poison_resist)
 	dam = (dam * 3) / 5;
     if (py.flags.immune_pois)
 	dam = 1;
     take_hit(dam, kb_str);
-    if (!(py.flags.poison_resist || py.flags.resist_poison
+    if (!(py.flags.poison_resist || py.flags.oppose_pois
 	  || py.flags.immune_pois))
 	py.flags.poisoned += 12 + randint(dam);
 }
@@ -2772,7 +2772,7 @@ const char *kb_str;
 {
     if (py.flags.fire_resist)
 	dam = dam / 3;
-    if (py.flags.resist_heat > 0)
+    if (py.flags.oppose_fire > 0)
 	dam = dam / 3;
     if (py.flags.immune_fire)
 	dam = 1;
@@ -2789,7 +2789,7 @@ const char *kb_str;
 {
     if (py.flags.cold_resist)
 	dam = dam / 3;
-    if (py.flags.resist_cold > 0)
+    if (py.flags.oppose_cold > 0)
 	dam = dam / 3;
     if (py.flags.immune_cold)
 	dam = 1;
@@ -2804,7 +2804,7 @@ light_dam(dam, kb_str)
 int dam;
 const char *kb_str;
 {
-    if (py.flags.resist_light)
+    if (py.flags.oppose_elec)
 	dam = dam / 3;
     if (py.flags.lght_resist)
 	dam = dam / 3;
@@ -2825,12 +2825,12 @@ const char *kb_str;
 
     if (py.flags.acid_resist > 0)
 	dam = dam / 3;
-    if (py.flags.resist_acid > 0)
+    if (py.flags.oppose_acid > 0)
 	dam = dam / 3;
     if (py.flags.immune_acid)
 	dam = 1;
     flag = 0;
-    if (!py.flags.resist_acid)
+    if (!py.flags.oppose_acid)
 	if (minus_ac((u32b) TR_RES_ACID))
 	    flag = 1;
     if (py.flags.acid_resist)
