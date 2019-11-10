@@ -4254,7 +4254,7 @@ self_knowledge()
 	prt("Your eyes are resistant to blindness.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags.fire_im) {
+    if (py.flags.immune_fire) {
 	prt("You are completely immune to fire.", i++, j);
 	pause_if_screen_full(&i, j);
     } else if ((py.flags.fire_resist) && (py.flags.resist_heat)) {
@@ -4264,7 +4264,7 @@ self_knowledge()
 	prt("You are resistant to fire.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags.cold_im) {
+    if (py.flags.immune_cold) {
 	prt("You are completely immune to cold.", i++, j);
 	pause_if_screen_full(&i, j);
     } else if ((py.flags.cold_resist) && (py.flags.resist_cold)) {
@@ -4274,7 +4274,7 @@ self_knowledge()
 	prt("You are resistant to cold.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags.acid_im) {
+    if (py.flags.immune_acid) {
 	prt("You are completely immune to acid.", i++, j);
 	pause_if_screen_full(&i, j);
     } else if ((py.flags.acid_resist) && (py.flags.resist_acid)) {
@@ -4284,7 +4284,7 @@ self_knowledge()
 	prt("You are resistant to acid.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags.poison_im) {
+    if (py.flags.immune_pois) {
 	prt("You are completely immune to poison.", i++, j);
 	pause_if_screen_full(&i, j);
     } else if ((py.flags.poison_resist) && (py.flags.resist_poison)) {
@@ -4294,7 +4294,7 @@ self_knowledge()
 	prt("You are resistant to poison.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags.light_im) {
+    if (py.flags.immune_elec) {
 	prt("You are completely immune to lightning.", i++, j);
 	pause_if_screen_full(&i, j);
     } else if ((py.flags.lght_resist) && (py.flags.resist_light)) {

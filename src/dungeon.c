@@ -394,7 +394,7 @@ dungeon()
 		prt_poisoned();
 	    }
 	    f_ptr->poisoned--;
-	    if (f_ptr->poisoned == 0 || f_ptr->poison_im ||
+	    if (f_ptr->poisoned == 0 || f_ptr->immune_pois ||
 		f_ptr->poison_resist || f_ptr->resist_poison) {
 		f_ptr->poisoned = 0;
 		f_ptr->status &= ~PY_POISONED;

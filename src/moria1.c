@@ -169,11 +169,11 @@ calc_bonuses()
     p_ptr->poison_resist = FALSE;
     p_ptr->hold_life = FALSE;
     p_ptr->telepathy = FALSE;
-    p_ptr->fire_im = FALSE;
-    p_ptr->acid_im = FALSE;
-    p_ptr->poison_im = FALSE;
-    p_ptr->cold_im = FALSE;
-    p_ptr->light_im = FALSE;
+    p_ptr->immune_fire = FALSE;
+    p_ptr->immune_acid = FALSE;
+    p_ptr->immune_pois = FALSE;
+    p_ptr->immune_cold = FALSE;
+    p_ptr->immune_elec = FALSE;
     p_ptr->light = FALSE;
     p_ptr->confusion_resist = FALSE;
     p_ptr->sound_resist = FALSE;
@@ -325,15 +325,15 @@ calc_bonuses()
     if (TR_TELEPATHY & item_flags2)
 	p_ptr->telepathy = TRUE;
     if (TR_IM_FIRE & item_flags2)
-	p_ptr->fire_im = TRUE;
+	p_ptr->immune_fire = TRUE;
     if (TR_IM_ACID & item_flags2)
-	p_ptr->acid_im = TRUE;
+	p_ptr->immune_acid = TRUE;
     if (TR_IM_COLD & item_flags2)
-	p_ptr->cold_im = TRUE;
+	p_ptr->immune_cold = TRUE;
     if (TR_IM_LIGHT & item_flags2)
-	p_ptr->light_im = TRUE;
+	p_ptr->immune_elec = TRUE;
     if (TR_IM_POISON & item_flags2)
-	p_ptr->poison_im = TRUE;
+	p_ptr->immune_pois = TRUE;
     if (TR_LIGHT & item_flags2)
 	p_ptr->light = TRUE;
     if (TR_FREE_ACT & item_flags)
@@ -2738,7 +2738,7 @@ void
 corrode_gas(kb_str)
 const char *kb_str;
 {
-    if (!py.flags.acid_im)
+    if (!py.flags.immune_acid)
 	if (!minus_ac((u32b) TR_RES_ACID))
 	    take_hit(randint(8), kb_str);
     inven_damage(set_corrodes, 5);
@@ -2755,11 +2755,11 @@ const char *kb_str;
 	dam = 2 * dam / 3;
     if (py.flags.poison_resist)
 	dam = (dam * 3) / 5;
-    if (py.flags.poison_im)
+    if (py.flags.immune_pois)
 	dam = 1;
     take_hit(dam, kb_str);
     if (!(py.flags.poison_resist || py.flags.resist_poison
-	  || py.flags.poison_im))
+	  || py.flags.immune_pois))
 	py.flags.poisoned += 12 + randint(dam);
 }
 
@@ -2774,7 +2774,7 @@ const char *kb_str;
 	dam = dam / 3;
     if (py.flags.resist_heat > 0)
 	dam = dam / 3;
-    if (py.flags.fire_im)
+    if (py.flags.immune_fire)
 	dam = 1;
     take_hit(dam, kb_str);
     inven_damage(set_flammable, 3);
@@ -2791,7 +2791,7 @@ const char *kb_str;
 	dam = dam / 3;
     if (py.flags.resist_cold > 0)
 	dam = dam / 3;
-    if (py.flags.cold_im)
+    if (py.flags.immune_cold)
 	dam = 1;
     take_hit(dam, kb_str);
     inven_damage(set_frost_destroy, 5);
@@ -2808,7 +2808,7 @@ const char *kb_str;
 	dam = dam / 3;
     if (py.flags.lght_resist)
 	dam = dam / 3;
-    if (py.flags.light_im)
+    if (py.flags.immune_elec)
 	dam = 1;
     take_hit(dam, kb_str);
     inven_damage(set_lightning_destroy, 3);
@@ -2827,7 +2827,7 @@ const char *kb_str;
 	dam = dam / 3;
     if (py.flags.resist_acid > 0)
 	dam = dam / 3;
-    if (py.flags.acid_im)
+    if (py.flags.immune_acid)
 	dam = 1;
     flag = 0;
     if (!py.flags.resist_acid)

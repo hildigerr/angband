@@ -976,7 +976,7 @@ int monptr;
 	      case 14:		   /* Poison	 */
 		f_ptr = &py.flags;
 		take_hit(damage, ddesc);
-		if (!(f_ptr->poison_im || f_ptr->poison_resist ||
+		if (!(f_ptr->immune_pois || f_ptr->poison_resist ||
 		      f_ptr->resist_poison)) {
 		    msg_print("You feel very sick.");
 		    f_ptr->poisoned += randint((int)r_ptr->level) + 5;

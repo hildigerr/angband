@@ -270,11 +270,11 @@ typedef struct player_type
       byte poison_resist;	    /* Resistance to poison	   */
       byte hold_life;		    /* Immune to life draining	   */
       byte telepathy;		    /* Gives telepathy	   */
-      byte fire_im;		    /* Immune to fire	   */
-      byte acid_im;		    /* Immune to acid	   */
-      byte poison_im;		    /* Immune to poison	   */
-      byte cold_im;		    /* Immune to cold	   */
-      byte light_im;		    /* Immune to lightning */
+      byte immune_fire;		    /* Immune to fire	   */
+      byte immune_acid;		    /* Immune to acid	   */
+      byte immune_pois;		    /* Immune to poison	   */
+      byte immune_cold;		    /* Immune to cold	   */
+      byte immune_elec;		    /* Immune to lightning */
       byte light;		    /* Permanent light	   */
       byte confusion_resist;	    /* Resist confusion	   */
       byte sound_resist;	    /* Resist sound	   */
