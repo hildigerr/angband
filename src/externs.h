@@ -267,7 +267,7 @@ extern const char **amulets;
 extern const char **syllables;
 #else
 extern const char *colors[MAX_COLORS];
-extern const char *mushrooms[MAX_MUSH];
+extern const char *mushrooms[MAX_SHROOM];
 extern const char *woods[MAX_WOODS];
 extern const char *metals[MAX_METALS];
 extern const char *rocks[MAX_ROCKS];

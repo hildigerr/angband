@@ -215,7 +215,7 @@
 
 /* Descriptive constants                                        */
 #define MAX_COLORS     57       /* Used with potions      */
-#define MAX_MUSH       21       /* Used with mushrooms    */
+#define MAX_SHROOM       21       /* Used with mushrooms    */
 #define MAX_WOODS      32       /* Used with staffs       */
 #define MAX_METALS     32       /* Used with wands & rods */
 #define MAX_ROCKS      42       /* Used with rings        */

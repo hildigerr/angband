@@ -88,7 +88,7 @@ register inven_type *i_ptr;
 	if (!known1_p(i_ptr))
 	    value = 20;
     } else if (i_ptr->tval == TV_FOOD) {
-	if ((i_ptr->subval < (ITEM_SINGLE_STACK_MIN + MAX_MUSH))
+	if ((i_ptr->subval < (ITEM_SINGLE_STACK_MIN + MAX_SHROOM))
 	    && !known1_p(i_ptr))
 	    value = 1;
 				/* Rings and amulets */

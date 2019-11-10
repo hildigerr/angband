@@ -163,7 +163,7 @@ const char *colors[MAX_COLORS] = {
   "Shimmering","Coagulated Crimson"
 };
 
-const char *mushrooms[MAX_MUSH] = {
+const char *mushrooms[MAX_SHROOM] = {
   "Blue","Black","Black Spotted","Brown","Dark Blue","Dark Green","Dark Red",
   "Ecru","Furry","Green","Grey","Light Blue","Light Green","Plaid","Red",
   "Slimy","Tan","White","White Spotted","Wooden","Wrinkled"/*,"Yellow",

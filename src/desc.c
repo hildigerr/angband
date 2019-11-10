@@ -96,8 +96,8 @@ magic_init()
 	amulets[i] = amulets[j];
 	amulets[j] = tmp;
     }
-    for (i = 0; i < MAX_MUSH; i++) {
-	j = randint(MAX_MUSH) - 1;
+    for (i = 0; i < MAX_SHROOM; i++) {
+	j = randint(MAX_SHROOM) - 1;
 	tmp = mushrooms[i];
 	mushrooms[i] = mushrooms[j];
 	mushrooms[j] = tmp;
@@ -142,7 +142,7 @@ inven_type *t_ptr;
       case TV_POTION2:
 	return (5);
       case TV_FOOD:
-	if ((t_ptr->subval & (ITEM_SINGLE_STACK_MIN - 1)) < MAX_MUSH)
+	if ((t_ptr->subval & (ITEM_SINGLE_STACK_MIN - 1)) < MAX_SHROOM)
 	    return (6);
 	return (-1);
       default:
