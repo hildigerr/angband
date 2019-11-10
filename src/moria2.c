@@ -1923,7 +1923,7 @@ static int map_diag2[] = {2, 1, 0, 4, 3};
  *
  * Looks first at real objects and monsters, and looks at rock types only after
  * all other things have been seen.  Only looks at rock types if the
- * highlight_seams option is set. 
+ * notice_seams option is set. 
  */
 
 void 
@@ -1994,7 +1994,7 @@ look()
 		    }
 		}
 	    }
-	    while (abort == FALSE && highlight_seams && (++gl_rock < 2));
+	    while (abort == FALSE && notice_seams && (++gl_rock < 2));
 	    if (abort)
 		msg_print("--Aborting look--");
 	    else {

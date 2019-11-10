@@ -614,7 +614,7 @@ int y, x;
     if (cave_ptr->fval <= MAX_CAVE_FLOOR)
 	return '.';
     if (cave_ptr->fval == GRANITE_WALL || cave_ptr->fval == BOUNDARY_WALL
-	|| highlight_seams == FALSE) {
+	|| notice_seams == FALSE) {
 #ifdef MSDOS
 	return wallsym;
 #else
@@ -5788,7 +5788,7 @@ static struct opt_desc {
     { "Rogue like commands", 			&rogue_like_commands},
     { "Show weights in inventory", 		&show_inven_weight},
     { "Show weights in equipment list",		&show_equip_weight},
-    { "Highlight and notice mineral seams", 	&highlight_seams},
+    { "Highlight and notice mineral seams", 	&notice_seams},
     { "Disable haggling in stores",		&no_haggle_flag},
     { "Plain object descriptions",		&plain_descriptions},
     { "Quick messages",		                &quick_messages},

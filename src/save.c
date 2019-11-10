@@ -163,7 +163,7 @@ sv_write()
 	l |= 32;
     if (show_inven_weight)
 	l |= 64;
-    if (highlight_seams)
+    if (notice_seams)
 	l |= 128;
     if (find_ignore_doors)
 	l |= 0x100L;
@@ -1042,9 +1042,9 @@ int *generate;
 	else
 	    show_inven_weight = FALSE;
 	if (l & 128)
-	    highlight_seams = TRUE;
+	    notice_seams = TRUE;
 	else
-	    highlight_seams = FALSE;
+	    notice_seams = FALSE;
 	if (l & 0x100L)
 	    find_ignore_doors = TRUE;
 	else
