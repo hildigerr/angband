@@ -3731,7 +3731,7 @@ s32b amount;
 {
     register int          i;
     register struct misc *m_ptr;
-    register class_type  *c_ptr;
+    register player_class  *c_ptr;
 
     m_ptr = &py.misc;
     if (amount > m_ptr->exp)

@@ -332,7 +332,7 @@ typedef struct player_race
   byte rtclass;		    /* Bit field for class types */
 } player_race;
 
-typedef struct class_type
+typedef struct player_class
 {
   const char *title;		    /* type of class		       */
   byte adj_hd;			    /* Adjust hit points	       */
@@ -353,7 +353,7 @@ typedef struct class_type
   byte m_exp;			    /* Class experience factor	       */
   byte first_spell_lev;	    /* First level where class can use spells.	       */
   byte age_adj;		    /* %age, warrior =100, so diff classes age faster. */
-} class_type;
+} player_class;
 
 typedef struct player_background
 {

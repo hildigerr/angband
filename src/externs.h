@@ -182,7 +182,7 @@ extern char *dsp_race[MAX_RACES]; /* Short strings for races. -CJS- */
 
 extern byte rgold_adj[MAX_RACES][MAX_RACES];
 
-extern class_type class[MAX_CLASS];
+extern player_class class[MAX_CLASS];
 extern s16b class_level_adj[MAX_CLASS][MAX_LEV_ADJ];
 
 /* Warriors don't have spells, so there is no entry for them. */

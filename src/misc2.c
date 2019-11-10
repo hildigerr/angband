@@ -3010,7 +3010,7 @@ gain_level()
 {
     vtype               out_val;
     register struct misc *p_ptr;
-    register class_type *c_ptr;
+    register player_class *c_ptr;
 
     p_ptr = &py.misc;
     p_ptr->lev++;

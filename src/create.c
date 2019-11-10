@@ -514,7 +514,7 @@ get_class()
     char                buf[50];
     register struct misc *m_ptr;
     register player_type *p_ptr;
-    class_type         *c_ptr;
+    player_class         *c_ptr;
 
     c_ptr = &class[py.misc.pclass];
     p_ptr = &py;
@@ -618,7 +618,7 @@ get_class_choice()
     register int i, j;
     int          k, l, m;
     int          cl[MAX_CLASS], exit_flag;
-    class_type   *c_ptr;
+    player_class   *c_ptr;
     char         tmp_str[80], s;
     u32b       mask;
 
@@ -715,7 +715,7 @@ create_character()
     int          stat[6];
     int          autoroll = 0;
     int          msstat = 0;/* Max autoroll w/ look for -SAC */
-    class_type   *cptr;
+    player_class   *cptr;
     player_race    *rptr;
     char         inp[60];
 
