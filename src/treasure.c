@@ -1108,7 +1108,7 @@ inven_kind object_list[MAX_OBJECTS] = {
 {"Power named Narya"		,0x01C008BFL,	TV_RING, '=',	/* +78 */
     1,	100000,	31,   1,   2,	0,   0,	 0,   0, {0,0}	, 80, 0, 0x02000848L},
 
-/* For some reason THIS is where SPECIAL_OBJ should point */    /* +79 */
+/* For some reason THIS is where OBJ_SPECIAL should point */    /* +79 */
 
 {"Power named Nenya"		,0x05C008BFL,	TV_RING, '=',	/*467*/
     2,	200000,	32,   1,   2,	0,   0,	 0,   0, {0,0}	, 90, 0, 0x02000888L},

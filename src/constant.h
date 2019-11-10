@@ -141,7 +141,7 @@
 #define OBJ_RUINED_CHEST        (MAX_DUNGEON_OBJ+76)
 #define OBJ_WIZARD              (MAX_DUNGEON_OBJ+77)
 /*Special start for rings amulets etc... */
-#define SPECIAL_OBJ         	(MAX_DUNGEON_OBJ+79)
+#define OBJ_SPECIAL         	(MAX_DUNGEON_OBJ+79)
   /* Number of objects for universe*/
 #define MAX_OBJECTS				(MAX_DUNGEON_OBJ+90)
 

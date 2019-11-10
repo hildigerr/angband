@@ -407,60 +407,60 @@ print_objects()
 			int                 tmp;
 
 		again:
-			tmp = randint(MAX_OBJECTS - (SPECIAL_OBJ - 1)) +
-			    (SPECIAL_OBJ - 1) - 1;
+			tmp = randint(MAX_OBJECTS - (OBJ_SPECIAL - 1)) +
+			    (OBJ_SPECIAL - 1) - 1;
 			switch (tmp) {
-			  case (SPECIAL_OBJ - 1):
+			  case (OBJ_SPECIAL - 1):
 			    if (object_list[tmp].level <= level)
 				msg_print("*Remove Curse*");
 			    break;
-			  case (SPECIAL_OBJ):
+			  case (OBJ_SPECIAL):
 			    if (object_list[tmp].level <= level)
 				msg_print("[Resistance of Scarabtarices]");
 			    break;
-			  case (SPECIAL_OBJ + 1):
+			  case (OBJ_SPECIAL + 1):
 			    if (object_list[tmp].level <= level)
 				msg_print("[Mordenkainen's Escapes]");
 			    break;
-			  case (SPECIAL_OBJ + 2):
+			  case (OBJ_SPECIAL + 2):
 			    if (object_list[tmp].level <= level)
 				msg_print("[Kelek's Grimoire of Power]");
 			    break;
-			  case (SPECIAL_OBJ + 3):
+			  case (OBJ_SPECIAL + 3):
 			    if (randint(2) == 1)
 				goto again;
 			    if (object_list[tmp].level <= level)
 				msg_print("[Tenser's Transformations]");
 			    break;
-			  case (SPECIAL_OBJ + 4):
+			  case (OBJ_SPECIAL + 4):
 			    if (randint(2) == 1)
 				goto again;
 			    if (object_list[tmp].level <= level)
 				msg_print("[Raal's Tome of Destruction]");
 			    break;
-			  case (SPECIAL_OBJ + 5):
+			  case (OBJ_SPECIAL + 5):
 			    if (object_list[tmp].level <= level)
 				msg_print("[Ethereal Openings]");
 			    break;
-			  case (SPECIAL_OBJ + 6):
+			  case (OBJ_SPECIAL + 6):
 			    if (object_list[tmp].level <= level)
 				msg_print("[Godly Insights]");
 			    break;
-			  case (SPECIAL_OBJ + 7):
+			  case (OBJ_SPECIAL + 7):
 			    if (object_list[tmp].level <= level)
 				msg_print("[Purifications and Healing]");
 			    break;
-			  case (SPECIAL_OBJ + 8):
+			  case (OBJ_SPECIAL + 8):
 			    if (object_list[tmp].level <= level)
 				msg_print("[Wrath of God]");
 			    break;
-			  case (SPECIAL_OBJ + 9):
+			  case (OBJ_SPECIAL + 9):
 			    if (randint(2) > 1)
 				goto again;
 			    if (object_list[tmp].level <= level)
 				msg_print("[Holy Infusions]");
 			    break; /* End of Books */
-			  case (SPECIAL_OBJ + 10):	/* Narya */
+			  case (OBJ_SPECIAL + 10):	/* Narya */
 			    if (randint(4) > 1)
 				goto again;
 			    if (NARYA)
@@ -469,7 +469,7 @@ print_objects()
 				msg_print("Narya");
 			    NARYA = TRUE;
 			    break;
-			  case (SPECIAL_OBJ + 11):	/* Nenya */
+			  case (OBJ_SPECIAL + 11):	/* Nenya */
 			    if (randint(5) > 1)
 				goto again;
 			    if (NENYA)
@@ -478,7 +478,7 @@ print_objects()
 				msg_print("Nenya");
 			    NENYA = TRUE;
 			    break;
-			  case (SPECIAL_OBJ + 12):	/* Vilya */
+			  case (OBJ_SPECIAL + 12):	/* Vilya */
 			    if (randint(6) > 1)
 				goto again;
 			    if (VILYA)
@@ -487,7 +487,7 @@ print_objects()
 				msg_print("Vilya");
 			    VILYA = TRUE;
 			    break;
-			  case (SPECIAL_OBJ + 13):	/* The Ring of Power */
+			  case (OBJ_SPECIAL + 13):	/* The Ring of Power */
 			    if (randint(10) > 1)
 				goto again;
 			    if (POWER)
@@ -496,19 +496,19 @@ print_objects()
 				msg_print("Power (The One Ring)");
 			    POWER = TRUE;
 			    break;
-			  case (SPECIAL_OBJ + 14):	/* Dragon Scale mails */
-			  case (SPECIAL_OBJ + 15):
-			  case (SPECIAL_OBJ + 16):
-			  case (SPECIAL_OBJ + 17):
-			  case (SPECIAL_OBJ + 18):
-			  case (SPECIAL_OBJ + 19):
-			  case (SPECIAL_OBJ + 20):
+			  case (OBJ_SPECIAL + 14):	/* Dragon Scale mails */
+			  case (OBJ_SPECIAL + 15):
+			  case (OBJ_SPECIAL + 16):
+			  case (OBJ_SPECIAL + 17):
+			  case (OBJ_SPECIAL + 18):
+			  case (OBJ_SPECIAL + 19):
+			  case (OBJ_SPECIAL + 20):
 			    if (randint(2) > 1)
 				goto again;
 			    if (object_list[tmp].level <= level)
 				msg_print("Dragon Scale Mail");
 			    break;
-			  case (SPECIAL_OBJ + 23):	/* Multi-Hued Dragon
+			  case (OBJ_SPECIAL + 23):	/* Multi-Hued Dragon
 							 * Scale Mail */
 			    if (randint(3) > 1)
 				goto again;

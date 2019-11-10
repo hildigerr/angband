@@ -260,9 +260,9 @@ int y, x;
 again:
     if (done > 20)
 	return 0;
-    tmp = randint(MAX_OBJECTS - (SPECIAL_OBJ - 1)) + (SPECIAL_OBJ - 1) - 1;
+    tmp = randint(MAX_OBJECTS - (OBJ_SPECIAL - 1)) + (OBJ_SPECIAL - 1) - 1;
     switch (tmp) {
-      case (SPECIAL_OBJ - 1):
+      case (OBJ_SPECIAL - 1):
 	done++;
 	if (randint(30) > 1)
 	    goto again;
@@ -278,7 +278,7 @@ again:
 	    good_item_flag = TRUE;
 	NARYA = TRUE;
 	break;
-      case (SPECIAL_OBJ):
+      case (OBJ_SPECIAL):
 	done++;
 	if (randint(35) > 1)
 	    goto again;
@@ -294,7 +294,7 @@ again:
 	    good_item_flag = TRUE;
 	NENYA = TRUE;
 	break;
-      case (SPECIAL_OBJ + 1):
+      case (OBJ_SPECIAL + 1):
 	done++;
 	if (randint(40) > 1)
 	    goto again;
@@ -310,7 +310,7 @@ again:
 	    good_item_flag = TRUE;
 	VILYA = TRUE;
 	break;
-      case (SPECIAL_OBJ + 2):
+      case (OBJ_SPECIAL + 2):
 	done++;
 	if (randint(60) > 1)
 	    goto again;
@@ -326,7 +326,7 @@ again:
 	    good_item_flag = TRUE;
 	POWER = TRUE;
 	break;
-      case (SPECIAL_OBJ + 3):
+      case (OBJ_SPECIAL + 3):
 	done++;
 	if (PHIAL)
 	    goto again;
@@ -340,7 +340,7 @@ again:
 	    good_item_flag = TRUE;
 	PHIAL = TRUE;
 	break;
-      case (SPECIAL_OBJ + 4):
+      case (OBJ_SPECIAL + 4):
 	done++;
 	if (randint(10) > 1)
 	    goto again;
@@ -356,7 +356,7 @@ again:
 	    good_item_flag = TRUE;
 	INGWE = TRUE;
 	break;
-      case (SPECIAL_OBJ + 5):
+      case (OBJ_SPECIAL + 5):
 	done++;
 	if (randint(6) > 1)
 	    goto again;
@@ -372,7 +372,7 @@ again:
 	    good_item_flag = TRUE;
 	CARLAMMAS = TRUE;
 	break;
-      case (SPECIAL_OBJ + 6):
+      case (OBJ_SPECIAL + 6):
 	done++;
 	if (randint(8) > 1)
 	    goto again;
@@ -388,7 +388,7 @@ again:
 	    good_item_flag = TRUE;
 	ELENDIL = TRUE;
 	break;
-      case (SPECIAL_OBJ + 7):
+      case (OBJ_SPECIAL + 7):
 	done++;
 	if (randint(18) > 1)
 	    goto again;
@@ -404,7 +404,7 @@ again:
 	    good_item_flag = TRUE;
 	THRAIN = TRUE;
 	break;
-      case (SPECIAL_OBJ + 8):
+      case (OBJ_SPECIAL + 8):
 	done++;
 	if (randint(25) > 1)
 	    goto again;
@@ -420,7 +420,7 @@ again:
 	    good_item_flag = TRUE;
 	TULKAS = TRUE;
 	break;
-      case (SPECIAL_OBJ + 9):
+      case (OBJ_SPECIAL + 9):
 	done++;
 	if (randint(25) > 1)
 	    goto again;
@@ -436,7 +436,7 @@ again:
 	    good_item_flag = TRUE;
 	NECKLACE = TRUE;
 	break;
-      case (SPECIAL_OBJ + 10):
+      case (OBJ_SPECIAL + 10):
 	done++;
 	if (randint(20) > 1)
 	    goto again;
@@ -487,7 +487,7 @@ int y, x;
 	else
 	    delete_object(y,x);
     
-    if (randint(MAX_OBJECTS)>SPECIAL_OBJ && randint(10)==1)
+    if (randint(MAX_OBJECTS)>OBJ_SPECIAL && randint(10)==1)
 	if (special_place_object(y,x)==(-1))
 	    return;
     cur_pos = popt();

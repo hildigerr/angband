@@ -2824,7 +2824,7 @@ activate()
 		    inventory[i].timeout = 500;
 		}
 		break;
-	      case (SPECIAL_OBJ - 1):	/* Narya */
+	      case (OBJ_SPECIAL - 1):	/* Narya */
 		msg_print("The ring glows deep red...");
 		if (get_dir(NULL, &dir)) {
 		    if (py.flags.confused > 0) {
@@ -2837,7 +2837,7 @@ activate()
 		    inventory[i].timeout = 222 + randint(222);
 		}
 		break;
-	      case (SPECIAL_OBJ): /* Nenya */
+	      case (OBJ_SPECIAL): /* Nenya */
 		msg_print("The ring glows bright white...");
 		if (get_dir(NULL, &dir)) {
 		    if (py.flags.confused > 0) {
@@ -2850,7 +2850,7 @@ activate()
 		    inventory[i].timeout = 222 + randint(333);
 		}
 		break;
-	      case (SPECIAL_OBJ + 1):	/* Vilya */
+	      case (OBJ_SPECIAL + 1):	/* Vilya */
 		msg_print("The ring glows deep blue...");
 		if (get_dir(NULL, &dir)) {
 		    if (py.flags.confused > 0) {
@@ -2863,7 +2863,7 @@ activate()
 		    inventory[i].timeout = 222 + randint(444);
 		}
 		break;
-	      case (SPECIAL_OBJ + 2):	/* Power */
+	      case (OBJ_SPECIAL + 2):	/* Power */
 		msg_print("The ring glows intensely black...");
 		switch (randint(17) + (8 - py.misc.lev / 10)) {
 		  case 5:
@@ -3141,36 +3141,36 @@ activate()
 		    }
 		}
 		break;
-	      case (SPECIAL_OBJ + 3):
+	      case (OBJ_SPECIAL + 3):
 		msg_print("The phial wells with clear light...");
 		light_area(char_row, char_col, damroll(2, 15), 3);
 		inventory[i].timeout = 10 + randint(10);
 		break;
-	      case (SPECIAL_OBJ + 4):
+	      case (OBJ_SPECIAL + 4):
 		msg_print("An aura of good floods the area...");
 		dispel_creature(EVIL, (int)(5 * py.misc.lev));
 		inventory[i].timeout = 444 + randint(222);
 		break;
-	      case (SPECIAL_OBJ + 5):
+	      case (OBJ_SPECIAL + 5):
 		msg_print("The amulet lets out a shrill wail...");
 		msg_print("You feel somewhat safer...");
 		protect_evil();
 		inventory[i].timeout = 222 + randint(222);
 		break;
-	      case (SPECIAL_OBJ + 6):
+	      case (OBJ_SPECIAL + 6):
 		msg_print("The star shines brightly...");
 		msg_print("And you sense your surroundings...");
 		map_area();
 		inventory[i].timeout = 50 + randint(50);
 		break;
-	      case (SPECIAL_OBJ + 7):
+	      case (OBJ_SPECIAL + 7):
 		msg_print("The stone glows a deep green");
 		wizard_light(TRUE);
 		(void)detect_sdoor();
 		(void)detect_trap();
 		inventory[i].timeout = 100 + randint(100);
 		break;
-	      case (SPECIAL_OBJ + 8):
+	      case (OBJ_SPECIAL + 8):
 		msg_print("The ring glows brightly...");
 		py.flags.fast += randint(100) + 50;
 		inventory[i].timeout = 200;
