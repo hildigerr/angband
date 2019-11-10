@@ -300,7 +300,7 @@ typedef struct spell_type
 } spell_type;
 
 
-typedef struct race_type
+typedef struct player_race
 {
   const char	*trace;		    /* Type of race	    */
   s16b str_adj;		    /* adjustments	    */
@@ -330,7 +330,7 @@ typedef struct race_type
   byte infra;			    /* See infra-red		 */
   byte b_exp;			    /* Base experience factor	 */
   byte rtclass;		    /* Bit field for class types */
-} race_type;
+} player_race;
 
 typedef struct class_type
 {

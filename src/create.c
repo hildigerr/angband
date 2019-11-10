@@ -188,7 +188,7 @@ static void
 get_all_stats()
 {
     register player_type *p_ptr;
-    register race_type *r_ptr;
+    register player_race *r_ptr;
     register int        j;
 
     p_ptr = &py;
@@ -254,7 +254,7 @@ choose_race()
     char                 s;
     char                 tmp_str[80];
     register player_type *p_ptr;
-    register race_type   *r_ptr;
+    register player_race   *r_ptr;
 
     j = 0;
     k = 0;
@@ -716,7 +716,7 @@ create_character()
     int          autoroll = 0;
     int          msstat = 0;/* Max autoroll w/ look for -SAC */
     class_type   *cptr;
-    race_type    *rptr;
+    player_race    *rptr;
     char         inp[60];
 
 #endif

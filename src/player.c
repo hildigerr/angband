@@ -109,9 +109,9 @@ u32b player_exp[MAX_PLAYER_LEVEL] = {
 	Racial Bases for: dis,srh,stl,fos,bth,bthb,bsav,hitdie,
 	infra, exp base, choice-classes */
 #ifdef MACGAME
-race_type *race;
+player_race *race;
 #else
-race_type race[MAX_RACES] = {
+player_race race[MAX_RACES] = {
    {"Human",	 0,  0,	 0,  0,	 0,  0,
       14,  6, 72,  6,180, 25, 66,  4,150, 20,
       0,  0,  0,  0,  0,  0,  0, 10,  0, 100, 0x3F,

@@ -164,11 +164,11 @@ extern cave_type cave[MAX_HEIGHT][MAX_WIDTH];
 extern player_type py;
 #ifdef MACGAME
 extern char *(*player_title)[MAX_PLAYER_LEVEL];
-extern race_type *race;
+extern player_race *race;
 extern player_background *background;
 #else
 extern char *player_title[MAX_CLASS][MAX_PLAYER_LEVEL];
-extern race_type race[MAX_RACES];
+extern player_race race[MAX_RACES];
 extern player_background background[MAX_BACKGROUND];
 #endif
 extern u32b player_exp[MAX_PLAYER_LEVEL];
