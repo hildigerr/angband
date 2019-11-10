@@ -529,7 +529,7 @@ char *argv[];
 	quests[SAURON_QUEST]=99;
 
 	/* Unique Monster Flags */
-	for (i=0; i<MAX_CREATURES; i++)
+	for (i=0; i<MAX_R_IDX; i++)
 	    u_list[i].exist=0, u_list[i].dead=0;
 	create_character();
 
@@ -640,7 +640,7 @@ init_m_level()
     for (i = 0; i <= MAX_MONS_LEVEL; i++)
 	m_level[i] = 0;
 
-    k = MAX_CREATURES - WIN_MON_TOT;
+    k = MAX_R_IDX - WIN_MON_TOT;
     for (i = 0; i < k; i++)
 	m_level[c_list[i].level]++;
 

@@ -78,7 +78,7 @@
 				the player.
 									*/
 
-creature_type c_list[MAX_CREATURES] = {
+creature_type c_list[MAX_R_IDX] = {
 
 {"Filthy street urchin"	    ,(MV_ATT_NORM|MV_20|THRO_DR|PICK_UP)
 			    ,(NONE8),(NONE8),(NONE8),(NONE8)

@@ -394,7 +394,7 @@ delete_unique()
 {
     int i;
 
-    for (i = 0; i < MAX_CREATURES; i++)
+    for (i = 0; i < MAX_R_IDX; i++)
 	if (c_list[i].cdefense & UNIQUE)
 	    u_list[i].exist = 0;
 }
@@ -834,7 +834,7 @@ int monptr, dam, print_fear;
     c_ptr = &c_list[m_ptr->mptr];
 
     if (m_ptr->hp < 0) {
-	if (m_ptr->mptr == (MAX_CREATURES - 1)) {
+	if (m_ptr->mptr == (MAX_R_IDX - 1)) {
 	    char                temp[100];
 
 	    if (!dun_level) {

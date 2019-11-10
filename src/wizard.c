@@ -1935,7 +1935,7 @@ check_uniques()
     i = 1;
     prt("Uniques:", i++, j + 5);
 
-    for (k = 0; k < (MAX_CREATURES - 1); k++) {
+    for (k = 0; k < (MAX_R_IDX - 1); k++) {
 	if ((strlen(c_list[k].name) > 0) && (c_list[k].cdefense & UNIQUE)) {
 	    if (wizard) {
 		sprintf(msg, "%s is %s.", c_list[k].name,

@@ -58,7 +58,7 @@ int monster_is_afraid = 0;      /* redo monster fear messages -CWS */
 int coin_type;			/* remember Creeping _xxx_ coin type -CWS */
 int opening_chest = 0;          /* don't generate another chest -CWS */
 
-struct unique_mon u_list[MAX_CREATURES]; /* Unique check list... -LVB- */ 
+struct unique_mon u_list[MAX_R_IDX]; /* Unique check list... -LVB- */ 
 
 int rogue_like_commands;	/* set in config.h/main.c */
 
@@ -119,5 +119,5 @@ cave_type cave[MAX_HEIGHT][MAX_WIDTH];
 #ifdef MAC
 monster_lore *c_recall;
 #else
-monster_lore c_recall[MAX_CREATURES];	/* Monster memories */
+monster_lore c_recall[MAX_R_IDX];	/* Monster memories */
 #endif

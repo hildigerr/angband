@@ -311,10 +311,10 @@ sv_write()
     for (i = 0; i < MAX_QUESTS; i++)
 	wr_long(quests[i]);
 
-    for (i = 0; i < MAX_CREATURES; i++)
+    for (i = 0; i < MAX_R_IDX; i++)
 	wr_unique(&u_list[i]);
 
-    for (i = 0; i < MAX_CREATURES; i++) {
+    for (i = 0; i < MAX_R_IDX; i++) {
 	r_ptr = &c_recall[i];
 	if (r_ptr->r_cmove || r_ptr->r_cdefense || r_ptr->r_kills ||
 	    r_ptr->r_spells2 || r_ptr->r_spells3 || r_ptr->r_spells ||
@@ -598,15 +598,15 @@ sv_write()
 	wr_monster(&m_list[i]);
 
 /* Save ghost names & stats etc... */
-     if (!c_list[MAX_CREATURES - 1].name) {
+     if (!c_list[MAX_R_IDX - 1].name) {
                                   /* Can't dereference NULL! */
-	 c_list[MAX_CREATURES - 1].name = (char*)malloc(101);
-	 bzero((char *)c_list[MAX_CREATURES - 1].name, 101);
+	 c_list[MAX_R_IDX - 1].name = (char*)malloc(101);
+	 bzero((char *)c_list[MAX_R_IDX - 1].name, 101);
      }
-    wr_bytes(c_list[MAX_CREATURES - 1].name, 100);
-    wr_long((u32b) c_list[MAX_CREATURES - 1].cmove);
-    wr_long((u32b) c_list[MAX_CREATURES - 1].spells);
-    wr_long((u32b) c_list[MAX_CREATURES - 1].cdefense);
+    wr_bytes(c_list[MAX_R_IDX - 1].name, 100);
+    wr_long((u32b) c_list[MAX_R_IDX - 1].cmove);
+    wr_long((u32b) c_list[MAX_R_IDX - 1].spells);
+    wr_long((u32b) c_list[MAX_R_IDX - 1].cdefense);
     {
 	u16b temp;
 /* fix player ghost's exp bug.  The mexp field is really an u32b, but the
@@ -617,20 +617,20 @@ sv_write()
  * perfectly with a similar fix when* loading a character. -CFT
  */
 
-	if (c_list[MAX_CREATURES - 1].mexp > (u32b) 0xff00)
+	if (c_list[MAX_R_IDX - 1].mexp > (u32b) 0xff00)
 	    temp = (u16b) 0xff00;
 	else
-	    temp = (u16b) c_list[MAX_CREATURES - 1].mexp;
+	    temp = (u16b) c_list[MAX_R_IDX - 1].mexp;
 	wr_short((u16b) temp);
     }
-    wr_short((byte) c_list[MAX_CREATURES - 1].sleep);
-    wr_byte((byte) c_list[MAX_CREATURES - 1].aaf);
-    wr_short((byte) c_list[MAX_CREATURES - 1].ac);
-    wr_byte((byte) c_list[MAX_CREATURES - 1].speed);
-    wr_byte((byte) c_list[MAX_CREATURES - 1].cchar);
-    wr_bytes(c_list[MAX_CREATURES - 1].hd, 2);
-    wr_bytes(c_list[MAX_CREATURES - 1].damage, sizeof(attid) * 4);
-    wr_short((u16b) c_list[MAX_CREATURES - 1].level);
+    wr_short((byte) c_list[MAX_R_IDX - 1].sleep);
+    wr_byte((byte) c_list[MAX_R_IDX - 1].aaf);
+    wr_short((byte) c_list[MAX_R_IDX - 1].ac);
+    wr_byte((byte) c_list[MAX_R_IDX - 1].speed);
+    wr_byte((byte) c_list[MAX_R_IDX - 1].cchar);
+    wr_bytes(c_list[MAX_R_IDX - 1].hd, 2);
+    wr_bytes(c_list[MAX_R_IDX - 1].damage, sizeof(attid) * 4);
+    wr_short((u16b) c_list[MAX_R_IDX - 1].level);
 
     if (ferror(fileptr) || (fflush(fileptr) == EOF))
 	return FALSE;
@@ -975,7 +975,7 @@ int *generate;
 	if (to_be_wizard)
 	    prt("Loaded Quests", 4, 0);
 
-	for (i = 0; i < MAX_CREATURES; i++)
+	for (i = 0; i < MAX_R_IDX; i++)
 	    rd_unique(&u_list[i]);
 	if (to_be_wizard)
 	    prt("Loaded Unique Beasts", 5, 0);
@@ -983,7 +983,7 @@ int *generate;
 
 	rd_short(&u16b_tmp);
 	while (u16b_tmp != 0xFFFF) {
-	    if (u16b_tmp >= MAX_CREATURES)
+	    if (u16b_tmp >= MAX_R_IDX)
 		goto error;
 	    r_ptr = &c_recall[u16b_tmp];
 	    rd_long(&r_ptr->r_cmove);
@@ -1447,13 +1447,13 @@ int *generate;
 
 				/* Restore ghost names & stats etc... */
 				/* Allocate storage for name */
-	c_list[MAX_CREATURES - 1].name = (char*)malloc(101);
-	bzero((char *)c_list[MAX_CREATURES - 1].name, 101);
-	*((char *) c_list[MAX_CREATURES - 1].name) = 'A';
-	rd_bytes((byte *) (c_list[MAX_CREATURES - 1].name), 100);
-	rd_long((u32b *) & (c_list[MAX_CREATURES - 1].cmove));
-	rd_long((u32b *) & (c_list[MAX_CREATURES - 1].spells));
-	rd_long((u32b *) & (c_list[MAX_CREATURES - 1].cdefense));
+	c_list[MAX_R_IDX - 1].name = (char*)malloc(101);
+	bzero((char *)c_list[MAX_R_IDX - 1].name, 101);
+	*((char *) c_list[MAX_R_IDX - 1].name) = 'A';
+	rd_bytes((byte *) (c_list[MAX_R_IDX - 1].name), 100);
+	rd_long((u32b *) & (c_list[MAX_R_IDX - 1].cmove));
+	rd_long((u32b *) & (c_list[MAX_R_IDX - 1].spells));
+	rd_long((u32b *) & (c_list[MAX_R_IDX - 1].cdefense));
 	{
 	    u16b t1;
 /* fix player ghost's exp bug.  The mexp field is really an u32b, but the
@@ -1464,31 +1464,31 @@ int *generate;
  */
 
 	    rd_short((u16b *) & t1);
-	    c_list[MAX_CREATURES - 1].mexp = (u32b) t1;
+	    c_list[MAX_R_IDX - 1].mexp = (u32b) t1;
 	}
 
 /* more stupid size bugs that would've never been needed if these variables
  * had been given enough space in the first place -CWS
  */
 	if ((version_maj >= 2) && (version_min >= 6))
-	    rd_short((u16b *) & (c_list[MAX_CREATURES - 1].sleep));
+	    rd_short((u16b *) & (c_list[MAX_R_IDX - 1].sleep));
 	else
-	    rd_byte((byte *) & (c_list[MAX_CREATURES - 1].sleep));
+	    rd_byte((byte *) & (c_list[MAX_R_IDX - 1].sleep));
 
-	rd_byte((byte *) & (c_list[MAX_CREATURES - 1].aaf));
+	rd_byte((byte *) & (c_list[MAX_R_IDX - 1].aaf));
 
 	if ((version_maj >= 2) && (version_min >= 6))
-	    rd_short((u16b *) & (c_list[MAX_CREATURES - 1].ac));
+	    rd_short((u16b *) & (c_list[MAX_R_IDX - 1].ac));
 	else
-	    rd_byte((byte *) & (c_list[MAX_CREATURES - 1].ac));
+	    rd_byte((byte *) & (c_list[MAX_R_IDX - 1].ac));
 
-	rd_byte((byte *) & (c_list[MAX_CREATURES - 1].speed));
-	rd_byte((byte *) & (c_list[MAX_CREATURES - 1].cchar));
+	rd_byte((byte *) & (c_list[MAX_R_IDX - 1].speed));
+	rd_byte((byte *) & (c_list[MAX_R_IDX - 1].cchar));
 
-	rd_bytes((byte *) (c_list[MAX_CREATURES - 1].hd), 2);
+	rd_bytes((byte *) (c_list[MAX_R_IDX - 1].hd), 2);
 
-	rd_bytes((byte *) (c_list[MAX_CREATURES - 1].damage), sizeof(attid) * 4);
-	rd_short((u16b *) & (c_list[MAX_CREATURES - 1].level));
+	rd_bytes((byte *) (c_list[MAX_R_IDX - 1].damage), sizeof(attid) * 4);
+	rd_short((u16b *) & (c_list[MAX_R_IDX - 1].level));
 	*generate = FALSE;	   /* We have restored a cave - no need to generate. */
 
 	if ((version_min == 1 && patch_level < 3)

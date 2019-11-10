@@ -340,7 +340,7 @@ int mon_num;
 /* Immediately obvious. */
 
 #if 0
-    for (k = 0; k < MAX_CREATURES; k++) {
+    for (k = 0; k < MAX_R_IDX; k++) {
 	if (!stricmp(desc_list[k].name, cp->name)) {
 	    if (strlen(desc_list[k].desc) != 0)
 		roff(desc_list[k].desc);
@@ -349,7 +349,7 @@ int mon_num;
     }
 #endif
     k = mon_num;
-    if (k == MAX_CREATURES - 1)
+    if (k == MAX_R_IDX - 1)
 	roff("You feel you know it, and it knows you.  This can only mean trouble.  ");
     else {
 	roff(desc_list[k].desc);

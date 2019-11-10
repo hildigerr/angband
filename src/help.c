@@ -314,7 +314,7 @@ ident_char()
     if (command == '.' || command == '#')
 	command = (command == '.' ? floorsym : wallsym);
 #endif
-    for (i = MAX_CREATURES - 1; i >= 0; i--)
+    for (i = MAX_R_IDX - 1; i >= 0; i--)
 #ifdef MSDOS
 	if ((c_list[i].cchar == (unsigned) command) && bool_roff_recall(i))
 #else

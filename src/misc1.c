@@ -783,7 +783,7 @@ int          slp;
     register monster_type *mon_ptr;
     char                   buf[100];
 
-    if ((z < 0) || (z >= MAX_CREATURES))
+    if ((z < 0) || (z >= MAX_R_IDX))
 	return FALSE;		/* another paranoia check -CFT */
 
     if (!test_place(y, x))
@@ -875,7 +875,7 @@ int          slp;
 	j = c_list[z].cchar;
 	if ((j=='k')||(j=='L')||(j=='o')||(j=='O')||(j=='T')||(j=='y')||
 	    (j=='I')||(j=='&')) {
-	    for (cur_pos=MAX_CREATURES-1;cur_pos>=0;cur_pos--)
+	    for (cur_pos=MAX_R_IDX-1;cur_pos>=0;cur_pos--)
 		if ((c_list[cur_pos].cchar==j) &&
 		    (c_list[cur_pos].level<=c_list[z].level) &&
 		    !(c_list[cur_pos].cdefense & UNIQUE)) {
@@ -921,7 +921,7 @@ place_win_monster()
 	       (distance(y, x, char_row, char_col) <= MAX_SIGHT));
 	mon_ptr->fy = y;
 	mon_ptr->fx = x;
-	mon_ptr->mptr = MAX_CREATURES - 2;
+	mon_ptr->mptr = MAX_R_IDX - 2;
 	if (c_list[mon_ptr->mptr].cdefense & MAX_HP)
 	    mon_ptr->hp = max_hp(c_list[mon_ptr->mptr].hd);
 	else
@@ -957,10 +957,10 @@ int                 r, c, l;
     int  i;
 
     /* Allocate storage for name -TL -- braindamaged ghost name spoo -CWS */
-    if (c_list[MAX_CREATURES - 1].name == NULL) {
-	c_list[MAX_CREATURES - 1].name = (char*)malloc(101);
-	bzero((char *) c_list[MAX_CREATURES - 1].name, 101);
-	*((char *) c_list[MAX_CREATURES - 1].name) = 'A';
+    if (c_list[MAX_R_IDX - 1].name == NULL) {
+	c_list[MAX_R_IDX - 1].name = (char*)malloc(101);
+	bzero((char *) c_list[MAX_R_IDX - 1].name, 101);
+	*((char *) c_list[MAX_R_IDX - 1].name) = 'A';
     }
 
     switch (r) {
@@ -1386,7 +1386,7 @@ place_ghost()
 {
     register int           y, x, cur_pos;
     register monster_type *mon_ptr;
-    creature_type         *ghost = &c_list[MAX_CREATURES - 1];
+    creature_type         *ghost = &c_list[MAX_R_IDX - 1];
     char                   tmp[100];
     char                   name[100];
     int                    i, j, level;
@@ -1463,7 +1463,7 @@ place_ghost()
 	     (distance(y, x, char_row, char_col) <= MAX_SIGHT));
     mon_ptr->fy = y;
     mon_ptr->fx = x;
-    mon_ptr->mptr = (MAX_CREATURES - 1);
+    mon_ptr->mptr = (MAX_R_IDX - 1);
     mon_ptr->hp = (s16b) ghost->hd[0] * (s16b) ghost->hd[1];
 /* the c_list speed value is 10 greater, so that it can be a byte */
     mon_ptr->cspeed = c_list[mon_ptr->mptr].speed - 10;

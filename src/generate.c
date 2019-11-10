@@ -664,7 +664,7 @@ int y, x, rank;
     i = 0;
     switch (rank) {
       case 1:
-	while (i < MAX_CREATURES) {
+	while (i < MAX_R_IDX) {
 	    if (!stricmp(c_list[i].name, "Snaga"))
 		break;
 	    i++;
@@ -672,7 +672,7 @@ int y, x, rank;
 	break;
       case 2:
       case 3:
-	while (i < MAX_CREATURES) {
+	while (i < MAX_R_IDX) {
 	    if (!stricmp(c_list[i].name, "Black orc"))
 		break;
 	    i++;
@@ -680,21 +680,21 @@ int y, x, rank;
 	break;
       case 4:
       case 5:
-	while (i < MAX_CREATURES) {
+	while (i < MAX_R_IDX) {
 	    if (!stricmp(c_list[i].name, "Uruk-Hai"))
 		break;
 	    i++;
 	}
 	break;
       case 6:
-	while (i < MAX_CREATURES) {
+	while (i < MAX_R_IDX) {
 	    if (!stricmp(c_list[i].name, "Orc captain"))
 		break;
 	    i++;
 	}
 	break;
     }
-    if (i != MAX_CREATURES)
+    if (i != MAX_R_IDX)
 	place_monster(y, x, i, FALSE);
 }
 
@@ -707,49 +707,49 @@ int y, x, rank;
     i = 0;
     switch (rank) {
       case 1:
-	while (i < MAX_CREATURES) {
+	while (i < MAX_R_IDX) {
 	    if (!stricmp(c_list[i].name, "Forest troll"))
 		break;
 	    i++;
 	}
 	break;
       case 2:
-	while (i < MAX_CREATURES) {
+	while (i < MAX_R_IDX) {
 	    if (!stricmp(c_list[i].name, "Stone troll"))
 		break;
 	    i++;
 	}
 	break;
       case 3:
-	while (i < MAX_CREATURES) {
+	while (i < MAX_R_IDX) {
 	    if (!stricmp(c_list[i].name, "Ice troll"))
 		break;
 	    i++;
 	}
 	break;
       case 4:
-	while (i < MAX_CREATURES) {
+	while (i < MAX_R_IDX) {
 	    if (!stricmp(c_list[i].name, "Cave troll"))
 		break;
 	    i++;
 	}
 	break;
       case 5:
-	while (i < MAX_CREATURES) {
+	while (i < MAX_R_IDX) {
 	    if (!stricmp(c_list[i].name, "Water troll"))
 		break;
 	    i++;
 	}
 	break;
       case 6:
-	while (i < MAX_CREATURES) {
+	while (i < MAX_R_IDX) {
 	    if (!stricmp(c_list[i].name, "Olog-Hai"))
 		break;
 	    i++;
 	}
 	break;
     }
-    if (i != MAX_CREATURES)
+    if (i != MAX_R_IDX)
 	place_monster(y, x, i, FALSE);
 }
 
@@ -783,42 +783,42 @@ int y, x, rank, type;
       case 3:
 	switch (type) {
 	  case 1:
-	    while (i < MAX_CREATURES) {
+	    while (i < MAX_R_IDX) {
 		if (!stricmp(c_list[i].name, "Young blue dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 2:
-	    while (i < MAX_CREATURES) {
+	    while (i < MAX_R_IDX) {
 		if (!stricmp(c_list[i].name, "Young white dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 3:
-	    while (i < MAX_CREATURES) {
+	    while (i < MAX_R_IDX) {
 		if (!stricmp(c_list[i].name, "Young green dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 4:
-	    while (i < MAX_CREATURES) {
+	    while (i < MAX_R_IDX) {
 		if (!stricmp(c_list[i].name, "Young black dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 5:
-	    while (i < MAX_CREATURES) {
+	    while (i < MAX_R_IDX) {
 		if (!stricmp(c_list[i].name, "Young red dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 6:
-	    while (i < MAX_CREATURES) {
+	    while (i < MAX_R_IDX) {
 		if (!stricmp(c_list[i].name, "Young Multi-Hued Dragon"))
 		    break;
 		i++;
@@ -830,42 +830,42 @@ int y, x, rank, type;
       case 5:
 	switch (type) {
 	  case 1:
-	    while (i < MAX_CREATURES) {
+	    while (i < MAX_R_IDX) {
 		if (!stricmp(c_list[i].name, "Mature blue Dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 2:
-	    while (i < MAX_CREATURES) {
+	    while (i < MAX_R_IDX) {
 		if (!stricmp(c_list[i].name, "Mature white Dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 3:
-	    while (i < MAX_CREATURES) {
+	    while (i < MAX_R_IDX) {
 		if (!stricmp(c_list[i].name, "Mature green Dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 4:
-	    while (i < MAX_CREATURES) {
+	    while (i < MAX_R_IDX) {
 		if (!stricmp(c_list[i].name, "Mature black Dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 5:
-	    while (i < MAX_CREATURES) {
+	    while (i < MAX_R_IDX) {
 		if (!stricmp(c_list[i].name, "Mature red Dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 6:
-	    while (i < MAX_CREATURES) {
+	    while (i < MAX_R_IDX) {
 		if (!stricmp(c_list[i].name, "Mature Multi-Hued Dragon"))
 		    break;
 		i++;
@@ -876,42 +876,42 @@ int y, x, rank, type;
       case 6:
 	switch (type) {
 	  case 1:
-	    while (i < MAX_CREATURES) {
+	    while (i < MAX_R_IDX) {
 		if (!stricmp(c_list[i].name, "Ancient blue Dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 2:
-	    while (i < MAX_CREATURES) {
+	    while (i < MAX_R_IDX) {
 		if (!stricmp(c_list[i].name, "Ancient white Dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 3:
-	    while (i < MAX_CREATURES) {
+	    while (i < MAX_R_IDX) {
 		if (!stricmp(c_list[i].name, "Ancient green Dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 4:
-	    while (i < MAX_CREATURES) {
+	    while (i < MAX_R_IDX) {
 		if (!stricmp(c_list[i].name, "Ancient black Dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 5:
-	    while (i < MAX_CREATURES) {
+	    while (i < MAX_R_IDX) {
 		if (!stricmp(c_list[i].name, "Ancient red Dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 6:
-	    while (i < MAX_CREATURES) {
+	    while (i < MAX_R_IDX) {
 		if (!stricmp(c_list[i].name, "Ancient Multi-Hued Dragon"))
 		    break;
 		i++;
@@ -920,7 +920,7 @@ int y, x, rank, type;
 	}
 	break;
     }
-    if (i != MAX_CREATURES)
+    if (i != MAX_R_IDX)
 	place_monster(y, x, i, FALSE);
 }
 
@@ -932,49 +932,49 @@ int y, x, rank;
 
     switch (rank) {
       case 1:
-	while (i < MAX_CREATURES) {
+	while (i < MAX_R_IDX) {
 	    if (!stricmp(c_list[i].name, "Vrock"))
 		break;
 	    i++;
 	}
 	break;
       case 2:
-	while (i < MAX_CREATURES) {
+	while (i < MAX_R_IDX) {
 	    if (!stricmp(c_list[i].name, "Hezrou"))
 		break;
 	    i++;
 	}
 	break;
       case 3:
-	while (i < MAX_CREATURES) {
+	while (i < MAX_R_IDX) {
 	    if (!stricmp(c_list[i].name, "Glabrezu"))
 		break;
 	    i++;
 	}
 	break;
       case 4:
-	while (i < MAX_CREATURES) {
+	while (i < MAX_R_IDX) {
 	    if (!stricmp(c_list[i].name, "Nalfeshnee"))
 		break;
 	    i++;
 	}
 	break;
       case 5:
-	while (i < MAX_CREATURES) {
+	while (i < MAX_R_IDX) {
 	    if (!stricmp(c_list[i].name, "Marilith"))
 		break;
 	    i++;
 	}
 	break;
       case 6:
-	while (i < MAX_CREATURES) {
+	while (i < MAX_R_IDX) {
 	    if (!stricmp(c_list[i].name, "Lesser balrog"))
 		break;
 	    i++;
 	}
 	break;
     }
-    if (i != MAX_CREATURES)
+    if (i != MAX_R_IDX)
 	place_monster(y, x, i, FALSE);
 }
 
@@ -987,49 +987,49 @@ int y, x, rank;
 
     switch (rank) {
       case 1:
-	while (i < MAX_CREATURES) {
+	while (i < MAX_R_IDX) {
 	    if (!stricmp(c_list[i].name, "Hill giant"))
 		break;
 	    i++;
 	}
 	break;
       case 2:
-	while (i < MAX_CREATURES) {
+	while (i < MAX_R_IDX) {
 	    if (!stricmp(c_list[i].name, "Frost giant"))
 		break;
 	    i++;
 	}
 	break;
       case 3:
-	while (i < MAX_CREATURES) {
+	while (i < MAX_R_IDX) {
 	    if (!stricmp(c_list[i].name, "Fire giant"))
 		break;
 	    i++;
 	}
 	break;
       case 4:
-	while (i < MAX_CREATURES) {
+	while (i < MAX_R_IDX) {
 	    if (!stricmp(c_list[i].name, "Stone giant"))
 		break;
 	    i++;
 	}
 	break;
       case 5:
-	while (i < MAX_CREATURES) {
+	while (i < MAX_R_IDX) {
 	    if (!stricmp(c_list[i].name, "Cloud giant"))
 		break;
 	    i++;
 	}
 	break;
       case 6:
-	while (i < MAX_CREATURES) {
+	while (i < MAX_R_IDX) {
 	    if (!stricmp(c_list[i].name, "Storm giant"))
 		break;
 	    i++;
 	}
 	break;
     }
-    if (i != MAX_CREATURES)
+    if (i != MAX_R_IDX)
 	place_monster(y, x, i, FALSE);
 }
 

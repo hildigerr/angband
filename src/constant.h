@@ -185,7 +185,7 @@
 #define OBJ_BREAK_GLYPH     550   /* Rune of protection resistance           */
 
 /* Creature constants*/
-#define MAX_CREATURES     549   /* Number of creatures defined for univ  */
+#define MAX_R_IDX     549   /* Number of creatures defined for univ  */
 #define N_MONS_ATTS       285   /* Number of monster attack types.       */
 
 /* with MAX_MALLOC 101, it is possible to get compacting monsters messages

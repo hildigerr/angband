@@ -10,7 +10,7 @@
 #include "types.h"
 #include "externs.h"
 
-describe_mon_type desc_list[MAX_CREATURES] = {
+describe_mon_type desc_list[MAX_R_IDX] = {
 
 {"Filthy street urchin", "He looks squalid and thoroughly revolting.", 'm'},
 {"Filthy street urchin", "He looks squalid and thoroughly revolting.", 'm'},

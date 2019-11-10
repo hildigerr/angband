@@ -83,7 +83,7 @@ THORIN, CELEBORN, THRAIN, GONDOR, THINGOL, THORONGIL, LUTHIEN, TUOR, ROHAN,
 TULKAS, NECKLACE, BARAHIR, CASPANION, RAZORBACK, BLADETURNER;
 
 /* Brand new extra effecient and kind way to add unique monsters... HOORAY!! */
-extern struct unique_mon u_list[MAX_CREATURES];
+extern struct unique_mon u_list[MAX_R_IDX];
 
 extern int quests[MAX_QUESTS];
 
@@ -241,16 +241,16 @@ extern s16b tcptr;				/* Cur treasure heap ptr	*/
 #ifdef MACGAME
 extern creature_type *c_list;
 #else
-extern creature_type c_list[MAX_CREATURES];
+extern creature_type c_list[MAX_R_IDX];
 #endif
-extern describe_mon_type desc_list[MAX_CREATURES];
+extern describe_mon_type desc_list[MAX_R_IDX];
 extern monster_type m_list[MAX_MALLOC];
 extern s16b m_level[MAX_MONS_LEVEL+1];
 extern monster_attack monster_attacks[N_MONS_ATTS];
 #ifdef MAC
 extern monster_lore *c_recall;
 #else
-extern monster_lore c_recall[MAX_CREATURES];	/* Monster memories. -CJS- */
+extern monster_lore c_recall[MAX_R_IDX];	/* Monster memories. -CJS- */
 #endif
 extern monster_type blank_monster; /* Blank monster values	*/
 extern s16b mfptr;				   /* Cur free monster ptr	*/
