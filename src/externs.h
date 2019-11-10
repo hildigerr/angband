@@ -246,7 +246,7 @@ extern creature_type c_list[MAX_R_IDX];
 extern describe_mon_type desc_list[MAX_R_IDX];
 extern monster_type m_list[MAX_MALLOC];
 extern s16b m_level[MAX_MONS_LEVEL+1];
-extern monster_attack monster_attacks[N_MONS_ATTS];
+extern monster_attack monster_attacks[MAX_A_IDX];
 #ifdef MAC
 extern monster_lore *c_recall;
 #else

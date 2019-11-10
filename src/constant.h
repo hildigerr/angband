@@ -186,7 +186,7 @@
 
 /* Creature constants*/
 #define MAX_R_IDX     549   /* Number of creatures defined for univ  */
-#define N_MONS_ATTS       285   /* Number of monster attack types.       */
+#define MAX_A_IDX       285   /* Number of monster attack types.       */
 
 /* with MAX_MALLOC 101, it is possible to get compacting monsters messages
  * while breeding/cloning monsters
