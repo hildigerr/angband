@@ -541,7 +541,7 @@ wizard_create()
     s32b                tmp_lval;
     char                 tmp_str[100];
     register inven_type *i_ptr;
-    treasure_type        t_type, *t_ptr;
+    inven_kind        t_type, *t_ptr;
     inven_type           forge;
     register cave_type  *c_ptr;
     char                 ch;

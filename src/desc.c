@@ -768,7 +768,7 @@ invcopy(to, from_index)
 register inven_type *to;
 int                  from_index;
 {
-    register treasure_type *from;
+    register inven_kind *from;
 
     from = &object_list[from_index];
     to->index = from_index;

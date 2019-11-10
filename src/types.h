@@ -110,7 +110,7 @@ typedef struct monster_type
   byte monfear;		    /* Run away! Run away! -DGK */
 } monster_type;
 
-typedef struct treasure_type
+typedef struct inven_kind
 {
   const char *name;		    /* Object name		      */
   u32b flags;			    /* Special flags		      */
@@ -129,7 +129,7 @@ typedef struct treasure_type
   byte level;			    /* Level item first found	      */
   byte rare;			    /* True if Rare		      */
   u32b flags2;		    /* Yes! even more froggin' flags! */
-} treasure_type;
+} inven_kind;
 
 /* only damage, ac, and tchar are constant; level could possibly be made
    constant by changing index instead; all are used rarely */

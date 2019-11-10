@@ -67,9 +67,9 @@
 
 /* Object list (All objects must be defined here)		 */
 #ifdef MACGAME
-treasure_type *object_list;
+inven_kind *object_list;
 #else
-treasure_type object_list[MAX_OBJECTS] = {
+inven_kind object_list[MAX_OBJECTS] = {
 /* Dungeon items from 0 to MAX_DUNGEON_OBJ */
 {"Poison"			,0x00000001L,	TV_FOOD, ',',	/*  0*/
   500,	   0,	64,   1,   1,	0,   0,	 0,   0, {0,0}	,  7, 0, 0x0L},
