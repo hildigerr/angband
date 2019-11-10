@@ -3057,7 +3057,7 @@ creature_type c_list[MAX_CREATURES] = {
 /* These should never be created by accident (and probably won't ;-). -CWS */
 
 /* ERROR: attack #35 is no longer used */
-struct m_attack_type monster_attacks[N_MONS_ATTS] = {
+struct monster_attack monster_attacks[N_MONS_ATTS] = {
 /* 0 */	{0, 0, 0, 0},	{1, 1, 1, 2},	{1, 1, 1, 3},	{1, 1, 1, 4},
 	{1, 1, 1, 5},	{1, 1, 1, 6},	{1, 1, 1, 7},	{1, 1, 1, 8},
 	{1, 1, 1, 9},	{1, 1, 1, 10},	{1, 1, 1, 12},	{1, 1, 2, 2},

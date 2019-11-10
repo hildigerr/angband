@@ -62,13 +62,13 @@ typedef struct creature_type
   char gender;			    /* one of 'm','f','n','p' to genderize monsters -CWS */
 } creature_type;
 
-typedef struct m_attack_type	    /* Monster attack and damage types */
+typedef struct monster_attack	    /* Monster attack and damage types */
   {
     byte attack_type;		    
     byte attack_desc;
     byte attack_dice;
     byte attack_sides;
-  } m_attack_type;
+  } monster_attack;
 
 typedef struct monster_lore	    /* Monster memories. -CJS- */
   {
