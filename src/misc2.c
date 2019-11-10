@@ -160,7 +160,7 @@ int y, x;
 	    delete_object(y, x);
     cur_pos = popt();
     i = ((randint(object_level + 2) + 2) / 2) - 1;
-    if (randint(OBJ_GREAT) == 1)
+    if (randint(GREAT_OBJ) == 1)
 	i += randint(object_level + 1);
     if (i >= MAX_GOLD)
 	i = MAX_GOLD - 1;
@@ -197,7 +197,7 @@ int level, good;
 	else {
 	    if (level >= MAX_OBJ_LEVEL)
 		level = MAX_OBJ_LEVEL;
-	    else if (randint(OBJ_GREAT) == 1) {
+	    else if (randint(GREAT_OBJ) == 1) {
 		level = level * MAX_OBJ_LEVEL / randint(MAX_OBJ_LEVEL) + 1;
 		if (level > MAX_OBJ_LEVEL)
 		    level = MAX_OBJ_LEVEL;

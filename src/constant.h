@@ -116,7 +116,7 @@
 /* Treasure constants                                           */
 #define INVEN_ARRAY_SIZE 34     /* Size of inventory array(Do not change) */
 #define MAX_OBJ_LEVEL   255     /* Maximum level of magic in dungeon      */
-#define OBJ_GREAT        11     /* 1/n Chance of item being a Great Item  */
+#define GREAT_OBJ        11     /* 1/n Chance of item being a Great Item  */
 
 /* Number of dungeon objects */
 #define MAX_DUNGEON_OBJ  423
