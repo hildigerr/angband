@@ -70,7 +70,7 @@ typedef struct m_attack_type	    /* Monster attack and damage types */
     byte attack_sides;
   } m_attack_type;
 
-typedef struct recall_type	    /* Monster memories. -CJS- */
+typedef struct monster_lore	    /* Monster memories. -CJS- */
   {
     u32b r_cmove;
     u32b r_spells;
@@ -80,7 +80,7 @@ typedef struct recall_type	    /* Monster memories. -CJS- */
     u32b r_cdefense;
     byte r_wake, r_ignore;
     byte r_attacks[MAX_MON_NATTACK];
-  } recall_type;
+  } monster_lore;
 
 struct unique_mon {
   s32b exist;

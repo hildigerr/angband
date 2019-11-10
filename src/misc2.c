@@ -3307,7 +3307,7 @@ register int         tdam;
 int                  monster;
 {
     register creature_type *m_ptr;
-    register recall_type   *r_ptr;
+    register monster_lore   *r_ptr;
     int                     reduced = FALSE;
     /* don't resist more than one thing.... -CWS */
 

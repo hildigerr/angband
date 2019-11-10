@@ -218,7 +218,7 @@ int
 bool_roff_recall(mon_num)
 int mon_num;
 {
-    register recall_type *mp;
+    register monster_lore *mp;
     register int          i;
 
     if (wizard)
@@ -241,14 +241,14 @@ int mon_num;
     const char             *p, *q;
     attid                  *pu;
     vtype                   temp;
-    register recall_type   *mp;
+    register monster_lore   *mp;
     register creature_type *cp;
     register u32b         i, k;   /* changed from int, to avoid PC's 16bit ints -CFT */
     u32b              j;
     int                 mspeed;
     u32b              rcmove, rspells, rspells2, rspells3;
     u32b              rcdefense; /* this was u16b, but c_recall[] uses u32b -CFT */
-    recall_type         save_mem;
+    monster_lore         save_mem;
     int                 breath = FALSE, magic = FALSE;
     char                sex;
 

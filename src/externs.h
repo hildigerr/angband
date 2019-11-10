@@ -248,9 +248,9 @@ extern monster_type m_list[MAX_MALLOC];
 extern s16b m_level[MAX_MONS_LEVEL+1];
 extern m_attack_type monster_attacks[N_MONS_ATTS];
 #ifdef MAC
-extern recall_type *c_recall;
+extern monster_lore *c_recall;
 #else
-extern recall_type c_recall[MAX_CREATURES];	/* Monster memories. -CJS- */
+extern monster_lore c_recall[MAX_CREATURES];	/* Monster memories. -CJS- */
 #endif
 extern monster_type blank_monster; /* Blank monster values	*/
 extern s16b mfptr;				   /* Cur free monster ptr	*/

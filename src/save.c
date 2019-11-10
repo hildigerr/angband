@@ -130,7 +130,7 @@ sv_write()
     int                 count;
     byte               char_tmp, prev_char;
     register cave_type   *c_ptr;
-    register recall_type *r_ptr;
+    register monster_lore *r_ptr;
     struct stats         *s_ptr;
 
 #ifdef MSDOS
@@ -766,7 +766,7 @@ int *generate;
     vtype                  temp;
     u16b                 u16b_tmp;
     register cave_type    *c_ptr;
-    register recall_type  *r_ptr;
+    register monster_lore  *r_ptr;
     struct misc           *m_ptr;
     struct stats          *s_ptr;
     register struct flags *f_ptr;

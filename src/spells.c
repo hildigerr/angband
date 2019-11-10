@@ -3529,7 +3529,7 @@ probing()
     int                     probe;
     register monster_type  *m_ptr;
     register creature_type *r_ptr;
-    register recall_type   *mp;
+    register monster_lore   *mp;
     vtype                   out_val, m_name;
 
     msg_print("Probing...");

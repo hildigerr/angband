@@ -117,7 +117,7 @@ cave_type cave[MAX_HEIGHT][MAX_WIDTH];
 #endif
 
 #ifdef MAC
-recall_type *c_recall;
+monster_lore *c_recall;
 #else
-recall_type c_recall[MAX_CREATURES];	/* Monster memories */
+monster_lore c_recall[MAX_CREATURES];	/* Monster memories */
 #endif
