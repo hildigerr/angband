@@ -3182,7 +3182,7 @@ struct monster_attack monster_attacks[MAX_A_IDX] = {
 
 
 monster_type m_list[MAX_M_IDX];
-s16b m_level[MAX_MONS_LEVEL+1];
+s16b m_level[MAX_R_LEV+1];
 
 /* Blank monster values	*/
 monster_type blank_monster = {0,0,0,0,0,0,0,FALSE,0,FALSE};

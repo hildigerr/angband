@@ -1256,7 +1256,7 @@ int monptr;
 		if (py.flags.confuse_monster && py.flags.protevil <= 0) {
 		    msg_print("Your hands stop glowing.");
 		    py.flags.confuse_monster = FALSE;
-		    if ((randint(MAX_MONS_LEVEL) < r_ptr->level) ||
+		    if ((randint(MAX_R_LEV) < r_ptr->level) ||
 			(CHARM_SLEEP & r_ptr->cdefense))
 			(void)sprintf(tmp_str, "%sis unaffected.", cdesc);
 		    else {

@@ -637,14 +637,14 @@ init_m_level()
 {
     register int i, k;
 
-    for (i = 0; i <= MAX_MONS_LEVEL; i++)
+    for (i = 0; i <= MAX_R_LEV; i++)
 	m_level[i] = 0;
 
     k = MAX_R_IDX - WIN_MON_TOT;
     for (i = 0; i < k; i++)
 	m_level[c_list[i].level]++;
 
-    for (i = 1; i <= MAX_MONS_LEVEL; i++)
+    for (i = 1; i <= MAX_R_LEV; i++)
 	m_level[i] += m_level[i-1];
 }
 

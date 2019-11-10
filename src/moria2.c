@@ -1072,7 +1072,7 @@ int y, x;
 		py.flags.confuse_monster = FALSE;
 		msg_print("Your hands stop glowing.");
 		if ((c_list[monptr].cdefense & CHARM_SLEEP)
-		    || (randint(MAX_MONS_LEVEL) < c_list[monptr].level))
+		    || (randint(MAX_R_LEV) < c_list[monptr].level))
 		    (void)sprintf(out_val, "%s is unaffected.", m_name);
 		else {
 		    (void)sprintf(out_val, "%s appears confused.", m_name);

@@ -643,7 +643,7 @@ int y, x;
     int l, m, summon;
 
     summon = FALSE;
-    l = m_level[MAX_MONS_LEVEL];
+    l = m_level[MAX_R_LEV];
     do {
 	m = randint(l) - 1;
 	if (((c_list[m].cchar == 'j') || (c_list[m].cchar == ',')
@@ -760,7 +760,7 @@ int y, x;
     int l, m, summon;
     
     summon = FALSE;
-    l = m_level[MAX_MONS_LEVEL];
+    l = m_level[MAX_R_LEV];
     do {
 	m = randint(l) - 1;
 	if ((c_list[m].cdefense & UNDEAD) && !(c_list[m].cdefense & UNIQUE)) {

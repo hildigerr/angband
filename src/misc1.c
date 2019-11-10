@@ -1491,15 +1491,15 @@ again:
     if (level == 0)
 	i = randint(m_level[0]) - 1;
     else {
-	if (level > MAX_MONS_LEVEL)
-	    level = MAX_MONS_LEVEL;
+	if (level > MAX_R_LEV)
+	    level = MAX_R_LEV;
 	if (randint(MON_NASTY) == 1) {
 	    i = level / 4 + 1;	   /* be a little more civilized about monster depths */
 	    if (i > 4)		   /* for the first levels -CWS */
 		i = 4;
 	    level = level + MY_ABS(i) + 1;
-	    if (level > MAX_MONS_LEVEL)
-		level = MAX_MONS_LEVEL;
+	    if (level > MAX_R_LEV)
+		level = MAX_R_LEV;
 	} else {
 
 	/* This code has been added to make it slightly more likely to get
@@ -1541,8 +1541,8 @@ again:
     if (level == 0)
 	i = randint(m_level[0]) - 1;
     else {
-	if (level > MAX_MONS_LEVEL)
-	    level = MAX_MONS_LEVEL;
+	if (level > MAX_R_LEV)
+	    level = MAX_R_LEV;
 	num = m_level[level] - m_level[0];
 	i = randint(num) - 1;
 	i += 15;
@@ -1752,7 +1752,7 @@ int *y, *x;
 
     i = 0;
     summon = FALSE;
-    l = m_level[MAX_MONS_LEVEL];
+    l = m_level[MAX_R_LEV];
     do {
 	m = randint(l) - 1;
 	ctr = 0;
@@ -1800,7 +1800,7 @@ int *y, *x;
 
     i = 0;
     summon = FALSE;
-    l = m_level[MAX_MONS_LEVEL];
+    l = m_level[MAX_R_LEV];
     do {
 	m = randint(l) - 1;
 	ctr = 0;
@@ -1847,7 +1847,7 @@ int *y, *x;
 
     i = 0;
     summon = FALSE;
-    l = m_level[MAX_MONS_LEVEL];
+    l = m_level[MAX_R_LEV];
     do {
 	m = randint(l) - 1;
 	ctr = 0;
@@ -1896,7 +1896,7 @@ int *y, *x;
 
     i = 0;
     summon = FALSE;
-    l = m_level[MAX_MONS_LEVEL];
+    l = m_level[MAX_R_LEV];
     do {
 	m = randint(l) - 1;
 	ctr = 0;
@@ -1945,7 +1945,7 @@ int *y, *x;
 
     i = 0;
     summon = FALSE;
-    l = m_level[MAX_MONS_LEVEL];
+    l = m_level[MAX_R_LEV];
     do {
 	m = randint(l) - 1;
 	ctr = 0;
@@ -1995,7 +1995,7 @@ int *y, *x;
 
     i = 0;
     summon = FALSE;
-    l = m_level[MAX_MONS_LEVEL];
+    l = m_level[MAX_R_LEV];
     do {
 	m = randint(l) - 1;
 	ctr = 0;
@@ -2044,7 +2044,7 @@ int *y, *x;
 
     i = 0;
     summon = FALSE;
-    l = m_level[MAX_MONS_LEVEL];
+    l = m_level[MAX_R_LEV];
     do {
 	m = randint(l) - 1;
 	ctr = 0;
@@ -2091,7 +2091,7 @@ int *y, *x;
 
     i = 0;
     summon = FALSE;
-    l = m_level[MAX_MONS_LEVEL];
+    l = m_level[MAX_R_LEV];
     do {
 	m = randint(l) - 1;
 	ctr = 0;
@@ -2140,7 +2140,7 @@ int *y, *x;
 
     i = 0;
     summon = FALSE;
-    l = m_level[MAX_MONS_LEVEL];
+    l = m_level[MAX_R_LEV];
     do {
 	m = randint(l) - 1;
 	ctr = 0;
@@ -2189,7 +2189,7 @@ int *y, *x;
 
     i = 0;
     summon = FALSE;
-    l = m_level[MAX_MONS_LEVEL];
+    l = m_level[MAX_R_LEV];
     do {
 	m = randint(l) - 1;
 	ctr = 0;
@@ -2238,7 +2238,7 @@ int *y, *x;
 
     i = 0;
     summon = FALSE;
-    l = m_level[MAX_MONS_LEVEL];
+    l = m_level[MAX_R_LEV];
     do {
 	m = randint(l) - 1;
 	ctr = 0;
@@ -2288,7 +2288,7 @@ int *y, *x;
 
     i = 0;
     summon = FALSE;
-    l = m_level[MAX_MONS_LEVEL];
+    l = m_level[MAX_R_LEV];
     do {
 	m = randint(l) - 1;
 	ctr = 0;
@@ -2337,7 +2337,7 @@ int *y, *x;
 
     i = 0;
     summon = FALSE;
-    l = m_level[MAX_MONS_LEVEL];
+    l = m_level[MAX_R_LEV];
     do {
 	m = randint(l) - 1;
 	ctr = 0;
@@ -2384,7 +2384,7 @@ int *y, *x;
     int l, m, summon;
 
     summon = FALSE;
-    l = m_level[MAX_MONS_LEVEL];
+    l = m_level[MAX_R_LEV];
     do {
 	m = randint(l) - 1;
 	if (c_list[m].cchar == 'J') {

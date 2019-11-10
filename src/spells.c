@@ -2804,7 +2804,7 @@ poly(int mnum)
     i = (randint(20)/randint(9))+1;
     k = j = c_ptr->level;
     if ((j -=i)<0) j = 0;
-    if ((k +=i)>MAX_MONS_LEVEL) k = MAX_MONS_LEVEL;
+    if ((k +=i)>MAX_R_LEV) k = MAX_R_LEV;
     delete_monster(mnum);
     do {
 	i = randint(m_level[k]-m_level[j])-1+m_level[j];  /* new creature index */
