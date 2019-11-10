@@ -1301,10 +1301,10 @@ int command;
 	int                 min_i, max_i, min_j, max_j;
 
 /* replace a check for in_bounds2 every loop with 4 quick computations -CWS */
-	min_i = MY_MAX(0, (char_row - light_rad));
-	max_i = MY_MIN(cur_height, (char_row + light_rad));
-	min_j = MY_MAX(0, (char_col - light_rad));
-	max_j = MY_MIN(cur_width, (char_col + light_rad));
+	min_i = MY_MAX(0, (char_row - cur_lite));
+	max_i = MY_MIN(cur_height, (char_row + cur_lite));
+	min_j = MY_MAX(0, (char_col - cur_lite));
+	max_j = MY_MIN(cur_width, (char_col + cur_lite));
 
 	for (i = min_i; i <= max_i; i++)
 	    for (j = min_j; j <= max_j; j++)
@@ -1313,26 +1313,26 @@ int command;
 #ifdef TC_COLOR
 	textcolor(LIGHTGRAY);
 #endif
-	tmp2 = light_rad;
+	tmp2 = cur_lite;
 	print('@', char_row, char_col);
 	if (inventory[INVEN_LIGHT].tval == TV_LIGHT)
 	    tmp = inventory[INVEN_LIGHT].subval;
 	else
 	    tmp = 195;
-	light_rad = 1 + (tmp < 190) + (tmp == 4 || tmp == 6);
-	if (tmp2 < light_rad)
-	    tmp2 = light_rad;
+	cur_lite = 1 + (tmp < 190) + (tmp == 4 || tmp == 6);
+	if (tmp2 < cur_lite)
+	    tmp2 = cur_lite;
 
 	if (!py.flags.blind) {
-	    min_i = MY_MAX(0, (char_row - light_rad));
-	    max_i = MY_MIN(cur_height, (char_row + light_rad));
-	    min_j = MY_MAX(0, (char_col - light_rad));
-	    max_j = MY_MIN(cur_width, (char_col + light_rad));
+	    min_i = MY_MAX(0, (char_row - cur_lite));
+	    max_i = MY_MIN(cur_height, (char_row + cur_lite));
+	    min_j = MY_MAX(0, (char_col - cur_lite));
+	    max_j = MY_MIN(cur_width, (char_col + cur_lite));
 
 	    for (i = min_i; i <= max_i; i++)
 		for (j = min_j; j <= max_j; j++)
 		    if (los(char_row, char_col, i, j) &&
-			distance(char_row, char_col, i, j) <= light_rad)
+			distance(char_row, char_col, i, j) <= cur_lite)
 			cave[i][j].tl = TRUE;
 	}
 
@@ -1917,13 +1917,13 @@ int y1, y2;
 	light_flag = TRUE;
 
 /* replace a check for in_bounds2 every loop with 4 quick computations -CWS */
-    min_i = MY_MAX(0, (y2 - light_rad));
-    max_i = MY_MIN(cur_height, (y2 + light_rad));
-    min_j = MY_MAX(0, (x2 - light_rad));
-    max_j = MY_MIN(cur_width, (x2 + light_rad));
+    min_i = MY_MAX(0, (y2 - cur_lite));
+    max_i = MY_MIN(cur_height, (y2 + cur_lite));
+    min_j = MY_MAX(0, (x2 - cur_lite));
+    max_j = MY_MIN(cur_width, (x2 + cur_lite));
     for (i = min_i; i <= max_i; i++)
 	for (j = min_j; j <= max_j; j++)
-	    if (los(y2, x2, i, j) && distance(i, j, y2, x2) <= light_rad) {
+	    if (los(y2, x2, i, j) && distance(i, j, y2, x2) <= cur_lite) {
 		c_ptr = &cave[i][j];
 	    /* only light up if normal movement */
 		if (light_flag)
@@ -1938,18 +1938,18 @@ int y1, y2;
 	    }
 /* From uppermost to bottom most lines player was on.	 */
     if (y1 < y2) {
-	top = y1 - light_rad;
-	bottom = y2 + light_rad;
+	top = y1 - cur_lite;
+	bottom = y2 + cur_lite;
     } else {
-	top = y2 - light_rad;
-	bottom = y1 + light_rad;
+	top = y2 - cur_lite;
+	bottom = y1 + cur_lite;
     }
     if (x1 < x2) {
-	left = x1 - light_rad;
-	right = x2 + light_rad;
+	left = x1 - cur_lite;
+	right = x2 + cur_lite;
     } else {
-	left = x2 - light_rad;
-	right = x1 + light_rad;
+	left = x2 - cur_lite;
+	right = x1 + cur_lite;
     }
     for (i = top; i <= bottom; i++)
 	for (j = left; j <= right; j++)	/* Leftmost to rightmost do */
@@ -1986,7 +1986,7 @@ int y1, x1;
 {
     int min_i, max_i, min_j, max_j, rad, i, j;
 
-    rad = MY_MAX(light_rad, old_rad);
+    rad = MY_MAX(cur_lite, old_lite);
 
 /* replace a check for in_bounds2 every loop with 4 quick computations -CWS */
     min_i = MY_MAX(0, (y1 - rad));
@@ -2379,9 +2379,9 @@ int dir;
     register int i, shortleft, shortright;
 
     darken_player(char_row, char_col);
-    old_rad = light_rad;
-    if (light_rad >= 0)
-	light_rad = 1;
+    old_lite = cur_lite;
+    if (cur_lite >= 0)
+	cur_lite = 1;
 
     row = char_row;
     col = char_col;
@@ -2470,7 +2470,7 @@ end_find()
 {
     if (find_flag) {
 	find_flag = FALSE;
-	light_rad = old_rad;
+	cur_lite = old_lite;
 	move_light(char_row, char_col, char_row, char_col);
     }
 }

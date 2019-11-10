@@ -22,7 +22,7 @@ vtype died_from;
 
 vtype savefile;			/* The savefile to use. */
 
-int light_rad = 0, old_rad;				/* light radius spoo */
+int cur_lite = 0, old_lite;				/* light radius spoo */
 s16b total_winner = FALSE;
 int NO_SAVE=FALSE;
 int character_generated = 0;	/* don't save score until char gen finished */

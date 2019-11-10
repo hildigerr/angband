@@ -96,7 +96,7 @@ extern int new_level_flag;		/* Next level when true  */
 extern int teleport_flag;		/* Handle teleport traps  */
 extern int eof_flag;			/* Used to handle eof/HANGUP */
 extern int player_light;		/* Player carrying light */
-extern int light_rad,old_rad;           /* Light radius */
+extern int cur_lite,old_lite;           /* Light radius */
 extern int find_flag;        	/* Used in MORIA	      */
 extern int free_turn_flag;		/* Used in MORIA	      */
 extern int weapon_heavy;		/* Flag if the weapon too heavy -CJS- */

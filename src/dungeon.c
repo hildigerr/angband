@@ -86,7 +86,7 @@ dungeon()
 	i = i_ptr->subval;
     else
 	i = 195;
-    light_rad = 1 + (i < 190) + (i == 4 || i == 6);
+    cur_lite = 1 + (i < 190) + (i == 4 || i == 6);
 
 /* Check for a maximum level		   */
 /* Added check to avoid -50' being "deepest", since max_dlv unsigned -CFT */
@@ -101,7 +101,7 @@ dungeon()
     find_flag      = FALSE;
     teleport_flag  = FALSE;
     mon_tot_mult   = 0;
-    old_rad        = (-1);
+    old_lite        = (-1);
     coin_type      = 0;
     opening_chest  = FALSE;
 
@@ -961,9 +961,9 @@ dungeon()
 		default_dir = FALSE;
 		free_turn_flag = FALSE;
 
-		if ((old_rad >= 0) && (!find_flag)) {
-		    light_rad = old_rad;
-		    old_rad = (-1);
+		if ((old_lite >= 0) && (!find_flag)) {
+		    cur_lite = old_lite;
+		    old_lite = (-1);
 		}
 		if (find_flag) {
 		    find_run();
@@ -1075,9 +1075,9 @@ dungeon()
 		    if (find_flag) {
 			find_count = command_count;
 			command_count = 0;
-		    } else if (old_rad >= 0) {
-			light_rad = old_rad;
-			old_rad = (-1);
+		    } else if (old_lite >= 0) {
+			cur_lite = old_lite;
+			old_lite = (-1);
 		    }
 		    if (free_turn_flag)
 			command_count = 0;

@@ -146,7 +146,7 @@ int monptr;
 		    flag = TRUE;   /* only can see if not NO_INFRA... */
 	    }
 	    if (c_ptr->pl || c_ptr->tl ||
-		(find_flag && m_ptr->cdis <= light_rad && player_light)) {
+		(find_flag && m_ptr->cdis <= cur_lite && player_light)) {
 
 #ifdef ATARIST_MWC
 		holder = CM_INVISIBLE;
