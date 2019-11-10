@@ -1428,8 +1428,8 @@ int *generate;
 	for (i = MIN_TRIX; i < tcptr; i++)
 	    rd_item(&t_list[i]);
 	rd_short((u16b *) & mfptr);
-	if (mfptr > MAX_MALLOC) {
-	    prt("ERROR in MAX_MALLOC", 15, 0);
+	if (mfptr > MAX_M_IDX) {
+	    prt("ERROR in MAX_M_IDX", 15, 0);
 	    goto error;
 	}
 	for (i = MIN_MONIX; i < mfptr; i++) {

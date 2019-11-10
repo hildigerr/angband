@@ -2692,10 +2692,10 @@ mlink()
 {
     register int i;
 
-    for (i = 0; i < MAX_MALLOC; i++)
+    for (i = 0; i < MAX_M_IDX; i++)
 	if (m_list[i].mptr)
 	    delete_monster(i);
-    for (i = 0; i < MAX_MALLOC; i++)
+    for (i = 0; i < MAX_M_IDX; i++)
 	m_list[i] = blank_monster;
     delete_unique();		   /* Kludgey Fix ~Ludwig */
     mfptr = MIN_MONIX;

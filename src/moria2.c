@@ -3023,7 +3023,7 @@ target()
 			    0,0);
 		    else {
 			target_mode = TRUE;
-			target_mon  = MAX_MALLOC;
+			target_mon  = MAX_M_IDX;
 			exit = TRUE;
 		    }
 		    break;

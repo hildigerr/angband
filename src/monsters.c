@@ -3181,7 +3181,7 @@ struct monster_attack monster_attacks[MAX_A_IDX] = {
 };
 
 
-monster_type m_list[MAX_MALLOC];
+monster_type m_list[MAX_M_IDX];
 s16b m_level[MAX_MONS_LEVEL+1];
 
 /* Blank monster values	*/

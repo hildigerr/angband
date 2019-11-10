@@ -188,11 +188,11 @@
 #define MAX_R_IDX     549   /* Number of creatures defined for univ  */
 #define MAX_A_IDX       285   /* Number of monster attack types.       */
 
-/* with MAX_MALLOC 101, it is possible to get compacting monsters messages
+/* with MAX_M_IDX 101, it is possible to get compacting monsters messages
  * while breeding/cloning monsters
  */
 
-#define MAX_MALLOC        600   /* Max that can be allocated                */
+#define MAX_M_IDX        600   /* Max that can be allocated                */
 #define MAX_M_ALLOC_CHANCE 160   /* 1/x chance of new monster each round     */
 #define MAX_MONS_LEVEL     99   /* Maximum level of creatures               */
 #define MAX_SIGHT          20   /* Maximum dis a creature can be seen       */

@@ -946,7 +946,7 @@ dungeon()
      * more likely to succeed if called from here, than if called from within
      * creatures().  
      */
-	if (MAX_MALLOC - mfptr < 10)
+	if (MAX_M_IDX - mfptr < 10)
 	    (void)compact_monsters();
 
 	if ((py.flags.paralysis < 1) &&	/* Accept a command?     */
@@ -3436,7 +3436,7 @@ regen_monsters()
     register int i;
     int          frac;
 
-    for (i = 0; i < MAX_MALLOC; i++) {
+    for (i = 0; i < MAX_M_IDX; i++) {
 	if (m_list[i].hp >= 0) {
 	    if (m_list[i].maxhp == 0) {	/* then we're just going to fix it!
 					 * -CFT */

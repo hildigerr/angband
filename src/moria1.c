@@ -1599,9 +1599,9 @@ int        *dir;
    targetting mode shouldn't help the player shoot a monster in a
    dark room.  If he can't see it, he shouldn't be able to aim... -CFT */
     if ((target_mode)&&
-	(((target_mon<MAX_MALLOC)&& m_list[target_mon].ml &&
+	(((target_mon<MAX_M_IDX)&& m_list[target_mon].ml &&
 	  (los(char_row,char_col,m_list[target_mon].fy,m_list[target_mon].fx))||
-	  ((target_mon>=MAX_MALLOC) &&
+	  ((target_mon>=MAX_M_IDX) &&
 	   (los(char_row,char_col,target_row,target_col)))))) {
       /* It don't get no better than this */
 	*dir=0;

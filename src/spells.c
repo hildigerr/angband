@@ -1582,7 +1582,7 @@ int typ, dir, y, x, dam_hp, max_dis;
 		((c_ptr->cptr > 1) &&
 		 (!target_mode || at_target(y, x) ||
 		  !los(target_row, target_col, char_row, char_col) ||
-		  ((target_mon < MAX_MALLOC) && !m_list[target_mon].ml))) ||
+		  ((target_mon < MAX_M_IDX) && !m_list[target_mon].ml))) ||
 		(target_mode && at_target(y, x))) {
 	        flag = TRUE;	   /* THEN we decide to explode here. -CFT */
 	        if (c_ptr->fval >= MIN_CLOSED_SPACE) {

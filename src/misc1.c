@@ -757,7 +757,7 @@ int num;
 int 
 popm()
 {
-    if (mfptr == MAX_MALLOC)
+    if (mfptr == MAX_M_IDX)
 	if (!compact_monsters())
 	    return (-1);
     return (mfptr++);
