@@ -46,8 +46,8 @@ extern int find_examine;		/* Check corners on a run */
 extern int find_prself;			/* Print yourself on a run (slower) */
 extern int find_bound;			/* Stop run when the map shifts */
 extern int prompt_carry_flag;	/* auto-pickupobjects */
-extern int show_weight_flag;	/* Display weights in inventory */
-extern int show_equip_weight_flag;	/* Display weights in equip list -CWS */
+extern int show_inven_weight;	/* Display weights in inventory */
+extern int show_equip_weight;	/* Display weights in equip list -CWS */
 extern int highlight_seams;		/* Highlight magma and quartz */
 extern int find_ignore_doors;	/* Run through open doors */
 extern int delay_spd;			/* 1-10 for delays */

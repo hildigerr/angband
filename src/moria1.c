@@ -765,15 +765,15 @@ int new_scr;
 	    line = 7;
 	    break;
 	  case INVEN_SCR:
-	    scr_left = show_inven(0, inven_ctr - 1, show_weight_flag, scr_left, 0);
+	    scr_left = show_inven(0, inven_ctr - 1, show_inven_weight, scr_left, 0);
 	    line = inven_ctr;
 	    break;
 	  case WEAR_SCR:
-	    scr_left = show_inven(wear_low, wear_high, show_weight_flag, scr_left, 0);
+	    scr_left = show_inven(wear_low, wear_high, show_inven_weight, scr_left, 0);
 	    line = wear_high - wear_low + 1;
 	    break;
 	  case EQUIP_SCR:
-	    scr_left = show_equip(show_equip_weight_flag, scr_left);
+	    scr_left = show_equip(show_equip_weight, scr_left);
 	    line = equip_ctr;
 	    break;
 	}
@@ -904,7 +904,7 @@ int command;
 		inventory[INVEN_AUX] = inventory[INVEN_WIELD];
 		inventory[INVEN_WIELD] = tmp_obj;
 		if (scr_state == EQUIP_SCR)
-		    scr_left = show_equip(show_weight_flag, scr_left);
+		    scr_left = show_equip(show_inven_weight, scr_left);
 		py_bonuses(&inventory[INVEN_AUX], -1);	/* Subtract bonuses */
 		py_bonuses(&inventory[INVEN_WIELD], 1);	/* Add bonuses    */
 
@@ -1260,7 +1260,7 @@ int command;
 	} else {
 	/* Put an appropriate header. */
 	    if (scr_state == INVEN_SCR) {
-		if (!show_weight_flag || inven_ctr == 0)
+		if (!show_inven_weight || inven_ctr == 0)
 		    (void)sprintf(prt1,
 			  "You are carrying %d.%d pounds. In your pack there is %s",
 				  inven_weight / 10, inven_weight % 10,

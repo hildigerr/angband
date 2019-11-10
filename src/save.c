@@ -161,7 +161,7 @@ sv_write()
 	l |= 16;
     if (rogue_like_commands)
 	l |= 32;
-    if (show_weight_flag)
+    if (show_inven_weight)
 	l |= 64;
     if (highlight_seams)
 	l |= 128;
@@ -181,7 +181,7 @@ sv_write()
     l |= ((hitpoint_warn & 0xf) << 17);
     if (plain_descriptions)	/* don't do "black Mushroom of Curing" -CWS */
 	l |= 0x00400000L;
-    if (show_equip_weight_flag)
+    if (show_equip_weight)
 	l |= 0x00800000L;
     if (feeling > 10)
 	feeling = 0;		/* bounds for level feelings -CWS */
@@ -1038,9 +1038,9 @@ int *generate;
 	else
 	    rogue_like_commands = FALSE;
 	if (l & 64)
-	    show_weight_flag = TRUE;
+	    show_inven_weight = TRUE;
 	else
-	    show_weight_flag = FALSE;
+	    show_inven_weight = FALSE;
 	if (l & 128)
 	    highlight_seams = TRUE;
 	else
@@ -1073,9 +1073,9 @@ int *generate;
 	else
 	    plain_descriptions = FALSE;
 	if (l & 0x00800000L)
-	    show_equip_weight_flag = TRUE;
+	    show_equip_weight = TRUE;
 	else
-	    show_equip_weight_flag = FALSE;
+	    show_equip_weight = FALSE;
 	feeling = ((l >> 24) & 0xf);
 	if (feeling > 10)
 	    feeling = 0;	    /* bounds for level feelings -CWS */
