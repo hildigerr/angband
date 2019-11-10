@@ -1421,7 +1421,7 @@ u32b *rcmove;
 	    if (do_move && (c_ptr->tptr != 0) &&
 		(t_list[c_ptr->tptr].tval == TV_VIS_TRAP) &&
 		(t_list[c_ptr->tptr].subval == 99)) {
-		if (randint(OBJ_RUNE_PROT) < c_list[m_ptr->mptr].level) {
+		if (randint(OBJ_BREAK_GLYPH) < c_list[m_ptr->mptr].level) {
 		    if ((newy == char_row) && (newx == char_col))
 			msg_print("The rune of protection is broken!");
 		    (void)delete_object(newy, newx);

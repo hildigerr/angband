@@ -182,7 +182,7 @@
 /* Constants describing limits of certain objects */
 #define OBJ_LAMP_MAX    15000   /* Maximum amount that lamp can be filled  */
 #define OBJ_BOLT_RANGE     18   /* Maximum range of bolts and balls        */
-#define OBJ_RUNE_PROT     550   /* Rune of protection resistance           */
+#define OBJ_BREAK_GLYPH     550   /* Rune of protection resistance           */
 
 /* Creature constants*/
 #define MAX_CREATURES     549   /* Number of creatures defined for univ  */
