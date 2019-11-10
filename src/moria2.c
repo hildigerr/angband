@@ -125,7 +125,7 @@ int y, x;
 		dam = (dam * 3) / 2;	/* do a little extra damage for spikes */
 		if (randint(3) == 1) {
 		    msg_print("The spikes are poisoned!");
-		    if (!(py.flags.immune_pois || py.flags.poison_resist ||
+		    if (!(py.flags.immune_pois || py.flags.resist_pois ||
 			  py.flags.oppose_pois))
 			dam *= 2;  /* more damage from poison!  :-)  -CFT */
 		    else
@@ -196,19 +196,19 @@ int y, x;
 	acid_dam(dam, "an acid trap");
 	break;
       case 14:			   /* Poison gas */
-	if (!(py.flags.immune_pois || py.flags.poison_resist ||
+	if (!(py.flags.immune_pois || py.flags.resist_pois ||
 	      py.flags.oppose_pois))
 	    poison_gas(dam, "a poison gas trap");
 	msg_print("A pungent green gas surrounds you!");
 	break;
       case 15:			   /* Blind Gas */
 	msg_print("A black gas surrounds you!");
-	if (!py.flags.blindness_resist)
+	if (!py.flags.resist_blind)
 	    py.flags.blind += randint(50) + 50;
 	break;
       case 16:			   /* Confuse Gas */
 	msg_print("A gas of scintillating colors surrounds you!");
-	if ((!py.flags.confusion_resist) && (!py.flags.chaos_resist))
+	if ((!py.flags.resist_conf) && (!py.flags.resist_chaos))
 	    py.flags.confused += randint(15) + 15;
 	break;
       case 17:			   /* Slow Dart */
@@ -1307,7 +1307,7 @@ int y, x;
     if (CH_POISON & t_ptr->flags) {
 	msg_print("A small needle has pricked you!");
 	take_hit(damroll(1, 6), "a poison needle");
-	if (!(py.flags.poison_resist || py.flags.oppose_pois ||
+	if (!(py.flags.resist_pois || py.flags.oppose_pois ||
 	      py.flags.immune_pois))
 	    py.flags.poisoned += 10 + randint(20);
     }

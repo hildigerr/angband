@@ -425,11 +425,11 @@ sv_write()
     wr_byte(f_ptr->free_act);
     wr_byte(f_ptr->slow_digest);
     wr_byte(f_ptr->aggravate);
-    wr_byte(f_ptr->fire_resist);
-    wr_byte(f_ptr->cold_resist);
-    wr_byte(f_ptr->acid_resist);
+    wr_byte(f_ptr->resist_fire);
+    wr_byte(f_ptr->resist_cold);
+    wr_byte(f_ptr->resist_acid);
     wr_byte(f_ptr->regenerate);
-    wr_byte(f_ptr->lght_resist);
+    wr_byte(f_ptr->resist_elec);
     wr_byte(f_ptr->ffall);
     wr_byte(f_ptr->sustain_str);
     wr_byte(f_ptr->sustain_int);
@@ -439,7 +439,7 @@ sv_write()
     wr_byte(f_ptr->sustain_chr);
     wr_byte(f_ptr->confuse_monster);
     wr_byte(f_ptr->new_spells);
-    wr_byte(f_ptr->poison_resist);
+    wr_byte(f_ptr->resist_pois);
     wr_byte(f_ptr->hold_life);
     wr_byte(f_ptr->telepathy);
     wr_byte(f_ptr->immune_fire);
@@ -448,17 +448,17 @@ sv_write()
     wr_byte(f_ptr->immune_cold);
     wr_byte(f_ptr->immune_elec);
     wr_byte(f_ptr->light);
-    wr_byte(f_ptr->confusion_resist);
-    wr_byte(f_ptr->sound_resist);
-    wr_byte(f_ptr->light_resist);
-    wr_byte(f_ptr->dark_resist);
-    wr_byte(f_ptr->chaos_resist);
-    wr_byte(f_ptr->disenchant_resist);
-    wr_byte(f_ptr->shards_resist);
-    wr_byte(f_ptr->nexus_resist);
-    wr_byte(f_ptr->blindness_resist);
-    wr_byte(f_ptr->nether_resist);
-    wr_byte(f_ptr->fear_resist); /* added -CWS */
+    wr_byte(f_ptr->resist_conf);
+    wr_byte(f_ptr->resist_sound);
+    wr_byte(f_ptr->resist_lite);
+    wr_byte(f_ptr->resist_dark);
+    wr_byte(f_ptr->resist_chaos);
+    wr_byte(f_ptr->resist_disen);
+    wr_byte(f_ptr->resist_shards);
+    wr_byte(f_ptr->resist_nexus);
+    wr_byte(f_ptr->resist_blind);
+    wr_byte(f_ptr->resist_nether);
+    wr_byte(f_ptr->resist_fear); /* added -CWS */
 
     wr_short((u16b) missile_ctr);
     wr_long((u32b) turn);
@@ -1183,11 +1183,11 @@ int *generate;
 	    rd_byte(&f_ptr->free_act);
 	    rd_byte(&f_ptr->slow_digest);
 	    rd_byte(&f_ptr->aggravate);
-	    rd_byte(&f_ptr->fire_resist);
-	    rd_byte(&f_ptr->cold_resist);
-	    rd_byte(&f_ptr->acid_resist);
+	    rd_byte(&f_ptr->resist_fire);
+	    rd_byte(&f_ptr->resist_cold);
+	    rd_byte(&f_ptr->resist_acid);
 	    rd_byte(&f_ptr->regenerate);
-	    rd_byte(&f_ptr->lght_resist);
+	    rd_byte(&f_ptr->resist_elec);
 	    rd_byte(&f_ptr->ffall);
 	    rd_byte(&f_ptr->sustain_str);
 	    rd_byte(&f_ptr->sustain_int);
@@ -1197,7 +1197,7 @@ int *generate;
 	    rd_byte(&f_ptr->sustain_chr);
 	    rd_byte(&f_ptr->confuse_monster);
 	    rd_byte(&f_ptr->new_spells);
-	    rd_byte(&f_ptr->poison_resist);
+	    rd_byte(&f_ptr->resist_pois);
 	    rd_byte(&f_ptr->hold_life);
 	    rd_byte(&f_ptr->telepathy);
 	    rd_byte(&f_ptr->immune_fire);
@@ -1206,20 +1206,20 @@ int *generate;
 	    rd_byte(&f_ptr->immune_cold);
 	    rd_byte(&f_ptr->immune_elec);
 	    rd_byte(&f_ptr->light);
-	    rd_byte(&f_ptr->confusion_resist);
-	    rd_byte(&f_ptr->sound_resist);
-	    rd_byte(&f_ptr->light_resist);
-	    rd_byte(&f_ptr->dark_resist);
-	    rd_byte(&f_ptr->chaos_resist);
-	    rd_byte(&f_ptr->disenchant_resist);
-	    rd_byte(&f_ptr->shards_resist);
-	    rd_byte(&f_ptr->nexus_resist);
-	    rd_byte(&f_ptr->blindness_resist);
-	    rd_byte(&f_ptr->nether_resist);
+	    rd_byte(&f_ptr->resist_conf);
+	    rd_byte(&f_ptr->resist_sound);
+	    rd_byte(&f_ptr->resist_lite);
+	    rd_byte(&f_ptr->resist_dark);
+	    rd_byte(&f_ptr->resist_chaos);
+	    rd_byte(&f_ptr->resist_disen);
+	    rd_byte(&f_ptr->resist_shards);
+	    rd_byte(&f_ptr->resist_nexus);
+	    rd_byte(&f_ptr->resist_blind);
+	    rd_byte(&f_ptr->resist_nether);
 	    if ((version_maj >= 2) && (version_min >= 6))
-		rd_byte(&f_ptr->fear_resist);
+		rd_byte(&f_ptr->resist_fear);
 	    else
-		f_ptr->fear_resist = 0;	/* sigh */
+		f_ptr->resist_fear = 0;	/* sigh */
 
 	    rd_short((u16b *) & missile_ctr);
 	    rd_long((u32b *) & turn);

@@ -839,7 +839,7 @@ int monptr;
 	      case 3:		   /* Confusion attack */
 		f_ptr = &py.flags;
 		take_hit(damage, ddesc);
-		if ((!py.flags.confusion_resist) && (!py.flags.chaos_resist)) {
+		if ((!py.flags.resist_conf) && (!py.flags.resist_chaos)) {
 		    if (randint(2) == 1) {
 			if (f_ptr->confused < 1) {
 			    msg_print("You feel confused.");
@@ -855,7 +855,7 @@ int monptr;
 		f_ptr = &py.flags;
 		take_hit(damage, ddesc);
 		if (player_saves() || (py.misc.pclass == 1 && randint(3) == 1)
-		    || py.flags.fear_resist)
+		    || py.flags.resist_fear)
 		    msg_print("You stand your ground!");
 		else if (f_ptr->afraid < 1) {
 		    msg_print("You are suddenly afraid!");
@@ -889,7 +889,7 @@ int monptr;
 	      case 10:		   /* Blindness attack */
 		f_ptr = &py.flags;
 		take_hit(damage, ddesc);
-		if (!py.flags.blindness_resist) {
+		if (!py.flags.resist_blind) {
 		    if (f_ptr->blind < 1) {
 			f_ptr->blind += 10 + randint((int)r_ptr->level);
 			msg_print("Your eyes begin to sting.");
@@ -976,7 +976,7 @@ int monptr;
 	      case 14:		   /* Poison	 */
 		f_ptr = &py.flags;
 		take_hit(damage, ddesc);
-		if (!(f_ptr->immune_pois || f_ptr->poison_resist ||
+		if (!(f_ptr->immune_pois || f_ptr->resist_pois ||
 		      f_ptr->oppose_pois)) {
 		    msg_print("You feel very sick.");
 		    f_ptr->poisoned += randint((int)r_ptr->level) + 5;
@@ -1041,7 +1041,7 @@ int monptr;
 		(void)aggravate_monster(20);
 		break;
 	      case 21:		   /* Disenchant	   */
-		if (!py.flags.disenchant_resist) {
+		if (!py.flags.resist_disen) {
 		    byte               chance = 0;
 
 		    take_hit(damage, ddesc);
@@ -1736,7 +1736,7 @@ int monptr, *took_turn;
 	    else
 		(void)strcat(cdesc, "mumbles, and your eyes burn even more.");
 	    msg_print(cdesc);
-	    if ((player_saves()) || (py.flags.blindness_resist))
+	    if ((player_saves()) || (py.flags.resist_blind))
 		if (!blind)
 		    msg_print("You blink and your vision clears.");
 		else
@@ -1752,8 +1752,8 @@ int monptr, *took_turn;
 	    else
 		(void)strcat(cdesc, "mumbles, and you hear puzzling noises.");
 	    msg_print(cdesc);
-	    if ((player_saves()) || (py.flags.confusion_resist)
-		|| (py.flags.chaos_resist))
+	    if ((player_saves()) || (py.flags.resist_conf)
+		|| (py.flags.resist_chaos))
 		msg_print("You disbelieve the feeble spell.");
 	    else if (py.flags.confused > 0)
 		py.flags.confused += 2;
@@ -1766,7 +1766,7 @@ int monptr, *took_turn;
 	    else
 		(void)strcat(cdesc, "mumbles, and you hear scary noises.");
 	    msg_print(cdesc);
-	    if (player_saves() || py.flags.fear_resist)
+	    if (player_saves() || py.flags.resist_fear)
 		msg_print("You refuse to be frightened.");
 	    else if (py.flags.afraid > 0)
 		py.flags.afraid += 2;
@@ -2113,7 +2113,7 @@ int monptr, *took_turn;
 		msg_print("You resist the effects.");
 	    else {
 		msg_print("Your mind is blasted by psionic energy.");
-		if ((!py.flags.confusion_resist) && (!py.flags.chaos_resist)) {
+		if ((!py.flags.resist_conf) && (!py.flags.resist_chaos)) {
 		    if (py.flags.confused > 0)
 			py.flags.confused += 2;
 		    else
@@ -2298,7 +2298,7 @@ int monptr, *took_turn;
 	    else {
 		msg_print("Your mind is blasted by psionic energy.");
 		take_hit(damroll(12, 15), ddesc);
-		if ((!py.flags.confusion_resist) && (!py.flags.chaos_resist)) {
+		if ((!py.flags.resist_conf) && (!py.flags.resist_chaos)) {
 		    if (py.flags.confused > 0)
 			py.flags.confused += 2;
 		    else
@@ -2314,7 +2314,7 @@ int monptr, *took_turn;
 		    else
 			py.flags.slow = randint(5) + 3;
 		}
-		if (!py.flags.blindness_resist) {
+		if (!py.flags.resist_blind) {
 		    if (py.flags.blind > 0)
 			py.flags.blind += 6;
 		    else
@@ -2338,7 +2338,7 @@ int monptr, *took_turn;
 		(void)strcat(cdesc, "mumbles strangely.");
 	    msg_print(cdesc);
 	    if ((player_saves()) || (randint(3) != 1) ||
-		(py.flags.nexus_resist))
+		(py.flags.resist_nexus))
 		msg_print("You keep your feet firmly on the ground.");
 	    else {
 		k = dun_level;

@@ -207,7 +207,7 @@ quaff()
 		    break;
 		  case 20:
 		    f_ptr = &py.flags;
-		    if (!py.flags.blindness_resist) {
+		    if (!py.flags.resist_blind) {
 			if (f_ptr->blind == 0) {
 			    msg_print("You are covered by a veil of darkness.");
 			    ident = TRUE;
@@ -217,7 +217,7 @@ quaff()
 		    break;
 		  case 21:
 		    f_ptr = &py.flags;
-		    if (!f_ptr->confusion_resist) {
+		    if (!f_ptr->resist_conf) {
 			if (f_ptr->confused == 0) {
 			    msg_print("Hey!  This is good stuff!  * Hick! *");
 			    ident = TRUE;
@@ -227,13 +227,13 @@ quaff()
 		    break;
 		  case 22:
 		    f_ptr = &py.flags;
-		    if (!(f_ptr->immune_pois || f_ptr->poison_resist ||
+		    if (!(f_ptr->immune_pois || f_ptr->resist_pois ||
 			  f_ptr->oppose_pois)) {
 			msg_print("You feel very sick.");
 			f_ptr->poisoned += randint(15) + 10;
 		    } else
 			msg_print("The poison has no effect.");
-		    if (!f_ptr->poison_resist)
+		    if (!f_ptr->resist_pois)
 		    ident = TRUE;
 		    break;
 		  case 23:

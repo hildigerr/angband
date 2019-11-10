@@ -253,11 +253,11 @@ typedef struct player_type
       byte free_act;		    /* Never paralyzed	   */
       byte slow_digest;	    /* Lower food needs	   */
       byte aggravate;		    /* Aggravate monsters  */
-      byte fire_resist;	    /* Resistance to fire  */
-      byte cold_resist;	    /* Resistance to cold  */
-      byte acid_resist;	    /* Resistance to acid  */
+      byte resist_fire;	    /* Resistance to fire  */
+      byte resist_cold;	    /* Resistance to cold  */
+      byte resist_acid;	    /* Resistance to acid  */
       byte regenerate;		    /* Regenerate hit pts  */
-      byte lght_resist;	    /* Resistance to light */
+      byte resist_elec;	    /* Resistance to light */
       byte ffall;		    /* No damage falling   */
       byte sustain_str;	    /* Keep strength	   */
       byte sustain_int;	    /* Keep intelligence   */
@@ -267,7 +267,7 @@ typedef struct player_type
       byte sustain_chr;	    /* Keep charisma	   */
       byte confuse_monster;	    /* Glowing hands.	   */
       byte new_spells;		    /* Number of spells can learn. */
-      byte poison_resist;	    /* Resistance to poison	   */
+      byte resist_pois;	    /* Resistance to poison	   */
       byte hold_life;		    /* Immune to life draining	   */
       byte telepathy;		    /* Gives telepathy	   */
       byte immune_fire;		    /* Immune to fire	   */
@@ -276,17 +276,17 @@ typedef struct player_type
       byte immune_cold;		    /* Immune to cold	   */
       byte immune_elec;		    /* Immune to lightning */
       byte light;		    /* Permanent light	   */
-      byte confusion_resist;	    /* Resist confusion	   */
-      byte sound_resist;	    /* Resist sound	   */
-      byte light_resist;	    /* Resist light	   */
-      byte dark_resist;	    /* Resist darkness	   */
-      byte chaos_resist;	    /* Resist chaos	   */
-      byte disenchant_resist;	    /* Resist disenchant   */
-      byte shards_resist;	    /* Resist shards	   */
-      byte nexus_resist;	    /* Resist nexus	   */
-      byte blindness_resist;	    /* Resist blindness	   */
-      byte nether_resist;	    /* Resist nether	   */
-      byte fear_resist;	    /* Resist fear	   */
+      byte resist_conf;	    /* Resist confusion	   */
+      byte resist_sound;	    /* Resist sound	   */
+      byte resist_lite;	    /* Resist light	   */
+      byte resist_dark;	    /* Resist darkness	   */
+      byte resist_chaos;	    /* Resist chaos	   */
+      byte resist_disen;	    /* Resist disenchant   */
+      byte resist_shards;	    /* Resist shards	   */
+      byte resist_nexus;	    /* Resist nexus	   */
+      byte resist_blind;	    /* Resist blindness	   */
+      byte resist_nether;	    /* Resist nether	   */
+      byte resist_fear;	    /* Resist fear	   */
     } flags;
 } player_type;
 

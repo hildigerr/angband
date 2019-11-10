@@ -1208,7 +1208,7 @@ int s;
 {
     int t;
 
-    if (!py.flags.sound_resist) {
+    if (!py.flags.resist_sound) {
 	t = py.flags.stun;
 	py.flags.stun += s;
 	s = py.flags.stun;
@@ -1255,7 +1255,7 @@ prt_stun()
 {
     int s = py.flags.stun;
 
-    if (!py.flags.sound_resist) {
+    if (!py.flags.resist_sound) {
 	if (s > 100)
 	    put_buffer("Knocked out ", 22, 0);
 	else if (s > 50)

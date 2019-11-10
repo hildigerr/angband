@@ -1198,7 +1198,7 @@ int           monptr;
 		      case GF_NETHER:
 			if (blind)
 			    msg_print("You are hit by an unholy blast!");
-			if (py.flags.nether_resist) {
+			if (py.flags.resist_nether) {
 			    dam_hp *= 6;	/* these 2 lines give avg dam
 						 * of .655, ranging from */
 			    dam_hp /= (randint(6) + 6);	/* .858 to .5 -CFT */
@@ -1218,32 +1218,32 @@ int           monptr;
 		      case GF_WATER:
 			if (blind)
 			    msg_print("You are hit by a jet of water!");
-			if (!py.flags.sound_resist)
+			if (!py.flags.resist_sound)
 			    stun_player(randint(15));
 			take_hit(dam_hp, ddesc);
 			break;
 		      case GF_CHAOS:
 			if (blind)
 			    msg_print("You are hit by wave of entropy!");
-			if (py.flags.chaos_resist) {
+			if (py.flags.resist_chaos) {
 			    dam_hp *= 6;	/* these 2 lines give avg dam
 						 * of .655, ranging from */
 			    dam_hp /= (randint(6) + 6);	/* .858 to .5 -CFT */
 			}
-			if ((!py.flags.confusion_resist) && (!py.flags.chaos_resist)) {
+			if ((!py.flags.resist_conf) && (!py.flags.resist_chaos)) {
 			    if (py.flags.confused > 0)
 				py.flags.confused += 12;
 			    else
 				py.flags.confused = randint(20) + 10;
 			}
-			if (!py.flags.chaos_resist)
+			if (!py.flags.resist_chaos)
 			    py.flags.image += randint(10);
 			take_hit(dam_hp, ddesc);
 			break;
 		      case GF_SHARDS:
 			if (blind)
 			    msg_print("You are cut by sharp fragments!");
-			if (py.flags.shards_resist) {
+			if (py.flags.resist_shards) {
 			    dam_hp *= 6;	/* these 2 lines give avg dam
 						 * of .655, ranging from */
 			    dam_hp /= (randint(6) + 6);	/* .858 to .5 -CFT */
@@ -1255,7 +1255,7 @@ int           monptr;
 		      case GF_SOUND:
 			if (blind)
 			    msg_print("You are deafened by a blast of noise!");
-			if (py.flags.sound_resist) {
+			if (py.flags.resist_sound) {
 			    dam_hp *= 5;
 			    dam_hp /= (randint(6) + 6);
 			} else {
@@ -1266,11 +1266,11 @@ int           monptr;
 		      case GF_CONFUSION:
 			if (blind)
 			    msg_print("You are hit by a wave of dizziness!");
-			if (py.flags.confusion_resist) {
+			if (py.flags.resist_conf) {
 			    dam_hp *= 5;
 			    dam_hp /= (randint(6) + 6);
 			}
-			if (!py.flags.confusion_resist && !py.flags.chaos_resist) {
+			if (!py.flags.resist_conf && !py.flags.resist_chaos) {
 			    if (py.flags.confused > 0)
 				py.flags.confused += 8;
 			    else
@@ -1281,7 +1281,7 @@ int           monptr;
 		      case GF_DISENCHANT:
 			if (blind)
 			    msg_print("You are hit by something!");
-			if (py.flags.disenchant_resist) {
+			if (py.flags.resist_disen) {
 			    dam_hp *= 6;	/* these 2 lines give avg dam
 						 * of .655, ranging from */
 			    dam_hp /= (randint(6) + 6);	/* .858 to .5 -CFT */
@@ -1362,7 +1362,7 @@ int           monptr;
 		      case GF_NEXUS:
 			if (blind)
 			    msg_print("You are hit by something strange!");
-			if (py.flags.nexus_resist) {
+			if (py.flags.resist_nexus) {
 			    dam_hp *= 6;	/* these 2 lines give avg dam
 						 * of .655, ranging from */
 			    dam_hp /= (randint(6) + 6);	/* .858 to .5 -CFT */
@@ -1372,7 +1372,7 @@ int           monptr;
 		      case GF_FORCE:
 			if (blind)
 			    msg_print("You are hit hard by a sudden force!");
-			if (!py.flags.sound_resist)
+			if (!py.flags.resist_sound)
 			    stun_player(randint(15) + 1);
 			take_hit(dam_hp, ddesc);
 			break;
@@ -1390,11 +1390,11 @@ int           monptr;
 		      case GF_LIGHT:
 			if (blind)
 			    msg_print("You are hit by something!");
-			if (py.flags.light_resist) {
+			if (py.flags.resist_lite) {
 			    dam_hp *= 4;	/* these 2 lines give avg dam
 						 * of .444, ranging from */
 			    dam_hp /= (randint(6) + 6);	/* .556 to .333 -CFT */
-			} else if (!blind && !py.flags.blindness_resist) {
+			} else if (!blind && !py.flags.resist_blind) {
 			    msg_print("You are blinded by the flash!");
 			    py.flags.blind += randint(5) + 2;
 			}
@@ -1403,12 +1403,12 @@ int           monptr;
 		      case GF_DARK:
 			if (blind)
 			    msg_print("You are hit by something!");
-			if (py.flags.dark_resist) {
+			if (py.flags.resist_dark) {
 			    dam_hp *= 4;	/* these 2 lines give avg dam
 						 * of .444, ranging from */
 			    dam_hp /= (randint(6) + 6);	/* .556 to .333 -CFT */
 			} else {
-			    if (!blind && !py.flags.blindness_resist) {
+			    if (!blind && !py.flags.resist_blind) {
 				msg_print("The darkness prevents you from seeing!");
 				py.flags.blind += randint(5) + 2;
 			    }
@@ -1462,7 +1462,7 @@ int           monptr;
 		      case GF_GRAVITY:
 			if (blind)
 			    msg_print("You are hit by a surge of gravity!");
-			if ((!py.flags.sound_resist) && (!py.flags.ffall))	/* DGK */
+			if ((!py.flags.resist_sound) && (!py.flags.ffall))	/* DGK */
 			    stun_player(randint(15) + 1);
 			if (py.flags.ffall) {	/* DGK */
 			    dam_hp *= 3;	/* these 2 lines give avg dam
@@ -1492,9 +1492,9 @@ int           monptr;
 			if (blind)
 			    msg_print("You are hit by something cold and sharp!");
 			cold_dam(dam_hp, ddesc);
-			if (!py.flags.sound_resist)
+			if (!py.flags.resist_sound)
 			    stun_player(randint(15) + 1);
-			if (!py.flags.shards_resist)
+			if (!py.flags.resist_shards)
 			    cut_player(damroll(8, 10));
 			break;
 		      default:
@@ -1915,12 +1915,12 @@ int   monptr;
 			    break;
 			  case GF_PLASMA:	/* no resist to plasma? */
 			    take_hit(dam, ddesc);
-			    if (!py.flags.sound_resist)
+			    if (!py.flags.resist_sound)
 				stun_player(randint(
 				(dam_hp > 40) ? 35 : (dam_hp * 3 / 4 + 5)));
 			    break;
 			  case GF_NETHER:
-			    if (py.flags.nether_resist) {
+			    if (py.flags.resist_nether) {
 				dam *= 6;	/* these 2 lines give avg dam
 						 * of .655, ranging from */
 				dam /= (randint(5) + 6);	/* .858 to .5 -CFT */
@@ -1938,10 +1938,10 @@ int   monptr;
 			    take_hit(dam, ddesc);
 			    break;
 			  case GF_WATER:
-			    if (!py.flags.sound_resist)
+			    if (!py.flags.resist_sound)
 				stun_player(randint(55));
-			    if (!player_saves() && !py.flags.confusion_resist
-				&& !py.flags.chaos_resist) {
+			    if (!player_saves() && !py.flags.resist_conf
+				&& !py.flags.resist_chaos) {
 				if ((py.flags.confused > 0) &&
 				    (py.flags.confused < 32000))
 				    py.flags.confused += 6;
@@ -1951,21 +1951,21 @@ int   monptr;
 			    take_hit(dam, ddesc);
 			    break;
 			  case GF_CHAOS:
-			    if (py.flags.chaos_resist) {
+			    if (py.flags.resist_chaos) {
 				dam *= 6;	/* these 2 lines give avg dam
 						 * of .655, ranging from */
 				dam /= (randint(6) + 6);	/* .858 to .5 -CFT */
 			    }
-			    if ((!py.flags.confusion_resist) &&
-				(!py.flags.chaos_resist)) {
+			    if ((!py.flags.resist_conf) &&
+				(!py.flags.resist_chaos)) {
 				if (py.flags.confused > 0)
 				    py.flags.confused += 12;
 				else
 				    py.flags.confused = randint(20) + 10;
 			    }
-			    if (!py.flags.chaos_resist)
+			    if (!py.flags.resist_chaos)
 				py.flags.image += randint(10);
-			    if (!py.flags.nether_resist && !py.flags.chaos_resist) {
+			    if (!py.flags.resist_nether && !py.flags.resist_chaos) {
 				if (py.flags.hold_life && randint(3) > 1)
 				    msg_print("You keep hold of your life force!");
 				else if (py.flags.hold_life) {
@@ -1979,7 +1979,7 @@ int   monptr;
 			    take_hit(dam, ddesc);
 			    break;
 			  case GF_SHARDS:
-			    if (py.flags.shards_resist) {
+			    if (py.flags.resist_shards) {
 				dam *= 6;	/* these 2 lines give avg dam
 						 * of .655, ranging from */
 				dam /= (randint(6) + 6);	/* .858 to .5 -CFT */
@@ -1989,7 +1989,7 @@ int   monptr;
 			    take_hit(dam, ddesc);
 			    break;
 			  case GF_SOUND:
-			    if (py.flags.sound_resist) {
+			    if (py.flags.resist_sound) {
 				dam *= 5;
 				dam /= (randint(6) + 6);
 			    } else {
@@ -1998,12 +1998,12 @@ int   monptr;
 			    take_hit(dam, ddesc);
 			    break;
 			  case GF_CONFUSION:
-			    if (py.flags.confusion_resist) {
+			    if (py.flags.resist_conf) {
 				dam *= 5;	/* these 2 lines give avg dam
 						 * of .655, ranging from */
 				dam /= (randint(6) + 6);	/* .858 to .5 -CFT */
 			    }
-			    if (!py.flags.confusion_resist && !py.flags.chaos_resist) {
+			    if (!py.flags.resist_conf && !py.flags.resist_chaos) {
 				if (py.flags.confused > 0)
 				    py.flags.confused += 12;
 				else
@@ -2012,7 +2012,7 @@ int   monptr;
 			    take_hit(dam, ddesc);
 			    break;
 			  case GF_DISENCHANT:
-			    if (py.flags.disenchant_resist) {
+			    if (py.flags.resist_disen) {
 				dam *= 6;	/* these 2 lines give avg dam
 						 * of .655, ranging from */
 				dam /= (randint(6) + 6);	/* .858 to .5 -CFT */
@@ -2094,7 +2094,7 @@ int   monptr;
 			    break;
 			  case GF_NEXUS:
 			    /* no spec. effects from nexus bolt, only breath -CFT */
-			    if (py.flags.nexus_resist) {
+			    if (py.flags.resist_nexus) {
 				dam *= 6;	/* these 2 lines give avg dam
 						 * of .655, ranging from */
 				dam /= (randint(6) + 6);	/* .858 to .5 -CFT */
@@ -2161,7 +2161,7 @@ int   monptr;
 			    take_hit(dam, ddesc);
 			    break;
 			  case GF_FORCE:
-			    if (!py.flags.sound_resist)
+			    if (!py.flags.resist_sound)
 				stun_player(randint(20));
 			    take_hit(dam, ddesc);
 			    break;
@@ -2175,10 +2175,10 @@ int   monptr;
 			    take_hit(dam, ddesc);
 			    break;
 			  case GF_LIGHT:
-			    if (py.flags.light_resist) {
+			    if (py.flags.resist_lite) {
 				dam *= 4;
 				dam /= (randint(6) + 6);
-			    } else if (!blind && !py.flags.blindness_resist) {
+			    } else if (!blind && !py.flags.resist_blind) {
 				msg_print("You are blinded by the flash!");
 				py.flags.blind += randint(6) + 3;
 			    }
@@ -2186,7 +2186,7 @@ int   monptr;
 			    take_hit(dam, ddesc);
 			    break;
 			  case GF_DARK:
-			    if (py.flags.dark_resist) {
+			    if (py.flags.resist_dark) {
 				dam *= 4;
 				dam /= (randint(6) + 6);
 			    } else {
@@ -2271,7 +2271,7 @@ int   monptr;
 			    take_hit(dam, ddesc);
 			    break;
 			  case GF_GRAVITY:
-			    if ((!py.flags.sound_resist) && (!py.flags.ffall))	/* DGK */
+			    if ((!py.flags.resist_sound) && (!py.flags.ffall))	/* DGK */
 				stun_player(randint((dam > 90) ? 35 : (dam / 3 + 5)));
 			    if (py.flags.ffall) {	/* DGK */
 				dam_hp *= 3;	/* these 2 lines give avg dam
@@ -2297,9 +2297,9 @@ int   monptr;
 			    break;
 			  case GF_ICE:
 			    cold_dam(dam, ddesc);
-			    if (!py.flags.sound_resist)
+			    if (!py.flags.resist_sound)
 				stun_player(randint(25));
-			    if (!py.flags.shards_resist)
+			    if (!py.flags.resist_shards)
 				cut_player(damroll(8, 10));
 			    break;
 			  default:
@@ -3854,7 +3854,7 @@ register int y, x;
     register int i, j, k;
 
     msg_print("There is a searing blast of light!");
-    if (!py.flags.blindness_resist && !py.flags.light_resist)
+    if (!py.flags.resist_blind && !py.flags.resist_lite)
 	py.flags.blind += 10 + randint(10);
     if (dun_level > 0) {
 	for (i = (y - 15); i <= (y + 15); i++)
@@ -3876,7 +3876,7 @@ register int y, x;
     }
 
     /* We need to redraw the screen. -DGK */
-    if (py.flags.blindness_resist || py.flags.light_resist) {
+    if (py.flags.resist_blind || py.flags.resist_lite) {
 	draw_cave();
 	creatures(FALSE);	   /* draw monsters */
     }
@@ -4246,97 +4246,97 @@ self_knowledge()
 	prt("You are carrying a permanent light.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags.fear_resist) {
+    if (py.flags.resist_fear) {
 	prt("You are completely fearless.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags.blindness_resist) {
+    if (py.flags.resist_blind) {
 	prt("Your eyes are resistant to blindness.", i++, j);
 	pause_if_screen_full(&i, j);
     }
     if (py.flags.immune_fire) {
 	prt("You are completely immune to fire.", i++, j);
 	pause_if_screen_full(&i, j);
-    } else if ((py.flags.fire_resist) && (py.flags.oppose_fire)) {
+    } else if ((py.flags.resist_fire) && (py.flags.oppose_fire)) {
 	prt("You resist fire exceptionally well.", i++, j);
 	pause_if_screen_full(&i, j);
-    } else if ((py.flags.fire_resist) || (py.flags.oppose_fire)) {
+    } else if ((py.flags.resist_fire) || (py.flags.oppose_fire)) {
 	prt("You are resistant to fire.", i++, j);
 	pause_if_screen_full(&i, j);
     }
     if (py.flags.immune_cold) {
 	prt("You are completely immune to cold.", i++, j);
 	pause_if_screen_full(&i, j);
-    } else if ((py.flags.cold_resist) && (py.flags.oppose_cold)) {
+    } else if ((py.flags.resist_cold) && (py.flags.oppose_cold)) {
 	prt("You resist cold exceptionally well.", i++, j);
 	pause_if_screen_full(&i, j);
-    } else if ((py.flags.cold_resist) || (py.flags.oppose_cold)) {
+    } else if ((py.flags.resist_cold) || (py.flags.oppose_cold)) {
 	prt("You are resistant to cold.", i++, j);
 	pause_if_screen_full(&i, j);
     }
     if (py.flags.immune_acid) {
 	prt("You are completely immune to acid.", i++, j);
 	pause_if_screen_full(&i, j);
-    } else if ((py.flags.acid_resist) && (py.flags.oppose_acid)) {
+    } else if ((py.flags.resist_acid) && (py.flags.oppose_acid)) {
 	prt("You resist acid exceptionally well.", i++, j);
 	pause_if_screen_full(&i, j);
-    } else if ((py.flags.acid_resist) || (py.flags.oppose_acid)) {
+    } else if ((py.flags.resist_acid) || (py.flags.oppose_acid)) {
 	prt("You are resistant to acid.", i++, j);
 	pause_if_screen_full(&i, j);
     }
     if (py.flags.immune_pois) {
 	prt("You are completely immune to poison.", i++, j);
 	pause_if_screen_full(&i, j);
-    } else if ((py.flags.poison_resist) && (py.flags.oppose_pois)) {
+    } else if ((py.flags.resist_pois) && (py.flags.oppose_pois)) {
 	prt("You resist poison exceptionally well.", i++, j);
 	pause_if_screen_full(&i, j);
-    } else if ((py.flags.poison_resist) || (py.flags.oppose_pois)) {
+    } else if ((py.flags.resist_pois) || (py.flags.oppose_pois)) {
 	prt("You are resistant to poison.", i++, j);
 	pause_if_screen_full(&i, j);
     }
     if (py.flags.immune_elec) {
 	prt("You are completely immune to lightning.", i++, j);
 	pause_if_screen_full(&i, j);
-    } else if ((py.flags.lght_resist) && (py.flags.oppose_elec)) {
+    } else if ((py.flags.resist_elec) && (py.flags.oppose_elec)) {
 	prt("You resist lightning exceptionally well.", i++, j);
 	pause_if_screen_full(&i, j);
-    } else if ((py.flags.lght_resist) || (py.flags.oppose_elec)) {
+    } else if ((py.flags.resist_elec) || (py.flags.oppose_elec)) {
 	prt("You are resistant to lightning.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags.light_resist) {
+    if (py.flags.resist_lite) {
 	prt("You are resistant to bright light.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags.dark_resist) {
+    if (py.flags.resist_dark) {
 	prt("You are resistant to darkness.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags.confusion_resist) {
+    if (py.flags.resist_conf) {
 	prt("You are resistant to confusion.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags.sound_resist) {
+    if (py.flags.resist_sound) {
 	prt("You are resistant to sonic attacks.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags.disenchant_resist) {
+    if (py.flags.resist_disen) {
 	prt("You are resistant to disenchantment.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags.chaos_resist) {
+    if (py.flags.resist_chaos) {
 	prt("You are resistant to chaos.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags.shards_resist) {
+    if (py.flags.resist_shards) {
 	prt("You are resistant to blasts of shards.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags.nexus_resist) {
+    if (py.flags.resist_nexus) {
 	prt("You are resistant to nexus attacks.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags.nether_resist) {
+    if (py.flags.resist_nether) {
 	prt("You are resistant to nether forces.", i++, j);
 	pause_if_screen_full(&i, j);
     }

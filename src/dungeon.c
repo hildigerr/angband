@@ -320,13 +320,13 @@ dungeon()
     /* Afraid		       */
 	if (f_ptr->afraid > 0) {
 	    if ((PY_FEAR & f_ptr->status) == 0) {
-		if ((f_ptr->shero + f_ptr->hero + py.flags.fear_resist) > 0)
+		if ((f_ptr->shero + f_ptr->hero + py.flags.resist_fear) > 0)
 		    f_ptr->afraid = 0;
 		else {
 		    f_ptr->status |= PY_FEAR;
 		    prt_afraid();
 		}
-	    } else if ((f_ptr->shero + f_ptr->hero + py.flags.fear_resist) > 0)
+	    } else if ((f_ptr->shero + f_ptr->hero + py.flags.resist_fear) > 0)
 		f_ptr->afraid = 1;
 	    f_ptr->afraid--;
 	    if (f_ptr->afraid == 0) {
@@ -395,7 +395,7 @@ dungeon()
 	    }
 	    f_ptr->poisoned--;
 	    if (f_ptr->poisoned == 0 || f_ptr->immune_pois ||
-		f_ptr->poison_resist || f_ptr->oppose_pois) {
+		f_ptr->resist_pois || f_ptr->oppose_pois) {
 		f_ptr->poisoned = 0;
 		f_ptr->status &= ~PY_POISONED;
 		prt_poisoned();

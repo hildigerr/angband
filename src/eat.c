@@ -45,13 +45,13 @@ eat()
 	    switch (j) {
 	      case 1:
 		f_ptr = &py.flags;
-		if (!f_ptr->poison_resist)
+		if (!f_ptr->resist_pois)
 		    f_ptr->poisoned += randint(10) + i_ptr->level;
 		ident = TRUE;
 		break;
 	      case 2:
 		f_ptr = &py.flags;
-		if (!py.flags.blindness_resist) {
+		if (!py.flags.resist_blind) {
 		    f_ptr->blind += randint(250) + 10 * i_ptr->level + 100;
 		    draw_cave();
 		    msg_print("A veil of darkness surrounds you.");
@@ -59,7 +59,7 @@ eat()
 		}
 		break;
 	      case 3:
-		if (!py.flags.fear_resist) {
+		if (!py.flags.resist_fear) {
 		    f_ptr = &py.flags;
 		    f_ptr->afraid += randint(10) + i_ptr->level;
 		    msg_print("You feel terrified!");
@@ -68,7 +68,7 @@ eat()
 		break;
 	      case 4:
 		f_ptr = &py.flags;
-		if ((!py.flags.confusion_resist) && (!py.flags.chaos_resist)) {
+		if ((!py.flags.resist_conf) && (!py.flags.resist_chaos)) {
 		    f_ptr->confused += randint(10) + i_ptr->level;
 		    msg_print("You feel drugged.");
 		}

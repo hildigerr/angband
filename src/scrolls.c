@@ -228,7 +228,7 @@ read_scroll()
 		break;
 	      case 27:
 		ident = unlight_area(char_row, char_col);
-		if (!py.flags.blindness_resist)
+		if (!py.flags.resist_blind)
 		    py.flags.blind += 3 + randint(5);
 		break;
 	      case 28:

@@ -157,16 +157,16 @@ calc_bonuses()
     else
 	p_ptr->sustain_dex = FALSE;
     p_ptr->sustain_chr = FALSE;
-    p_ptr->fire_resist = FALSE;
-    p_ptr->acid_resist = FALSE;
-    p_ptr->cold_resist = FALSE;
+    p_ptr->resist_fire = FALSE;
+    p_ptr->resist_acid = FALSE;
+    p_ptr->resist_cold = FALSE;
     p_ptr->regenerate = FALSE;
-    p_ptr->lght_resist = FALSE;
+    p_ptr->resist_elec = FALSE;
     if (py.misc.prace == 9)
 	p_ptr->ffall = TRUE;
     else
 	p_ptr->ffall = FALSE;
-    p_ptr->poison_resist = FALSE;
+    p_ptr->resist_pois = FALSE;
     p_ptr->hold_life = FALSE;
     p_ptr->telepathy = FALSE;
     p_ptr->immune_fire = FALSE;
@@ -175,26 +175,26 @@ calc_bonuses()
     p_ptr->immune_cold = FALSE;
     p_ptr->immune_elec = FALSE;
     p_ptr->light = FALSE;
-    p_ptr->confusion_resist = FALSE;
-    p_ptr->sound_resist = FALSE;
+    p_ptr->resist_conf = FALSE;
+    p_ptr->resist_sound = FALSE;
     if (py.misc.prace == 2)
-	p_ptr->light_resist = TRUE;
+	p_ptr->resist_lite = TRUE;
     else
-	p_ptr->light_resist = FALSE;
+	p_ptr->resist_lite = FALSE;
     if (py.misc.prace == 6)
-	p_ptr->dark_resist = TRUE;
+	p_ptr->resist_dark = TRUE;
     else
-	p_ptr->dark_resist = FALSE;
-    p_ptr->chaos_resist = FALSE;
-    p_ptr->disenchant_resist = FALSE;
-    p_ptr->shards_resist = FALSE;
-    p_ptr->nexus_resist = FALSE;
+	p_ptr->resist_dark = FALSE;
+    p_ptr->resist_chaos = FALSE;
+    p_ptr->resist_disen = FALSE;
+    p_ptr->resist_shards = FALSE;
+    p_ptr->resist_nexus = FALSE;
     if (py.misc.prace == 5)
-	p_ptr->blindness_resist = TRUE;
+	p_ptr->resist_blind = TRUE;
     else
-	p_ptr->blindness_resist = FALSE;
-    p_ptr->nether_resist = FALSE;
-    p_ptr->fear_resist = FALSE;
+	p_ptr->resist_blind = FALSE;
+    p_ptr->resist_nether = FALSE;
+    p_ptr->resist_fear = FALSE;
 
     old_dis_ac = m_ptr->dis_ac;
     m_ptr->ptohit = tohit_adj();   /* Real To Hit   */
@@ -313,13 +313,13 @@ calc_bonuses()
     if (TR_REGEN & item_flags)
 	p_ptr->regenerate = TRUE;
     if (TR_RES_FIRE & item_flags)
-	p_ptr->fire_resist = TRUE;
+	p_ptr->resist_fire = TRUE;
     if (TR_RES_ACID & item_flags)
-	p_ptr->acid_resist = TRUE;
+	p_ptr->resist_acid = TRUE;
     if (TR_RES_COLD & item_flags)
-	p_ptr->cold_resist = TRUE;
+	p_ptr->resist_cold = TRUE;
     if (TR_POISON & item_flags)
-	p_ptr->poison_resist = TRUE;
+	p_ptr->resist_pois = TRUE;
     if (TR_HOLD_LIFE & item_flags2)
 	p_ptr->hold_life = TRUE;
     if (TR_TELEPATHY & item_flags2)
@@ -341,31 +341,31 @@ calc_bonuses()
     if (TR_SEE_INVIS & item_flags)
 	p_ptr->see_inv = TRUE;
     if (TR_RES_LIGHT & item_flags)
-	p_ptr->lght_resist = TRUE;
+	p_ptr->resist_elec = TRUE;
     if (TR_FFALL & item_flags)
 	p_ptr->ffall = TRUE;
     if (TR_RES_CONF & item_flags2)
-	p_ptr->confusion_resist = TRUE;
+	p_ptr->resist_conf = TRUE;
     if (TR_RES_SOUND & item_flags2)
-	p_ptr->sound_resist = TRUE;
+	p_ptr->resist_sound = TRUE;
     if (TR_RES_LT & item_flags2)
-	p_ptr->light_resist = TRUE;
+	p_ptr->resist_lite = TRUE;
     if (TR_RES_DARK & item_flags2)
-	p_ptr->dark_resist = TRUE;
+	p_ptr->resist_dark = TRUE;
     if (TR_RES_CHAOS & item_flags2)
-	p_ptr->chaos_resist = TRUE;
+	p_ptr->resist_chaos = TRUE;
     if (TR_RES_DISENCHANT & item_flags2)
-	p_ptr->disenchant_resist = TRUE;
+	p_ptr->resist_disen = TRUE;
     if (TR_RES_SHARDS & item_flags2)
-	p_ptr->shards_resist = TRUE;
+	p_ptr->resist_shards = TRUE;
     if (TR_RES_NEXUS & item_flags2)
-	p_ptr->nexus_resist = TRUE;
+	p_ptr->resist_nexus = TRUE;
     if (TR_RES_BLIND & item_flags2)
-	p_ptr->blindness_resist = TRUE;
+	p_ptr->resist_blind = TRUE;
     if (TR_RES_NETHER & item_flags2)
-	p_ptr->nether_resist = TRUE;
+	p_ptr->resist_nether = TRUE;
     if (TR_RES_FEAR & item_flags2)
-	p_ptr->fear_resist = TRUE;
+	p_ptr->resist_fear = TRUE;
 
     i_ptr = &inventory[INVEN_WIELD];
     for (i = INVEN_WIELD; i < INVEN_LIGHT; i++) {
@@ -2753,12 +2753,12 @@ const char *kb_str;
 {
     if (py.flags.oppose_pois > 0)
 	dam = 2 * dam / 3;
-    if (py.flags.poison_resist)
+    if (py.flags.resist_pois)
 	dam = (dam * 3) / 5;
     if (py.flags.immune_pois)
 	dam = 1;
     take_hit(dam, kb_str);
-    if (!(py.flags.poison_resist || py.flags.oppose_pois
+    if (!(py.flags.resist_pois || py.flags.oppose_pois
 	  || py.flags.immune_pois))
 	py.flags.poisoned += 12 + randint(dam);
 }
@@ -2770,7 +2770,7 @@ fire_dam(dam, kb_str)
 int dam;
 const char *kb_str;
 {
-    if (py.flags.fire_resist)
+    if (py.flags.resist_fire)
 	dam = dam / 3;
     if (py.flags.oppose_fire > 0)
 	dam = dam / 3;
@@ -2787,7 +2787,7 @@ cold_dam(dam, kb_str)
 int dam;
 const char *kb_str;
 {
-    if (py.flags.cold_resist)
+    if (py.flags.resist_cold)
 	dam = dam / 3;
     if (py.flags.oppose_cold > 0)
 	dam = dam / 3;
@@ -2806,7 +2806,7 @@ const char *kb_str;
 {
     if (py.flags.oppose_elec)
 	dam = dam / 3;
-    if (py.flags.lght_resist)
+    if (py.flags.resist_elec)
 	dam = dam / 3;
     if (py.flags.immune_elec)
 	dam = 1;
@@ -2823,7 +2823,7 @@ const char *kb_str;
 {
     register int flag;
 
-    if (py.flags.acid_resist > 0)
+    if (py.flags.resist_acid > 0)
 	dam = dam / 3;
     if (py.flags.oppose_acid > 0)
 	dam = dam / 3;
@@ -2833,7 +2833,7 @@ const char *kb_str;
     if (!py.flags.oppose_acid)
 	if (minus_ac((u32b) TR_RES_ACID))
 	    flag = 1;
-    if (py.flags.acid_resist)
+    if (py.flags.resist_acid)
 	flag += 2;
     inven_damage(set_acid_affect, 3);
 }
