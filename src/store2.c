@@ -114,8 +114,8 @@ static const char        *comment6[5] = {
 /* Lets do all prototypes correctly.... -CWS */
 #ifndef NO_LINT_ARGS
 #ifdef __STDC__
-static void prt_comment2(int32, int32, int);
-static void prt_comment3(int32, int32, int);
+static void prt_comment2(s32b, s32b, int);
+static void prt_comment3(s32b, s32b, int);
 static void haggle_commands(int);
 static void display_inventory(int, int);
 static void display_cost(int, int);
@@ -124,10 +124,10 @@ static int get_store_item(int *, const char *, int, int);
 static int increase_insults(int);
 static void decrease_insults(int);
 static int haggle_insults(int);
-static int get_haggle(const char *, int32 *, int, int32, int);
-static int receive_offer(int, const char *, int32 *, int32, int, int, int32, int);
-static int purchase_haggle(int, int32 *, inven_type *);
-static int sell_haggle(int, int32 *, inven_type *);
+static int get_haggle(const char *, s32b *, int, s32b, int);
+static int receive_offer(int, const char *, s32b *, s32b, int, int, s32b, int);
+static int purchase_haggle(int, s32b *, inven_type *);
+static int sell_haggle(int, s32b *, inven_type *);
 static int store_purchase(int, int *);
 static int store_sell(int, int *);
 #else
@@ -169,7 +169,7 @@ prt_comment1()
 /* %A1 is offer, %A2 is asking.		 */
 static void 
 prt_comment2(offer, asking, final)
-int32 offer, asking;
+s32b offer, asking;
 int   final;
 {
     vtype comment;
@@ -187,7 +187,7 @@ int   final;
 
 static void 
 prt_comment3(offer, asking, final)
-    int32 offer, asking;
+    s32b offer, asking;
     int   final;
 {
     vtype comment;
@@ -270,7 +270,7 @@ int store_num, start;
     register inven_type *i_ptr;
     register int         i, j, stop;
     bigvtype             out_val1, out_val2;
-    int32                x;
+    s32b                x;
 
     s_ptr = &store[store_num];
     i = (start % 12);
@@ -292,7 +292,7 @@ int store_num, start;
 	if (!is_home) {
 	    x = s_ptr->store_inven[start].scost;
 	    if (x < 0) {
-		int32               value = (int32)(-x);
+		s32b               value = (s32b)(-x);
 		
 		value = value * chr_adj() / 100;
 		if (value <= 0)
@@ -322,7 +322,7 @@ display_cost(store_num, pos)
 int store_num, pos;
 {
     register int         i;
-    register int32       j;
+    register s32b       j;
     vtype                out_val;
     register store_type *s_ptr;
 
@@ -455,17 +455,17 @@ int store_num;
 static int 
 get_haggle(comment, new_offer, num_offer, price, final)
 const char *comment;
-int32      *new_offer;
+s32b      *new_offer;
 int         num_offer;
-int32       price;
+s32b       price;
 int         final;
 {
-    register int32      i;
+    register s32b      i;
     vtype               out_val;
     char                buf[100];
     register int        flag, clen;
     register char      *p;
-    static int32        last_inc = 0L;
+    static s32b        last_inc = 0L;
     int                 inc = FALSE;
 
     flag = TRUE;
@@ -513,9 +513,9 @@ receive_offer(store_num, comment, new_offer, last_offer,
 	      num_offer, factor, price, final)
 int             store_num;
 const char     *comment;
-register int32 *new_offer, last_offer;
+register s32b *new_offer, last_offer;
 int             num_offer, factor;
-int32           price;
+s32b           price;
 int             final;
 {
     register int flag, receive;
@@ -547,14 +547,14 @@ int             final;
 static int 
 purchase_haggle(store_num, price, item)
 int         store_num;
-int32      *price;
+s32b      *price;
 inven_type *item;
 {
-    int32               max_sell, min_sell, max_buy;
-    int32               cost, cur_ask, final_ask, min_offer;
-    int32               last_offer, new_offer;
-    int32               x1, x2, x3;
-    int32               min_per, max_per;
+    s32b               max_sell, min_sell, max_buy;
+    s32b               cost, cur_ask, final_ask, min_offer;
+    s32b               last_offer, new_offer;
+    s32b               x1, x2, x3;
+    s32b               min_per, max_per;
     register int        flag, loop_flag;
     const char         *comment;
     vtype               out_val;
@@ -679,15 +679,15 @@ inven_type *item;
 static int 
 sell_haggle(store_num, price, item)
 int         store_num;
-int32      *price;
+s32b      *price;
 inven_type *item;
 {
-    int32               max_sell = 0, max_buy = 0, min_buy = 0;
-    int32               cost = 0, cur_ask = 0, final_ask = 0, min_offer = 0;
-    int32               last_offer = 0, new_offer = 0;
-    int32               max_gold = 0;
-    int32               x1, x2, x3;
-    int32               min_per, max_per;
+    s32b               max_sell = 0, max_buy = 0, min_buy = 0;
+    s32b               cost = 0, cur_ask = 0, final_ask = 0, min_offer = 0;
+    s32b               last_offer = 0, new_offer = 0;
+    s32b               max_gold = 0;
+    s32b               x1, x2, x3;
+    s32b               min_per, max_per;
     register int        flag, loop_flag;
     const char          *comment;
     vtype               out_val;
@@ -838,7 +838,7 @@ store_purchase(store_num, cur_top)
 int  store_num;
 int *cur_top;
 {
-    int32               price;
+    s32b               price;
     register int        i, choice;
     bigvtype            out_val, tmp_str;
     register store_type *s_ptr;
@@ -954,7 +954,7 @@ store_sell(store_num, cur_top)
 int store_num, *cur_top;
 {
     int                 item_val, item_pos;
-    int32               price;
+    s32b               price;
     bigvtype            out_val, tmp_str;
     inven_type          sold_obj;
     register int        sell, choice, test;
@@ -979,8 +979,8 @@ int store_num, *cur_top;
 		if (!is_home) {
 		    choice = sell_haggle(store_num, &price, &sold_obj);
 		    if (choice == 0) {
-			int32               cost;
-			int32               real;
+			s32b               cost;
+			s32b               real;
 
 			prt_comment1();
 			decrease_insults(store_num);

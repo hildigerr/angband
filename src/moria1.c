@@ -117,8 +117,8 @@ register int         factor;
 void 
 calc_bonuses()
 {
-    register int32u        item_flags;
-    register int32u        item_flags2;
+    register u32b        item_flags;
+    register u32b        item_flags2;
     int                    old_dis_ac;
     register struct flags *p_ptr;
     register struct misc  *m_ptr;
@@ -2667,7 +2667,7 @@ int dir, y, x;
 /* can detect the damage.					 */
 int 
 minus_ac(typ_dam)
-int32u typ_dam;
+u32b typ_dam;
 {
     register int         i, j;
     int                  tmp[6], minus, do_damage;
@@ -2739,7 +2739,7 @@ corrode_gas(kb_str)
 const char *kb_str;
 {
     if (!py.flags.acid_im)
-	if (!minus_ac((int32u) TR_RES_ACID))
+	if (!minus_ac((u32b) TR_RES_ACID))
 	    take_hit(randint(8), kb_str);
     inven_damage(set_corrodes, 5);
 }
@@ -2831,7 +2831,7 @@ const char *kb_str;
 	dam = 1;
     flag = 0;
     if (!py.flags.resist_acid)
-	if (minus_ac((int32u) TR_RES_ACID))
+	if (minus_ac((u32b) TR_RES_ACID))
 	    flag = 1;
     if (py.flags.acid_resist)
 	flag += 2;

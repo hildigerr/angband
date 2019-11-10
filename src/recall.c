@@ -243,11 +243,11 @@ int mon_num;
     vtype                   temp;
     register recall_type   *mp;
     register creature_type *cp;
-    register int32u         i, k;   /* changed from int, to avoid PC's 16bit ints -CFT */
-    int32u              j;
+    register u32b         i, k;   /* changed from int, to avoid PC's 16bit ints -CFT */
+    u32b              j;
     int                 mspeed;
-    int32u              rcmove, rspells, rspells2, rspells3;
-    int32u              rcdefense; /* this was int16u, but c_recall[] uses int32u -CFT */
+    u32b              rcmove, rspells, rspells2, rspells3;
+    u32b              rcdefense; /* this was u16b, but c_recall[] uses u32b -CFT */
     recall_type         save_mem;
     int                 breath = FALSE, magic = FALSE;
     char                sex;
@@ -370,7 +370,7 @@ int mon_num;
 	roff(temp);
 	k = TRUE;
     }
-/* the c_list speed value is 10 greater, so that it can be a int8u */
+/* the c_list speed value is 10 greater, so that it can be a byte */
     mspeed = cp->speed - 10;
     if ((rcmove & CM_ALL_MV_FLAGS) || (rcmove & CM_RANDOM_MOVE)) {
 	if (k)

@@ -30,7 +30,7 @@
 static int look_ray(int, int, int);
 static int look_see(int, int, int *);
 static void hit_trap(int, int);
-static int summon_object(int, int, int, int, int32u);
+static int summon_object(int, int, int, int, u32b);
 static void py_attack(int, int);
 static void chest_trap(int, int);
 static void inven_throw(int, struct inven_type *);
@@ -270,7 +270,7 @@ const char *prompt;
 int         item_val;
 int        *sn, *sc;
 {
-    int32u               j1, j2;
+    u32b               j1, j2;
     register int         i, k;
     int                  spell[63], result, first_spell;
     register spell_type *s_ptr;
@@ -518,7 +518,7 @@ int j;
 static int 
 summon_object(y, x, num, typ, good)
 int    y, x, num, typ;
-int32u good;
+u32b good;
 {
     register int        i, j, k;
     register cave_type *c_ptr;
@@ -600,18 +600,18 @@ int y, x;
  * Returns a mask of bits from the given flags which indicates what the
  * monster is seen to have dropped.  This may be added to monster memory. 
  */
-int32u 
+u32b 
 monster_death(y, x, flags, good, win)
 int                 y, x;
-register int32u     flags;
-int32u              good;
-int32u              win;
+register u32b     flags;
+u32b              good;
+u32b              win;
 {
     register int i, number;
-    int32u       dump, res;
+    u32b       dump, res;
 
 #if defined(ATARIST_MWC)
-    int32u              holder;	   /* avoid a compiler bug */
+    u32b              holder;	   /* avoid a compiler bug */
 #endif
 
     if (win) {		   /* MORGOTH */
@@ -816,14 +816,14 @@ int
 mon_take_hit(monptr, dam, print_fear)
 int monptr, dam, print_fear;
 {
-    register int32u         i;
+    register u32b         i;
     int                     found = FALSE;
-    int32                   new_exp, new_exp_frac;
+    s32b                   new_exp, new_exp_frac;
     register monster_type  *m_ptr;
     register struct misc   *p_ptr;
     register creature_type *c_ptr;
     int                     m_take_hit = (-1);
-    int32u                  tmp;
+    u32b                  tmp;
     int                     percentage;
     char                    m_name[80];
     vtype                   out_val;
@@ -870,8 +870,8 @@ int monptr, dam, print_fear;
 			  (t_list[cave[ty][tx].tptr].tval <= TV_MAX_WEAR) &&
 			 (t_list[cave[ty][tx].tptr].flags2 & TR_ARTIFACT)) {
 			    do { /* pick new possible spot */
-				ny = ty + (int8u) randint(3) - 2;
-				nx = tx + (int8u) randint(3) - 2;
+				ny = ty + (byte) randint(3) - 2;
+				nx = tx + (byte) randint(3) - 2;
 			    } while (!in_bounds(ny, nx) ||
 				     (cave[ny][nx].fval > MAX_OPEN_SPACE));
 			    ty = ny;	/* this is a new spot, not in a wall/door/etc */
@@ -1204,7 +1204,7 @@ int dir, do_pickup;
 		}
 	    /* In doorway of light-room?	       */
 		else if (c_ptr->lr && (py.flags.blind < 1)) {
-		    int8u lit = FALSE;	/* only call light_room once... -CFT */
+		    byte lit = FALSE;	/* only call light_room once... -CFT */
 
 		    for (i = (char_row - 1); !lit && i <= (char_row + 1); i++)
 			for (j = (char_col - 1); !lit && j <= (char_col + 1); j++) {
@@ -2877,8 +2877,8 @@ look_mon_desc(mnum)
 int mnum;
 {
     monster_type *m = &m_list[mnum];
-    int32         thp, tmax, perc;
-    int8u         living;
+    s32b         thp, tmax, perc;
+    byte         living;
 
     living = !((c_list[m->mptr].cdefense & (UNDEAD|DEMON)) ||
 	       ((c_list[m->mptr].cchar == 'E') ||
@@ -2897,9 +2897,9 @@ int mnum;
 
     if ((m->maxhp == 0) || (m->hp >= m->maxhp))	/* shouldn't ever need > -CFT */
 	return (living ? "unhurt" : "undamaged");
-    thp = (int32) m->hp;
-    tmax = (int32) m->maxhp;
-    perc = (int32) (thp * 100L) / tmax;
+    thp = (s32b) m->hp;
+    tmax = (s32b) m->maxhp;
+    perc = (s32b) (thp * 100L) / tmax;
     if (perc > 60)
 	return (living ? "somewhat wounded" : "somewhat damaged");
     if (perc > 25)

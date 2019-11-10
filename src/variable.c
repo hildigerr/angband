@@ -17,41 +17,41 @@ int hack_monptr = (-1);
 
 int weapon_heavy = FALSE;
 int pack_heavy = FALSE;
-int16 log_index = (-1);		/* Index to log file. (<= 0 means no log) */
+s16b log_index = (-1);		/* Index to log file. (<= 0 means no log) */
 vtype died_from;
 
 vtype savefile;			/* The savefile to use. */
 
 int light_rad = 0, old_rad;				/* light radius spoo */
-int16 total_winner = FALSE;
+s16b total_winner = FALSE;
 int NO_SAVE=FALSE;
 int character_generated = 0;	/* don't save score until char gen finished */
 int character_saved = 0;	/* prevents save on kill after save_char() */
 int highscore_fd;		/* File descriptor to high score file */
 int LOAD=0;
-int32u randes_seed;		/* for restarting randes_state */
-int32u town_seed;		/* for restarting town_seed */
+u32b randes_seed;		/* for restarting randes_state */
+u32b town_seed;		/* for restarting town_seed */
 char *old_state = NULL;         /* state array initialized by time -CWS */
 char *dummy_state = NULL;       /* dummy state array -CWS */
 
-int16 cur_height,cur_width;	/* Cur dungeon size    */
-int16 dun_level = 0;		/* Cur dungeon level   */
+s16b cur_height,cur_width;	/* Cur dungeon size    */
+s16b dun_level = 0;		/* Cur dungeon level   */
 int object_level = 0;		/* level for objects to be created -CWS  */
-int16 missile_ctr = 0;		/* Counter for missiles */
+s16b missile_ctr = 0;		/* Counter for missiles */
 int msg_flag;			/* Set with first msg  */
 vtype old_msg[MAX_SAVE_MSG];	/* Last message	      */
-int16 last_msg = 0;		/* Where last is held */
+s16b last_msg = 0;		/* Where last is held */
 int death = FALSE;		/* True if died	      */
 int find_flag;			/* Used in ANGBAND for .(dir) */
 int free_turn_flag;		/* Used in ANGBAND, do not move creatures  */
 int command_count;		/* Gives repetition of commands. -CJS- */
 int default_dir = FALSE;	/* Use last direction for repeated command */
-int32 turn = (-1);		/* Cur turn of game    */
-int32 old_turn = (-1);		/* Last feeling message */
+s32b turn = (-1);		/* Cur turn of game    */
+s32b old_turn = (-1);		/* Last feeling message */
 int wizard = FALSE;		/* Wizard flag	      */
 int to_be_wizard = FALSE;	/* used during startup, when -w option used */
-int16 panic_save = FALSE;	/* this is true if playing from a panic save */
-int16 noscore = FALSE;		/* Don't log the game. -CJS- */
+s16b panic_save = FALSE;	/* this is true if playing from a panic save */
+s16b noscore = FALSE;		/* Don't log the game. -CJS- */
 int is_home = FALSE;		/* Are we in our home? */
 int in_store_flag = FALSE;	/* Don't redisplay light in stores -DGK */
 int monster_is_afraid = 0;      /* redo monster fear messages -CWS */
@@ -96,7 +96,7 @@ int wait_for_more = FALSE;	/* used when ^C hit during -more- prompt */
 int closing_flag = FALSE;	/* Used for closing   */
 
 /*  Following are calculated from max dungeon sizes		*/
-int16 max_panel_rows,max_panel_cols;
+s16b max_panel_rows,max_panel_cols;
 int panel_row,panel_col;
 int panel_row_min,panel_row_max;
 int panel_col_min,panel_col_max;
@@ -105,9 +105,9 @@ int panel_col_prt,panel_row_prt;
 #ifdef TARGET
 /* Targetting information, this code stolen from Morgul -CFT */
 int target_mode = FALSE;
-int16u target_col;
-int16u target_row;
-int16u target_mon;
+u16b target_col;
+u16b target_row;
+u16b target_mon;
 #endif
 
 #ifdef MAC

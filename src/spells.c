@@ -31,7 +31,7 @@
 static char bolt_char(int, int, int, int);
 static void ball_destroy(int, int (**) ());
 static void pause_if_screen_full(int *, int);
-static void spell_hit_monster(monster_type *, int, int *, int, int *, int *, int8u);
+static void spell_hit_monster(monster_type *, int, int *, int, int *, int *, byte);
 static void replace_spot(int, int, int);
 #else
 static char bolt_char();
@@ -949,7 +949,7 @@ fire_bolt(typ, dir, y, x, dam_hp)
 int typ, dir, y, x, dam_hp;
 {
     int                 i, oldy, oldx, dist, flag;
-/*    int32u              harm_type = 0; */
+/*    u32b              harm_type = 0; */
     register cave_type *c_ptr;
     register monster_type *m_ptr;
     register creature_type *r_ptr;
@@ -1051,7 +1051,7 @@ int           monptr;
 {
     int                 i = ptr->fy, j = ptr->fx;
     int                 dam;
-    int32u              tmp, treas;
+    u32b              tmp, treas;
     register cave_type     *c_ptr;
     register monster_type  *m_ptr;
     register creature_type *r_ptr;
@@ -1286,8 +1286,8 @@ int           monptr;
 						 * of .655, ranging from */
 			    dam_hp /= (randint(6) + 6);	/* .858 to .5 -CFT */
 			} else {
-			    int8u               disenchant = FALSE;
-			    int8u               chance;
+			    byte               disenchant = FALSE;
+			    byte               chance;
 			    int                 t = 0;
 			    inven_type         *i_ptr;
 
@@ -1744,7 +1744,7 @@ int   monptr;
 {
     register int        i, j;
     int                 dam, max_dis;
-    int32u              tmp, treas;
+    u32b              tmp, treas;
     int                 (*destroy) ();
     register cave_type     *c_ptr;
     register monster_type  *m_ptr;
@@ -2017,8 +2017,8 @@ int   monptr;
 						 * of .655, ranging from */
 				dam /= (randint(6) + 6);	/* .858 to .5 -CFT */
 			    } else {
-				int8u               disenchant = FALSE;
-				int8u               chance;
+				byte               disenchant = FALSE;
+				byte               chance;
 				int                 t = 0;
 				inven_type         *i_ptr;
 
@@ -2343,14 +2343,14 @@ register int num;
 	res = TRUE;
 	if (i_ptr->tval == TV_ROD) {
 	    /* now allow players to speed up recharge time of rods -CFT */
-	    int16u              t_o = i_ptr->timeout, t;
+	    u16b              t_o = i_ptr->timeout, t;
 
 	    if (randint((100 - i_ptr->level + num) / 5) == 1) {	/* not today... */
 		msg_print("The recharge backfires, and drains the rod further!");
 		if (t_o < 32000)   /* don't overflow... */
 		    i_ptr->timeout = (t_o + 100) * 2;
 	    } else {
-		t = (int16u) (num * damroll(2, 4));	/* rechange amount */
+		t = (u16b) (num * damroll(2, 4));	/* rechange amount */
 		if (t_o < t)
 		    i_ptr->timeout = 0;
 		else
@@ -2563,7 +2563,7 @@ int dir, y, x, lvl;
 		m_ptr->csleep = 0;
 	    } else {
 		if (m_ptr->confused < 230)
-		    m_ptr->confused += (int8u) (damroll(3, (lvl / 2)) + 1);
+		    m_ptr->confused += (byte) (damroll(3, (lvl / 2)) + 1);
 		confuse = TRUE;
 		m_ptr->csleep = 0;
 		(void)sprintf(out_val, "%s appears confused.", m_name);
@@ -2611,7 +2611,7 @@ int dir, y, x, lvl;
 		m_ptr->csleep = 0;
 	    } else {
 		if (m_ptr->monfear < 175)
-		    m_ptr->monfear += (int8u) (damroll(3, (lvl / 2)) + 1);
+		    m_ptr->monfear += (byte) (damroll(3, (lvl / 2)) + 1);
 		fear = TRUE;
 		m_ptr->csleep = 0;
 		(void)sprintf(out_val, "%s flees in terror!", m_name);
@@ -3501,7 +3501,7 @@ create_food()
 
 int 
 banish_creature(cflag, dist)
-int32u cflag;
+u32b cflag;
 int    dist;
 {
     register int           i;
@@ -3727,7 +3727,7 @@ lose_chr()
 /* Lose experience					-RAK-	 */
 void 
 lose_exp(amount)
-int32 amount;
+s32b amount;
 {
     register int          i;
     register struct misc *m_ptr;
@@ -3888,7 +3888,7 @@ register int y, x;
  * break a curse on the item.  -CFT */
 /* Enchants a plus onto an item.                        -RAK-   */
 int
-enchant(inven_type *i_ptr, int n, int8u eflag)
+enchant(inven_type *i_ptr, int n, byte eflag)
 {
     register int chance, res = FALSE, i, a = i_ptr->flags2 & TR_ARTIFACT;
     int table[13] = {  10,  50, 100, 200, 300, 400,
@@ -3960,8 +3960,8 @@ int monptr, dam;
     m_ptr = &m_list[monptr];
     c_ptr = &c_list[m_ptr->mptr];
 #ifdef MSDOS			   /* more fix -CFT */
-    newhp = (int32) (m_ptr->hp);
-    oldhp = newhp + (int32) dam;
+    newhp = (s32b) (m_ptr->hp);
+    oldhp = newhp + (s32b) dam;
 #else
     newhp = m_ptr->hp;
     oldhp = newhp + dam;
@@ -4142,7 +4142,7 @@ void
 self_knowledge()
 {
     int    i, j;
-    int32u f = 0L, f2 = 0L;
+    u32b f = 0L, f2 = 0L;
 
     for (i = INVEN_WIELD; i <= INVEN_LIGHT; i++) {	/* get flags from items */
 	if (inventory[i].tval != TV_NOTHING) {
@@ -4514,7 +4514,7 @@ static void
 spell_hit_monster(m_ptr, typ, dam, rad, y, x, by_player)
 monster_type *m_ptr;
 int           typ, *dam, rad, *y, *x;
-int8u         by_player;
+byte         by_player;
 {
     register creature_type *r_ptr;
     int blind = (py.flags.status & PY_BLIND) ? 1 : 0;
@@ -4917,7 +4917,7 @@ int typ, dir, y, x, dam;
     int t, tdam;
     monster_type *m_ptr;
     cave_type *c_ptr;
-    int8u path[OBJ_BOLT_RANGE+5][3]; /* pre calculate "flight" path, makes bolt
+    byte path[OBJ_BOLT_RANGE+5][3]; /* pre calculate "flight" path, makes bolt
 					calc faster because fns more likely to be in mem.
 					Also allows redraw at reasonable spd -CFT */  
 

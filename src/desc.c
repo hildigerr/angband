@@ -120,7 +120,7 @@ magic_init()
     reset_seed();
 }
 
-int16 
+s16b 
 object_offset(t_ptr)
 inven_type *t_ptr;
 {
@@ -155,8 +155,8 @@ void
 known1(i_ptr)
 inven_type *i_ptr;
 {
-    int16 offset;
-    int8u indexx;
+    s16b offset;
+    byte indexx;
 
     if ((offset = object_offset(i_ptr)) < 0)
 	return;
@@ -171,8 +171,8 @@ int
 known1_p(i_ptr)
 inven_type *i_ptr;
 {
-    int16 offset;
-    int8u indexx;
+    s16b offset;
+    byte indexx;
 
 /* Items which don't have a 'color' are always known1, so that they can be
  * carried in order in the inventory.  
@@ -241,8 +241,8 @@ static void
 unsample(i_ptr)
 inven_type *i_ptr;
 {
-    int16 offset;
-    int8u indexx;
+    s16b offset;
+    byte indexx;
 
 /* used to clear ID_DAMD flag, but I think it should remain set */
     i_ptr->ident &= ~(ID_MAGIK | ID_EMPTY);
@@ -260,8 +260,8 @@ void
 sample(i_ptr)
 inven_type *i_ptr;
 {
-    int16 offset;
-    int8u indexx;
+    s16b offset;
+    byte indexx;
 
     if ((offset = object_offset(i_ptr)) < 0)
 	return;

@@ -51,7 +51,7 @@ int *dir;
 void 
 activate_rod()
 {
-    int32u              i;
+    u32b              i;
     register int        l, ident;
     int                 item_val, j, k, chance, dir;
     register inven_type *i_ptr;

@@ -23,7 +23,7 @@
 void 
 quaff()
 {
-    int32u i, l;
+    u32b i, l;
     int    j, k, item_val;
     int    ident;
     register inven_type   *i_ptr;
@@ -282,7 +282,7 @@ quaff()
 		  case 34:
 		    ident = TRUE;
 		    if (!py.flags.hold_life && py.misc.exp > 0) {
-			int32               m, scale;
+			s32b               m, scale;
 
 			msg_print("You feel your memories fade.");
 			m = py.misc.exp / 5;

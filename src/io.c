@@ -1434,12 +1434,12 @@ void
 screen_map()
 {
     register int i, j;
-    static int8u screen_border[2][6] = {
+    static byte screen_border[2][6] = {
     {'+', '+', '+', '+', '-', '|'},	/* normal chars */
     {201, 187, 200, 188, 205, 186}	/* graphics chars */
     };
-    int8u map[MAX_WIDTH / RATIO + 1];
-    int8u tmp;
+    byte map[MAX_WIDTH / RATIO + 1];
+    byte tmp;
     int   priority[256];
     int   row, orow, col, myrow = 0, mycol = 0;
 

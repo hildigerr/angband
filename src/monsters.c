@@ -3182,9 +3182,9 @@ struct m_attack_type monster_attacks[N_MONS_ATTS] = {
 
 
 monster_type m_list[MAX_MALLOC];
-int16 m_level[MAX_MONS_LEVEL+1];
+s16b m_level[MAX_MONS_LEVEL+1];
 
 /* Blank monster values	*/
 monster_type blank_monster = {0,0,0,0,0,0,0,FALSE,0,FALSE};
-int16 mfptr;			/* Cur free monster ptr	*/
-int16 mon_tot_mult;		/* # of repro's of creature	*/
+s16b mfptr;			/* Cur free monster ptr	*/
+s16b mon_tot_mult;		/* # of repro's of creature	*/

@@ -335,8 +335,8 @@ void
 change_character()
 {
     register int          tmp_val;
-    register int32        tmp_lval;
-    int16u               *a_ptr;
+    register s32b        tmp_lval;
+    u16b               *a_ptr;
     vtype                 tmp_str;
     register struct misc *m_ptr;
 
@@ -538,7 +538,7 @@ wizard_create()
 {
     register int         tmp_val;
     int                  i, j, k;
-    int32                tmp_lval;
+    s32b                tmp_lval;
     char                 tmp_str[100];
     register inven_type *i_ptr;
     treasure_type        t_type, *t_ptr;

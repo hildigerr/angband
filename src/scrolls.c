@@ -24,7 +24,7 @@
 void 
 read_scroll()
 {
-    int32u                i;
+    u32b                i;
     int                   j, k, item_val, y, x;
     int                   tmp[6], used_up;
     bigvtype              out_val, tmp_str;

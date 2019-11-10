@@ -2173,7 +2173,7 @@ regenhp(percent)
 int percent;
 {
     register struct misc *p_ptr;
-    register int32        new_chp, new_chp_frac;
+    register s32b        new_chp, new_chp_frac;
     int                   old_chp;
 
     p_ptr = &py.misc;
@@ -2206,7 +2206,7 @@ regenmana(percent)
 int percent;
 {
     register struct misc *p_ptr;
-    register int32        new_mana, new_mana_frac;
+    register s32b        new_mana, new_mana_frac;
     int                   old_cmana;
 
     p_ptr = &py.misc;
@@ -3196,8 +3196,8 @@ activate()
 static void 
 examine_book()
 {
-    int32u               j1;
-    int32u               j2;
+    u32b               j1;
+    u32b               j2;
     int                  i, k, item_val, flag;
     int                  spell_index[63];
     register inven_type *i_ptr;
@@ -3228,9 +3228,9 @@ examine_book()
 	    msg_print("You do not understand the language.");
 	else {
 	    i = 0;
-	    j1 = (int32u) inventory[item_val].flags;
+	    j1 = (u32b) inventory[item_val].flags;
 	    first_spell = bit_pos(&j1);	/* check which spell was first */
-	    j1 = (int32u) inventory[item_val].flags;	/* restore j1 value */
+	    j1 = (u32b) inventory[item_val].flags;	/* restore j1 value */
 	    while (j1) {
 		k = bit_pos(&j1);
 		s_ptr = &magic_spell[py.misc.pclass - 1][k];
@@ -3239,10 +3239,10 @@ examine_book()
 		    i++;
 		}
 	    }
-	    j2 = (int32u) inventory[item_val].flags2;
+	    j2 = (u32b) inventory[item_val].flags2;
 	    if (first_spell == -1) {	/* if none from other set of flags */
 		first_spell = 32 + bit_pos(&j2);	/* get 1st spell # */
-		j2 = (int32u) inventory[item_val].flags2;	/* and restore j2 */
+		j2 = (u32b) inventory[item_val].flags2;	/* and restore j2 */
 	    }
 	    while (j2) {
 		k = bit_pos(&j2);

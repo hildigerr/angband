@@ -25,7 +25,7 @@
 void 
 aim()
 {
-    int32u                i;
+    u32b                i;
     register int          l, ident;
     int                   item_val, done_effect, j, k, chance, dir;
     register inven_type  *i_ptr;

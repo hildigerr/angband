@@ -117,7 +117,7 @@ int
 set_meteor_destroy(e)		   /* added -DGK */
 inven_type *e;
 {
-    int8u fi, fo;
+    byte fi, fo;
 
     fi = set_fire_destroy(e);
     fo = set_frost_destroy(e);
@@ -155,7 +155,7 @@ int
 set_plasma_destroy(e)		   /* added -DGK */
 inven_type *e;
 {
-    int8u fi, li;
+    byte fi, li;
 
     fi = set_fire_destroy(e);
     li = set_lightning_destroy(e);

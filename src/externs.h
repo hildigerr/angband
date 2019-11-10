@@ -35,7 +35,7 @@ extern int NO_SAVE;
    within creatures() via place_monster() and summon_monster() */
 extern int hack_monptr;
 
-extern int16 log_index;			/* Index to log file. -CJS- */
+extern s16b log_index;			/* Index to log file. -CJS- */
 extern vtype died_from;
 extern vtype savefile;			/* The save file. -CJS- */
 
@@ -64,7 +64,7 @@ extern int coin_type;			/* remember Creeping _xxx_ coin type -CWS */
 extern int opening_chest;		/* do not generate another chest -CWS */
 
 /* Unique artifact weapon flags */
-extern int32 GROND, RINGIL, AEGLOS, ARUNRUTH, MORMEGIL, ANGRIST, GURTHANG,
+extern s32b GROND, RINGIL, AEGLOS, ARUNRUTH, MORMEGIL, ANGRIST, GURTHANG,
   CALRIS, ANDURIL, STING, ORCRIST, GLAMDRING, DURIN, AULE, THUNDERFIST,
   BLOODSPIKE, DOOMCALLER, NARTHANC, NIMTHANC, DETHANC, GILETTAR, RILIA,
   BELANGIL, BALLI, LOTHARANG, FIRESTAR, ERIRIL, CUBRAGOL, BARD, COLLUIN,
@@ -75,7 +75,7 @@ extern int32 GROND, RINGIL, AEGLOS, ARUNRUTH, MORMEGIL, ANGRIST, GURTHANG,
   EONWE, THEODEN, ULMO, OSONDIR, TURMIL, TIL, DEATHWREAKER, AVAVIR, TARATOL;
 
 /* Unique artifact armour flags */
-extern int32 DOR_LOMIN, NENYA, NARYA, VILYA, BELEGENNON, FEANOR, ISILDUR,
+extern s32b DOR_LOMIN, NENYA, NARYA, VILYA, BELEGENNON, FEANOR, ISILDUR,
 SOULKEEPER, FINGOLFIN, ANARION, POWER, PHIAL, BELEG, DAL, PAURHACH,
 PAURNIMMEN, PAURAEGEN, PAURNEN, CAMMITHRIM, CAMBELEG, INGWE, CARLAMMAS,
 HOLHENNETH, AEGLIN, CAMLOST, NIMLOTH, NAR, BERUTHIEL, GORLIM, ELENDIL,
@@ -112,34 +112,34 @@ extern int feeling;				/* level feeling */
 extern int highscore_fd;		/* High score file descriptor */
 extern int command_count;		/* Repetition of commands. -CJS- */
 extern int default_dir;			/* Use last direction in repeated commands */
-extern int16 noscore;			/* Don't score this game. -CJS- */
-extern int32u randes_seed;		/* For encoding colors */
-extern int32u town_seed;		/* Seed for town generation */
+extern s16b noscore;			/* Don't score this game. -CJS- */
+extern u32b randes_seed;		/* For encoding colors */
+extern u32b town_seed;		/* Seed for town generation */
 extern char *old_state;			/* state array initialized by time -CWS */
 extern char *dummy_state;		/* dummy state array so that town/colors look
                                  * the same -CWS */
 
-extern int16 dun_level;         /* Cur dungeon level   */
-extern int16 object_level;		/* used to generate objects -CWS */
-extern int16 missile_ctr;		/* Counter for missiles */
+extern s16b dun_level;         /* Cur dungeon level   */
+extern s16b object_level;		/* used to generate objects -CWS */
+extern s16b missile_ctr;		/* Counter for missiles */
 extern int msg_flag;			/* Set with first msg  */
 extern vtype old_msg[MAX_SAVE_MSG];	/* Last messages -CJS- */
-extern int16 last_msg;			/* Where in the array is the last */
+extern s16b last_msg;			/* Where in the array is the last */
 extern int death;				/* True if died	      */
-extern int32 turn;				/* Cur turn of game    */
-extern int32 old_turn;			/* last turn feeling was felt */
+extern s32b turn;				/* Cur turn of game    */
+extern s32b old_turn;			/* last turn feeling was felt */
 extern int wizard;				/* Wizard flag	      */
 extern int to_be_wizard;
-extern int16 panic_save;		/* this is true if playing from a panic save */
+extern s16b panic_save;		/* this is true if playing from a panic save */
 
 extern int wait_for_more;
 
 extern char days[7][29];
 extern int closing_flag;		/* Used for closing   */
 
-extern int16 cur_height, cur_width;	/* Cur dungeon size    */
+extern s16b cur_height, cur_width;	/* Cur dungeon size    */
 /*  Following are calculated from max dungeon sizes		*/
-extern int16 max_panel_rows, max_panel_cols;
+extern s16b max_panel_rows, max_panel_cols;
 extern int panel_row, panel_col;
 extern int panel_row_min, panel_row_max;
 extern int panel_col_min, panel_col_max;
@@ -148,9 +148,9 @@ extern int panel_col_prt, panel_row_prt;
 #ifdef TARGET
 /* Targetting code, stolen from Morgul -CFT */
 extern int target_mode;
-extern int16u target_col;
-extern int16u target_row;
-extern int16u target_mon;
+extern u16b target_col;
+extern u16b target_row;
+extern u16b target_mon;
 #endif
 
 /*  Following are all floor definitions				*/
@@ -171,19 +171,19 @@ extern char *player_title[MAX_CLASS][MAX_PLAYER_LEVEL];
 extern race_type race[MAX_RACES];
 extern background_type background[MAX_BACKGROUND];
 #endif
-extern int32u player_exp[MAX_PLAYER_LEVEL];
-extern int16u player_hp[MAX_PLAYER_LEVEL];
-extern int16 char_row;
-extern int16 char_col;
+extern u32b player_exp[MAX_PLAYER_LEVEL];
+extern u16b player_hp[MAX_PLAYER_LEVEL];
+extern s16b char_row;
+extern s16b char_col;
 
 #if 0 /* not used? */
 extern char *dsp_race[MAX_RACES]; /* Short strings for races. -CJS- */
 #endif
 
-extern int8u rgold_adj[MAX_RACES][MAX_RACES];
+extern byte rgold_adj[MAX_RACES][MAX_RACES];
 
 extern class_type class[MAX_CLASS];
-extern int16 class_level_adj[MAX_CLASS][MAX_LEV_ADJ];
+extern s16b class_level_adj[MAX_CLASS][MAX_LEV_ADJ];
 
 /* Warriors don't have spells, so there is no entry for them. */
 #ifdef MACGAME
@@ -192,17 +192,17 @@ extern spell_type (*magic_spell)[63];
 extern spell_type magic_spell[MAX_CLASS-1][63];
 #endif
 extern const char *spell_names[127];
-extern int32u spell_learned;	/* Bit field for spells learnt -CJS- */
-extern int32u spell_learned2;	/* Bit field for spells learnt -CJS- */
-extern int32u spell_worked;		/* Bit field for spells tried -CJS- */
-extern int32u spell_worked2;	/* Bit field for spells tried -CJS- */
-extern int32u spell_forgotten;	/* Bit field for spells forgotten -JEW- */
-extern int32u spell_forgotten2;	/* Bit field for spells forgotten -JEW- */
-extern int8u spell_order[64];	/* remember order that spells are learned in */
-extern int32u spellmasks[MAX_CLASS][2];
+extern u32b spell_learned;	/* Bit field for spells learnt -CJS- */
+extern u32b spell_learned2;	/* Bit field for spells learnt -CJS- */
+extern u32b spell_worked;		/* Bit field for spells tried -CJS- */
+extern u32b spell_worked2;	/* Bit field for spells tried -CJS- */
+extern u32b spell_forgotten;	/* Bit field for spells forgotten -JEW- */
+extern u32b spell_forgotten2;	/* Bit field for spells forgotten -JEW- */
+extern byte spell_order[64];	/* remember order that spells are learned in */
+extern u32b spellmasks[MAX_CLASS][2];
 /* used to check if player knows all spells knowable to him -CFT */
-extern int16u player_init[MAX_CLASS][5];
-extern int16 total_winner;
+extern u16b player_init[MAX_CLASS][5];
+extern s16b total_winner;
 
 /* Following are store definitions				*/
 #ifdef MACGAME
@@ -215,7 +215,7 @@ extern store_type *store;
 #else
 extern store_type store[MAX_STORES];
 #endif
-extern int16u store_choice[MAX_STORES][STORE_CHOICES];
+extern u16b store_choice[MAX_STORES][STORE_CHOICES];
 #ifndef MAC
 extern int (*store_buy[MAX_STORES])();
 #endif
@@ -226,16 +226,16 @@ extern treasure_type *object_list;
 #else
 extern treasure_type object_list[MAX_OBJECTS];
 #endif
-extern int8u object_ident[OBJECT_IDENT_SIZE];
-extern int16 t_level[MAX_OBJ_LEVEL+1];
+extern byte object_ident[OBJECT_IDENT_SIZE];
+extern s16b t_level[MAX_OBJ_LEVEL+1];
 extern inven_type t_list[MAX_TALLOC];
 extern inven_type inventory[INVEN_ARRAY_SIZE];
 extern const char *special_names[SN_ARRAY_SIZE];
-extern int16 sorted_objects[MAX_DUNGEON_OBJ];
-extern int16 inven_ctr;			/* Total different obj's	*/
-extern int16 inven_weight;		/* Cur carried weight	*/
-extern int16 equip_ctr;			/* Cur equipment ctr	*/
-extern int16 tcptr;				/* Cur treasure heap ptr	*/
+extern s16b sorted_objects[MAX_DUNGEON_OBJ];
+extern s16b inven_ctr;			/* Total different obj's	*/
+extern s16b inven_weight;		/* Cur carried weight	*/
+extern s16b equip_ctr;			/* Cur equipment ctr	*/
+extern s16b tcptr;				/* Cur treasure heap ptr	*/
 
 /* Following are creature arrays and variables			*/
 #ifdef MACGAME
@@ -245,7 +245,7 @@ extern creature_type c_list[MAX_CREATURES];
 #endif
 extern describe_mon_type desc_list[MAX_CREATURES];
 extern monster_type m_list[MAX_MALLOC];
-extern int16 m_level[MAX_MONS_LEVEL+1];
+extern s16b m_level[MAX_MONS_LEVEL+1];
 extern m_attack_type monster_attacks[N_MONS_ATTS];
 #ifdef MAC
 extern recall_type *c_recall;
@@ -253,8 +253,8 @@ extern recall_type *c_recall;
 extern recall_type c_recall[MAX_CREATURES];	/* Monster memories. -CJS- */
 #endif
 extern monster_type blank_monster; /* Blank monster values	*/
-extern int16 mfptr;				   /* Cur free monster ptr	*/
-extern int16 mon_tot_mult;		   /* # of repro's of creature	*/
+extern s16b mfptr;				   /* Cur free monster ptr	*/
+extern s16b mon_tot_mult;		   /* # of repro's of creature	*/
 
 /* Following are arrays for descriptive pieces			*/
 #ifdef MACGAME
@@ -275,9 +275,9 @@ extern const char *amulets[MAX_AMULETS];
 extern const char *syllables[MAX_SYLLABLES];
 #endif
 
-extern int8u blows_table[11][12];
+extern byte blows_table[11][12];
 
-extern int16u normal_table[NORMAL_TABLE_SIZE];
+extern u16b normal_table[NORMAL_TABLE_SIZE];
 
 /* Initialized data which had to be moved from some other file */
 /* Since these get modified, macrsrc.c must be able to access them */
@@ -289,7 +289,7 @@ extern char last_command;		/* Memory of previous command. */
 extern int light_flag;
 
 #ifdef MSDOS
-extern int8u	floorsym, wallsym;
+extern byte	floorsym, wallsym;
 extern int	ansi, saveprompt;
 extern char	moriatop[], moriasav[];
 #endif
@@ -358,7 +358,7 @@ void inscribe(inven_type *, const char *);
 void invcopy(inven_type *, int);
 void desc_charges(int);
 void desc_remain(int);
-int16 object_offset(inven_type *);
+s16b object_offset(inven_type *);
 
 /* dungeon.c */
 void dungeon(void);
@@ -430,24 +430,24 @@ int main(int, char **);
 
 /* misc1.c */
 void init_seeds();
-void set_seed(int32u);
+void set_seed(u32b);
 void reset_seed(void);
 int check_time(void);
 int randnor(int, int);
-int bit_pos(int32u *);
+int bit_pos(u32b *);
 void panel_bounds(void);
 int get_panel(int, int, int);
 int next_to_wall(int, int);
 int next_to_corr(int, int);
 int damroll(int, int);
-int pdamroll(int8u *);
+int pdamroll(byte *);
 int los(int, int, int, int);
 unsigned char loc_symbol(int, int);
 int test_light(int, int);
 void prt_map(void);
 void add_food(int);
 int popm(void);
-int max_hp(int8u *);
+int max_hp(byte *);
 int place_monster(int, int, int, int);
 int place_win_monster(void);
 void place_group(int, int, int, int);
@@ -511,7 +511,7 @@ void prt_state(void);
 void prt_speed(void);
 void prt_study(void);
 void prt_winner(void);
-int16u modify_stat(int, int);
+u16b modify_stat(int, int);
 void set_use_stat(int);
 int inc_stat(int);
 int dec_stat(int);
@@ -550,7 +550,7 @@ void calc_mana(int);
 void prt_experience(void);
 void calc_hitpoints(void);
 void insert_str(char *, const char *, const char *);
-void insert_lnum(char *, const char *, int32, int);
+void insert_lnum(char *, const char *, s32b, int);
 int enter_wiz_mode(void);
 int attack_blows(int, int *);
 int tot_dam(struct inven_type *, int, int);
@@ -560,7 +560,7 @@ int player_saves(void);
 int find_range(int, int, int *, int *);
 void teleport(int);
 void check_view(void);
-void place_special(int, int, int32u);
+void place_special(int, int, u32b);
 int place_ghost(void);
 void prt_cut(void);
 void prt_stun(void);
@@ -602,7 +602,7 @@ void find_init(int);
 void find_run(void);
 void end_find(void);
 void area_affect(int, int, int);
-int minus_ac(int32u);
+int minus_ac(u32b);
 void corrode_gas(const char *);
 void poison_gas(int, const char *);
 void fire_dam(int, const char *);
@@ -617,7 +617,7 @@ void delete_monster(int);
 void fix1_delete_monster(int);
 void fix2_delete_monster(int);
 int delete_object(int, int);
-int32u monster_death(int, int, int32u, int32u, int32u);
+u32b monster_death(int, int, u32b, u32b, u32b);
 int mon_take_hit(int, int, int);
 void move_char(int, int);
 void openobject(void);
@@ -749,7 +749,7 @@ void light_line(int, int, int);
 void frost_line(int, int, int, int);
 void starlite(int, int);
 int disarm_all(int, int, int);
-void get_flags(int, int32u *, int32u *, int (**)());
+void get_flags(int, u32b *, u32b *, int (**)());
 void fire_bolt(int, int, int, int, int);
 void fire_ball(int, int, int, int, int, int);
 void breath(int, int, int, int, char *, int);
@@ -790,12 +790,12 @@ void lose_wis(void);
 void lose_dex(void);
 void lose_con(void);
 void lose_chr(void);
-void lose_exp(int32);
+void lose_exp(s32b);
 int slow_poison(void);
 void bless(int);
 void detect_inv2(int);
 void destroy_area(int, int);
-int enchant(inven_type *, int, int8u);
+int enchant(inven_type *, int, byte);
 void elemental_brand(void);
 int remove_curse(void);
 int restore_level(void);
@@ -808,7 +808,7 @@ int lose_all_info(void);
 void tele_level(void);
 void identify_pack(void);
 int fear_monster(int, int, int, int);
-int banish_creature(int32u, int);
+int banish_creature(u32b, int);
 int remove_all_curse(void);
 void darken_room(int, int);
 void lite_spot(int, int);
@@ -819,15 +819,15 @@ void line_spell(int, int, int, int, int);
 void use(void);
 
 /* store1.c */
-int32 item_value(struct inven_type *);
-int32 sell_price(int, int32 *, int32 *, struct inven_type *);
+s32b item_value(struct inven_type *);
+s32b sell_price(int, s32b *, s32b *, struct inven_type *);
 int store_check_num(inven_type *, int);
 void store_carry(int, int *, struct inven_type *);
 void store_destroy(int, int, int);
 void store_init(void);
 void store_maint(void);
-int noneedtobargain(int, int32);
-void updatebargain(int, int32, int32);
+int noneedtobargain(int, s32b);
+void updatebargain(int, s32b, s32b);
 
 /* store2.c */
 void enter_store(int);
@@ -913,7 +913,7 @@ void inscribe();
 void invcopy();
 void desc_charges();
 void desc_remain();
-int16 object_offset();
+s16b object_offset();
 
 /* dungeon.c */
 void dungeon();
@@ -1043,7 +1043,7 @@ void prt_state();
 void prt_speed();
 void prt_study();
 void prt_winner();
-int16u modify_stat();
+u16b modify_stat();
 void set_use_stat();
 int inc_stat();
 int dec_stat();
@@ -1155,7 +1155,7 @@ void fix1_delete_monster();
 void fix2_delete_monster();
 int multiply_monster();
 int delete_object();
-int32u monster_death();
+u32b monster_death();
 int mon_take_hit();
 void move_char();
 void openobject();
@@ -1330,8 +1330,8 @@ void line_spell();
 void use();
 
 /* store1.c */
-int32 item_value();
-int32 sell_price();
+s32b item_value();
+s32b sell_price();
 int store_check_num();
 void store_carry();
 void store_destroy();

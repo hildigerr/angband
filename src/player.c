@@ -13,11 +13,11 @@
 /* Player record for most player related info */
 player_type py;
 /* player location in dungeon */
-int16 char_row;
-int16 char_col;
+s16b char_row;
+s16b char_col;
 /* calculated base hp values for player at each level, store them so that
    drain life + restore life does not affect hit points */
-int16u player_hp[MAX_PLAYER_LEVEL];
+u16b player_hp[MAX_PLAYER_LEVEL];
 
 /* Class titles for different levels				*/
 #ifdef MACGAME
@@ -94,7 +94,7 @@ const char *player_title[MAX_CLASS][MAX_PLAYER_LEVEL] = {
 #endif
 
 /* Base experience levels, may be adjusted up for race and/or class*/
-int32u player_exp[MAX_PLAYER_LEVEL] = {
+u32b player_exp[MAX_PLAYER_LEVEL] = {
       10,      25,	45,	 70,	  100,	    140,      200,	280,
      380,     500,     650,	850,	 1100,	   1400,     1800,     2300,
     2900,    3600,    4400,    5400,	 6800,	   8400,    10200,    12500,
@@ -355,7 +355,7 @@ class_type class[MAX_CLASS] = {
    headaches in its use */
 /* CLA_MISC_HIT is identical to CLA_SAVE, which takes advantage of
    the fact that the save values are independent of the class */
-int16 class_level_adj[MAX_CLASS][MAX_LEV_ADJ] = {
+s16b class_level_adj[MAX_CLASS][MAX_LEV_ADJ] = {
 /*	       bth    bthb   device  disarm   save/misc hit  */
 /* Warrior */ {	4,	4,	2,	2,	3 },
 /* Mage    */ { 2,	2,	4,	2,	3 },
@@ -365,13 +365,13 @@ int16 class_level_adj[MAX_CLASS][MAX_LEV_ADJ] = {
 /* Paladin */ { 3,	2,	3,	2,	3 }
 };
 
-int32u spell_learned = 0;	/* bit mask of spells learned */
-int32u spell_learned2 = 0;	/* bit mask of spells learned */
-int32u spell_worked = 0;	/* bit mask of spells tried and worked */
-int32u spell_worked2 = 0;	/* bit mask of spells tried and worked */
-int32u spell_forgotten = 0;	/* bit mask of spells learned but forgotten */
-int32u spell_forgotten2 = 0;	/* bit mask of spells learned but forgotten */
-int8u spell_order[64];		/* order spells learned/remembered/forgotten */
+u32b spell_learned = 0;	/* bit mask of spells learned */
+u32b spell_learned2 = 0;	/* bit mask of spells learned */
+u32b spell_worked = 0;	/* bit mask of spells tried and worked */
+u32b spell_worked2 = 0;	/* bit mask of spells tried and worked */
+u32b spell_forgotten = 0;	/* bit mask of spells learned but forgotten */
+u32b spell_forgotten2 = 0;	/* bit mask of spells learned but forgotten */
+byte spell_order[64];		/* order spells learned/remembered/forgotten */
 
 /* Warriors don't have spells, so there is no entry for them.  Note that
    this means you must always subtract one from the py.misc.pclass before
@@ -868,7 +868,7 @@ const char *spell_names[127] = {
 /* 356 = Food Ration, 365 = Wooden Torch, 123 = Cloak, 30 = Stiletto,
    103 = Soft Leather Armor, 318 = Beginners-Magic, 322 = Beginners Handbook */
 
-int16u player_init[MAX_CLASS][5] = {
+u16b player_init[MAX_CLASS][5] = {
 		{ MDO, MDO+21,  34, 109, 258},	/* Warrior	 */
 		{ MDO, MDO+21,  29, 330, 220},	/* Mage		 */
 		{ MDO, MDO+21,  53, 334, 242},	/* Priest	 */
@@ -881,7 +881,7 @@ int16u player_init[MAX_CLASS][5] = {
 /* spellmasks[][] is used to control the "you seem to be missing a book"
 	messages, because they cause a little confusion, and a bit of
 	irritation.  -CFT */
-int32u spellmasks[MAX_CLASS][2] = {
+u32b spellmasks[MAX_CLASS][2] = {
 	{ 0x0L, 0x0L },			/* warrior */
 	{ 0xffffffafL, 0x0fffffffL },	/* mage */
 	{ 0xffffffffL, 0x03ffffffL },	/* priest */

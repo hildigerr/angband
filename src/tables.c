@@ -79,7 +79,7 @@ owner_type owners[MAX_OWNERS] = {
 
 /* Buying and selling adjustments for character race VS store	*/
 /* owner race							 */
-int8u rgold_adj[MAX_RACES][MAX_RACES] = {
+byte rgold_adj[MAX_RACES][MAX_RACES] = {
 			/*Hum, HfE, Elf,  Hal, Gno, Dwa, HfO, HfT, Dun, HiE*/
 /*Human		 */	 { 100, 105, 105, 110, 113, 115, 120, 125, 100, 105},
 /*Half-Elf	 */	 { 110, 100, 100, 105, 110, 120, 125, 130, 110, 100},
@@ -96,7 +96,7 @@ int8u rgold_adj[MAX_RACES][MAX_RACES] = {
 #define MDO MAX_DUNGEON_OBJ
 
 /* object_list[] index of objects that may appear in the store */
-int16u store_choice[MAX_STORES][STORE_CHOICES] = {
+u16b store_choice[MAX_STORES][STORE_CHOICES] = {
 	/* General Store */
 {MDO,MDO,MDO,MDO,MDO,MDO,MDO,MDO,MDO+21,MDO+21,MDO+21,MDO+21,MDO+22,MDO+22,
  MDO+22,MDO+1,MDO+2,MDO+3,MDO+4,
@@ -229,7 +229,7 @@ const char *syllables[MAX_SYLLABLES] = {
 #endif
 
 /* used to calculate the number of blows the player gets in combat */
-int8u blows_table[11][12] = {
+byte blows_table[11][12] = {
 /* STR/W:	   9  18  67  107  117  118  128  138  148  158  168 more : DEX */
 /* <2 */	{  1,  1,  1,   1,   1,   1,   2,   2,   2,   2,   2,   3},
 /* <3 */	{  1,  1,  1,   1,   2,   2,   3,   3,   3,   3,   3,   4},
@@ -249,7 +249,7 @@ int8u blows_table[11][12] = {
 /* this table is used to generate a psuedo-normal distribution.	 See the
    function randnor() in misc1.c, this is much faster than calling
    transcendental function to calculate a true normal distribution */
-int16u normal_table[NORMAL_TABLE_SIZE] = {
+u16b normal_table[NORMAL_TABLE_SIZE] = {
      206,     613,    1022,    1430,	1838,	 2245,	  2652,	   3058,
     3463,    3867,    4271,    4673,	5075,	 5475,	  5874,	   6271,
     6667,    7061,    7454,    7845,	8234,	 8621,	  9006,	   9389,

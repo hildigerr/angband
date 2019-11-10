@@ -70,7 +70,7 @@ static void special_pit(int, int, int);
 static void build_tunnel(int, int, int, int);
 static int next_to(int, int);
 static void try_door(int, int);
-static void new_spot(int16 *, int16 *);
+static void new_spot(s16b *, s16b *);
 static void build_pit(int, int);
 static void build_store(int, int, int);
 #else
@@ -1041,7 +1041,7 @@ int yval, xval;
 {
     register int        i, j, y_depth, x_right;
     int                 y_height, x_left;
-    int8u               floor;
+    byte               floor;
     register cave_type *c_ptr, *d_ptr;
 
     if (dun_level <= randint(25))
@@ -1120,7 +1120,7 @@ int yval, xval;
     int                 y_height, y_depth;
     int                 x_left, x_right, limit;
     register int        i0, i, j;
-    int8u               floor;
+    byte               floor;
     register cave_type *c_ptr, *d_ptr;
 
     if (dun_level <= randint(25))
@@ -1202,8 +1202,8 @@ int yval, xval;
  */
     char               *t;
     char                buf[50];
-    int8u               floor;
-    int8u               wall;
+    byte               floor;
+    byte               wall;
     register cave_type *c_ptr;
 
     if (dun_level <= randint(25))
@@ -1625,7 +1625,7 @@ int yval, xval;
 {
     register int        i, j, y_height, x_left;
     int                 y_depth, x_right, tmp;
-    int8u               floor;
+    byte               floor;
     register cave_type *c_ptr, *d_ptr;
 
     if (dun_level <= randint(25))
@@ -1890,7 +1890,7 @@ int yval, xval;
     int                 y_height, y_depth;
     int                 x_left, x_right;
     register int        tmp, i, j;
-    int8u               floor;
+    byte               floor;
     register cave_type *c_ptr;
 
 /* quick, basic bounds-check... If too close, then this is better suited to a
@@ -2085,7 +2085,7 @@ int yval, xval, type;
 {
     register int        i, j, y_height, x_left;
     int                 y_depth, x_right, colour;
-    int8u               floor;
+    byte               floor;
     register cave_type *c_ptr, *d_ptr;
 
     floor = DARK_FLOOR;
@@ -2456,7 +2456,7 @@ register int y, x;
 /* Returns random co-ordinates				-RAK-	 */
 static void 
 new_spot(y, x)
-int16 *y, *x;
+s16b *y, *x;
 {
     register int        i, j;
     register cave_type *c_ptr;
@@ -2509,7 +2509,7 @@ cave_gen()
     register int i, j, k;
     int          y1, x1, y2, x2, pick1, pick2, tmp;
     int          row_rooms, col_rooms, alloc_level;
-    int16        yloc[400], xloc[400];
+    s16b        yloc[400], xloc[400];
     int          pit_ok, spec_level;
 
     rating = 0;

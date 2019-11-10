@@ -53,12 +53,12 @@ static void get_money();
 #endif
 
 struct previous {
-    int16u age;
-    int16u wt;
-    int16u ht;
-    int16  disarm;
-    int16u stat[6];
-    int16u sc;
+    u16b age;
+    u16b wt;
+    u16b ht;
+    s16b  disarm;
+    u16b stat[6];
+    u16b sc;
     char   history[4][60];
     background_type     bg;
 }      prev;
@@ -98,7 +98,7 @@ get_stats()
 static int
 adjust_stat(stat_value, amount, auto_roll)
 int stat_value;
-int16 amount;
+s16b amount;
 int auto_roll;
 {
   register int i;
@@ -145,7 +145,7 @@ int stat;
 int amount;
 {
   py.stats.max_stat[stat] =
-        adjust_stat(py.stats.max_stat[stat], (int16) amount, FALSE);
+        adjust_stat(py.stats.max_stat[stat], (s16b) amount, FALSE);
 }
 
 
@@ -155,7 +155,7 @@ set_prev_stats()
     register int        i;
 
     for (i = 0; i < 6; i++)
-	prev.stat[i] = (int16u) py.stats.max_stat[i];
+	prev.stat[i] = (u16b) py.stats.max_stat[i];
 
     return;
 }
@@ -620,7 +620,7 @@ get_class_choice()
     int          cl[MAX_CLASS], exit_flag;
     class_type   *c_ptr;
     char         tmp_str[80], s;
-    int32u       mask;
+    u32b       mask;
 
     for (j = 0; j < MAX_CLASS; j++)
 	cl[j] = 0;
@@ -683,7 +683,7 @@ static void
 get_money()
 {
     register int        tmp, gold;
-    register int16u    *a_ptr;
+    register u16b    *a_ptr;
 
     a_ptr = py.stats.max_stat;
     tmp = monval(a_ptr[A_STR]) + monval(a_ptr[A_INT])
@@ -710,7 +710,7 @@ create_character()
     register char       c;
 
 #ifdef AUTOROLLER
-    int32u       auto_round = 0;
+    u32b       auto_round = 0;
     register int i;
     int          stat[6];
     int          autoroll = 0;

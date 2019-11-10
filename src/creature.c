@@ -32,9 +32,9 @@ static int  check_mon_lite(int, int);
 static void get_moves(int, int *);
 static int  monster_critical(int, int, int);
 static void make_attack(int);
-static void make_move(int, int *, int32u *);
+static void make_move(int, int *, u32b *);
 static void mon_cast_spell(int, int *);
-static void mon_move(int, int32u *);
+static void mon_move(int, u32b *);
 static void shatter_quake(int, int);
 static void br_wall(int, int);
 #else
@@ -61,7 +61,7 @@ int monptr;
     register creature_type *r_ptr;
 
 #ifdef ATARIST_MWC
-    int32u                 holder;
+    u32b                 holder;
 
 #endif
 
@@ -282,7 +282,7 @@ get_moves(monptr, mm)
  * lvl  23++  no afraid monsters      [ level=less afraid m. ]
  */
 
-    if (((int16)(py.misc.lev - 34 - c_list[(m_list[monptr]).mptr].level +
+    if (((s16b)(py.misc.lev - 34 - c_list[(m_list[monptr]).mptr].level +
 		 ((m_list[monptr].maxhp) % 8)) > 0)
 	|| m_list[monptr].monfear) { /* Run away!  Run away! -DGK */
 	y = (-y);     /* FIXME: make monsters running away more intelligent */
@@ -464,7 +464,7 @@ int monptr;
     int                    i, j, damage, flag, attackn, notice, visible;
     int                    shatter = FALSE;
     int                    CUT = FALSE, STUN = FALSE;
-    int32                  gold;
+    s32b                  gold;
     attid                  *attstr, *attstr_orig;
     vtype                  cdesc, tmp_str, ddesc;
     register creature_type *r_ptr;
@@ -472,7 +472,7 @@ int monptr;
     register struct misc   *p_ptr;
     register struct flags  *f_ptr;
     register inven_type    *i_ptr;
-    int8u                  blinked = 0;	/* flag to see if blinked away (after
+    byte                  blinked = 0;	/* flag to see if blinked away (after
 					 * steal) -CFT */
 
     if (death)			        /* don't beat a dead body! */
@@ -1042,7 +1042,7 @@ int monptr;
 		break;
 	      case 21:		   /* Disenchant	   */
 		if (!py.flags.disenchant_resist) {
-		    int8u               chance = 0;
+		    byte               chance = 0;
 
 		    take_hit(damage, ddesc);
 		    flag = FALSE;
@@ -1302,16 +1302,16 @@ int monptr;
 static void 
 make_move(monptr, mm, rcmove)
 int     monptr, *mm;
-int32u *rcmove;
+u32b *rcmove;
 {
     int                   i, newy, newx, do_turn, do_move, stuck_door;
-    int32u                movebits;
+    u32b                movebits;
     register cave_type    *c_ptr;
     register monster_type *m_ptr;
     register inven_type   *t_ptr;
 
 #ifdef ATARIST_MWC
-    int32u              holder;
+    u32b              holder;
 #endif
 
     i = 0;
@@ -1499,7 +1499,7 @@ int32u *rcmove;
 #endif
 		{
 /* used in code to prevent orcs from picking up Slay Orc weapons, etc -CFT */
-		    int32u t;
+		    u32b t;
 
 		    c_ptr = &cave[newy][newx];
 
@@ -1579,7 +1579,7 @@ static void
 mon_cast_spell(monptr, took_turn)
 int monptr, *took_turn;
 {
-    int32u                 i;
+    u32b                 i;
     int                    y, x, chance, thrown_spell, r1;
     register int           k;
     int                    spell_choice[64], desperate = FALSE;
@@ -2690,7 +2690,7 @@ int y, x, cr_index, monptr;
     int                 result;
 
 #ifdef ATARIST_MWC
-    int32u              holder;
+    u32b              holder;
 #endif
 
     i = 0;
@@ -2756,7 +2756,7 @@ int y, x, cr_index, monptr;
 static void 
 mon_move(monptr, rcmove)
 int                 monptr;
-int32u             *rcmove;
+u32b             *rcmove;
 {
     register int           i, j;
     int                    k, move_test, dir;
@@ -2780,7 +2780,7 @@ int32u             *rcmove;
 		msg_print(out_val);
 	    }
 	}
-	m_ptr->monfear = (int8u) t;
+	m_ptr->monfear = (byte) t;
     }
 /* Does the critter multiply?				   */
     if ((r_ptr->cmove & CM_MULTIPLY) && (MAX_MON_MULT >= mon_tot_mult) &&
@@ -2870,7 +2870,7 @@ int32u             *rcmove;
 	    t -= randint(c_list[m_ptr->mptr].level / 10);
 	    if (t < 0)
 		t = 0;
-	    m_ptr->confused = (int8u) t;
+	    m_ptr->confused = (byte) t;
 	}
 	move_test = TRUE;
     }
@@ -2948,7 +2948,7 @@ int attack;
     register int          i, k;
     register monster_type *m_ptr;
     recall_type           *r_ptr;
-    int32u                notice, rcmove;
+    u32b                notice, rcmove;
     int                   wake, ignore;
     vtype                 cdesc;
 
@@ -3125,7 +3125,7 @@ int mon_y, mon_x;
 			if ((r_ptr->cdefense & UNIQUE) && (m_ptr->hp < 0))
 			    m_ptr->hp = 0;
 			if (m_ptr->hp < 0) {
-			    int32u              temp, treas;
+			    u32b              temp, treas;
 
 			    (void)sprintf(out_val, "%s is embedded in the rock.",
 					  m_name);

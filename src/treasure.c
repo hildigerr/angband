@@ -1210,16 +1210,16 @@ const char *special_names[SN_ARRAY_SIZE] = {
 /* 180 */
 };
 
-int16 sorted_objects[MAX_DUNGEON_OBJ];
+s16b sorted_objects[MAX_DUNGEON_OBJ];
 
 /* Identified objects flags					*/
-int8u object_ident[OBJECT_IDENT_SIZE];
-int16 t_level[MAX_OBJ_LEVEL+1];
+byte object_ident[OBJECT_IDENT_SIZE];
+s16b t_level[MAX_OBJ_LEVEL+1];
 inven_type t_list[MAX_TALLOC];
 inven_type inventory[INVEN_ARRAY_SIZE];
 
 /* Treasure related values					*/
-int16 inven_ctr = 0;		/* Total different obj's	*/
-int16 inven_weight = 0;		/* Cur carried weight	*/
-int16 equip_ctr = 0;		/* Cur equipment ctr	*/
-int16 tcptr;			/* Cur treasure heap ptr	*/
+s16b inven_ctr = 0;		/* Total different obj's	*/
+s16b inven_weight = 0;		/* Cur carried weight	*/
+s16b equip_ctr = 0;		/* Cur equipment ctr	*/
+s16b tcptr;			/* Cur treasure heap ptr	*/

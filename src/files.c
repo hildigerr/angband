@@ -536,7 +536,7 @@ print_objects()
 		    }
 		    (void)fprintf(file1, "%d %s.\n", i_ptr->level, tmp_str);
 		}
-		pusht((int16) j);
+		pusht((s16b) j);
 		(void)fclose(file1);
 		prt("Completed.", 0, 0);
 	    } else

@@ -80,10 +80,10 @@ char *malloc();
  * procedure 
  */
 static FILE        *fileptr;
-static int8u        xor_byte;
+static byte        xor_byte;
 static int          from_savefile; /* can overwrite old savefile when save */
-static int32u       start_time;	   /* time that play started */
-static int8u        version_maj, version_min, patch_level;
+static u32b       start_time;	   /* time that play started */
+static byte        version_maj, version_min, patch_level;
 
 /*
  * This save package was brought to by			-JWT- and
@@ -109,26 +109,26 @@ static void
 wr_unique(item)
 register struct unique_mon *item;
 {
-    wr_long((int32u) item->exist);
-    wr_long((int32u) item->dead);
+    wr_long((u32b) item->exist);
+    wr_long((u32b) item->dead);
 }
 
 static void 
 rd_unique(item)
 register struct unique_mon *item;
 {
-    rd_long((int32u *) & item->exist);
-    rd_long((int32u *) & item->dead);
+    rd_long((u32b *) & item->exist);
+    rd_long((u32b *) & item->dead);
 }
 
 
 static int 
 sv_write()
 {
-    int32u              l;
+    u32b              l;
     register int        i, j;
     int                 count;
-    int8u               char_tmp, prev_char;
+    byte               char_tmp, prev_char;
     register cave_type   *c_ptr;
     register recall_type *r_ptr;
     struct stats         *s_ptr;
@@ -320,7 +320,7 @@ sv_write()
 	    r_ptr->r_spells2 || r_ptr->r_spells3 || r_ptr->r_spells ||
 	    r_ptr->r_deaths || r_ptr->r_attacks[0] || r_ptr->r_attacks[1] ||
 	    r_ptr->r_attacks[2] || r_ptr->r_attacks[3]) {
-	    wr_short((int16u) i);
+	    wr_short((u16b) i);
 	    wr_long(r_ptr->r_cmove);
 	    wr_long(r_ptr->r_spells);
 	    wr_long(r_ptr->r_spells2);
@@ -333,9 +333,9 @@ sv_write()
 	    wr_bytes(r_ptr->r_attacks, MAX_MON_NATTACK);
 	}
     }
-    wr_short((int16u) 0xFFFF);	   /* sentinel to indicate no more monster info */
+    wr_short((u16b) 0xFFFF);	   /* sentinel to indicate no more monster info */
 
-    wr_short((int16u) log_index);
+    wr_short((u16b) log_index);
     wr_long(l);
     wr_long(l);	/* added some duplicates, for future flags expansion -CWS */
     wr_long(l);
@@ -344,40 +344,40 @@ sv_write()
     m_ptr = &py.misc;
     wr_string(m_ptr->name);
     wr_byte(m_ptr->male);
-    wr_long((int32u) m_ptr->au);
-    wr_long((int32u) m_ptr->max_exp);
-    wr_long((int32u) m_ptr->exp);
+    wr_long((u32b) m_ptr->au);
+    wr_long((u32b) m_ptr->max_exp);
+    wr_long((u32b) m_ptr->exp);
     wr_short(m_ptr->exp_frac);
     wr_short(m_ptr->age);
     wr_short(m_ptr->ht);
     wr_short(m_ptr->wt);
     wr_short(m_ptr->lev);
     wr_short(m_ptr->max_dlv);
-    wr_short((int16u) m_ptr->srh);
-    wr_short((int16u) m_ptr->fos);
-    wr_short((int16u) m_ptr->bth);
-    wr_short((int16u) m_ptr->bthb);
-    wr_short((int16u) m_ptr->mana);
-    wr_short((int16u) m_ptr->mhp);
-    wr_short((int16u) m_ptr->ptohit);
-    wr_short((int16u) m_ptr->ptodam);
-    wr_short((int16u) m_ptr->pac);
-    wr_short((int16u) m_ptr->ptoac);
-    wr_short((int16u) m_ptr->dis_th);
-    wr_short((int16u) m_ptr->dis_td);
-    wr_short((int16u) m_ptr->dis_ac);
-    wr_short((int16u) m_ptr->dis_tac);
-    wr_short((int16u) m_ptr->disarm);
-    wr_short((int16u) m_ptr->save);
-    wr_short((int16u) m_ptr->sc);
-    wr_short((int16u) m_ptr->stl);
+    wr_short((u16b) m_ptr->srh);
+    wr_short((u16b) m_ptr->fos);
+    wr_short((u16b) m_ptr->bth);
+    wr_short((u16b) m_ptr->bthb);
+    wr_short((u16b) m_ptr->mana);
+    wr_short((u16b) m_ptr->mhp);
+    wr_short((u16b) m_ptr->ptohit);
+    wr_short((u16b) m_ptr->ptodam);
+    wr_short((u16b) m_ptr->pac);
+    wr_short((u16b) m_ptr->ptoac);
+    wr_short((u16b) m_ptr->dis_th);
+    wr_short((u16b) m_ptr->dis_td);
+    wr_short((u16b) m_ptr->dis_ac);
+    wr_short((u16b) m_ptr->dis_tac);
+    wr_short((u16b) m_ptr->disarm);
+    wr_short((u16b) m_ptr->save);
+    wr_short((u16b) m_ptr->sc);
+    wr_short((u16b) m_ptr->stl);
     wr_byte(m_ptr->pclass);
     wr_byte(m_ptr->prace);
     wr_byte(m_ptr->hitdie);
     wr_byte(m_ptr->expfact);
-    wr_short((int16u) m_ptr->cmana);
+    wr_short((u16b) m_ptr->cmana);
     wr_short(m_ptr->cmana_frac);
-    wr_short((int16u) m_ptr->chp);
+    wr_short((u16b) m_ptr->chp);
     wr_short(m_ptr->chp_frac);
     for (i = 0; i < 4; i++)
 	wr_string(m_ptr->history[i]);
@@ -385,41 +385,41 @@ sv_write()
     s_ptr = &py.stats;
     wr_shorts(s_ptr->max_stat, 6);
     wr_bytes(s_ptr->cur_stat, 6);               /* Was wr_shorts -TL */
-    wr_shorts((int16u *) s_ptr->mod_stat, 6);
+    wr_shorts((u16b *) s_ptr->mod_stat, 6);
     wr_shorts(s_ptr->use_stat, 6);
 
     f_ptr = &py.flags;
     wr_long(f_ptr->status);
-    wr_short((int16u) f_ptr->rest);
-    wr_short((int16u) f_ptr->blind);
-    wr_short((int16u) f_ptr->paralysis);
-    wr_short((int16u) f_ptr->confused);
-    wr_short((int16u) f_ptr->food);
-    wr_short((int16u) f_ptr->food_digested);
-    wr_short((int16u) f_ptr->protection);
-    wr_short((int16u) f_ptr->speed);
-    wr_short((int16u) f_ptr->fast);
-    wr_short((int16u) f_ptr->slow);
-    wr_short((int16u) f_ptr->afraid);
-    wr_short((int16u) f_ptr->cut);
-    wr_short((int16u) f_ptr->stun);
-    wr_short((int16u) f_ptr->poisoned);
-    wr_short((int16u) f_ptr->image);
-    wr_short((int16u) f_ptr->protevil);
-    wr_short((int16u) f_ptr->invuln);
-    wr_short((int16u) f_ptr->hero);
-    wr_short((int16u) f_ptr->shero);
-    wr_short((int16u) f_ptr->shield);
-    wr_short((int16u) f_ptr->blessed);
-    wr_short((int16u) f_ptr->resist_heat);
-    wr_short((int16u) f_ptr->resist_cold);
-    wr_short((int16u) f_ptr->resist_acid);
-    wr_short((int16u) f_ptr->resist_light);
-    wr_short((int16u) f_ptr->resist_poison);
-    wr_short((int16u) f_ptr->detect_inv);
-    wr_short((int16u) f_ptr->word_recall);
-    wr_short((int16u) f_ptr->see_infra);
-    wr_short((int16u) f_ptr->tim_infra);
+    wr_short((u16b) f_ptr->rest);
+    wr_short((u16b) f_ptr->blind);
+    wr_short((u16b) f_ptr->paralysis);
+    wr_short((u16b) f_ptr->confused);
+    wr_short((u16b) f_ptr->food);
+    wr_short((u16b) f_ptr->food_digested);
+    wr_short((u16b) f_ptr->protection);
+    wr_short((u16b) f_ptr->speed);
+    wr_short((u16b) f_ptr->fast);
+    wr_short((u16b) f_ptr->slow);
+    wr_short((u16b) f_ptr->afraid);
+    wr_short((u16b) f_ptr->cut);
+    wr_short((u16b) f_ptr->stun);
+    wr_short((u16b) f_ptr->poisoned);
+    wr_short((u16b) f_ptr->image);
+    wr_short((u16b) f_ptr->protevil);
+    wr_short((u16b) f_ptr->invuln);
+    wr_short((u16b) f_ptr->hero);
+    wr_short((u16b) f_ptr->shero);
+    wr_short((u16b) f_ptr->shield);
+    wr_short((u16b) f_ptr->blessed);
+    wr_short((u16b) f_ptr->resist_heat);
+    wr_short((u16b) f_ptr->resist_cold);
+    wr_short((u16b) f_ptr->resist_acid);
+    wr_short((u16b) f_ptr->resist_light);
+    wr_short((u16b) f_ptr->resist_poison);
+    wr_short((u16b) f_ptr->detect_inv);
+    wr_short((u16b) f_ptr->word_recall);
+    wr_short((u16b) f_ptr->see_infra);
+    wr_short((u16b) f_ptr->tim_infra);
     wr_byte(f_ptr->see_inv);
     wr_byte(f_ptr->teleport);
     wr_byte(f_ptr->free_act);
@@ -460,16 +460,16 @@ sv_write()
     wr_byte(f_ptr->nether_resist);
     wr_byte(f_ptr->fear_resist); /* added -CWS */
 
-    wr_short((int16u) missile_ctr);
-    wr_long((int32u) turn);
-    wr_long((int32u) old_turn);	/* added -CWS */
-    wr_short((int16u) inven_ctr);
+    wr_short((u16b) missile_ctr);
+    wr_long((u32b) turn);
+    wr_long((u32b) old_turn);	/* added -CWS */
+    wr_short((u16b) inven_ctr);
     for (i = 0; i < inven_ctr; i++)
 	wr_item(&inventory[i]);
     for (i = INVEN_WIELD; i < INVEN_ARRAY_SIZE; i++)
 	wr_item(&inventory[i]);
-    wr_short((int16u) inven_weight);
-    wr_short((int16u) equip_ctr);
+    wr_short((u16b) inven_weight);
+    wr_short((u16b) equip_ctr);
     wr_long(spell_learned);
     wr_long(spell_worked);
     wr_long(spell_forgotten);
@@ -480,28 +480,28 @@ sv_write()
     wr_bytes(object_ident, OBJECT_IDENT_SIZE);
     wr_long(randes_seed);
     wr_long(town_seed);
-    wr_short((int16u) last_msg);
+    wr_short((u16b) last_msg);
     for (i = 0; i < MAX_SAVE_MSG; i++)
 	wr_string(old_msg[i]);
 
 /* this indicates 'cheating' if it is a one */
-    wr_short((int16u) panic_save);
-    wr_short((int16u) total_winner);
-    wr_short((int16u) noscore);
+    wr_short((u16b) panic_save);
+    wr_short((u16b) total_winner);
+    wr_short((u16b) noscore);
     wr_shorts(player_hp, MAX_PLAYER_LEVEL);
 
 
     for (i = 0; i < MAX_STORES; i++) {
 	st_ptr = &store[i];
-	wr_long((int32u) st_ptr->store_open);
-	wr_short((int16u) st_ptr->insult_cur);
+	wr_long((u32b) st_ptr->store_open);
+	wr_short((u16b) st_ptr->insult_cur);
 	wr_byte(st_ptr->owner);
 	wr_byte(st_ptr->store_ctr);
 	wr_short(st_ptr->good_buy);
 	wr_short(st_ptr->bad_buy);
 
 	for (j = 0; j < st_ptr->store_ctr; j++) {
-	    wr_long((int32u) st_ptr->store_inven[j].scost);
+	    wr_long((u32b) st_ptr->store_inven[j].scost);
 	    wr_item(&st_ptr->store_inven[j].sitem);
 	}
     }
@@ -525,32 +525,32 @@ sv_write()
 	    return FALSE;
 	return TRUE;
     }
-    wr_short((int16u) dun_level);
-    wr_short((int16u) char_row);
-    wr_short((int16u) char_col);
-    wr_short((int16u) mon_tot_mult);
-    wr_short((int16u) cur_height);
-    wr_short((int16u) cur_width);
-    wr_short((int16u) max_panel_rows);
-    wr_short((int16u) max_panel_cols);
+    wr_short((u16b) dun_level);
+    wr_short((u16b) char_row);
+    wr_short((u16b) char_col);
+    wr_short((u16b) mon_tot_mult);
+    wr_short((u16b) cur_height);
+    wr_short((u16b) cur_width);
+    wr_short((u16b) max_panel_rows);
+    wr_short((u16b) max_panel_cols);
 
     for (i = 0; i < MAX_HEIGHT; i++)
 	for (j = 0; j < MAX_WIDTH; j++) {
 	    c_ptr = &cave[i][j];
 	    if (c_ptr->cptr != 0) {
-		wr_byte((int8u) i);
-		wr_byte((int8u) j);
-		wr_short((int16u) c_ptr->cptr); /* was wr_byte -CWS */
+		wr_byte((byte) i);
+		wr_byte((byte) j);
+		wr_short((u16b) c_ptr->cptr); /* was wr_byte -CWS */
 	    }
 	}
-    wr_byte((int8u) 0xFF);	   /* marks end of cptr info */
+    wr_byte((byte) 0xFF);	   /* marks end of cptr info */
     for (i = 0; i < MAX_HEIGHT; i++)
 	for (j = 0; j < MAX_WIDTH; j++) {
 	    c_ptr = &cave[i][j];
 	    if (c_ptr->tptr != 0) {
-		wr_byte((int8u) i);
-		wr_byte((int8u) j);
-		wr_short((int16u) c_ptr->tptr);
+		wr_byte((byte) i);
+		wr_byte((byte) j);
+		wr_short((u16b) c_ptr->tptr);
 	    }
 	}
     wr_byte(0xFF);		   /* marks end of tptr info */
@@ -566,7 +566,7 @@ sv_write()
 	    char_tmp = c_ptr->fval | (c_ptr->lr << 4) | (c_ptr->fm << 5) |
 		(c_ptr->pl << 6) | (c_ptr->tl << 7);
 	    if (char_tmp != prev_char || count == MAX_UCHAR) {
-		wr_byte((int8u) count);
+		wr_byte((byte) count);
 		wr_byte(prev_char);
 		prev_char = char_tmp;
 		count = 1;
@@ -574,7 +574,7 @@ sv_write()
 		count++;
 	}
 /* save last entry */
-    wr_byte((int8u) count);
+    wr_byte((byte) count);
     wr_byte(prev_char);
 
 #ifdef MSDOS
@@ -590,10 +590,10 @@ sv_write()
 	t_ptr--;
     }
 #endif
-    wr_short((int16u) tcptr);
+    wr_short((u16b) tcptr);
     for (i = MIN_TRIX; i < tcptr; i++)
 	wr_item(&t_list[i]);
-    wr_short((int16u) mfptr);
+    wr_short((u16b) mfptr);
     for (i = MIN_MONIX; i < mfptr; i++)
 	wr_monster(&m_list[i]);
 
@@ -604,33 +604,33 @@ sv_write()
 	 bzero((char *)c_list[MAX_CREATURES - 1].name, 101);
      }
     wr_bytes(c_list[MAX_CREATURES - 1].name, 100);
-    wr_long((int32u) c_list[MAX_CREATURES - 1].cmove);
-    wr_long((int32u) c_list[MAX_CREATURES - 1].spells);
-    wr_long((int32u) c_list[MAX_CREATURES - 1].cdefense);
+    wr_long((u32b) c_list[MAX_CREATURES - 1].cmove);
+    wr_long((u32b) c_list[MAX_CREATURES - 1].spells);
+    wr_long((u32b) c_list[MAX_CREATURES - 1].cdefense);
     {
-	int16u temp;
-/* fix player ghost's exp bug.  The mexp field is really an int32u, but the
- * savefile was writing/reading an int16u.  Since I don't want to change
+	u16b temp;
+/* fix player ghost's exp bug.  The mexp field is really an u32b, but the
+ * savefile was writing/reading an u16b.  Since I don't want to change
  * the savefile format, this insures that the low bits of mexp are written (No
  * ghost should be worth more than 64K (Melkor is only worth 60k!), but we
  * check anyway).  Using temp insures that the low bits are all written, and works
  * perfectly with a similar fix when* loading a character. -CFT
  */
 
-	if (c_list[MAX_CREATURES - 1].mexp > (int32u) 0xff00)
-	    temp = (int16u) 0xff00;
+	if (c_list[MAX_CREATURES - 1].mexp > (u32b) 0xff00)
+	    temp = (u16b) 0xff00;
 	else
-	    temp = (int16u) c_list[MAX_CREATURES - 1].mexp;
-	wr_short((int16u) temp);
+	    temp = (u16b) c_list[MAX_CREATURES - 1].mexp;
+	wr_short((u16b) temp);
     }
-    wr_short((int8u) c_list[MAX_CREATURES - 1].sleep);
-    wr_byte((int8u) c_list[MAX_CREATURES - 1].aaf);
-    wr_short((int8u) c_list[MAX_CREATURES - 1].ac);
-    wr_byte((int8u) c_list[MAX_CREATURES - 1].speed);
-    wr_byte((int8u) c_list[MAX_CREATURES - 1].cchar);
+    wr_short((byte) c_list[MAX_CREATURES - 1].sleep);
+    wr_byte((byte) c_list[MAX_CREATURES - 1].aaf);
+    wr_short((byte) c_list[MAX_CREATURES - 1].ac);
+    wr_byte((byte) c_list[MAX_CREATURES - 1].speed);
+    wr_byte((byte) c_list[MAX_CREATURES - 1].cchar);
     wr_bytes(c_list[MAX_CREATURES - 1].hd, 2);
     wr_bytes(c_list[MAX_CREATURES - 1].damage, sizeof(attid) * 4);
-    wr_short((int16u) c_list[MAX_CREATURES - 1].level);
+    wr_short((u16b) c_list[MAX_CREATURES - 1].level);
 
     if (ferror(fileptr) || (fflush(fileptr) == EOF))
 	return FALSE;
@@ -671,7 +671,7 @@ char *fnam;
 {
     vtype temp;
     int   ok, fd;
-    int8u char_tmp;
+    byte char_tmp;
 
     if (log_index < 0)
 	return TRUE;		   /* Nothing to save. */
@@ -718,11 +718,11 @@ char *fnam;
 	(void)setmode(fileno(fileptr), O_BINARY);
 #endif
 	xor_byte = 0;
-	wr_byte((int8u) CUR_VERSION_MAJ);
+	wr_byte((byte) CUR_VERSION_MAJ);
 	xor_byte = 0;
-	wr_byte((int8u) CUR_VERSION_MIN);
+	wr_byte((byte) CUR_VERSION_MIN);
 	xor_byte = 0;
-	wr_byte((int8u) PATCH_LEVEL);
+	wr_byte((byte) PATCH_LEVEL);
 	xor_byte = 0;
 	char_tmp = randint(256) - 1;
 	wr_byte(char_tmp);
@@ -762,16 +762,16 @@ get_char(generate)
 int *generate;
 {
     int                    i, j, fd, c, ok, total_count;
-    int32u                 l, age, time_saved;
+    u32b                 l, age, time_saved;
     vtype                  temp;
-    int16u                 int16u_tmp;
+    u16b                 u16b_tmp;
     register cave_type    *c_ptr;
     register recall_type  *r_ptr;
     struct misc           *m_ptr;
     struct stats          *s_ptr;
     register struct flags *f_ptr;
     store_type            *st_ptr;
-    int8u char_tmp, ychar, xchar, count;
+    byte char_tmp, ychar, xchar, count;
 
     free_turn_flag = TRUE;	   /* So a feeling isn't generated upon reloading -DGK */
     nosignals();
@@ -981,11 +981,11 @@ int *generate;
 	    prt("Loaded Unique Beasts", 5, 0);
 	put_qio();
 
-	rd_short(&int16u_tmp);
-	while (int16u_tmp != 0xFFFF) {
-	    if (int16u_tmp >= MAX_CREATURES)
+	rd_short(&u16b_tmp);
+	while (u16b_tmp != 0xFFFF) {
+	    if (u16b_tmp >= MAX_CREATURES)
 		goto error;
-	    r_ptr = &c_recall[int16u_tmp];
+	    r_ptr = &c_recall[u16b_tmp];
 	    rd_long(&r_ptr->r_cmove);
 	    rd_long(&r_ptr->r_spells);
 	    rd_long(&r_ptr->r_spells2);
@@ -996,12 +996,12 @@ int *generate;
 	    rd_byte(&r_ptr->r_wake);
 	    rd_byte(&r_ptr->r_ignore);
 	    rd_bytes(r_ptr->r_attacks, MAX_MON_NATTACK);
-	    rd_short(&int16u_tmp);
+	    rd_short(&u16b_tmp);
 	}
 	if (to_be_wizard)
 	    prt("Loaded Recall Memory", 6, 0);
 	put_qio();
-	rd_short((int16u *) & log_index);
+	rd_short((u16b *) & log_index);
         rd_long(&l);
 	if ((version_maj >= 2) && (version_min >= 6)) {
 	  rd_long(&l);
@@ -1099,40 +1099,40 @@ int *generate;
 	    m_ptr = &py.misc;
 	    rd_string(m_ptr->name);
 	    rd_byte(&m_ptr->male);
-	    rd_long((int32u *) & m_ptr->au);
-	    rd_long((int32u *) & m_ptr->max_exp);
-	    rd_long((int32u *) & m_ptr->exp);
+	    rd_long((u32b *) & m_ptr->au);
+	    rd_long((u32b *) & m_ptr->max_exp);
+	    rd_long((u32b *) & m_ptr->exp);
 	    rd_short(&m_ptr->exp_frac);
 	    rd_short(&m_ptr->age);
 	    rd_short(&m_ptr->ht);
 	    rd_short(&m_ptr->wt);
 	    rd_short(&m_ptr->lev);
 	    rd_short(&m_ptr->max_dlv);
-	    rd_short((int16u *) & m_ptr->srh);
-	    rd_short((int16u *) & m_ptr->fos);
-	    rd_short((int16u *) & m_ptr->bth);
-	    rd_short((int16u *) & m_ptr->bthb);
-	    rd_short((int16u *) & m_ptr->mana);
-	    rd_short((int16u *) & m_ptr->mhp);
-	    rd_short((int16u *) & m_ptr->ptohit);
-	    rd_short((int16u *) & m_ptr->ptodam);
-	    rd_short((int16u *) & m_ptr->pac);
-	    rd_short((int16u *) & m_ptr->ptoac);
-	    rd_short((int16u *) & m_ptr->dis_th);
-	    rd_short((int16u *) & m_ptr->dis_td);
-	    rd_short((int16u *) & m_ptr->dis_ac);
-	    rd_short((int16u *) & m_ptr->dis_tac);
-	    rd_short((int16u *) & m_ptr->disarm);
-	    rd_short((int16u *) & m_ptr->save);
-	    rd_short((int16u *) & m_ptr->sc);
-	    rd_short((int16u *) & m_ptr->stl);
+	    rd_short((u16b *) & m_ptr->srh);
+	    rd_short((u16b *) & m_ptr->fos);
+	    rd_short((u16b *) & m_ptr->bth);
+	    rd_short((u16b *) & m_ptr->bthb);
+	    rd_short((u16b *) & m_ptr->mana);
+	    rd_short((u16b *) & m_ptr->mhp);
+	    rd_short((u16b *) & m_ptr->ptohit);
+	    rd_short((u16b *) & m_ptr->ptodam);
+	    rd_short((u16b *) & m_ptr->pac);
+	    rd_short((u16b *) & m_ptr->ptoac);
+	    rd_short((u16b *) & m_ptr->dis_th);
+	    rd_short((u16b *) & m_ptr->dis_td);
+	    rd_short((u16b *) & m_ptr->dis_ac);
+	    rd_short((u16b *) & m_ptr->dis_tac);
+	    rd_short((u16b *) & m_ptr->disarm);
+	    rd_short((u16b *) & m_ptr->save);
+	    rd_short((u16b *) & m_ptr->sc);
+	    rd_short((u16b *) & m_ptr->stl);
 	    rd_byte(&m_ptr->pclass);
 	    rd_byte(&m_ptr->prace);
 	    rd_byte(&m_ptr->hitdie);
 	    rd_byte(&m_ptr->expfact);
-	    rd_short((int16u *) & m_ptr->cmana);
+	    rd_short((u16b *) & m_ptr->cmana);
 	    rd_short(&m_ptr->cmana_frac);
-	    rd_short((int16u *) & m_ptr->chp);
+	    rd_short((u16b *) & m_ptr->chp);
 	    rd_short(&m_ptr->chp_frac);
 	    for (i = 0; i < 4; i++)
 		rd_string(m_ptr->history[i]);
@@ -1143,41 +1143,41 @@ int *generate;
 		rd_shorts(s_ptr->cur_stat, 6);
 	    else
 		rd_bytes(s_ptr->cur_stat, 6);                   /* -TL */
-	    rd_shorts((int16u *) s_ptr->mod_stat, 6);
+	    rd_shorts((u16b *) s_ptr->mod_stat, 6);
 	    rd_shorts(s_ptr->use_stat, 6);
 
 	    f_ptr = &py.flags;
 	    rd_long(&f_ptr->status);
-	    rd_short((int16u *) & f_ptr->rest);
-	    rd_short((int16u *) & f_ptr->blind);
-	    rd_short((int16u *) & f_ptr->paralysis);
-	    rd_short((int16u *) & f_ptr->confused);
-	    rd_short((int16u *) & f_ptr->food);
-	    rd_short((int16u *) & f_ptr->food_digested);
-	    rd_short((int16u *) & f_ptr->protection);
-	    rd_short((int16u *) & f_ptr->speed);
-	    rd_short((int16u *) & f_ptr->fast);
-	    rd_short((int16u *) & f_ptr->slow);
-	    rd_short((int16u *) & f_ptr->afraid);
-	    rd_short((int16u *) & f_ptr->cut);
-	    rd_short((int16u *) & f_ptr->stun);
-	    rd_short((int16u *) & f_ptr->poisoned);
-	    rd_short((int16u *) & f_ptr->image);
-	    rd_short((int16u *) & f_ptr->protevil);
-	    rd_short((int16u *) & f_ptr->invuln);
-	    rd_short((int16u *) & f_ptr->hero);
-	    rd_short((int16u *) & f_ptr->shero);
-	    rd_short((int16u *) & f_ptr->shield);
-	    rd_short((int16u *) & f_ptr->blessed);
-	    rd_short((int16u *) & f_ptr->resist_heat);
-	    rd_short((int16u *) & f_ptr->resist_cold);
-	    rd_short((int16u *) & f_ptr->resist_acid);
-	    rd_short((int16u *) & f_ptr->resist_light);
-	    rd_short((int16u *) & f_ptr->resist_poison);
-	    rd_short((int16u *) & f_ptr->detect_inv);
-	    rd_short((int16u *) & f_ptr->word_recall);
-	    rd_short((int16u *) & f_ptr->see_infra);
-	    rd_short((int16u *) & f_ptr->tim_infra);
+	    rd_short((u16b *) & f_ptr->rest);
+	    rd_short((u16b *) & f_ptr->blind);
+	    rd_short((u16b *) & f_ptr->paralysis);
+	    rd_short((u16b *) & f_ptr->confused);
+	    rd_short((u16b *) & f_ptr->food);
+	    rd_short((u16b *) & f_ptr->food_digested);
+	    rd_short((u16b *) & f_ptr->protection);
+	    rd_short((u16b *) & f_ptr->speed);
+	    rd_short((u16b *) & f_ptr->fast);
+	    rd_short((u16b *) & f_ptr->slow);
+	    rd_short((u16b *) & f_ptr->afraid);
+	    rd_short((u16b *) & f_ptr->cut);
+	    rd_short((u16b *) & f_ptr->stun);
+	    rd_short((u16b *) & f_ptr->poisoned);
+	    rd_short((u16b *) & f_ptr->image);
+	    rd_short((u16b *) & f_ptr->protevil);
+	    rd_short((u16b *) & f_ptr->invuln);
+	    rd_short((u16b *) & f_ptr->hero);
+	    rd_short((u16b *) & f_ptr->shero);
+	    rd_short((u16b *) & f_ptr->shield);
+	    rd_short((u16b *) & f_ptr->blessed);
+	    rd_short((u16b *) & f_ptr->resist_heat);
+	    rd_short((u16b *) & f_ptr->resist_cold);
+	    rd_short((u16b *) & f_ptr->resist_acid);
+	    rd_short((u16b *) & f_ptr->resist_light);
+	    rd_short((u16b *) & f_ptr->resist_poison);
+	    rd_short((u16b *) & f_ptr->detect_inv);
+	    rd_short((u16b *) & f_ptr->word_recall);
+	    rd_short((u16b *) & f_ptr->see_infra);
+	    rd_short((u16b *) & f_ptr->tim_infra);
 	    rd_byte(&f_ptr->see_inv);
 	    rd_byte(&f_ptr->teleport);
 	    rd_byte(&f_ptr->free_act);
@@ -1221,14 +1221,14 @@ int *generate;
 	    else
 		f_ptr->fear_resist = 0;	/* sigh */
 
-	    rd_short((int16u *) & missile_ctr);
-	    rd_long((int32u *) & turn);
+	    rd_short((u16b *) & missile_ctr);
+	    rd_long((u32b *) & turn);
 	    if ((version_maj >= 2) && (version_min >= 6))
-	      rd_long((int32u *) & old_turn);
+	      rd_long((u32b *) & old_turn);
 	    else
 	      old_turn = turn;	/* best we can do... -CWS */
 
-	    rd_short((int16u *) & inven_ctr);
+	    rd_short((u16b *) & inven_ctr);
 	    if (inven_ctr > INVEN_WIELD) {
 		prt("ERROR in inven_ctr", 8, 0);
 		goto error;
@@ -1237,8 +1237,8 @@ int *generate;
 		rd_item(&inventory[i]);
 	    for (i = INVEN_WIELD; i < INVEN_ARRAY_SIZE; i++)
 		rd_item(&inventory[i]);
-	    rd_short((int16u *) & inven_weight);
-	    rd_short((int16u *) & equip_ctr);
+	    rd_short((u16b *) & inven_weight);
+	    rd_short((u16b *) & equip_ctr);
 	    rd_long(&spell_learned);
 	    rd_long(&spell_worked);
 	    rd_long(&spell_forgotten);
@@ -1249,19 +1249,19 @@ int *generate;
 	    rd_bytes(object_ident, OBJECT_IDENT_SIZE);
 	    rd_long(&randes_seed);
 	    rd_long(&town_seed);
-	    rd_short((int16u *) & last_msg);
+	    rd_short((u16b *) & last_msg);
 	    for (i = 0; i < MAX_SAVE_MSG; i++)
 		rd_string(old_msg[i]);
 
-	    rd_short((int16u *) & panic_save);
-	    rd_short((int16u *) & total_winner);
-	    rd_short((int16u *) & noscore);
+	    rd_short((u16b *) & panic_save);
+	    rd_short((u16b *) & total_winner);
+	    rd_short((u16b *) & noscore);
 	    rd_shorts(player_hp, MAX_PLAYER_LEVEL);
 
 	    for (i = 0; i < MAX_STORES; i++) {
 	      st_ptr = &store[i];
-	      rd_long((int32u *) & st_ptr->store_open);
-	      rd_short((int16u *) & st_ptr->insult_cur);
+	      rd_long((u32b *) & st_ptr->store_open);
+	      rd_short((u16b *) & st_ptr->insult_cur);
 	      rd_byte(&st_ptr->owner);
 	      rd_byte(&st_ptr->store_ctr);
 	      rd_short(&st_ptr->good_buy);
@@ -1271,7 +1271,7 @@ int *generate;
 		goto error;
 	      }
 	      for (j = 0; j < st_ptr->store_ctr; j++) {
-		rd_long((int32u *) & st_ptr->store_inven[j].scost);
+		rd_long((u32b *) & st_ptr->store_inven[j].scost);
 		rd_item(&st_ptr->store_inven[j].sitem);
 	      }
 	    }
@@ -1351,14 +1351,14 @@ int *generate;
 
     /* only level specific info should follow, not present for dead characters */
 
-	rd_short((int16u *) & dun_level);
-	rd_short((int16u *) & char_row);
-	rd_short((int16u *) & char_col);
-	rd_short((int16u *) & mon_tot_mult);
-	rd_short((int16u *) & cur_height);
-	rd_short((int16u *) & cur_width);
-	rd_short((int16u *) & max_panel_rows);
-	rd_short((int16u *) & max_panel_cols);
+	rd_short((u16b *) & dun_level);
+	rd_short((u16b *) & char_row);
+	rd_short((u16b *) & char_col);
+	rd_short((u16b *) & mon_tot_mult);
+	rd_short((u16b *) & cur_height);
+	rd_short((u16b *) & cur_width);
+	rd_short((u16b *) & max_panel_rows);
+	rd_short((u16b *) & max_panel_cols);
 
     /* read in the creature ptr info */
 	rd_byte(&char_tmp);
@@ -1368,10 +1368,10 @@ int *generate;
 
     /* let's correctly fix the invisible monster bug  -CWS */
 	    if ((version_maj >= 2) && (version_min >= 6)) {
-		rd_short((int16u *) & int16u_tmp);
-		cave[ychar][xchar].cptr = int16u_tmp;
+		rd_short((u16b *) & u16b_tmp);
+		cave[ychar][xchar].cptr = u16b_tmp;
 	    } else {
-		rd_byte((int8u *) & char_tmp);
+		rd_byte((byte *) & char_tmp);
 		cave[ychar][xchar].cptr = char_tmp;
 	    }
 	    if (xchar > MAX_WIDTH || ychar > MAX_HEIGHT) {
@@ -1389,12 +1389,12 @@ int *generate;
 	while (char_tmp != 0xFF) {
 	    ychar = char_tmp;
 	    rd_byte(&xchar);
-	    rd_short((int16u *) & int16u_tmp);
+	    rd_short((u16b *) & u16b_tmp);
 	    if (xchar > MAX_WIDTH || ychar > MAX_HEIGHT) {
 		prt("Error in treasure pointer info", 12, 0);
 		goto error;
 	    }
-	    cave[ychar][xchar].tptr = int16u_tmp;
+	    cave[ychar][xchar].tptr = u16b_tmp;
 	    rd_byte(&char_tmp);
 	}
     /* read in the rest of the cave info */
@@ -1420,14 +1420,14 @@ int *generate;
 	    total_count += count;
 	}
 
-	rd_short((int16u *) & tcptr);
+	rd_short((u16b *) & tcptr);
 	if (tcptr > MAX_TALLOC) {
 	    prt("ERROR in MAX_TALLOC", 14, 0);
 	    goto error;
 	}
 	for (i = MIN_TRIX; i < tcptr; i++)
 	    rd_item(&t_list[i]);
-	rd_short((int16u *) & mfptr);
+	rd_short((u16b *) & mfptr);
 	if (mfptr > MAX_MALLOC) {
 	    prt("ERROR in MAX_MALLOC", 15, 0);
 	    goto error;
@@ -1450,53 +1450,53 @@ int *generate;
 	c_list[MAX_CREATURES - 1].name = (char*)malloc(101);
 	bzero((char *)c_list[MAX_CREATURES - 1].name, 101);
 	*((char *) c_list[MAX_CREATURES - 1].name) = 'A';
-	rd_bytes((int8u *) (c_list[MAX_CREATURES - 1].name), 100);
-	rd_long((int32u *) & (c_list[MAX_CREATURES - 1].cmove));
-	rd_long((int32u *) & (c_list[MAX_CREATURES - 1].spells));
-	rd_long((int32u *) & (c_list[MAX_CREATURES - 1].cdefense));
+	rd_bytes((byte *) (c_list[MAX_CREATURES - 1].name), 100);
+	rd_long((u32b *) & (c_list[MAX_CREATURES - 1].cmove));
+	rd_long((u32b *) & (c_list[MAX_CREATURES - 1].spells));
+	rd_long((u32b *) & (c_list[MAX_CREATURES - 1].cdefense));
 	{
-	    int16u t1;
-/* fix player ghost's exp bug.  The mexp field is really an int32u, but the
- * savefile was writing/ reading an int16u.  Since I don't want to change
+	    u16b t1;
+/* fix player ghost's exp bug.  The mexp field is really an u32b, but the
+ * savefile was writing/ reading an u16b.  Since I don't want to change
  * the savefile format, this insures that the mexp field is loaded, and that
  * the "high bits" of mexp do not contain garbage values which could mean that
  * player ghost are worth millions of exp. -CFT
  */
 
-	    rd_short((int16u *) & t1);
-	    c_list[MAX_CREATURES - 1].mexp = (int32u) t1;
+	    rd_short((u16b *) & t1);
+	    c_list[MAX_CREATURES - 1].mexp = (u32b) t1;
 	}
 
 /* more stupid size bugs that would've never been needed if these variables
  * had been given enough space in the first place -CWS
  */
 	if ((version_maj >= 2) && (version_min >= 6))
-	    rd_short((int16u *) & (c_list[MAX_CREATURES - 1].sleep));
+	    rd_short((u16b *) & (c_list[MAX_CREATURES - 1].sleep));
 	else
-	    rd_byte((int8u *) & (c_list[MAX_CREATURES - 1].sleep));
+	    rd_byte((byte *) & (c_list[MAX_CREATURES - 1].sleep));
 
-	rd_byte((int8u *) & (c_list[MAX_CREATURES - 1].aaf));
+	rd_byte((byte *) & (c_list[MAX_CREATURES - 1].aaf));
 
 	if ((version_maj >= 2) && (version_min >= 6))
-	    rd_short((int16u *) & (c_list[MAX_CREATURES - 1].ac));
+	    rd_short((u16b *) & (c_list[MAX_CREATURES - 1].ac));
 	else
-	    rd_byte((int8u *) & (c_list[MAX_CREATURES - 1].ac));
+	    rd_byte((byte *) & (c_list[MAX_CREATURES - 1].ac));
 
-	rd_byte((int8u *) & (c_list[MAX_CREATURES - 1].speed));
-	rd_byte((int8u *) & (c_list[MAX_CREATURES - 1].cchar));
+	rd_byte((byte *) & (c_list[MAX_CREATURES - 1].speed));
+	rd_byte((byte *) & (c_list[MAX_CREATURES - 1].cchar));
 
-	rd_bytes((int8u *) (c_list[MAX_CREATURES - 1].hd), 2);
+	rd_bytes((byte *) (c_list[MAX_CREATURES - 1].hd), 2);
 
-	rd_bytes((int8u *) (c_list[MAX_CREATURES - 1].damage), sizeof(attid) * 4);
-	rd_short((int16u *) & (c_list[MAX_CREATURES - 1].level));
+	rd_bytes((byte *) (c_list[MAX_CREATURES - 1].damage), sizeof(attid) * 4);
+	rd_short((u16b *) & (c_list[MAX_CREATURES - 1].level));
 	*generate = FALSE;	   /* We have restored a cave - no need to generate. */
 
 	if ((version_min == 1 && patch_level < 3)
 	    || (version_min == 0))
 	    for (i = 0; i < MAX_STORES; i++) {
 		st_ptr = &store[i];
-		rd_long((int32u *) & st_ptr->store_open);
-		rd_short((int16u *) & st_ptr->insult_cur);
+		rd_long((u32b *) & st_ptr->store_open);
+		rd_short((u16b *) & st_ptr->insult_cur);
 		rd_byte(&st_ptr->owner);
 		rd_byte(&st_ptr->store_ctr);
 		rd_short(&st_ptr->good_buy);
@@ -1506,7 +1506,7 @@ int *generate;
 		    goto error;
 		}
 		for (j = 0; j < st_ptr->store_ctr; j++) {
-		    rd_long((int32u *) & st_ptr->store_inven[j].scost);
+		    rd_long((u32b *) & st_ptr->store_inven[j].scost);
 		    rd_item(&st_ptr->store_inven[j].sitem);
 		}
 	    }
@@ -1612,7 +1612,7 @@ closefiles:
 
 static void 
 wr_byte(c)
-int8u c;
+byte c;
 {
     xor_byte ^= c;
     (void)putc((int)xor_byte, fileptr);
@@ -1620,7 +1620,7 @@ int8u c;
 
 static void 
 wr_short(s)
-int16u s;
+u16b s;
 {
     xor_byte ^= (s & 0xFF);
     (void)putc((int)xor_byte, fileptr);
@@ -1630,7 +1630,7 @@ int16u s;
 
 static void 
 wr_long(l)
-register int32u l;
+register u32b l;
 {
     xor_byte ^= (l & 0xFF);
     (void)putc((int)xor_byte, fileptr);
@@ -1644,11 +1644,11 @@ register int32u l;
 
 static void 
 wr_bytes(c, count)
-int8u       *c;
+byte       *c;
 register int count;
 {
     register int    i;
-    register int8u *ptr;
+    register byte *ptr;
 
     ptr = c;
     for (i = 0; i < count; i++) {
@@ -1671,11 +1671,11 @@ register char *str;
 
 static void 
 wr_shorts(s, count)
-int16u      *s;
+u16b      *s;
 register int count;
 {
     register int        i;
-    register int16u    *sptr;
+    register u16b    *sptr;
 
     sptr = s;
     for (i = 0; i < count; i++) {
@@ -1696,30 +1696,30 @@ register inven_type *item;
     wr_long(item->flags);
     wr_byte(item->tval);
     wr_byte(item->tchar);
-    wr_short((int16u) item->p1);
-    wr_long((int32u) item->cost);
+    wr_short((u16b) item->p1);
+    wr_long((u32b) item->cost);
     wr_byte(item->subval);
     wr_byte(item->number);
     wr_short(item->weight);
-    wr_short((int16u) item->tohit);
-    wr_short((int16u) item->todam);
-    wr_short((int16u) item->ac);
-    wr_short((int16u) item->toac);
+    wr_short((u16b) item->tohit);
+    wr_short((u16b) item->todam);
+    wr_short((u16b) item->ac);
+    wr_short((u16b) item->toac);
     wr_bytes(item->damage, 2);
     wr_byte(item->level);
     wr_byte(item->ident);
     wr_long(item->flags2);
-    wr_short((int16u) item->timeout);
+    wr_short((u16b) item->timeout);
 }
 
 static void 
 wr_monster(mon)
 register monster_type *mon;
 {
-    wr_short((int16u) mon->hp);
-    wr_short((int16u) mon->maxhp); /* added -CWS */
-    wr_short((int16u) mon->csleep);
-    wr_short((int16u) mon->cspeed);
+    wr_short((u16b) mon->hp);
+    wr_short((u16b) mon->maxhp); /* added -CWS */
+    wr_short((u16b) mon->csleep);
+    wr_short((u16b) mon->cspeed);
     wr_short(mon->mptr);
     wr_byte(mon->fy);
     wr_byte(mon->fx);
@@ -1732,9 +1732,9 @@ register monster_type *mon;
 
 static void 
 rd_byte(ptr)
-int8u *ptr;
+byte *ptr;
 {
-    int8u c;
+    byte c;
 
     c = getc(fileptr) & 0xFF;
     *ptr = c ^ xor_byte;
@@ -1743,43 +1743,43 @@ int8u *ptr;
 
 static void 
 rd_short(ptr)
-int16u *ptr;
+u16b *ptr;
 {
-    int8u  c;
-    int16u s;
+    byte  c;
+    u16b s;
 
     c = (getc(fileptr) & 0xFF);
     s = c ^ xor_byte;
     xor_byte = (getc(fileptr) & 0xFF);
-    s |= (int16u) (c ^ xor_byte) << 8;
+    s |= (u16b) (c ^ xor_byte) << 8;
     *ptr = s;
 }
 
 static void 
 rd_long(ptr)
-int32u *ptr;
+u32b *ptr;
 {
-    register int32u l;
-    register int8u  c;
+    register u32b l;
+    register byte  c;
 
     c = (getc(fileptr) & 0xFF);
     l = c ^ xor_byte;
     xor_byte = (getc(fileptr) & 0xFF);
-    l |= (int32u) (c ^ xor_byte) << 8;
+    l |= (u32b) (c ^ xor_byte) << 8;
     c = (getc(fileptr) & 0xFF);
-    l |= (int32u) (c ^ xor_byte) << 16;
+    l |= (u32b) (c ^ xor_byte) << 16;
     xor_byte = (getc(fileptr) & 0xFF);
-    l |= (int32u) (c ^ xor_byte) << 24;
+    l |= (u32b) (c ^ xor_byte) << 24;
     *ptr = l;
 }
 
 static void 
 rd_bytes(ptr, count)
-int8u *ptr;
+byte *ptr;
 int    count;
 {
     int   i;
-    int8u c, nc;
+    byte c, nc;
 
     for (i = 0; i < count; i++) {
 	c = (getc(fileptr) & 0xFF);
@@ -1794,7 +1794,7 @@ static void
 rd_string(str)
 char *str;
 {
-    register int8u c;
+    register byte c;
 
     do {
 	c = (getc(fileptr) & 0xFF);
@@ -1806,20 +1806,20 @@ char *str;
 
 static void 
 rd_shorts(ptr, count)
-int16u      *ptr;
+u16b      *ptr;
 register int count;
 {
     register int        i;
-    register int16u    *sptr;
-    register int16u     s;
-    int8u               c;
+    register u16b    *sptr;
+    register u16b     s;
+    byte               c;
 
     sptr = ptr;
     for (i = 0; i < count; i++) {
 	c = (getc(fileptr) & 0xFF);
 	s = c ^ xor_byte;
 	xor_byte = (getc(fileptr) & 0xFF);
-	s |= (int16u) (c ^ xor_byte) << 8;
+	s |= (u16b) (c ^ xor_byte) << 8;
 	*sptr++ = s;
     }
 }
@@ -1834,36 +1834,36 @@ register inven_type *item;
     rd_long(&item->flags);
     rd_byte(&item->tval);
     rd_byte(&item->tchar);
-    rd_short((int16u *) & item->p1);
-    rd_long((int32u *) & item->cost);
+    rd_short((u16b *) & item->p1);
+    rd_long((u32b *) & item->cost);
     rd_byte(&item->subval);
     rd_byte(&item->number);
     rd_short(&item->weight);
-    rd_short((int16u *) & item->tohit);
-    rd_short((int16u *) & item->todam);
-    rd_short((int16u *) & item->ac);
-    rd_short((int16u *) & item->toac);
+    rd_short((u16b *) & item->tohit);
+    rd_short((u16b *) & item->todam);
+    rd_short((u16b *) & item->ac);
+    rd_short((u16b *) & item->toac);
     rd_bytes(item->damage, 2);
     rd_byte(&item->level);
     rd_byte(&item->ident);
     rd_long(&item->flags2);
-    rd_short((int16u *) & item->timeout);
+    rd_short((u16b *) & item->timeout);
 }
 
 static void 
 rd_monster(mon)
 register monster_type *mon;
 {
-    rd_short((int16u *) & mon->hp);
+    rd_short((u16b *) & mon->hp);
     if ((version_maj >= 2) && (version_min >= 6))
-	rd_short((int16u *) & mon->maxhp);
+	rd_short((u16b *) & mon->maxhp);
     else {
 	/* let's fix the infamous monster heal bug -CWS */
 	mon->maxhp = mon->hp;
     }
 
-    rd_short((int16u *) & mon->csleep);
-    rd_short((int16u *) & mon->cspeed);
+    rd_short((u16b *) & mon->csleep);
+    rd_short((u16b *) & mon->cspeed);
     rd_short(&mon->mptr);
     rd_byte(&mon->fy);
     rd_byte(&mon->fx);
@@ -1872,7 +1872,7 @@ register monster_type *mon;
     rd_byte(&mon->stunned);
     rd_byte(&mon->confused);
     if ((version_maj >= 2) && (version_min >= 6))
-	rd_byte((int8u *) & mon->monfear);
+	rd_byte((byte *) & mon->monfear);
     else
 	mon->monfear = 0; /* this is not saved either -CWS */
 }

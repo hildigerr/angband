@@ -113,7 +113,7 @@ init_seeds()
 /* change to different random number generator state */
 void 
 set_seed(seed)
-int32u seed;
+u32b seed;
 {
     setstate(dummy_state);
     srandom((seed % 2147483646L) + 1);	/* necessary to keep the town/desc's */
@@ -234,10 +234,10 @@ int mean, stand;
 /* and clears that bit */
 int 
 bit_pos(test)
-int32u *test;
+u32b *test;
 {
     register int    i;
-    register int32u mask = 0x1L;
+    register u32b mask = 0x1L;
 
     for (i = 0; i < sizeof(*test) * 8; i++) {
 	if (*test & mask) {
@@ -394,7 +394,7 @@ int num, sides;
 
 int 
 pdamroll(array)
-int8u *array;
+byte *array;
 {
     return damroll((int)array[0], (int)array[1]);
 }
@@ -767,7 +767,7 @@ popm()
 /* Gives Max hit points					-RAK-	 */
 int 
 max_hp(array)
-int8u *array;
+byte *array;
 {
     return ((int)(array[0]) * (int)(array[1]));
 }
@@ -1408,7 +1408,7 @@ place_ghost()
 	    }
 	    fclose(fp);
 	    j = 1;
-	    if (i > 255) {	   /* avoid wrap-around of int8u hitdice, by
+	    if (i > 255) {	   /* avoid wrap-around of byte hitdice, by
 				    * factoring */
 		j = i / 32;
 		i = 32;
@@ -1435,7 +1435,7 @@ place_ghost()
 		}
 		fclose(fp);
 		j = 1;
-		if (i > 255) {	   /* avoid wrap-around of int8u hitdice, by
+		if (i > 255) {	   /* avoid wrap-around of byte hitdice, by
 				    * factoring */
 		    j = i / 32;
 		    i = 32;
@@ -1464,8 +1464,8 @@ place_ghost()
     mon_ptr->fy = y;
     mon_ptr->fx = x;
     mon_ptr->mptr = (MAX_CREATURES - 1);
-    mon_ptr->hp = (int16) ghost->hd[0] * (int16) ghost->hd[1];
-/* the c_list speed value is 10 greater, so that it can be a int8u */
+    mon_ptr->hp = (s16b) ghost->hd[0] * (s16b) ghost->hd[1];
+/* the c_list speed value is 10 greater, so that it can be a byte */
     mon_ptr->cspeed = c_list[mon_ptr->mptr].speed - 10;
     mon_ptr->stunned = 0;
     mon_ptr->cdis = distance(char_row, char_col, y, x);
@@ -2472,7 +2472,7 @@ void
 pusht(my_x)
 int my_x;
 {
-    int16        x = (int16) my_x;
+    s16b        x = (s16b) my_x;
     register int i, j;
 
     if (x != tcptr - 1) {
@@ -4253,8 +4253,8 @@ magic_treasure(x, level, good, not_unique)
 int x, level, good, not_unique;
 {
     register inven_type *t_ptr;
-    register int32u      chance, special, cursed, i;
-    int32u               tmp;
+    register u32b      chance, special, cursed, i;
+    u32b               tmp;
 
     chance = OBJ_BASE_MAGIC + level;
     if (chance > OBJ_BASE_MAX)
@@ -4279,7 +4279,7 @@ int x, level, good, not_unique;
 	    || (t_ptr->index >= 408 && t_ptr->index <= 409)
 	    || (t_ptr->index >= 415 && t_ptr->index <= 419)) {
 
-	    int8u               artifact = FALSE;
+	    byte               artifact = FALSE;
 
 	/* all DSM are enchanted, I guess -CFT */
 	    t_ptr->toac += m_bonus(0, 5, level) + randint(5);
@@ -4294,7 +4294,7 @@ int x, level, good, not_unique;
 				    * artifact */
 		if (wizard || peek)
 		    msg_print("Dragon Scale Mail");
-		t_ptr->cost += ((int32) t_ptr->toac * 500L);
+		t_ptr->cost += ((s32b) t_ptr->toac * 500L);
 	    }
 	}
 	 /* end if is a DSM */ 

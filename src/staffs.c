@@ -25,7 +25,7 @@
 void 
 use()
 {
-    int32u                i;
+    u32b                i;
     int                   j, k, item_val, chance, y, x;
     register int          ident;
     register struct misc *m_ptr;

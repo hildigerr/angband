@@ -23,7 +23,7 @@
 void 
 eat()
 {
-    int32u                 i;
+    u32b                 i;
     int                    j, k, item_val, ident;
     register struct flags *f_ptr;
     register struct misc  *m_ptr;

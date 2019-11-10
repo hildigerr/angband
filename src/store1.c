@@ -24,7 +24,7 @@
 #ifndef NO_LINT_ARGS
 #ifdef __STDC__
 static void special_offer(inven_type *);
-static void insert_store(int, int, int32, struct inven_type *);
+static void insert_store(int, int, s32b, struct inven_type *);
 static void store_create(int);
 #else
 static void special_offer();
@@ -34,11 +34,11 @@ static void store_create();
 #endif
 
 /* Returns the value for any given object		-RAK-	 */
-int32 
+s32b 
 item_value(i_ptr)
 register inven_type *i_ptr;
 {
-    register int32      value;
+    register s32b      value;
 
     value = i_ptr->cost;
 /* don't purchase known cursed items */
@@ -140,13 +140,13 @@ register inven_type *i_ptr;
 
 
 /* Asking price for an item				-RAK-	 */
-int32 
+s32b 
 sell_price(snum, max_sell, min_sell, item)
     int                 snum;
-    int32              *max_sell, *min_sell;
+    s32b              *max_sell, *min_sell;
     inven_type         *item;
 {
-    register int32      i;
+    register s32b      i;
     register store_type *s_ptr;
 
     s_ptr = &store[snum];
@@ -222,7 +222,7 @@ static void
 insert_store(store_num, pos, icost, i_ptr)
     register int        pos;
     int                 store_num;
-    int32               icost;
+    s32b               icost;
     inven_type         *i_ptr;
 {
     register int        i;
@@ -246,7 +246,7 @@ store_carry(store_num, ipos, t_ptr)
 {
     int                 item_num, item_val, flag;
     register int        typ, subt;
-    int32               icost, dummy;
+    s32b               icost, dummy;
     register inven_type *i_ptr;
     register store_type *s_ptr;
     int stacked = FALSE; /* from inven_carry() -CFT */
@@ -439,7 +439,7 @@ static void
 special_offer(i_ptr)
 inven_type *i_ptr;
 {
-    int32 orig_cost = i_ptr->cost;
+    s32b orig_cost = i_ptr->cost;
 
     if (randint(30) == 1) {
 	i_ptr->cost = (i_ptr->cost * 3) / 4;
@@ -499,7 +499,7 @@ store_maint()
 int 
 noneedtobargain(store_num, minprice)
 int store_num;
-int32 minprice;
+s32b minprice;
 {
     register int         flagnoneed;
     register store_type *s_ptr;
@@ -518,7 +518,7 @@ int32 minprice;
 void 
 updatebargain(store_num, price, minprice)
 int   store_num;
-int32 price, minprice;
+s32b price, minprice;
 {
     register store_type *s_ptr;
 
