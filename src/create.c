@@ -60,7 +60,7 @@ struct previous {
     u16b stat[6];
     u16b sc;
     char   history[4][60];
-    background_type     bg;
+    player_background     bg;
 }      prev;
 
 extern int peek;
@@ -356,7 +356,7 @@ get_history()
     register int             start_pos, end_pos, cur_len;
     int                      line_ctr, new_start = 0, social_class;
     char                     history_block[240];
-    register background_type *b_ptr;
+    register player_background *b_ptr;
 
 /* Get a block of history text				 */
     if (py.misc.prace == 8)

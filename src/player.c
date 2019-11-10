@@ -172,9 +172,9 @@ const char *dsp_race[MAX_RACES] = {
 #endif
 /* Background information					*/
 #ifdef MACGAME
-background_type *background;
+player_background *background;
 #else
-background_type background[MAX_BACKGROUND] = {
+player_background background[MAX_BACKGROUND] = {
 {"You are the illegitimate and unacknowledged child ",		 10, 1, 2, 25},
 {"You are the illegitimate but acknowledged child ",		 20, 1, 2, 35},
 {"You are one of several children ",				 95, 1, 2, 45},

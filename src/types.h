@@ -355,14 +355,14 @@ typedef struct class_type
   byte age_adj;		    /* %age, warrior =100, so diff classes age faster. */
 } class_type;
 
-typedef struct background_type
+typedef struct player_background
 {
   const char *info;		    /* History information	    */
   byte roll;			    /* Die roll needed for history  */
   byte chart;			    /* Table number		    */
   byte next;			    /* Pointer to next table	    */
   byte bonus;			    /* Bonus to the Social Class+50 */
-} background_type;
+} player_background;
 
 typedef struct cave_type
 {
