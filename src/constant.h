@@ -193,16 +193,16 @@
  */
 
 #define MAX_MALLOC        600   /* Max that can be allocated                */
-#define MAX_MALLOC_CHANCE 160   /* 1/x chance of new monster each round     */
+#define MAX_M_ALLOC_CHANCE 160   /* 1/x chance of new monster each round     */
 #define MAX_MONS_LEVEL     99   /* Maximum level of creatures               */
 #define MAX_SIGHT          20   /* Maximum dis a creature can be seen       */
 #define MAX_SPELL_DIS      18   /* Maximum dis creat. spell can be cast     */
 #define MAX_MON_MULT       75   /* Maximum reproductions on a level         */
 #define MON_MULT_ADJ        8   /* High value slows multiplication          */
 #define MON_NASTY          50   /* 1/x chance of high level creat           */
-#define MIN_MALLOC_LEVEL   14   /* Minimum number of monsters/level         */
-#define MIN_MALLOC_TD       4   /* Number of people on town level (day)     */
-#define MIN_MALLOC_TN       8   /* Number of people on town level (night)   */
+#define MIN_M_ALLOC_LEVEL   14   /* Minimum number of monsters/level         */
+#define MIN_M_ALLOC_TD       4   /* Number of people on town level (day)     */
+#define MIN_M_ALLOC_TN       8   /* Number of people on town level (night)   */
 #define WIN_MON_TOT         2   /* Total number of "win" creatures          */
 #define WIN_MON_APPEAR    100   /* Level where winning creatures begin      */
 #define MON_SUMMON_ADJ      2   /* Adjust level of summoned creatures       */

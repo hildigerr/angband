@@ -2610,7 +2610,7 @@ cave_gen()
     place_stairs(1, randint(2), 3);
 /* Set up the character co-ords, used by alloc_monster, place_win_monster */
     new_spot(&char_row, &char_col);
-    alloc_monster((randint(8) + MIN_MALLOC_LEVEL + alloc_level), 0, TRUE);
+    alloc_monster((randint(8) + MIN_M_ALLOC_LEVEL + alloc_level), 0, TRUE);
     alloc_object(set_corr, 3, randint(alloc_level));
     alloc_object(set_room, 5, randnor(TREAS_ROOM_ALLOC, 3));
     alloc_object(set_floor, 5, randnor(TREAS_ANY_ALLOC, 3));
@@ -2738,7 +2738,7 @@ town_gen()
 		c_ptr++;
 	    }
 	}
-	alloc_monster(MIN_MALLOC_TN, 3, TRUE);
+	alloc_monster(MIN_M_ALLOC_TN, 3, TRUE);
     } else {			   /* Day	 */
 	for (i = 0; i < cur_height; i++) {
 	    c_ptr = &cave[i][0];
@@ -2747,7 +2747,7 @@ town_gen()
 		c_ptr++;
 	    }
 	}
-	alloc_monster(MIN_MALLOC_TD, 3, TRUE);
+	alloc_monster(MIN_M_ALLOC_TD, 3, TRUE);
     }
     store_maint();
     place_ghost();

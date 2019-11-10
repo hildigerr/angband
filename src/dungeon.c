@@ -191,7 +191,7 @@ dungeon()
 	/* if (peek) msg_print("Complete "); */
 	}
     /* Check for creature generation		 */
-	if (randint(MAX_MALLOC_CHANCE) == 1)
+	if (randint(MAX_M_ALLOC_CHANCE) == 1)
 	    alloc_monster(1, MAX_SIGHT, FALSE);
 	if (!(turn % 20))
 	    regen_monsters();
