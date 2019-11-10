@@ -2698,7 +2698,7 @@ mlink()
     for (i = 0; i < MAX_M_IDX; i++)
 	m_list[i] = blank_monster;
     delete_unique();		   /* Kludgey Fix ~Ludwig */
-    mfptr = MIN_MONIX;
+    mfptr = MIN_M_IDX;
 }
 
 

@@ -208,7 +208,7 @@
 #define MON_SUMMON_ADJ      2   /* Adjust level of summoned creatures       */
 #define MON_DRAIN_LIFE      2   /* Percent of player exp drained per hit    */
 #define MAX_MON_NATTACK     4   /* Max num attacks (used in mons memory)    */
-#define MIN_MONIX           2   /* Minimum index in m_list (1=py, 0=no mon) */
+#define MIN_M_IDX           2   /* Minimum index in m_list (1=py, 0=no mon) */
 
 /* Trap constants                                               */
 #define MAX_TRAP           18   /* Number of defined traps      */

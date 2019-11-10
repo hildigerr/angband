@@ -66,7 +66,7 @@ int y, x, subval;
 
     if (!in_bounds(y, x))
 	return;	       /* abort! -CFT */
-    if (cave[y][x].cptr >= MIN_MONIX)
+    if (cave[y][x].cptr >= MIN_M_IDX)
 	return;	       /* don't put rubble under monsters, it's annoying -CFT */
 
     if (cave[y][x].tptr != 0)

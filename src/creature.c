@@ -2953,7 +2953,7 @@ int attack;
     vtype                 cdesc;
 
 /* Process the monsters  */
-    for (i = mfptr - 1; i >= MIN_MONIX && !death; i--) {
+    for (i = mfptr - 1; i >= MIN_M_IDX && !death; i--) {
 	m_ptr = &m_list[i];
     /* Get rid of an eaten/breathed on monster.  Note: Be sure not to process
      * this monster. This is necessary because we can't delete monsters while

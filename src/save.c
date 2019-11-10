@@ -594,7 +594,7 @@ sv_write()
     for (i = MIN_TRIX; i < tcptr; i++)
 	wr_item(&t_list[i]);
     wr_short((u16b) mfptr);
-    for (i = MIN_MONIX; i < mfptr; i++)
+    for (i = MIN_M_IDX; i < mfptr; i++)
 	wr_monster(&m_list[i]);
 
 /* Save ghost names & stats etc... */
@@ -1432,7 +1432,7 @@ int *generate;
 	    prt("ERROR in MAX_M_IDX", 15, 0);
 	    goto error;
 	}
-	for (i = MIN_MONIX; i < mfptr; i++) {
+	for (i = MIN_M_IDX; i < mfptr; i++) {
 	    rd_monster(&m_list[i]);
 	}
 #ifdef MSDOS

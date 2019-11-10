@@ -683,7 +683,7 @@ compact_monsters()
     cur_dis = 66;
     delete_any = FALSE;
     do {
-	for (i = mfptr - 1; i >= MIN_MONIX; i--) {
+	for (i = mfptr - 1; i >= MIN_M_IDX; i--) {
 	    mon_ptr = &m_list[i];
 	    if ((cur_dis < mon_ptr->cdis) && (randint(3) == 1)) {
 	    /* Don't compact Melkor! */
