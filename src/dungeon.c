@@ -1417,9 +1417,9 @@ register inven_type *t_ptr;
 	return "average";
     if (t_ptr->name2 == SN_NULL)
 	return "good";
-    if ((t_ptr->name2 == EGO_R) || (t_ptr->name2 == EGO_RA) ||
-	(t_ptr->name2 == EGO_RF) || (t_ptr->name2 == EGO_RC) ||
-	(t_ptr->name2 == EGO_RL) || (t_ptr->name2 == EGO_SE) ||
+    if ((t_ptr->name2 == EGO_R) || (t_ptr->name2 == EGO_RESIST_A) ||
+	(t_ptr->name2 == EGO_RESIST_F) || (t_ptr->name2 == EGO_RESIST_C) ||
+	(t_ptr->name2 == EGO_RESIST_E) || (t_ptr->name2 == EGO_SE) ||
 	(t_ptr->name2 == EGO_HA) || (t_ptr->name2 == EGO_FT) ||
 	(t_ptr->name2 == EGO_DF) || (t_ptr->name2 == EGO_FB) ||
 	(t_ptr->name2 == EGO_SA) || (t_ptr->name2 == EGO_FREE_ACTION) ||

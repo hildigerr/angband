@@ -4355,7 +4355,7 @@ int x, level, good, not_unique;
 			msg_print("Resist Acid");
 		    rating += 15;
 		    t_ptr->flags |= TR_RES_ACID;
-		    t_ptr->name2 = EGO_RA;
+		    t_ptr->name2 = EGO_RESIST_A;
 		    t_ptr->cost += 1000L;
 		    break;
 		  case 3:
@@ -4367,7 +4367,7 @@ int x, level, good, not_unique;
 			msg_print("Resist Fire");
 		    rating += 17;
 		    t_ptr->flags |= TR_RES_FIRE;
-		    t_ptr->name2 = EGO_RF;
+		    t_ptr->name2 = EGO_RESIST_F;
 		    t_ptr->cost += 600L;
 		    break;
 		  case 5:
@@ -4379,7 +4379,7 @@ int x, level, good, not_unique;
 			msg_print("Resist Cold");
 		    rating += 16;
 		    t_ptr->flags |= TR_RES_COLD;
-		    t_ptr->name2 = EGO_RC;
+		    t_ptr->name2 = EGO_RESIST_C;
 		    t_ptr->cost += 600L;
 		    break;
 		  case 7:
@@ -4392,7 +4392,7 @@ int x, level, good, not_unique;
 			msg_print("Resist Lightning");
 		    rating += 15;
 		    t_ptr->flags |= TR_RES_LIGHT;
-		    t_ptr->name2 = EGO_RL;
+		    t_ptr->name2 = EGO_RESIST_E;
 		    t_ptr->cost += 500L;
 		    break;
 		}

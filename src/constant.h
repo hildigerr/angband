@@ -579,10 +579,10 @@
 /* indexes into the special name table */
 #define SN_NULL                 0
 #define EGO_R                    1
-#define EGO_RA                   2
-#define EGO_RF                   3
-#define EGO_RC                   4
-#define EGO_RL                   5
+#define EGO_RESIST_A                   2
+#define EGO_RESIST_F                   3
+#define EGO_RESIST_C                   4
+#define EGO_RESIST_E                   5
 #define EGO_HA                   6
 #define EGO_DF                   7
 #define EGO_SA                   8
