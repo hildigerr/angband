@@ -4511,7 +4511,7 @@ int x, level, good, not_unique;
 			    msg_print("Slay Animal");
 			t_ptr->tohit += 3;
 			t_ptr->todam += 3;
-			t_ptr->name2 = EGO_SA;
+			t_ptr->name2 = EGO_SLAY_A;
 			t_ptr->cost += 2000L;
 			break;
 		      case 9:
@@ -4522,7 +4522,7 @@ int x, level, good, not_unique;
 			rating += 18;
 			t_ptr->tohit += 3;
 			t_ptr->todam += 3;
-			t_ptr->name2 = EGO_SD;
+			t_ptr->name2 = EGO_SLAY_D;
 			t_ptr->cost += 4000L;
 			break;
 		      case 11:
@@ -4539,7 +4539,7 @@ int x, level, good, not_unique;
 			rating += 18;
 			t_ptr->tohit += 3;
 			t_ptr->todam += 3;
-			t_ptr->name2 = EGO_SE;
+			t_ptr->name2 = EGO_SLAY_E;
 			t_ptr->cost += 4000L;
 			break;
 		      case 13:
@@ -4554,7 +4554,7 @@ int x, level, good, not_unique;
 			rating += 18;
 			t_ptr->tohit += 2;
 			t_ptr->todam += 2;
-			t_ptr->name2 = EGO_SU;
+			t_ptr->name2 = EGO_SLAY_U;
 			t_ptr->cost += 3000L;
 			break;
 		      case 15:
@@ -4566,7 +4566,7 @@ int x, level, good, not_unique;
 			rating += 13;
 			t_ptr->tohit += 2;
 			t_ptr->todam += 2;
-			t_ptr->name2 = EGO_SO;
+			t_ptr->name2 = EGO_SLAY_O;
 			t_ptr->cost += 1200L;
 			break;
 		      case 18:
@@ -4578,7 +4578,7 @@ int x, level, good, not_unique;
 			rating += 13;
 			t_ptr->tohit += 2;
 			t_ptr->todam += 2;
-			t_ptr->name2 = EGO_ST;
+			t_ptr->name2 = EGO_SLAY_T;
 			t_ptr->cost += 1200L;
 			break;
 		      case 21:
@@ -4590,7 +4590,7 @@ int x, level, good, not_unique;
 			rating += 14;
 			t_ptr->tohit += 2;
 			t_ptr->todam += 2;
-			t_ptr->name2 = EGO_SG;
+			t_ptr->name2 = EGO_SLAY_G;
 			t_ptr->cost += 1200L;
 			break;
 		      case 24:
@@ -4602,7 +4602,7 @@ int x, level, good, not_unique;
 			rating += 16;
 			t_ptr->tohit += 2;
 			t_ptr->todam += 2;
-			t_ptr->name2 = EGO_SDEM;
+			t_ptr->name2 = EGO_SLAY_DEMON;
 			t_ptr->cost += 1200L;
 			break;
 		      case 27:	   /* of Westernesse */

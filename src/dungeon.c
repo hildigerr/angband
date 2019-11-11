@@ -1419,12 +1419,12 @@ register inven_type *t_ptr;
 	return "good";
     if ((t_ptr->name2 == EGO_R) || (t_ptr->name2 == EGO_RESIST_A) ||
 	(t_ptr->name2 == EGO_RESIST_F) || (t_ptr->name2 == EGO_RESIST_C) ||
-	(t_ptr->name2 == EGO_RESIST_E) || (t_ptr->name2 == EGO_SE) ||
+	(t_ptr->name2 == EGO_RESIST_E) || (t_ptr->name2 == EGO_SLAY_E) ||
 	(t_ptr->name2 == EGO_HA) || (t_ptr->name2 == EGO_FT) ||
 	(t_ptr->name2 == EGO_DF) || (t_ptr->name2 == EGO_FB) ||
-	(t_ptr->name2 == EGO_SA) || (t_ptr->name2 == EGO_FREE_ACTION) ||
-	(t_ptr->name2 == EGO_SD) || (t_ptr->name2 == EGO_SLAYING) ||
-	(t_ptr->name2 == EGO_SU) || (t_ptr->name2 == EGO_SLOW_DESCENT) ||
+	(t_ptr->name2 == EGO_SLAY_A) || (t_ptr->name2 == EGO_FREE_ACTION) ||
+	(t_ptr->name2 == EGO_SLAY_D) || (t_ptr->name2 == EGO_SLAYING) ||
+	(t_ptr->name2 == EGO_SLAY_U) || (t_ptr->name2 == EGO_SLOW_DESCENT) ||
 	(t_ptr->name2 == EGO_SPEED) || (t_ptr->name2 == EGO_STEALTH) ||
 	(t_ptr->name2 == EGO_INTELLIGENCE) || (t_ptr->name2 == EGO_WISDOM) ||
 	(t_ptr->name2 == EGO_INFRAVISION) || (t_ptr->name2 == EGO_MIGHT) ||
@@ -1433,11 +1433,11 @@ register inven_type *t_ptr;
      (t_ptr->name2 == EGO_REGENERATION) || (t_ptr->name2 == EGO_PROTECTION) ||
 	(t_ptr->name2 == EGO_FIRE) || (t_ptr->name2 == EGO_SLAY_EVIL) ||
 	(t_ptr->name2 == EGO_DRAGON_SLAYING) || (t_ptr->name2 == EGO_SLAY_ANIMAL) ||
-	(t_ptr->name2 == EGO_ACCURACY) || (t_ptr->name2 == EGO_SO) ||
+	(t_ptr->name2 == EGO_ACCURACY) || (t_ptr->name2 == EGO_SLAY_O) ||
 	(t_ptr->name2 == ART_POWER) || (t_ptr->name2 == EGO_WEST) ||
-	(t_ptr->name2 == EGO_SDEM) || (t_ptr->name2 == EGO_ST) ||
+	(t_ptr->name2 == EGO_SLAY_DEMON) || (t_ptr->name2 == EGO_SLAY_T) ||
 	(t_ptr->name2 == EGO_LIGHT) || (t_ptr->name2 == EGO_AGILITY) ||
-	(t_ptr->name2 == EGO_SG) || (t_ptr->name2 == EGO_TELEPATHY) ||
+	(t_ptr->name2 == EGO_SLAY_G) || (t_ptr->name2 == EGO_TELEPATHY) ||
 	(t_ptr->name2 == EGO_DRAGONKIND) || (t_ptr->name2 == EGO_AMAN) ||
 	(t_ptr->name2 == EGO_ELVENKIND) || (t_ptr->name2 == EGO_WOUNDING) ||
 	(t_ptr->name2 == EGO_BLESS_BLADE) || (t_ptr->name2 == EGO_ATTACKS))
