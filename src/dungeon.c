@@ -82,7 +82,7 @@ dungeon()
 	player_light = TRUE;
     else
 	player_light = FALSE;
-    if (i_ptr->tval == TV_LIGHT)
+    if (i_ptr->tval == TV_LITE)
 	i = i_ptr->subval;
     else
 	i = 195;

@@ -768,7 +768,7 @@ wizard_create()
 		break;
 	      case 'L':
 	      case 'l':
-		i_ptr->tval = TV_LIGHT;
+		i_ptr->tval = TV_LITE;
 		break;
 	      case 'F':
 	      case 'f':

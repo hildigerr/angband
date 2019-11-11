@@ -1069,7 +1069,7 @@ int command;
 			      case TV_DIGGING:
 				slot = INVEN_WIELD;
 				break;
-			      case TV_LIGHT:
+			      case TV_LITE:
 				slot = INVEN_LIGHT;
 				break;
 			      case TV_BOOTS:
@@ -1315,7 +1315,7 @@ int command;
 #endif
 	tmp2 = cur_lite;
 	print('@', char_row, char_col);
-	if (inventory[INVEN_LIGHT].tval == TV_LIGHT)
+	if (inventory[INVEN_LIGHT].tval == TV_LITE)
 	    tmp = inventory[INVEN_LIGHT].subval;
 	else
 	    tmp = 195;

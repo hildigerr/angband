@@ -90,7 +90,7 @@ inven_type *e;
       case TV_SCROLL2:
       case TV_FLASK:
 	return (TRUE);
-      case TV_LIGHT:
+      case TV_LITE:
 	if (e->subval >= 192)	   /* only torches... -CFT */
 	    return (TRUE);
 	else
@@ -285,7 +285,7 @@ inven_type *e;
       case TV_OPEN_DOOR:
       case TV_CLOSED_DOOR:
 	return (TRUE);
-      case TV_LIGHT:
+      case TV_LITE:
 	if (e->subval >= 192)	   /* only torches... -CFT */
 	    return (TRUE);
 	else
@@ -305,7 +305,7 @@ int element;
       case TV_CLOAK:
       case TV_FOOD:
       case TV_FLASK:
-      case TV_LIGHT:
+      case TV_LITE:
       case TV_SPIKE:
 	return (TRUE);
     }

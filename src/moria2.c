@@ -2450,7 +2450,7 @@ inven_type *i_ptr;
     case TV_MAGIC_BOOK: case TV_PRAYER_BOOK:
       return TRUE;
     case TV_MISC: case TV_SPIKE: case TV_WAND: case TV_BOLT:
-    case TV_ARROW: case TV_LIGHT: case TV_SCROLL1: case TV_SCROLL2:
+    case TV_ARROW: case TV_LITE: case TV_SCROLL1: case TV_SCROLL2:
       return (randint(2)==1);
   }
   return FALSE;

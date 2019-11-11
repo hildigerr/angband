@@ -5273,7 +5273,7 @@ int x, level, good, not_unique;
 
     /* Subval should be even for store, odd for dungeon */
     /* Dungeon found ones will be partially charged	 */
-      case TV_LIGHT:
+      case TV_LITE:
 	if ((t_ptr->subval % 2) == 1) {
 	    t_ptr->p1 = randint(t_ptr->p1);
 	    t_ptr->subval -= 1;

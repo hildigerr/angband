@@ -241,9 +241,9 @@ inven_kind object_list[MAX_OBJECTS] = {
     0,	   2, 194,   1,   5,	0,   0,	 0,   0, {1,3}	,  3, 0, 0x0L},
 {"& Iron Spike~"		,0x00000000L,	TV_SPIKE, '~',	/* 84*/
     0,	   1, 193,   1,  10,	0,   0,	 0,   0, {1,1}	,  1, 0, 0x0L},
-{"& Brass Lantern~"		,0x00000000L,	TV_LIGHT, '~',	/* 85*/
+{"& Brass Lantern~"		,0x00000000L,	TV_LITE, '~',	/* 85*/
  7500,	  35,	1,   1,  50,	0,   0,	 0,   0, {1,1}	,  1, 0, 0x0L},
-{"& Wooden Torch~"		,0x00000000L,	TV_LIGHT, '~',	/* 86*/
+{"& Wooden Torch~"		,0x00000000L,	TV_LITE, '~',	/* 86*/
  4000,	   2, 193,   1,  30,	0,   0,	 0,   0, {1,1}	,  1, 0, 0x0L},
 {"& Orcish Pick"		,0x20000000L,	TV_DIGGING, '\\',/* 87*/
     2,	 300,	2,   1, 180,	0,   0,	 0,   0, {1,3}	, 20, 0, 0x0L},
@@ -969,9 +969,9 @@ inven_kind object_list[MAX_OBJECTS] = {
     0,	  10, 100,   2,   4,	0,   0,	 0,   0, {1,1}	,  0, 0, 0x0L},
 {"Slow Poison"			,0x00000800L,	TV_POTION2, '!',
     0,	  25, 105,   2,   4,	0,   0,	 0,   0, {1,1}	,  0, 0, 0x0L},
-{"& Brass Lantern~"		,0x00000000L,	TV_LIGHT, '~',	/* +20 */
+{"& Brass Lantern~"		,0x00000000L,	TV_LITE, '~',	/* +20 */
  7500,	  35,	0,   1,  50,	0,   0,	 0,   0, {1,1}	,  1, 0, 0x0L},
-{"& Wooden Torch~"		,0x00000000L,	TV_LIGHT, '~',
+{"& Wooden Torch~"		,0x00000000L,	TV_LITE, '~',
  4000,	   2, 192,   5,  30,	0,   0,	 0,   0, {1,1}	,  1, 0, 0x0L},
 {"& Flask~ of oil"		,0x00040000L,	TV_FLASK, '!',
  7500,	   3,	64,   5,  10,	0,   0,	 0,   0, {2,6}	,  1, 0, 0x0L},
@@ -1116,15 +1116,15 @@ inven_kind object_list[MAX_OBJECTS] = {
     3,	300000,	33,   1,   2,	0,   0,	 0,   0, {0,0}	, 100, 0, 0x02000A08L},
 {"Power"			,0x83B80A3FL,	TV_RING, '=',	/*469*/
     5,5000000,	34,   1,   2,	0,   0,	 0,   0, {0,0}	, 110, 0, 0x02000BC0L},
-{"The Phial of Galadriel"        ,0x00000000L,	TV_LIGHT, '~',	   /*470*/
+{"The Phial of Galadriel"        ,0x00000000L,	TV_LITE, '~',	   /*470*/
     0,	10000,	4,    1,  10,	0,   0,	 0,   0, {1,1}	,  1, 0, 0x02000C00L},
 {"Ingwe"                         ,0x43380024L,  TV_AMULET, '"',    /*471*/
     3,  90000,  10,   1,   3,   0,   0,  0,   0, {0,0}  ,  65, 0,0x02000800L},
 {"Carlammas"                     ,0x00080010L,  TV_AMULET, '"',    /*472*/
     2,  60000,  11,   1,   3,   0,   0,  0,   0, {0,0}  ,  50, 0,0x02000800L},
-{"The Star of Elendil"		 ,0x00000000L,  TV_LIGHT,   '~',   /*473*/
+{"The Star of Elendil"		 ,0x00000000L,  TV_LITE,   '~',   /*473*/
     0,  25000,  5,    1,   5,   0,   0,  0,   0, {1,1}  ,  25, 0,0x02000C00L},
-{"The Arkenstone of Thrain"	 ,0x0100000CL,  TV_LIGHT,   '~',   /*474*/
+{"The Arkenstone of Thrain"	 ,0x0100000CL,  TV_LITE,   '~',   /*474*/
     2,  60000,  6,    1,   5,   0,   0,  0,   0, {1,1}  ,  60, 0,0x02000C08L},
 {"Tulkas"			 ,0x00000019L,  TV_RING, '=',     /*475*/
     4,  150000, 35,   1,   2,   0,   0,  0,   0, {0,0}  ,  90, 0,0x02000800L},

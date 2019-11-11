@@ -378,7 +378,7 @@ int                  pref;
       case TV_ARROW:
 	(void)sprintf(damstr, " (%dd%d)", i_ptr->damage[0], i_ptr->damage[1]);
 	break;
-      case TV_LIGHT:
+      case TV_LITE:
 	p1_use = LIGHT;
 	if (!stricmp("The Phial of Galadriel", basenm) && !known2_p(i_ptr))
 	    basenm = "a Shining Phial";
