@@ -38,7 +38,7 @@ static void facts(struct inven_type *, int *, int *, int *, int *, int *);
 static void drop_throw(int, int, struct inven_type *);
 static void py_bash(int, int);
 static const char *look_mon_desc(int);
-static int fearless(creature_type *);
+static int fearless(monster_race *);
 
 #else
 static int look_ray();
@@ -780,7 +780,7 @@ u32b              win;
 /* return whether a monster is "fearless" and will never run away. -CWS */
 static int 
 fearless(c_ptr)
-creature_type *c_ptr;
+monster_race *c_ptr;
 {
     int flag = FALSE;
 
@@ -821,7 +821,7 @@ int monptr, dam, print_fear;
     s32b                   new_exp, new_exp_frac;
     register monster_type  *m_ptr;
     register struct misc   *p_ptr;
-    register creature_type *c_ptr;
+    register monster_race *c_ptr;
     int                     m_take_hit = (-1);
     u32b                  tmp;
     int                     percentage;
@@ -2693,7 +2693,7 @@ py_bash(y, x)
 int y, x;
 {
     int                     monster, k, avg_max_hp, base_tohit, monptr;
-    register creature_type *c_ptr;
+    register monster_race *c_ptr;
     register monster_type  *m_ptr;
     vtype                   m_name, out_val;
 

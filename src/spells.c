@@ -129,7 +129,7 @@ void
 monster_name(m_name, m_ptr, r_ptr)
 char               *m_name;
 monster_type       *m_ptr;
-creature_type      *r_ptr;
+monster_race      *r_ptr;
 {
     if (!m_ptr->ml)
 	(void)strcpy(m_name, "It");
@@ -145,7 +145,7 @@ void
 lower_monster_name(m_name, m_ptr, r_ptr)
 char               *m_name;
 monster_type       *m_ptr;
-creature_type      *r_ptr;
+monster_race      *r_ptr;
 {
     if (!m_ptr->ml)
 	(void)strcpy(m_name, "it");
@@ -180,7 +180,7 @@ int y, x;
     register int            i, j;
     register cave_type     *c_ptr;
     register monster_type  *m_ptr;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     int                     sleep;
     vtype                   out_val, m_name;
 
@@ -537,7 +537,7 @@ int y, x, dam;
 {
     register cave_type     *c_ptr;
     register monster_type  *m_ptr;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     vtype                   out_val, m_name;
     int                     i;
 
@@ -952,7 +952,7 @@ int typ, dir, y, x, dam_hp;
 /*    u32b              harm_type = 0; */
     register cave_type *c_ptr;
     register monster_type *m_ptr;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     vtype               out_val, m_name;
     int                 dam = dam_hp;
     int                 ny, nx;
@@ -1054,7 +1054,7 @@ int           monptr;
     u32b              tmp, treas;
     register cave_type     *c_ptr;
     register monster_type  *m_ptr;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     char                bolt_char;
     int                 blind = (py.flags.status & PY_BLIND) ? 1 : 0;
     int                 ny, nx, sourcey, sourcex, dist;
@@ -1520,7 +1520,7 @@ int typ, dir, y, x, dam_hp, max_dis;
     int                 (*destroy) ();
     register cave_type *c_ptr;
     register monster_type *m_ptr;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     int                 ny, nx;
     char                bolt_char;
 
@@ -1748,7 +1748,7 @@ int   monptr;
     int                 (*destroy) ();
     register cave_type     *c_ptr;
     register monster_type  *m_ptr;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     int                 ny, nx;
     int                 blind = (py.flags.status & PY_BLIND) ? 1 : 0;
     char                ch;
@@ -2387,7 +2387,7 @@ int dir, y, x, dam;
     int                 flag, dist, monster;
     register cave_type *c_ptr;
     register monster_type *m_ptr;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     vtype               out_val, m_name;
 
     monster = FALSE;
@@ -2431,7 +2431,7 @@ int dir, y, x, dam;
     int                     flag, dist, drain;
     register cave_type     *c_ptr;
     register monster_type  *m_ptr;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     vtype                   out_val, m_name;
 
     drain = FALSE;
@@ -2484,7 +2484,7 @@ int dir, y, x, spd;
     int                    flag, dist, speed;
     register cave_type     *c_ptr;
     register monster_type  *m_ptr;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     vtype                   out_val, m_name;
 
     speed = FALSE;
@@ -2535,7 +2535,7 @@ int dir, y, x, lvl;
     int                     flag, dist, confuse;
     register cave_type     *c_ptr;
     register monster_type  *m_ptr;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     vtype                   out_val, m_name;
 
     confuse = FALSE;
@@ -2584,7 +2584,7 @@ int dir, y, x, lvl;
     int                     flag, dist, fear;
     register cave_type     *c_ptr;
     register monster_type  *m_ptr;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     vtype                   out_val, m_name;
 
     fear = FALSE;
@@ -2631,7 +2631,7 @@ int dir, y, x;
     int                     flag, dist, sleep;
     register cave_type     *c_ptr;
     register monster_type  *m_ptr;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     vtype                   out_val, m_name;
 
     sleep = FALSE;
@@ -2679,7 +2679,7 @@ int dir, y, x;
     register int            flag;
     register cave_type     *c_ptr;
     register monster_type  *m_ptr;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     vtype                   m_name;
 
     wall = FALSE;
@@ -2794,7 +2794,7 @@ int dir, y, x;
 static int
 poly(int mnum)
 {
-    register creature_type *c_ptr = &c_list[m_list[mnum].mptr];
+    register monster_race *c_ptr = &c_list[m_list[mnum].mptr];
     int y, x;
     int i,j,k;
     
@@ -2822,7 +2822,7 @@ int dir, y, x;
 {
     int                     dist, flag, flag2, p;
     register cave_type     *c_ptr;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     register monster_type  *m_ptr;
     vtype                   out_val, m_name;
     
@@ -2865,7 +2865,7 @@ int dir, y, x;
     int                     build, damage, dist, flag;
     register cave_type     *c_ptr;
     register monster_type  *m_ptr;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     vtype                   m_name, out_val;
 
     build = FALSE;
@@ -3063,7 +3063,7 @@ int spell;
 {
     register int        i, result;
     register monster_type *m_ptr;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
 
     result = FALSE;
     for (i = mfptr - 1; i >= MIN_M_IDX; i--) {
@@ -3099,7 +3099,7 @@ int spell;
     register int            i, killed;
     char                    typ;
     register monster_type  *m_ptr;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     vtype                   out_val;
 
     killed = FALSE;
@@ -3146,7 +3146,7 @@ int spd;
 {
     register int        i, speed;
     register monster_type *m_ptr;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     vtype               out_val, m_name;
 
     speed = FALSE;
@@ -3191,7 +3191,7 @@ sleep_monsters2()
 {
     register int        i, sleep;
     register monster_type *m_ptr;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     vtype               out_val, m_name;
 
     sleep = FALSE;
@@ -3233,7 +3233,7 @@ mass_poly()
     register int i;
     int mass;
     register monster_type  *m_ptr;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     
     mass = FALSE;
     for (i = mfptr - 1; i >= MIN_M_IDX; i--) {
@@ -3391,7 +3391,7 @@ earthquake()
     register int        i, j;
     register cave_type *c_ptr;
     register monster_type *m_ptr;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     int                 kill, damage, tmp, y, x;
     vtype               out_val, m_name;
 
@@ -3528,7 +3528,7 @@ probing()
     register int            i;
     int                     probe;
     register monster_type  *m_ptr;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     register monster_lore   *mp;
     vtype                   out_val, m_name;
 
@@ -3573,7 +3573,7 @@ int damage;
     register int            i;
     int                     k, dispel;
     register monster_type  *m_ptr;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     vtype                   out_val, m_name;
 
     dispel = FALSE;
@@ -3606,7 +3606,7 @@ turn_undead()
 {
     register int            i, turn_und;
     register monster_type  *m_ptr;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     vtype                   out_val, m_name;
 
     turn_und = FALSE;
@@ -3951,7 +3951,7 @@ pain_message(monptr, dam)
 int monptr, dam;
 {
     register monster_type *m_ptr;
-    creature_type      *c_ptr;
+    monster_race      *c_ptr;
     int                 percentage, oldhp, newhp;
 
     if (dam == 0)
@@ -4516,7 +4516,7 @@ monster_type *m_ptr;
 int           typ, *dam, rad, *y, *x;
 byte         by_player;
 {
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     int blind = (py.flags.status & PY_BLIND) ? 1 : 0;
     int res;			/* controls messages, using above #defines -CFT */
     vtype cdesc, outval;

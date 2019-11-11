@@ -239,9 +239,9 @@ extern s16b tcptr;				/* Cur treasure heap ptr	*/
 
 /* Following are creature arrays and variables			*/
 #ifdef MACGAME
-extern creature_type *c_list;
+extern monster_race *c_list;
 #else
-extern creature_type c_list[MAX_R_IDX];
+extern monster_race c_list[MAX_R_IDX];
 #endif
 extern describe_mon_type desc_list[MAX_R_IDX];
 extern monster_type m_list[MAX_M_IDX];
@@ -568,7 +568,7 @@ void special_random_object(int, int, int);
 void cut_player(int);
 void stun_player(int);
 void prt_equippy_chars(void);
-void get_coin_type(creature_type *);
+void get_coin_type(monster_race *);
 
 /* monsters.c */
 
@@ -727,8 +727,8 @@ void default_signals(void);
 void restore_signals(void);
 
 /* spells.c */
-void monster_name(char *, struct monster_type *, struct creature_type *);
-void lower_monster_name(char *, struct monster_type *, struct creature_type *);
+void monster_name(char *, struct monster_type *, struct monster_race *);
+void lower_monster_name(char *, struct monster_type *, struct monster_race *);
 int sleep_monsters1(int, int);
 int detect_treasure(void);
 int detect_object(void);

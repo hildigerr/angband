@@ -242,7 +242,7 @@ int mon_num;
     attid                  *pu;
     vtype                   temp;
     register monster_lore   *mp;
-    register creature_type *cp;
+    register monster_race *cp;
     register u32b         i, k;   /* changed from int, to avoid PC's 16bit ints -CFT */
     u32b              j;
     int                 mspeed;

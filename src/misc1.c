@@ -948,7 +948,7 @@ char *str;
 
 void 
 set_ghost(g, name, r, c, l)
-creature_type      *g;
+monster_race      *g;
 char               *name;
 int                 r, c, l;
 {
@@ -1386,7 +1386,7 @@ place_ghost()
 {
     register int           y, x, cur_pos;
     register monster_type *mon_ptr;
-    creature_type         *ghost = &c_list[MAX_R_IDX - 1];
+    monster_race         *ghost = &c_list[MAX_R_IDX - 1];
     char                   tmp[100];
     char                   name[100];
     int                    i, j, level;

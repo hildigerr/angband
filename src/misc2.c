@@ -115,7 +115,7 @@ int y, x;
 /* if killed a 'Creeping _xxx_ coins'... -CWS */
 void
 get_coin_type(c_ptr)
-creature_type *c_ptr;
+monster_race *c_ptr;
 {
     if (!stricmp(c_ptr->name, "Creeping copper coins")) {
 	coin_type = 2;
@@ -3306,7 +3306,7 @@ register inven_type *i_ptr;
 register int         tdam;
 int                  monster;
 {
-    register creature_type *m_ptr;
+    register monster_race *m_ptr;
     register monster_lore   *r_ptr;
     int                     reduced = FALSE;
     /* don't resist more than one thing.... -CWS */

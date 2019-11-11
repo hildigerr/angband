@@ -109,7 +109,7 @@ int rating    = 0;
 int peek      = FALSE;
 int player_uid;
 int quests[MAX_QUESTS];
-creature_type ghost;
+monster_race ghost;
 
 
 /* Unique artifact weapon flags, even though some are in the wrong place!*/

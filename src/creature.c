@@ -58,7 +58,7 @@ int monptr;
     register int           flag;
     register cave_type     *c_ptr;
     register monster_type  *m_ptr;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
 
 #ifdef ATARIST_MWC
     u32b                 holder;
@@ -467,7 +467,7 @@ int monptr;
     s32b                  gold;
     attid                  *attstr, *attstr_orig;
     vtype                  cdesc, tmp_str, ddesc;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     monster_type           *m_ptr;
     register struct misc   *p_ptr;
     register struct flags  *f_ptr;
@@ -1328,7 +1328,7 @@ u32b *rcmove;
 
 	if ((i == 4) && (m_ptr->monfear) &&  /* cornered (or things in the way!) -CWS */
 	    ((c_ptr->fval > MAX_OPEN_SPACE) || (c_ptr->cptr > 1))) {
-	    creature_type      *r_ptr = &c_list[m_ptr->mptr];
+	    monster_race      *r_ptr = &c_list[m_ptr->mptr];
 	    vtype               m_name, out_val;
 	    
 	    m_ptr->monfear = 0;
@@ -1586,7 +1586,7 @@ int monptr, *took_turn;
     vtype                  cdesc, outval, ddesc;
     register struct flags  *f_ptr;
     register monster_type  *m_ptr;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     char                   sex;
     int                    blind = (py.flags.blind > 0);
 /* alter msgs if player can't see -CFT */
@@ -2760,7 +2760,7 @@ u32b             *rcmove;
 {
     register int           i, j;
     int                    k, move_test, dir;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     register monster_type  *m_ptr;
     int                    mm[9];
     bigvtype               out_val, m_name;
@@ -3069,7 +3069,7 @@ int mon_y, mon_x;
     register int           i, j, k, l;
     register cave_type     *c_ptr;
     register monster_type  *m_ptr;
-    register creature_type *r_ptr;
+    register monster_race *r_ptr;
     int                    kill, damage = 0, tmp, y, x = 0;
     vtype                  out_val, m_name;
     int                    monptr = cave[mon_y][mon_x].cptr;

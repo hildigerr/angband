@@ -41,7 +41,7 @@ typedef char stat_type[8];
 
 typedef u16b attid;
 
-typedef struct creature_type
+typedef struct monster_race
 {
   const char *name;		    /* Descrip of creature    */
   u32b cmove;			    /* Bit field	      */
@@ -60,7 +60,7 @@ typedef struct creature_type
   u16b level;			    /* Level of creature      */
   byte rarity;			    /* Rarity of creature     */
   char gender;			    /* one of 'm','f','n','p' to genderize monsters -CWS */
-} creature_type;
+} monster_race;
 
 typedef struct monster_attack	    /* Monster attack and damage types */
   {
