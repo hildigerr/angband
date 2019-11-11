@@ -3784,7 +3784,7 @@ inven_type *t_ptr;
 	t_ptr->flags |= (TR_RES_ACID | TR_RES_FIRE | TR_RES_COLD | TR_RES_LIGHT |
 			 TR_STR | TR_DEX);
 	t_ptr->flags2 |= (TR_RES_SOUND | TR_RES_CONF | TR_ARTIFACT);
-	t_ptr->name2 = SN_ROHAN;
+	t_ptr->name2 = EGO_ROHAN;
 	t_ptr->tohit = 0;
 	t_ptr->p1 = 2;
 	t_ptr->toac = 15;
@@ -4313,7 +4313,7 @@ int x, level, good, not_unique;
 		give_1_hi_resist(t_ptr);	/* JLS */
 		t_ptr->p1 = 10;
 		t_ptr->toac += 10 + randint(5);
-		t_ptr->name2 = SN_MAGI;
+		t_ptr->name2 = EGO_MAGI;
 		t_ptr->cost = 10000L + (t_ptr->toac * 100);
 	    } else if (magik(special) || good == 666)
 		switch (randint(9)) {
@@ -4330,14 +4330,14 @@ int x, level, good, not_unique;
 			give_1_hi_resist(t_ptr);	/* JLS */
 			t_ptr->flags |= TR_STEALTH;
 			t_ptr->p1 = randint(3);
-			t_ptr->name2 = SN_ELVENKIND;
+			t_ptr->name2 = EGO_ELVENKIND;
 			t_ptr->toac += 15;
 			t_ptr->cost += 15000L;
 		    } else {
 			if (peek)
 			    msg_print("Resist");
 			rating += 20;
-			t_ptr->name2 = SN_R;
+			t_ptr->name2 = EGO_R;
 			t_ptr->toac += 8;
 			t_ptr->cost += 12500L;
 		    }
@@ -4355,7 +4355,7 @@ int x, level, good, not_unique;
 			msg_print("Resist Acid");
 		    rating += 15;
 		    t_ptr->flags |= TR_RES_ACID;
-		    t_ptr->name2 = SN_RA;
+		    t_ptr->name2 = EGO_RA;
 		    t_ptr->cost += 1000L;
 		    break;
 		  case 3:
@@ -4367,7 +4367,7 @@ int x, level, good, not_unique;
 			msg_print("Resist Fire");
 		    rating += 17;
 		    t_ptr->flags |= TR_RES_FIRE;
-		    t_ptr->name2 = SN_RF;
+		    t_ptr->name2 = EGO_RF;
 		    t_ptr->cost += 600L;
 		    break;
 		  case 5:
@@ -4379,7 +4379,7 @@ int x, level, good, not_unique;
 			msg_print("Resist Cold");
 		    rating += 16;
 		    t_ptr->flags |= TR_RES_COLD;
-		    t_ptr->name2 = SN_RC;
+		    t_ptr->name2 = EGO_RC;
 		    t_ptr->cost += 600L;
 		    break;
 		  case 7:
@@ -4392,7 +4392,7 @@ int x, level, good, not_unique;
 			msg_print("Resist Lightning");
 		    rating += 15;
 		    t_ptr->flags |= TR_RES_LIGHT;
-		    t_ptr->name2 = SN_RL;
+		    t_ptr->name2 = EGO_RL;
 		    t_ptr->cost += 500L;
 		    break;
 		}
@@ -4421,7 +4421,7 @@ int x, level, good, not_unique;
 		    && randint(2)==1) {
 		    if (peek) msg_print("Whip of Fire");
 		    rating += 20;
-		    t_ptr->name2 = SN_FIRE;
+		    t_ptr->name2 = EGO_FIRE;
 		    t_ptr->flags |= (TR_FLAME_TONGUE | TR_RES_FIRE);
 		    /* this should allow some WICKED whips -CFT */
 		    while (randint(5*(int)t_ptr->damage[0])==1) {
@@ -4450,7 +4450,7 @@ int x, level, good, not_unique;
 		    /* the value in p1 is used for strength increase */
 		    /* p1 is also used for sustain stat */
 			t_ptr->p1 = randint(4);
-			t_ptr->name2 = SN_HA;
+			t_ptr->name2 = EGO_HA;
 			t_ptr->cost += t_ptr->p1 * 500;
 			t_ptr->cost += 10000L;
 			t_ptr->cost *= 2;
@@ -4468,7 +4468,7 @@ int x, level, good, not_unique;
 			t_ptr->tohit += 3;
 			t_ptr->todam += 3;
 			t_ptr->toac += 5 + randint(5);
-			t_ptr->name2 = SN_DF;
+			t_ptr->name2 = EGO_DF;
 		    /* the value in p1 is used for stealth */
 			t_ptr->p1 = randint(3);
 			t_ptr->cost += t_ptr->p1 * 500;
@@ -4486,7 +4486,7 @@ int x, level, good, not_unique;
 			    msg_print("Flame");
 			t_ptr->tohit += 2;
 			t_ptr->todam += 3;
-			t_ptr->name2 = SN_FT;
+			t_ptr->name2 = EGO_FT;
 			t_ptr->cost += 3000L;
 			break;
 		      case 5:
@@ -4500,7 +4500,7 @@ int x, level, good, not_unique;
 			t_ptr->flags |= (TR_FROST_BRAND | TR_RES_COLD);
 			t_ptr->tohit += 2;
 			t_ptr->todam += 2;
-			t_ptr->name2 = SN_FB;
+			t_ptr->name2 = EGO_FB;
 			t_ptr->cost += 2200L;
 			break;
 		      case 7:
@@ -4511,7 +4511,7 @@ int x, level, good, not_unique;
 			    msg_print("Slay Animal");
 			t_ptr->tohit += 3;
 			t_ptr->todam += 3;
-			t_ptr->name2 = SN_SA;
+			t_ptr->name2 = EGO_SA;
 			t_ptr->cost += 2000L;
 			break;
 		      case 9:
@@ -4522,7 +4522,7 @@ int x, level, good, not_unique;
 			rating += 18;
 			t_ptr->tohit += 3;
 			t_ptr->todam += 3;
-			t_ptr->name2 = SN_SD;
+			t_ptr->name2 = EGO_SD;
 			t_ptr->cost += 4000L;
 			break;
 		      case 11:
@@ -4539,7 +4539,7 @@ int x, level, good, not_unique;
 			rating += 18;
 			t_ptr->tohit += 3;
 			t_ptr->todam += 3;
-			t_ptr->name2 = SN_SE;
+			t_ptr->name2 = EGO_SE;
 			t_ptr->cost += 4000L;
 			break;
 		      case 13:
@@ -4554,7 +4554,7 @@ int x, level, good, not_unique;
 			rating += 18;
 			t_ptr->tohit += 2;
 			t_ptr->todam += 2;
-			t_ptr->name2 = SN_SU;
+			t_ptr->name2 = EGO_SU;
 			t_ptr->cost += 3000L;
 			break;
 		      case 15:
@@ -4566,7 +4566,7 @@ int x, level, good, not_unique;
 			rating += 13;
 			t_ptr->tohit += 2;
 			t_ptr->todam += 2;
-			t_ptr->name2 = SN_SO;
+			t_ptr->name2 = EGO_SO;
 			t_ptr->cost += 1200L;
 			break;
 		      case 18:
@@ -4578,7 +4578,7 @@ int x, level, good, not_unique;
 			rating += 13;
 			t_ptr->tohit += 2;
 			t_ptr->todam += 2;
-			t_ptr->name2 = SN_ST;
+			t_ptr->name2 = EGO_ST;
 			t_ptr->cost += 1200L;
 			break;
 		      case 21:
@@ -4590,7 +4590,7 @@ int x, level, good, not_unique;
 			rating += 14;
 			t_ptr->tohit += 2;
 			t_ptr->todam += 2;
-			t_ptr->name2 = SN_SG;
+			t_ptr->name2 = EGO_SG;
 			t_ptr->cost += 1200L;
 			break;
 		      case 24:
@@ -4602,7 +4602,7 @@ int x, level, good, not_unique;
 			rating += 16;
 			t_ptr->tohit += 2;
 			t_ptr->todam += 2;
-			t_ptr->name2 = SN_SDEM;
+			t_ptr->name2 = EGO_SDEM;
 			t_ptr->cost += 1200L;
 			break;
 		      case 27:	   /* of Westernesse */
@@ -4620,7 +4620,7 @@ int x, level, good, not_unique;
 			t_ptr->p1 = 1;
 			t_ptr->cost += 10000L;
 			t_ptr->cost *= 2;
-			t_ptr->name2 = SN_WEST;
+			t_ptr->name2 = EGO_WEST;
 			break;
 		      case 28:
 		      case 29:	   /* Blessed Blade -DGK */
@@ -4635,7 +4635,7 @@ int x, level, good, not_unique;
 			t_ptr->tohit += 3;
 			t_ptr->todam += 3;
 			t_ptr->p1 = randint(3);
-			t_ptr->name2 = SN_BLESS_BLADE;
+			t_ptr->name2 = EGO_BLESS_BLADE;
 			t_ptr->cost += t_ptr->p1 * 1000;
 			t_ptr->cost += 3000L;
 			break;
@@ -4655,7 +4655,7 @@ int x, level, good, not_unique;
 			    t_ptr->p1 = randint(2);
 			else
 			    t_ptr->p1 = 1;
-			t_ptr->name2 = SN_ATTACKS;
+			t_ptr->name2 = EGO_ATTACKS;
 			t_ptr->cost += (t_ptr->p1 * 2000);
 			t_ptr->cost *= 2;
 			break;
@@ -4667,7 +4667,7 @@ int x, level, good, not_unique;
 	    t_ptr->todam = (-randint(3) - m_bonus(1, 20, level));
 	    t_ptr->flags |= TR_CURSED;
 	    if (level > (20 + randint(15)) && randint(10) == 1) {
-		t_ptr->name2 = SN_MORGUL;
+		t_ptr->name2 = EGO_MORGUL;
 		t_ptr->flags |= (TR_SEE_INVIS | TR_AGGRAVATE);
 		t_ptr->tohit -= 15;
 		t_ptr->todam -= 15;
@@ -4696,7 +4696,7 @@ int x, level, good, not_unique;
 			    msg_print("Belthronding");
 			else
 			    good_item_flag = TRUE;
-			t_ptr->name2 = SN_BELEG;
+			t_ptr->name2 = EGO_BELEG;
 			t_ptr->ident |= ID_NOSHOW_TYPE;
 			t_ptr->subval = 4; /* make do x5 damage!! -CFT */
 			t_ptr->tohit = 20;
@@ -4745,7 +4745,7 @@ int x, level, good, not_unique;
 		    CUBRAGOL = 1;
 		    break;
 		}
-		t_ptr->name2 = SN_MIGHT;
+		t_ptr->name2 = EGO_MIGHT;
 		if (peek)
 		    msg_print("Bow of Might");
 		rating += 15;
@@ -4754,7 +4754,7 @@ int x, level, good, not_unique;
 		t_ptr->todam += 10;
 		break;
 	      case 4: case 5: case 6: case 7: case 8:
-		t_ptr->name2 = SN_MIGHT;
+		t_ptr->name2 = EGO_MIGHT;
 		if (peek) msg_print("Bow of Might");
 		rating += 11;
 		t_ptr->tohit += 5;
@@ -4763,7 +4763,7 @@ int x, level, good, not_unique;
 
 	      case 9: case 10: case 11: case 12:
 	      case 13: case 14: case 15:
-		t_ptr->name2 = SN_ACCURACY;
+		t_ptr->name2 = EGO_ACCURACY;
 		rating += 11;
 		if (peek)
 		    msg_print("Accuracy");
@@ -4823,7 +4823,7 @@ int x, level, good, not_unique;
 			msg_print("Free action");
 		    rating += 11;
 		    t_ptr->flags |= TR_FREE_ACT;
-		    t_ptr->name2 = SN_FREE_ACTION;
+		    t_ptr->name2 = EGO_FREE_ACTION;
 		    t_ptr->cost += 1000L;
 		    break;
 		  case 4:
@@ -4835,13 +4835,13 @@ int x, level, good, not_unique;
 			msg_print("Slaying");
 		    t_ptr->tohit += 1 + randint(4);
 		    t_ptr->todam += 1 + randint(4);
-		    t_ptr->name2 = SN_SLAYING;
+		    t_ptr->name2 = EGO_SLAYING;
 		    t_ptr->cost += (t_ptr->tohit + t_ptr->todam) * 250;
 		    break;
 		  case 7:
 		  case 8:
 		  case 9:
-		    t_ptr->name2 = SN_AGILITY;
+		    t_ptr->name2 = EGO_AGILITY;
 		    if (peek)
 			msg_print("Agility");
 		    rating += 14;
@@ -4871,10 +4871,10 @@ int x, level, good, not_unique;
 	    if (magik(special)) {
 		if (randint(2) == 1) {
 		    t_ptr->flags |= TR_DEX;
-		    t_ptr->name2 = SN_CLUMSINESS;
+		    t_ptr->name2 = EGO_CLUMSINESS;
 		} else {
 		    t_ptr->flags |= TR_STR;
-		    t_ptr->name2 = SN_WEAKNESS;
+		    t_ptr->name2 = EGO_WEAKNESS;
 		}
 		t_ptr->p1 = (randint(3) - m_bonus(0, 10, level));
 	    }
@@ -4895,7 +4895,7 @@ int x, level, good, not_unique;
 			t_ptr->flags |= TR_SPEED;
 			if (wizard || peek)
 			    msg_print("Boots of Speed");
-			t_ptr->name2 = SN_SPEED;
+			t_ptr->name2 = EGO_SPEED;
 			rating += 30;
 			t_ptr->p1 = 1;
 			t_ptr->cost += 300000L;
@@ -4905,18 +4905,18 @@ int x, level, good, not_unique;
 		    if (tmp > 6) {
 			t_ptr->flags |= TR_FFALL;
 			rating += 7;
-			t_ptr->name2 = SN_SLOW_DESCENT;
+			t_ptr->name2 = EGO_SLOW_DESCENT;
 			t_ptr->cost += 250;
 		    } else if (tmp < 5) {
 			t_ptr->flags |= TR_STEALTH;
 			rating += 16;
 			t_ptr->p1 = randint(3);
-			t_ptr->name2 = SN_STEALTH;
+			t_ptr->name2 = EGO_STEALTH;
 			t_ptr->cost += 500;
 		    } else {	   /* 5,6 */
 			t_ptr->flags |= TR_FREE_ACT;
 			rating += 15;
-			t_ptr->name2 = SN_FREE_ACTION;
+			t_ptr->name2 = EGO_FREE_ACTION;
 			t_ptr->cost += 500;
 			t_ptr->cost *= 2;
 		    }
@@ -4925,13 +4925,13 @@ int x, level, good, not_unique;
 		    if (tmp < 5) {
 			t_ptr->flags |= TR_FREE_ACT;
 			rating += 15;
-			t_ptr->name2 = SN_FREE_ACTION;
+			t_ptr->name2 = EGO_FREE_ACTION;
 			t_ptr->cost += 500;
 			t_ptr->cost *= 2;
 		    } else {	   /* tmp > 4 */
 			t_ptr->flags |= TR_FFALL;
 			rating += 7;
-			t_ptr->name2 = SN_SLOW_DESCENT;
+			t_ptr->name2 = EGO_SLOW_DESCENT;
 			t_ptr->cost += 250;
 		    }
 	    }
@@ -4939,13 +4939,13 @@ int x, level, good, not_unique;
 	    tmp = randint(3);
 	    if (tmp == 1) {
 		t_ptr->flags |= TR_SPEED;
-		t_ptr->name2 = SN_SLOWNESS;
+		t_ptr->name2 = EGO_SLOWNESS;
 		t_ptr->p1 = -1;
 	    } else if (tmp == 2) {
 		t_ptr->flags |= TR_AGGRAVATE;
-		t_ptr->name2 = SN_NOISE;
+		t_ptr->name2 = EGO_NOISE;
 	    } else {
-		t_ptr->name2 = SN_GREAT_MASS;
+		t_ptr->name2 = EGO_GREAT_MASS;
 		t_ptr->weight = t_ptr->weight * 5;
 	    }
 	    t_ptr->cost = 0;
@@ -4973,7 +4973,7 @@ int x, level, good, not_unique;
 			    t_ptr->p1 = randint(2);
 			    rating += 13;
 			    t_ptr->flags |= TR_INT;
-			    t_ptr->name2 = SN_INTELLIGENCE;
+			    t_ptr->name2 = EGO_INTELLIGENCE;
 			    t_ptr->cost += t_ptr->p1 * 500;
 			}
 		    } else if (tmp < 6) {
@@ -4984,7 +4984,7 @@ int x, level, good, not_unique;
 			    rating += 13;
 			    t_ptr->p1 = randint(2);
 			    t_ptr->flags |= TR_WIS;
-			    t_ptr->name2 = SN_WISDOM;
+			    t_ptr->name2 = EGO_WISDOM;
 			    t_ptr->cost += t_ptr->p1 * 500;
 			}
 		    } else if (tmp < 10) {
@@ -4993,7 +4993,7 @@ int x, level, good, not_unique;
 			    t_ptr->p1 = 1 + randint(4);
 			    rating += 11;
 			    t_ptr->flags |= TR_INFRA;
-			    t_ptr->name2 = SN_INFRAVISION;
+			    t_ptr->name2 = EGO_INFRAVISION;
 			    t_ptr->cost += t_ptr->p1 * 250;
 			}
 		    } else if (tmp < 12) {
@@ -5003,7 +5003,7 @@ int x, level, good, not_unique;
 				msg_print("Light");
 			    t_ptr->flags2 |= (TR_RES_LT | TR_LIGHT);
 			    rating += 6;
-			    t_ptr->name2 = SN_LIGHT;
+			    t_ptr->name2 = EGO_LIGHT;
 			    t_ptr->cost += 500;
 			}
 		    } else if (tmp < 14) {
@@ -5014,7 +5014,7 @@ int x, level, good, not_unique;
 			    t_ptr->flags |= TR_SEE_INVIS;
 			    t_ptr->flags2 |= TR_RES_BLIND;
 			    rating += 8;
-			    t_ptr->name2 = SN_SEEING;
+			    t_ptr->name2 = EGO_SEEING;
 			    t_ptr->cost += 1000;
 			}
 		    } else {
@@ -5024,7 +5024,7 @@ int x, level, good, not_unique;
 				msg_print("Telepathy");
 			    rating += 20;
 			    t_ptr->flags2 |= TR_TELEPATHY;
-			    t_ptr->name2 = SN_TELEPATHY;
+			    t_ptr->name2 = EGO_TELEPATHY;
 			    t_ptr->cost += 50000L;
 			}
 		    }
@@ -5039,7 +5039,7 @@ int x, level, good, not_unique;
 			    t_ptr->p1 = randint(3);
 			    t_ptr->flags |= (TR_FREE_ACT | TR_CON |
 					     TR_DEX | TR_STR);
-			    t_ptr->name2 = SN_MIGHT;
+			    t_ptr->name2 = EGO_MIGHT;
 			    t_ptr->cost += 1000 + t_ptr->p1 * 500;
 			}
 			break;
@@ -5049,7 +5049,7 @@ int x, level, good, not_unique;
 			t_ptr->p1 = randint(3);
 			rating += 17;
 			t_ptr->flags |= (TR_CHR | TR_WIS);
-			t_ptr->name2 = SN_LORDLINESS;
+			t_ptr->name2 = EGO_LORDLINESS;
 			t_ptr->cost += 1000 + t_ptr->p1 * 500;
 			break;
 		      case 3:
@@ -5059,7 +5059,7 @@ int x, level, good, not_unique;
 			t_ptr->p1 = randint(3);
 			t_ptr->flags |= (TR_RES_LIGHT | TR_RES_COLD
 				      | TR_RES_ACID | TR_RES_FIRE | TR_INT);
-			t_ptr->name2 = SN_MAGI;
+			t_ptr->name2 = EGO_MAGI;
 			t_ptr->cost += 3000 + t_ptr->p1 * 500;
 			break;
 		      case 4:
@@ -5068,7 +5068,7 @@ int x, level, good, not_unique;
 			    msg_print("Beauty");
 			t_ptr->p1 = randint(4);
 			t_ptr->flags |= TR_CHR;
-			t_ptr->name2 = SN_BEAUTY;
+			t_ptr->name2 = EGO_BEAUTY;
 			t_ptr->cost += 750;
 			break;
 		      case 5:
@@ -5077,7 +5077,7 @@ int x, level, good, not_unique;
 			rating += 8;
 			t_ptr->p1 = 5 * (1 + randint(4));
 			t_ptr->flags |= (TR_SEE_INVIS | TR_SEARCH);
-			t_ptr->name2 = SN_SEEING;
+			t_ptr->name2 = EGO_SEEING;
 			t_ptr->cost += 1000 + t_ptr->p1 * 100;
 			break;
 		      case 6:
@@ -5085,7 +5085,7 @@ int x, level, good, not_unique;
 			rating += 10;
 			if (peek)
 			    msg_print("Regeneration");
-			t_ptr->name2 = SN_REGENERATION;
+			t_ptr->name2 = EGO_REGENERATION;
 			t_ptr->cost += 1500;
 			break;
 
@@ -5101,28 +5101,28 @@ int x, level, good, not_unique;
 		  case 1:
 		    t_ptr->p1 = -randint(5);
 		    t_ptr->flags |= TR_INT;
-		    t_ptr->name2 = SN_STUPIDITY;
+		    t_ptr->name2 = EGO_STUPIDITY;
 		    break;
 		  case 2:
 		  case 3:
 		    t_ptr->p1 = -randint(5);
 		    t_ptr->flags |= TR_WIS;
-		    t_ptr->name2 = SN_DULLNESS;
+		    t_ptr->name2 = EGO_DULLNESS;
 		    break;
 		  case 4:
 		  case 5:
 		    t_ptr->p1 = -randint(5);
 		    t_ptr->flags |= TR_STR;
-		    t_ptr->name2 = SN_WEAKNESS;
+		    t_ptr->name2 = EGO_WEAKNESS;
 		    break;
 		  case 6:
 		    t_ptr->flags |= TR_TELEPORT;
-		    t_ptr->name2 = SN_TELEPORTATION;
+		    t_ptr->name2 = EGO_TELEPORTATION;
 		    break;
 		  case 7:
 		    t_ptr->p1 = -randint(5);
 		    t_ptr->flags |= TR_CHR;
-		    t_ptr->name2 = SN_UGLINESS;
+		    t_ptr->name2 = EGO_UGLINESS;
 		    break;
 		}
 	}
@@ -5619,7 +5619,7 @@ int x, level, good, not_unique;
 		}
 		if (!made_art_cloak) {
 		    if (randint(2) == 1) {
-			t_ptr->name2 = SN_PROTECTION;
+			t_ptr->name2 = EGO_PROTECTION;
 			t_ptr->toac += m_bonus(0, 10, level) + (5 + randint(3));
 			t_ptr->cost += 250L;
 			rating += 8;
@@ -5627,14 +5627,14 @@ int x, level, good, not_unique;
 			t_ptr->toac += m_bonus(3, 10, level);
 			t_ptr->p1 = randint(3);
 			t_ptr->flags |= TR_STEALTH;
-			t_ptr->name2 = SN_STEALTH;
+			t_ptr->name2 = EGO_STEALTH;
 			t_ptr->cost += 500 + (50 * t_ptr->p1);
 			rating += 9;
 		    } else {
 			t_ptr->toac += 10 + randint(10);
 			t_ptr->p1 = randint(3);
 			t_ptr->flags |= (TR_STEALTH | TR_RES_ACID);
-			t_ptr->name2 = SN_AMAN;
+			t_ptr->name2 = EGO_AMAN;
 			t_ptr->cost += 4000 + (100 * t_ptr->toac);
 			rating += 16;
 		    }
@@ -5644,18 +5644,18 @@ int x, level, good, not_unique;
 	    tmp = randint(3);
 	    if (tmp == 1) {
 		t_ptr->flags |= TR_AGGRAVATE;
-		t_ptr->name2 = SN_IRRITATION;
+		t_ptr->name2 = EGO_IRRITATION;
 		t_ptr->toac -= m_bonus(1, 10, level);
 		t_ptr->ident |= ID_SHOW_HITDAM;
 		t_ptr->tohit -= m_bonus(1, 10, level);
 		t_ptr->todam -= m_bonus(1, 10, level);
 		t_ptr->cost = 0;
 	    } else if (tmp == 2) {
-		t_ptr->name2 = SN_VULNERABILITY;
+		t_ptr->name2 = EGO_VULNERABILITY;
 		t_ptr->toac -= m_bonus(10, 20, level + 50);
 		t_ptr->cost = 0;
 	    } else {
-		t_ptr->name2 = SN_ENVELOPING;
+		t_ptr->name2 = EGO_ENVELOPING;
 		t_ptr->toac -= m_bonus(1, 10, level);
 		t_ptr->ident |= ID_SHOW_HITDAM;
 		t_ptr->tohit -= m_bonus(2, 15, level + 10);
@@ -5670,49 +5670,49 @@ int x, level, good, not_unique;
 	switch (randint(level + 4)) {
 	  case 1:
 	    t_ptr->flags = 0;
-	    t_ptr->name2 = SN_EMPTY;
+	    t_ptr->name2 = EGO_EMPTY;
 	    break;
 	  case 2:
 	    t_ptr->flags |= CH_LOCKED;
-	    t_ptr->name2 = SN_LOCKED;
+	    t_ptr->name2 = EGO_LOCKED;
 	    break;
 	  case 3:
 	  case 4:
 	    t_ptr->flags |= (CH_LOSE_STR | CH_LOCKED);
-	    t_ptr->name2 = SN_POISON_NEEDLE;
+	    t_ptr->name2 = EGO_POISON_NEEDLE;
 	    break;
 	  case 5:
 	  case 6:
 	    t_ptr->flags |= (CH_POISON | CH_LOCKED);
-	    t_ptr->name2 = SN_POISON_NEEDLE;
+	    t_ptr->name2 = EGO_POISON_NEEDLE;
 	    break;
 	  case 7:
 	  case 8:
 	  case 9:
 	    t_ptr->flags |= (CH_PARALYSED | CH_LOCKED);
-	    t_ptr->name2 = SN_GAS_TRAP;
+	    t_ptr->name2 = EGO_GAS_TRAP;
 	    break;
 	  case 10:
 	  case 11:
 	    t_ptr->flags |= (CH_EXPLODE | CH_LOCKED);
-	    t_ptr->name2 = SN_EXPLOSION_DEVICE;
+	    t_ptr->name2 = EGO_EXPLOSION_DEVICE;
 	    break;
 	  case 12:
 	  case 13:
 	  case 14:
 	    t_ptr->flags |= (CH_SUMMON | CH_LOCKED);
-	    t_ptr->name2 = SN_SUMMONING_RUNES;
+	    t_ptr->name2 = EGO_SUMMONING_RUNES;
 	    break;
 	  case 15:
 	  case 16:
 	  case 17:
 	    t_ptr->flags |= (CH_PARALYSED | CH_POISON | CH_LOSE_STR |
 			     CH_LOCKED);
-	    t_ptr->name2 = SN_MULTIPLE_TRAPS;
+	    t_ptr->name2 = EGO_MULTIPLE_TRAPS;
 	    break;
 	  default:
 	    t_ptr->flags |= (CH_SUMMON | CH_EXPLODE | CH_LOCKED);
-	    t_ptr->name2 = SN_MULTIPLE_TRAPS;
+	    t_ptr->name2 = EGO_MULTIPLE_TRAPS;
 	    break;
 	}
 	if (not_unique)		/* if bought from store - dbd */
@@ -5958,7 +5958,7 @@ int         good, chance, special, cursed, level;
 	if (magik(5*special/2)||(good==666))
 	    switch(randint(11)) {
 	      case 1: case 2: case 3:
-		t_ptr->name2 = SN_WOUNDING; /* swapped with slaying -CFT */
+		t_ptr->name2 = EGO_WOUNDING; /* swapped with slaying -CFT */
 		t_ptr->tohit += 5;
 		t_ptr->todam += 5;
 		t_ptr->damage[0] ++; /* added -CFT */
@@ -5969,7 +5969,7 @@ int         good, chance, special, cursed, level;
 		t_ptr->flags |= (TR_FLAME_TONGUE|TR_RES_FIRE); /* RF so won't burn */
 		t_ptr->tohit += 2;
 		t_ptr->todam += 4;
-		t_ptr->name2 = SN_FIRE;
+		t_ptr->name2 = EGO_FIRE;
 		t_ptr->cost += 25;
 		rating += 6;
 		break;
@@ -5977,7 +5977,7 @@ int         good, chance, special, cursed, level;
 		t_ptr->flags |= TR_SLAY_EVIL;
 		t_ptr->tohit += 3;
 		t_ptr->todam += 3;
-		t_ptr->name2 = SN_SLAY_EVIL;
+		t_ptr->name2 = EGO_SLAY_EVIL;
 		t_ptr->cost += 25;
 		rating += 7;
 		break;
@@ -5985,7 +5985,7 @@ int         good, chance, special, cursed, level;
 		t_ptr->flags |= TR_SLAY_ANIMAL;
 		t_ptr->tohit += 2;
 		t_ptr->todam += 2;
-		t_ptr->name2 = SN_SLAY_ANIMAL;
+		t_ptr->name2 = EGO_SLAY_ANIMAL;
 		t_ptr->cost += 30;
 		rating += 5;
 		break;
@@ -5993,14 +5993,14 @@ int         good, chance, special, cursed, level;
 		t_ptr->flags |= TR_SLAY_DRAGON;
 		t_ptr->tohit += 3;
 		t_ptr->todam += 3;
-		t_ptr->name2 = SN_DRAGON_SLAYING;
+		t_ptr->name2 = EGO_DRAGON_SLAYING;
 		t_ptr->cost += 35;
 		rating += 9;
 		break;
 	      case 11:
 		t_ptr->tohit += 10; /* reduced because of dice bonus -CFT */
 		t_ptr->todam += 10;
-		t_ptr->name2 = SN_SLAYING; /* swapped w/ wounding -CFT */
+		t_ptr->name2 = EGO_SLAYING; /* swapped w/ wounding -CFT */
 		t_ptr->damage[0] += 2; /* added -CFT */
 		t_ptr->cost += 45;
 		rating += 10;
@@ -6017,7 +6017,7 @@ int         good, chance, special, cursed, level;
 	t_ptr->flags |= TR_CURSED;
 	t_ptr->cost = 0;
 	if (randint(5)==1) {
-	    t_ptr->name2 = SN_BACKBITING;
+	    t_ptr->name2 = EGO_BACKBITING;
 	    t_ptr->tohit -= 20;
 	    t_ptr->todam -= 20;
 	}

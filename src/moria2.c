@@ -1425,7 +1425,7 @@ openobject()
 		    flag = TRUE;
 		if (flag) {
 		    t_ptr->flags &= ~CH_LOCKED;
-		    t_ptr->name2 = SN_EMPTY;
+		    t_ptr->name2 = EGO_EMPTY;
 		    known2(t_ptr);
 		    t_ptr->cost = 0;
 		}
@@ -1818,9 +1818,9 @@ disarm_trap()
 		    if ((tot - level) > randint(100)) {
 			i_ptr->flags &= ~CH_TRAPPED;
 			if (CH_LOCKED & i_ptr->flags)
-			    i_ptr->name2 = SN_LOCKED;
+			    i_ptr->name2 = EGO_LOCKED;
 			else
-			    i_ptr->name2 = SN_DISARMED;
+			    i_ptr->name2 = EGO_DISARMED;
 			msg_print("You have disarmed the chest.");
 			known2(i_ptr);
 			py.misc.exp += level;

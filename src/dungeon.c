@@ -1417,30 +1417,30 @@ register inven_type *t_ptr;
 	return "average";
     if (t_ptr->name2 == SN_NULL)
 	return "good";
-    if ((t_ptr->name2 == SN_R) || (t_ptr->name2 == SN_RA) ||
-	(t_ptr->name2 == SN_RF) || (t_ptr->name2 == SN_RC) ||
-	(t_ptr->name2 == SN_RL) || (t_ptr->name2 == SN_SE) ||
-	(t_ptr->name2 == SN_HA) || (t_ptr->name2 == SN_FT) ||
-	(t_ptr->name2 == SN_DF) || (t_ptr->name2 == SN_FB) ||
-	(t_ptr->name2 == SN_SA) || (t_ptr->name2 == SN_FREE_ACTION) ||
-	(t_ptr->name2 == SN_SD) || (t_ptr->name2 == SN_SLAYING) ||
-	(t_ptr->name2 == SN_SU) || (t_ptr->name2 == SN_SLOW_DESCENT) ||
-	(t_ptr->name2 == SN_SPEED) || (t_ptr->name2 == SN_STEALTH) ||
-	(t_ptr->name2 == SN_INTELLIGENCE) || (t_ptr->name2 == SN_WISDOM) ||
-	(t_ptr->name2 == SN_INFRAVISION) || (t_ptr->name2 == SN_MIGHT) ||
-	(t_ptr->name2 == SN_LORDLINESS) || (t_ptr->name2 == SN_MAGI) ||
-	(t_ptr->name2 == SN_BEAUTY) || (t_ptr->name2 == SN_SEEING) ||
-     (t_ptr->name2 == SN_REGENERATION) || (t_ptr->name2 == SN_PROTECTION) ||
-	(t_ptr->name2 == SN_FIRE) || (t_ptr->name2 == SN_SLAY_EVIL) ||
-	(t_ptr->name2 == SN_DRAGON_SLAYING) || (t_ptr->name2 == SN_SLAY_ANIMAL) ||
-	(t_ptr->name2 == SN_ACCURACY) || (t_ptr->name2 == SN_SO) ||
-	(t_ptr->name2 == ART_POWER) || (t_ptr->name2 == SN_WEST) ||
-	(t_ptr->name2 == SN_SDEM) || (t_ptr->name2 == SN_ST) ||
-	(t_ptr->name2 == SN_LIGHT) || (t_ptr->name2 == SN_AGILITY) ||
-	(t_ptr->name2 == SN_SG) || (t_ptr->name2 == SN_TELEPATHY) ||
-	(t_ptr->name2 == SN_DRAGONKIND) || (t_ptr->name2 == SN_AMAN) ||
-	(t_ptr->name2 == SN_ELVENKIND) || (t_ptr->name2 == SN_WOUNDING) ||
-	(t_ptr->name2 == SN_BLESS_BLADE) || (t_ptr->name2 == SN_ATTACKS))
+    if ((t_ptr->name2 == EGO_R) || (t_ptr->name2 == EGO_RA) ||
+	(t_ptr->name2 == EGO_RF) || (t_ptr->name2 == EGO_RC) ||
+	(t_ptr->name2 == EGO_RL) || (t_ptr->name2 == EGO_SE) ||
+	(t_ptr->name2 == EGO_HA) || (t_ptr->name2 == EGO_FT) ||
+	(t_ptr->name2 == EGO_DF) || (t_ptr->name2 == EGO_FB) ||
+	(t_ptr->name2 == EGO_SA) || (t_ptr->name2 == EGO_FREE_ACTION) ||
+	(t_ptr->name2 == EGO_SD) || (t_ptr->name2 == EGO_SLAYING) ||
+	(t_ptr->name2 == EGO_SU) || (t_ptr->name2 == EGO_SLOW_DESCENT) ||
+	(t_ptr->name2 == EGO_SPEED) || (t_ptr->name2 == EGO_STEALTH) ||
+	(t_ptr->name2 == EGO_INTELLIGENCE) || (t_ptr->name2 == EGO_WISDOM) ||
+	(t_ptr->name2 == EGO_INFRAVISION) || (t_ptr->name2 == EGO_MIGHT) ||
+	(t_ptr->name2 == EGO_LORDLINESS) || (t_ptr->name2 == EGO_MAGI) ||
+	(t_ptr->name2 == EGO_BEAUTY) || (t_ptr->name2 == EGO_SEEING) ||
+     (t_ptr->name2 == EGO_REGENERATION) || (t_ptr->name2 == EGO_PROTECTION) ||
+	(t_ptr->name2 == EGO_FIRE) || (t_ptr->name2 == EGO_SLAY_EVIL) ||
+	(t_ptr->name2 == EGO_DRAGON_SLAYING) || (t_ptr->name2 == EGO_SLAY_ANIMAL) ||
+	(t_ptr->name2 == EGO_ACCURACY) || (t_ptr->name2 == EGO_SO) ||
+	(t_ptr->name2 == ART_POWER) || (t_ptr->name2 == EGO_WEST) ||
+	(t_ptr->name2 == EGO_SDEM) || (t_ptr->name2 == EGO_ST) ||
+	(t_ptr->name2 == EGO_LIGHT) || (t_ptr->name2 == EGO_AGILITY) ||
+	(t_ptr->name2 == EGO_SG) || (t_ptr->name2 == EGO_TELEPATHY) ||
+	(t_ptr->name2 == EGO_DRAGONKIND) || (t_ptr->name2 == EGO_AMAN) ||
+	(t_ptr->name2 == EGO_ELVENKIND) || (t_ptr->name2 == EGO_WOUNDING) ||
+	(t_ptr->name2 == EGO_BLESS_BLADE) || (t_ptr->name2 == EGO_ATTACKS))
 	return "excellent";
     return "special";
 }
@@ -2591,7 +2591,7 @@ activate()
 		    if (a < INVEN_WIELD) {
 			i_ptr = &inventory[a];
 			msg_print("Your bolts are covered in a fiery aura!");
-			i_ptr->name2 = SN_FIRE;
+			i_ptr->name2 = EGO_FIRE;
 			i_ptr->flags |= (TR_FLAME_TONGUE|TR_RES_FIRE);
 			i_ptr->cost += 25;
 			enchant(i_ptr, 3+randint(3), ENCH_TOHIT|ENCH_TODAM);

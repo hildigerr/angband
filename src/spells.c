@@ -809,7 +809,7 @@ td_destroy()
 		} else if (t_list[c_ptr->tptr].tval == TV_CHEST) {
 		/* destroy traps on chest and unlock */
 		    t_list[c_ptr->tptr].flags &= ~(CH_TRAPPED | CH_LOCKED);
-		    t_list[c_ptr->tptr].name2 = SN_DISARMED;
+		    t_list[c_ptr->tptr].name2 = EGO_DISARMED;
 		    msg_print("You have disarmed the chest.");
 		    known2(&t_list[c_ptr->tptr]);
 		    destroy = TRUE;
@@ -932,7 +932,7 @@ int dir, y, x;
 		msg_print("Click!");
 		t_ptr->flags &= ~(CH_TRAPPED | CH_LOCKED);
 		disarm = TRUE;
-		t_ptr->name2 = SN_UNLOCKED;
+		t_ptr->name2 = EGO_UNLOCKED;
 		known2(t_ptr);
 	    }
 	}
@@ -4049,7 +4049,7 @@ remove_curse()
     for (i = INVEN_WIELD; i <= INVEN_OUTER; i++) {
 	i_ptr = &inventory[i];
 	if ((TR_CURSED & i_ptr->flags) &&
-	    (i_ptr->name2 != SN_MORGUL) &&
+	    (i_ptr->name2 != EGO_MORGUL) &&
 	    (i_ptr->name2 != ART_CALRIS) &&
 	    (i_ptr->name2 != ART_MORMEGIL)) {
 	    if (!(!stricmp(object_list[i_ptr->index].name, "Power") &&
@@ -4413,7 +4413,7 @@ self_knowledge()
 	f2 = 0L;
     }
     if (f & TR_CURSED) {
-	if (inventory[INVEN_WIELD].name2 == SN_MORGUL)
+	if (inventory[INVEN_WIELD].name2 == EGO_MORGUL)
 	    prt("Your weapon is truly foul.", i++, j);
 	else if (inventory[INVEN_WIELD].name2 == ART_CALRIS)
 	    prt("Your bastard sword is wickedly accursed.", i++, j);

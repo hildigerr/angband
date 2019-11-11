@@ -378,12 +378,12 @@ pray()
 			    sprintf(out_val,
 				    "Your %s is covered in a fiery shield!",
 				    tmp_str);
-			    i_ptr->name2 |= SN_FT;
+			    i_ptr->name2 |= EGO_FT;
 			    i_ptr->flags |= (TR_FLAME_TONGUE | TR_RES_FIRE);
 			} else {
 			    sprintf(out_val, "Your %s glows deep, icy blue!",
 				    tmp_str);
-			    i_ptr->name2 |= SN_FB;
+			    i_ptr->name2 |= EGO_FB;
 			    i_ptr->flags |= (TR_FROST_BRAND | TR_RES_COLD);
 			}
 			msg_print(out_val);

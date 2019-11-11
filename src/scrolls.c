@@ -269,7 +269,7 @@ read_scroll()
 		(void)sprintf(out_val, "A terrible black aura blasts your %s!", tmp_str);
 			msg_print(out_val);
 			py_bonuses(i_ptr, -1);	/* take off current bonuses -CFT */
-			i_ptr->name2 = SN_SHATTERED;
+			i_ptr->name2 = EGO_SHATTERED;
 			i_ptr->tohit = (-randint(5) - randint(5));
 			i_ptr->todam = (-randint(5) - randint(5));
 			i_ptr->flags = TR_CURSED;
@@ -371,7 +371,7 @@ read_scroll()
 		(void)sprintf(out_val, "A terrible black aura blasts your %s!", tmp_str);
 			msg_print(out_val);
 			py_bonuses(i_ptr, -1);	/* take off current bonuses -CFT */
-			i_ptr->name2 = SN_BLASTED;
+			i_ptr->name2 = EGO_BLASTED;
 			i_ptr->flags = TR_CURSED;
 			i_ptr->flags2 = 0;
 			i_ptr->toac = (-randint(5) - randint(5));
