@@ -1024,7 +1024,7 @@ int y, x;
 	blows = 2;
 	tot_tohit = (-3);
     }
-    if ((i_ptr->tval >= TV_SLING_AMMO) && (i_ptr->tval <= TV_ARROW))
+    if ((i_ptr->tval >= TV_SHOT) && (i_ptr->tval <= TV_ARROW))
     /* Fix for arrows */
 	blows = 1;
     p_ptr = &py.misc;
@@ -1102,7 +1102,7 @@ int y, x;
 		prt_experience();
 		blows = 0;
 	    }
-	    if ((i_ptr->tval >= TV_SLING_AMMO)
+	    if ((i_ptr->tval >= TV_SHOT)
 		&& (i_ptr->tval <= TV_ARROW)) {	/* Use missiles up */
 		i_ptr->number--;
 		inven_weight -= i_ptr->weight;
@@ -2274,7 +2274,7 @@ facts(i_ptr, tbth, tpth, tdam, tdis, thits)
     if (inventory[INVEN_WIELD].tval == TV_BOW)
 	switch (inventory[INVEN_WIELD].subval) {
 	  case 20:
-	    if (i_ptr->tval == TV_SLING_AMMO) {	/* Sling and ammo */
+	    if (i_ptr->tval == TV_SHOT) {	/* Sling and ammo */
 		*tbth = py.misc.bthb;
 		*tpth += 2 * inventory[INVEN_WIELD].tohit;
 		*tdam += inventory[INVEN_WIELD].todam;
@@ -2283,7 +2283,7 @@ facts(i_ptr, tbth, tpth, tdam, tdis, thits)
 	    }
 	    break;
 	  case 21:
-	    if (i_ptr->tval == TV_SLING_AMMO){ /* Sling of Might and ammo */
+	    if (i_ptr->tval == TV_SHOT){ /* Sling of Might and ammo */
 		*tbth = py.misc.bthb;
 		*tpth += 2 * inventory[INVEN_WIELD].tohit;
 		*tdam += inventory[INVEN_WIELD].todam;
@@ -2446,7 +2446,7 @@ inven_type *i_ptr;
   if ((i_ptr->tval >= TV_BOW) && (i_ptr->tval <= TV_STAFF))
     return TRUE;
   switch (i_ptr->tval){
-    case TV_CHEST: case TV_SLING_AMMO: case TV_ROD: case TV_FOOD:
+    case TV_CHEST: case TV_SHOT: case TV_ROD: case TV_FOOD:
     case TV_MAGIC_BOOK: case TV_PRAYER_BOOK:
       return TRUE;
     case TV_MISC: case TV_SPIKE: case TV_WAND: case TV_BOLT:
@@ -2484,7 +2484,7 @@ throw_object()
     } else if (get_item(&item_val, "Fire/Throw which one?", 0, inven_ctr - 1, 0)) {
 	inven_type *t = &inventory[item_val];
 	
-	if ((t->tval == TV_FLASK) || (t->tval == TV_SLING_AMMO) ||
+	if ((t->tval == TV_FLASK) || (t->tval == TV_SHOT) ||
 	    (t->tval == TV_ARROW) || (t->tval == TV_BOLT) ||
 	    (t->tval == TV_SPIKE) || (t->tval == TV_MISC))
 	    ok_throw = TRUE;

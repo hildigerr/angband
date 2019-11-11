@@ -604,7 +604,7 @@ wizard_create()
 		break;
 	      case 'P':
 	      case 'p':
-		i_ptr->tval = TV_SLING_AMMO;
+		i_ptr->tval = TV_SHOT;
 		break;
 	      default:
 		break;
@@ -959,7 +959,7 @@ again:
 	(i_ptr->tval == TV_POLEARM) ||
 	(i_ptr->tval == TV_ARROW) ||
 	(i_ptr->tval == TV_BOLT) ||
-	(i_ptr->tval == TV_SLING_AMMO) ||
+	(i_ptr->tval == TV_SHOT) ||
 	(i_ptr->tval == TV_DIGGING)) {
 	i_ptr->ident |= ID_SHOW_HITDAM;
 	prt("Damage (dice): ", 0, 0);
@@ -1027,7 +1027,7 @@ again:
 	    (i_ptr->tval == TV_POLEARM) ||
 	    (i_ptr->tval == TV_ARROW) ||
 	    (i_ptr->tval == TV_BOLT) ||
-	    (i_ptr->tval == TV_SLING_AMMO) ||
+	    (i_ptr->tval == TV_SHOT) ||
 	    (i_ptr->tval == TV_DIGGING)) {
 	    if (get_com("Slay Evil? [yn]: ", &ch)) {
 		if (ch == 'y' || ch == 'Y')

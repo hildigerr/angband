@@ -1059,7 +1059,7 @@ int command;
 			    item = (-1);
 			else
 			    switch (inventory[item].tval) { /* Slot for equipment */
-			      case TV_SLING_AMMO:
+			      case TV_SHOT:
 			      case TV_BOLT:
 			      case TV_ARROW:
 			      case TV_BOW:

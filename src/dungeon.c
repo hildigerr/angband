@@ -841,7 +841,7 @@ dungeon()
 			    (i_ptr->tval == TV_BOLT) ||
 			    (i_ptr->tval == TV_ARROW) ||
 			    (i_ptr->tval == TV_DIGGING) ||
-			    (i_ptr->tval == TV_SLING_AMMO) ||
+			    (i_ptr->tval == TV_SHOT) ||
 			    (i_ptr->tval == TV_SOFT_ARMOR) ||
 			    (i_ptr->tval == TV_HARD_ARMOR) ||
 			    (i_ptr->tval == TV_HELM) ||
@@ -890,7 +890,7 @@ dungeon()
 		     (i_ptr->tval == TV_BOOTS) ||
 		     (i_ptr->tval == TV_GLOVES) ||
 		     (i_ptr->tval == TV_DIGGING) ||
-		     (i_ptr->tval == TV_SLING_AMMO) ||
+		     (i_ptr->tval == TV_SHOT) ||
 		     (i_ptr->tval == TV_BOLT) ||
 		     (i_ptr->tval == TV_ARROW) ||
 		     (i_ptr->tval == TV_BOW) ||
@@ -924,7 +924,7 @@ dungeon()
 				  describe_use(i),
 				  ((i_ptr->tval == TV_BOLT) ||
 				   (i_ptr->tval == TV_ARROW) ||
-				   (i_ptr->tval == TV_SLING_AMMO) ||
+				   (i_ptr->tval == TV_SHOT) ||
 				   (i_ptr->tval == TV_BOOTS) ||
 				 (i_ptr->tval == TV_GLOVES)) ? "are" : "is",
 				  value_check(i_ptr));
@@ -1370,7 +1370,7 @@ register inven_type *t_ptr;
 	t_ptr->tval != TV_CLOAK && t_ptr->tval != TV_GLOVES &&
 	t_ptr->tval != TV_BOOTS && t_ptr->tval != TV_HELM &&
 	t_ptr->tval != TV_DIGGING && t_ptr->tval != TV_SPIKE &&
-	t_ptr->tval != TV_SLING_AMMO && t_ptr->tval != TV_BOLT &&
+	t_ptr->tval != TV_SHOT && t_ptr->tval != TV_BOLT &&
 	t_ptr->tval != TV_ARROW && t_ptr->tval != TV_BOW &&
 	t_ptr->tval != TV_POLEARM && t_ptr->tval != TV_HAFTED)
 	return 0;

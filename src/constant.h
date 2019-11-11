@@ -779,7 +779,7 @@
  */
 
 #define TV_MIN_ENCHANT  10
-#define TV_SLING_AMMO   10
+#define TV_SHOT   10
 #define TV_BOLT         11
 #define TV_ARROW        12
 #define TV_LITE        15

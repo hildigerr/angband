@@ -335,7 +335,7 @@ weaponsmith(element)
 int element;
 {
     switch (element) {
-      case TV_SLING_AMMO:
+      case TV_SHOT:
       case TV_BOLT:
       case TV_ARROW:
       case TV_BOW:

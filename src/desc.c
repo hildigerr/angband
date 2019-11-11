@@ -373,7 +373,7 @@ int                  pref;
       case TV_MISC:
       case TV_CHEST:
 	break;
-      case TV_SLING_AMMO:
+      case TV_SHOT:
       case TV_BOLT:
       case TV_ARROW:
 	(void)sprintf(damstr, " (%dd%d)", i_ptr->damage[0], i_ptr->damage[1]);

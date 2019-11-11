@@ -64,7 +64,7 @@ register inven_type *i_ptr;
 	    else
 		value = i_ptr->cost + i_ptr->toac * 100;
 	}
-    } else if (((i_ptr->tval >= TV_SLING_AMMO) && (i_ptr->tval <= TV_ARROW))
+    } else if (((i_ptr->tval >= TV_SHOT) && (i_ptr->tval <= TV_ARROW))
 	       || (i_ptr->tval == TV_SPIKE)) {	/* Ammo			 */
 	if (!known2_p(i_ptr))
 	    value = object_list[i_ptr->index].cost;

@@ -3311,7 +3311,7 @@ int                  monster;
     int                     reduced = FALSE;
     /* don't resist more than one thing.... -CWS */
 
-    if ((((i_ptr->tval >= TV_SLING_AMMO) && (i_ptr->tval <= TV_ARROW)) ||
+    if ((((i_ptr->tval >= TV_SHOT) && (i_ptr->tval <= TV_ARROW)) ||
 	 ((i_ptr->tval >= TV_HAFTED) && (i_ptr->tval <= TV_SWORD)) ||
 	 (i_ptr->tval == TV_FLASK))) {
 	m_ptr = &c_list[monster];

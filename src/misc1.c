@@ -5732,7 +5732,7 @@ int x, level, good, not_unique;
 	t_ptr->p1 = missile_ctr;
 	break;
 
-    case TV_BOLT: case TV_ARROW: case TV_SLING_AMMO:
+    case TV_BOLT: case TV_ARROW: case TV_SHOT:
      /* this fn makes ammo for player's missile weapon more common -CFT */
       magic_ammo(t_ptr, good, chance, special, cursed, level);
       break;
@@ -5923,7 +5923,7 @@ int         good, chance, special, cursed, level;
     else if (inventory[INVEN_AUX].tval == TV_BOW) i_ptr=&inventory[INVEN_AUX];
 
     if (i_ptr && (randint(2)==1)){
-	if ((t_ptr->tval == TV_SLING_AMMO) &&
+	if ((t_ptr->tval == TV_SHOT) &&
 	    (i_ptr->subval >= 20) && (i_ptr->subval <= 21));
 	/* right type, do nothing */
 	else if ((t_ptr->tval == TV_ARROW) &&
