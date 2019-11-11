@@ -835,11 +835,11 @@
 #define TV_MAX_VISIBLE  110
 
 /* spell types used by get_flags(), breathe(), fire_bolt() and fire_ball() */
-#define GF_MAGIC_MISSILE 0
-#define GF_LIGHTNING    1
-#define GF_POISON_GAS   2
+#define GF_MISSILE 0
+#define GF_ELEC    1
+#define GF_POIS   2
 #define GF_ACID         3
-#define GF_FROST        4
+#define GF_COLD        4
 #define GF_FIRE         5
 #define GF_HOLY_ORB     6
 #define GF_ARROW        7
@@ -854,7 +854,7 @@
 #define GF_NEXUS        16
 #define GF_FORCE        17
 #define GF_INERTIA      18
-#define GF_LIGHT        19
+#define GF_LITE        19
 #define GF_DARK         20
 #define GF_TIME         21
 #define GF_GRAVITY      22

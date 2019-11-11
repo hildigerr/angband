@@ -80,14 +80,14 @@ int (**destroy) ();
       case GF_ACID:
 	*destroy = set_acid_destroy;
 	break;
-      case GF_FROST:
+      case GF_COLD:
       case GF_SHARDS:
       case GF_ICE:
       case GF_FORCE:
       case GF_SOUND:
 	*destroy = set_frost_destroy;	/* just potions and flasks -DGK */
 	break;
-      case GF_LIGHTNING:
+      case GF_ELEC:
 	*destroy = set_lightning_destroy;
 	break;
       case GF_PLASMA:		   /* DGK */
@@ -102,8 +102,8 @@ int (**destroy) ();
       case GF_HOLY_ORB:	   /* DGK */
 	*destroy = set_holy_destroy;	/* cursed stuff -DGK */
 	break;
-      case GF_MAGIC_MISSILE:
-      case GF_POISON_GAS:
+      case GF_MISSILE:
+      case GF_POIS:
       case GF_ARROW:
       case GF_NETHER:
       case GF_WATER:
@@ -112,7 +112,7 @@ int (**destroy) ();
       case GF_DISENCHANT:
       case GF_NEXUS:
       case GF_INERTIA:
-      case GF_LIGHT:
+      case GF_LITE:
       case GF_DARK:
       case GF_TIME:
       case GF_GRAVITY:
@@ -1148,12 +1148,12 @@ int           monptr;
 			dam_hp = 1;
 		    m_ptr = &m_list[monptr];
 		    switch (typ) {
-		      case GF_LIGHTNING:
+		      case GF_ELEC:
 			if (blind)
 			    msg_print("You are hit by electricity!");
 			light_dam(dam_hp, ddesc);
 			break;
-		      case GF_POISON_GAS:
+		      case GF_POIS:
 			if (blind)
 			    msg_print("You are hit by a blast of noxious gases!");
 			poison_gas(dam_hp, ddesc);
@@ -1163,7 +1163,7 @@ int           monptr;
 			    msg_print("You are hit by a jet of acidic fluid!");
 			acid_dam(dam_hp, ddesc);
 			break;
-		      case GF_FROST:
+		      case GF_COLD:
 			if (blind)
 			    msg_print("You are hit by something cold!");
 			cold_dam(dam_hp, ddesc);
@@ -1173,7 +1173,7 @@ int           monptr;
 			    msg_print("You are hit by something hot!");
 			fire_dam(dam_hp, ddesc);
 			break;
-		      case GF_MAGIC_MISSILE:
+		      case GF_MISSILE:
 			if (blind)
 			    msg_print("You are hit by something!");
 			take_hit(dam_hp, ddesc);
@@ -1387,7 +1387,7 @@ int           monptr;
 			}
 			take_hit(dam_hp, ddesc);
 			break;
-		      case GF_LIGHT:
+		      case GF_LITE:
 			if (blind)
 			    msg_print("You are hit by something!");
 			if (py.flags.resist_lite) {
@@ -1731,7 +1731,7 @@ starball(y, x)
 
     for (i = 1; i <= 9; i++)
 	if (i != 5)
-	    fire_ball(GF_LIGHTNING, i, y, x, 150, 3);
+	    fire_ball(GF_ELEC, i, y, x, 150, 3);
 }
 
 /* Breath weapon works like a fire_ball, but affects the player. */
@@ -1887,22 +1887,22 @@ int   monptr;
 			if (dam > 1600)
 			    dam = 1600;
 			switch (typ) {
-			  case GF_LIGHTNING:
+			  case GF_ELEC:
 			    light_dam(dam, ddesc);
 			    break;
-			  case GF_POISON_GAS:
+			  case GF_POIS:
 			    poison_gas(dam, ddesc);
 			    break;
 			  case GF_ACID:
 			    acid_dam(dam, ddesc);
 			    break;
-			  case GF_FROST:
+			  case GF_COLD:
 			    cold_dam(dam, ddesc);
 			    break;
 			  case GF_FIRE:
 			    fire_dam(dam, ddesc);
 			    break;
-			  case GF_MAGIC_MISSILE:
+			  case GF_MISSILE:
 			    take_hit(dam, ddesc);
 			    break;
 			  case GF_HOLY_ORB:
@@ -2174,7 +2174,7 @@ int   monptr;
 			    }
 			    take_hit(dam, ddesc);
 			    break;
-			  case GF_LIGHT:
+			  case GF_LITE:
 			    if (py.flags.resist_lite) {
 				dam *= 4;
 				dam /= (randint(6) + 6);
@@ -4538,9 +4538,9 @@ byte         by_player;
 
     res = NO_RES;		/* assume until we know different -CFT */
     switch ( typ ){		/* check for resists... */
-      case GF_MAGIC_MISSILE:	/* pure damage, no resist possible */
+      case GF_MISSILE:	/* pure damage, no resist possible */
 	break;
-      case GF_LIGHTNING:
+      case GF_ELEC:
 	if (r_ptr->cdefense & IM_LIGHTNING) {
 	    res = RESIST;
 	    *dam /= 9;
@@ -4548,7 +4548,7 @@ byte         by_player;
 		c_recall[m_ptr->mptr].r_cdefense |= IM_LIGHTNING;
         }
 	break;
-      case GF_POISON_GAS:
+      case GF_POIS:
 	if (r_ptr->cdefense & IM_POISON) {
 	    res = RESIST;
 	    *dam /= 9;
@@ -4564,7 +4564,7 @@ byte         by_player;
 		c_recall[m_ptr->mptr].r_cdefense |= IM_ACID;
         }
 	break;
-      case GF_FROST:
+      case GF_COLD:
 	if (r_ptr->cdefense & IM_FROST) {
 	    res = RESIST;
 	    *dam /= 9;
@@ -4766,7 +4766,7 @@ byte         by_player;
 	    *dam /= (randint(6)+6); /* from .427 to .25 -CFT */
         }
 	break;
-      case GF_LIGHT:
+      case GF_LITE:
 	if (r_ptr->spells3 & BREATH_LT){ /* breathe light to res light */
 	    res = RESIST;
 	    *dam *= 2;

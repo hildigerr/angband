@@ -80,7 +80,7 @@ aim()
 			done_effect = 1;
 			break;
 		      case WD_DRG_FRST:
-			fire_ball(GF_FROST, dir, k, l, 80, 3);
+			fire_ball(GF_COLD, dir, k, l, 80, 3);
 			ident = TRUE;
 			done_effect = 1;
 			break;
@@ -90,16 +90,16 @@ aim()
 			    fire_ball(GF_FIRE, dir, k, l, 100, 3);
 			    break;
 			  case 2:
-			    fire_ball(GF_FROST, dir, k, l, 80, 3);
+			    fire_ball(GF_COLD, dir, k, l, 80, 3);
 			    break;
 			  case 3:
 			    fire_ball(GF_ACID, dir, k, l, 90, 3);
 			    break;
 			  case 4:
-			    fire_ball(GF_LIGHTNING, dir, k, l, 70, 3);
+			    fire_ball(GF_ELEC, dir, k, l, 70, 3);
 			    break;
 			  default:
-			    fire_ball(GF_POISON_GAS, dir, k, l, 70, 3);
+			    fire_ball(GF_POIS, dir, k, l, 70, 3);
 			    break;
 			}
 			ident = TRUE;
@@ -115,17 +115,17 @@ aim()
 			break;
 		      case WD_LT_BLTS:	/* Lightning */
 			if (randint(6)==1)
-			    line_spell(GF_LIGHTNING,dir,k,l,damroll(3,8));
+			    line_spell(GF_ELEC,dir,k,l,damroll(3,8));
 			else
-			    fire_bolt(GF_LIGHTNING, dir, k, l, damroll(3, 8));
+			    fire_bolt(GF_ELEC, dir, k, l, damroll(3, 8));
 			ident = TRUE;
 			done_effect = 1;
 			break;
 		      case WD_FT_BLTS:	/* Frost */
 			if (randint(6)==1)
-			    line_spell(GF_LIGHTNING,dir,k,l,damroll(3,8));
+			    line_spell(GF_ELEC,dir,k,l,damroll(3,8));
 			else
-			    fire_bolt(GF_LIGHTNING, dir, k, l, damroll(3, 8));
+			    fire_bolt(GF_ELEC, dir, k, l, damroll(3, 8));
 			ident = TRUE;
 			done_effect = 1;
 			break;
@@ -179,9 +179,9 @@ aim()
 			break;
 		      case WD_MAG_MIS:
 			if (randint(6)==1)
-			    line_spell(GF_MAGIC_MISSILE,dir,k,l,damroll(2,6));
+			    line_spell(GF_MISSILE,dir,k,l,damroll(2,6));
 			else
-			    fire_bolt(GF_MAGIC_MISSILE, dir, k, l, damroll(2, 6));
+			    fire_bolt(GF_MISSILE, dir, k, l, damroll(2, 6));
 			ident = TRUE;
 			done_effect = 1;
 			break;
@@ -202,12 +202,12 @@ aim()
 			done_effect = 1;
 			break;
 		      case WD_LT_BALL:
-			fire_ball(GF_LIGHTNING, dir, k, l, 32, 2);
+			fire_ball(GF_ELEC, dir, k, l, 32, 2);
 			ident = TRUE;
 			done_effect = 1;
 			break;
 		      case WD_CD_BALL:
-			fire_ball(GF_FROST, dir, k, l, 48, 2);
+			fire_ball(GF_COLD, dir, k, l, 48, 2);
 			ident = TRUE;
 			done_effect = 1;
 			break;
@@ -217,7 +217,7 @@ aim()
 			done_effect = 1;
 			break;
 		      case WD_ST_CLD:
-			fire_ball(GF_POISON_GAS, dir, k, l, 12, 2);
+			fire_ball(GF_POIS, dir, k, l, 12, 2);
 			ident = TRUE;
 			done_effect = 1;
 			break;

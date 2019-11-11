@@ -110,9 +110,9 @@ activate_rod()
 		if (!direction(&dir))
 		    goto no_charge;
 		if (randint(12)==1)
-		    line_spell(GF_LIGHTNING, dir, k, l, damroll(3, 8));
+		    line_spell(GF_ELEC, dir, k, l, damroll(3, 8));
 		else
-		    fire_bolt(GF_LIGHTNING, dir, k, l, damroll(3, 8));
+		    fire_bolt(GF_ELEC, dir, k, l, damroll(3, 8));
 		ident = TRUE;
 		i_ptr->timeout = 11;
 		break;
@@ -120,9 +120,9 @@ activate_rod()
 		if (!direction(&dir))
 		    goto no_charge;
 		if (randint(10)==1)
-		    line_spell(GF_FROST, dir, k, l, damroll(5, 8));
+		    line_spell(GF_COLD, dir, k, l, damroll(5, 8));
 		else
-		    fire_bolt(GF_FROST, dir, k, l, damroll(5, 8));
+		    fire_bolt(GF_COLD, dir, k, l, damroll(5, 8));
 		ident = TRUE;
 		i_ptr->timeout = 13;
 		break;
@@ -175,14 +175,14 @@ activate_rod()
 	      case RD_LT_BALL:
 		if (!direction(&dir))
 		    goto no_charge;
-		fire_ball(GF_LIGHTNING, dir, k, l, 32, 2);
+		fire_ball(GF_ELEC, dir, k, l, 32, 2);
 		ident = TRUE;
 		i_ptr->timeout = 23;
 		break;
 	      case RD_CD_BALL:
 		if (!direction(&dir))
 		    goto no_charge;
-		fire_ball(GF_FROST, dir, k, l, 48, 2);
+		fire_ball(GF_COLD, dir, k, l, 48, 2);
 		ident = TRUE;
 		i_ptr->timeout = 25;
 		break;

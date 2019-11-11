@@ -65,10 +65,10 @@ cast()
 		  case 1:
 		    if (get_dir(NULL, &dir))
 			if (randint(100) < (chance-10))
-			    line_spell(GF_MAGIC_MISSILE, dir, char_row, char_col,
+			    line_spell(GF_MISSILE, dir, char_row, char_col,
 				       damroll(3 + ((py.misc.lev - 1) / 5), 4) );
 			else
-			    fire_bolt(GF_MAGIC_MISSILE, dir, char_row, char_col,
+			    fire_bolt(GF_MISSILE, dir, char_row, char_col,
 				      damroll(3 + ((py.misc.lev - 1) / 5), 4) );
 		    break;
 		  case 2:
@@ -102,7 +102,7 @@ cast()
 		    break;
 		  case 9:
 		    if (get_dir(NULL, &dir))
-			fire_ball(GF_POISON_GAS, dir, char_row, char_col,
+			fire_ball(GF_POIS, dir, char_row, char_col,
 				  10 + (py.misc.lev / 2), 2);
 		    break;
 		  case 10:
@@ -112,10 +112,10 @@ cast()
 		  case 11:
 		    if (get_dir(NULL, &dir))
 			if (randint(100) < (chance-10))
-			    line_spell(GF_LIGHTNING, dir, char_row, char_col,
+			    line_spell(GF_ELEC, dir, char_row, char_col,
 				       damroll(3+((py.misc.lev-5)/4),8));
 			else
-			    fire_bolt(GF_LIGHTNING, dir, char_row, char_col,
+			    fire_bolt(GF_ELEC, dir, char_row, char_col,
 				      damroll(3+((py.misc.lev-5)/4),8));
 		    break;
 		  case 12:
@@ -140,10 +140,10 @@ cast()
 		  case 17:
 		    if (get_dir(NULL, &dir))
 			if (randint(100) < (chance-10))
-			    line_spell(GF_FROST, dir, char_row, char_col,
+			    line_spell(GF_COLD, dir, char_row, char_col,
 				       damroll(5+((py.misc.lev-5)/4),8));
 			else
-			    fire_bolt(GF_FROST, dir, char_row, char_col,
+			    fire_bolt(GF_COLD, dir, char_row, char_col,
 				      damroll(5+((py.misc.lev-5)/4),8));
 		    break;
 		  case 18:
@@ -184,7 +184,7 @@ cast()
 		    break;
 		  case 27:
 		    if (get_dir(NULL, &dir))
-			fire_ball(GF_FROST, dir, char_row, char_col,
+			fire_ball(GF_COLD, dir, char_row, char_col,
 				  30 + (py.misc.lev), 2);
 		    break;
 		  case 28:
@@ -244,7 +244,7 @@ cast()
 		    break;
 		  case 40:	   /* Cloud kill */
 		    if (get_dir(NULL, &dir))
-			fire_ball(GF_POISON_GAS, dir, char_row, char_col,
+			fire_ball(GF_POIS, dir, char_row, char_col,
 				  20 + (py.misc.lev / 2), 3);
 		    break;
 		  case 41:	   /* Acid Ball */
@@ -254,7 +254,7 @@ cast()
 		    break;
 		  case 42:	   /* Ice Storm */
 		    if (get_dir(NULL, &dir))
-			fire_ball(GF_FROST, dir, char_row, char_col,
+			fire_ball(GF_COLD, dir, char_row, char_col,
 				  70 + (py.misc.lev), 3);
 		    break;
 		  case 43:	   /* Meteor Swarm */

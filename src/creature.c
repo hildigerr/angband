@@ -1873,7 +1873,7 @@ int monptr, *took_turn;
 	    else
 		(void)strcat(cdesc, "breathes, and you get zapped.");
 	    msg_print(cdesc);
-	    breath(GF_LIGHTNING, char_row, char_col,
+	    breath(GF_ELEC, char_row, char_col,
 		   ((m_ptr->hp / 3) > 1600 ? 1600 : (m_ptr->hp / 3)),
 		   ddesc, monptr);
 	    break;
@@ -1883,7 +1883,7 @@ int monptr, *took_turn;
 	    else
 		(void)strcat(cdesc, "breathes, and you inhale noxious gases.");
 	    msg_print(cdesc);
-	    breath(GF_POISON_GAS, char_row, char_col,
+	    breath(GF_POIS, char_row, char_col,
 	    ((m_ptr->hp / 3) > 800 ? 800 : (m_ptr->hp / 3)), ddesc, monptr);
 	    break;
 	  case 22:		   /* Breath Acid	 */
@@ -1902,7 +1902,7 @@ int monptr, *took_turn;
 	    else
 		(void)strcat(cdesc, "breathes, and feel a frigid blast.");
 	    msg_print(cdesc);
-	    breath(GF_FROST, char_row, char_col,
+	    breath(GF_COLD, char_row, char_col,
 		   ((m_ptr->hp / 3) > 1600 ? 1600 : (m_ptr->hp / 3)),
 		   ddesc, monptr);
 	    break;
@@ -1932,7 +1932,7 @@ int monptr, *took_turn;
 	    else
 		(void)strcat(cdesc, "mumbles, and you feel a frigid blast .");
 	    msg_print(cdesc);
-	    bolt(GF_FROST, char_row, char_col,
+	    bolt(GF_COLD, char_row, char_col,
 		 damroll(6, 8) + (c_list[m_ptr->mptr].level / 3)
 		 ,ddesc, m_ptr, monptr);
 	    break;
@@ -1952,7 +1952,7 @@ int monptr, *took_turn;
 	    else
 		(void)strcat(cdesc, "mumbles, and you feel an arrow hit you.");
 	    msg_print(cdesc);
-	    bolt(GF_MAGIC_MISSILE, char_row, char_col,
+	    bolt(GF_MISSILE, char_row, char_col,
 		 damroll(2, 6) + (c_list[m_ptr->mptr].level / 3)
 		 ,ddesc, m_ptr, monptr);
 	    break;
@@ -1983,7 +1983,7 @@ int monptr, *took_turn;
 	    else
 		(void)strcat(cdesc, "mumbles, and you feel a frigid blast.");
 	    msg_print(cdesc);
-	    breath(GF_FROST, char_row, char_col,
+	    breath(GF_COLD, char_row, char_col,
 		   randint((c_list[m_ptr->mptr].level * 3) / 2) + 10,
 		   ddesc, monptr);
 	    break;
@@ -1993,7 +1993,7 @@ int monptr, *took_turn;
 	    else
 		(void)strcat(cdesc, "mumbles, and you feel a magical blast.");
 	    msg_print(cdesc);
-	    bolt(GF_MAGIC_MISSILE, char_row, char_col,
+	    bolt(GF_MISSILE, char_row, char_col,
 	    randint((c_list[m_ptr->mptr].level * 7) / 2) + 50, ddesc, m_ptr,
 		 monptr);
 	    break;
@@ -2058,7 +2058,7 @@ int monptr, *took_turn;
 	    else
 		(void)strcat(cdesc, "mumbles.");
 	    msg_print(cdesc);
-	    bolt(GF_LIGHTNING, char_row, char_col,
+	    bolt(GF_ELEC, char_row, char_col,
 		 damroll(4, 8) + (c_list[m_ptr->mptr].level / 3)
 		 ,ddesc, m_ptr, monptr);
 	    break;
@@ -2068,7 +2068,7 @@ int monptr, *took_turn;
 	    else
 		(void)strcat(cdesc, "mumbles, and you get zapped.");
 	    msg_print(cdesc);
-	    breath(GF_LIGHTNING, char_row, char_col,
+	    breath(GF_ELEC, char_row, char_col,
 	    randint((c_list[m_ptr->mptr].level * 3) / 2) + 8, ddesc, monptr);
 	    break;
 	  case 41:
@@ -2261,7 +2261,7 @@ int monptr, *took_turn;
 	    else
 		(void)strcat(cdesc, "mumbles.");
 	    msg_print(cdesc);
-	    bolt(GF_FROST, char_row, char_col,
+	    bolt(GF_COLD, char_row, char_col,
 		 damroll(6, 6) + (c_list[m_ptr->mptr].level)
 		 ,ddesc, m_ptr, monptr);
 	    break;
@@ -2328,7 +2328,7 @@ int monptr, *took_turn;
 	    else
 		(void)strcat(cdesc, "mumbles, and you smell a foul odor.");
 	    msg_print(cdesc);
-	    breath(GF_POISON_GAS, char_row, char_col,
+	    breath(GF_POIS, char_row, char_col,
 		   damroll(12, 2), ddesc, monptr);
 	    break;
 	  case 57:
@@ -2476,7 +2476,7 @@ int monptr, *took_turn;
 	    else
 		(void)strcat(cdesc, "breathes.");
 	    msg_print(cdesc);
-	    breath(GF_LIGHT, char_row, char_col,
+	    breath(GF_LITE, char_row, char_col,
 	    ((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), ddesc, monptr);
 	    break;
 	  case 68:

@@ -2397,7 +2397,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_bolt(GF_FROST, dir, char_row, char_col, damroll(6, 8));
+			fire_bolt(GF_COLD, dir, char_row, char_col, damroll(6, 8));
 			inventory[i].timeout = 4 + randint(8);
 		    }
 		} else if (inventory[i].name2 == SN_DETHANC) {
@@ -2409,7 +2409,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_bolt(GF_LIGHTNING, dir, char_row, char_col, damroll(4, 8));
+			fire_bolt(GF_ELEC, dir, char_row, char_col, damroll(4, 8));
 			inventory[i].timeout = 3 + randint(7);
 		    }
 		} else if (inventory[i].name2 == SN_RILIA) {
@@ -2421,7 +2421,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_ball(GF_POISON_GAS, dir, char_row, char_col, 12, 3);
+			fire_ball(GF_POIS, dir, char_row, char_col, 12, 3);
 			inventory[i].timeout = 3 + randint(3);
 		    }
 		} else if (inventory[i].name2 == SN_BELANGIL) {
@@ -2433,7 +2433,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_ball(GF_FROST, dir, char_row, char_col, 48, 2);
+			fire_ball(GF_COLD, dir, char_row, char_col, 48, 2);
 			inventory[i].timeout = 3 + randint(7);
 		    }
 		}
@@ -2457,7 +2457,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_ball(GF_FROST, dir, char_row, char_col, 100, 2);
+			fire_ball(GF_COLD, dir, char_row, char_col, 100, 2);
 			inventory[i].timeout = 300;
 		    }
 		} else if (inventory[i].name2 == SN_ANDURIL) {
@@ -2613,7 +2613,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_bolt(GF_FROST, dir, char_row, char_col, damroll(12, 8));
+			fire_bolt(GF_COLD, dir, char_row, char_col, damroll(12, 8));
 			inventory[i].timeout = 500;
 		    }
 		}
@@ -2628,7 +2628,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_ball(GF_FROST, dir, char_row, char_col, 100, 2);
+			fire_ball(GF_COLD, dir, char_row, char_col, 100, 2);
 			inventory[i].timeout = 500;
 		    }
 		} else if (inventory[i].name2 == SN_OROME) {
@@ -2735,7 +2735,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_bolt(GF_MAGIC_MISSILE, dir, char_row, char_col,
+			fire_bolt(GF_MISSILE, dir, char_row, char_col,
 				  damroll(2, 6));
 			inventory[i].timeout = 2;
 		    }
@@ -2766,7 +2766,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_bolt(GF_FROST, dir, char_row, char_col, damroll(6, 8));
+			fire_bolt(GF_COLD, dir, char_row, char_col, damroll(6, 8));
 			inventory[i].timeout = 4 + randint(8);
 		    }
 		} else if (inventory[i].name2 == SN_PAURAEGEN) {
@@ -2778,7 +2778,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_bolt(GF_LIGHTNING, dir, char_row, char_col, damroll(4, 8));
+			fire_bolt(GF_ELEC, dir, char_row, char_col, damroll(4, 8));
 			inventory[i].timeout = 3 + randint(7);
 		    }
 		} else if (inventory[i].name2 == SN_PAURNEN) {
@@ -2846,7 +2846,7 @@ activate()
 			    dir = randint(9);
 			} while (dir == 5);
 		    }
-		    fire_ball(GF_FROST, dir, char_row, char_col, 200, 3);
+		    fire_ball(GF_COLD, dir, char_row, char_col, 200, 3);
 		    inventory[i].timeout = 222 + randint(333);
 		}
 		break;
@@ -2859,7 +2859,7 @@ activate()
 			    dir = randint(9);
 			} while (dir == 5);
 		    }
-		    fire_ball(GF_LIGHTNING, dir, char_row, char_col, 250, 3);
+		    fire_ball(GF_ELEC, dir, char_row, char_col, 250, 3);
 		    inventory[i].timeout = 222 + randint(444);
 		}
 		break;
@@ -2932,7 +2932,7 @@ activate()
 			    dir = randint(9);
 			} while (dir == 5);
 		    }
-		    fire_ball(GF_LIGHTNING, dir, char_row, char_col, 100, 2);
+		    fire_ball(GF_ELEC, dir, char_row, char_col, 100, 2);
 		    inventory[i].timeout = 444 + randint(444);
 		}
 		break;
@@ -2945,7 +2945,7 @@ activate()
 			    dir = randint(9);
 			} while (dir == 5);
 		    }
-		    fire_ball(GF_FROST, dir, char_row, char_col, 110, 2);
+		    fire_ball(GF_COLD, dir, char_row, char_col, 110, 2);
 		    inventory[i].timeout = 444 + randint(444);
 		}
 		break;
@@ -2971,7 +2971,7 @@ activate()
 			    dir = randint(9);
 			} while (dir == 5);
 		    }
-		    fire_ball(GF_POISON_GAS, dir, char_row, char_col, 150, 2);
+		    fire_ball(GF_POIS, dir, char_row, char_col, 150, 2);
 		    inventory[i].timeout = 444 + randint(444);
 		}
 		break;
@@ -3008,10 +3008,10 @@ activate()
 				  ((choice == 3) ? "acid" :
 				((choice == 4) ? "poison gas" : "fire")))));
 			msg_print(tmp2);
-			fire_ball(((choice == 1) ? GF_LIGHTNING :
-				   ((choice == 2) ? GF_FROST :
+			fire_ball(((choice == 1) ? GF_ELEC :
+				   ((choice == 2) ? GF_COLD :
 				    ((choice == 3) ? GF_ACID :
-			       ((choice == 4) ? GF_POISON_GAS : GF_FIRE)))),
+			       ((choice == 4) ? GF_POIS : GF_FIRE)))),
 				  dir, char_row, char_col, 250, 2);
 			inventory[i].timeout = 222 + randint(222);
 		    }
@@ -3110,7 +3110,7 @@ activate()
 		    sprintf(tmp2, "You breathe %s...",
 			    ((choice == 1 ? "light" : "darkness")));
 		    msg_print(tmp2);
-		    fire_ball((choice == 1 ? GF_LIGHT : GF_DARK), dir,
+		    fire_ball((choice == 1 ? GF_LITE : GF_DARK), dir,
 			      char_row, char_col, 200, 2);
 		    inventory[i].timeout = 300 + randint(300);
 		}
@@ -3136,7 +3136,7 @@ activate()
 				dir = randint(9);
 			    } while (dir == 5);
 			}
-			fire_ball(GF_MAGIC_MISSILE, dir, char_row, char_col, 300, 2);
+			fire_ball(GF_MISSILE, dir, char_row, char_col, 300, 2);
 			inventory[i].timeout = 300 + randint(300);
 		    }
 		}
