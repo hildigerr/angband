@@ -4050,8 +4050,8 @@ remove_curse()
 	i_ptr = &inventory[i];
 	if ((TR_CURSED & i_ptr->flags) &&
 	    (i_ptr->name2 != SN_MORGUL) &&
-	    (i_ptr->name2 != SN_CALRIS) &&
-	    (i_ptr->name2 != SN_MORMEGIL)) {
+	    (i_ptr->name2 != ART_CALRIS) &&
+	    (i_ptr->name2 != ART_MORMEGIL)) {
 	    if (!(!stricmp(object_list[i_ptr->index].name, "Power") &&
 		  (i_ptr->tval == TV_RING))) {
 		i_ptr->flags &= ~TR_CURSED;
@@ -4415,9 +4415,9 @@ self_knowledge()
     if (f & TR_CURSED) {
 	if (inventory[INVEN_WIELD].name2 == SN_MORGUL)
 	    prt("Your weapon is truly foul.", i++, j);
-	else if (inventory[INVEN_WIELD].name2 == SN_CALRIS)
+	else if (inventory[INVEN_WIELD].name2 == ART_CALRIS)
 	    prt("Your bastard sword is wickedly accursed.", i++, j);
-	else if (inventory[INVEN_WIELD].name2 == SN_MORMEGIL)
+	else if (inventory[INVEN_WIELD].name2 == ART_MORMEGIL)
 	    prt("Your two-handed sword radiates an aura of unspeakable evil.", i++, j);
 	else
 	    prt("Your weapon is accursed.", i++, j);

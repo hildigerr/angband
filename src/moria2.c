@@ -639,7 +639,7 @@ u32b              win;
 				       TR_SEE_INVIS | TR_CURSED | TR_INFRA);
 			t_ptr->flags2 |= (TR_TELEPATHY | TR_LIGHT | TR_ARTIFACT);
 			t_ptr->ident |= ID_NOSHOW_TYPE;
-			t_ptr->name2 = SN_MORGOTH;
+			t_ptr->name2 = ART_MORGOTH;
 			t_ptr->p1 = 125;
 			t_ptr->cost = 10000000L;
 			if (cave[j][k].cptr == 1)
@@ -653,7 +653,7 @@ u32b              win;
 			cave[j][k].tptr = cur_pos;
 			invcopy(&t_list[cur_pos], 56);
 			t_ptr = &t_list[cur_pos];
-			t_ptr->name2 = SN_GROND;
+			t_ptr->name2 = ART_GROND;
 			t_ptr->tohit = 5;
 			t_ptr->todam = 25;
 			t_ptr->damage[0] = 10;
