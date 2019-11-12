@@ -81,7 +81,7 @@
 /* probably unix */
 #define ANGBAND_TST       LIBDIR(test)
 #define ANGBAND_HOURS       LIBDIR(files/hours)
-#define ANGBAND_NEWS       LIBDIR(files/news)
+#define ANGBAND_NEWS       LIBDIR(files/news.hlp)
 #define ANGBAND_TOP       LIBDIR(files/newscores)
 #define ANGBAND_DIR_BONES     LIBDIR(bones)
 #define ANGBAND_R_HELP      LIBDIR(files/cmds_r.hlp)

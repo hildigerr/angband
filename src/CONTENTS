@@ -5,7 +5,7 @@ lib/files/:
 	glog				File to cat to GAMELOG
 	hours				Hours file
 	loadcheck			Loadcheck file
-	news				Start screen for game
+	news.hlp				Start screen for game
 	newscores			Scores file
 	scores				Old scores file (only needs newscores)
 	old.version.hlp			

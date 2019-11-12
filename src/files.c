@@ -72,7 +72,7 @@ void exit();
 #ifdef NEW_FILEPATHS
 char *ANGBAND_TST;		/* was LIBDIR(test)			*/
 char *ANGBAND_HOURS;		/* was LIBDIR(files/hours)		*/
-char *ANGBAND_NEWS;		/* was LIBDIR(files/news)		*/
+char *ANGBAND_NEWS;		/* was LIBDIR(files/news.hlp)		*/
 char *ANGBAND_TOP;		/* was LIBDIR(files/newscores)		*/
 char *ANGBAND_DIR_BONES;		/* was LIBDIR(bones)			*/
 char *ANGBAND_R_HELP;		/* was LIBDIR(files/cmds_r.hlp)	*/
@@ -132,7 +132,7 @@ void get_file_paths()
     strcat( ANGBAND_NEWS, PATH_SEP );
     strcat( ANGBAND_NEWS, "files" );
     strcat( ANGBAND_NEWS, PATH_SEP );
-    strcat( ANGBAND_NEWS, "news" );
+    strcat( ANGBAND_NEWS, "news.hlp" );
     ANGBAND_NEWS = (char *)realloc( ANGBAND_NEWS, strlen( ANGBAND_NEWS ) + 1 );
 
     ANGBAND_TOP = (char *)malloc( MAXPATHLEN );

@@ -300,7 +300,7 @@ extern char	moriatop[], moriasav[];
 #ifdef NEW_FILEPATHS
 extern char *ANGBAND_TST;		/* was LIBDIR(test)					*/
 extern char *ANGBAND_HOURS;		/* was LIBDIR(files/hours)			*/
-extern char *ANGBAND_NEWS;		/* was LIBDIR(files/news)			*/
+extern char *ANGBAND_NEWS;		/* was LIBDIR(files/news.hlp)			*/
 extern char *ANGBAND_TOP;		/* was LIBDIR(files/newscores)		*/
 extern char *ANGBAND_DIR_BONES;		/* was LIBDIR(bones)				*/
 extern char *ANGBAND_R_HELP;		/* was LIBDIR(files/cmds_r.hlp)	*/
