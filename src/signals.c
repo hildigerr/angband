@@ -184,14 +184,14 @@ signal_handler(sig)
 	panic_save = 1;
 	prt("Your guardian angel is trying to save you.", 0, 0);
 	(void)sprintf(died_from, "(panic save %d)", sig);
-	if (!save_char()) {
+	if (!save_player()) {
 	    (void)strcpy(died_from, "software bug");
 	    death = TRUE;
 	    turn = (-1);
 	}
     } else {
 	death = TRUE;
-	(void)_save_char(savefile);/* Quietly save the memory anyway. */
+	(void)_save_player(savefile);/* Quietly save the memory anyway. */
     }
     restore_term();
 #ifndef MSDOS

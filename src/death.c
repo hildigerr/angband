@@ -215,7 +215,7 @@ int from, to;
 	    clear_screen();
 	    flush();		   /* flush all input */
 	    signals_ignore_tstp();	   /* Can't interrupt or suspend. */
-	    (void)save_char();	   /* Save the memory at least. */
+	    (void)save_player();	   /* Save the memory at least. */
 	    restore_term();
 	    exit(0);
 	}
@@ -405,21 +405,21 @@ top_twenty()
 
     if (wizard || to_be_wizard) {
 	display_scores(0, 10);
-	(void)save_char();
+	(void)save_player();
 	restore_term();
 	exit(0);
     }
     if (!total_winner && !stricmp(died_from, "Interrupting")) {
 	msg_print("Score not registered due to interruption.");
 	display_scores(0, 10);
-	(void)save_char();
+	(void)save_player();
 	restore_term();
 	exit(0);
     }
     if (!total_winner && !stricmp(died_from, "Quitting")) {
 	msg_print("Score not registered due to quitting.");
 	display_scores(0, 10);
-	(void)save_char();
+	(void)save_player();
 	restore_term();
 	exit(0);
     }
@@ -626,7 +626,7 @@ exit_game()
 	    msg_print("Score not registered.");
     }
     i = log_index;
-    (void)save_char();		   /* Save the memory at least. */
+    (void)save_player();		   /* Save the memory at least. */
     if (i > 0)
 	display_scores(0, 10);
     erase_line(23, 0);

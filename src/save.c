@@ -638,7 +638,7 @@ sv_write()
 }
 
 int 
-save_char()
+save_player()
 {
     vtype temp;
     char *tmp2;
@@ -649,7 +649,7 @@ save_char()
     if (death && NO_SAVE)
 	return TRUE;
 
-    if (_save_char(savefile)) {
+    if (_save_player(savefile)) {
 
 	tmp2 = basename(savefile);
 
@@ -666,7 +666,7 @@ save_char()
 }
 
 int 
-_save_char(fnam)
+_save_player(fnam)
 char *fnam;
 {
     vtype temp;

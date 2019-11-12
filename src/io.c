@@ -764,7 +764,7 @@ inkey()
 	    /* just in case, to make sure that the process eventually dies */
 		panic_save = 1;
 		(void)strcpy(died_from, "(end of input: panic saved)");
-		if (!save_char()) {
+		if (!save_player()) {
 		    (void)strcpy(died_from, "panic: unexpected eof");
 		    death = TRUE;
 		}

@@ -392,7 +392,7 @@ char *argv[];
 
     if (FIDDLE) {
 	if (get_char(&generate))
-	    save_char();
+	    save_player();
 	exit_game();
     }
 
@@ -585,7 +585,7 @@ char *argv[];
 	if (eof_flag)
 	{
 	    (void) strcpy(died_from, "(end of input: saved)");
-	    if (!save_char())
+	    if (!save_player())
 	    {
 		(void) strcpy(died_from, "unexpected eof");
 	    }

@@ -26,7 +26,7 @@ int cur_lite = 0, old_lite;				/* light radius spoo */
 s16b total_winner = FALSE;
 int NO_SAVE=FALSE;
 int character_generated = 0;	/* don't save score until char gen finished */
-int character_saved = 0;	/* prevents save on kill after save_char() */
+int character_saved = 0;	/* prevents save on kill after save_player() */
 int highscore_fd;		/* File descriptor to high score file */
 int LOAD=0;
 u32b randes_seed;		/* for restarting randes_state */

@@ -107,7 +107,7 @@ extern int be_nasty;
 extern int monster_is_afraid;	/* redo monster fear messages -CWS */
 
 extern int character_generated;	/* don't save score until char gen finished */
-extern int character_saved;		/* prevents save on kill after save_char() */
+extern int character_saved;		/* prevents save on kill after save_player() */
 extern int feeling;				/* level feeling */
 extern int highscore_fd;		/* High score file descriptor */
 extern int command_count;		/* Repetition of commands. -CJS- */
@@ -681,11 +681,11 @@ void activate_rod(void);
 
 /* save.c */
 #ifdef MAC
-int save_char(int);
+int save_player(int);
 #else
-int save_char(void);
+int save_player(void);
 #endif
-int _save_char(char *);
+int _save_player(char *);
 int get_char(int *);
 
 /* scrolls.c */
@@ -1211,8 +1211,8 @@ char *setstate();
 #endif
 
 /* save.c */
-int save_char();
-int _save_char();
+int save_player();
+int _save_player();
 int get_char();
 
 /* scrolls.c */

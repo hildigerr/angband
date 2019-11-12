@@ -170,7 +170,7 @@ dungeon()
 	    if (closing_flag > 2) {
 		msg_print("The gates to ANGBAND are now closed.");
 		(void)strcpy(died_from, "(closing gate: saved)");
-		if (!save_char()) {
+		if (!save_player()) {
 		    (void)strcpy(died_from, "a slammed gate");
 		    death = TRUE;
 		}
@@ -1573,7 +1573,7 @@ char com_val;
 	} else {
 	    (void)strcpy(died_from, "(saved)");
 	    msg_print("Saving game...");
-	    if (save_char())
+	    if (save_player())
 		exit_game();
 	    msg_print("Save failed...");
 	    (void)strcpy(died_from, "(alive and well)");
