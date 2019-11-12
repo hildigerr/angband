@@ -530,7 +530,7 @@ detect_invisible()
 }
 
 
-/* Split out of light_line.       -DGK */
+/* Split out of lite_line.       -DGK */
 void 
 mon_light_dam(y, x, dam)
 int y, x, dam;
@@ -852,7 +852,7 @@ detect_monsters()
 /* Leave a line of light in given dir, blue light can sometimes	 */
 /* hurt creatures.				       -RAK-   */
 void 
-light_line(dir, y, x)
+lite_line(dir, y, x)
 int dir, y, x;
 {
     register cave_type *c_ptr;
@@ -895,7 +895,7 @@ register int y, x;
 	msg_print("The end of the staff bursts into a blue shimmering light.");
     for (i = 1; i <= 9; i++)
 	if (i != 5)
-	    light_line(i, y, x);
+	    lite_line(i, y, x);
 }
 
 /* Disarms all traps/chests in a given direction	-RAK-	 */

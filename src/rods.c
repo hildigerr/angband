@@ -87,7 +87,7 @@ activate_rod()
 		if (!direction(&dir))
 		    goto no_charge;
 		msg_print("A line of blue shimmering light appears.");
-		light_line(dir, char_row, char_col);
+		lite_line(dir, char_row, char_col);
 		ident = TRUE;
 		i_ptr->timeout = 9;
 		break;

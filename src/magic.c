@@ -134,7 +134,7 @@ cast()
 		  case 16:
 		    if (get_dir(NULL, &dir)) {
 			msg_print("A line of blue shimmering light appears.");
-			light_line(dir, char_row, char_col);
+			lite_line(dir, char_row, char_col);
 		    }
 		    break;
 		  case 17:

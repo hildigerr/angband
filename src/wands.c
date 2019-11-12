@@ -70,7 +70,7 @@ aim()
 		    switch (i) {
 		      case WD_LT:
 			msg_print("A line of blue shimmering light appears.");
-			light_line(dir, char_row, char_col);
+			lite_line(dir, char_row, char_col);
 			ident = TRUE;
 			done_effect = 1;
 			break;
