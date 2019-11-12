@@ -43,7 +43,7 @@ static void examine_book();
 static void activate();
 static void go_up();
 static void go_down();
-static void jamdoor();
+static void do_cmd_spike();
 static void refill_lamp();
 static void regen_monsters();
 #endif
@@ -1861,7 +1861,7 @@ char com_val;
 	inven_command('i');
 	break;
       case 'S':			/* (S)pike a door	(j)am a door */
-	jamdoor();
+	do_cmd_spike();
 	break;
       case 'x':			/* e(x)amine surrounds	(l)ook about */
 	look();
@@ -3327,7 +3327,7 @@ go_down()
 
 /* Jam a closed door					-RAK-	 */
 static void 
-jamdoor()
+do_cmd_spike()
 {
     int                  y, x, dir, i, j;
     register cave_type  *c_ptr;
