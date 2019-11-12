@@ -9,10 +9,10 @@ lib/files/:
 	newscores			Scores file
 	scores				Old scores file (only needs newscores)
 	old.version.hlp			
-	origcmds.hlp
+	cmds_o.hlp
 	owizcmds.hlp
-	roglcmds.hlp
-	rwizcmds.hlp			  Help files
+	cmds_r.hlp
+	cmds_w.hlp			  Help files
 	version.hlp
 	version.help.orig
 	welcome.hlp

@@ -107,7 +107,7 @@ OBJECTS = main.o misc1.o misc2.o store1.o files.o io.o birth.o desc.o\
 	treasure.o variable.o recall.o unix.o undef.o\
 	player.o tables.o describe_mon.o rods.o util.o $(EXTRAOBJS)
 
-LIBFILES = hours news origcmds.hlp owizcmds.hlp roglcmds.hlp rwizcmds.hlp \
+LIBFILES = hours news cmds_o.hlp owizcmds.hlp cmds_r.hlp cmds_w.hlp \
 	scores version.hlp welcome.hlp
 
 default: all
