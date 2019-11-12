@@ -8,9 +8,6 @@
  * included in all such copies. 
  */
 
-#include <stdio.h>
-#include <ctype.h>
-
 #include "angband.h"
 #include "monster.h"
 

@@ -10,8 +10,6 @@
 
 #if defined(unix) || defined(__MINT__)
 
-/* defines NULL */
-#include <stdio.h>
 /* defines CTRL */
 #include <sys/ioctl.h>
 
@@ -65,7 +63,6 @@ typedef struct {
 #endif
 
 /* #include <pwd.h> */
-#include <sys/errno.h>
 
 struct passwd      *getpwuid();
 struct passwd      *getpwnam();

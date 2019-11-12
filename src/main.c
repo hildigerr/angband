@@ -8,7 +8,6 @@
 
 #include "angband.h"
 
-#include <stdio.h>
 
 /* include before constant, because param.h defines NULL incorrectly */
 #ifndef USG
@@ -29,7 +28,6 @@
 #include <sys/stat.h>
 #endif
 
-#include <ctype.h>
 
 #ifndef ibm032
 #include <time.h>

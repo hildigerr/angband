@@ -8,8 +8,6 @@
  * included in all such copies. 
  */
 
-#include <stdio.h>
-#include <errno.h>
 
 #ifndef MSDOS
 #include <sys/param.h>
@@ -17,14 +15,6 @@
 
 #include "angband.h"
 
-#ifdef ibm032
-#include <ctype.h>
-#endif
-
-#ifdef MSDOS
-extern int          errno;
-
-#endif
 
 #if defined(GEMDOS) && (__STDC__ == 0)
 #include <access.h>
@@ -36,9 +26,6 @@ char               *strcat();
 #ifndef ATARIST_MWC
 #include <string.h>
 #include <fcntl.h>
-#ifdef __MINT__
-#include <ctype.h>
-#endif
 #endif
 #else
 #include <strings.h>

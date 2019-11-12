@@ -27,7 +27,6 @@ defined(NCR3K) || defined(linux) || defined(ibm032) || defined (__osf__)
 #endif
 #endif
 
-#include <stdio.h>
 #include "angband.h"
 #include "monster.h"
 

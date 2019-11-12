@@ -8,7 +8,6 @@
 
 #define get_Yn get_check
 
-#include <stdio.h>
 
 /* many systems don't define these anywhere */
 #if defined(USG) || defined(DGUX) || defined(atarist)

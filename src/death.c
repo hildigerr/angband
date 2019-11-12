@@ -13,7 +13,6 @@
  * local includes 
  */
 
-#include <stdio.h>
 #include <signal.h>
 #include "angband.h"
 
@@ -23,8 +22,6 @@
 #include <time.h>
 #endif
 
-#include <ctype.h>
-#include "config.h"
 
 #ifndef USG
 /* only needed for Berkeley UNIX */

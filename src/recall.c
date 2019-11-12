@@ -11,7 +11,6 @@
 #include "angband.h"
 #include "monster.h"
 
-#include <stdio.h>
 
 #ifndef NO_LINT_ARGS
 #ifdef __STDC__

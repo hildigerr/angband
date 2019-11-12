@@ -18,7 +18,6 @@
 
 #include "angband.h"
 
-#include <ctype.h>
 
 #ifdef USG
 #ifndef ATARIST_MWC
