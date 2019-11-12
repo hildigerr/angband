@@ -224,7 +224,7 @@ pray()
 		    (void)probing();
 		    break;
 		  case 36:	   /* Clairvoyance */
-		    wizard_light(TRUE);
+		    wiz_lite(TRUE);
 		    break;
 		  case 37:
 		    (void)hp_player(damroll(8, 4));

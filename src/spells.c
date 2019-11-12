@@ -220,7 +220,7 @@ lose_all_info()
 	if (inventory[i].tval != TV_NOTHING)
 	    inventory[i].ident &= ~(ID_KNOWN2);
     }
-    wizard_light(-1);
+    wiz_lite(-1);
     return (0);
 }
 

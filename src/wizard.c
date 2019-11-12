@@ -301,7 +301,7 @@ artifact_check()
 
 /* Light up the dungeon					-RAK-	 */
 void
-wizard_light(light)
+wiz_lite(light)
 int light;
 {
     register cave_type *c_ptr;

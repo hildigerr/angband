@@ -2016,7 +2016,7 @@ char com_val;
 		wizard_create();
 		break;
 	      case '$':	   /* $ = wiz light */
-		wizard_light(TRUE);
+		wiz_lite(TRUE);
 		break;
 	      case '%':	   /* self-knowledge */
 		self_knowledge();
@@ -3165,7 +3165,7 @@ activate()
 		break;
 	      case (OBJ_SPECIAL + 7):
 		msg_print("The stone glows a deep green");
-		wizard_light(TRUE);
+		wiz_lite(TRUE);
 		(void)detect_sdoor();
 		(void)detect_trap();
 		inventory[i].timeout = 100 + randint(100);

@@ -866,7 +866,7 @@ int microsleep(unsigned long);
 void aim(void);
 
 /* wizard.c */
-void wizard_light(int);
+void wiz_lite(int);
 void change_character(void);
 void wizard_create(void);
 void artifact_check(void);
@@ -1382,7 +1382,7 @@ int microsleep();
 void aim();
 
 /* wizard.c */
-void wizard_light();
+void wiz_lite();
 void change_character();
 void wizard_create();
 void artifact_check();

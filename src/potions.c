@@ -366,7 +366,7 @@ quaff()
 		    f_ptr->tim_infra += 100 + randint(100);
 		    break;
 		  case 48:
-		    wizard_light(TRUE);
+		    wiz_lite(TRUE);
 		    if (!res_stat(A_WIS))
 			inc_stat(A_WIS);
 		    if (!res_stat(A_INT))
@@ -435,7 +435,7 @@ quaff()
 		    break;
 		  case 54:
 		    msg_print("An image of your surroundings forms in your mind...");
-		    wizard_light(TRUE);
+		    wiz_lite(TRUE);
 		    ident = TRUE;
 		    break;
 		  case 55:
