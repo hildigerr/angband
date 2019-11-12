@@ -75,7 +75,7 @@ void exit();
 #ifdef NEW_FILEPATHS
 char *ANGBAND_TST;		/* was LIBDIR(test)			*/
 char *ANGBAND_HOURS;		/* was LIBDIR(files/hours)		*/
-char *ANGBAND_MOR;		/* was LIBDIR(files/news)		*/
+char *ANGBAND_NEWS;		/* was LIBDIR(files/news)		*/
 char *ANGBAND_TOP;		/* was LIBDIR(files/newscores)		*/
 char *ANGBAND_BONES;		/* was LIBDIR(bones)			*/
 char *ANGBAND_HELP;		/* was LIBDIR(files/roglcmds.hlp)	*/
@@ -130,13 +130,13 @@ void get_file_paths()
     strcat( ANGBAND_HOURS, "hours" );
     ANGBAND_HOURS = (char *)realloc( ANGBAND_HOURS, strlen( ANGBAND_HOURS ) + 1 );
 
-    ANGBAND_MOR = (char *)malloc( MAXPATHLEN );
-    strcpy( ANGBAND_MOR, angband_path );
-    strcat( ANGBAND_MOR, PATH_SEP );
-    strcat( ANGBAND_MOR, "files" );
-    strcat( ANGBAND_MOR, PATH_SEP );
-    strcat( ANGBAND_MOR, "news" );
-    ANGBAND_MOR = (char *)realloc( ANGBAND_MOR, strlen( ANGBAND_MOR ) + 1 );
+    ANGBAND_NEWS = (char *)malloc( MAXPATHLEN );
+    strcpy( ANGBAND_NEWS, angband_path );
+    strcat( ANGBAND_NEWS, PATH_SEP );
+    strcat( ANGBAND_NEWS, "files" );
+    strcat( ANGBAND_NEWS, PATH_SEP );
+    strcat( ANGBAND_NEWS, "news" );
+    ANGBAND_NEWS = (char *)realloc( ANGBAND_NEWS, strlen( ANGBAND_NEWS ) + 1 );
 
     ANGBAND_TOP = (char *)malloc( MAXPATHLEN );
     strcpy( ANGBAND_TOP, angband_path );
@@ -318,7 +318,7 @@ read_times()
 #endif				   /* CHECK_HOURS */
 
 /* Print the introduction message, news, etc.		 */
-    if ((file1 = my_tfopen(ANGBAND_MOR, "r")) != NULL) {
+    if ((file1 = my_tfopen(ANGBAND_NEWS, "r")) != NULL) {
 	clear_screen();
 	for (i = 0; fgets(in_line, 80, file1) != NULL; i++)
 	    put_str(in_line, i, 0);
