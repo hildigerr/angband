@@ -74,7 +74,7 @@ void exit();
  */
 #ifdef NEW_FILEPATHS
 char *ANGBAND_TST;		/* was LIBDIR(test)			*/
-char *ANGBAND_HOU;		/* was LIBDIR(files/hours)		*/
+char *ANGBAND_HOURS;		/* was LIBDIR(files/hours)		*/
 char *ANGBAND_MOR;		/* was LIBDIR(files/news)		*/
 char *ANGBAND_TOP;		/* was LIBDIR(files/newscores)		*/
 char *ANGBAND_BONES;		/* was LIBDIR(bones)			*/
@@ -122,13 +122,13 @@ void get_file_paths()
     strcat( ANGBAND_TST, "test" );
     ANGBAND_TST = (char *)realloc( ANGBAND_TST, strlen( ANGBAND_TST ) + 1 );
 
-    ANGBAND_HOU = (char *)malloc( MAXPATHLEN );
-    strcpy( ANGBAND_HOU, angband_path );
-    strcat( ANGBAND_HOU, PATH_SEP );
-    strcat( ANGBAND_HOU, "files" );
-    strcat( ANGBAND_HOU, PATH_SEP );
-    strcat( ANGBAND_HOU, "hours" );
-    ANGBAND_HOU = (char *)realloc( ANGBAND_HOU, strlen( ANGBAND_HOU ) + 1 );
+    ANGBAND_HOURS = (char *)malloc( MAXPATHLEN );
+    strcpy( ANGBAND_HOURS, angband_path );
+    strcat( ANGBAND_HOURS, PATH_SEP );
+    strcat( ANGBAND_HOURS, "files" );
+    strcat( ANGBAND_HOURS, PATH_SEP );
+    strcat( ANGBAND_HOURS, "hours" );
+    ANGBAND_HOURS = (char *)realloc( ANGBAND_HOURS, strlen( ANGBAND_HOURS ) + 1 );
 
     ANGBAND_MOR = (char *)malloc( MAXPATHLEN );
     strcpy( ANGBAND_MOR, angband_path );
@@ -279,7 +279,7 @@ read_times()
 #ifdef CHECKHOURS
 /* Attempt to read hours.dat.	 If it does not exist,	   */
 /* inform the user so he can tell the wizard about it	 */
-    if ((file1 = my_tfopen(ANGBAND_HOU, "r")) != NULL) {
+    if ((file1 = my_tfopen(ANGBAND_HOURS, "r")) != NULL) {
 	while (fgets(in_line, 80, file1) != NULL)
 	    if (strlen(in_line) > 3) {
 		if (!strncmp(in_line, "SUN:", 4))
@@ -300,13 +300,13 @@ read_times()
 	(void)fclose(file1);
     } else {
 	restore_term();
-	(void)fprintf(stderr, "There is no hours file \"%s\".\nPlease inform the wizard, %s, so he can correct this!\n", ANGBAND_HOU, WIZARD);
+	(void)fprintf(stderr, "There is no hours file \"%s\".\nPlease inform the wizard, %s, so he can correct this!\n", ANGBAND_HOURS, WIZARD);
 	exit(1);
     }
 
 /* Check the hours, if closed	then exit. */
     if (!check_time()) {
-	if ((file1 = my_tfopen(ANGBAND_HOU, "r")) != NULL) {
+	if ((file1 = my_tfopen(ANGBAND_HOURS, "r")) != NULL) {
 	    clear_screen();
 	    for (i = 0; fgets(in_line, 80, file1) != NULL; i++)
 		put_str(in_line, i, 0);

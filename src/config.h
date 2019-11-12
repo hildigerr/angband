@@ -80,7 +80,7 @@
 
 /* probably unix */
 #define ANGBAND_TST       LIBDIR(test)
-#define ANGBAND_HOU       LIBDIR(files/hours)
+#define ANGBAND_HOURS       LIBDIR(files/hours)
 #define ANGBAND_MOR       LIBDIR(files/news)
 #define ANGBAND_TOP       LIBDIR(files/newscores)
 #define ANGBAND_BONES     LIBDIR(bones)

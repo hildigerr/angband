@@ -299,7 +299,7 @@ extern char	moriatop[], moriasav[];
 /* these are #define'd to something, so they aren't variables.         [cjh] */
 #ifdef NEW_FILEPATHS
 extern char *ANGBAND_TST;		/* was LIBDIR(test)					*/
-extern char *ANGBAND_HOU;		/* was LIBDIR(files/hours)			*/
+extern char *ANGBAND_HOURS;		/* was LIBDIR(files/hours)			*/
 extern char *ANGBAND_MOR;		/* was LIBDIR(files/news)			*/
 extern char *ANGBAND_TOP;		/* was LIBDIR(files/newscores)		*/
 extern char *ANGBAND_BONES;		/* was LIBDIR(bones)				*/
