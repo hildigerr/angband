@@ -83,7 +83,7 @@ char *ANGBAND_WELCOME;		/* was LIBDIR(files/welcome.hlp)	*/
 char *ANGBAND_LOG;		/* was LIBDIR(files/ANGBAND.log)	*/
 char *ANGBAND_VERSION;		/* was LIBDIR(files/version.hlp)	*/
 char *ANGBAND_LOAD;		/* was LIBDIR(files/loadcheck)		*/
-char *ANGBAND_WIZ;		/* was LIBDIR(files/wizards)		*/
+char *ANGBAND_WIZ;		/* was LIBDIR(files/wizards.txt)		*/
 char *ANGBAND_DIR_SAVE;		/* was LIBDIR(save)			*/
 
 void get_file_paths()
@@ -221,7 +221,7 @@ void get_file_paths()
     strcat( ANGBAND_WIZ, PATH_SEP );
     strcat( ANGBAND_WIZ, "files" );
     strcat( ANGBAND_WIZ, PATH_SEP );
-    strcat( ANGBAND_WIZ, "wizards" );
+    strcat( ANGBAND_WIZ, "wizards.txt" );
     ANGBAND_WIZ = (char *)realloc( ANGBAND_WIZ, strlen( ANGBAND_WIZ ) + 1 );
 
     ANGBAND_DIR_SAVE = (char *)malloc( MAXPATHLEN );

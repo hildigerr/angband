@@ -16,7 +16,7 @@ lib/files/:
 	version.hlp
 	version.help.orig
 	welcome.hlp
-	wizards				Wizlist
+	wizards.txt				Wizlist
 	bugs.doc			My bugs file
 	to_do.doc			My to_do list
 lib/save/				Where the savefiles are stored
