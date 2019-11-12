@@ -1,6 +1,6 @@
 /* variable.c: Global variables */
 
-#include "constant.h"
+#include "angband.h"
 #include "config.h"
 #include "types.h"
 

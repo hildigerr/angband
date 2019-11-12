@@ -15,7 +15,7 @@
 #include <sys/param.h>
 #endif
 
-#include "constant.h"
+#include "angband.h"
 #include "config.h"
 #include "types.h"
 #include "externs.h"

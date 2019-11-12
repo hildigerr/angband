@@ -10,13 +10,13 @@
 
 #include "monster.h"
 
-/* include before constant.h because param.h defines NULL incorrectly */
+/* include before angband.h because param.h defines NULL incorrectly */
 #ifndef USG
 #include <sys/types.h>
 #include <sys/param.h>
 #endif
 
-#include "constant.h"
+#include "angband.h"
 #include "config.h"
 #include "types.h"
 #include "externs.h"

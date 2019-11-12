@@ -9,7 +9,7 @@
  * included in all such copies. 
  */
 
-#include "constant.h"
+#include "angband.h"
 #include "config.h"
 #include "types.h"
 #include "externs.h"

@@ -23,7 +23,7 @@
 #endif
 
 #include <pwd.h>
-#include "constant.h"
+#include "angband.h"
 #include "config.h"
 #include "types.h"
 #include "externs.h"

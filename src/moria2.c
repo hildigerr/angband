@@ -10,7 +10,7 @@
 
 #include <ctype.h>
 
-#include "constant.h"
+#include "angband.h"
 #include "monster.h"
 #include "config.h"
 #include "types.h"

@@ -8,7 +8,7 @@
  * included in all such copies. 
  */
 
-#include "constant.h"
+#include "angband.h"
 #include "monster.h"
 #include "config.h"
 #include "types.h"

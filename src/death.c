@@ -16,7 +16,7 @@
 #include <stdio.h>
 #include <signal.h>
 #include "config.h"
-#include "constant.h"
+#include "angband.h"
 #include "types.h"
 #include "externs.h"
 

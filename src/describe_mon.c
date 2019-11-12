@@ -5,7 +5,7 @@
  *     monsters appear in monsters.c.  'make check' will confirm this.  -CWS
  */
 
-#include "constant.h"
+#include "angband.h"
 #include "config.h"
 #include "types.h"
 #include "externs.h"

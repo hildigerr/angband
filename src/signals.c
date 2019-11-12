@@ -44,7 +44,7 @@ signals_init()
  * need these for atari st, but for unix, must include signals.h first, or
  * else suspend won't be properly declared 
  */
-#include "constant.h"
+#include "angband.h"
 #include "config.h"
 #include "types.h"
 #include "externs.h"
@@ -71,7 +71,7 @@ typedef struct {
 /* must include before externs.h, because that uses SIGTSTP */
 #include <signal.h>
 
-#include "constant.h"
+#include "angband.h"
 #include "types.h"
 #include "externs.h"
 
