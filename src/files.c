@@ -77,7 +77,7 @@ char *ANGBAND_TST;		/* was LIBDIR(test)			*/
 char *ANGBAND_HOURS;		/* was LIBDIR(files/hours)		*/
 char *ANGBAND_NEWS;		/* was LIBDIR(files/news)		*/
 char *ANGBAND_TOP;		/* was LIBDIR(files/newscores)		*/
-char *ANGBAND_BONES;		/* was LIBDIR(bones)			*/
+char *ANGBAND_DIR_BONES;		/* was LIBDIR(bones)			*/
 char *ANGBAND_HELP;		/* was LIBDIR(files/roglcmds.hlp)	*/
 char *ANGBAND_ORIG_HELP;	/* was LIBDIR(files/origcmds.hlp)	*/
 char *ANGBAND_WIZ_HELP;		/* was LIBDIR(files/rwizcmds.hlp)	*/
@@ -146,11 +146,11 @@ void get_file_paths()
     strcat( ANGBAND_TOP, "newscores" );
     ANGBAND_TOP = (char *)realloc( ANGBAND_TOP, strlen( ANGBAND_TOP ) + 1 );
 
-    ANGBAND_BONES = (char *)malloc( MAXPATHLEN );
-    strcpy( ANGBAND_BONES, angband_path );
-    strcat( ANGBAND_BONES, PATH_SEP );
-    strcat( ANGBAND_BONES, "bones" );
-    ANGBAND_BONES = (char *)realloc( ANGBAND_BONES, strlen( ANGBAND_BONES ) + 1 );
+    ANGBAND_DIR_BONES = (char *)malloc( MAXPATHLEN );
+    strcpy( ANGBAND_DIR_BONES, angband_path );
+    strcat( ANGBAND_DIR_BONES, PATH_SEP );
+    strcat( ANGBAND_DIR_BONES, "bones" );
+    ANGBAND_DIR_BONES = (char *)realloc( ANGBAND_DIR_BONES, strlen( ANGBAND_DIR_BONES ) + 1 );
 
     ANGBAND_HELP = (char *)malloc( MAXPATHLEN );
     strcpy( ANGBAND_HELP, angband_path );

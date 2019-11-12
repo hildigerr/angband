@@ -302,7 +302,7 @@ extern char *ANGBAND_TST;		/* was LIBDIR(test)					*/
 extern char *ANGBAND_HOURS;		/* was LIBDIR(files/hours)			*/
 extern char *ANGBAND_NEWS;		/* was LIBDIR(files/news)			*/
 extern char *ANGBAND_TOP;		/* was LIBDIR(files/newscores)		*/
-extern char *ANGBAND_BONES;		/* was LIBDIR(bones)				*/
+extern char *ANGBAND_DIR_BONES;		/* was LIBDIR(bones)				*/
 extern char *ANGBAND_HELP;		/* was LIBDIR(files/roglcmds.hlp)	*/
 extern char *ANGBAND_ORIG_HELP;	/* was LIBDIR(files/origcmds.hlp)	*/
 extern char *ANGBAND_WIZ_HELP;	/* was LIBDIR(files/rwizcmds.hlp)	*/

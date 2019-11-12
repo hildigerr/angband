@@ -251,7 +251,7 @@ print_tomb()
     FILE                *fp;
 
     if (stricmp(died_from, "Interrupting") && !wizard) {
-	sprintf(str, "%s/%d", ANGBAND_BONES, dun_level);
+	sprintf(str, "%s/%d", ANGBAND_DIR_BONES, dun_level);
 	if ((fp = my_tfopen(str, "r")) == NULL && (dun_level > 1)) {
 	    if ((fp = my_tfopen(str, "w")) != NULL) {
 #ifndef __MINT__

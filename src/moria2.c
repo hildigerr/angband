@@ -838,9 +838,9 @@ int monptr, dam, print_fear;
 	    char                temp[100];
 
 	    if (!dun_level) {
-		sprintf(temp, "%s/%d", ANGBAND_BONES, c_list[m_ptr->mptr].level);
+		sprintf(temp, "%s/%d", ANGBAND_DIR_BONES, c_list[m_ptr->mptr].level);
 	    } else {
-		sprintf(temp, "%s/%d", ANGBAND_BONES, dun_level);
+		sprintf(temp, "%s/%d", ANGBAND_DIR_BONES, dun_level);
 	    }
 	    unlink(temp);
 	}

@@ -83,7 +83,7 @@
 #define ANGBAND_HOURS       LIBDIR(files/hours)
 #define ANGBAND_NEWS       LIBDIR(files/news)
 #define ANGBAND_TOP       LIBDIR(files/newscores)
-#define ANGBAND_BONES     LIBDIR(bones)
+#define ANGBAND_DIR_BONES     LIBDIR(bones)
 #define ANGBAND_HELP      LIBDIR(files/roglcmds.hlp)
 #define ANGBAND_ORIG_HELP LIBDIR(files/origcmds.hlp)
 #define ANGBAND_WIZ_HELP  LIBDIR(files/rwizcmds.hlp)

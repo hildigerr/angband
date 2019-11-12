@@ -1398,7 +1398,7 @@ place_ghost()
 
 	if (py.misc.lev < 5 || randint(10) > 1)
 	    return 0;
-	sprintf(tmp, "%s/%d", ANGBAND_BONES, py.misc.lev);
+	sprintf(tmp, "%s/%d", ANGBAND_DIR_BONES, py.misc.lev);
 	if ((fp = my_tfopen(tmp, "r")) != NULL) {
 	    if (fscanf(fp, "%[^\n]\n%d\n%d\n%d", name, &i, &ghost_race, &cl) < 4) {
 		fclose(fp);
@@ -1425,7 +1425,7 @@ place_ghost()
 	if (randint(3) == 1) {
 	    FILE *fp;
 
-	    sprintf(tmp, "%s/%d", ANGBAND_BONES, dun_level);
+	    sprintf(tmp, "%s/%d", ANGBAND_DIR_BONES, dun_level);
 	    if ((fp = my_tfopen(tmp, "r")) != NULL) {
 		if (fscanf(fp, "%[^\n]\n%d\n%d\n%d", name, &i, &ghost_race, &cl) < 4) {
 		    fclose(fp);
