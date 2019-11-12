@@ -321,7 +321,7 @@ extern char *ANGBAND_DIR_SAVE;		/* was LIBDIR(save)					*/
    the file that defines them */
 #ifdef __STDC__
 
-/* create.c */
+/* birth.c */
 void player_birth(void);
 
 /* creature.c */
@@ -876,7 +876,7 @@ int is_wizard(int);
 
 #else
 
-/* create.c */
+/* birth.c */
 void player_birth();
 
 /* creature.c */
