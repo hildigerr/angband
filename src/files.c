@@ -78,9 +78,9 @@ char *ANGBAND_HOURS;		/* was LIBDIR(files/hours)		*/
 char *ANGBAND_NEWS;		/* was LIBDIR(files/news)		*/
 char *ANGBAND_TOP;		/* was LIBDIR(files/newscores)		*/
 char *ANGBAND_DIR_BONES;		/* was LIBDIR(bones)			*/
-char *ANGBAND_HELP;		/* was LIBDIR(files/roglcmds.hlp)	*/
-char *ANGBAND_ORIG_HELP;	/* was LIBDIR(files/origcmds.hlp)	*/
-char *ANGBAND_WIZ_HELP;		/* was LIBDIR(files/rwizcmds.hlp)	*/
+char *ANGBAND_R_HELP;		/* was LIBDIR(files/roglcmds.hlp)	*/
+char *ANGBAND_O_HELP;	/* was LIBDIR(files/origcmds.hlp)	*/
+char *ANGBAND_W_HELP;		/* was LIBDIR(files/rwizcmds.hlp)	*/
 char *ANGBAND_OWIZ_HELP;	/* was LIBDIR(files/owizcmds.hlp)	*/
 char *ANGBAND_WELCOME;		/* was LIBDIR(files/welcome.hlp)	*/
 char *ANGBAND_LOG;		/* was LIBDIR(files/ANGBAND.log)	*/
@@ -152,31 +152,31 @@ void get_file_paths()
     strcat( ANGBAND_DIR_BONES, "bones" );
     ANGBAND_DIR_BONES = (char *)realloc( ANGBAND_DIR_BONES, strlen( ANGBAND_DIR_BONES ) + 1 );
 
-    ANGBAND_HELP = (char *)malloc( MAXPATHLEN );
-    strcpy( ANGBAND_HELP, angband_path );
-    strcat( ANGBAND_HELP, PATH_SEP );
-    strcat( ANGBAND_HELP, "files" );
-    strcat( ANGBAND_HELP, PATH_SEP );
-    strcat( ANGBAND_HELP, "roglcmds.hlp" );
-    ANGBAND_HELP = (char *)realloc( ANGBAND_HELP, strlen( ANGBAND_HELP ) + 1 );
+    ANGBAND_R_HELP = (char *)malloc( MAXPATHLEN );
+    strcpy( ANGBAND_R_HELP, angband_path );
+    strcat( ANGBAND_R_HELP, PATH_SEP );
+    strcat( ANGBAND_R_HELP, "files" );
+    strcat( ANGBAND_R_HELP, PATH_SEP );
+    strcat( ANGBAND_R_HELP, "roglcmds.hlp" );
+    ANGBAND_R_HELP = (char *)realloc( ANGBAND_R_HELP, strlen( ANGBAND_R_HELP ) + 1 );
 
-    ANGBAND_ORIG_HELP = (char *)malloc( MAXPATHLEN );
-    strcpy( ANGBAND_ORIG_HELP, angband_path );
-    strcat( ANGBAND_ORIG_HELP, PATH_SEP );
-    strcat( ANGBAND_ORIG_HELP, "files" );
-    strcat( ANGBAND_ORIG_HELP, PATH_SEP );
-    strcat( ANGBAND_ORIG_HELP, "origcmds.hlp" );
-    ANGBAND_ORIG_HELP = (char *)realloc(ANGBAND_ORIG_HELP,
-					strlen( ANGBAND_ORIG_HELP ) + 1 );
+    ANGBAND_O_HELP = (char *)malloc( MAXPATHLEN );
+    strcpy( ANGBAND_O_HELP, angband_path );
+    strcat( ANGBAND_O_HELP, PATH_SEP );
+    strcat( ANGBAND_O_HELP, "files" );
+    strcat( ANGBAND_O_HELP, PATH_SEP );
+    strcat( ANGBAND_O_HELP, "origcmds.hlp" );
+    ANGBAND_O_HELP = (char *)realloc(ANGBAND_O_HELP,
+					strlen( ANGBAND_O_HELP ) + 1 );
 
-    ANGBAND_WIZ_HELP = (char *)malloc( MAXPATHLEN );
-    strcpy( ANGBAND_WIZ_HELP, angband_path );
-    strcat( ANGBAND_WIZ_HELP, PATH_SEP );
-    strcat( ANGBAND_WIZ_HELP, "files" );
-    strcat( ANGBAND_WIZ_HELP, PATH_SEP );
-    strcat( ANGBAND_WIZ_HELP, "rwizcmds.hlp" );
-    ANGBAND_WIZ_HELP = (char *)realloc(ANGBAND_WIZ_HELP,
-				       strlen( ANGBAND_WIZ_HELP ) + 1 );
+    ANGBAND_W_HELP = (char *)malloc( MAXPATHLEN );
+    strcpy( ANGBAND_W_HELP, angband_path );
+    strcat( ANGBAND_W_HELP, PATH_SEP );
+    strcat( ANGBAND_W_HELP, "files" );
+    strcat( ANGBAND_W_HELP, PATH_SEP );
+    strcat( ANGBAND_W_HELP, "rwizcmds.hlp" );
+    ANGBAND_W_HELP = (char *)realloc(ANGBAND_W_HELP,
+				       strlen( ANGBAND_W_HELP ) + 1 );
 
     ANGBAND_OWIZ_HELP = (char *)malloc( MAXPATHLEN );
     strcpy( ANGBAND_OWIZ_HELP, angband_path );

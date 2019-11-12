@@ -1692,9 +1692,9 @@ char com_val;
 	break;
       case '?':			/* (?) help with commands */
 	if (rogue_like_commands)
-	    helpfile(ANGBAND_HELP);
+	    helpfile(ANGBAND_R_HELP);
 	else
-	    helpfile(ANGBAND_ORIG_HELP);
+	    helpfile(ANGBAND_O_HELP);
 	free_turn_flag = TRUE;
 	break;
 #ifdef ALLOW_SCORE
@@ -1920,7 +1920,7 @@ char com_val;
 	    free_turn_flag = TRUE; /* Wizard commands are free moves */
 	    switch (com_val) {
 	      case '\\':	   /* \ wizard help */
-		helpfile(ANGBAND_WIZ_HELP);
+		helpfile(ANGBAND_W_HELP);
 	      case CTRL('A'):	   /* ^A = Cure all */
 		(void)remove_all_curse();
 		(void)cure_blindness();
