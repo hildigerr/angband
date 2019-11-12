@@ -1,7 +1,6 @@
 lib:					where LIBDIR points to
 lib/files/:
 	GAMELOG				Saved gamelog file
-	angband.man.txt			Manual
 	glog				File to cat to GAMELOG
 	hours				Hours file
 	loadcheck			Loadcheck file
