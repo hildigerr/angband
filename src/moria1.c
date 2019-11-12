@@ -340,7 +340,7 @@ calc_bonuses()
 	p_ptr->free_act = TRUE;
     if (TR_SEE_INVIS & item_flags)
 	p_ptr->see_inv = TRUE;
-    if (TR_RES_LIGHT & item_flags)
+    if (TR_RES_ELEC & item_flags)
 	p_ptr->resist_elec = TRUE;
     if (TR_FFALL & item_flags)
 	p_ptr->ffall = TRUE;

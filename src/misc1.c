@@ -2591,7 +2591,7 @@ inven_type *t_ptr;
 	    t_ptr->name2 = ART_ANGUIREL;
 	    t_ptr->tohit = 8;
 	    t_ptr->todam = 12;
-	    t_ptr->flags = (TR_SEE_INVIS | TR_SLAY_EVIL | TR_FREE_ACT | TR_RES_LIGHT
+	    t_ptr->flags = (TR_SEE_INVIS | TR_SLAY_EVIL | TR_FREE_ACT | TR_RES_ELEC
 			    | TR_STR | TR_CON);
 	    t_ptr->flags2 |= (TR_ARTIFACT |
 		       TR_LIGHTNING | TR_LIGHT | TR_SLAY_DEMON | TR_RES_LT);
@@ -2730,7 +2730,7 @@ inven_type *t_ptr;
 	    t_ptr->name2 = ART_AEGLIN;
 	    t_ptr->tohit = 12;
 	    t_ptr->todam = 16;
-	    t_ptr->flags = (TR_SLOW_DIGEST | TR_SEARCH | TR_RES_LIGHT);
+	    t_ptr->flags = (TR_SLOW_DIGEST | TR_SEARCH | TR_RES_ELEC);
 	    t_ptr->flags2 |= (TR_ARTIFACT | TR_SLAY_ORC | TR_LIGHT | TR_LIGHTNING);
 	    t_ptr->p1 = 4;
 	    t_ptr->cost = 45000L;
@@ -2923,7 +2923,7 @@ inven_type *t_ptr;
 	t_ptr->todam = 12;
 	t_ptr->weight = 200;
 	t_ptr->damage[1] = 7;
-	t_ptr->flags = (TR_SLAY_X_DRAGON | TR_RES_LIGHT);
+	t_ptr->flags = (TR_SLAY_X_DRAGON | TR_RES_ELEC);
 	t_ptr->flags2 |= (TR_ARTIFACT | TR_LIGHTNING | TR_ACTIVATE | TR_RES_DARK);
 	t_ptr->cost = 20000L;
 	TARATOL = 1;
@@ -3041,7 +3041,7 @@ inven_type *t_ptr;
 	t_ptr->tohit = 12;
 	t_ptr->todam = 17;
 	t_ptr->flags |= (TR_SLAY_EVIL | TR_RES_FIRE | TR_RES_COLD
-			 | TR_RES_LIGHT | TR_RES_ACID);
+			 | TR_RES_ELEC | TR_RES_ACID);
 	t_ptr->flags2 |= (TR_ARTIFACT);
 	t_ptr->cost = 30000L;
 	MUNDWINE = 1;
@@ -3058,7 +3058,7 @@ inven_type *t_ptr;
 	t_ptr->tohit = 10;
 	t_ptr->todam = 11;
 	t_ptr->flags |= (TR_SEE_INVIS | TR_FFALL | TR_REGEN | TR_STEALTH | TR_RES_FIRE |
-			 TR_RES_COLD | TR_RES_ACID | TR_RES_LIGHT | TR_DEX);
+			 TR_RES_COLD | TR_RES_ACID | TR_RES_ELEC | TR_DEX);
 	t_ptr->flags2 |= (TR_ARTIFACT);
 	t_ptr->p1 = 3;
 	t_ptr->cost = 28000L;
@@ -3295,7 +3295,7 @@ inven_type *t_ptr;
 	    t_ptr->name2 = ART_DETHANC;
 	    t_ptr->tohit = 4;
 	    t_ptr->todam = 6;
-	    t_ptr->flags = (TR_RES_LIGHT);
+	    t_ptr->flags = (TR_RES_ELEC);
 	    t_ptr->flags2 |= (TR_ACTIVATE | TR_LIGHTNING | TR_ARTIFACT);
 	    t_ptr->cost = 13000L;
 	    DETHANC = 1;
@@ -3419,7 +3419,7 @@ inven_type *t_ptr;
 	    t_ptr->damage[0] = 3;
 	    t_ptr->damage[1] = 6;
 	    t_ptr->toac = 5;
-	    t_ptr->flags = (TR_FFALL | TR_RES_LIGHT | TR_SEE_INVIS | TR_STR | TR_CON
+	    t_ptr->flags = (TR_FFALL | TR_RES_ELEC | TR_SEE_INVIS | TR_STR | TR_CON
 			    | TR_FREE_ACT | TR_RES_COLD | TR_RES_ACID
 			    | TR_RES_FIRE | TR_REGEN | TR_STEALTH);
 	    t_ptr->flags2 |= (TR_SLAY_DEMON | TR_SLAY_TROLL | TR_SLAY_ORC | TR_RES_BLIND
@@ -3461,7 +3461,7 @@ inven_type *t_ptr;
 	t_ptr->todam = 21;
 	t_ptr->toac = 5;
 	t_ptr->flags = (TR_SLAY_X_DRAGON | TR_SLAY_EVIL | TR_SLAY_UNDEAD |
-		    TR_RES_FIRE | TR_RES_ACID | TR_RES_COLD | TR_RES_LIGHT |
+		    TR_RES_FIRE | TR_RES_ACID | TR_RES_COLD | TR_RES_ELEC |
 			TR_FREE_ACT | TR_SEE_INVIS | TR_WIS);
 	t_ptr->flags2 |= (TR_ARTIFACT | TR_SLAY_DEMON | TR_LIGHTNING | TR_RES_NEXUS);
 	t_ptr->p1 = 4;
@@ -3500,7 +3500,7 @@ inven_type *t_ptr;
 	t_ptr->tohit = 5;
 	t_ptr->todam = 18;
 	t_ptr->flags = (TR_SLAY_ANIMAL | TR_STR | TR_FLAME_TONGUE |
-			TR_RES_FIRE | TR_RES_LIGHT);
+			TR_RES_FIRE | TR_RES_ELEC);
 	t_ptr->flags2 |= (TR_ARTIFACT | TR_SLAY_TROLL | TR_SLAY_ORC
 			  | TR_LIGHTNING | TR_RES_DARK);
 	t_ptr->p1 = 4;
@@ -3558,7 +3558,7 @@ inven_type *t_ptr;
 	t_ptr->todam = 28;
 	t_ptr->flags = (TR_CON | TR_SLAY_ANIMAL | TR_SLAY_X_DRAGON |
 		TR_FROST_BRAND | TR_SLAY_EVIL | TR_FREE_ACT | TR_SEE_INVIS |
-		    TR_RES_FIRE | TR_RES_COLD | TR_RES_LIGHT | TR_RES_ACID |
+		    TR_RES_FIRE | TR_RES_COLD | TR_RES_ELEC | TR_RES_ACID |
 			TR_AGGRAVATE);
 	t_ptr->flags2 |= (TR_SLAY_TROLL | TR_SLAY_ORC | TR_TELEPATHY | TR_ARTIFACT);
 	t_ptr->p1 = -5;
@@ -3668,7 +3668,7 @@ inven_type *t_ptr;
 	else
 	    good_item_flag = TRUE;
 	t_ptr->flags |= (TR_RES_FIRE | TR_RES_COLD | TR_RES_ACID | TR_POISON |
-			 TR_RES_LIGHT | TR_FREE_ACT | TR_SEE_INVIS | TR_INT |
+			 TR_RES_ELEC | TR_FREE_ACT | TR_SEE_INVIS | TR_INT |
 			 TR_WIS | TR_STEALTH | TR_AGGRAVATE);
 	t_ptr->flags2 |= (TR_ACTIVATE | TR_LIGHT | TR_IM_LIGHT | TR_RES_LT |
 			  TR_ARTIFACT);
@@ -3690,7 +3690,7 @@ inven_type *t_ptr;
 	else
 	    good_item_flag = TRUE;
 	t_ptr->flags |= (TR_RES_FIRE | TR_RES_COLD | TR_RES_ACID | TR_POISON |
-			 TR_RES_LIGHT | TR_DEX | TR_SEARCH | TR_REGEN);
+			 TR_RES_ELEC | TR_DEX | TR_SEARCH | TR_REGEN);
 	t_ptr->flags2 |= (TR_HOLD_LIFE | TR_RES_CONF | TR_RES_SOUND | TR_RES_LT
 	      | TR_RES_DARK | TR_RES_CHAOS | TR_RES_DISENCHANT | TR_ARTIFACT
 	       | TR_RES_SHARDS | TR_RES_BLIND | TR_RES_NEXUS | TR_RES_NETHER
@@ -3765,7 +3765,7 @@ inven_type *t_ptr;
 	else
 	    good_item_flag = TRUE;
 	t_ptr->weight = 300;
-	t_ptr->flags |= (TR_RES_ACID | TR_RES_FIRE | TR_RES_COLD | TR_RES_LIGHT);
+	t_ptr->flags |= (TR_RES_ACID | TR_RES_FIRE | TR_RES_COLD | TR_RES_ELEC);
 	t_ptr->flags2 |= (TR_RES_SOUND | TR_ARTIFACT | TR_RES_NEXUS);
 	t_ptr->name2 = ART_ISILDUR;
 	t_ptr->tohit = 0;
@@ -3781,7 +3781,7 @@ inven_type *t_ptr;
 	else
 	    good_item_flag = TRUE;
 	t_ptr->weight = 200;
-	t_ptr->flags |= (TR_RES_ACID | TR_RES_FIRE | TR_RES_COLD | TR_RES_LIGHT |
+	t_ptr->flags |= (TR_RES_ACID | TR_RES_FIRE | TR_RES_COLD | TR_RES_ELEC |
 			 TR_STR | TR_DEX);
 	t_ptr->flags2 |= (TR_RES_SOUND | TR_RES_CONF | TR_ARTIFACT);
 	t_ptr->name2 = EGO_ROHAN;
@@ -3800,7 +3800,7 @@ inven_type *t_ptr;
 	    good_item_flag = TRUE;
 	if (wizard || peek)
 	    msg_print("Anarion");
-	t_ptr->flags |= (TR_RES_ACID | TR_RES_FIRE | TR_RES_COLD | TR_RES_LIGHT |
+	t_ptr->flags |= (TR_RES_ACID | TR_RES_FIRE | TR_RES_COLD | TR_RES_ELEC |
 			 TR_SUST_STAT);
 	t_ptr->flags2 |= (TR_ARTIFACT);
 	t_ptr->name2 = ART_ANARION;
@@ -3904,7 +3904,7 @@ inven_type *t_ptr;
 		msg_print("Pauraegen");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->flags |= TR_RES_LIGHT;
+	    t_ptr->flags |= TR_RES_ELEC;
 	    t_ptr->flags2 |= (TR_ACTIVATE | TR_ARTIFACT);
 	    t_ptr->name2 = ART_PAURAEGEN;
 	    t_ptr->toac = 15;
@@ -3952,7 +3952,7 @@ inven_type *t_ptr;
 	else
 	    good_item_flag = TRUE;
 	t_ptr->flags |= (TR_RES_ACID | TR_RES_FIRE | TR_RES_COLD |
-			 TR_RES_LIGHT | TR_STEALTH);
+			 TR_RES_ELEC | TR_STEALTH);
 	t_ptr->flags2 |= (TR_ACTIVATE | TR_ARTIFACT);
 	t_ptr->name2 = ART_BELEGENNON;
 	t_ptr->p1 = 4;
@@ -3968,7 +3968,7 @@ inven_type *t_ptr;
 	else
 	    good_item_flag = TRUE;
 	t_ptr->weight = 250;
-	t_ptr->flags |= (TR_RES_ACID | TR_RES_FIRE | TR_RES_COLD | TR_RES_LIGHT |
+	t_ptr->flags |= (TR_RES_ACID | TR_RES_FIRE | TR_RES_COLD | TR_RES_ELEC |
 			 TR_STR | TR_CHR);
 	t_ptr->flags2 |= (TR_ACTIVATE | TR_RES_DISENCHANT | TR_RES_DARK | TR_ARTIFACT);
 	t_ptr->name2 = ART_CELEBORN;
@@ -4001,7 +4001,7 @@ inven_type *t_ptr;
 	    msg_print("Hithlomir");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->flags |= (TR_RES_ACID | TR_RES_FIRE | TR_RES_COLD | TR_RES_LIGHT |
+	t_ptr->flags |= (TR_RES_ACID | TR_RES_FIRE | TR_RES_COLD | TR_RES_ELEC |
 			 TR_STEALTH);
 	t_ptr->flags2 |= (TR_ARTIFACT | TR_RES_DARK);
 	t_ptr->name2 = ART_HITHLOMIR;
@@ -4033,7 +4033,7 @@ inven_type *t_ptr;
 	    msg_print("Arvedui");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->flags |= (TR_RES_ACID | TR_RES_FIRE | TR_RES_COLD | TR_RES_LIGHT |
+	t_ptr->flags |= (TR_RES_ACID | TR_RES_FIRE | TR_RES_COLD | TR_RES_ELEC |
 			 TR_STR | TR_CHR);
 	t_ptr->flags2 |= (TR_ARTIFACT | TR_RES_NEXUS | TR_RES_SHARDS);
 	t_ptr->name2 = ART_ARVEDUI;
@@ -4095,7 +4095,7 @@ inven_type *t_ptr;
 	else
 	    good_item_flag = TRUE;
 	t_ptr->weight = 60;
-	t_ptr->flags |= (TR_RES_ACID | TR_RES_FIRE | TR_RES_COLD | TR_RES_LIGHT);
+	t_ptr->flags |= (TR_RES_ACID | TR_RES_FIRE | TR_RES_COLD | TR_RES_ELEC);
 	t_ptr->flags2 |= (TR_RES_LT | TR_RES_DARK | TR_ARTIFACT);
 	t_ptr->name2 = ART_CELEGORM;
 	t_ptr->toac = 20;
@@ -4125,7 +4125,7 @@ inven_type *t_ptr;
 		msg_print("Dor-Lomin");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->flags |= (TR_RES_ACID | TR_RES_FIRE | TR_RES_COLD | TR_RES_LIGHT |
+	    t_ptr->flags |= (TR_RES_ACID | TR_RES_FIRE | TR_RES_COLD | TR_RES_ELEC |
 			     TR_CON | TR_DEX | TR_STR | TR_SEE_INVIS);
 	    t_ptr->flags2 |= (TR_TELEPATHY | TR_LIGHT | TR_RES_LT | TR_RES_BLIND
 			      | TR_ARTIFACT);
@@ -4303,7 +4303,7 @@ int x, level, good, not_unique;
 	    if (!stricmp(k_list[t_ptr->index].name, "& Robe") &&
 		((magik(special) && randint(30) == 1)
 		 || (good == 666 && magik(special)))) {
-		t_ptr->flags |= (TR_RES_LIGHT | TR_RES_COLD | TR_RES_ACID |
+		t_ptr->flags |= (TR_RES_ELEC | TR_RES_COLD | TR_RES_ACID |
 				 TR_RES_FIRE | TR_SUST_STAT);
 		if (wizard || peek)
 		    msg_print("Robe of the Magi");
@@ -4321,7 +4321,7 @@ int x, level, good, not_unique;
 		    if ((randint(3) == 1 || good == 666) && !not_unique &&
 			unique_armour(t_ptr))
 			break;
-		    t_ptr->flags |= (TR_RES_LIGHT | TR_RES_COLD | TR_RES_ACID |
+		    t_ptr->flags |= (TR_RES_ELEC | TR_RES_COLD | TR_RES_ACID |
 				     TR_RES_FIRE);
 		    if (randint(3) == 1) {
 			if (peek)
@@ -4391,7 +4391,7 @@ int x, level, good, not_unique;
 		    if (peek)
 			msg_print("Resist Lightning");
 		    rating += 15;
-		    t_ptr->flags |= TR_RES_LIGHT;
+		    t_ptr->flags |= TR_RES_ELEC;
 		    t_ptr->name2 = EGO_RESIST_E;
 		    t_ptr->cost += 500L;
 		    break;
@@ -4462,7 +4462,7 @@ int x, level, good, not_unique;
 			if (peek)
 			    msg_print("Defender");
 			rating += 23;
-			t_ptr->flags |= (TR_FFALL | TR_RES_LIGHT | TR_SEE_INVIS
+			t_ptr->flags |= (TR_FFALL | TR_RES_ELEC | TR_SEE_INVIS
 				   | TR_FREE_ACT | TR_RES_COLD | TR_RES_ACID
 				     | TR_RES_FIRE | TR_REGEN | TR_STEALTH);
 			t_ptr->tohit += 3;
@@ -5057,7 +5057,7 @@ int x, level, good, not_unique;
 			    msg_print("Crown of the Magi");
 			rating += 15;
 			t_ptr->p1 = randint(3);
-			t_ptr->flags |= (TR_RES_LIGHT | TR_RES_COLD
+			t_ptr->flags |= (TR_RES_ELEC | TR_RES_COLD
 				      | TR_RES_ACID | TR_RES_FIRE | TR_INT);
 			t_ptr->name2 = EGO_MAGI;
 			t_ptr->cost += 3000 + t_ptr->p1 * 500;
@@ -5498,7 +5498,7 @@ int x, level, good, not_unique;
 			t_ptr->name2 = ART_COLLUIN;
 			t_ptr->toac = 15;
 			t_ptr->flags |= (TR_RES_FIRE | TR_RES_COLD | TR_POISON |
-					 TR_RES_LIGHT | TR_RES_ACID);
+					 TR_RES_ELEC | TR_RES_ACID);
 			t_ptr->flags2 |= (TR_ACTIVATE | TR_ARTIFACT);
 			t_ptr->cost = 10000L;
 			made_art_cloak = 1;

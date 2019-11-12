@@ -660,7 +660,7 @@ u32b              win;
 			t_ptr->damage[1] = 8;
 			t_ptr->weight = 600;
 			t_ptr->flags = (TR_SEE_INVIS | TR_SLAY_EVIL | TR_SLAY_UNDEAD |
-					TR_RES_FIRE | TR_RES_COLD | TR_RES_LIGHT |
+					TR_RES_FIRE | TR_RES_COLD | TR_RES_ELEC |
 					TR_RES_ACID | TR_SLAY_ANIMAL | TR_SPEED |
 					TR_SLAY_X_DRAGON | TR_AGGRAVATE);
 			t_ptr->flags2 = (TR_SLAY_DEMON | TR_SLAY_TROLL | TR_SLAY_ORC |

@@ -1172,7 +1172,7 @@ again:
 	    goto end;
 	if (get_com("Resist Lightning? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags |= TR_RES_LIGHT;
+		i_ptr->flags |= TR_RES_ELEC;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Resist Poison? [yn]: ", &ch)) {
