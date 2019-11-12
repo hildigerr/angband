@@ -97,7 +97,7 @@ static int d_check();
 
 static void init_m_level();
 static void init_t_level();
-static void char_inven_init();
+static void player_outfit();
 #endif
 
 #if (COST_ADJ != 100)
@@ -535,7 +535,7 @@ char *argv[];
 
 	/* if we're creating a new character, change the savefile name */
     (void) sprintf(savefile, "%s/%d%s", ANGBAND_DIR_SAVE, player_uid, py.misc.name);
-	char_inven_init();
+	player_outfit();
 	py.flags.food = 7500;
 	py.flags.food_digested = 2;
         if (class[py.misc.pclass].spell == MAGE)
@@ -605,7 +605,7 @@ char *argv[];
 
 /* Init players with some belongings			-RAK-	*/
 static void
-char_inven_init()
+player_outfit()
 {
     register int i, j;
     inven_type inven_init;
