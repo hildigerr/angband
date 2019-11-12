@@ -35,7 +35,7 @@ static void        regenmana();
 static const char *value_check();
 #endif
 
-static void print_feeling();
+static void do_cmd_feeling();
 static char original_commands();
 static void do_command();
 static int  valid_countcommand();
@@ -154,7 +154,7 @@ dungeon()
 /* FIXME: figure this out */
     if (((turn - old_turn) > randint(50) + 50) && dun_level) {
 	unfelt = FALSE;
-	print_feeling();
+	do_cmd_feeling();
     }
     old_turn = turn;
 
@@ -1552,7 +1552,7 @@ char com_val;
 	break;
       case CTRL('F'):		/* Repeat (^F)eeling */
 	free_turn_flag = TRUE;
-	print_feeling();
+	do_cmd_feeling();
 	break;
       case CTRL('W'):		/* (^W)izard mode */
 	if (wizard) {
@@ -3455,7 +3455,7 @@ regen_monsters()
 
 
 static void
-print_feeling()
+do_cmd_feeling()
 {
     if (dun_level == 0)		/* snicker.... -CWS */
 	msg_print("You feel there is something special about the town level.");
