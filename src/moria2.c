@@ -2464,7 +2464,7 @@ inven_type *i_ptr;
 /* with correct weapon.  I.E.  wield bow and throw arrow.	 */
 /* Note: Some characters will now get multiple shots per turn -EAM */
 void 
-throw_object()
+do_cmd_fire()
 {
     int item_val, tbth, tpth, tdam, tdis;
     int y, x, oldy, oldx, cur_dis, dir;

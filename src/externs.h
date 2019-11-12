@@ -626,7 +626,7 @@ int twall(int, int, int, int);
 void tunnel(int);
 void do_cmd_disarm(void);
 void look(void);
-void throw_object(void);
+void do_cmd_fire(void);
 void bash(void);
 void delete_unique(void);
 void carry(int, int, int);
@@ -1164,7 +1164,7 @@ int twall();
 void tunnel();
 void do_cmd_disarm();
 void look();
-void throw_object();
+void do_cmd_fire();
 void bash();
 void target();					/* target fns stolen from Morgul -CFT */
 int at_target();				/* target fns stolen from Morgul -CFT */

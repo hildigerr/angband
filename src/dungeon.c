@@ -1855,7 +1855,7 @@ char com_val;
 	inven_command('e');
 	break;
       case 't':			/* (t)hrow something	(f)ire something */
-	throw_object();
+	do_cmd_fire();
 	break;
       case 'i':			/* (i)nventory list */
 	inven_command('i');
