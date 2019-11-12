@@ -354,7 +354,7 @@ char *argv[];
 
     /* catch those nasty signals */
     /* must come after init_curses as some of the signal handlers use curses */
-    init_signals();
+    signals_init();
 
     /* Check operating hours			*/
     /* If not wizard  No_Control_Y	        */

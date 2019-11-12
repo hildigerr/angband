@@ -721,7 +721,7 @@ int store_buy(int, int);
 /* signals.c */
 void signals_ignore_tstp(void);
 void signals(void);
-void init_signals(void);
+void signals_init(void);
 void ignore_signals(void);
 void default_signals(void);
 void restore_signals(void);
@@ -1247,7 +1247,7 @@ int store_buy();
 /* signals.c */
 void signals_ignore_tstp();
 void signals();
-void init_signals();
+void signals_init();
 void ignore_signals();
 void default_signals();
 void restore_signals();
