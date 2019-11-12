@@ -2506,7 +2506,7 @@ do_cmd_fire()
 	else if ((t->tval >= TV_MIN_WEAR) && (t->tval <= TV_MAX_WEAR) &&
 		 (t->flags & TR_CURSED) && known2_p(t))
 	    ok_throw = TRUE; /* if user wants to throw cursed, let him */
-	else if ((object_list[t->index].cost <= 0) && known1_p(t) &&
+	else if ((k_list[t->index].cost <= 0) && known1_p(t) &&
 		 !(known2_p(t) && (t->cost > 0)))
 	    ok_throw = TRUE;
 	else if ((t->cost <= 0) && known2_p(t))

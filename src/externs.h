@@ -222,9 +222,9 @@ extern int (*store_buy[MAX_STORES])();
 
 /* Following are treasure arrays	and variables			*/
 #ifdef MACGAME
-extern inven_kind *object_list;
+extern inven_kind *k_list;
 #else
-extern inven_kind object_list[MAX_OBJECTS];
+extern inven_kind k_list[MAX_OBJECTS];
 #endif
 extern byte object_ident[OBJECT_IDENT_SIZE];
 extern s16b t_level[MAX_OBJ_LEVEL+1];

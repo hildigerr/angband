@@ -95,15 +95,15 @@ register int         factor;
     if (TR_SPEED & t_ptr->flags) {
 	if ((t_ptr->tval == TV_RING) &&
 	    !stricmp("Speed",
-		     object_list[t_ptr->index].name) &&
+		     k_list[t_ptr->index].name) &&
 	    (t_ptr->p1 > 0))
 	    if ((inventory[INVEN_RIGHT].tval == TV_RING) &&
 		!stricmp("Speed",
-			 object_list[inventory[INVEN_RIGHT].index].name) &&
+			 k_list[inventory[INVEN_RIGHT].index].name) &&
 		(inventory[INVEN_RIGHT].p1 > 0) &&
 		(inventory[INVEN_LEFT].tval == TV_RING) &&
 		!stricmp("Speed",
-			 object_list[inventory[INVEN_LEFT].index].name) &&
+			 k_list[inventory[INVEN_LEFT].index].name) &&
 		(inventory[INVEN_RIGHT].p1 > 0))
 		return;
 	change_speed(-amount);
@@ -445,7 +445,7 @@ int (*test) ();
     k = 0;
     for (i = r1; i <= r2; i++) {
 	if (test) {
-	    if ((*test) (object_list[inventory[i].index].tval)) {
+	    if ((*test) (k_list[inventory[i].index].tval)) {
 		objdes(tmp_val, &inventory[i], TRUE);
 		tmp_val[lim] = 0;  /* Truncate if too long. */
 		(void)sprintf(out_val[i], "  %c) %s", 'a' + i, tmp_val);
@@ -2187,8 +2187,8 @@ register int y, x;
     } else if (t_ptr->tval == TV_SECRET_DOOR) {
     /* change secret door to closed door */
 	t_ptr->index = OBJ_CLOSED_DOOR;
-	t_ptr->tval = object_list[OBJ_CLOSED_DOOR].tval;
-	t_ptr->tchar = object_list[OBJ_CLOSED_DOOR].tchar;
+	t_ptr->tval = k_list[OBJ_CLOSED_DOOR].tval;
+	t_ptr->tchar = k_list[OBJ_CLOSED_DOOR].tchar;
 	lite_spot(y, x);
     }
 }

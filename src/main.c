@@ -659,7 +659,7 @@ init_t_level()
     for (i = 0; i <= MAX_OBJ_LEVEL; i++)
 	t_level[i] = 0;
     for (i = 0; i < MAX_DUNGEON_OBJ; i++)
-	t_level[object_list[i].level]++;
+	t_level[k_list[i].level]++;
     for (i = 1; i <= MAX_OBJ_LEVEL; i++)
 	t_level[i] += t_level[i-1];
 
@@ -670,7 +670,7 @@ init_t_level()
 	tmp[i] = 1;
     for (i = 0; i < MAX_DUNGEON_OBJ; i++)
     {
-	l = object_list[i].level;
+	l = k_list[i].level;
 	sorted_objects[t_level[l] - tmp[l]] = i;
 	tmp[l]++;
     }
@@ -686,7 +686,7 @@ price_adjust()
 
     /* round half-way cases up */
     for (i = 0; i < MAX_OBJECTS; i++)
-	object_list[i].cost = ((object_list[i].cost * COST_ADJ) + 50) / 100;
+	k_list[i].cost = ((k_list[i].cost * COST_ADJ) + 50) / 100;
 }
 #endif
 

@@ -864,7 +864,7 @@ const char *spell_names[127] = {
 
 #define MDO MAX_DUNGEON_OBJ
 /* Each type of character starts out with a few provisions.	*/
-/* Note that the entries refer to elements of the object_list[] array*/
+/* Note that the entries refer to elements of the k_list[] array*/
 /* 356 = Food Ration, 365 = Wooden Torch, 123 = Cloak, 30 = Stiletto,
    103 = Soft Leather Armor, 318 = Beginners-Magic, 322 = Beginners Handbook */
 

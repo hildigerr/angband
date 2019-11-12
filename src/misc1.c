@@ -2535,7 +2535,7 @@ inven_type *t_ptr;
 
     if (be_nasty)
 	return 0;
-    name = object_list[t_ptr->index].name;
+    name = k_list[t_ptr->index].name;
     if (!stricmp("& Longsword", name)) {
 	switch (randint(15)) {
 	  case 1:
@@ -3638,7 +3638,7 @@ inven_type *t_ptr;
 
     if (be_nasty)
 	return 0;
-    name = object_list[t_ptr->index].name;
+    name = k_list[t_ptr->index].name;
     if (!strncmp("Adamantite", name, 10)) {
 	if (SOULKEEPER)
 	    return 0;
@@ -4264,7 +4264,7 @@ int x, level, good, not_unique;
     t_ptr = &i_list[x];
 
 /*
- * some objects appear multiple times in the object_list with different
+ * some objects appear multiple times in the k_list with different
  * levels, this is to make the object occur more often, however, for
  * consistency, must set the level of these duplicates to be the same as the
  * object with the lowest level 
@@ -4300,7 +4300,7 @@ int x, level, good, not_unique;
 	 /* end if is a DSM */ 
 	else if (magik(chance) || good) {
 	    t_ptr->toac += randint(3) + m_bonus(0, 5, level);
-	    if (!stricmp(object_list[t_ptr->index].name, "& Robe") &&
+	    if (!stricmp(k_list[t_ptr->index].name, "& Robe") &&
 		((magik(special) && randint(30) == 1)
 		 || (good == 666 && magik(special)))) {
 		t_ptr->flags |= (TR_RES_LIGHT | TR_RES_COLD | TR_RES_ACID |
@@ -4346,9 +4346,9 @@ int x, level, good, not_unique;
 		    if ((randint(3) == 1 || good == 666) && !not_unique &&
 			unique_armour(t_ptr))
 			break;
-		    if (!strncmp(object_list[t_ptr->index].name,
+		    if (!strncmp(k_list[t_ptr->index].name,
 				 "Mithril", 7) ||
-			!strncmp(object_list[t_ptr->index].name,
+			!strncmp(k_list[t_ptr->index].name,
 				 "Adamantite", 10))
 			break;
 		    if (peek)
@@ -4417,7 +4417,7 @@ int x, level, good, not_unique;
 	 * number of ego weapons same as before, see also missiles 
 	 */
 	    if (magik(3*special/2)||good==666) { /* was 2 */
-		if (!stricmp("& Whip", object_list[t_ptr->index].name)
+		if (!stricmp("& Whip", k_list[t_ptr->index].name)
 		    && randint(2)==1) {
 		    if (peek) msg_print("Whip of Fire");
 		    rating += 20;
@@ -4686,7 +4686,7 @@ int x, level, good, not_unique;
 	    switch (randint(15)) {
 	      case 1: case 2: case 3:
 		if (((randint(3)==1)||(good==666)) && !not_unique &&
-		    !stricmp(object_list[t_ptr->index].name, "& Long Bow") &&
+		    !stricmp(k_list[t_ptr->index].name, "& Long Bow") &&
 		    (((i=randint(2))==1 && !BELEG) || (i==2 && !BARD))) {
 		    switch (i) {
 		    case 1:
@@ -4728,7 +4728,7 @@ int x, level, good, not_unique;
 		    break;
 		}
 		if (((randint(5) == 1) || (good == 666)) && !not_unique &&
-		    !stricmp(object_list[t_ptr->index].name, "& Light Crossbow")
+		    !stricmp(k_list[t_ptr->index].name, "& Light Crossbow")
 		    && !CUBRAGOL) {
 		    if (CUBRAGOL)
 			break;
@@ -4802,15 +4802,15 @@ int x, level, good, not_unique;
 	if (magik(chance) || good) {
 	    t_ptr->toac = randint(3) + m_bonus(0, 10, level);
 	    if ((((randint(2) == 1) && magik(5 * special / 2)) || (good == 666)) &&
-		!stricmp(object_list[t_ptr->index].name,
+		!stricmp(k_list[t_ptr->index].name,
 			 "& Set of Leather Gloves") &&
 		!not_unique && unique_armour(t_ptr));
 	    else if ((((randint(4) == 1) && magik(special)) || (good == 666))
-		     && !stricmp(object_list[t_ptr->index].name,
+		     && !stricmp(k_list[t_ptr->index].name,
 				 "& Set of Gauntlets") &&
 		     !not_unique && unique_armour(t_ptr));
 	    else if ((((randint(5) == 1) && magik(special)) || (good == 666))
-		     && !stricmp(object_list[t_ptr->index].name,
+		     && !stricmp(k_list[t_ptr->index].name,
 				 "& Set of Cesti") &&
 		     !not_unique && unique_armour(t_ptr));
 	/* don't forget cesti -CFT */
@@ -4901,7 +4901,7 @@ int x, level, good, not_unique;
 			t_ptr->cost += 300000L;
 		    }
 		} else if (stricmp("& Pair of Metal Shod Boots",
-				   object_list[t_ptr->index].name))	/* not metal */
+				   k_list[t_ptr->index].name))	/* not metal */
 		    if (tmp > 6) {
 			t_ptr->flags |= TR_FFALL;
 			rating += 7;
@@ -5484,7 +5484,7 @@ int x, level, good, not_unique;
 	    t_ptr->toac += 1 + m_bonus(0, 20, level);
 	    if (magik(special) || (good == 666)) {
 		if (!not_unique &&
-		    !stricmp(object_list[t_ptr->index].name, "& Cloak")
+		    !stricmp(k_list[t_ptr->index].name, "& Cloak")
 		    && randint(10) == 1) {
 		    switch (randint(9)) {
 		      case 1:
@@ -5577,7 +5577,7 @@ int x, level, good, not_unique;
 		    }
 
 		} else if (!not_unique &&
-			   !stricmp(object_list[t_ptr->index].name,
+			   !stricmp(k_list[t_ptr->index].name,
 				    "& Shadow Cloak")
 			   && randint(20) == 1) {
 		    switch (randint(2)) {

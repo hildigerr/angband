@@ -140,7 +140,7 @@ typedef struct inven_kind
 #define INSCRIP_SIZE 13	 /* notice alignment, must be 4*x + 1 */
 typedef struct inven_type
 {
-  u16b index;			    /* Index to object_list	*/
+  u16b index;			    /* Index to k_list	*/
   byte name2;			    /* Object special name	*/
   char inscrip[INSCRIP_SIZE];	    /* Object inscription	*/
   u32b flags;			    /* Special flags		*/

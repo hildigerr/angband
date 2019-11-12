@@ -3493,7 +3493,7 @@ create_food()
 	 py.flags.food = PLAYER_FOOD_MAX;
 #else
      /* add to food timer rather than create mush - cba */
-     add_food(object_list[OBJ_MUSH].p1);
+     add_food(k_list[OBJ_MUSH].p1);
 #endif
      py.flags.status &= ~(PY_WEAK | PY_HUNGRY);
      prt_hunger();
@@ -4052,7 +4052,7 @@ remove_curse()
 	    (i_ptr->name2 != EGO_MORGUL) &&
 	    (i_ptr->name2 != ART_CALRIS) &&
 	    (i_ptr->name2 != ART_MORMEGIL)) {
-	    if (!(!stricmp(object_list[i_ptr->index].name, "Power") &&
+	    if (!(!stricmp(k_list[i_ptr->index].name, "Power") &&
 		  (i_ptr->tval == TV_RING))) {
 		i_ptr->flags &= ~TR_CURSED;
 		i_ptr->ident &= ~ID_DAMD;	/* DGK */
@@ -4075,7 +4075,7 @@ remove_all_curse()
     for (i = INVEN_WIELD; i <= INVEN_OUTER; i++) {
 	i_ptr = &inventory[i];
 	if (TR_CURSED & i_ptr->flags) {
-	    if (!(!stricmp(object_list[i_ptr->index].name, "Power") &&
+	    if (!(!stricmp(k_list[i_ptr->index].name, "Power") &&
 		  (i_ptr->tval == TV_RING))) {
 		i_ptr->flags &= ~TR_CURSED;
 		i_ptr->ident &= ~ID_DAMD;	/* DGK */

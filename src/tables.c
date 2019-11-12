@@ -95,7 +95,7 @@ byte rgold_adj[MAX_RACES][MAX_RACES] = {
 
 #define MDO MAX_DUNGEON_OBJ
 
-/* object_list[] index of objects that may appear in the store */
+/* k_list[] index of objects that may appear in the store */
 u16b store_choice[MAX_STORES][STORE_CHOICES] = {
 	/* General Store */
 {MDO,MDO,MDO,MDO,MDO,MDO,MDO,MDO,MDO+21,MDO+21,MDO+21,MDO+21,MDO+22,MDO+22,

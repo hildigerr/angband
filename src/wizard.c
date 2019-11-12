@@ -803,24 +803,24 @@ again:
     for (; i < MAX_DUNGEON_OBJ; i++) {
 	switch (i_ptr->tval) {
 	  case TV_POTION1:
-	    if ((object_list[i].tval == TV_POTION1) ||
-		(object_list[i].tval == TV_POTION2)) {
-		sprintf(tmp_str, "%c) %s", 'a' + j, object_list[i].name);
+	    if ((k_list[i].tval == TV_POTION1) ||
+		(k_list[i].tval == TV_POTION2)) {
+		sprintf(tmp_str, "%c) %s", 'a' + j, k_list[i].name);
 		prt(tmp_str, 1 + j, 0);
 		j++;
 	    }
 	    break;
 	  case TV_SCROLL1:
-	    if ((object_list[i].tval == TV_SCROLL1) ||
-		(object_list[i].tval == TV_SCROLL2)) {
-		sprintf(tmp_str, "%c) %s", 'a' + j, object_list[i].name);
+	    if ((k_list[i].tval == TV_SCROLL1) ||
+		(k_list[i].tval == TV_SCROLL2)) {
+		sprintf(tmp_str, "%c) %s", 'a' + j, k_list[i].name);
 		prt(tmp_str, 1 + j, 0);
 		j++;
 	    }
 	    break;
 	  default:
-	    if (object_list[i].tval == i_ptr->tval) {
-		sprintf(tmp_str, "%c) %s", 'a' + j, object_list[i].name);
+	    if (k_list[i].tval == i_ptr->tval) {
+		sprintf(tmp_str, "%c) %s", 'a' + j, k_list[i].name);
 		prt(tmp_str, 1 + j, 0);
 		j++;
 	    }
@@ -835,24 +835,24 @@ again:
 	for (i = (i - (MAX_DUNGEON_OBJ - 1)) + (OBJ_SPECIAL - 1); i < MAX_OBJECTS; i++) {
 	    switch (i_ptr->tval) {
 	      case TV_POTION1:
-		if ((object_list[i].tval == TV_POTION1) ||
-		    (object_list[i].tval == TV_POTION2)) {
-		    sprintf(tmp_str, "%c) %s", 'a' + j, object_list[i].name);
+		if ((k_list[i].tval == TV_POTION1) ||
+		    (k_list[i].tval == TV_POTION2)) {
+		    sprintf(tmp_str, "%c) %s", 'a' + j, k_list[i].name);
 		    prt(tmp_str, 1 + j, 0);
 		    j++;
 		}
 		break;
 	      case TV_SCROLL1:
-		if ((object_list[i].tval == TV_SCROLL1) ||
-		    (object_list[i].tval == TV_SCROLL2)) {
-		    sprintf(tmp_str, "%c) %s", 'a' + j, object_list[i].name);
+		if ((k_list[i].tval == TV_SCROLL1) ||
+		    (k_list[i].tval == TV_SCROLL2)) {
+		    sprintf(tmp_str, "%c) %s", 'a' + j, k_list[i].name);
 		    prt(tmp_str, 1 + j, 0);
 		    j++;
 		}
 		break;
 	      default:
-		if (object_list[i].tval == i_ptr->tval) {
-		    sprintf(tmp_str, "%c) %s", 'a' + j, object_list[i].name);
+		if (k_list[i].tval == i_ptr->tval) {
+		    sprintf(tmp_str, "%c) %s", 'a' + j, k_list[i].name);
 		    prt(tmp_str, 1 + j, 0);
 		    j++;
 		}
@@ -886,19 +886,19 @@ again:
     for (i = 0; i < MAX_DUNGEON_OBJ; i++) {
 	switch (i_ptr->tval) {
 	  case TV_POTION1:
-	    if ((object_list[i].tval == TV_POTION1) ||
-		(object_list[i].tval == TV_POTION2)) {
+	    if ((k_list[i].tval == TV_POTION1) ||
+		(k_list[i].tval == TV_POTION2)) {
 		j++;
 	    }
 	    break;
 	  case TV_SCROLL1:
-	    if ((object_list[i].tval == TV_SCROLL1) ||
-		(object_list[i].tval == TV_SCROLL2)) {
+	    if ((k_list[i].tval == TV_SCROLL1) ||
+		(k_list[i].tval == TV_SCROLL2)) {
 		j++;
 	    }
 	    break;
 	  default:
-	    if (object_list[i].tval == i_ptr->tval) {
+	    if (k_list[i].tval == i_ptr->tval) {
 		j++;
 	    }
 	    break;
@@ -910,19 +910,19 @@ again:
 	for (i = (OBJ_SPECIAL - 1); i < MAX_OBJECTS; i++) {
 	    switch (i_ptr->tval) {
 	      case TV_POTION1:
-		if ((object_list[i].tval == TV_POTION1) ||
-		    (object_list[i].tval == TV_POTION2)) {
+		if ((k_list[i].tval == TV_POTION1) ||
+		    (k_list[i].tval == TV_POTION2)) {
 		    j++;
 		}
 		break;
 	      case TV_SCROLL1:
-		if ((object_list[i].tval == TV_SCROLL1) ||
-		    (object_list[i].tval == TV_SCROLL2)) {
+		if ((k_list[i].tval == TV_SCROLL1) ||
+		    (k_list[i].tval == TV_SCROLL2)) {
 		    j++;
 		}
 		break;
 	      default:
-		if (object_list[i].tval == i_ptr->tval) {
+		if (k_list[i].tval == i_ptr->tval) {
 		    j++;
 		}
 		break;

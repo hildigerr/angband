@@ -411,53 +411,53 @@ print_objects()
 			    (OBJ_SPECIAL - 1) - 1;
 			switch (tmp) {
 			  case (OBJ_SPECIAL - 1):
-			    if (object_list[tmp].level <= level)
+			    if (k_list[tmp].level <= level)
 				msg_print("*Remove Curse*");
 			    break;
 			  case (OBJ_SPECIAL):
-			    if (object_list[tmp].level <= level)
+			    if (k_list[tmp].level <= level)
 				msg_print("[Resistance of Scarabtarices]");
 			    break;
 			  case (OBJ_SPECIAL + 1):
-			    if (object_list[tmp].level <= level)
+			    if (k_list[tmp].level <= level)
 				msg_print("[Mordenkainen's Escapes]");
 			    break;
 			  case (OBJ_SPECIAL + 2):
-			    if (object_list[tmp].level <= level)
+			    if (k_list[tmp].level <= level)
 				msg_print("[Kelek's Grimoire of Power]");
 			    break;
 			  case (OBJ_SPECIAL + 3):
 			    if (randint(2) == 1)
 				goto again;
-			    if (object_list[tmp].level <= level)
+			    if (k_list[tmp].level <= level)
 				msg_print("[Tenser's Transformations]");
 			    break;
 			  case (OBJ_SPECIAL + 4):
 			    if (randint(2) == 1)
 				goto again;
-			    if (object_list[tmp].level <= level)
+			    if (k_list[tmp].level <= level)
 				msg_print("[Raal's Tome of Destruction]");
 			    break;
 			  case (OBJ_SPECIAL + 5):
-			    if (object_list[tmp].level <= level)
+			    if (k_list[tmp].level <= level)
 				msg_print("[Ethereal Openings]");
 			    break;
 			  case (OBJ_SPECIAL + 6):
-			    if (object_list[tmp].level <= level)
+			    if (k_list[tmp].level <= level)
 				msg_print("[Godly Insights]");
 			    break;
 			  case (OBJ_SPECIAL + 7):
-			    if (object_list[tmp].level <= level)
+			    if (k_list[tmp].level <= level)
 				msg_print("[Purifications and Healing]");
 			    break;
 			  case (OBJ_SPECIAL + 8):
-			    if (object_list[tmp].level <= level)
+			    if (k_list[tmp].level <= level)
 				msg_print("[Wrath of God]");
 			    break;
 			  case (OBJ_SPECIAL + 9):
 			    if (randint(2) > 1)
 				goto again;
-			    if (object_list[tmp].level <= level)
+			    if (k_list[tmp].level <= level)
 				msg_print("[Holy Infusions]");
 			    break; /* End of Books */
 			  case (OBJ_SPECIAL + 10):	/* Narya */
@@ -465,7 +465,7 @@ print_objects()
 				goto again;
 			    if (NARYA)
 				goto again;
-			    if (object_list[tmp].level <= level)
+			    if (k_list[tmp].level <= level)
 				msg_print("Narya");
 			    NARYA = TRUE;
 			    break;
@@ -474,7 +474,7 @@ print_objects()
 				goto again;
 			    if (NENYA)
 				goto again;
-			    if (object_list[tmp].level <= level)
+			    if (k_list[tmp].level <= level)
 				msg_print("Nenya");
 			    NENYA = TRUE;
 			    break;
@@ -483,7 +483,7 @@ print_objects()
 				goto again;
 			    if (VILYA)
 				goto again;
-			    if (object_list[tmp].level <= level)
+			    if (k_list[tmp].level <= level)
 				msg_print("Vilya");
 			    VILYA = TRUE;
 			    break;
@@ -492,7 +492,7 @@ print_objects()
 				goto again;
 			    if (POWER)
 				goto again;
-			    if (object_list[tmp].level <= level)
+			    if (k_list[tmp].level <= level)
 				msg_print("Power (The One Ring)");
 			    POWER = TRUE;
 			    break;
@@ -505,21 +505,21 @@ print_objects()
 			  case (OBJ_SPECIAL + 20):
 			    if (randint(2) > 1)
 				goto again;
-			    if (object_list[tmp].level <= level)
+			    if (k_list[tmp].level <= level)
 				msg_print("Dragon Scale Mail");
 			    break;
 			  case (OBJ_SPECIAL + 23):	/* Multi-Hued Dragon
 							 * Scale Mail */
 			    if (randint(3) > 1)
 				goto again;
-			    if (object_list[tmp].level <= level)
+			    if (k_list[tmp].level <= level)
 				msg_print("Multi-Hued Dragon Scale Mail");
 			    break;
 			}
-			if (object_list[tmp].level > level)
+			if (k_list[tmp].level > level)
 			    continue;
 			invcopy(&i_list[j], tmp);
-			if (object_list[i_list[j].index].tval == TV_HARD_ARMOR)
+			if (k_list[i_list[j].index].tval == TV_HARD_ARMOR)
 			    i_list[j].toac += 10 + randint(10);
 			i_ptr = &i_list[j];
 			store_bought(i_ptr);

@@ -688,7 +688,7 @@ dungeon()
 		if (i_ptr->timeout > 0)
 		    i_ptr->timeout--;
 		if ((i_ptr->tval == TV_RING) &&
-		    (!stricmp(object_list[i_ptr->index].name, "Power")) &&
+		    (!stricmp(k_list[i_ptr->index].name, "Power")) &&
 		    (randint(20) == 1) && (py.misc.exp > 0))
 		    py.misc.exp--, py.misc.max_exp--, prt_experience();
 	    }
@@ -900,7 +900,7 @@ dungeon()
 		    char                out_val[100], tmp[100], *ptr;
 		    int                 sp;
 
-		    (void)strcpy(tmp, object_list[i_ptr->index].name);
+		    (void)strcpy(tmp, k_list[i_ptr->index].name);
 
 		    ptr = tmp;
 		    sp = 0;
@@ -1409,7 +1409,7 @@ register inven_type *t_ptr;
 	return "terrible";
     if ((t_ptr->tval == TV_DIGGING) &&  /* also, good digging tools -CFT */
 	(t_ptr->flags & TR_TUNNEL) &&
-	(t_ptr->p1 > object_list[t_ptr->index].p1)) /* better than normal for this
+	(t_ptr->p1 > k_list[t_ptr->index].p1)) /* better than normal for this
 						       type of shovel/pick? -CFT */
 	return "good";
     if ((t_ptr->tohit<=0 && t_ptr->todam<=0 && t_ptr->toac<=0) &&
@@ -2039,7 +2039,7 @@ char com_val;
 		    inven_type          inv;
 
 		    for (temp = 0; temp < MAX_DUNGEON_OBJ; temp++) {
-			if (object_list[temp].level <= i) {
+			if (k_list[temp].level <= i) {
 			    invcopy(&inv, temp);
 			    known1(&inv);
 			}
@@ -2366,7 +2366,7 @@ activate()
 		break;
 	    }
 	    if (py.stats.use_stat[A_INT] < randint(18) &&
-	     randint(object_list[inventory[i].index].level) > py.misc.lev) {
+	     randint(k_list[inventory[i].index].level) > py.misc.lev) {
 		msg_print("You fail to activate it properly.");
 		break;
 	    }

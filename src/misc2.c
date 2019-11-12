@@ -176,7 +176,7 @@ int y, x;
 
 /* average the values to make Creeping _xxx_ coins not give too great treasure drops */
     if (coin_type)
-	t_ptr->cost = ((8L * (long)randint((int)object_list[OBJ_GOLD_LIST + i].cost))
+	t_ptr->cost = ((8L * (long)randint((int)k_list[OBJ_GOLD_LIST + i].cost))
 		       + (t_ptr->cost)) >> 1;
 					  
     if (cave[y][x].cptr == 1)
@@ -220,16 +220,16 @@ int level, good;
 		j = randint(t_level[level]) - 1;
 		if (i < j)
 		    i = j;
-		j = object_list[sorted_objects[i]].level;
+		j = k_list[sorted_objects[i]].level;
 		if (j == 0)
 		    i = randint(t_level[0]) - 1;
 		else
 		    i = randint(t_level[j] - t_level[j - 1]) - 1 + t_level[j - 1];
 	    }
 	}
-    } while (((object_list[sorted_objects[i]].rare ?
-	       (randint(object_list[sorted_objects[i]].rare) - 1) : 0) && !good)
-	     || (object_list[sorted_objects[i]].rare == 255));
+    } while (((k_list[sorted_objects[i]].rare ?
+	       (randint(k_list[sorted_objects[i]].rare) - 1) : 0) && !good)
+	     || (k_list[sorted_objects[i]].rare == 255));
     return (i);
 }
 
@@ -268,9 +268,9 @@ again:
 	    goto again;
 	if (NARYA)
 	    goto again;
-	if ((object_list[tmp].level - 40) > object_level)
+	if ((k_list[tmp].level - 40) > object_level)
 	    goto again;
-	if ((object_list[tmp].level > object_level) && (randint(50) > 1))
+	if ((k_list[tmp].level > object_level) && (randint(50) > 1))
 	    goto again;
 	if ((wizard || peek))
 	    sprintf(str, "Narya");
@@ -284,9 +284,9 @@ again:
 	    goto again;
 	if (NENYA)
 	    goto again;
-	if ((object_list[tmp].level - 40) > object_level)
+	if ((k_list[tmp].level - 40) > object_level)
 	    goto again;
-	if ((object_list[tmp].level > object_level) && (randint(60) > 1))
+	if ((k_list[tmp].level > object_level) && (randint(60) > 1))
 	    goto again;
 	if ((wizard || peek))
 	    sprintf(str, "Nenya");
@@ -300,9 +300,9 @@ again:
 	    goto again;
 	if (VILYA)
 	    goto again;
-	if ((object_list[tmp].level - 40) > object_level)
+	if ((k_list[tmp].level - 40) > object_level)
 	    goto again;
-	if ((object_list[tmp].level > object_level) && (randint(70) > 1))
+	if ((k_list[tmp].level > object_level) && (randint(70) > 1))
 	    goto again;
 	if ((wizard || peek))
 	    sprintf(str, "Vilya");
@@ -316,9 +316,9 @@ again:
 	    goto again;
 	if (POWER)
 	    goto again;
-	if ((object_list[tmp].level - 40) > object_level)
+	if ((k_list[tmp].level - 40) > object_level)
 	    goto again;
-	if ((object_list[tmp].level > object_level) && (randint(100) > 1))
+	if ((k_list[tmp].level > object_level) && (randint(100) > 1))
 	    goto again;
 	if ((wizard || peek))
 	    sprintf(str, "Power (The One Ring)");
@@ -330,9 +330,9 @@ again:
 	done++;
 	if (PHIAL)
 	    goto again;
-	if ((object_list[tmp].level - 40) > object_level)
+	if ((k_list[tmp].level - 40) > object_level)
 	    goto again;
-	if ((object_list[tmp].level > object_level) && (randint(30) > 1))
+	if ((k_list[tmp].level > object_level) && (randint(30) > 1))
 	    goto again;
 	if ((wizard || peek))
 	    sprintf(str, "Phial of Galadriel");
@@ -346,9 +346,9 @@ again:
 	    goto again;
 	if (INGWE)
 	    goto again;
-	if ((object_list[tmp].level - 40) > object_level)
+	if ((k_list[tmp].level - 40) > object_level)
 	    goto again;
-	if ((object_list[tmp].level > object_level) && (randint(50) > 1))
+	if ((k_list[tmp].level > object_level) && (randint(50) > 1))
 	    goto again;
 	if ((wizard || peek))
 	    sprintf(str, "Amulet of Ingwe");
@@ -362,9 +362,9 @@ again:
 	    goto again;
 	if (CARLAMMAS)
 	    goto again;
-	if ((object_list[tmp].level - 40) > object_level)
+	if ((k_list[tmp].level - 40) > object_level)
 	    goto again;
-	if ((object_list[tmp].level > object_level) && (randint(35) > 1))
+	if ((k_list[tmp].level > object_level) && (randint(35) > 1))
 	    goto again;
 	if ((wizard || peek))
 	    sprintf(str, "Amulet of Carlammas");
@@ -378,9 +378,9 @@ again:
 	    goto again;
 	if (ELENDIL)
 	    goto again;
-	if ((object_list[tmp].level - 40) > object_level)
+	if ((k_list[tmp].level - 40) > object_level)
 	    goto again;
-	if ((object_list[tmp].level > object_level) && (randint(30) > 1))
+	if ((k_list[tmp].level > object_level) && (randint(30) > 1))
 	    goto again;
 	if ((wizard || peek))
 	    sprintf(str, "Star of Elendil");
@@ -394,9 +394,9 @@ again:
 	    goto again;
 	if (THRAIN)
 	    goto again;
-	if ((object_list[tmp].level - 40) > object_level)
+	if ((k_list[tmp].level - 40) > object_level)
 	    goto again;
-	if ((object_list[tmp].level > object_level) && (randint(60) > 1))
+	if ((k_list[tmp].level > object_level) && (randint(60) > 1))
 	    goto again;
 	if ((wizard || peek))
 	    sprintf(str, "Arkenstone of Thrain");
@@ -410,9 +410,9 @@ again:
 	    goto again;
 	if (TULKAS)
 	    goto again;
-	if ((object_list[tmp].level - 40) > object_level)
+	if ((k_list[tmp].level - 40) > object_level)
 	    goto again;
-	if ((object_list[tmp].level > object_level) && (randint(65) > 1))
+	if ((k_list[tmp].level > object_level) && (randint(65) > 1))
 	    goto again;
 	if ((wizard || peek))
 	    sprintf(str, "Ring of Tulkas");
@@ -426,9 +426,9 @@ again:
 	    goto again;
 	if (NECKLACE)
 	    goto again;
-	if ((object_list[tmp].level - 40) > object_level)
+	if ((k_list[tmp].level - 40) > object_level)
 	    goto again;
-	if ((object_list[tmp].level > object_level) && (randint(60) > 1))
+	if ((k_list[tmp].level > object_level) && (randint(60) > 1))
 	    goto again;
 	if ((wizard || peek))
 	    sprintf(str, "Necklace of the Dwarves");
@@ -442,9 +442,9 @@ again:
 	    goto again;
 	if (BARAHIR)
 	    goto again;
-	if ((object_list[tmp].level - 40) > object_level)
+	if ((k_list[tmp].level - 40) > object_level)
 	    goto again;
-	if ((object_list[tmp].level > object_level) && (randint(50) > 1))
+	if ((k_list[tmp].level > object_level) && (randint(50) > 1))
 	    goto again;
 	if ((wizard || peek))
 	    sprintf(str, "Ring of Barahir");
@@ -460,8 +460,8 @@ again:
     invcopy(&i_list[cur_pos], tmp);
     i_list[cur_pos].timeout = 0;
     i_list[cur_pos].ident |= ID_NOSHOW_TYPE; /* don't show (+x of yyy) for these */
-    if (object_list[tmp].level > object_level) {
-	rating += 2 * (object_list[sorted_objects[tmp]].level - object_level);
+    if (k_list[tmp].level > object_level) {
+	rating += 2 * (k_list[sorted_objects[tmp]].level - object_level);
     }
     if (cave[y][x].cptr == 1)
 	msg_print("You feel something roll beneath your feet.");
@@ -495,14 +495,14 @@ int y, x;
 
     do {	   /* don't generate another chest if opening_chest is true -CWS */
 	tmp = get_obj_num(dun_level, FALSE);
-    } while (opening_chest && (object_list[sorted_objects[tmp]].tval == TV_CHEST));
+    } while (opening_chest && (k_list[sorted_objects[tmp]].tval == TV_CHEST));
 	
     invcopy(&i_list[cur_pos], sorted_objects[tmp]);
     magic_treasure(cur_pos, dun_level, FALSE, 0);
-    if (object_list[sorted_objects[tmp]].level > dun_level)
-	rating += object_list[sorted_objects[tmp]].level - dun_level;
+    if (k_list[sorted_objects[tmp]].level > dun_level)
+	rating += k_list[sorted_objects[tmp]].level - dun_level;
     if (peek) {
-	if (object_list[sorted_objects[tmp]].level > dun_level) {
+	if (k_list[sorted_objects[tmp]].level > dun_level) {
 	    char buf[200];
 	    byte temp;
 	    
@@ -546,36 +546,36 @@ u32b good;
     cave[y][x].tptr = cur_pos;
     do {
 	tmp = get_obj_num((object_level + 10), TRUE);
-	tv = object_list[sorted_objects[tmp]].tval;
+	tv = k_list[sorted_objects[tmp]].tval;
 	if ((tv == TV_HELM) || (tv == TV_SHIELD) ||
 	    (tv == TV_CLOAK) || (tv == TV_HAFTED) || (tv == TV_POLEARM) ||
 	    (tv == TV_BOW) || (tv == TV_BOLT) || (tv == TV_ARROW) ||
 	    (tv == TV_BOOTS) || (tv == TV_GLOVES))
 	    is_good = TRUE;
 	if ((tv == TV_SWORD) &&
-	    strncmp("& Broken", object_list[sorted_objects[tmp]].name, 8))
+	    strncmp("& Broken", k_list[sorted_objects[tmp]].name, 8))
 	    is_good = TRUE;	   /* broken swords/daggers are NOT good!
 				    * -CFT */
 	if ((tv == TV_HARD_ARMOR) &&
-	    strncmp("Rusty", object_list[sorted_objects[tmp]].name, 5))
+	    strncmp("Rusty", k_list[sorted_objects[tmp]].name, 5))
 	    is_good = TRUE;	   /* rusty chainmail is NOT good! -CFT */
 	if ((tv == TV_SOFT_ARMOR) &&
-	 stricmp("some filthy rags", object_list[sorted_objects[tmp]].name))
+	 stricmp("some filthy rags", k_list[sorted_objects[tmp]].name))
 	    is_good = TRUE;	   /* nor are rags! -CFT */
 	if ((tv == TV_MAGIC_BOOK) &&	/* if book, good must be one of the
 					 * deeper, special must be Raal's */
-	    (object_list[sorted_objects[tmp]].sval > ((good & SPECIAL) ? 71 : 67)))
+	    (k_list[sorted_objects[tmp]].sval > ((good & SPECIAL) ? 71 : 67)))
 	    is_good = TRUE;
 	if ((tv == TV_PRAYER_BOOK) &&	/* if book, good must be one of the
 					 * deeper, special must be Wrath of
 					 * God */
-	    (object_list[sorted_objects[tmp]].sval > ((good & SPECIAL) ? 71 : 67)))
+	    (k_list[sorted_objects[tmp]].sval > ((good & SPECIAL) ? 71 : 67)))
 	    is_good = TRUE;
     } while (!is_good);
     invcopy(&i_list[cur_pos], sorted_objects[tmp]);
     magic_treasure(cur_pos, object_level, (good & SPECIAL) ? 666 : 1, 0);
     if (peek) {
-	if (object_list[sorted_objects[tmp]].level > object_level) {
+	if (k_list[sorted_objects[tmp]].level > object_level) {
 	    char                buf[200];
 	    byte               t;
 

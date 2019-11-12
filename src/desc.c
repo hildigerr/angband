@@ -363,7 +363,7 @@ int                  pref;
     int                  indexx, p1_use, modify, append_name;
 
     indexx = i_ptr->sval & (ITEM_SINGLE_STACK_MIN - 1);
-    basenm = object_list[i_ptr->index].name;
+    basenm = k_list[i_ptr->index].name;
     modstr = NULL;
     damstr[0] = '\0';
     p1_use = IGNORED;
@@ -560,12 +560,12 @@ int                  pref;
       case TV_VIS_TRAP:
       case TV_UP_STAIR:
       case TV_DOWN_STAIR:
-	(void)strcpy(out_val, object_list[i_ptr->index].name);
+	(void)strcpy(out_val, k_list[i_ptr->index].name);
     /* (void) strcat(out_val, "."); avoid ".." bug -CWS */
 	return;
       case TV_STORE_DOOR:
 	(void)sprintf(out_val, "the entrance to the %s",
-		      object_list[i_ptr->index].name);
+		      k_list[i_ptr->index].name);
 	return;
       default:
 	(void)strcpy(out_val, "Error in objdes()");
@@ -577,7 +577,7 @@ int                  pref;
 	(void)strcpy(tmp_val, basenm);
     if (append_name) {
 	(void)strcat(tmp_val, " of ");
-	(void)strcat(tmp_val, object_list[i_ptr->index].name);
+	(void)strcat(tmp_val, k_list[i_ptr->index].name);
     }
     if (i_ptr->number != 1) {
 	insert_str(tmp_val, "ch~", "ches");
@@ -770,7 +770,7 @@ int                  from_index;
 {
     register inven_kind *from;
 
-    from = &object_list[from_index];
+    from = &k_list[from_index];
     to->index = from_index;
     to->name2 = SN_NULL;
     to->inscrip[0] = '\0';
