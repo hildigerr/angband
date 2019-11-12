@@ -1837,7 +1837,7 @@ put_misc3()
 
 /* Used to display the character on the screen.		-RAK-	 */
 void 
-display_char()
+display_player()
 {
     put_character();
     put_misc1();
@@ -1889,7 +1889,7 @@ change_name()
 #endif
 
     flag = FALSE;
-    display_char();
+    display_player();
     do {
 	prt("<f>ile character description. <c>hange character name.", 21, 2);
 	c = inkey();

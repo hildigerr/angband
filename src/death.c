@@ -338,7 +338,7 @@ print_tomb()
 	}
 	calc_bonuses();
 	clear_screen();
-	display_char();
+	display_player();
 	put_str("Type ESC to skip the inventory:", 23, 0);
 	if (inkey() != ESCAPE) {
 	    clear_screen();
