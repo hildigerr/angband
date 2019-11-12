@@ -15,7 +15,18 @@
 
 
 
+/*
+ * Include the "Angband" configuration header
+ */
+#include "config.h"
+
+
+/*
+ * Now, include the define's, the type's, and the extern's
+ */
 #include "defines.h"
+#include "types.h"
+#include "externs.h"
 
 
 

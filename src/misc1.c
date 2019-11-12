@@ -30,9 +30,6 @@ defined(NCR3K) || defined(linux) || defined(ibm032) || defined (__osf__)
 #include <stdio.h>
 #include "angband.h"
 #include "monster.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
 
 #ifdef USG
 #ifndef ATARIST_MWC

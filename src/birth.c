@@ -9,9 +9,6 @@
  */
 
 #include "angband.h"
-#include "types.h"
-#include "config.h"
-#include "externs.h"
 
 #ifdef USG
 #ifndef ATARIST_MWC

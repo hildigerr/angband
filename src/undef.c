@@ -1,8 +1,6 @@
 /* undef.c: undefined routines */
 
 #include "angband.h"
-#include "config.h"
-#include "types.h"
 
 #if defined(SOLARIS)
 #include <string.h>

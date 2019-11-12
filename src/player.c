@@ -7,8 +7,6 @@
    included in all such copies. */
 
 #include "angband.h"
-#include "config.h"
-#include "types.h"
 
 /* Player record for most player related info */
 player_type py;

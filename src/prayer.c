@@ -10,9 +10,6 @@
 
 #include "angband.h"
 #include "monster.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
 
 
 /* Pray like HELL.					-RAK-	 */

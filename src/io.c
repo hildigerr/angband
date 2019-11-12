@@ -43,9 +43,6 @@ char               *getenv();
 #endif
 
 #include "angband.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
 
 #include <ctype.h>
 

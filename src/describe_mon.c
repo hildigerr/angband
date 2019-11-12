@@ -6,9 +6,6 @@
  */
 
 #include "angband.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
 
 describe_mon_type desc_list[MAX_R_IDX] = {
 

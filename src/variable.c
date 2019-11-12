@@ -1,8 +1,6 @@
 /* variable.c: Global variables */
 
 #include "angband.h"
-#include "config.h"
-#include "types.h"
 
 const char *copyright[5] = {
 "Copyright (c) 1989 James E. Wilson, Robert A. Keoneke",

@@ -16,9 +16,6 @@
 #endif
 
 #include "angband.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
 
 #ifdef ibm032
 #include <ctype.h>

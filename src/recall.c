@@ -9,10 +9,7 @@
  */
 
 #include "angband.h"
-#include "config.h"
 #include "monster.h"
-#include "types.h"
-#include "externs.h"
 
 #include <stdio.h>
 

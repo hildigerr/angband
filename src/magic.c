@@ -9,9 +9,6 @@
  */
 
 #include "angband.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
 
 /* Lets do all prototypes correctly.... -CWS */
 #ifndef NO_LINT_ARGS

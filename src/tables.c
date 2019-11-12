@@ -7,8 +7,6 @@
    included in all such copies. */
 
 #include "angband.h"
-#include "config.h"
-#include "types.h"
 
 #if defined(CHECK_HOURS)
 /* Operating hours for ANGBAND				-RAK-	*/

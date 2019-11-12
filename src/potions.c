@@ -9,9 +9,6 @@
  */
 
 #include "angband.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
 
 #ifdef USG
 #include <string.h>

@@ -15,10 +15,7 @@
 
 #include <stdio.h>
 #include <signal.h>
-#include "config.h"
 #include "angband.h"
-#include "types.h"
-#include "externs.h"
 
 #ifdef Pyramid
 #include <sys/time.h>

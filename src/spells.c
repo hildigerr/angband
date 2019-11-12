@@ -10,10 +10,7 @@
  */
 
 #include "angband.h"
-#include "config.h"
-#include "types.h"
 #include "monster.h"
-#include "externs.h"
 
 #ifdef USG
 #ifndef ATARIST_MWC

@@ -24,9 +24,6 @@
 
 #include <pwd.h>
 #include "angband.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
 
 #if defined(SYS_V) && defined(lint)
 /* for AIX, prevent hundreds of unnecessary lint errors, must define before

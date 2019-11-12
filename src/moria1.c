@@ -12,9 +12,6 @@
 #include <ctype.h>
 
 #include "angband.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
 #include "monster.h"
 
 #ifdef USG

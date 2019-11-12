@@ -9,9 +9,6 @@
  */
 
 #include "angband.h"
-#include "config.h"
-#include "types.h"
-#include "externs.h"
 
 /* For those systems that don't have stricmp. -hmj */
 
