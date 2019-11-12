@@ -653,7 +653,7 @@ save_player()
 
 	tmp2 = basename(savefile);
 
-	(void)sprintf(temp, "%s/p.%s", ANGBAND_SAV, (tmp2 + 1));
+	(void)sprintf(temp, "%s/p.%s", ANGBAND_DIR_SAVE, (tmp2 + 1));
 
 	unlink(temp);
     } else {
@@ -1587,7 +1587,7 @@ closefiles:
 
 		tmp2 = basename(savefile);
 
-		(void)sprintf(temp, "%s/p.%s", ANGBAND_SAV, (tmp2 + 1));
+		(void)sprintf(temp, "%s/p.%s", ANGBAND_DIR_SAVE, (tmp2 + 1));
 
 		link(savefile, temp);
 		unlink(savefile);

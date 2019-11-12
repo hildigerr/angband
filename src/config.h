@@ -93,7 +93,7 @@
 #define ANGBAND_VERSION       LIBDIR(files/version.hlp)
 #define ANGBAND_LOAD      LIBDIR(files/loadcheck)
 #define ANGBAND_WIZ       LIBDIR(files/wizards)
-#define ANGBAND_SAV       LIBDIR(save)
+#define ANGBAND_DIR_SAVE       LIBDIR(save)
 #endif /* OLD_FILEPATHS */
 
 

@@ -383,7 +383,7 @@ char *argv[];
        hence, this code is not necessary */
 #endif
 
-    (void) sprintf(savefile, "%s/%d%s", ANGBAND_SAV, player_uid, py.misc.name);
+    (void) sprintf(savefile, "%s/%d%s", ANGBAND_DIR_SAVE, player_uid, py.misc.name);
 
  /* This restoration of a saved character may get ONLY the monster memory. In
     this case, get_char returns false. It may also resurrect a dead character
@@ -534,7 +534,7 @@ char *argv[];
 	player_birth();
 
 	/* if we're creating a new character, change the savefile name */
-    (void) sprintf(savefile, "%s/%d%s", ANGBAND_SAV, player_uid, py.misc.name);
+    (void) sprintf(savefile, "%s/%d%s", ANGBAND_DIR_SAVE, player_uid, py.misc.name);
 	char_inven_init();
 	py.flags.food = 7500;
 	py.flags.food_digested = 2;
