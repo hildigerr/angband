@@ -215,7 +215,7 @@ eat()
 	add_food(i_ptr->p1);
 	py.flags.status &= ~(PY_WEAK | PY_HUNGRY);
 	prt_hunger();
-	desc_remain(item_val);
+	inven_item_describe(item_val);
 	inven_destroy(item_val);
     }
 }

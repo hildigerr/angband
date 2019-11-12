@@ -812,7 +812,7 @@ int item_val;
 
 /* Describe amount of item remaining.			-RAK-	 */
 void 
-desc_remain(item_val)
+inven_item_describe(item_val)
 int item_val;
 {
     bigvtype             out_val, tmp_str;

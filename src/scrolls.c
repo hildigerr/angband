@@ -450,7 +450,7 @@ read_scroll()
 	} else if (!known1_p(i_ptr))
 	    sample(i_ptr);
 	if (used_up) {
-	    desc_remain(item_val);
+	    inven_item_describe(item_val);
 	    inven_destroy(item_val);
 	}
     }

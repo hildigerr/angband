@@ -2526,7 +2526,7 @@ do_cmd_fire()
     if (ok_throw) { /* can only be true if selected item, and it either looked
 		     * okay, or user said yes... */
 	if (get_dir(NULL, &dir)) {
-	    desc_remain(item_val);
+	    inven_item_describe(item_val);
 	    if (py.flags.confused > 0) {
 		msg_print("You are confused.");
 		do {
@@ -2661,12 +2661,12 @@ do_cmd_fire()
 		    if (inventory[INVEN_WIELD].sval != 12) {
 			(void)sprintf(out_val, "Keep shooting?");
 			if (get_check(out_val)) {
-			    desc_remain(item_val);
+			    inven_item_describe(item_val);
 			    inven_throw(item_val, &throw_obj);
 			} else
 			    thits = 0;
 		    } else {
-			desc_remain(item_val);
+			inven_item_describe(item_val);
 			inven_throw(item_val, &throw_obj);
 		    }
 		}

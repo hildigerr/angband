@@ -497,7 +497,7 @@ quaff()
 	    sample(i_ptr);
 
 	add_food(i_ptr->p1);
-	desc_remain(item_val);
+	inven_item_describe(item_val);
 	inven_destroy(item_val);
     }
 }

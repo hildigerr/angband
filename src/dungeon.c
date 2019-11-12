@@ -3414,7 +3414,7 @@ refill_lamp()
 	    msg_print("Your lamp is half full.");
 	else
 	    msg_print("Your lamp is less than half full.");
-	desc_remain(i);
+	inven_item_describe(i);
 	inven_destroy(i);
     }
 }
