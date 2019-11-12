@@ -421,7 +421,7 @@ read_scroll()
 		ident = TRUE;
 		break;
 	      case 43:
-		place_special(char_row, char_col, SPECIAL);
+		place_good(char_row, char_col, SPECIAL);
 		ident = TRUE;
 		prt_map();
 		break;

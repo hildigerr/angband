@@ -519,7 +519,7 @@ int y, x;
 
 /* Places a GOOD-object at given row, column co-ordinate ~Ludwig */
 void 
-place_special(y, x, good)
+place_good(y, x, good)
 int    y, x;
 u32b good;
 {
@@ -676,9 +676,9 @@ int y, x, num;
 	    if ((cave_ptr->fval <= MAX_CAVE_FLOOR) && (cave_ptr->tptr == 0)) {
 		if (randint(5) == 1) {
 		    if (!special_place_object(j, k))
-			place_special(j, k, SPECIAL);
+			place_good(j, k, SPECIAL);
 		} else {
-		    place_special(j, k, SPECIAL);
+		    place_good(j, k, SPECIAL);
 		}
 		i = 9;
 	    }

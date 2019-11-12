@@ -545,12 +545,12 @@ u32b good;
 		    }
 		    if (real_typ == 1) {
 			if (good)
-			    place_special(j, k, good);
+			    place_good(j, k, good);
 			else
 			    place_object(j, k);
 		    } else {
 			if (good)
-			    place_special(j, k, good);
+			    place_good(j, k, good);
 			else
 			    place_gold(j, k);
 		    }

@@ -1571,7 +1571,7 @@ int yval, xval;
 		place_monster(y1, x1,
 			      get_nmons_num(dun_level + MON_SUMMON_ADJ + 7),
 			      TRUE);
-		place_special(y1, x1, 1);
+		place_good(y1, x1, 1);
 		c_ptr->lr = TRUE;
 		break;
 	      case 'O':	   /* Nasty monster and treasure */
@@ -1580,7 +1580,7 @@ int yval, xval;
 			      get_nmons_num(dun_level + MON_SUMMON_ADJ + 40),
 			      TRUE);
 		object_level = dun_level + MON_SUMMON_ADJ + 20;
-		place_special(y1, x1, SPECIAL);
+		place_good(y1, x1, SPECIAL);
 		object_level = dun_level + 7;
 		c_ptr->lr = TRUE;
 		break;
