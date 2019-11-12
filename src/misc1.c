@@ -2455,7 +2455,7 @@ compact_objects()
 
 /* Gives pointer to next free space			-RAK-	 */
 int 
-popt()
+i_pop()
 {
     if (tcptr == MAX_TALLOC)
 	compact_objects();

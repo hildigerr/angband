@@ -422,7 +422,7 @@ stair_creation()
 /* if no artifact here -CFT */
 	if (c_ptr->tptr != 0)
 	    (void)delete_object(char_row, char_col);
-	cur_pos = popt();
+	cur_pos = i_pop();
 	c_ptr->tptr = cur_pos;
 	if ((randint(2) == 1 || is_quest(dun_level)) && (dun_level > 0))
 	    invcopy(&t_list[cur_pos], OBJ_UP_STAIR);
@@ -458,7 +458,7 @@ door_creation()
 			door = TRUE;
 			if (c_ptr->tptr != 0)
 			    (void)delete_object(i, j);
-			k = popt();
+			k = i_pop();
 			c_ptr->fval = BLOCKED_FLOOR;
 			c_ptr->tptr = k;
 			invcopy(&t_list[k], OBJ_CLOSED_DOOR);
@@ -3645,7 +3645,7 @@ warding_glyph()
 
     c_ptr = &cave[char_row][char_col];
     if (c_ptr->tptr == 0) {
-	i = popt();
+	i = i_pop();
 	c_ptr->tptr = i;
 	invcopy(&t_list[i], OBJ_SCARE_MON);
     }

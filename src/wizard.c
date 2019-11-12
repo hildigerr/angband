@@ -1373,13 +1373,13 @@ SNagain:
 
 end:
     if (get_check("Allocate?")) {
-    /* delete object first if any, before call popt */
+    /* delete object first if any, before call i_pop */
 	c_ptr = &cave[char_row][char_col];
 	if (c_ptr->tptr != 0)
 	    (void)delete_object(char_row, char_col);
 
 	store_bought(i_ptr);
-	tmp_val = popt();
+	tmp_val = i_pop();
 	t_list[tmp_val] = forge;
 	c_ptr->tptr = tmp_val;
 	msg_print("Allocated.");

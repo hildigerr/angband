@@ -401,7 +401,7 @@ print_objects()
 		(void)fprintf(file1, "*** For Level %d\n", level);
 		(void)fprintf(file1, "\n");
 		(void)fprintf(file1, "\n");
-		j = popt();
+		j = i_pop();
 		for (i = 0; i < nobj; i++) {
 		    if (randint(MAX_DUNGEON_OBJ) == 1) {
 			int                 tmp;

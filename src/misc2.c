@@ -79,7 +79,7 @@ int y, x, sval;
 	    return;		   /* don't replace stairs, stores, artifacts */
 	else
 	    delete_object(y, x);
-    cur_pos = popt();
+    cur_pos = i_pop();
     cave[y][x].tptr = cur_pos;
     invcopy(&t_list[cur_pos], OBJ_TRAP_LIST + sval);
 }
@@ -105,7 +105,7 @@ int y, x;
 	    return;		   /* don't replace stairs, stores, artifacts */
 	else
 	    delete_object(y, x);
-    cur_pos = popt();
+    cur_pos = i_pop();
     cave_ptr = &cave[y][x];
     cave_ptr->tptr = cur_pos;
     cave_ptr->fval = BLOCKED_FLOOR;
@@ -158,7 +158,7 @@ int y, x;
 	    return;		   /* don't replace stairs, stores, artifacts */
 	else
 	    delete_object(y, x);
-    cur_pos = popt();
+    cur_pos = i_pop();
     i = ((randint(object_level + 2) + 2) / 2) - 1;
     if (randint(GREAT_OBJ) == 1)
 	i += randint(object_level + 1);
@@ -455,7 +455,7 @@ again:
     }
     if (strlen(str) > 0 && (wizard || peek))
 	msg_print(str);
-    cur_pos = popt();
+    cur_pos = i_pop();
     cave[y][x].tptr = cur_pos;
     invcopy(&t_list[cur_pos], tmp);
     t_list[cur_pos].timeout = 0;
@@ -490,7 +490,7 @@ int y, x;
     if (randint(MAX_OBJECTS)>OBJ_SPECIAL && randint(10)==1)
 	if (special_place_object(y,x)==(-1))
 	    return;
-    cur_pos = popt();
+    cur_pos = i_pop();
     cave[y][x].tptr = cur_pos;
 
     do {	   /* don't generate another chest if opening_chest is true -CWS */
@@ -542,7 +542,7 @@ u32b good;
     if (randint(10) == 1)
 	if (special_place_object(y, x) == (-1))
 	    return;
-    cur_pos = popt();
+    cur_pos = i_pop();
     cave[y][x].tptr = cur_pos;
     do {
 	tmp = get_obj_num((object_level + 10), TRUE);
@@ -1976,7 +1976,7 @@ register int item_val, drop_all;
     i_ptr = &inventory[item_val];
     if (cave[char_row][char_col].tptr != 0)
 	(void)delete_object(char_row, char_col);
-    i = popt();
+    i = i_pop();
     t_list[i] = *i_ptr;
     cave[char_row][char_col].tptr = i;
 

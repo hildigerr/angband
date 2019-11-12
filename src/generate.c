@@ -393,7 +393,7 @@ int y, x;
     register cave_type *c_ptr;
 
     if (!(c_ptr = test_place_obj(y,x))) return;
-    cur_pos = popt();
+    cur_pos = i_pop();
     c_ptr->tptr = cur_pos;
     invcopy(&t_list[cur_pos], OBJ_OPEN_DOOR);
     c_ptr->fval = CORR_FLOOR;
@@ -408,7 +408,7 @@ int y, x;
     register cave_type *c_ptr;
 
     if (!(c_ptr = test_place_obj(y,x))) return;
-    cur_pos = popt();
+    cur_pos = i_pop();
     c_ptr->tptr = cur_pos;
     invcopy(&t_list[cur_pos], OBJ_OPEN_DOOR);
     c_ptr->fval = CORR_FLOOR;
@@ -424,7 +424,7 @@ int y, x;
     register cave_type *c_ptr;
 
     if (!(c_ptr = test_place_obj(y,x))) return;
-    cur_pos = popt();
+    cur_pos = i_pop();
     c_ptr->tptr = cur_pos;
     invcopy(&t_list[cur_pos], OBJ_CLOSED_DOOR);
     c_ptr->fval = BLOCKED_FLOOR;
@@ -439,7 +439,7 @@ int y, x;
     register cave_type *c_ptr;
 
     if (!(c_ptr = test_place_obj(y,x))) return;
-    cur_pos = popt();
+    cur_pos = i_pop();
     c_ptr->tptr = cur_pos;
     invcopy(&t_list[cur_pos], OBJ_CLOSED_DOOR);
     c_ptr->fval = BLOCKED_FLOOR;
@@ -455,7 +455,7 @@ int y, x;
     register cave_type *c_ptr;
 
     if (!(c_ptr = test_place_obj(y,x))) return;
-    cur_pos = popt();
+    cur_pos = i_pop();
     c_ptr->tptr = cur_pos;
     invcopy(&t_list[cur_pos], OBJ_CLOSED_DOOR);
     c_ptr->fval = BLOCKED_FLOOR;
@@ -471,7 +471,7 @@ int y, x;
     register cave_type *c_ptr;
 
     if (!(c_ptr = test_place_obj(y,x))) return;
-    cur_pos = popt();
+    cur_pos = i_pop();
     c_ptr->tptr = cur_pos;
     invcopy(&t_list[cur_pos], OBJ_SECRET_DOOR);
     c_ptr->fval = BLOCKED_FLOOR;
@@ -512,7 +512,7 @@ int y, x;
     register cave_type *c_ptr;
 
     if (!(c_ptr = test_place_obj(y,x))) return;
-    cur_pos = popt();
+    cur_pos = i_pop();
     c_ptr->tptr = cur_pos;
     invcopy(&t_list[cur_pos], OBJ_UP_STAIR);
 
@@ -532,7 +532,7 @@ int y, x;
 	return;
     }
     if (!(c_ptr = test_place_obj(y,x))) return;
-    cur_pos = popt();
+    cur_pos = i_pop();
     c_ptr->tptr = cur_pos;
     invcopy(&t_list[cur_pos], OBJ_DOWN_STAIR);
     if (dun_level == 0)			/* on town level -CWS */
@@ -2668,7 +2668,7 @@ int store_num, y, x;
     }
     c_ptr = &cave[i][j];
     c_ptr->fval = CORR_FLOOR;
-    cur_pos = popt();
+    cur_pos = i_pop();
     c_ptr->tptr = cur_pos;
     invcopy(&t_list[cur_pos], OBJ_STORE_DOOR + store_num);
 }

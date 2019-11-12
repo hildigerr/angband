@@ -390,7 +390,7 @@ int store_num;
     register inven_type *t_ptr;
 
     tries = 0;
-    cur_pos = popt();
+    cur_pos = i_pop();
     s_ptr = &store[store_num];
     object_level = OBJ_TOWN_LEVEL;
     do {
