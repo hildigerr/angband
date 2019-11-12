@@ -871,7 +871,7 @@ void change_character(void);
 void wizard_create(void);
 void artifact_check(void);
 void artifact_check_no_file(void);
-void check_uniques(void);
+void do_cmd_check_uniques(void);
 int is_wizard(int);
 
 #else
@@ -1387,6 +1387,6 @@ void change_character();
 void wizard_create();
 void artifact_check();
 void artifact_check_no_file();
-void check_uniques();
+void do_cmd_check_uniques();
 int is_wizard();
 #endif      /* __STDC__ */

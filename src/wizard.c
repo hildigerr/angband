@@ -1921,7 +1921,7 @@ int  j;
 }
 
 void
-check_uniques()
+do_cmd_check_uniques()
 {
     int      i, j, k;
     bigvtype msg;

@@ -1912,7 +1912,7 @@ char com_val;
 #endif
 #ifdef ALLOW_CHECK_UNIQUES /* -CWS */
       case '|':
-	check_uniques();
+	do_cmd_check_uniques();
 	break;
 #endif
       default:
@@ -2010,7 +2010,7 @@ char com_val;
 		artifact_check_no_file();
 		break;
 	      case '|':
-		check_uniques();
+		do_cmd_check_uniques();
 		break;
 	      case '@':
 		wizard_create();
