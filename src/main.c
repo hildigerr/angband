@@ -253,7 +253,7 @@ char *argv[];
 	  case 'n': new_game = TRUE; break;
 	  case 'O':
 	  case 'o':
-	    /* rogue_like_commands may be set in get_char(), so delay this
+	    /* rogue_like_commands may be set in load_player(), so delay this
 	       until after read savefile if any */
 	    force_rogue_like = TRUE;
 	    force_keys_to = FALSE;
@@ -386,19 +386,19 @@ char *argv[];
     (void) sprintf(savefile, "%s/%d%s", ANGBAND_DIR_SAVE, player_uid, py.misc.name);
 
  /* This restoration of a saved character may get ONLY the monster memory. In
-    this case, get_char returns false. It may also resurrect a dead character
+    this case, load_player returns false. It may also resurrect a dead character
     (if you are the wizard). In this case, it returns true, but also sets the
     parameter "generate" to true, as it does not recover any cave details. */
 
     if (FIDDLE) {
-	if (get_char(&generate))
+	if (load_player(&generate))
 	    save_player();
 	exit_game();
     }
 
-    result = get_char(&generate);
+    result = load_player(&generate);
     /* enter wizard mode before showing the character display, but must wait
-       until after get_char in case it was just a resurrection */
+       until after load_player in case it was just a resurrection */
     if (to_be_wizard)
 	if (!enter_wiz_mode())
 	    exit_game();

@@ -758,7 +758,7 @@ char *fnam;
 /* Certain checks are ommitted for the wizard. -CJS- */
 
 int 
-get_char(generate)
+load_player(generate)
 int *generate;
 {
     int                    i, j, fd, c, ok, total_count;

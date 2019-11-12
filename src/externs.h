@@ -686,7 +686,7 @@ int save_player(int);
 int save_player(void);
 #endif
 int _save_player(char *);
-int get_char(int *);
+int load_player(int *);
 
 /* scrolls.c */
 void read_scroll(void);
@@ -1213,7 +1213,7 @@ char *setstate();
 /* save.c */
 int save_player();
 int _save_player();
-int get_char();
+int load_player();
 
 /* scrolls.c */
 void read_scroll();
