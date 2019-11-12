@@ -1981,7 +1981,7 @@ register int item_val, drop_all;
     cave[char_row][char_col].tptr = i;
 
     if (item_val >= INVEN_WIELD)
-	takeoff(item_val, -1);
+	inven_takeoff(item_val, -1);
     else {
 	if (drop_all || i_ptr->number == 1) {
 	    inven_weight -= i_ptr->weight * i_ptr->number;

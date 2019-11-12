@@ -654,7 +654,7 @@ int weight, col;
 
 /* Remove item from equipment list		-RAK-	 */
 void 
-takeoff(item_val, posn)
+inven_takeoff(item_val, posn)
 int item_val, posn;
 {
     register const char *p;
@@ -1046,7 +1046,7 @@ int command;
 				inven_weight = 0;
 			} else if (item >= 0) {
 			    slot = inven_carry(&inventory[item]);
-			    takeoff(item, slot);
+			    inven_takeoff(item, slot);
 			}
 			check_strength();
 			free_turn_flag = FALSE;
@@ -1181,7 +1181,7 @@ int command;
 /* if item removed did not stack with anything in inventory, then increment wear_high */
 				if (inven_ctr != tmp2)
 				    wear_high++;
-				takeoff(slot, tmp);
+				inven_takeoff(slot, tmp);
 			    }
 			/* third, wear new item */
 			    *i_ptr = tmp_obj;
