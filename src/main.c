@@ -531,7 +531,7 @@ char *argv[];
 	/* Unique Monster Flags */
 	for (i=0; i<MAX_R_IDX; i++)
 	    u_list[i].exist=0, u_list[i].dead=0;
-	create_character();
+	player_birth();
 
 	/* if we're creating a new character, change the savefile name */
     (void) sprintf(savefile, "%s/%d%s", ANGBAND_SAV, player_uid, py.misc.name);

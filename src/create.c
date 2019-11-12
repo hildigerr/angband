@@ -34,20 +34,20 @@ static int  monval();
 #endif
 
 static void get_stats();
-static void set_prev_stats();
-static int  get_prev_stats();
+static void save_prev_data();
+static int  load_prev_data();
 static void get_all_stats();
 static void put_auto_stats();
 static void choose_race();
-static void print_history();
+static void put_history();
 static void set_prev_history();
 static void get_prev_history();
-static void get_sex();
+static void choose_sex();
 static void get_ahw();
 static void set_prev_ahw();
 static void get_prev_ahw();
 static void get_class();
-static void get_class_choice();
+static void choose_class();
 static void get_money();
 
 #endif
@@ -150,7 +150,7 @@ int amount;
 
 
 static void
-set_prev_stats()
+save_prev_data()
 {
     register int        i;
 
@@ -162,7 +162,7 @@ set_prev_stats()
 
 
 static int
-get_prev_stats()
+load_prev_data()
 {
     register int        i;
 
@@ -297,7 +297,7 @@ choose_race()
 
 /* Will print the history of a character			-JWT-	 */
 static void
-print_history()
+put_history()
 {
     register int        i;
 
@@ -432,7 +432,7 @@ get_history()
 
 /* Gets the character's sex				-JWT-	 */
 static void
-get_sex()
+choose_sex()
 {
     register int        exit_flag;
     char                c;
@@ -613,7 +613,7 @@ rerate()
 
 /* Gets a character class				-JWT-	 */
 static void
-get_class_choice()
+choose_class()
 {
     register int i, j;
     int          k, l, m;
@@ -705,7 +705,7 @@ get_money()
 /* ---------- M A I N  for Character Creation Routine ---------- */
 /* -JWT-	 */
 void
-create_character()
+player_birth()
 {
     register char       c;
 
@@ -727,8 +727,8 @@ create_character()
 
     put_character();
     choose_race();
-    get_sex();
-    get_class_choice();
+    choose_sex();
+    choose_class();
 
 #ifdef AUTOROLLER
 /*
@@ -862,7 +862,7 @@ create_character()
        get_ahw();
 
 	calc_bonuses();
-	print_history();
+	put_history();
 	put_misc1();
 	clear_from(20);
 
@@ -878,10 +878,10 @@ create_character()
 	    c = inkey();
 	    if ((previous_exists) && (c == CTRL('P'))) {
 		previous_exists = FALSE;
-		if (get_prev_stats()) {
+		if (load_prev_data()) {
 		    get_prev_history();
 		    get_prev_ahw();
-		    print_history();
+		    put_history();
 		    put_misc1();
 		    calc_bonuses();
 		    put_stats();
@@ -892,7 +892,7 @@ create_character()
 	} while ((c != ' ') && (c != ESCAPE));
 
 /* Not going to waste space w/ a check here. So ESC takes a little longer. -SAC */
-	set_prev_stats();
+	save_prev_data();
 	set_prev_history();
 	set_prev_ahw();
 	previous_exists = TRUE;

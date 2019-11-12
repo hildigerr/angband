@@ -322,7 +322,7 @@ extern char *ANGBAND_SAV;		/* was LIBDIR(save)					*/
 #ifdef __STDC__
 
 /* create.c */
-void create_character(void);
+void player_birth(void);
 
 /* creature.c */
 void update_mon(int);
@@ -877,7 +877,7 @@ int is_wizard(int);
 #else
 
 /* create.c */
-void create_character();
+void player_birth();
 
 /* creature.c */
 void update_mon();
