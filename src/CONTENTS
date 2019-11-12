@@ -37,7 +37,7 @@ total 1685
 -rw-r--r--   1 root     staff         766 Sep 18 10:36 READ.ME
 -rw-r--r--   1 root     staff          78 Sep 18 11:49 bzero.c
 -rw-r--r--   1 root     staff       10653 Sep 18 11:54 config.h
--rw-r--r--   1 root     staff       33687 Sep 18 11:18 constant.h
+-rw-r--r--   1 root     staff       33687 Sep 18 11:18 defines.h
 -rw-r--r--   1 root     staff       22734 Sep 18 12:15 birth.c
 -rw-r--r--   1 root     staff       95403 Sep 18 11:40 creature.c
 -rw-r--r--   1 root     staff       16613 Sep 18 12:32 death.c
