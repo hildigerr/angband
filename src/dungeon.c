@@ -1846,7 +1846,7 @@ char com_val;
 	free_turn_flag = TRUE;
 	break;
       case 'c':			/* (c)lose an object */
-	closeobject();
+	do_cmd_close();
 	break;
       case 'd':			/* (d)rop something */
 	inven_command('d');
@@ -1871,7 +1871,7 @@ char com_val;
 	cast();
 	break;
       case 'o':			/* (o)pen something */
-	openobject();
+	do_cmd_open();
 	break;
       case 'p':			/* (p)ray */
 	pray();

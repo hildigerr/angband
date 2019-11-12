@@ -1337,7 +1337,7 @@ int y, x;
 
 /* Opens a closed door or closed chest.		-RAK-	 */
 void 
-openobject()
+do_cmd_open()
 {
     int                    y, x, i, dir;
     int                    flag, no_object;
@@ -1483,7 +1483,7 @@ openobject()
 
 /* Closes an open door.				-RAK-	 */
 void 
-closeobject()
+do_cmd_close()
 {
     int                    y, x, dir, no_object;
     vtype                  out_val, m_name;
