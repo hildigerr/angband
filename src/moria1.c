@@ -1523,7 +1523,7 @@ int       (*test) ();
 
 /* Returns true if player has no light			-RAK-	 */
 int 
-no_light()
+no_lite()
 {
     register cave_type *c_ptr;
 
@@ -2208,7 +2208,7 @@ int y, x, chance;
     p_ptr = &py.flags;
     if (p_ptr->confused > 0)
 	chance = chance / 10;
-    if ((p_ptr->blind > 0) || no_light())
+    if ((p_ptr->blind > 0) || no_lite())
 	chance = chance / 10;
     if (p_ptr->image > 0)
 	chance = chance / 10;

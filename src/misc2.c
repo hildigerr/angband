@@ -2724,7 +2724,7 @@ gain_spells()
     i = 0;
     if (py.flags.blind > 0)
 	msg_print("You can't see to read your spell book!");
-    else if (no_light())
+    else if (no_lite())
 	msg_print("You have no light to read by.");
     else if (py.flags.confused > 0)
 	msg_print("You are too confused.");

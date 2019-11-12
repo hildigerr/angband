@@ -1778,7 +1778,7 @@ disarm_trap()
 	} else if (c_ptr->tptr != 0) {
 	    tot = py.misc.disarm + 2 * todis_adj() + stat_adj(A_INT)
 		+ (class_level_adj[py.misc.pclass][CLA_DISARM] * py.misc.lev / 3);
-	    if ((py.flags.blind > 0) || (no_light()))
+	    if ((py.flags.blind > 0) || (no_lite()))
 		tot = tot / 10;
 	    if (py.flags.confused > 0)
 		tot = tot / 10;

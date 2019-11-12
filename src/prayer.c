@@ -29,7 +29,7 @@ pray()
     free_turn_flag = TRUE;
     if (py.flags.blind > 0)
 	msg_print("You can't see to read your prayer!");
-    else if (no_light())
+    else if (no_lite())
 	msg_print("You have no light to read by.");
     else if (py.flags.confused > 0)
 	msg_print("You are too confused.");

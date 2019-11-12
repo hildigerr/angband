@@ -1735,7 +1735,7 @@ char com_val;
 	    free_turn_flag = TRUE;
 	break;
       case 'W':			/* (W)here are we on the map	(L)ocate on map */
-	if ((py.flags.blind > 0) || no_light())
+	if ((py.flags.blind > 0) || no_lite())
 	    msg_print("You can't see your map.");
 	else {
 	    int                 cy, cx, p_y, p_x;
@@ -3208,7 +3208,7 @@ examine_book()
 	msg_print("You are not carrying any books.");
     else if (py.flags.blind > 0)
 	msg_print("You can't see to read your spell book!");
-    else if (no_light())
+    else if (no_lite())
 	msg_print("You have no light to read by.");
     else if (py.flags.confused > 0)
 	msg_print("You are too confused.");
