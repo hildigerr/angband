@@ -26,12 +26,11 @@ lib/bones/			Where the bones files are stored
 
 
 src/:
-	Makefile, CONTENTS, READ.ME, FIXES
+	Makefile, CONTENTS, READ.ME
 
 Source files:
 total 1685
 -rw-r--r--   1 root     staff        4057 Sep 18 10:36 CONTENTS
--rw-r--r--   1 root     staff       19106 Sep 18 16:51 FIXES
 -rw-r--r--   1 root     staff        6282 Sep 18 11:50 Makefile
 -rw-r--r--   1 root     staff         766 Sep 18 10:36 READ.ME
 -rw-r--r--   1 root     staff          78 Sep 18 11:49 bzero.c

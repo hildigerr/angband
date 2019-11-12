@@ -42,7 +42,10 @@ David J. Grabiner     - numerous bug reports, and consistency checking
 Dan Bernstein         - UNIX hangup signal fix, many bug fixes
 and many others...
 
-[ please consult the FIXES file for additional credits - CWS ]
+
+
+
+
 
 Copyright (c) 1989 James E. Wilson, Robert A. Keoneke
   This software may be copied and distributed for educational, research, and
