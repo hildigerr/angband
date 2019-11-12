@@ -90,7 +90,7 @@
 #define ANGBAND_OWIZ_HELP LIBDIR(files/owizcmds.hlp)
 #define ANGBAND_WELCOME   LIBDIR(files/welcome.hlp)
 #define ANGBAND_LOG       LIBDIR(files/ANGBAND.log)
-#define ANGBAND_VER       LIBDIR(files/version.hlp)
+#define ANGBAND_VERSION       LIBDIR(files/version.hlp)
 #define ANGBAND_LOAD      LIBDIR(files/loadcheck)
 #define ANGBAND_WIZ       LIBDIR(files/wizards)
 #define ANGBAND_SAV       LIBDIR(save)

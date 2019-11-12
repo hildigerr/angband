@@ -84,7 +84,7 @@ char *ANGBAND_WIZ_HELP;		/* was LIBDIR(files/rwizcmds.hlp)	*/
 char *ANGBAND_OWIZ_HELP;	/* was LIBDIR(files/owizcmds.hlp)	*/
 char *ANGBAND_WELCOME;		/* was LIBDIR(files/welcome.hlp)	*/
 char *ANGBAND_LOG;		/* was LIBDIR(files/ANGBAND.log)	*/
-char *ANGBAND_VER;		/* was LIBDIR(files/version.hlp)	*/
+char *ANGBAND_VERSION;		/* was LIBDIR(files/version.hlp)	*/
 char *ANGBAND_LOAD;		/* was LIBDIR(files/loadcheck)		*/
 char *ANGBAND_WIZ;		/* was LIBDIR(files/wizards)		*/
 char *ANGBAND_SAV;		/* was LIBDIR(save)			*/
@@ -203,13 +203,13 @@ void get_file_paths()
     strcat( ANGBAND_LOG, "ANGBAND.log" );
     ANGBAND_LOG = (char *)realloc( ANGBAND_LOG, strlen( ANGBAND_LOG ) + 1 );
 
-    ANGBAND_VER = (char *)malloc( MAXPATHLEN );
-    strcpy( ANGBAND_VER, angband_path );
-    strcat( ANGBAND_VER, PATH_SEP );
-    strcat( ANGBAND_VER, "files" );
-    strcat( ANGBAND_VER, PATH_SEP );
-    strcat( ANGBAND_VER, "version.hlp" );
-    ANGBAND_VER = (char *)realloc( ANGBAND_VER, strlen( ANGBAND_VER ) + 1 );
+    ANGBAND_VERSION = (char *)malloc( MAXPATHLEN );
+    strcpy( ANGBAND_VERSION, angband_path );
+    strcat( ANGBAND_VERSION, PATH_SEP );
+    strcat( ANGBAND_VERSION, "files" );
+    strcat( ANGBAND_VERSION, PATH_SEP );
+    strcat( ANGBAND_VERSION, "version.hlp" );
+    ANGBAND_VERSION = (char *)realloc( ANGBAND_VER, strlen( ANGBAND_VER ) + 1 );
 
     ANGBAND_LOAD = (char *)malloc( MAXPATHLEN );
     strcpy( ANGBAND_LOAD, angband_path );

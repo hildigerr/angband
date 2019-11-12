@@ -309,7 +309,7 @@ extern char *ANGBAND_WIZ_HELP;	/* was LIBDIR(files/rwizcmds.hlp)	*/
 extern char *ANGBAND_OWIZ_HELP;	/* was LIBDIR(files/owizcmds.hlp)	*/
 extern char *ANGBAND_WELCOME;	/* was LIBDIR(files/welcome.hlp)	*/
 extern char *ANGBAND_LOG;		/* was LIBDIR(files/ANGBAND.log)	*/
-extern char *ANGBAND_VER;		/* was LIBDIR(files/version.hlp)	*/
+extern char *ANGBAND_VERSION;		/* was LIBDIR(files/version.hlp)	*/
 extern char *ANGBAND_LOAD;		/* was LIBDIR(files/loadcheck)		*/
 extern char *ANGBAND_WIZ;		/* was LIBDIR(files/wizards)		*/
 extern char *ANGBAND_SAV;		/* was LIBDIR(save)					*/

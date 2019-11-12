@@ -1892,7 +1892,7 @@ char com_val;
 	use();
 	break;
       case 'V':			/* (V)ersion of game */
-	helpfile(ANGBAND_VER);
+	helpfile(ANGBAND_VERSION);
 	free_turn_flag = TRUE;
 	break;
       case 'w':			/* (w)ear or wield */
