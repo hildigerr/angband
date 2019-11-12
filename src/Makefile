@@ -154,43 +154,5 @@ query:
 	@echo "Describe_Mon.c:"
 	egrep '^{"' describe_mon.c | wc -l
 
-create.o: constant.h types.h externs.h config.h
-creature.o: constant.h types.h externs.h config.h monster.h
-death.o: constant.h types.h externs.h config.h
-desc.o: constant.h types.h externs.h config.h
-dungeon.o: constant.h types.h externs.h config.h
-eat.o: constant.h types.h externs.h config.h
-files.o: constant.h types.h externs.h config.h
-generate.o: constant.h types.h externs.h config.h
-help.o: constant.h types.h externs.h config.h monster.h
-io.o: constant.h types.h externs.h config.h
-magic.o: constant.h types.h externs.h config.h
-main.o: constant.h types.h externs.h config.h
-misc1.o: constant.h types.h externs.h config.h monster.h
-misc2.o: constant.h types.h externs.h config.h monster.h
-monsters.o: constant.h types.h config.h monster.h
-moria1.o: constant.h types.h externs.h config.h monster.h
-moria2.o: constant.h types.h externs.h config.h monster.h
-player.o: constant.h types.h config.h
-potions.o: constant.h types.h externs.h config.h
-prayer.o: constant.h types.h externs.h config.h monster.h
-recall.o: constant.h config.h types.h externs.h monster.h
-rnd.o: constant.h types.h
-save.o: constant.h types.h externs.h config.h
-scrolls.o: constant.h types.h externs.h config.h monster.h
-sets.o: constant.h config.h types.h
-signals.o: constant.h types.h externs.h config.h
-spells.o: constant.h types.h externs.h config.h monster.h
-staffs.o: constant.h types.h externs.h config.h monster.h
-store1.o: constant.h types.h externs.h config.h
-store2.o: constant.h types.h externs.h config.h
-tables.o: constant.h types.h config.h
-treasure.o: constant.h types.h config.h
-unix.o: constant.h config.h types.h externs.h
-variable.o: constant.h types.h config.h
-rods.o: constant.h types.h externs.h config.h monster.h
-wands.o: constant.h types.h externs.h config.h monster.h
-wizard.o: constant.h types.h externs.h config.h
-describe_mon.o: monster.h externs.h types.h
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
