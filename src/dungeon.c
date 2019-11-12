@@ -1602,7 +1602,7 @@ char com_val;
 #endif
       case '=':			/* (=) set options */
 	save_screen();
-	set_options();
+	do_cmd_options();
 	restore_screen();
 	free_turn_flag = TRUE;
 	break;

@@ -39,7 +39,7 @@ extern s16b log_index;			/* Index to log file. -CJS- */
 extern vtype died_from;
 extern vtype savefile;			/* The save file. -CJS- */
 
-/* These are options, set with set_options command -CJS- */
+/* These are options, set with do_cmd_options command -CJS- */
 extern int rogue_like_commands;
 extern int find_cut;			/* Cut corners on a run */
 extern int find_examine;		/* Check corners on a run */
@@ -473,7 +473,7 @@ void pusht(int);
 int magik(int);
 int m_bonus(int, int, int);
 void magic_treasure(int, int, int, int);
-void set_options(void);
+void do_cmd_options(void);
 int compact_monsters(void);
 int next_to_walls(int, int);
 int get_nmons_num(int);
@@ -1133,7 +1133,7 @@ int test_hit();
 void take_hit();
 void change_trap();
 void search();
-void set_options();
+void do_cmd_options();
 void find_init();
 void find_run();
 void end_find();

@@ -5801,7 +5801,7 @@ static struct opt_desc {
 
 /* Set or unset various boolean options.		-CJS- */
 void 
-set_options()
+do_cmd_options()
 {
     register int i, max, ch;
     vtype        string;
