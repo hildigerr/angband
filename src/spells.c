@@ -250,7 +250,7 @@ detect_treasure()
 	for (j = panel_col_min; j <= panel_col_max; j++) {
 	    c_ptr = &cave[i][j];
 	    if ((c_ptr->tptr != 0) && (t_list[c_ptr->tptr].tval == TV_GOLD) &&
-		!test_light(i, j)) {
+		!test_lite(i, j)) {
 		c_ptr->fm = TRUE;
 		lite_spot(i, j);
 		detect = TRUE;
@@ -277,7 +277,7 @@ detect_magic()
 	for (j = panel_col_min; j <= panel_col_max; j++) {
 	    c_ptr = &cave[i][j];
 	    if ((c_ptr->tptr != 0) && (t_list[c_ptr->tptr].tval < TV_MAX_OBJECT)
-		&& !test_light(i, j)) {
+		&& !test_lite(i, j)) {
 		t_ptr = &t_list[c_ptr->tptr];
 		Tval = t_ptr->tval;
 		    /* Is it a weapon or armor or light? */
@@ -309,7 +309,7 @@ detect_enchantment()
 	for (j = panel_col_min; j <= panel_col_max; j++) {
 	    c_ptr = &cave[i][j];
 	    tv = t_list[c_ptr->tptr].tval;
-	    if ((c_ptr->tptr != 0) && !test_light(i, j) &&
+	    if ((c_ptr->tptr != 0) && !test_lite(i, j) &&
 		( ((tv > TV_MAX_ENCHANT) && (tv < TV_FLASK)) || /* misc items */
 		 (tv == TV_MAGIC_BOOK) || (tv == TV_PRAYER_BOOK) || /* books */
 		 ((tv >= TV_MIN_WEAR) && (tv <= TV_MAX_ENCHANT) && /* armor/weap */
@@ -368,7 +368,7 @@ detect_object()
 	for (j = panel_col_min; j <= panel_col_max; j++) {
 	    c_ptr = &cave[i][j];
 	    if ((c_ptr->tptr != 0) && (t_list[c_ptr->tptr].tval < TV_MAX_OBJECT)
-		&& !test_light(i, j)) {
+		&& !test_lite(i, j)) {
 		c_ptr->fm = TRUE;
 		lite_spot(i, j);
 		detect = TRUE;
@@ -2694,19 +2694,19 @@ int dir, y, x;
 	    flag = TRUE;
 	if (c_ptr->fval == BOUNDARY_WALL) {
 	    flag = TRUE;
-	    if (test_light(y, x))
+	    if (test_lite(y, x))
 		msg_print("The wall resists your spell.");
 	} else if ((c_ptr->fval >= MIN_CAVE_WALL)) {
 	    flag = TRUE;
 	    (void)twall(y, x, 1, 0);
-	    if (test_light(y, x)) {
+	    if (test_lite(y, x)) {
 		msg_print("The wall turns into mud.");
 		check_view();
 		wall = TRUE;
 	    }
 	} else if ((c_ptr->tptr != 0) && (c_ptr->fval >= MIN_CLOSED_SPACE)) {
 	    flag = TRUE;
-	    if (panel_contains(y, x) && test_light(y, x)) {		
+	    if (panel_contains(y, x) && test_lite(y, x)) {		
 		objdes(tmp_str, &t_list[c_ptr->tptr], FALSE);
 		if ((t_list[c_ptr->tptr].tval == TV_RUBBLE) && (randint(10)==1)) {
 		    delete_object(y,x);

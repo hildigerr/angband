@@ -632,7 +632,7 @@ int y, x;
 
 /* Tests a spot for light or field mark status		-RAK-	 */
 int 
-test_light(y, x)
+test_lite(y, x)
 int y, x;
 {
     register cave_type *cave_ptr;

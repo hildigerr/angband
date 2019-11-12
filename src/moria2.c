@@ -555,7 +555,7 @@ u32b good;
 			    place_gold(j, k);
 		    }
 		    lite_spot(j, k);
-		    if (test_light(j, k))
+		    if (test_lite(j, k))
 			res += real_typ;
 		    i = 20;
 		}
@@ -585,7 +585,7 @@ int y, x;
     c_ptr->tptr = 0;
     c_ptr->fm = FALSE;
     lite_spot(y, x);
-    if (test_light(y, x))
+    if (test_lite(y, x))
 	delete = TRUE;
     else
 	delete = FALSE;
@@ -1714,7 +1714,7 @@ int dir;
 			msg_print("You have removed the rubble.");
 			if (randint(10) == 1) {
 			    place_object(y, x);
-			    if (test_light(y, x))
+			    if (test_lite(y, x))
 				msg_print("You have found something!");
 			}
 			lite_spot(y, x);
