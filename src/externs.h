@@ -358,7 +358,7 @@ void inscribe(inven_type *, const char *);
 void invcopy(inven_type *, int);
 void desc_charges(int);
 void inven_item_describe(int);
-s16b object_offset(inven_type *);
+s16b flavor_p(inven_type *);
 
 /* dungeon.c */
 void dungeon(void);
@@ -913,7 +913,7 @@ void inscribe();
 void invcopy();
 void desc_charges();
 void inven_item_describe();
-s16b object_offset();
+s16b flavor_p();
 
 /* dungeon.c */
 void dungeon();

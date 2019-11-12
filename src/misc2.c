@@ -2189,7 +2189,7 @@ register inven_type *i_ptr;
     typ = i_ptr->tval;
     subt = i_ptr->sval;
     known1p = known1_p(i_ptr);
-    always_known1p = (object_offset(i_ptr) == -1);
+    always_known1p = (flavor_p(i_ptr) == -1);
 
     if (inven_ctr >= INVEN_WIELD) /* sanity checking to prevent the inv from */
 	inven_ctr = INVEN_WIELD;  /* running over the equipment list -CWS */

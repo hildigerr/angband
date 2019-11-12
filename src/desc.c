@@ -121,7 +121,7 @@ magic_init()
 }
 
 s16b 
-object_offset(t_ptr)
+flavor_p(t_ptr)
 inven_type *t_ptr;
 {
     switch (t_ptr->tval) {
@@ -158,7 +158,7 @@ inven_type *i_ptr;
     s16b offset;
     byte indexx;
 
-    if ((offset = object_offset(i_ptr)) < 0)
+    if ((offset = flavor_p(i_ptr)) < 0)
 	return;
     offset <<= 6;
     indexx = i_ptr->sval & (ITEM_SINGLE_STACK_MIN - 1);
@@ -177,7 +177,7 @@ inven_type *i_ptr;
 /* Items which don't have a 'color' are always known1, so that they can be
  * carried in order in the inventory.  
  */
-    if ((offset = object_offset(i_ptr)) < 0)
+    if ((offset = flavor_p(i_ptr)) < 0)
 	return OD_KNOWN1;
     if (store_bought_p(i_ptr))
 	return OD_KNOWN1;
@@ -246,7 +246,7 @@ inven_type *i_ptr;
 
 /* used to clear ID_DAMD flag, but I think it should remain set */
     i_ptr->ident &= ~(ID_MAGIK | ID_EMPTY);
-    if ((offset = object_offset(i_ptr)) < 0)
+    if ((offset = flavor_p(i_ptr)) < 0)
 	return;
     offset <<= 6;
     indexx = i_ptr->sval & (ITEM_SINGLE_STACK_MIN - 1);
@@ -263,7 +263,7 @@ inven_type *i_ptr;
     s16b offset;
     byte indexx;
 
-    if ((offset = object_offset(i_ptr)) < 0)
+    if ((offset = flavor_p(i_ptr)) < 0)
 	return;
     offset <<= 6;
     indexx = i_ptr->sval & (ITEM_SINGLE_STACK_MIN - 1);
@@ -728,7 +728,7 @@ int                  pref;
 	    (void)strcpy(out_val, tmp_val);
 
 	tmp_str[0] = '\0';
-	if ((indexx = object_offset(i_ptr)) >= 0) {
+	if ((indexx = flavor_p(i_ptr)) >= 0) {
 	    indexx = (indexx <<= 6) +
 		(i_ptr->sval & (ITEM_SINGLE_STACK_MIN - 1));
 	/* don't print tried string for store bought items */

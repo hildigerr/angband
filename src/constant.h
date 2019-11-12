@@ -146,7 +146,7 @@
 #define MAX_OBJECTS				(MAX_DUNGEON_OBJ+90)
 
 
-/* was 7*64, see object_offset() in desc.c, could be MAX_OBJECTS o_o() rewritten
+/* was 7*64, see flavor_p() in desc.c, could be MAX_OBJECTS o_o() rewritten
  * now 8*64 beacuse of Rods
  */
 
