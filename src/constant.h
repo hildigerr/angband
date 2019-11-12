@@ -534,14 +534,14 @@
 #define CD_ORC          0x8000
 
 
-/* inventory stacking subvals
+/* inventory stacking svals
  * these never stack:
  */
 
 #define ITEM_NEVER_STACK_MIN    0
 #define ITEM_NEVER_STACK_MAX    63
 
-/* these items always stack with others of same subval, always treated as
+/* these items always stack with others of same sval, always treated as
  * single objects, must be power of 2
  */
 
@@ -549,15 +549,15 @@
 #define ITEM_SINGLE_STACK_MAX   192     /* see NOTE below */
 
 
-/* these items stack with others only if have same subval and same p1,
+/* these items stack with others only if have same sval and same p1,
  * they are treated as a group for wielding, etc.
  */
 
 #define ITEM_GROUP_MIN          192
 #define ITEM_GROUP_MAX          255
 
-/* NOTE: items with subval 192 are treated as single objects, but only stack
- * with others of same subval if have the same p1 value, only used for
+/* NOTE: items with sval 192 are treated as single objects, but only stack
+ * with others of same sval if have the same p1 value, only used for
  * torches
  */
 

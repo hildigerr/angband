@@ -4698,7 +4698,7 @@ int x, level, good, not_unique;
 			    good_item_flag = TRUE;
 			t_ptr->name2 = EGO_BELEG;
 			t_ptr->ident |= ID_NOSHOW_TYPE;
-			t_ptr->subval = 4; /* make do x5 damage!! -CFT */
+			t_ptr->sval = 4; /* make do x5 damage!! -CFT */
 			t_ptr->tohit = 20;
 			t_ptr->todam = 22;
 			t_ptr->p1 = 3;
@@ -4715,7 +4715,7 @@ int x, level, good, not_unique;
 			else
 			    good_item_flag = TRUE;
 			t_ptr->name2 = ART_BARD;
-			t_ptr->subval = 3; /* make do x4 damage!! -CFT */
+			t_ptr->sval = 3; /* make do x4 damage!! -CFT */
 			t_ptr->tohit = 17;
 			t_ptr->todam = 19;
 			t_ptr->p1 = 3;
@@ -4735,7 +4735,7 @@ int x, level, good, not_unique;
 		    if (wizard || peek)
 			msg_print("Cubragol");
 		    t_ptr->name2 = ART_CUBRAGOL;
-		    t_ptr->subval = 11;
+		    t_ptr->sval = 11;
 		    t_ptr->tohit = 10;
 		    t_ptr->todam = 14;
 		    t_ptr->p1 = 1;
@@ -4749,7 +4749,7 @@ int x, level, good, not_unique;
 		if (peek)
 		    msg_print("Bow of Might");
 		rating += 15;
-		t_ptr->subval++; /* make it do an extra multiple of damage */
+		t_ptr->sval++; /* make it do an extra multiple of damage */
 		t_ptr->tohit += 5;
 		t_ptr->todam += 10;
 		break;
@@ -4955,7 +4955,7 @@ int x, level, good, not_unique;
 	break;
 
       case TV_HELM:		   /* Helms */
-	if ((t_ptr->subval >= 6) && (t_ptr->subval <= 8)) {
+	if ((t_ptr->sval >= 6) && (t_ptr->sval <= 8)) {
 	/* give crowns a higher chance for magic */
 	    chance += t_ptr->cost / 100;
 	    special += special;
@@ -4963,7 +4963,7 @@ int x, level, good, not_unique;
 	if (magik(chance) || good) {
 	    t_ptr->toac = randint(3) + m_bonus(0, 10, level);
 	    if (magik(special) || (good == 666)) {
-		if (t_ptr->subval < 6) {
+		if (t_ptr->sval < 6) {
 		    tmp = randint(14);
 		    if (tmp < 3) {
 			if (!((randint(2) == 1) && !not_unique &&
@@ -5130,7 +5130,7 @@ int x, level, good, not_unique;
 
       case TV_RING:		   /* Rings	      */
 	if (!((randint(10) == 1) && !not_unique && unique_armour(t_ptr))) {
-	    switch (t_ptr->subval) {
+	    switch (t_ptr->sval) {
 	      case 0:
 	      case 1:
 	      case 2:
@@ -5239,7 +5239,7 @@ int x, level, good, not_unique;
 	break;
 
       case TV_AMULET:		   /* Amulets	      */
-	if (t_ptr->subval < 2) {
+	if (t_ptr->sval < 2) {
 	    if (magik(cursed)) {
 		t_ptr->p1 = -m_bonus(1, 5, level);
 		t_ptr->flags |= TR_CURSED;
@@ -5248,7 +5248,7 @@ int x, level, good, not_unique;
 		t_ptr->p1 = m_bonus(1, 5, level);
 		t_ptr->cost += t_ptr->p1 * 100;
 	    }
-	} else if (t_ptr->subval == 2) { /* searching */
+	} else if (t_ptr->sval == 2) { /* searching */
 	    t_ptr->p1 = 5 * (randint(3) + m_bonus(0, 8, level));
 	    if (magik(cursed)) {
 		t_ptr->p1 = -t_ptr->p1;
@@ -5256,14 +5256,14 @@ int x, level, good, not_unique;
 		t_ptr->flags |= TR_CURSED;
 	    } else
 		t_ptr->cost += 20 * t_ptr->p1;
-	} else if (t_ptr->subval == 8) {
+	} else if (t_ptr->sval == 8) {
 	    rating += 25;
 	    t_ptr->p1 = 5 * (randint(2) + m_bonus(0, 10, level));
 	    t_ptr->toac = randint(4) + m_bonus(0, 8, level) - 2;
 	    t_ptr->cost += 20 * t_ptr->p1 + 50 * t_ptr->toac;
 	    if (t_ptr->toac < 0) /* sort-of cursed...just to be annoying -CWS */
 		t_ptr->flags |= TR_CURSED;
-	} else if (t_ptr->subval == 9) {
+	} else if (t_ptr->sval == 9) {
 	/* amulet of DOOM */
 	    t_ptr->p1 = (-randint(5) - m_bonus(2, 10, level));
 	    t_ptr->toac = (-randint(3) - m_bonus(0, 6, level));
@@ -5274,14 +5274,14 @@ int x, level, good, not_unique;
     /* Subval should be even for store, odd for dungeon */
     /* Dungeon found ones will be partially charged	 */
       case TV_LITE:
-	if ((t_ptr->subval % 2) == 1) {
+	if ((t_ptr->sval % 2) == 1) {
 	    t_ptr->p1 = randint(t_ptr->p1);
-	    t_ptr->subval -= 1;
+	    t_ptr->sval -= 1;
 	}
 	break;
 
       case TV_WAND:
-	switch (t_ptr->subval) {
+	switch (t_ptr->sval) {
 	  case 0:
 	    t_ptr->p1 = randint(10) + 6;
 	    break;
@@ -5375,7 +5375,7 @@ int x, level, good, not_unique;
 	break;
 
       case TV_STAFF:
-	switch (t_ptr->subval) {
+	switch (t_ptr->sval) {
 	  case 0:
 	    t_ptr->p1 = randint(20) + 12;
 	    break;
@@ -5739,31 +5739,31 @@ int x, level, good, not_unique;
 
       case TV_FOOD:
     /* make sure all food rations have the same level */
-	if (t_ptr->subval == 90)
+	if (t_ptr->sval == 90)
 	    t_ptr->level = 0;
     /* give all elvish waybread the same level */
-	else if (t_ptr->subval == 92)
+	else if (t_ptr->sval == 92)
 	    t_ptr->level = 6;
 	break;
 
       case TV_SCROLL1:
     /* give all identify scrolls the same level */
-	if (t_ptr->subval == 67)
+	if (t_ptr->sval == 67)
 	    t_ptr->level = 1;
     /* scroll of light */
-	else if (t_ptr->subval == 69)
+	else if (t_ptr->sval == 69)
 	    t_ptr->level = 0;
     /* scroll of trap detection */
-	else if (t_ptr->subval == 80)
+	else if (t_ptr->sval == 80)
 	    t_ptr->level = 5;
     /* scroll of door/stair location */
-	else if (t_ptr->subval == 81)
+	else if (t_ptr->sval == 81)
 	    t_ptr->level = 5;
 	break;
 
       case TV_POTION1:		   /* potions */
     /* cure light */
-	if (t_ptr->subval == 76)
+	if (t_ptr->sval == 76)
 	    t_ptr->level = 0;
 	break;
 
@@ -5924,17 +5924,17 @@ int         good, chance, special, cursed, level;
 
     if (i_ptr && (randint(2)==1)){
 	if ((t_ptr->tval == TV_SHOT) &&
-	    (i_ptr->subval >= 20) && (i_ptr->subval <= 21));
+	    (i_ptr->sval >= 20) && (i_ptr->sval <= 21));
 	/* right type, do nothing */
 	else if ((t_ptr->tval == TV_ARROW) &&
-		 (i_ptr->subval >= 1) && (i_ptr->subval <= 4));
+		 (i_ptr->sval >= 1) && (i_ptr->sval <= 4));
 	/* right type, do nothing */
 	else if ((t_ptr->tval == TV_BOLT) &&
-		 (i_ptr->subval >= 10) && (i_ptr->subval <= 12));
+		 (i_ptr->sval >= 10) && (i_ptr->sval <= 12));
 	/* right type, do nothing */
-	else if ((i_ptr->subval >= 20) && (i_ptr->subval <= 21))
+	else if ((i_ptr->sval >= 20) && (i_ptr->sval <= 21))
 	    invcopy(t_ptr, 83); /* this should be treasure list index of shots -CFT */
-	else if ((i_ptr->subval >= 1) && (i_ptr->subval <= 4))
+	else if ((i_ptr->sval >= 1) && (i_ptr->sval <= 4))
 	    invcopy(t_ptr, 78); /* this should be index of arrows -CFT */
 	else			/* xbow */
 	    invcopy(t_ptr, 80); /* this should be index of bolts -CFT */

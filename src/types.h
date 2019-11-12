@@ -118,7 +118,7 @@ typedef struct inven_kind
   byte tchar;			    /* Character representation	      */
   s16b p1;			    /* Misc. use variable	      */
   s32b cost;			    /* Cost of item		      */
-  byte subval;			    /* Sub-category number	      */
+  byte sval;			    /* Sub-category number	      */
   byte number;			    /* Number of items		      */
   u16b weight;		    /* Weight			      */
   s16b tohit;			    /* Plusses to hit		      */
@@ -148,7 +148,7 @@ typedef struct inven_type
   byte tchar;			    /* Character representation */
   s16b p1;			    /* Misc. use variable	*/
   s32b cost;			    /* Cost of item		*/
-  byte subval;			    /* Sub-category number	*/
+  byte sval;			    /* Sub-category number	*/
   byte number;			    /* Number of items		*/
   u16b weight;		    /* Weight			*/
   s16b tohit;			    /* Plusses to hit		*/

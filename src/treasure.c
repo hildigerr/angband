@@ -33,7 +33,7 @@
 		193 - 255: object can stack with others iff they have
 			the same p1 value, usually considered one group
 		Objects which have two type values, e.g. potions and
-		scrolls, need to have distinct subvals for
+		scrolls, need to have distinct svals for
 		each item regardless of its tval
 	Number	   : number of items appearing in group.
 	Weight	   : relative weight of an item.
@@ -978,7 +978,7 @@ inven_kind object_list[MAX_OBJECTS] = {
 /* end store items */
 
 /* start doors */
-/* Secret door must have same subval as closed door in	*/
+/* Secret door must have same sval as closed door in	*/
 /* TRAP_LISTB.	See CHANGE_TRAP. Must use & because of stone_to_mud. */
 {"& open door"			,0x00000000L, TV_OPEN_DOOR, '\'', /* +23 */
     0,	   0,	1,   1,   0,	0,   0,	 0,   0, {1,1}	,  0, 0, 0x0L},

@@ -956,12 +956,12 @@ int monptr;
 		    objdes(t1, &inventory[i], FALSE);
 /* stacked single items */
 		    sprintf(t2, "%sour %s (%c) %s stolen!",
-			  ((inventory[i].subval <= ITEM_SINGLE_STACK_MAX) &&
+			  ((inventory[i].sval <= ITEM_SINGLE_STACK_MAX) &&
 			   (inventory[i].number > 1))
 			    ? "One of y" : "Y",
 			    t1, i + 'a',
 /* stacked group items */
-			    ((inventory[i].subval > ITEM_SINGLE_STACK_MAX) &&
+			    ((inventory[i].sval > ITEM_SINGLE_STACK_MAX) &&
 			     (inventory[i].number > 1))
 			    ? "were" : "was");
 		    msg_print(t2);
@@ -1420,7 +1420,7 @@ u32b *rcmove;
 	/* Glyph of warding present?	   */
 	    if (do_move && (c_ptr->tptr != 0) &&
 		(t_list[c_ptr->tptr].tval == TV_VIS_TRAP) &&
-		(t_list[c_ptr->tptr].subval == 99)) {
+		(t_list[c_ptr->tptr].sval == 99)) {
 		if (randint(OBJ_BREAK_GLYPH) < c_list[m_ptr->mptr].level) {
 		    if ((newy == char_row) && (newx == char_col))
 			msg_print("The rune of protection is broken!");

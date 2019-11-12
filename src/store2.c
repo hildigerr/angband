@@ -281,8 +281,8 @@ int store_num, start;
 	i_ptr = &s_ptr->store_inven[start].sitem;
 	x = i_ptr->number;
 	if (!is_home) {
-	    if ((i_ptr->subval >= ITEM_SINGLE_STACK_MIN)
-		&& (i_ptr->subval <= ITEM_SINGLE_STACK_MAX))
+	    if ((i_ptr->sval >= ITEM_SINGLE_STACK_MIN)
+		&& (i_ptr->sval <= ITEM_SINGLE_STACK_MAX))
 		i_ptr->number = 1;
 	}
 	objdes(out_val1, i_ptr, TRUE);

@@ -59,8 +59,8 @@ extern int rating;
 
 /* Places a particular trap at location y, x		-RAK-	 */
 void 
-place_trap(y, x, subval)
-int y, x, subval;
+place_trap(y, x, sval)
+int y, x, sval;
 {
     register int cur_pos;
 
@@ -81,7 +81,7 @@ int y, x, subval;
 	    delete_object(y, x);
     cur_pos = popt();
     cave[y][x].tptr = cur_pos;
-    invcopy(&t_list[cur_pos], OBJ_TRAP_LIST + subval);
+    invcopy(&t_list[cur_pos], OBJ_TRAP_LIST + sval);
 }
 
 
@@ -564,12 +564,12 @@ u32b good;
 	    is_good = TRUE;	   /* nor are rags! -CFT */
 	if ((tv == TV_MAGIC_BOOK) &&	/* if book, good must be one of the
 					 * deeper, special must be Raal's */
-	    (object_list[sorted_objects[tmp]].subval > ((good & SPECIAL) ? 71 : 67)))
+	    (object_list[sorted_objects[tmp]].sval > ((good & SPECIAL) ? 71 : 67)))
 	    is_good = TRUE;
 	if ((tv == TV_PRAYER_BOOK) &&	/* if book, good must be one of the
 					 * deeper, special must be Wrath of
 					 * God */
-	    (object_list[sorted_objects[tmp]].subval > ((good & SPECIAL) ? 71 : 67)))
+	    (object_list[sorted_objects[tmp]].sval > ((good & SPECIAL) ? 71 : 67)))
 	    is_good = TRUE;
     } while (!is_good);
     invcopy(&t_list[cur_pos], sorted_objects[tmp]);
@@ -1934,7 +1934,7 @@ int item_val;
     register inven_type *i_ptr;
 
     i_ptr = &inventory[item_val];
-    if ((i_ptr->number > 1) && (i_ptr->subval <= ITEM_SINGLE_STACK_MAX)) {
+    if ((i_ptr->number > 1) && (i_ptr->sval <= ITEM_SINGLE_STACK_MAX)) {
 	i_ptr->number--;
 	inven_weight -= i_ptr->weight;
     } else {
@@ -1957,8 +1957,8 @@ take_one_item(s_ptr, i_ptr)
 register inven_type *s_ptr, *i_ptr;
 {
     *s_ptr = *i_ptr;
-    if ((s_ptr->number > 1) && (s_ptr->subval >= ITEM_SINGLE_STACK_MIN)
-	&& (s_ptr->subval <= ITEM_SINGLE_STACK_MAX))
+    if ((s_ptr->number > 1) && (s_ptr->sval >= ITEM_SINGLE_STACK_MIN)
+	&& (s_ptr->sval <= ITEM_SINGLE_STACK_MAX))
 	s_ptr->number = 1;
 }
 
@@ -2027,11 +2027,11 @@ register int perc;
 	if ((*typ) (&inventory[i]) && (randint(100) < perc)) {
 	    objdes(tmp_str, &inventory[i], FALSE);
 	    sprintf(out_val, "%sour %s (%c) %s destroyed!",
-		    ((inventory[i].subval <= ITEM_SINGLE_STACK_MAX) &&
+		    ((inventory[i].sval <= ITEM_SINGLE_STACK_MAX) &&
 		     (inventory[i].number > 1))	/* stacked single items */
 		    ? "One of y" : "Y",
 		    tmp_str, i + 'a',
-		    ((inventory[i].subval > ITEM_SINGLE_STACK_MAX) &&
+		    ((inventory[i].sval > ITEM_SINGLE_STACK_MAX) &&
 		     (inventory[i].number > 1))	/* stacked group items */
 		    ? "were" : "was");
 	    msg_print(out_val);
@@ -2066,14 +2066,14 @@ register inven_type *t_ptr;
 
     if (inven_ctr < INVEN_WIELD)
 	return TRUE;
-    else if (t_ptr->subval >= ITEM_SINGLE_STACK_MIN)
+    else if (t_ptr->sval >= ITEM_SINGLE_STACK_MIN)
 	for (i = 0; i < inven_ctr; i++)
 	    if (inventory[i].tval == t_ptr->tval &&
-		inventory[i].subval == t_ptr->subval &&
+		inventory[i].sval == t_ptr->sval &&
 	/* make sure the number field doesn't overflow */
 		((int)inventory[i].number + (int)t_ptr->number < 256) &&
-	/* they always stack (subval < 192), or else they have same p1 */
-		((t_ptr->subval < ITEM_GROUP_MIN) || (inventory[i].p1 == t_ptr->p1))
+	/* they always stack (sval < 192), or else they have same p1 */
+		((t_ptr->sval < ITEM_GROUP_MIN) || (inventory[i].p1 == t_ptr->p1))
 	/* only stack if both or neither are identified */
 		&& (known1_p(&inventory[i]) == known1_p(t_ptr)))
 		return TRUE;
@@ -2187,7 +2187,7 @@ register inven_type *i_ptr;
     int                  stacked = FALSE;
 
     typ = i_ptr->tval;
-    subt = i_ptr->subval;
+    subt = i_ptr->sval;
     known1p = known1_p(i_ptr);
     always_known1p = (object_offset(i_ptr) == -1);
 
@@ -2202,10 +2202,10 @@ register inven_type *i_ptr;
 	for (locn = 0; locn < inven_ctr; locn++) {
 	    t_ptr = &inventory[locn];
 	    if (t_ptr->tval == typ &&
-		t_ptr->subval == subt &&
+		t_ptr->sval == subt &&
 	/* make sure the number field doesn't overflow */
 		((int)t_ptr->number + (int)i_ptr->number < 256) &&
-	/* they always stack (subval < 192), or else they have same p1 */
+	/* they always stack (sval < 192), or else they have same p1 */
 		((subt < ITEM_GROUP_MIN) || (t_ptr->p1 == i_ptr->p1))
 	/* only stack if both or neither are identified */
 		&& (known1_p(&inventory[locn]) == known1p)) {
@@ -2247,9 +2247,9 @@ register inven_type *i_ptr;
 	 */
 	    if ((typ > tval_tmp) ||     /* sort by desc tval */
 		(always_known1p &&      /* if always known, then sort by inc level, */
-		 (typ == tval_tmp) &&	/* then by inc subval */
+		 (typ == tval_tmp) &&	/* then by inc sval */
 		 ((i_ptr->level < t_ptr->level) ||
-	     ((i_ptr->level == t_ptr->level) && (subt < t_ptr->subval))))) {
+	     ((i_ptr->level == t_ptr->level) && (subt < t_ptr->sval))))) {
 		for (i = inven_ctr - 1; i >= locn; i--)
 		    inventory[i + 1] = inventory[i];
 		inventory[locn] = *i_ptr;

@@ -75,7 +75,7 @@ int y, x;
     p_ptr = &py.misc;
     t_ptr = &t_list[c_ptr->tptr];
     dam = pdamroll(t_ptr->damage);
-    switch (t_ptr->subval) {
+    switch (t_ptr->sval) {
       case 1:			   /* Open pit */
 	msg_print("You fell into a pit!");
 	if (py.flags.ffall)
@@ -249,7 +249,7 @@ int y, x;
       case 106:
       case 107:
       case 108:
-	enter_store(t_ptr->subval - 101);
+	enter_store(t_ptr->sval - 101);
 	break;
 
       default:
@@ -2272,7 +2272,7 @@ facts(i_ptr, tbth, tpth, tdam, tdis, thits)
 
 /* Using Bows,  slings,  or crossbows	 */
     if (inventory[INVEN_WIELD].tval == TV_BOW)
-	switch (inventory[INVEN_WIELD].subval) {
+	switch (inventory[INVEN_WIELD].sval) {
 	  case 20:
 	    if (i_ptr->tval == TV_SHOT) {	/* Sling and ammo */
 		*tbth = py.misc.bthb;
@@ -2542,7 +2542,7 @@ throw_object()
 	    tchar = throw_obj.tchar;
 	/* EAM Start loop over multiple shots */
 	    while (thits-- > 0) {
-		if (inventory[INVEN_WIELD].subval == 12)
+		if (inventory[INVEN_WIELD].sval == 12)
 		    tpth -= 10;
 		flag = FALSE;
 		y = char_row;
@@ -2658,7 +2658,7 @@ throw_object()
 		}
 		while (!flag);
 		if (thits > 0) {   /* triple crossbow check -- not really needed */
-		    if (inventory[INVEN_WIELD].subval != 12) {
+		    if (inventory[INVEN_WIELD].sval != 12) {
 			(void)sprintf(out_val, "Keep shooting?");
 			if (get_check(out_val)) {
 			    desc_remain(item_val);

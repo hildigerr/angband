@@ -1144,7 +1144,7 @@ int command;
 				    (void)strcat(prt2, "wearing ");
 				msg_print(strcat(prt2, "appears to be cursed."));
 				item = (-1);
-			    } else if (inventory[item].subval == ITEM_GROUP_MIN &&
+			    } else if (inventory[item].sval == ITEM_GROUP_MIN &&
 				       inventory[item].number > 1 &&
 				       !inven_check_num(&inventory[slot])) {
  /* this can happen if try to wield a torch, and have more than one in your inventory */
@@ -1166,7 +1166,7 @@ int command;
 			    wear_high--;
 			/* Fix for torches	   */
 			    if (i_ptr->number > 1
-				&& i_ptr->subval <= ITEM_SINGLE_STACK_MAX) {
+				&& i_ptr->sval <= ITEM_SINGLE_STACK_MAX) {
 				i_ptr->number = 1;
 				wear_high++;
 			    }
@@ -1316,7 +1316,7 @@ int command;
 	tmp2 = cur_lite;
 	print('@', char_row, char_col);
 	if (inventory[INVEN_LIGHT].tval == TV_LITE)
-	    tmp = inventory[INVEN_LIGHT].subval;
+	    tmp = inventory[INVEN_LIGHT].sval;
 	else
 	    tmp = 195;
 	cur_lite = 1 + (tmp < 190) + (tmp == 4 || tmp == 6);

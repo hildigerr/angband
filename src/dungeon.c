@@ -83,7 +83,7 @@ dungeon()
     else
 	player_light = FALSE;
     if (i_ptr->tval == TV_LITE)
-	i = i_ptr->subval;
+	i = i_ptr->sval;
     else
 	i = 195;
     cur_lite = 1 + (i < 190) + (i == 4 || i == 6);
@@ -3395,7 +3395,7 @@ refill_lamp()
     register inven_type *i_ptr;
 
     free_turn_flag = TRUE;
-    k = inventory[INVEN_LIGHT].subval;
+    k = inventory[INVEN_LIGHT].sval;
     if (k != 0)
 	msg_print("But you are not using a lamp.");
     else if (!find_range(TV_FLASK, TV_NEVER, &i, &j))

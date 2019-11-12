@@ -91,7 +91,7 @@ inven_type *e;
       case TV_FLASK:
 	return (TRUE);
       case TV_LITE:
-	if (e->subval >= 192)	   /* only torches... -CFT */
+	if (e->sval >= 192)	   /* only torches... -CFT */
 	    return (TRUE);
 	else
 	    return (FALSE);
@@ -286,7 +286,7 @@ inven_type *e;
       case TV_CLOSED_DOOR:
 	return (TRUE);
       case TV_LITE:
-	if (e->subval >= 192)	   /* only torches... -CFT */
+	if (e->sval >= 192)	   /* only torches... -CFT */
 	    return (TRUE);
 	else
 	    return (FALSE);
