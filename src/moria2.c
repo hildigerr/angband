@@ -1743,7 +1743,7 @@ int dir;
 
 /* Disarms a trap					-RAK-	 */
 void 
-disarm_trap()
+do_cmd_disarm()
 {
     int                 y, x, level, tmp, dir, no_disarm;
     register int        tot, i;

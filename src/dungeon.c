@@ -1716,7 +1716,7 @@ char com_val;
 	free_turn_flag = TRUE;
 	break;
       case 'D':			/* (D)isarm trap */
-	disarm_trap();
+	do_cmd_disarm();
 	break;
       case 'E':			/* (E)at food */
 	eat();
