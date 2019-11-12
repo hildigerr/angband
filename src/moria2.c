@@ -1151,7 +1151,7 @@ int y, x;
 /* Moves player from one space to another.		-RAK-	 */
 /* Note: This routine has been pre-declared; see that for argument */
 void 
-move_char(dir, do_pickup)
+move_player(dir, do_pickup)
 int dir, do_pickup;
 {
     int                 old_row, old_col, old_find_flag;
@@ -1795,7 +1795,7 @@ disarm_trap()
 		/* make sure we move onto the trap even if confused */
 		    tmp = py.flags.confused;
 		    py.flags.confused = 0;
-		    move_char(dir, FALSE);
+		    move_player(dir, FALSE);
 		    py.flags.confused = tmp;
 		    prt_experience();
 		}
@@ -1807,7 +1807,7 @@ disarm_trap()
 		/* make sure we move onto the trap even if confused */
 		    tmp = py.flags.confused;
 		    py.flags.confused = 0;
-		    move_char(dir, FALSE);
+		    move_player(dir, FALSE);
 		    py.flags.confused += tmp;
 		}
 	    } else if (i == TV_CHEST) {
@@ -2833,7 +2833,7 @@ bash()
 		    t_ptr->p1 = 1 - randint(2);	/* 50% chance of breaking door */
 		    c_ptr->fval = CORR_FLOOR;
 		    if (py.flags.confused == 0)
-			move_char(dir, FALSE);
+			move_player(dir, FALSE);
 		    else
 			lite_spot(y, x);
 		    check_view();

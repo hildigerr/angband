@@ -2448,7 +2448,7 @@ int dir;
 	print(loc_symbol(char_row, char_col), char_row, char_col);
 #endif
 
-    move_char(dir, TRUE);
+    move_player(dir, TRUE);
     if (find_flag == FALSE)
 	command_count = 0;
 }
@@ -2461,7 +2461,7 @@ find_run()
 	msg_print("You stop running to catch your breath.");
 	end_find();
     } else
-	move_char(find_direction, TRUE);
+	move_player(find_direction, TRUE);
 }
 
 /* Switch off the run flag - and get the light correct. -CJS- */
