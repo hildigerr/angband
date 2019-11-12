@@ -322,7 +322,7 @@ ident_char()
 #endif
 	{
 	    if (n == 0) {
-		put_buffer("You recall those details? [y/n]", 0, 40);
+		put_str("You recall those details? [y/n]", 0, 40);
 		query = inkey();
 		if (query != 'y' && query != 'Y')
 		    break;

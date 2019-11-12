@@ -309,7 +309,7 @@ read_times()
 	if ((file1 = my_tfopen(ANGBAND_HOU, "r")) != NULL) {
 	    clear_screen();
 	    for (i = 0; fgets(in_line, 80, file1) != NULL; i++)
-		put_buffer(in_line, i, 0);
+		put_str(in_line, i, 0);
 	    (void)fclose(file1);
 	    pause_line(23);
 	}
@@ -321,7 +321,7 @@ read_times()
     if ((file1 = my_tfopen(ANGBAND_MOR, "r")) != NULL) {
 	clear_screen();
 	for (i = 0; fgets(in_line, 80, file1) != NULL; i++)
-	    put_buffer(in_line, i, 0);
+	    put_str(in_line, i, 0);
 	pause_line(23);
 	(void)fclose(file1);
     }
@@ -351,7 +351,7 @@ const char *filename;
 	clear_screen();
 	for (i = 0; i < 23; i++)
 	    if (fgets(tmp_str, BIGVTYPESIZ - 1, file) != NULL)
-		put_buffer(tmp_str, i, 0);
+		put_str(tmp_str, i, 0);
 	prt("[Press any key to continue.]", 23, 23);
 	input = inkey();
 	if (input == ESCAPE)

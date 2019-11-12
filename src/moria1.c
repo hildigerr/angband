@@ -1285,7 +1285,7 @@ int command;
 	    } else
 		prt("Allowed commands:", 0, 0);
 	    erase_line(scr_base, scr_left);
-	    put_buffer("e/i/t/w/x/d/?/ESC:", scr_base, 60);
+	    put_str("e/i/t/w/x/d/?/ESC:", scr_base, 60);
 	    command = inkey();
 	    erase_line(scr_base, scr_left);
 	}

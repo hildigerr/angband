@@ -397,7 +397,7 @@ int suspend(void);
 #endif
 void init_curses(void);
 void moriaterm(void);
-void put_buffer(const char *, int, int);
+void put_str(const char *, int, int);
 void put_qio(void);
 void restore_term(void);
 void shell_out(void);
@@ -948,7 +948,7 @@ int suspend();
 #endif
 void init_curses();
 void moriaterm();
-void put_buffer();
+void put_str();
 void put_qio();
 void restore_term();
 void shell_out();

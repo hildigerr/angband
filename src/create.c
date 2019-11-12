@@ -235,11 +235,11 @@ put_auto_stats()
 
     for (i = 0; i < 6; i++) {
 	cnv_stat(py.stats.use_stat[i], buf);
-	put_buffer(stat_names[i], 2 + i, 61);
-	put_buffer(buf, 2 + i, 66);
+	put_str(stat_names[i], 2 + i, 61);
+	put_str(buf, 2 + i, 66);
 	if (py.stats.max_stat[i] > py.stats.cur_stat[i]) {
 	    cnv_stat(py.stats.max_stat[i], buf);
-	    put_buffer(buf, 2 + i, 73);
+	    put_str(buf, 2 + i, 73);
 	}
     }
 }
@@ -261,10 +261,10 @@ choose_race()
     l = 2;
     m = 21;
     clear_from(20);
-    put_buffer("Choose a race (? for Help):", 20, 2);
+    put_str("Choose a race (? for Help):", 20, 2);
     do {
 	(void)sprintf(tmp_str, "%c) %s", k + 'a', race[j].trace);
-	put_buffer(tmp_str, m, l);
+	put_str(tmp_str, m, l);
 	k++;
 	l += 15;
 	if (l > 70) {
@@ -291,7 +291,7 @@ choose_race()
     p_ptr = &py;
     r_ptr = &race[j];
     p_ptr->misc.prace = j;
-    put_buffer(r_ptr->trace, 3, 15);
+    put_str(r_ptr->trace, 3, 15);
 }
 
 
@@ -301,7 +301,7 @@ print_history()
 {
     register int        i;
 
-    put_buffer("Character Background", 14, 27);
+    put_str("Character Background", 14, 27);
     for (i = 0; i < 4; i++)
 	prt(py.misc.history[i], i + 15, 10);
 }
@@ -439,19 +439,19 @@ get_sex()
 
     exit_flag = FALSE;
     clear_from(20);
-    put_buffer("Choose a sex (? for Help):", 20, 2);
-    put_buffer("m) Male       f) Female", 21, 2);
+    put_str("Choose a sex (? for Help):", 20, 2);
+    put_str("m) Male       f) Female", 21, 2);
     do {
 	move_cursor(20, 29);
     /* speed not important here */
 	c = inkey();
 	if (c == 'f' || c == 'F') {
 	    py.misc.male = FALSE;
-	    put_buffer("Female", 4, 15);
+	    put_str("Female", 4, 15);
 	    exit_flag = TRUE;
 	} else if (c == 'm' || c == 'M') {
 	    py.misc.male = TRUE;
-	    put_buffer("Male", 4, 15);
+	    put_str("Male", 4, 15);
 	    exit_flag = TRUE;
 	} else if (c == '?')
 	    helpfile(ANGBAND_WELCOME);
@@ -631,11 +631,11 @@ get_class_choice()
     m = 21;
     mask = 0x1;
     clear_from(20);
-    put_buffer("Choose a class (? for Help):", 20, 2);
+    put_str("Choose a class (? for Help):", 20, 2);
     do {
 	if (race[i].rtclass & mask) {
 	    (void)sprintf(tmp_str, "%c) %s", k + 'a', class[j].title);
-	    put_buffer(tmp_str, m, l);
+	    put_str(tmp_str, m, l);
 	    cl[k] = j;
 	    l += 15;
 	    if (l > 70) {
@@ -659,7 +659,7 @@ get_class_choice()
 	    c_ptr = &class[py.misc.pclass];
 	    exit_flag = TRUE;
 	    clear_from(20);
-	    put_buffer(c_ptr->title, 5, 15);
+	    put_str(c_ptr->title, 5, 15);
 	} else if (s == '?')
 	    helpfile(ANGBAND_WELCOME);
 	else
@@ -737,7 +737,7 @@ create_character()
  * copyright, take it out, and someone let me know -CFT 
  */
 
-    put_buffer("Do you want to use automatic rolling? (? for Help) ", 20, 2);
+    put_str("Do you want to use automatic rolling? (? for Help) ", 20, 2);
     do {   /* allow multiple key entry, so they can ask for help and
             * still get back to this menu... -CFT */
 
@@ -752,7 +752,7 @@ create_character()
 	clear_from(15);
 	cptr = &class[py.misc.pclass];
 	rptr = &race[py.misc.prace];
-	put_buffer("Enter minimum attribute for: ", 15, 2);
+	put_str("Enter minimum attribute for: ", 15, 2);
 	for (i = 0; i < 6; i++) {
 	    int                 stat_idx = 0;
 
@@ -762,42 +762,42 @@ create_character()
 		clear_from(16 + i);
 		msstat = adjust_stat(17, cptr->madj_str+rptr->str_adj, TRUE);
 		sprintf(inp, "    Strength (Max of %2d): ", msstat);
-		put_buffer(inp, 16 + i, 5);
+		put_str(inp, 16 + i, 5);
 		break;
 	      case 1:
 		stat_idx = A_INT;
 		clear_from(16 + i);
 		msstat = adjust_stat(17, cptr->madj_int+rptr->int_adj, TRUE);
 		sprintf(inp, "Intelligence (Max of %2d): ", msstat);
-		put_buffer(inp, 16 + i, 5);
+		put_str(inp, 16 + i, 5);
 		break;
 	      case 2:
 		stat_idx = A_WIS;
 		clear_from(16 + i);
 		msstat = adjust_stat(17, cptr->madj_wis+rptr->wis_adj, TRUE);
 		sprintf(inp, "      Wisdom (Max of %2d): ", msstat);
-		put_buffer(inp, 16 + i, 5);
+		put_str(inp, 16 + i, 5);
 		break;
 	      case 3:
 		stat_idx = A_DEX;
 		clear_from(16 + i);
 		msstat = adjust_stat(17, cptr->madj_dex+rptr->dex_adj, TRUE);
 		sprintf(inp, "   Dexterity (Max of %2d): ", msstat);
-		put_buffer(inp, 16 + i, 5);
+		put_str(inp, 16 + i, 5);
 		break;
 	      case 4:
 		stat_idx = A_CON;
 		clear_from(16 + i);
 		msstat = adjust_stat(17, cptr->madj_con+rptr->con_adj, TRUE);
 		sprintf(inp, "Constitution (Max of %2d): ", msstat);
-		put_buffer(inp, 16 + i, 5);
+		put_str(inp, 16 + i, 5);
 		break;
 	      case 5:
 		stat_idx = A_CHR;
 		clear_from(16 + i);
 		msstat = adjust_stat(17, cptr->madj_chr+rptr->chr_adj, TRUE);
 		sprintf(inp, "    Charisma (Max of %2d): ", msstat);
-		put_buffer(inp, 16 + i, 5);
+		put_str(inp, 16 + i, 5);
 		break;
 	    } /* switch */
 	    do {
@@ -833,7 +833,7 @@ create_character()
 		put_auto_stats();
 		auto_round++;
 		sprintf(inp, "auto-rolling round #%lu.", (long)auto_round);
-		put_buffer(inp, 20, 2);
+		put_str(inp, 20, 2);
 #if defined(unix) && defined(NICE)
 		usleep((long)100000L);
 #endif
@@ -868,11 +868,11 @@ create_character()
 
 	do {			   /* Input loop */
 	    if (previous_exists) {
-		put_buffer("Hit space: Reroll, ^P: Previous or ESC: Accept: ",
+		put_str("Hit space: Reroll, ^P: Previous or ESC: Accept: ",
 			   20, 2);
 		move_cursor(20, 50);
 	    } else {
-		put_buffer("Hit space: Reroll, or ESC: Accept: ", 20, 2);
+		put_str("Hit space: Reroll, or ESC: Accept: ", 20, 2);
 		move_cursor(20, 37);
 	    }
 	    c = inkey();

@@ -164,7 +164,7 @@ signal_handler(sig)
 #endif
 	    /* in case control-c typed during msg_print */
 		if (wait_for_more)
-		    put_buffer(" -more-", MSG_LINE, 0);
+		    put_str(" -more-", MSG_LINE, 0);
 		put_qio();
 		return;		   /* OK. We don't quit. */
 	    }

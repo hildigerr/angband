@@ -428,7 +428,7 @@ moriaterm()
 
 /* Dump IO to buffer					-RAK-	 */
 void 
-put_buffer(out_str, row, col)
+put_str(out_str, row, col)
 const char *out_str;
 int         row, col;
 
@@ -462,7 +462,7 @@ int         row, col;
 	abort();
     /* clear msg_flag to avoid problems with unflushed messages */
 	msg_flag = 0;
-	(void)sprintf(tmp_str, "error in put_buffer, row = %d col = %d\n",
+	(void)sprintf(tmp_str, "error in put_str, row = %d col = %d\n",
 		      row, col);
 	prt(tmp_str, 0, 0);
 	bell();
@@ -573,9 +573,9 @@ shell_out()
 /* clear screen and print 'exit' message */
     clear_screen();
 #ifndef ATARIST_MWC
-    put_buffer("[Entering shell, type 'exit' to resume your game.]\n", 0, 0);
+    put_str("[Entering shell, type 'exit' to resume your game.]\n", 0, 0);
 #else
-    put_buffer("[Escaping to shell]\n", 0, 0);
+    put_str("[Escaping to shell]\n", 0, 0);
 #endif
     put_qio();
 
@@ -610,7 +610,7 @@ shell_out()
     if ((comspec = getenv("COMSPEC")) == NULL
 	|| spawnl(P_WAIT, comspec, comspec, (char *)NULL) < 0) {
 	clear_screen();		   /* BOSS key if shell failed */
-	put_buffer("M:\\> ", 0, 0);
+	put_str("M:\\> ", 0, 0);
 	do {
 	    key = inkey();
 	} while (key != '!');
@@ -1048,7 +1048,7 @@ int         row, col;
     line.bottom = row + 1;
     DEraseScreen(&line);
 
-    put_buffer(str_buff, row, col);
+    put_str(str_buff, row, col);
 }
 
 #else
@@ -1057,7 +1057,7 @@ int         row, col;
 	msg_print(NULL);
     (void)move(row, col);
     clrtoeol();
-    put_buffer(str_buff, row, col);
+    put_str(str_buff, row, col);
 }
 
 #endif
@@ -1095,7 +1095,7 @@ const char *str_buff;
 	/* ensure that the complete -more- message is visible. */
 	    if (len > 73)
 		len = 73;
-	    put_buffer(" -more-", MSG_LINE, len);
+	    put_str(" -more-", MSG_LINE, len);
 	/* let sigint handler know that we are waiting for a space */
 	    wait_for_more = 1;
 	    do {
@@ -1109,7 +1109,7 @@ const char *str_buff;
 
 	/* Make the null string a special case.  -CJS- */
 	    if (str_buff) {
-		put_buffer(str_buff, MSG_LINE, 0);
+		put_str(str_buff, MSG_LINE, 0);
 		command_count = 0;
 		last_msg++;
 		if (last_msg >= MAX_SAVE_MSG)
@@ -1126,7 +1126,7 @@ const char *str_buff;
 	    if (!str_buff) {
 		if (len > 73)
 		    len = 73;
-		put_buffer(" -more-", MSG_LINE, len);
+		put_str(" -more-", MSG_LINE, len);
 	    /* let sigint handler know that we are waiting for a space */
 		wait_for_more = 1;
 		do {
@@ -1139,7 +1139,7 @@ const char *str_buff;
 		clrtoeol();
 		msg_flag = FALSE;
 	    } else {
-		put_buffer(str_buff, MSG_LINE, len);
+		put_str(str_buff, MSG_LINE, len);
 		len += strlen(str_buff) + 1;
 		command_count = 0;
 		last_msg++;
@@ -1154,7 +1154,7 @@ const char *str_buff;
 	(void)move(MSG_LINE, 0);
 	clrtoeol();
 	if (str_buff) {
-	    put_buffer(str_buff, MSG_LINE, 0);
+	    put_str(str_buff, MSG_LINE, 0);
 	    command_count = 0;
 	    len = strlen(str_buff) + 1;
 	    last_msg++;
@@ -1292,7 +1292,7 @@ int   row, column, slen;
 	  case CTRL('H'):
 	    if (column > start_col) {
 		column--;
-		put_buffer(" ", row, column);
+		put_str(" ", row, column);
 		move_cursor(row, column);
 		*--p = '\0';
 	    }

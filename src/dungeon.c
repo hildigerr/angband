@@ -1545,7 +1545,7 @@ char com_val;
 	    restore_screen();
 	} else {
 	/* Distinguish real and recovered messages with a '>'. -CJS- */
-	    put_buffer(">", 0, 0);
+	    put_str(">", 0, 0);
 	    prt(old_msg[j], 0, 1);
 	}
 	free_turn_flag = TRUE;

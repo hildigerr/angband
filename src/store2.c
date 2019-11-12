@@ -310,7 +310,7 @@ int store_num, start;
 	for (j = 0; j < (11 - i + 1); j++)
 	    erase_line(j + i + 5, 0);	/* clear remaining lines */
     if (s_ptr->store_ctr > 12)
-	put_buffer("- cont. -", 17, 60);
+	put_str("- cont. -", 17, 60);
     else
 	erase_line(17, 60);
 }
@@ -359,10 +359,10 @@ int store_num, cur_top;
 
     s_ptr = &store[store_num];
     clear_screen();
-    put_buffer(owners[s_ptr->owner].owner_name, 3, 9);
-    put_buffer("Item", 4, 3);
+    put_str(owners[s_ptr->owner].owner_name, 3, 9);
+    put_str("Item", 4, 3);
     if (!is_home) {
-	put_buffer("Asking Price", 4, 60);
+	put_str("Asking Price", 4, 60);
 	store_prt_gold();
     }
     display_commands();
@@ -603,7 +603,7 @@ inven_type *item;
 	do {
 	    loop_flag = TRUE;
 	    (void)sprintf(out_val, "%s :  %ld", comment, (long)cur_ask);
-	    put_buffer(out_val, 1, 0);
+	    put_str(out_val, 1, 0);
 	    purchase = receive_offer(store_num, "What do you offer? ",
 				     &new_offer, last_offer, num_offer,
 				     1, cur_ask, final);
@@ -660,7 +660,7 @@ inven_type *item;
 		num_offer++;	   /* enable incremental haggling */
 		erase_line(1, 0);
 		(void)sprintf(out_val, "Your last offer : %ld", (long)last_offer);
-		put_buffer(out_val, 1, 39);
+		put_str(out_val, 1, 39);
 		prt_comment2(last_offer, cur_ask, final_flag);
 	    }
 	}
@@ -760,7 +760,7 @@ inven_type *item;
 	    do {
 		loop_flag = TRUE;
 		(void)sprintf(out_val, "%s :  %ld", comment, (long)cur_ask);
-		put_buffer(out_val, 1, 0);
+		put_str(out_val, 1, 0);
 		sell = receive_offer(store_num, "What price do you ask? ",
 				     &new_offer, last_offer, num_offer,
 				     -1, cur_ask, final);
@@ -817,7 +817,7 @@ inven_type *item;
 		    num_offer++;   /* enable incremental haggling */
 		    erase_line(1, 0);
 		    (void)sprintf(out_val, "Your last bid %ld", (long)last_offer);
-		    put_buffer(out_val, 1, 39);
+		    put_str(out_val, 1, 39);
 		    prt_comment3(cur_ask, last_offer, final_flag);
 		}
 	    }

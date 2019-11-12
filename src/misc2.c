@@ -721,8 +721,8 @@ int stat;
     vtype out_val1;
 
     cnv_stat(py.stats.use_stat[stat], out_val1);
-    put_buffer(stat_names[stat], 5 + stat, STAT_COLUMN);
-    put_buffer(out_val1, 5 + stat, STAT_COLUMN + 6);
+    put_str(stat_names[stat], 5 + stat, STAT_COLUMN);
+    put_str(out_val1, 5 + stat, STAT_COLUMN + 6);
 }
 
 
@@ -733,8 +733,8 @@ prt_field(info, row, column)
 const char *info;
 int         row, column;
 {
-    put_buffer(&blank_string[BLANK_LENGTH - 13], row, column);
-    put_buffer(info, row, column);
+    put_str(&blank_string[BLANK_LENGTH - 13], row, column);
+    put_str(info, row, column);
 }
 
 /* Print long number with header at given row, column */
@@ -747,7 +747,7 @@ int         row, column;
     vtype out_val;
 
     (void)sprintf(out_val, "%s%9ld", header, (long)num);
-    put_buffer(out_val, row, column);
+    put_str(out_val, row, column);
 }
 
 /* Print number with header at given row, column	-RAK-	 */
@@ -759,7 +759,7 @@ int         num, row, column;
     vtype out_val;
 
     (void)sprintf(out_val, "%s   %6d", header, num);
-    put_buffer(out_val, row, column);
+    put_str(out_val, row, column);
 }
 
 /* Print long number at given row, column */
@@ -771,7 +771,7 @@ int   row, column;
     vtype out_val;
 
     (void)sprintf(out_val, "%9ld", (long)num);
-    put_buffer(out_val, row, column);
+    put_str(out_val, row, column);
 }
 
 /* Print number at given row, column	-RAK-	 */
@@ -782,7 +782,7 @@ prt_int(num, row, column)
     vtype out_val;
 
     (void)sprintf(out_val, "%6d", num);
-    put_buffer(out_val, row, column);
+    put_str(out_val, row, column);
 }
 
 
@@ -1035,11 +1035,11 @@ void
 prt_hunger()
 {
     if (PY_WEAK & py.flags.status)
-	put_buffer("Weak  ", 23, 0);
+	put_str("Weak  ", 23, 0);
     else if (PY_HUNGRY & py.flags.status)
-	put_buffer("Hungry", 23, 0);
+	put_str("Hungry", 23, 0);
     else
-	put_buffer("      ", 23, 0);
+	put_str("      ", 23, 0);
 }
 
 
@@ -1048,9 +1048,9 @@ void
 prt_blind()
 {
     if (PY_BLIND & py.flags.status)
-	put_buffer("Blind", 23, 7);
+	put_str("Blind", 23, 7);
     else
-	put_buffer("     ", 23, 7);
+	put_str("     ", 23, 7);
 }
 
 
@@ -1059,9 +1059,9 @@ void
 prt_confused()
 {
     if (PY_CONFUSED & py.flags.status)
-	put_buffer("Confused", 23, 13);
+	put_str("Confused", 23, 13);
     else
-	put_buffer("        ", 23, 13);
+	put_str("        ", 23, 13);
 }
 
 
@@ -1070,9 +1070,9 @@ void
 prt_afraid()
 {
     if (PY_FEAR & py.flags.status)
-	put_buffer("Afraid", 23, 22);
+	put_str("Afraid", 23, 22);
     else
-	put_buffer("      ", 23, 22);
+	put_str("      ", 23, 22);
 }
 
 
@@ -1081,9 +1081,9 @@ void
 prt_poisoned()
 {
     if (PY_POISONED & py.flags.status)
-	put_buffer("Poisoned", 23, 29);
+	put_str("Poisoned", 23, 29);
     else
-	put_buffer("        ", 23, 29);
+	put_str("        ", 23, 29);
 }
 
 
@@ -1095,7 +1095,7 @@ prt_state()
 
     py.flags.status &= ~PY_REPEAT;
     if (py.flags.paralysis > 1)
-	put_buffer("Paralysed ", 23, 38);
+	put_str("Paralysed ", 23, 38);
     else if (PY_REST & py.flags.status) {
 	if (py.flags.rest > 0)
 	    (void)sprintf(tmp, "Rest %-5d", py.flags.rest);
@@ -1103,17 +1103,17 @@ prt_state()
 	    (void)sprintf(tmp, "Rest *****");
 	else if (py.flags.rest == -2)
 	    (void)sprintf(tmp, "Rest &&&&&");
-	put_buffer(tmp, 23, 38);
+	put_str(tmp, 23, 38);
     } else if (command_count > 0) {
 	(void)sprintf(tmp, "Repeat %-3d", command_count);
 	py.flags.status |= PY_REPEAT;
-	put_buffer(tmp, 23, 38);
+	put_str(tmp, 23, 38);
 	if (PY_SEARCH & py.flags.status)
-	    put_buffer("Search    ", 23, 38);
+	    put_str("Search    ", 23, 38);
     } else if (PY_SEARCH & py.flags.status)
-	put_buffer("Searching ", 23, 38);
+	put_str("Searching ", 23, 38);
     else			   /* "repeat 999" is 10 characters */
-	put_buffer("          ", 23, 38);
+	put_str("          ", 23, 38);
 }
 
 
@@ -1127,23 +1127,23 @@ prt_speed()
     if (PY_SEARCH & py.flags.status)	/* Search mode. */
 	i--;
     if (i > 2)
-	put_buffer("Extremely Slow", 23, 49);
+	put_str("Extremely Slow", 23, 49);
     else if (i == 2)
-	put_buffer("Very Slow     ", 23, 49);
+	put_str("Very Slow     ", 23, 49);
     else if (i == 1)
-	put_buffer("Slow          ", 23, 49);
+	put_str("Slow          ", 23, 49);
     else if (i == 0)
-	put_buffer("              ", 23, 49);
+	put_str("              ", 23, 49);
     else if (i == -1)
-	put_buffer("Fast          ", 23, 49);
+	put_str("Fast          ", 23, 49);
     else if (i == -2)
-	put_buffer("Very Fast     ", 23, 49);
+	put_str("Very Fast     ", 23, 49);
     else if (i == -3)
-	put_buffer("Extremely Fast", 23, 49);
+	put_str("Extremely Fast", 23, 49);
     else if (i == -4)
-	put_buffer("Deadly Speed  ", 23, 49);
+	put_str("Deadly Speed  ", 23, 49);
     else
-	put_buffer("Light Speed   ", 23, 49);
+	put_str("Light Speed   ", 23, 49);
 }
 
 
@@ -1152,9 +1152,9 @@ prt_study()
 {
     py.flags.status &= ~PY_STUDY;
     if (py.flags.new_spells != 0)
-	put_buffer("Study", 23, 64);
+	put_str("Study", 23, 64);
     else
-	put_buffer("     ", 23, 64);
+	put_str("     ", 23, 64);
 }
 
 void 
@@ -1185,21 +1185,21 @@ prt_cut()
     int c = py.flags.cut;
 
     if (c > 900)
-	put_buffer("Mortal wound", 21, 0);
+	put_str("Mortal wound", 21, 0);
     else if (c > 300)
-	put_buffer("Deep gash   ", 21, 0);
+	put_str("Deep gash   ", 21, 0);
     else if (c > 200)
-	put_buffer("Severe cut  ", 21, 0);
+	put_str("Severe cut  ", 21, 0);
     else if (c > 45)
-	put_buffer("Nasty cut   ", 21, 0);
+	put_str("Nasty cut   ", 21, 0);
     else if (c > 15)
-	put_buffer("Bad cut     ", 21, 0);
+	put_str("Bad cut     ", 21, 0);
     else if (c > 5)
-	put_buffer("Light cut   ", 21, 0);
+	put_str("Light cut   ", 21, 0);
     else if (c > 0)
-	put_buffer("Graze       ", 21, 0);
+	put_str("Graze       ", 21, 0);
     else
-	put_buffer("            ", 21, 0);
+	put_str("            ", 21, 0);
 }
 
 void 
@@ -1257,13 +1257,13 @@ prt_stun()
 
     if (!py.flags.resist_sound) {
 	if (s > 100)
-	    put_buffer("Knocked out ", 22, 0);
+	    put_str("Knocked out ", 22, 0);
 	else if (s > 50)
-	    put_buffer("Heavy stun  ", 22, 0);
+	    put_str("Heavy stun  ", 22, 0);
 	else if (s > 0)
-	    put_buffer("Stun        ", 22, 0);
+	    put_str("Stun        ", 22, 0);
 	else
-	    put_buffer("            ", 22, 0);
+	    put_str("            ", 22, 0);
     }
 }
 
@@ -1272,11 +1272,11 @@ void
 prt_winner()
 {
     if (wizard)
-	put_buffer("Wizard", 20, 0);
+	put_str("Wizard", 20, 0);
     else if (total_winner)
-	put_buffer("Winner", 20, 0);
+	put_str("Winner", 20, 0);
     else
-	put_buffer("       ", 20, 0);
+	put_str("       ", 20, 0);
 }
 
 
@@ -1630,7 +1630,7 @@ prt_equippy_chars()
 	else                                             
 	    out_val[0] = (int)(i_ptr->tchar);                
 	
-	put_buffer(out_val, 4, j);
+	put_str(out_val, 4, j);
     }
 }
 
@@ -1654,15 +1654,15 @@ put_character()
 
     m_ptr = &py.misc;
     clear_screen();
-    put_buffer("Name        :", 2, 1);
-    put_buffer("Race        :", 3, 1);
-    put_buffer("Sex         :", 4, 1);
-    put_buffer("Class       :", 5, 1);
+    put_str("Name        :", 2, 1);
+    put_str("Race        :", 3, 1);
+    put_str("Sex         :", 4, 1);
+    put_str("Class       :", 5, 1);
     if (character_generated) {
-	put_buffer(m_ptr->name, 2, 15);
-	put_buffer(race[m_ptr->prace].trace, 3, 15);
-	put_buffer((m_ptr->male ? "Male" : "Female"), 4, 15);
-	put_buffer(class[m_ptr->pclass].title, 5, 15);
+	put_str(m_ptr->name, 2, 15);
+	put_str(race[m_ptr->prace].trace, 3, 15);
+	put_str((m_ptr->male ? "Male" : "Female"), 4, 15);
+	put_str(class[m_ptr->pclass].title, 5, 15);
     }
 }
 
@@ -1678,8 +1678,8 @@ put_stats()
     m_ptr = &py.misc;
     for (i = 0; i < 6; i++) {
 	cnv_stat(py.stats.use_stat[i], buf);
-	put_buffer(stat_names[i], 2 + i, 61);
-	put_buffer(buf, 2 + i, 66);
+	put_str(stat_names[i], 2 + i, 61);
+	put_str(buf, 2 + i, 66);
 	if (py.stats.max_stat[i] > py.stats.cur_stat[i]) {
 	    /* this looks silly, but it happens because modify_stat() only
 	     * looks at cur_stat -CFT */
@@ -1687,7 +1687,7 @@ put_stats()
 	    py.stats.cur_stat[i] = py.stats.max_stat[i];
 	    cnv_stat (modify_stat(i,py.stats.mod_stat[i]), buf);
 	    py.stats.cur_stat[i] = temp; /* DON'T FORGET! -CFT */
-	    put_buffer(buf, 2 + i, 73);
+	    put_str(buf, 2 + i, 73);
 	}
     }
     prt_num("+ To Hit    ", m_ptr->dis_th, 9, 1);
@@ -1769,7 +1769,7 @@ put_misc2()
 					 * -CFT */
 
 	sprintf(buf, "%s%9s", "Exp to Adv.", "****");
-	put_buffer(buf, 12, 28);
+	put_str(buf, 12, 28);
     } else
 	prt_lnum("Exp to Adv.", (s32b) (player_exp[m_ptr->lev - 1] *
 					 m_ptr->expfact / 100), 12, 28);
@@ -1811,27 +1811,27 @@ put_misc3()
 
     (void)sprintf(xinfra, "%d feet", py.flags.see_infra * 10);
 
-    put_buffer("(Miscellaneous Abilities)", 15, 25);
-    put_buffer("Fighting    :", 16, 1);
-    put_buffer(likert(xbth, 12), 16, 15);
-    put_buffer("Bows/Throw  :", 17, 1);
-    put_buffer(likert(xbthb, 12), 17, 15);
-    put_buffer("Saving Throw:", 18, 1);
-    put_buffer(likert(xsave, 6), 18, 15);
+    put_str("(Miscellaneous Abilities)", 15, 25);
+    put_str("Fighting    :", 16, 1);
+    put_str(likert(xbth, 12), 16, 15);
+    put_str("Bows/Throw  :", 17, 1);
+    put_str(likert(xbthb, 12), 17, 15);
+    put_str("Saving Throw:", 18, 1);
+    put_str(likert(xsave, 6), 18, 15);
 
-    put_buffer("Stealth     :", 16, 28);
-    put_buffer(likert(xstl, 1), 16, 42);
-    put_buffer("Disarming   :", 17, 28);
-    put_buffer(likert(xdis, 8), 17, 42);
-    put_buffer("Magic Device:", 18, 28);
-    put_buffer(likert(xdev, 6), 18, 42);
+    put_str("Stealth     :", 16, 28);
+    put_str(likert(xstl, 1), 16, 42);
+    put_str("Disarming   :", 17, 28);
+    put_str(likert(xdis, 8), 17, 42);
+    put_str("Magic Device:", 18, 28);
+    put_str(likert(xdev, 6), 18, 42);
 
-    put_buffer("Perception  :", 16, 55);
-    put_buffer(likert(xfos, 3), 16, 69);
-    put_buffer("Searching   :", 17, 55);
-    put_buffer(likert(xsrh, 6), 17, 69);
-    put_buffer("Infra-Vision:", 18, 55);
-    put_buffer(xinfra, 18, 69);
+    put_str("Perception  :", 16, 55);
+    put_str(likert(xfos, 3), 16, 69);
+    put_str("Searching   :", 17, 55);
+    put_str(likert(xsrh, 6), 17, 69);
+    put_str("Infra-Vision:", 18, 55);
+    put_str(xinfra, 18, 69);
 }
 
 
@@ -1855,7 +1855,7 @@ get_name()
 
     strcpy(tmp, py.misc.name);
     prt("Enter your player's name  [press <RETURN> when finished]", 21, 2);
-    put_buffer(&blank_string[BLANK_LENGTH - 15], 2, 15);
+    put_str(&blank_string[BLANK_LENGTH - 15], 2, 15);
 #ifdef MAC
 /*
  * Force player to give a name, would be nice to get name from chooser (STR
@@ -1865,7 +1865,7 @@ get_name()
 #else
     if (!get_string(py.misc.name, 2, 15, 15) || py.misc.name[0] == 0) {
 	strcpy(py.misc.name, tmp);
-	put_buffer(tmp, 2, 15);
+	put_str(tmp, 2, 15);
     }
 #endif
     clear_from(20);
@@ -2373,8 +2373,8 @@ int          comment, nonconsec;
 	col = 31;
     offset = (class[py.misc.pclass].spell == MAGE ? SPELL_OFFSET : PRAYER_OFFSET);
     erase_line(1, col);
-    put_buffer("Name", 1, col + 5);
-    put_buffer("Lv Mana Fail", 1, col + 35);
+    put_str("Name", 1, col + 5);
+    put_str("Lv Mana Fail", 1, col + 35);
 /* only show the first 22 choices */
     if (num > 22)
 	num = 22;
@@ -3057,7 +3057,7 @@ prt_experience()
     if (p_ptr->exp > p_ptr->max_exp)
 	p_ptr->max_exp = p_ptr->exp;
     (void) sprintf(out_val, "%8ld", (long)p_ptr->exp);
-    put_buffer(out_val, 13, STAT_COLUMN+4);
+    put_str(out_val, 13, STAT_COLUMN+4);
 }
 
 

@@ -786,7 +786,7 @@ int *generate;
     clear_screen();
 
     (void)sprintf(temp, "Restoring Character.");
-    put_buffer(temp, 23, 0);
+    put_str(temp, 23, 0);
     sleep(1);
 
     if (turn >= 0)
