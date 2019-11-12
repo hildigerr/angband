@@ -676,7 +676,7 @@ char *fnam;
     if (log_index < 0)
 	return TRUE;		   /* Nothing to save. */
 
-    nosignals();
+    signals_ignore_tstp();
     put_qio();
     disturb(1, 0);		   /* Turn off resting and searching. */
     change_speed(-pack_heavy);	   /* Fix the speed */
@@ -774,7 +774,7 @@ int *generate;
     byte char_tmp, ychar, xchar, count;
 
     free_turn_flag = TRUE;	   /* So a feeling isn't generated upon reloading -DGK */
-    nosignals();
+    signals_ignore_tstp();
     *generate = TRUE;
     fd = (-1);
 

@@ -16,7 +16,7 @@
 #ifdef MAC
 
 void 
-nosignals()
+signals_ignore_tstp()
 {
 }
 
@@ -216,7 +216,7 @@ static int          mask;
 #endif
 
 void 
-nosignals()
+signals_ignore_tstp()
 {
 #if !defined(ATARIST_MWC)
 #ifdef SIGTSTP

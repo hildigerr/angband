@@ -214,7 +214,7 @@ int from, to;
 	    msg_print(NULL);
 	    clear_screen();
 	    flush();		   /* flush all input */
-	    nosignals();	   /* Can't interrupt or suspend. */
+	    signals_ignore_tstp();	   /* Can't interrupt or suspend. */
 	    (void)save_char();	   /* Save the memory at least. */
 	    restore_term();
 	    exit(0);
@@ -615,7 +615,7 @@ exit_game()
 /* What happens upon dying.				-RAK-	 */
     msg_print(NULL);
     flush();			   /* flush all input */
-    nosignals();		   /* Can't interrupt or suspend. */
+    signals_ignore_tstp();		   /* Can't interrupt or suspend. */
     if (turn >= 0) {
 	if (total_winner)
 	    kingly();
