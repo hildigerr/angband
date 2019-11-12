@@ -21,9 +21,9 @@ lib/files/:
 	to_do.doc			My to_do list
 lib/save/				Where the savefiles are stored
 lib/bones/			Where the bones files are stored
-lib/quests/:
-	dragons				Dragon quest plane
-	elemental			Elemental quest plane
+
+	dragon.qst				Dragon quest plane
+	element.qst			Elemental quest plane
 
 
 src/:
