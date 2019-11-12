@@ -1374,7 +1374,7 @@ int       (*test) ();
      */
 
     c_ptr = &cave[char_row][char_col];
-    ih = t_list[c_ptr->tptr].tval;
+    ih = i_list[c_ptr->tptr].tval;
     on_floor = ( (strcmp("Item you wish identified?",pmt) == 0) &&
 		 !( (c_ptr->tptr == 0) || ih == TV_NOTHING
 		    || ih > TV_MAX_PICK_UP) );
@@ -1931,7 +1931,7 @@ int y1, y2;
 		if (c_ptr->fval >= MIN_CAVE_WALL)
 		    c_ptr->pl = TRUE;
 		else if (!c_ptr->fm && c_ptr->tptr != 0) {
-		    tval = t_list[c_ptr->tptr].tval;
+		    tval = i_list[c_ptr->tptr].tval;
 		    if ((tval >= TV_MIN_VISIBLE) && (tval <= TV_MAX_VISIBLE))
 			c_ptr->fm = TRUE;
 		}
@@ -2180,7 +2180,7 @@ register int y, x;
     register inven_type *t_ptr;
 
     c_ptr = &cave[y][x];
-    t_ptr = &t_list[c_ptr->tptr];
+    t_ptr = &i_list[c_ptr->tptr];
     if (t_ptr->tval == TV_INVIS_TRAP) {
 	t_ptr->tval = TV_VIS_TRAP;
 	lite_spot(y, x);
@@ -2218,7 +2218,7 @@ int y, x, chance;
 		c_ptr = &cave[i][j];
 	    /* Search for hidden objects		   */
 		if (c_ptr->tptr != 0) {
-		    t_ptr = &t_list[c_ptr->tptr];
+		    t_ptr = &i_list[c_ptr->tptr];
 		/* Trap on floor?		       */
 		    if (t_ptr->tval == TV_INVIS_TRAP) {
 			objdes(tmp_str2, t_ptr, TRUE);
@@ -2536,7 +2536,7 @@ int dir, y, x;
 		c_ptr = &cave[row][col];
 		if (player_light || c_ptr->tl || c_ptr->pl || c_ptr->fm) {
 		    if (c_ptr->tptr != 0) {
-			t = t_list[c_ptr->tptr].tval;
+			t = i_list[c_ptr->tptr].tval;
 			if (t != TV_INVIS_TRAP && t != TV_SECRET_DOOR
 			    && (t != TV_OPEN_DOOR || !find_ignore_doors)) {
 			    end_find();

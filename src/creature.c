@@ -1350,7 +1350,7 @@ u32b *rcmove;
 		*rcmove |= CM_PHASE;
 	    } else if (c_list[m_ptr->mptr].cdefense & BREAK_WALL) {
 	    /* Crunch up those Walls Morgoth and Umber Hulks!!!! */
-		t_ptr = &t_list[c_ptr->tptr];
+		t_ptr = &i_list[c_ptr->tptr];
 		do_move = TRUE;
 		c_recall[m_ptr->mptr].r_cdefense |= BREAK_WALL;
 		if ((t_ptr->tval == TV_CLOSED_DOOR) ||
@@ -1366,7 +1366,7 @@ u32b *rcmove;
 	    }
 	/* Creature can open doors?	   */
 	    else if (c_ptr->tptr != 0) {
-		t_ptr = &t_list[c_ptr->tptr];
+		t_ptr = &i_list[c_ptr->tptr];
 		if (movebits & CM_OPEN_DOOR) {	/* Creature can open doors. */
 		    stuck_door = FALSE;
 		    if (t_ptr->tval == TV_CLOSED_DOOR) {
@@ -1419,8 +1419,8 @@ u32b *rcmove;
 	    }
 	/* Glyph of warding present?	   */
 	    if (do_move && (c_ptr->tptr != 0) &&
-		(t_list[c_ptr->tptr].tval == TV_VIS_TRAP) &&
-		(t_list[c_ptr->tptr].sval == 99)) {
+		(i_list[c_ptr->tptr].tval == TV_VIS_TRAP) &&
+		(i_list[c_ptr->tptr].sval == 99)) {
 		if (randint(OBJ_BREAK_GLYPH) < c_list[m_ptr->mptr].level) {
 		    if ((newy == char_row) && (newx == char_col))
 			msg_print("The rune of protection is broken!");
@@ -1504,30 +1504,30 @@ u32b *rcmove;
 		    c_ptr = &cave[newy][newx];
 
 		    if ((c_ptr->tptr != 0)
-			&& (t_list[c_ptr->tptr].tval <= TV_MAX_OBJECT)) {
+			&& (i_list[c_ptr->tptr].tval <= TV_MAX_OBJECT)) {
 #ifdef ATARIST_MWC
 			*rcmove |= holder;
 #else
 			*rcmove |= CM_PICKS_UP;
 #endif
 			t = 0L;
-			if ((t_list[c_ptr->tptr].flags & TR_SLAY_DRAGON) ||
-			    (t_list[c_ptr->tptr].flags & TR_SLAY_X_DRAGON))
+			if ((i_list[c_ptr->tptr].flags & TR_SLAY_DRAGON) ||
+			    (i_list[c_ptr->tptr].flags & TR_SLAY_X_DRAGON))
 			    t |= DRAGON;
-			if (t_list[c_ptr->tptr].flags & TR_SLAY_UNDEAD)
+			if (i_list[c_ptr->tptr].flags & TR_SLAY_UNDEAD)
 			    t |= UNDEAD;
-			if (t_list[c_ptr->tptr].flags2 & TR_SLAY_DEMON)
+			if (i_list[c_ptr->tptr].flags2 & TR_SLAY_DEMON)
 			    t |= DEMON;
-			if (t_list[c_ptr->tptr].flags2 & TR_SLAY_TROLL)
+			if (i_list[c_ptr->tptr].flags2 & TR_SLAY_TROLL)
 			    t |= TROLL;
-			if (t_list[c_ptr->tptr].flags2 & TR_SLAY_GIANT)
+			if (i_list[c_ptr->tptr].flags2 & TR_SLAY_GIANT)
 			    t |= GIANT;
-			if (t_list[c_ptr->tptr].flags2 & TR_SLAY_ORC)
+			if (i_list[c_ptr->tptr].flags2 & TR_SLAY_ORC)
 			    t |= ORC;
 		    /* if artifact, or wearable & hurts this monster -CWS */
-			if ((t_list[c_ptr->tptr].flags2 & TR_ARTIFACT) ||
-			    ( (t_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
-			      (t_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
+			if ((i_list[c_ptr->tptr].flags2 & TR_ARTIFACT) ||
+			    ( (i_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
+			      (i_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
 			      (c_list[m_ptr->mptr].cdefense & t) )) {
 
 /* FIXME: should use new line-splitting code */
@@ -1540,7 +1540,7 @@ u32b *rcmove;
 						   m_ptr->fx)) {
 			    /* if we can see it, tell us what happened -CFT */
 				monster_name(m_name, m_ptr, &(c_list[m_ptr->mptr]));
-				objdes(i_name, &(t_list[c_ptr->tptr]), TRUE);
+				objdes(i_name, &(i_list[c_ptr->tptr]), TRUE);
 				sprintf(out_val,
 					"%s tries to pick up %s, but stops suddenly!",
 					m_name, i_name);
@@ -3210,12 +3210,12 @@ int mon_y, mon_x;
 		    take_hit(damage, "an Earthquake");
 		}
 		if (c_ptr->tptr != 0)
-		    if (((t_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
-			 (t_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
-			 (t_list[c_ptr->tptr].flags2 & TR_ARTIFACT)) ||
-			(t_list[c_ptr->tptr].tval == TV_UP_STAIR) ||
-			(t_list[c_ptr->tptr].tval == TV_DOWN_STAIR) ||
-			(t_list[c_ptr->tptr].tval == TV_STORE_DOOR))
+		    if (((i_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
+			 (i_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
+			 (i_list[c_ptr->tptr].flags2 & TR_ARTIFACT)) ||
+			(i_list[c_ptr->tptr].tval == TV_UP_STAIR) ||
+			(i_list[c_ptr->tptr].tval == TV_DOWN_STAIR) ||
+			(i_list[c_ptr->tptr].tval == TV_STORE_DOOR))
 			continue;  /* don't kill artifacts... */
 		    else
 			(void)delete_object(i, j);
@@ -3300,12 +3300,12 @@ int mon_y, mon_x;
 	move_rec(char_row, char_col, y, x);
     /* don't destroy floor if stairs, shop, or artifact... */
 	if ((c_ptr->fval <= MAX_CAVE_FLOOR) &&
-	((c_ptr->tptr == 0) || ((t_list[c_ptr->tptr].tval != TV_UP_STAIR) &&
-			      (t_list[c_ptr->tptr].tval != TV_DOWN_STAIR) &&
-			      (t_list[c_ptr->tptr].tval != TV_STORE_DOOR) &&
-			      !((t_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
-				(t_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
-			    (t_list[c_ptr->tptr].flags2 & TR_ARTIFACT))))) {
+	((c_ptr->tptr == 0) || ((i_list[c_ptr->tptr].tval != TV_UP_STAIR) &&
+			      (i_list[c_ptr->tptr].tval != TV_DOWN_STAIR) &&
+			      (i_list[c_ptr->tptr].tval != TV_STORE_DOOR) &&
+			      !((i_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
+				(i_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
+			    (i_list[c_ptr->tptr].flags2 & TR_ARTIFACT))))) {
 	    if (c_ptr->tptr)
 		delete_object(char_row, char_col);
 	    tmp = randint(10);

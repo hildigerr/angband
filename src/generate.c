@@ -341,9 +341,9 @@ place_destroyed()
 	    for (j = (x - 15); j <= (x + 15); j++)
 		if (in_bounds(i, j) && (cave[i][j].fval != BOUNDARY_WALL) &&
 		    ((cave[i][j].tptr == 0) ||	/* DGK */
-		     ((t_list[cave[i][j].tptr].tval != TV_UP_STAIR) &&
-		      (t_list[cave[i][j].tptr].tval != TV_DOWN_STAIR) &&
-		      (!(t_list[cave[i][j].tptr].flags2 & TR_ARTIFACT))))) {
+		     ((i_list[cave[i][j].tptr].tval != TV_UP_STAIR) &&
+		      (i_list[cave[i][j].tptr].tval != TV_DOWN_STAIR) &&
+		      (!(i_list[cave[i][j].tptr].flags2 & TR_ARTIFACT))))) {
 		    k = distance(i, j, y, x);
 		    if (i == char_row && j == char_col)
 			repl_spot(i, j, 1);
@@ -371,11 +371,11 @@ int y, x;
     if (!in_bounds(y,x))
 	return NULL;
     t = &cave[y][x];
-    tv = t_list[t->tptr].tval;
+    tv = i_list[t->tptr].tval;
     
     if (t->tptr != 0)
 	if (((tv <= TV_MAX_WEAR) && (tv >= TV_MIN_WEAR) &&
-	     (t_list[t->tptr].flags2 & TR_ARTIFACT)) ||
+	     (i_list[t->tptr].flags2 & TR_ARTIFACT)) ||
 	    (tv == TV_UP_STAIR) || (tv == TV_DOWN_STAIR) ||
 	    (tv == TV_STORE_DOOR))
 	    return NULL;
@@ -395,7 +395,7 @@ int y, x;
     if (!(c_ptr = test_place_obj(y,x))) return;
     cur_pos = i_pop();
     c_ptr->tptr = cur_pos;
-    invcopy(&t_list[cur_pos], OBJ_OPEN_DOOR);
+    invcopy(&i_list[cur_pos], OBJ_OPEN_DOOR);
     c_ptr->fval = CORR_FLOOR;
 }
 
@@ -410,9 +410,9 @@ int y, x;
     if (!(c_ptr = test_place_obj(y,x))) return;
     cur_pos = i_pop();
     c_ptr->tptr = cur_pos;
-    invcopy(&t_list[cur_pos], OBJ_OPEN_DOOR);
+    invcopy(&i_list[cur_pos], OBJ_OPEN_DOOR);
     c_ptr->fval = CORR_FLOOR;
-    t_list[cur_pos].p1 = 1;
+    i_list[cur_pos].p1 = 1;
 }
 
 
@@ -426,7 +426,7 @@ int y, x;
     if (!(c_ptr = test_place_obj(y,x))) return;
     cur_pos = i_pop();
     c_ptr->tptr = cur_pos;
-    invcopy(&t_list[cur_pos], OBJ_CLOSED_DOOR);
+    invcopy(&i_list[cur_pos], OBJ_CLOSED_DOOR);
     c_ptr->fval = BLOCKED_FLOOR;
 }
 
@@ -441,9 +441,9 @@ int y, x;
     if (!(c_ptr = test_place_obj(y,x))) return;
     cur_pos = i_pop();
     c_ptr->tptr = cur_pos;
-    invcopy(&t_list[cur_pos], OBJ_CLOSED_DOOR);
+    invcopy(&i_list[cur_pos], OBJ_CLOSED_DOOR);
     c_ptr->fval = BLOCKED_FLOOR;
-    t_list[cur_pos].p1 = randint(10) + 10;
+    i_list[cur_pos].p1 = randint(10) + 10;
 }
 
 
@@ -457,9 +457,9 @@ int y, x;
     if (!(c_ptr = test_place_obj(y,x))) return;
     cur_pos = i_pop();
     c_ptr->tptr = cur_pos;
-    invcopy(&t_list[cur_pos], OBJ_CLOSED_DOOR);
+    invcopy(&i_list[cur_pos], OBJ_CLOSED_DOOR);
     c_ptr->fval = BLOCKED_FLOOR;
-    t_list[cur_pos].p1 = (-randint(10) - 10);
+    i_list[cur_pos].p1 = (-randint(10) - 10);
 }
 
 
@@ -473,7 +473,7 @@ int y, x;
     if (!(c_ptr = test_place_obj(y,x))) return;
     cur_pos = i_pop();
     c_ptr->tptr = cur_pos;
-    invcopy(&t_list[cur_pos], OBJ_SECRET_DOOR);
+    invcopy(&i_list[cur_pos], OBJ_SECRET_DOOR);
     c_ptr->fval = BLOCKED_FLOOR;
 }
 
@@ -514,7 +514,7 @@ int y, x;
     if (!(c_ptr = test_place_obj(y,x))) return;
     cur_pos = i_pop();
     c_ptr->tptr = cur_pos;
-    invcopy(&t_list[cur_pos], OBJ_UP_STAIR);
+    invcopy(&i_list[cur_pos], OBJ_UP_STAIR);
 
 }
 
@@ -534,7 +534,7 @@ int y, x;
     if (!(c_ptr = test_place_obj(y,x))) return;
     cur_pos = i_pop();
     c_ptr->tptr = cur_pos;
-    invcopy(&t_list[cur_pos], OBJ_DOWN_STAIR);
+    invcopy(&i_list[cur_pos], OBJ_DOWN_STAIR);
     if (dun_level == 0)			/* on town level -CWS */
 	c_ptr->pl = TRUE;
 }
@@ -2670,7 +2670,7 @@ int store_num, y, x;
     c_ptr->fval = CORR_FLOOR;
     cur_pos = i_pop();
     c_ptr->tptr = cur_pos;
-    invcopy(&t_list[cur_pos], OBJ_STORE_DOOR + store_num);
+    invcopy(&i_list[cur_pos], OBJ_STORE_DOOR + store_num);
 }
 
 
@@ -2681,7 +2681,7 @@ tlink()
     register int i;
 
     for (i = 0; i < MAX_TALLOC; i++)
-	invcopy(&t_list[i], OBJ_NOTHING);
+	invcopy(&i_list[i], OBJ_NOTHING);
     tcptr = MIN_TRIX;
 }
 

@@ -396,9 +396,9 @@ int store_num;
     do {
 	if (store_num != 6) {
 	    i = store_choice[store_num][randint(STORE_CHOICES) - 1];
-	    invcopy(&t_list[cur_pos], i);
+	    invcopy(&i_list[cur_pos], i);
 	    magic_treasure(cur_pos, OBJ_TOWN_LEVEL, FALSE, TRUE);
-	    t_ptr = &t_list[cur_pos];
+	    t_ptr = &i_list[cur_pos];
 	    if (store_check_num(t_ptr, store_num)) {
 		if ((t_ptr->cost > 0) &&	/* Item must be good	 */
 		    (t_ptr->cost < owners[s_ptr->owner].max_cost)) {
@@ -413,9 +413,9 @@ int store_num;
 	    tries++;
 	} else {
 	    i = get_obj_num(40, FALSE);
-	    invcopy(&t_list[cur_pos], i);
+	    invcopy(&i_list[cur_pos], i);
 	    magic_treasure(cur_pos, 40, FALSE, TRUE);
-	    t_ptr = &t_list[cur_pos];
+	    t_ptr = &i_list[cur_pos];
 	    if (store_check_num(t_ptr, store_num)) {
 		if (t_ptr->cost > 0) {	/* Item must be good	 */
 		/*

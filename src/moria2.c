@@ -73,7 +73,7 @@ int y, x;
     change_trap(y, x);
     c_ptr = &cave[y][x];
     p_ptr = &py.misc;
-    t_ptr = &t_list[c_ptr->tptr];
+    t_ptr = &i_list[c_ptr->tptr];
     dam = pdamroll(t_ptr->damage);
     switch (t_ptr->sval) {
       case 1:			   /* Open pit */
@@ -330,8 +330,8 @@ int pickup;
     register inven_type *i_ptr;
 
     c_ptr = &cave[y][x];
-    i_ptr = &t_list[c_ptr->tptr];
-    i = t_list[c_ptr->tptr].tval;
+    i_ptr = &i_list[c_ptr->tptr];
+    i = i_list[c_ptr->tptr].tval;
     if (i <= TV_MAX_PICK_UP) {
 	end_find();
     /* There's GOLD in them thar hills!      */
@@ -633,8 +633,8 @@ u32b              win;
 			crown = TRUE;
 			cur_pos = i_pop();
 			cave[j][k].tptr = cur_pos;
-			invcopy(&t_list[cur_pos], 98);
-			t_ptr = &t_list[cur_pos];
+			invcopy(&i_list[cur_pos], 98);
+			t_ptr = &i_list[cur_pos];
 			t_ptr->flags |= (TR_STR | TR_DEX | TR_CON | TR_INT | TR_WIS | TR_CHR |
 				       TR_SEE_INVIS | TR_CURSED | TR_INFRA);
 			t_ptr->flags2 |= (TR_TELEPATHY | TR_LIGHT | TR_ARTIFACT);
@@ -651,8 +651,8 @@ u32b              win;
 			grond = TRUE;
 			cur_pos = i_pop();
 			cave[j][k].tptr = cur_pos;
-			invcopy(&t_list[cur_pos], 56);
-			t_ptr = &t_list[cur_pos];
+			invcopy(&i_list[cur_pos], 56);
+			t_ptr = &i_list[cur_pos];
 			t_ptr->name2 = ART_GROND;
 			t_ptr->tohit = 5;
 			t_ptr->todam = 25;
@@ -866,9 +866,9 @@ int monptr, dam, print_fear;
 			int                 ty = m_ptr->fy, tx = m_ptr->fx, ny, nx;
 
 			while ((cave[ty][tx].tptr != 0) &&
-			  (t_list[cave[ty][tx].tptr].tval >= TV_MIN_WEAR) &&
-			  (t_list[cave[ty][tx].tptr].tval <= TV_MAX_WEAR) &&
-			 (t_list[cave[ty][tx].tptr].flags2 & TR_ARTIFACT)) {
+			  (i_list[cave[ty][tx].tptr].tval >= TV_MIN_WEAR) &&
+			  (i_list[cave[ty][tx].tptr].tval <= TV_MAX_WEAR) &&
+			 (i_list[cave[ty][tx].tptr].flags2 & TR_ARTIFACT)) {
 			    do { /* pick new possible spot */
 				ny = ty + (byte) randint(3) - 2;
 				nx = tx + (byte) randint(3) - 2;
@@ -884,7 +884,7 @@ int monptr, dam, print_fear;
 		    }
 		    cur_pos = i_pop();
 		    ca_ptr->tptr = cur_pos;
-		    invcopy(&t_list[cur_pos], OBJ_DOWN_STAIR);
+		    invcopy(&i_list[cur_pos], OBJ_DOWN_STAIR);
 		    msg_print("Well done!! Go for it!");
 		    msg_print("A magical stairway appears...");
 		} /* if-else for stairway */
@@ -1223,7 +1223,7 @@ int dir, do_pickup;
 		move_light(old_row, old_col, char_row, char_col);
 	    /* An object is beneath him.	     */
 		if (c_ptr->tptr != 0) {
-		    i = t_list[c_ptr->tptr].tval;
+		    i = i_list[c_ptr->tptr].tval;
 		    if (i == TV_INVIS_TRAP || i == TV_VIS_TRAP
 			|| i == TV_STORE_DOOR || !prompt_carry_flag
 			|| i == TV_GOLD)
@@ -1233,7 +1233,7 @@ int dir, do_pickup;
 			inven_type         *i_ptr;
 			bigvtype            tmp_str, tmp2_str;
 
-			i_ptr = &t_list[cave[char_row][char_col].tptr];
+			i_ptr = &i_list[cave[char_row][char_col].tptr];
 			objdes(tmp_str, i_ptr, TRUE);
 			sprintf(tmp2_str, "You see %s.", tmp_str);
 			msg_print(tmp2_str);
@@ -1241,7 +1241,7 @@ int dir, do_pickup;
 		/* if stepped on falling rock trap, and space contains
 		 * rubble, then step back into a clear area 
 		 */
-		    if (t_list[c_ptr->tptr].tval == TV_RUBBLE) {
+		    if (i_list[c_ptr->tptr].tval == TV_RUBBLE) {
 			move_rec(char_row, char_col, old_row, old_col);
 			move_light(char_row, char_col, old_row, old_col);
 			char_row = old_row;
@@ -1249,7 +1249,7 @@ int dir, do_pickup;
 	/* check to see if we have stepped back onto another trap, if so, set it off */
 			c_ptr = &cave[char_row][char_col];
 			if (c_ptr->tptr != 0) {
-			    i = t_list[c_ptr->tptr].tval;
+			    i = i_list[c_ptr->tptr].tval;
 			    if (i == TV_INVIS_TRAP || i == TV_VIS_TRAP
 				|| i == TV_STORE_DOOR)
 				hit_trap(char_row, char_col);
@@ -1258,9 +1258,9 @@ int dir, do_pickup;
 		}
 	    } else {		   /* Can't move onto floor space */
 		if (!find_flag && (c_ptr->tptr != 0)) {
-		    if (t_list[c_ptr->tptr].tval == TV_RUBBLE)
+		    if (i_list[c_ptr->tptr].tval == TV_RUBBLE)
 			msg_print("There is rubble blocking your way.");
-		    else if (t_list[c_ptr->tptr].tval == TV_CLOSED_DOOR)
+		    else if (i_list[c_ptr->tptr].tval == TV_CLOSED_DOOR)
 			msg_print("There is a closed door blocking your way.");
 		} else
 		    end_find();
@@ -1294,7 +1294,7 @@ int y, x;
     int                 j, k;
     register inven_type *t_ptr;
 
-    t_ptr = &t_list[cave[y][x].tptr];
+    t_ptr = &i_list[cave[y][x].tptr];
     if (CH_LOSE_STR & t_ptr->flags) {
 	msg_print("A small needle has pricked you!");
 	if (!py.flags.sustain_str) {
@@ -1361,8 +1361,8 @@ do_cmd_open()
 	c_ptr = &cave[y][x];
 	no_object = FALSE;
 	if (c_ptr->cptr > 1 && c_ptr->tptr != 0 &&
-	    (t_list[c_ptr->tptr].tval == TV_CLOSED_DOOR
-	     || t_list[c_ptr->tptr].tval == TV_CHEST)) {
+	    (i_list[c_ptr->tptr].tval == TV_CLOSED_DOOR
+	     || i_list[c_ptr->tptr].tval == TV_CHEST)) {
 	    m_ptr = &m_list[c_ptr->cptr];
 	    if (m_ptr->ml) {
 		if (c_list[m_ptr->mptr].cdefense & UNIQUE)
@@ -1375,8 +1375,8 @@ do_cmd_open()
 	    msg_print(out_val);
 	} else if (c_ptr->tptr != 0)
 	/* Closed door		 */
-	    if (t_list[c_ptr->tptr].tval == TV_CLOSED_DOOR) {
-		t_ptr = &t_list[c_ptr->tptr];
+	    if (i_list[c_ptr->tptr].tval == TV_CLOSED_DOOR) {
+		t_ptr = &i_list[c_ptr->tptr];
 		if (t_ptr->p1 > 0) {
 		    p_ptr = &py.misc;
 		    i = p_ptr->disarm + 2 * todis_adj() + stat_adj(A_INT)
@@ -1397,7 +1397,7 @@ do_cmd_open()
 		} else if (t_ptr->p1 < 0)	/* It's stuck	  */
 		    msg_print("It appears to be stuck.");
 		if (t_ptr->p1 == 0) {
-		    invcopy(&t_list[c_ptr->tptr], OBJ_OPEN_DOOR);
+		    invcopy(&i_list[c_ptr->tptr], OBJ_OPEN_DOOR);
 		    c_ptr->fval = CORR_FLOOR;
 		    lite_spot(y, x);
 		    check_view();
@@ -1405,11 +1405,11 @@ do_cmd_open()
 		}
 	    }
     /* Open a closed chest.		     */
-	    else if (t_list[c_ptr->tptr].tval == TV_CHEST) {
+	    else if (i_list[c_ptr->tptr].tval == TV_CHEST) {
 		p_ptr = &py.misc;
 		i = p_ptr->disarm + 2 * todis_adj() + stat_adj(A_INT)
 		    + (class_level_adj[p_ptr->pclass][CLA_DISARM] * p_ptr->lev / 3);
-		t_ptr = &t_list[c_ptr->tptr];
+		t_ptr = &i_list[c_ptr->tptr];
 		flag = FALSE;
 		if (CH_LOCKED & t_ptr->flags)
 		    if (py.flags.confused > 0)
@@ -1461,8 +1461,8 @@ do_cmd_open()
 
 		    coin_type = 0;
 		    opening_chest = TRUE; /* don't generate another chest -CWS */
-		    (void)monster_death(y, x, t_list[c_ptr->tptr].flags, 0, 0);
-		    t_list[c_ptr->tptr].flags = 0;
+		    (void)monster_death(y, x, i_list[c_ptr->tptr].flags, 0, 0);
+		    i_list[c_ptr->tptr].flags = 0;
 		    opening_chest = FALSE;
 		}
 	    } else
@@ -1504,10 +1504,10 @@ do_cmd_close()
 	c_ptr = &cave[y][x];
 	no_object = FALSE;
 	if (c_ptr->tptr != 0)
-	    if (t_list[c_ptr->tptr].tval == TV_OPEN_DOOR)
+	    if (i_list[c_ptr->tptr].tval == TV_OPEN_DOOR)
 		if (c_ptr->cptr == 0)
-		    if (t_list[c_ptr->tptr].p1 == 0) {
-			invcopy(&t_list[c_ptr->tptr], OBJ_CLOSED_DOOR);
+		    if (i_list[c_ptr->tptr].p1 == 0) {
+			invcopy(&i_list[c_ptr->tptr], OBJ_CLOSED_DOOR);
 			c_ptr->fval = BLOCKED_FLOOR;
 			lite_spot(y, x);
 		    } else
@@ -1554,13 +1554,13 @@ int y, x, t1, t2;
     if (t1 > t2) {
 	c_ptr = &cave[y][x];
 	if (c_ptr->tptr) { /* secret door or rubble or gold -CFT */
-	    if (t_list[c_ptr->tptr].tval == TV_RUBBLE) {
+	    if (i_list[c_ptr->tptr].tval == TV_RUBBLE) {
 		delete_object(y,x); /* blow it away... */
 		if (randint(10)==1){
 		    place_object(y,x); /* and drop a goodie! */
 		}
 	    }
-	    else if (t_list[c_ptr->tptr].tval >= TV_MIN_DOORS)
+	    else if (i_list[c_ptr->tptr].tval >= TV_MIN_DOORS)
 		delete_object(y,x); /* no more door... */
 	} /* if object there.... */
 	
@@ -1631,8 +1631,8 @@ int dir;
  * somewhere where it has no effect.  
  */
     if (c_ptr->fval < MIN_CAVE_WALL
-	&& (c_ptr->tptr == 0 || (t_list[c_ptr->tptr].tval != TV_RUBBLE
-			  && t_list[c_ptr->tptr].tval != TV_SECRET_DOOR))) {
+	&& (c_ptr->tptr == 0 || (i_list[c_ptr->tptr].tval != TV_RUBBLE
+			  && i_list[c_ptr->tptr].tval != TV_SECRET_DOOR))) {
 	if (c_ptr->tptr == 0) {
 	    msg_print("Tunnel through what?  Empty air?!?");
 	    free_turn_flag = TRUE;
@@ -1708,7 +1708,7 @@ int dir;
 	/* Is there an object in the way?  (Rubble and secret doors) */
 	    if (c_ptr->tptr != 0) {
 	    /* Rubble.     */
-		if (t_list[c_ptr->tptr].tval == TV_RUBBLE) {
+		if (i_list[c_ptr->tptr].tval == TV_RUBBLE) {
 		    if (tabil > randint(180)) {
 			(void)delete_object(y, x);
 			msg_print("You have removed the rubble.");
@@ -1723,7 +1723,7 @@ int dir;
 			count_msg_print("You dig in the rubble.");
 		}
 	    /* Secret doors. */
-		else if (t_list[c_ptr->tptr].tval == TV_SECRET_DOOR) {
+		else if (i_list[c_ptr->tptr].tval == TV_SECRET_DOOR) {
 		    count_msg_print("You tunnel into the granite wall.");
 		    search(char_row, char_col, py.misc.srh);
 		} else {
@@ -1766,8 +1766,8 @@ do_cmd_disarm()
 	c_ptr = &cave[y][x];
 	no_disarm = FALSE;
 	if (c_ptr->cptr > 1 && c_ptr->tptr != 0 &&
-	    (t_list[c_ptr->tptr].tval == TV_VIS_TRAP
-	     || t_list[c_ptr->tptr].tval == TV_CHEST)) {
+	    (i_list[c_ptr->tptr].tval == TV_VIS_TRAP
+	     || i_list[c_ptr->tptr].tval == TV_CHEST)) {
 	    m_ptr = &m_list[c_ptr->cptr];
 	    if (m_ptr->ml)
 		(void)sprintf(m_name, "The %s", c_list[m_ptr->mptr].name);
@@ -1784,7 +1784,7 @@ do_cmd_disarm()
 		tot = tot / 10;
 	    if (py.flags.image > 0)
 		tot = tot / 10;
-	    i_ptr = &t_list[c_ptr->tptr];
+	    i_ptr = &i_list[c_ptr->tptr];
 	    i = i_ptr->tval;
 	    level = i_ptr->level;
 	    if (i == TV_VIS_TRAP) {/* Floor trap    */
@@ -2165,10 +2165,10 @@ int                *transparent;
     }
     if (c_ptr->tl || c_ptr->pl || c_ptr->fm) {
 	if (c_ptr->tptr != 0) {
-	    if (t_list[c_ptr->tptr].tval == TV_SECRET_DOOR)
+	    if (i_list[c_ptr->tptr].tval == TV_SECRET_DOOR)
 		goto granite;
-	    if (gl_rock == 0 && t_list[c_ptr->tptr].tval != TV_INVIS_TRAP) {
-		objdes(tmp_str, &t_list[c_ptr->tptr], TRUE);
+	    if (gl_rock == 0 && i_list[c_ptr->tptr].tval != TV_INVIS_TRAP) {
+		objdes(tmp_str, &i_list[c_ptr->tptr], TRUE);
 		(void)sprintf(out_val, "%s %s.  ---pause---", dstring, tmp_str);
 		dstring = "It is in";
 		prt(out_val, 0, 0);
@@ -2400,8 +2400,8 @@ inven_type         *t_ptr;
 	    k++;
 	    if (!(cur_pos = cave[i][j].tptr) || (k>64))
 		flag = TRUE;
-	    if (flag && (((t_list[cur_pos].flags2 & TR_ARTIFACT) &&
-			  ((cur_pos = t_list[cur_pos].tval) >= TV_MIN_WEAR) &&
+	    if (flag && (((i_list[cur_pos].flags2 & TR_ARTIFACT) &&
+			  ((cur_pos = i_list[cur_pos].tval) >= TV_MIN_WEAR) &&
 			  (cur_pos <= TV_MAX_WEAR)) ||
 			 (cur_pos == TV_STORE_DOOR) ||
 			 (cur_pos == TV_UP_STAIR) ||
@@ -2421,7 +2421,7 @@ inven_type         *t_ptr;
 	    delete_object(i,j);
 	cur_pos = i_pop();
 	cave[i][j].tptr = cur_pos;
-	t_list[cur_pos] = *t_ptr;
+	i_list[cur_pos] = *t_ptr;
 	lite_spot(i, j);
     }
     else
@@ -2821,7 +2821,7 @@ bash()
 	    else
 		py_bash(y, x);
 	} else if (c_ptr->tptr != 0) {
-	    t_ptr = &t_list[c_ptr->tptr];
+	    t_ptr = &i_list[c_ptr->tptr];
 	    if (t_ptr->tval == TV_CLOSED_DOOR) {
 		count_msg_print("You smash into the door!");
 		tmp = py.stats.use_stat[A_STR] + py.misc.wt / 2;
@@ -2829,7 +2829,7 @@ bash()
 		if (randint(tmp * (20 + MY_ABS(t_ptr->p1))) <
 			10 * (tmp - MY_ABS(t_ptr->p1))) {
 		    msg_print("The door crashes open!");
-		    invcopy(&t_list[c_ptr->tptr], OBJ_OPEN_DOOR);
+		    invcopy(&i_list[c_ptr->tptr], OBJ_OPEN_DOOR);
 		    t_ptr->p1 = 1 - randint(2);	/* 50% chance of breaking door */
 		    c_ptr->fval = CORR_FLOOR;
 		    if (py.flags.confused == 0)

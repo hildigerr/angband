@@ -70,18 +70,18 @@ int y, x, sval;
 	return;	       /* don't put rubble under monsters, it's annoying -CFT */
 
     if (cave[y][x].tptr != 0)
-	if ((t_list[cave[y][x].tptr].tval == TV_STORE_DOOR) ||
-	    (t_list[cave[y][x].tptr].tval == TV_UP_STAIR) ||
-	    (t_list[cave[y][x].tptr].tval == TV_DOWN_STAIR) ||
-	    ((t_list[cave[y][x].tptr].tval >= TV_MIN_WEAR) &&
-	     (t_list[cave[y][x].tptr].tval <= TV_MAX_WEAR) &&
-	     (t_list[cave[y][x].tptr].flags2 & TR_ARTIFACT)))
+	if ((i_list[cave[y][x].tptr].tval == TV_STORE_DOOR) ||
+	    (i_list[cave[y][x].tptr].tval == TV_UP_STAIR) ||
+	    (i_list[cave[y][x].tptr].tval == TV_DOWN_STAIR) ||
+	    ((i_list[cave[y][x].tptr].tval >= TV_MIN_WEAR) &&
+	     (i_list[cave[y][x].tptr].tval <= TV_MAX_WEAR) &&
+	     (i_list[cave[y][x].tptr].flags2 & TR_ARTIFACT)))
 	    return;		   /* don't replace stairs, stores, artifacts */
 	else
 	    delete_object(y, x);
     cur_pos = i_pop();
     cave[y][x].tptr = cur_pos;
-    invcopy(&t_list[cur_pos], OBJ_TRAP_LIST + sval);
+    invcopy(&i_list[cur_pos], OBJ_TRAP_LIST + sval);
 }
 
 
@@ -96,12 +96,12 @@ int y, x;
     if (!in_bounds(y, x))
 	return;			   /* abort! -CFT */
     if (cave[y][x].tptr != 0)
-	if ((t_list[cave[y][x].tptr].tval == TV_STORE_DOOR) ||
-	    (t_list[cave[y][x].tptr].tval == TV_UP_STAIR) ||
-	    (t_list[cave[y][x].tptr].tval == TV_DOWN_STAIR) ||
-	    ((t_list[cave[y][x].tptr].tval >= TV_MIN_WEAR) &&
-	     (t_list[cave[y][x].tptr].tval <= TV_MAX_WEAR) &&
-	     (t_list[cave[y][x].tptr].flags2 & TR_ARTIFACT)))
+	if ((i_list[cave[y][x].tptr].tval == TV_STORE_DOOR) ||
+	    (i_list[cave[y][x].tptr].tval == TV_UP_STAIR) ||
+	    (i_list[cave[y][x].tptr].tval == TV_DOWN_STAIR) ||
+	    ((i_list[cave[y][x].tptr].tval >= TV_MIN_WEAR) &&
+	     (i_list[cave[y][x].tptr].tval <= TV_MAX_WEAR) &&
+	     (i_list[cave[y][x].tptr].flags2 & TR_ARTIFACT)))
 	    return;		   /* don't replace stairs, stores, artifacts */
 	else
 	    delete_object(y, x);
@@ -109,7 +109,7 @@ int y, x;
     cave_ptr = &cave[y][x];
     cave_ptr->tptr = cur_pos;
     cave_ptr->fval = BLOCKED_FLOOR;
-    invcopy(&t_list[cur_pos], OBJ_RUBBLE);
+    invcopy(&i_list[cur_pos], OBJ_RUBBLE);
 }
 
 /* if killed a 'Creeping _xxx_ coins'... -CWS */
@@ -149,12 +149,12 @@ int y, x;
     if (!in_bounds(y, x))
 	return;			   /* abort! -CFT */
     if (cave[y][x].tptr != 0)
-	if ((t_list[cave[y][x].tptr].tval == TV_STORE_DOOR) ||
-	    (t_list[cave[y][x].tptr].tval == TV_UP_STAIR) ||
-	    (t_list[cave[y][x].tptr].tval == TV_DOWN_STAIR) ||
-	    ((t_list[cave[y][x].tptr].tval >= TV_MIN_WEAR) &&
-	     (t_list[cave[y][x].tptr].tval <= TV_MAX_WEAR) &&
-	     (t_list[cave[y][x].tptr].flags2 & TR_ARTIFACT)))
+	if ((i_list[cave[y][x].tptr].tval == TV_STORE_DOOR) ||
+	    (i_list[cave[y][x].tptr].tval == TV_UP_STAIR) ||
+	    (i_list[cave[y][x].tptr].tval == TV_DOWN_STAIR) ||
+	    ((i_list[cave[y][x].tptr].tval >= TV_MIN_WEAR) &&
+	     (i_list[cave[y][x].tptr].tval <= TV_MAX_WEAR) &&
+	     (i_list[cave[y][x].tptr].flags2 & TR_ARTIFACT)))
 	    return;		   /* don't replace stairs, stores, artifacts */
 	else
 	    delete_object(y, x);
@@ -170,8 +170,8 @@ int y, x;
 	i = coin_type;
     }
     cave[y][x].tptr = cur_pos;
-    invcopy(&t_list[cur_pos], OBJ_GOLD_LIST + i);
-    t_ptr = &t_list[cur_pos];
+    invcopy(&i_list[cur_pos], OBJ_GOLD_LIST + i);
+    t_ptr = &i_list[cur_pos];
     t_ptr->cost += (8L * (long)randint((int)t_ptr->cost)) + randint(8);
 
 /* average the values to make Creeping _xxx_ coins not give too great treasure drops */
@@ -246,12 +246,12 @@ int y, x;
     if (!in_bounds(y, x))
 	return 0;		   /* abort! -CFT */
     if (cave[y][x].tptr != 0)
-	if ((t_list[cave[y][x].tptr].tval == TV_STORE_DOOR) ||
-	    (t_list[cave[y][x].tptr].tval == TV_UP_STAIR) ||
-	    (t_list[cave[y][x].tptr].tval == TV_DOWN_STAIR) ||
-	    ((t_list[cave[y][x].tptr].tval >= TV_MIN_WEAR) &&
-	     (t_list[cave[y][x].tptr].tval <= TV_MAX_WEAR) &&
-	     (t_list[cave[y][x].tptr].flags2 & TR_ARTIFACT)))
+	if ((i_list[cave[y][x].tptr].tval == TV_STORE_DOOR) ||
+	    (i_list[cave[y][x].tptr].tval == TV_UP_STAIR) ||
+	    (i_list[cave[y][x].tptr].tval == TV_DOWN_STAIR) ||
+	    ((i_list[cave[y][x].tptr].tval >= TV_MIN_WEAR) &&
+	     (i_list[cave[y][x].tptr].tval <= TV_MAX_WEAR) &&
+	     (i_list[cave[y][x].tptr].flags2 & TR_ARTIFACT)))
 	    return 0;		   /* don't replace stairs, stores, artifacts */
 	else
 	    delete_object(y, x);
@@ -457,9 +457,9 @@ again:
 	msg_print(str);
     cur_pos = i_pop();
     cave[y][x].tptr = cur_pos;
-    invcopy(&t_list[cur_pos], tmp);
-    t_list[cur_pos].timeout = 0;
-    t_list[cur_pos].ident |= ID_NOSHOW_TYPE; /* don't show (+x of yyy) for these */
+    invcopy(&i_list[cur_pos], tmp);
+    i_list[cur_pos].timeout = 0;
+    i_list[cur_pos].ident |= ID_NOSHOW_TYPE; /* don't show (+x of yyy) for these */
     if (object_list[tmp].level > object_level) {
 	rating += 2 * (object_list[sorted_objects[tmp]].level - object_level);
     }
@@ -477,12 +477,12 @@ int y, x;
 
     if (!in_bounds(y,x)) return; /* abort! -CFT */
     if (cave[y][x].tptr != 0)
-	if ((t_list[cave[y][x].tptr].tval == TV_STORE_DOOR) ||
-	    (t_list[cave[y][x].tptr].tval == TV_UP_STAIR) ||
-	    (t_list[cave[y][x].tptr].tval == TV_DOWN_STAIR) ||
-	    ((t_list[cave[y][x].tptr].tval >= TV_MIN_WEAR) &&
-	     (t_list[cave[y][x].tptr].tval <= TV_MAX_WEAR) &&
-	     (t_list[cave[y][x].tptr].flags2 & TR_ARTIFACT)))
+	if ((i_list[cave[y][x].tptr].tval == TV_STORE_DOOR) ||
+	    (i_list[cave[y][x].tptr].tval == TV_UP_STAIR) ||
+	    (i_list[cave[y][x].tptr].tval == TV_DOWN_STAIR) ||
+	    ((i_list[cave[y][x].tptr].tval >= TV_MIN_WEAR) &&
+	     (i_list[cave[y][x].tptr].tval <= TV_MAX_WEAR) &&
+	     (i_list[cave[y][x].tptr].flags2 & TR_ARTIFACT)))
 	    return; /* don't replace stairs, stores, artifacts */
 	else
 	    delete_object(y,x);
@@ -497,7 +497,7 @@ int y, x;
 	tmp = get_obj_num(dun_level, FALSE);
     } while (opening_chest && (object_list[sorted_objects[tmp]].tval == TV_CHEST));
 	
-    invcopy(&t_list[cur_pos], sorted_objects[tmp]);
+    invcopy(&i_list[cur_pos], sorted_objects[tmp]);
     magic_treasure(cur_pos, dun_level, FALSE, 0);
     if (object_list[sorted_objects[tmp]].level > dun_level)
 	rating += object_list[sorted_objects[tmp]].level - dun_level;
@@ -506,10 +506,10 @@ int y, x;
 	    char buf[200];
 	    byte temp;
 	    
-	    temp=t_list[cur_pos].ident;
-	    t_list[cur_pos].ident |= ID_STOREBOUGHT;
-	    objdes(buf, &t_list[cur_pos], TRUE);
-	    t_list[cur_pos].ident = temp;
+	    temp=i_list[cur_pos].ident;
+	    i_list[cur_pos].ident |= ID_STOREBOUGHT;
+	    objdes(buf, &i_list[cur_pos], TRUE);
+	    i_list[cur_pos].ident = temp;
 	    msg_print(buf);
 	}
     }
@@ -529,12 +529,12 @@ u32b good;
     if (!in_bounds(y, x))
 	return;			   /* abort! -CFT */
     if (cave[y][x].tptr != 0)
-	if ((t_list[cave[y][x].tptr].tval == TV_STORE_DOOR) ||
-	    (t_list[cave[y][x].tptr].tval == TV_UP_STAIR) ||
-	    (t_list[cave[y][x].tptr].tval == TV_DOWN_STAIR) ||
-	    ((t_list[cave[y][x].tptr].tval >= TV_MIN_WEAR) &&
-	     (t_list[cave[y][x].tptr].tval <= TV_MAX_WEAR) &&
-	     (t_list[cave[y][x].tptr].flags2 & TR_ARTIFACT)))
+	if ((i_list[cave[y][x].tptr].tval == TV_STORE_DOOR) ||
+	    (i_list[cave[y][x].tptr].tval == TV_UP_STAIR) ||
+	    (i_list[cave[y][x].tptr].tval == TV_DOWN_STAIR) ||
+	    ((i_list[cave[y][x].tptr].tval >= TV_MIN_WEAR) &&
+	     (i_list[cave[y][x].tptr].tval <= TV_MAX_WEAR) &&
+	     (i_list[cave[y][x].tptr].flags2 & TR_ARTIFACT)))
 	    return;		   /* don't replace stairs, stores, artifacts */
 	else
 	    delete_object(y, x);
@@ -572,17 +572,17 @@ u32b good;
 	    (object_list[sorted_objects[tmp]].sval > ((good & SPECIAL) ? 71 : 67)))
 	    is_good = TRUE;
     } while (!is_good);
-    invcopy(&t_list[cur_pos], sorted_objects[tmp]);
+    invcopy(&i_list[cur_pos], sorted_objects[tmp]);
     magic_treasure(cur_pos, object_level, (good & SPECIAL) ? 666 : 1, 0);
     if (peek) {
 	if (object_list[sorted_objects[tmp]].level > object_level) {
 	    char                buf[200];
 	    byte               t;
 
-	    t = t_list[cur_pos].ident;
-	    t_list[cur_pos].ident |= ID_STOREBOUGHT;
-	    objdes(buf, &t_list[cur_pos], TRUE);
-	    t_list[cur_pos].ident = t;
+	    t = i_list[cur_pos].ident;
+	    i_list[cur_pos].ident |= ID_STOREBOUGHT;
+	    objdes(buf, &i_list[cur_pos], TRUE);
+	    i_list[cur_pos].ident = t;
 	    msg_print(buf);
 	}
     }
@@ -1977,7 +1977,7 @@ register int item_val, drop_all;
     if (cave[char_row][char_col].tptr != 0)
 	(void)delete_object(char_row, char_col);
     i = i_pop();
-    t_list[i] = *i_ptr;
+    i_list[i] = *i_ptr;
     cave[char_row][char_col].tptr = i;
 
     if (item_val >= INVEN_WIELD)
@@ -1992,11 +1992,11 @@ register int item_val, drop_all;
 	    }
 	    invcopy(&inventory[inven_ctr], OBJ_NOTHING);
 	} else {
-	    t_list[i].number = 1;
+	    i_list[i].number = 1;
 	    inven_weight -= i_ptr->weight;
 	    i_ptr->number--;
 	}
-	objdes(prt1, &t_list[i], TRUE);
+	objdes(prt1, &i_list[i], TRUE);
 	(void)sprintf(prt2, "Dropped %s.", prt1);
 	msg_print(prt2);
     }
@@ -3578,7 +3578,7 @@ int dis;
 	}
 	while (((cave[y][x].fval >= MIN_CLOSED_SPACE) ||
 		(cave[y][x].cptr >= 2) ||
-		(t_list[cave[y][x].tptr].index == OBJ_OPEN_DOOR) ||
+		(i_list[cave[y][x].tptr].index == OBJ_OPEN_DOOR) ||
 		(cave[y][x].fval == NT_DARK_FLOOR) ||
 		(cave[y][x].fval == NT_LIGHT_FLOOR)) && count < 1000);
 

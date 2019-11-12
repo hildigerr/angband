@@ -160,7 +160,7 @@
  */
 
 #define MAX_TALLOC      400     /* Max objects per level               */
-#define MIN_TRIX          1     /* Minimum t_list index used           */
+#define MIN_TRIX          1     /* Minimum i_list index used           */
 #define TREAS_ROOM_ALLOC  9     /* Amount of objects for rooms         */
 #define TREAS_ANY_ALLOC   3     /* Amount of objects for corridors     */
 #define TREAS_GOLD_ALLOC  3     /* Amount of gold (and gems)           */

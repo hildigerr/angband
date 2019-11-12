@@ -228,7 +228,7 @@ extern inven_kind object_list[MAX_OBJECTS];
 #endif
 extern byte object_ident[OBJECT_IDENT_SIZE];
 extern s16b t_level[MAX_OBJ_LEVEL+1];
-extern inven_type t_list[MAX_TALLOC];
+extern inven_type i_list[MAX_TALLOC];
 extern inven_type inventory[INVEN_ARRAY_SIZE];
 extern const char *special_names[SN_ARRAY_SIZE];
 extern s16b sorted_objects[MAX_DUNGEON_OBJ];

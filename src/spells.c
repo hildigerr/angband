@@ -249,7 +249,7 @@ detect_treasure()
     for (i = panel_row_min; i <= panel_row_max; i++)
 	for (j = panel_col_min; j <= panel_col_max; j++) {
 	    c_ptr = &cave[i][j];
-	    if ((c_ptr->tptr != 0) && (t_list[c_ptr->tptr].tval == TV_GOLD) &&
+	    if ((c_ptr->tptr != 0) && (i_list[c_ptr->tptr].tval == TV_GOLD) &&
 		!test_lite(i, j)) {
 		c_ptr->fm = TRUE;
 		lite_spot(i, j);
@@ -276,9 +276,9 @@ detect_magic()
     for (i = panel_row_min; i <= panel_row_max; i++)
 	for (j = panel_col_min; j <= panel_col_max; j++) {
 	    c_ptr = &cave[i][j];
-	    if ((c_ptr->tptr != 0) && (t_list[c_ptr->tptr].tval < TV_MAX_OBJECT)
+	    if ((c_ptr->tptr != 0) && (i_list[c_ptr->tptr].tval < TV_MAX_OBJECT)
 		&& !test_lite(i, j)) {
-		t_ptr = &t_list[c_ptr->tptr];
+		t_ptr = &i_list[c_ptr->tptr];
 		Tval = t_ptr->tval;
 		    /* Is it a weapon or armor or light? */
 		if (((Tval > 9) && (Tval < 39)) &&
@@ -308,15 +308,15 @@ detect_enchantment()
     for (i = panel_row_min; i <= panel_row_max; i++)
 	for (j = panel_col_min; j <= panel_col_max; j++) {
 	    c_ptr = &cave[i][j];
-	    tv = t_list[c_ptr->tptr].tval;
+	    tv = i_list[c_ptr->tptr].tval;
 	    if ((c_ptr->tptr != 0) && !test_lite(i, j) &&
 		( ((tv > TV_MAX_ENCHANT) && (tv < TV_FLASK)) || /* misc items */
 		 (tv == TV_MAGIC_BOOK) || (tv == TV_PRAYER_BOOK) || /* books */
 		 ((tv >= TV_MIN_WEAR) && (tv <= TV_MAX_ENCHANT) && /* armor/weap */
-		  ((t_list[c_ptr->tptr].flags2 & TR_ARTIFACT) || /* if Art., or */
-		   (t_list[c_ptr->tptr].tohit>0) || /* has pluses, then show */
-		   (t_list[c_ptr->tptr].todam>0) ||
-		   (t_list[c_ptr->tptr].toac>0))) )){
+		  ((i_list[c_ptr->tptr].flags2 & TR_ARTIFACT) || /* if Art., or */
+		   (i_list[c_ptr->tptr].tohit>0) || /* has pluses, then show */
+		   (i_list[c_ptr->tptr].todam>0) ||
+		   (i_list[c_ptr->tptr].toac>0))) )){
 		c_ptr->fm = TRUE;
 		lite_spot(i, j);
 		detect = TRUE;
@@ -367,7 +367,7 @@ detect_object()
     for (i = panel_row_min; i <= panel_row_max; i++)
 	for (j = panel_col_min; j <= panel_col_max; j++) {
 	    c_ptr = &cave[i][j];
-	    if ((c_ptr->tptr != 0) && (t_list[c_ptr->tptr].tval < TV_MAX_OBJECT)
+	    if ((c_ptr->tptr != 0) && (i_list[c_ptr->tptr].tval < TV_MAX_OBJECT)
 		&& !test_lite(i, j)) {
 		c_ptr->fm = TRUE;
 		lite_spot(i, j);
@@ -392,12 +392,12 @@ detect_trap()
 	for (j = panel_col_min; j <= panel_col_max; j++) {
 	    c_ptr = &cave[i][j];
 	    if (c_ptr->tptr != 0)
-		if (t_list[c_ptr->tptr].tval == TV_INVIS_TRAP) {
+		if (i_list[c_ptr->tptr].tval == TV_INVIS_TRAP) {
 		    c_ptr->fm = TRUE;
 		    change_trap(i, j);
 		    detect = TRUE;
-		} else if (t_list[c_ptr->tptr].tval == TV_CHEST) {
-		    t_ptr = &t_list[c_ptr->tptr];
+		} else if (i_list[c_ptr->tptr].tval == TV_CHEST) {
+		    t_ptr = &i_list[c_ptr->tptr];
 		    known2(t_ptr);
 		}
 	}
@@ -413,21 +413,21 @@ stair_creation()
     c_ptr = &cave[char_row][char_col];
 
     if ((c_ptr->tptr == 0) ||
-        ((t_list[c_ptr->tptr].tval != TV_UP_STAIR)  /* if not stairs or a store */
-         && (t_list[c_ptr->tptr].tval != TV_DOWN_STAIR)
-         && (t_list[c_ptr->tptr].tval != TV_STORE_DOOR)
-         && ((t_list[c_ptr->tptr].tval < TV_MIN_WEAR) ||
-             (t_list[c_ptr->tptr].tval > TV_MAX_WEAR) ||
-             !(t_list[c_ptr->tptr].flags2 & TR_ARTIFACT)))) {
+        ((i_list[c_ptr->tptr].tval != TV_UP_STAIR)  /* if not stairs or a store */
+         && (i_list[c_ptr->tptr].tval != TV_DOWN_STAIR)
+         && (i_list[c_ptr->tptr].tval != TV_STORE_DOOR)
+         && ((i_list[c_ptr->tptr].tval < TV_MIN_WEAR) ||
+             (i_list[c_ptr->tptr].tval > TV_MAX_WEAR) ||
+             !(i_list[c_ptr->tptr].flags2 & TR_ARTIFACT)))) {
 /* if no artifact here -CFT */
 	if (c_ptr->tptr != 0)
 	    (void)delete_object(char_row, char_col);
 	cur_pos = i_pop();
 	c_ptr->tptr = cur_pos;
 	if ((randint(2) == 1 || is_quest(dun_level)) && (dun_level > 0))
-	    invcopy(&t_list[cur_pos], OBJ_UP_STAIR);
+	    invcopy(&i_list[cur_pos], OBJ_UP_STAIR);
 	else
-	    invcopy(&t_list[cur_pos], OBJ_DOWN_STAIR);
+	    invcopy(&i_list[cur_pos], OBJ_DOWN_STAIR);
     } else
 	msg_print("The object resists the spell.");
 }
@@ -447,13 +447,13 @@ door_creation()
 		c_ptr = &cave[i][j];
 		if (c_ptr->fval <= MAX_CAVE_FLOOR) {
 		    if ((c_ptr->tptr == 0) ||
-			((t_list[c_ptr->tptr].tval != TV_UP_STAIR) 
+			((i_list[c_ptr->tptr].tval != TV_UP_STAIR) 
 				/* if not stairs or a store */
-			 &&(t_list[c_ptr->tptr].tval != TV_DOWN_STAIR)
-			 && (t_list[c_ptr->tptr].tval != TV_STORE_DOOR)) ||
-			(t_list[c_ptr->tptr].tval < TV_MIN_WEAR) ||
-			(t_list[c_ptr->tptr].tval > TV_MAX_WEAR) ||
-			!(t_list[c_ptr->tptr].flags2 & TR_ARTIFACT)) {
+			 &&(i_list[c_ptr->tptr].tval != TV_DOWN_STAIR)
+			 && (i_list[c_ptr->tptr].tval != TV_STORE_DOOR)) ||
+			(i_list[c_ptr->tptr].tval < TV_MIN_WEAR) ||
+			(i_list[c_ptr->tptr].tval > TV_MAX_WEAR) ||
+			!(i_list[c_ptr->tptr].flags2 & TR_ARTIFACT)) {
 				/* if no artifact here -CFT */
 			door = TRUE;
 			if (c_ptr->tptr != 0)
@@ -461,7 +461,7 @@ door_creation()
 			k = i_pop();
 			c_ptr->fval = BLOCKED_FLOOR;
 			c_ptr->tptr = k;
-			invcopy(&t_list[k], OBJ_CLOSED_DOOR);
+			invcopy(&i_list[k], OBJ_CLOSED_DOOR);
 			lite_spot(i, j);
 		    } else
 			msg_print("The object resists the spell.");
@@ -483,14 +483,14 @@ detect_sdoor()
 	    c_ptr = &cave[i][j];
 	    if (c_ptr->tptr != 0)
 	    /* Secret doors  */
-		if (t_list[c_ptr->tptr].tval == TV_SECRET_DOOR) {
+		if (i_list[c_ptr->tptr].tval == TV_SECRET_DOOR) {
 		    c_ptr->fm = TRUE;
 		    change_trap(i, j);
 		    detect = TRUE;
 		}
 	/* Staircases	 */
-		else if (((t_list[c_ptr->tptr].tval == TV_UP_STAIR) ||
-			  (t_list[c_ptr->tptr].tval == TV_DOWN_STAIR)) &&
+		else if (((i_list[c_ptr->tptr].tval == TV_UP_STAIR) ||
+			  (i_list[c_ptr->tptr].tval == TV_DOWN_STAIR)) &&
 			 !c_ptr->fm) {
 		    c_ptr->fm = TRUE;
 		    lite_spot(i, j);
@@ -664,8 +664,8 @@ map_area()
 			if (c_ptr->fval >= MIN_CAVE_WALL)
 			    c_ptr->pl = TRUE;
 			else if ((c_ptr->tptr != 0) &&
-			     (t_list[c_ptr->tptr].tval >= TV_MIN_VISIBLE) &&
-			       (t_list[c_ptr->tptr].tval <= TV_MAX_VISIBLE))
+			     (i_list[c_ptr->tptr].tval >= TV_MIN_VISIBLE) &&
+			       (i_list[c_ptr->tptr].tval <= TV_MAX_VISIBLE))
 			    c_ptr->fm = TRUE;
 		    }
     prt_map();
@@ -702,7 +702,7 @@ ident_spell()
 	    break;
 	case FUZZY:
 	    ident = TRUE;
-	    i_ptr = &t_list[cave[char_row][char_col].tptr];
+	    i_ptr = &i_list[cave[char_row][char_col].tptr];
 	    /* that piece of code taken from desc.c:identify()
 	     * no use to convert type for calling identify since obj
 	     * on floor can't stack
@@ -764,20 +764,20 @@ trap_creation()
 	    c_ptr = &cave[i][j];
 	    if (c_ptr->fval <= MAX_CAVE_FLOOR) {
 		if ((c_ptr->tptr == 0) ||
-		    ((t_list[c_ptr->tptr].tval != TV_UP_STAIR)
+		    ((i_list[c_ptr->tptr].tval != TV_UP_STAIR)
 		     /* if not stairs or a store */
-		     &&(t_list[c_ptr->tptr].tval != TV_DOWN_STAIR)
-		     && (t_list[c_ptr->tptr].tval != TV_STORE_DOOR)) ||
-		    (t_list[c_ptr->tptr].tval < TV_MIN_WEAR) ||
-		    (t_list[c_ptr->tptr].tval > TV_MAX_WEAR) ||
-		    !(t_list[c_ptr->tptr].flags2 & TR_ARTIFACT)) {
+		     &&(i_list[c_ptr->tptr].tval != TV_DOWN_STAIR)
+		     && (i_list[c_ptr->tptr].tval != TV_STORE_DOOR)) ||
+		    (i_list[c_ptr->tptr].tval < TV_MIN_WEAR) ||
+		    (i_list[c_ptr->tptr].tval > TV_MAX_WEAR) ||
+		    !(i_list[c_ptr->tptr].flags2 & TR_ARTIFACT)) {
 				/* if no artifact here -CFT */
 		    trap = TRUE;
 		    if (c_ptr->tptr != 0)
 			(void)delete_object(i, j);
 		    place_trap(i, j, randint(MAX_TRAP) - 1);
 		/* don't let player gain exp from the newly created traps */
-		    t_list[c_ptr->tptr].p1 = 0;
+		    i_list[c_ptr->tptr].p1 = 0;
 		/* open pits are immediately visible, so call lite_spot */
 		    lite_spot(i, j);
 		} else
@@ -800,18 +800,18 @@ td_destroy()
 	for (j = char_col - 1; j <= char_col + 1; j++) {
 	    c_ptr = &cave[i][j];
 	    if (c_ptr->tptr != 0) {
-		if (((t_list[c_ptr->tptr].tval >= TV_INVIS_TRAP) &&
-		     (t_list[c_ptr->tptr].tval <= TV_CLOSED_DOOR) &&
-		     (t_list[c_ptr->tptr].tval != TV_RUBBLE)) ||
-		    (t_list[c_ptr->tptr].tval == TV_SECRET_DOOR)) {
+		if (((i_list[c_ptr->tptr].tval >= TV_INVIS_TRAP) &&
+		     (i_list[c_ptr->tptr].tval <= TV_CLOSED_DOOR) &&
+		     (i_list[c_ptr->tptr].tval != TV_RUBBLE)) ||
+		    (i_list[c_ptr->tptr].tval == TV_SECRET_DOOR)) {
 		    if (delete_object(i, j))
 			destroy = TRUE;
-		} else if (t_list[c_ptr->tptr].tval == TV_CHEST) {
+		} else if (i_list[c_ptr->tptr].tval == TV_CHEST) {
 		/* destroy traps on chest and unlock */
-		    t_list[c_ptr->tptr].flags &= ~(CH_TRAPPED | CH_LOCKED);
-		    t_list[c_ptr->tptr].name2 = EGO_DISARMED;
+		    i_list[c_ptr->tptr].flags &= ~(CH_TRAPPED | CH_LOCKED);
+		    i_list[c_ptr->tptr].name2 = EGO_DISARMED;
 		    msg_print("You have disarmed the chest.");
-		    known2(&t_list[c_ptr->tptr]);
+		    known2(&i_list[c_ptr->tptr]);
 		    destroy = TRUE;
 		}
 	    }
@@ -918,7 +918,7 @@ int dir, y, x;
      * because secret doors have fval greater than MAX_OPEN_SPACE 
      */
 	if (c_ptr->tptr != 0) {
-	    t_ptr = &t_list[c_ptr->tptr];
+	    t_ptr = &i_list[c_ptr->tptr];
 	    if ((t_ptr->tval == TV_INVIS_TRAP) || (t_ptr->tval == TV_VIS_TRAP)) {
 		if (delete_object(y, x))
 		    disarm = TRUE;
@@ -1642,7 +1642,7 @@ int typ, dir, y, x, dam_hp, max_dis;
 		    for (j = x - max_dis; j <= x + max_dis; j++)
 			if (in_bounds(i, j) && (distance(y, x, i, j) <= max_dis)
 			    && los(y, x, i, j) && (cave[i][j].tptr != 0) &&
-			    (*destroy) (&t_list[cave[i][j].tptr]))
+			    (*destroy) (&i_list[cave[i][j].tptr]))
 			    (void)delete_object(i, j);
 		/* burn/corrode or OW destroy items in area of effect */
 	    /* now go over area of affect and DO something to monsters... */
@@ -1810,7 +1810,7 @@ int   monptr;
 	for (j = x - max_dis; j <= x + max_dis; j++)
 	    if (in_bounds(i, j) && (distance(y, x, i, j) <= max_dis)
 		&& los(y, x, i, j) && (cave[i][j].tptr != 0)
-		&& (*destroy) (&t_list[cave[i][j].tptr]))
+		&& (*destroy) (&i_list[cave[i][j].tptr]))
 		delete_object(i, j);
 
 /* now go over area of affect and DO something to monsters */
@@ -1820,7 +1820,7 @@ int   monptr;
 		&& los(y, x, i, j)) {
 
 		c_ptr = &cave[i][j];
-		if ((c_ptr->tptr != 0) && (*destroy) (&t_list[c_ptr->tptr]))
+		if ((c_ptr->tptr != 0) && (*destroy) (&i_list[c_ptr->tptr]))
 		    (void)delete_object(i, j);
 		if (c_ptr->fval <= MAX_OPEN_SPACE) {
 		    if ((c_ptr->cptr > 1) && (c_ptr->cptr != monptr)) {
@@ -2707,8 +2707,8 @@ int dir, y, x;
 	} else if ((c_ptr->tptr != 0) && (c_ptr->fval >= MIN_CLOSED_SPACE)) {
 	    flag = TRUE;
 	    if (panel_contains(y, x) && test_lite(y, x)) {		
-		objdes(tmp_str, &t_list[c_ptr->tptr], FALSE);
-		if ((t_list[c_ptr->tptr].tval == TV_RUBBLE) && (randint(10)==1)) {
+		objdes(tmp_str, &i_list[c_ptr->tptr], FALSE);
+		if ((i_list[c_ptr->tptr].tval == TV_RUBBLE) && (randint(10)==1)) {
 		    delete_object(y,x);
 		    place_object(y,x);
 		    lite_spot(y,x);
@@ -2770,7 +2770,7 @@ int dir, y, x;
 	c_ptr = &cave[y][x];
     /* must move into first closed spot, as it might be a secret door */
 	if (c_ptr->tptr != 0) {
-	    t_ptr = &t_list[c_ptr->tptr];
+	    t_ptr = &i_list[c_ptr->tptr];
 	    if (t_ptr->tval == TV_CHEST) /* let's untrap it instead -CWS */
 		t_ptr->flags &= ~(CH_TRAPPED | CH_LOCKED);
 	    else if ((t_ptr->tval == TV_INVIS_TRAP) || (t_ptr->tval == TV_VIS_TRAP) ||
@@ -2910,12 +2910,12 @@ int dir, y, x;
 		}
 	    }
 	    if (c_ptr->tptr != 0)
-		if (((t_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
-		     (t_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
-		     (t_list[c_ptr->tptr].flags2 & TR_ARTIFACT))
-		    || (t_list[c_ptr->tptr].tval == TV_UP_STAIR)
-		    || (t_list[c_ptr->tptr].tval == TV_DOWN_STAIR)
-		    || (t_list[c_ptr->tptr].tval == TV_STORE_DOOR))
+		if (((i_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
+		     (i_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
+		     (i_list[c_ptr->tptr].flags2 & TR_ARTIFACT))
+		    || (i_list[c_ptr->tptr].tval == TV_UP_STAIR)
+		    || (i_list[c_ptr->tptr].tval == TV_DOWN_STAIR)
+		    || (i_list[c_ptr->tptr].tval == TV_STORE_DOOR))
 		    continue;	   /* don't bury the artifact/stair/store */
 		else
 		    (void)delete_object(y, x);
@@ -3402,12 +3402,12 @@ earthquake()
 		(randint(8) == 1)) {
 		c_ptr = &cave[i][j];
 		if (c_ptr->tptr != 0)
-		    if (((t_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
-			 (t_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
-			 (t_list[c_ptr->tptr].flags2 & TR_ARTIFACT))
-			|| (t_list[c_ptr->tptr].tval == TV_UP_STAIR)
-			|| (t_list[c_ptr->tptr].tval == TV_DOWN_STAIR)
-			|| (t_list[c_ptr->tptr].tval == TV_STORE_DOOR))
+		    if (((i_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
+			 (i_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
+			 (i_list[c_ptr->tptr].flags2 & TR_ARTIFACT))
+			|| (i_list[c_ptr->tptr].tval == TV_UP_STAIR)
+			|| (i_list[c_ptr->tptr].tval == TV_DOWN_STAIR)
+			|| (i_list[c_ptr->tptr].tval == TV_STORE_DOOR))
 			continue;  /* don't touch artifacts or stairs or
 				    * stores -CFT */
 		    else
@@ -3647,7 +3647,7 @@ warding_glyph()
     if (c_ptr->tptr == 0) {
 	i = i_pop();
 	c_ptr->tptr = i;
-	invcopy(&t_list[i], OBJ_SCARE_MON);
+	invcopy(&i_list[i], OBJ_SCARE_MON);
     }
 }
 
@@ -3861,9 +3861,9 @@ register int y, x;
 	    for (j = (x - 15); j <= (x + 15); j++)
 		if (in_bounds(i, j) && (cave[i][j].fval != BOUNDARY_WALL) &&
 		    ((cave[i][j].tptr == 0) ||
-		     ((t_list[cave[i][j].tptr].tval != TV_UP_STAIR) &&
-		      (t_list[cave[i][j].tptr].tval != TV_DOWN_STAIR) &&
-		      (!(t_list[cave[i][j].tptr].flags2 & TR_ARTIFACT))))) {	/* DGK */
+		     ((i_list[cave[i][j].tptr].tval != TV_UP_STAIR) &&
+		      (i_list[cave[i][j].tptr].tval != TV_DOWN_STAIR) &&
+		      (!(i_list[cave[i][j].tptr].flags2 & TR_ARTIFACT))))) {	/* DGK */
 		    k = distance(i, j, y, x);
 		    if (k == 0)	   /* player's spot... */
 			replace_spot(i, j, 1);	/* clear player's spot...

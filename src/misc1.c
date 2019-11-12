@@ -373,7 +373,7 @@ register int y, x;
 	    c_ptr = &cave[j][k];
 	/* should fail if there is already a door present */
 	    if (c_ptr->fval == CORR_FLOOR
-	    && (c_ptr->tptr == 0 || t_list[c_ptr->tptr].tval < TV_MIN_DOORS))
+	    && (c_ptr->tptr == 0 || i_list[c_ptr->tptr].tval < TV_MIN_DOORS))
 		i++;
 	}
     return (i);
@@ -609,8 +609,8 @@ int y, x;
     if (!cave_ptr->pl && !cave_ptr->tl && !cave_ptr->fm)
 	return ' ';
     if ((cave_ptr->tptr != 0)
-	&& (t_list[cave_ptr->tptr].tval != TV_INVIS_TRAP))
-	return t_list[cave_ptr->tptr].tchar;
+	&& (i_list[cave_ptr->tptr].tval != TV_INVIS_TRAP))
+	return i_list[cave_ptr->tptr].tchar;
     if (cave_ptr->fval <= MAX_CAVE_FLOOR)
 	return '.';
     if (cave_ptr->fval == GRANITE_WALL || cave_ptr->fval == BOUNDARY_WALL
@@ -2413,7 +2413,7 @@ compact_objects()
 		cave_ptr = &cave[i][j];
 		if ((cave_ptr->tptr != 0)
 		    && (distance(i, j, char_row, char_col) > cur_dis)) {
-		    switch (t_list[cave_ptr->tptr].tval) {
+		    switch (i_list[cave_ptr->tptr].tval) {
 		      case TV_VIS_TRAP:
 			chance = 15;
 			break;
@@ -2432,9 +2432,9 @@ compact_objects()
 			chance = 3;
 			break;
 		      default:
-			if ((t_list[cave_ptr->tptr].tval >= TV_MIN_WEAR) &&
-			    (t_list[cave_ptr->tptr].tval <= TV_MAX_WEAR) &&
-			    (t_list[cave_ptr->tptr].flags2 & TR_ARTIFACT))
+			if ((i_list[cave_ptr->tptr].tval >= TV_MIN_WEAR) &&
+			    (i_list[cave_ptr->tptr].tval <= TV_MAX_WEAR) &&
+			    (i_list[cave_ptr->tptr].flags2 & TR_ARTIFACT))
 			    chance = 0;	/* don't compact artifacts -CFT */
 			else
 			    chance = 10;
@@ -2476,7 +2476,7 @@ int my_x;
     register int i, j;
 
     if (x != tcptr - 1) {
-	t_list[x] = t_list[tcptr - 1];
+	i_list[x] = i_list[tcptr - 1];
 
     /* must change the tptr in the cave of the object just moved */
 	for (i = 0; i < cur_height; i++)
@@ -2485,7 +2485,7 @@ int my_x;
 		    cave[i][j].tptr = x;
     }
     tcptr--;
-    invcopy(&t_list[tcptr], OBJ_NOTHING);
+    invcopy(&i_list[tcptr], OBJ_NOTHING);
 }
 
 
@@ -4261,7 +4261,7 @@ int x, level, good, not_unique;
 	chance = OBJ_BASE_MAX;
     special = chance / OBJ_DIV_SPECIAL;
     cursed = (10 * chance) / OBJ_DIV_CURSED;
-    t_ptr = &t_list[x];
+    t_ptr = &i_list[x];
 
 /*
  * some objects appear multiple times in the object_list with different

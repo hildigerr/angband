@@ -1380,7 +1380,7 @@ end:
 
 	store_bought(i_ptr);
 	tmp_val = i_pop();
-	t_list[tmp_val] = forge;
+	i_list[tmp_val] = forge;
 	c_ptr->tptr = tmp_val;
 	msg_print("Allocated.");
     } else

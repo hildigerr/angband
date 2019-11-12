@@ -518,17 +518,17 @@ print_objects()
 			}
 			if (object_list[tmp].level > level)
 			    continue;
-			invcopy(&t_list[j], tmp);
-			if (object_list[t_list[j].index].tval == TV_HARD_ARMOR)
-			    t_list[j].toac += 10 + randint(10);
-			i_ptr = &t_list[j];
+			invcopy(&i_list[j], tmp);
+			if (object_list[i_list[j].index].tval == TV_HARD_ARMOR)
+			    i_list[j].toac += 10 + randint(10);
+			i_ptr = &i_list[j];
 			store_bought(i_ptr);
 			objdes(tmp_str, i_ptr, TRUE);
 		    } else {
-			invcopy(&t_list[j],
+			invcopy(&i_list[j],
 				sorted_objects[get_obj_num(level, FALSE)]);
 			magic_treasure(j, level, 0, FALSE);
-			i_ptr = &t_list[j];
+			i_ptr = &i_list[j];
 			store_bought(i_ptr);
 			if (i_ptr->flags & TR_CURSED)
 			    add_inscribe(i_ptr, ID_DAMD);

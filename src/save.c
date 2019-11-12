@@ -583,7 +583,7 @@ sv_write()
  * this is necessary so that if the user changes the graphics line, the
  * program will be able change all existing walls/floors to the new symbol 
  */
-    t_ptr = &t_list[tcptr - 1];
+    t_ptr = &i_list[tcptr - 1];
     for (i = tcptr - 1; i >= MIN_TRIX; i--) {
 	if (t_ptr->tchar == wallsym)
 	    t_ptr->tchar = '#';
@@ -592,7 +592,7 @@ sv_write()
 #endif
     wr_short((u16b) tcptr);
     for (i = MIN_TRIX; i < tcptr; i++)
-	wr_item(&t_list[i]);
+	wr_item(&i_list[i]);
     wr_short((u16b) mfptr);
     for (i = MIN_M_IDX; i < mfptr; i++)
 	wr_monster(&m_list[i]);
@@ -1426,7 +1426,7 @@ int *generate;
 	    goto error;
 	}
 	for (i = MIN_TRIX; i < tcptr; i++)
-	    rd_item(&t_list[i]);
+	    rd_item(&i_list[i]);
 	rd_short((u16b *) & mfptr);
 	if (mfptr > MAX_M_IDX) {
 	    prt("ERROR in MAX_M_IDX", 15, 0);
@@ -1437,7 +1437,7 @@ int *generate;
 	}
 #ifdef MSDOS
     /* change walls and floors to graphic symbols */
-	t_ptr = &t_list[tcptr - 1];
+	t_ptr = &i_list[tcptr - 1];
 	for (i = tcptr - 1; i >= MIN_TRIX; i--) {
 	    if (t_ptr->tchar == '#')
 		t_ptr->tchar = wallsym;

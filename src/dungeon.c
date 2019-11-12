@@ -118,18 +118,18 @@ dungeon()
 
 	c_ptr = &cave[char_row][char_col];
 	if ((c_ptr->tptr == 0) ||
-	    ((t_list[c_ptr->tptr].tval != TV_STORE_DOOR) && /* if not store */
-	     ((t_list[c_ptr->tptr].tval < TV_MIN_WEAR) ||   /* if no artifact here -CFT */
-	      (t_list[c_ptr->tptr].tval > TV_MIN_WEAR) ||
-	      !(t_list[c_ptr->tptr].flags2 & TR_ARTIFACT)))) {
+	    ((i_list[c_ptr->tptr].tval != TV_STORE_DOOR) && /* if not store */
+	     ((i_list[c_ptr->tptr].tval < TV_MIN_WEAR) ||   /* if no artifact here -CFT */
+	      (i_list[c_ptr->tptr].tval > TV_MIN_WEAR) ||
+	      !(i_list[c_ptr->tptr].flags2 & TR_ARTIFACT)))) {
 	    if (c_ptr->tptr != 0)
 		(void)delete_object(char_row, char_col);
 	    cur_pos = i_pop();
 	    c_ptr->tptr = cur_pos;
 	    if (create_up_stair)
-		invcopy(&t_list[cur_pos], OBJ_UP_STAIR);
+		invcopy(&i_list[cur_pos], OBJ_UP_STAIR);
 	    else if (create_down_stair && !is_quest(dun_level))
-		invcopy(&t_list[cur_pos], OBJ_DOWN_STAIR);
+		invcopy(&i_list[cur_pos], OBJ_DOWN_STAIR);
 	} else
 	    msg_print("The object resists your attempt to transform it into a stairway.");
 	create_down_stair = FALSE;
@@ -3269,7 +3269,7 @@ go_up()
 
     c_ptr = &cave[char_row][char_col];
     if (c_ptr->tptr != 0)
-	if (t_list[c_ptr->tptr].tval == TV_UP_STAIR) {
+	if (i_list[c_ptr->tptr].tval == TV_UP_STAIR) {
 	    if (dun_level == Q_PLANE) {
 		dun_level = 0;
 		new_level_flag = TRUE;
@@ -3302,7 +3302,7 @@ go_down()
 
     c_ptr = &cave[char_row][char_col];
     if (c_ptr->tptr != 0)
-	if (t_list[c_ptr->tptr].tval == TV_DOWN_STAIR) {
+	if (i_list[c_ptr->tptr].tval == TV_DOWN_STAIR) {
 	    if (dun_level == Q_PLANE) {
 		dun_level = 0;
 		new_level_flag = TRUE;
@@ -3347,7 +3347,7 @@ do_cmd_spike()
 	(void)mmove(dir, &y, &x);
 	c_ptr = &cave[y][x];
 	if (c_ptr->tptr != 0) {
-	    t_ptr = &t_list[c_ptr->tptr];
+	    t_ptr = &i_list[c_ptr->tptr];
 	    if (t_ptr->tval == TV_CLOSED_DOOR)
 		if (c_ptr->cptr == 0) {
 		    if (find_range(TV_SPIKE, TV_NEVER, &i, &j)) {
