@@ -92,7 +92,7 @@ activate_rod()
 		i_ptr->timeout = 9;
 		break;
 	      case RD_ILLUME:
-		light_area(k, l, damroll(2, 8), 2);
+		lite_area(k, l, damroll(2, 8), 2);
 		ident = TRUE;
 		i_ptr->timeout = 30;
 		break;

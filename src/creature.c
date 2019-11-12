@@ -2271,7 +2271,7 @@ int monptr, *took_turn;
 	    else
 		(void)strcat(cdesc, "mumbles.");
 	    msg_print(cdesc);
-	    (void)unlight_area(char_row, char_col);
+	    (void)unlite_area(char_row, char_col);
 	    break;
 	  case 54:
 	    (void)strcat(cdesc, "tries to blank your mind.");

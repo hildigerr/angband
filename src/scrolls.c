@@ -144,7 +144,7 @@ read_scroll()
 		}
 		break;
 	      case 6:
-		ident = light_area(char_row, char_col, damroll(2, 12), 2);
+		ident = lite_area(char_row, char_col, damroll(2, 12), 2);
 		break;
 	      case 7:
 		for (k = 0; k < randint(3); k++) {
@@ -227,7 +227,7 @@ read_scroll()
 		ident = TRUE;
 		break;
 	      case 27:
-		ident = unlight_area(char_row, char_col);
+		ident = unlite_area(char_row, char_col);
 		if (!py.flags.resist_blind)
 		    py.flags.blind += 3 + randint(5);
 		break;

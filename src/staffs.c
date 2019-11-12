@@ -134,7 +134,7 @@ use()
 		ident = TRUE;
 		break;
 	      case ST_LIGHT:
-		ident = light_area(char_row, char_col, damroll(2, 10), 2);
+		ident = lite_area(char_row, char_col, damroll(2, 10), 2);
 		break;
 	      case ST_DR_LC:
 		ident = detect_sdoor();
@@ -233,7 +233,7 @@ use()
 		ident = dispel_creature(EVIL, 60);
 		break;
 	      case ST_DARK:
-		ident = unlight_area(char_row, char_col);
+		ident = unlite_area(char_row, char_col);
 		break;
 	      default:
 		msg_print("Internal error in staffs()");

@@ -3143,7 +3143,7 @@ activate()
 		break;
 	      case (OBJ_SPECIAL + 3):
 		msg_print("The phial wells with clear light...");
-		light_area(char_row, char_col, damroll(2, 15), 3);
+		lite_area(char_row, char_col, damroll(2, 15), 3);
 		inventory[i].timeout = 10 + randint(10);
 		break;
 	      case (OBJ_SPECIAL + 4):

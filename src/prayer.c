@@ -75,7 +75,7 @@ pray()
 		    (void)remove_fear();
 		    break;
 		  case 5:
-		    (void)light_area(char_row, char_col,
+		    (void)lite_area(char_row, char_col,
 		     damroll(2, (py.misc.lev / 2)), (py.misc.lev / 10) + 1);
 		    break;
 /* FIXME: hammer? */

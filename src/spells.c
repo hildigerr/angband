@@ -565,7 +565,7 @@ int y, x, dam;
 
 
 int 
-light_area(y, x, dam, rad)	   /* Expanded -DGK */
+lite_area(y, x, dam, rad)	   /* Expanded -DGK */
 register int y, x, dam, rad;
 {
     register int i, j;
@@ -603,7 +603,7 @@ register int y, x, dam, rad;
 
 /* Darken an area, opposite of light area		-RAK-	 */
 int 
-unlight_area(y, x)
+unlite_area(y, x)
 int y, x;
 {
     register int        i, j, unlight;
@@ -2182,7 +2182,7 @@ int   monptr;
 				msg_print("You are blinded by the flash!");
 				py.flags.blind += randint(6) + 3;
 			    }
-			    light_area(char_row, char_col, 0, max_dis);
+			    lite_area(char_row, char_col, 0, max_dis);
 			    take_hit(dam, ddesc);
 			    break;
 			  case GF_DARK:
@@ -2194,7 +2194,7 @@ int   monptr;
 				    msg_print("The darkness prevents you from seeing!");
 				py.flags.blind += randint(5) + 2;
 			    }
-			    unlight_area(char_row, char_col);
+			    unlite_area(char_row, char_col);
 			    take_hit(dam, ddesc);
 			    break;
 			  case GF_TIME:	/* only some effects from
