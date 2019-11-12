@@ -755,7 +755,7 @@ int num;
 
 /* Returns a pointer to next free space			-RAK-	 */
 int 
-popm()
+m_pop()
 {
     if (mfptr == MAX_M_IDX)
 	if (!compact_monsters())
@@ -806,7 +806,7 @@ int          slp;
 	}
 	u_list[z].exist = 1;
     }
-    cur_pos = popm();		   /* from um55, paranoia error check... */
+    cur_pos = m_pop();		   /* from um55, paranoia error check... */
     if (cur_pos == -1)
 	return FALSE;
 
@@ -903,7 +903,7 @@ place_win_monster()
     register monster_type *mon_ptr;
 
     if (!total_winner) {
-	cur_pos = popm();
+	cur_pos = m_pop();
     /* paranoia error check, from um55 -CFT */
 	if (cur_pos == -1)
 	    return FALSE;
@@ -1453,7 +1453,7 @@ place_ghost()
     set_ghost(ghost, name, ghost_race, cl, level);
     if (wizard || peek)
 	msg_print(ghost->name);
-    cur_pos = popm();
+    cur_pos = m_pop();
     mon_ptr = &m_list[cur_pos];
     do {
 	y = randint(cur_height - 2);
