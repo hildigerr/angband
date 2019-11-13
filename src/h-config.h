@@ -60,6 +60,15 @@
 # define ultrix
 #endif
 
+/*
+ * Extract the "MSDOS" flag from the compiler
+ */
+#ifdef __MSDOS__
+# ifndef MSDOS
+#  define MSDOS
+# endif
+#endif
+
 #endif
 
 
