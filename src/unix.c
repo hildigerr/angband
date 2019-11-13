@@ -290,7 +290,7 @@ tilde(file, exp)
 
 	    user[0] = '\0';
 	    file++;
-	    while (*file != '/' && i < sizeof(user))
+	    while (*file != PATH_SEP && i < sizeof(user))
 		user[i++] = *file++;
 	    user[i] = '\0';
 	    if (i == 0) {

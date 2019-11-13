@@ -128,34 +128,6 @@
  * compilation, you might want to check the defines below.                  *
  ****************************************************************************/
 
-/* For the NEW_FILEPATHS option, we'll use PATH_SEP as the path separator;
- * this will help make at least one section of Angband more portable.  If
- * you don't seem something sensible here, either add a section for your
- * filesystem, or just define PATH_SEP to something useful.          [cjh]
- */
-
-/* NOTE: This is 100% untested on all but Atari, UNIX, and OS/2...  I'm
- *       guessing at the Mac and VMS PATH_SEP values!                [cjh]
- */
-
-#if defined(ultrix) || defined(SYS_V) || defined(SYS_III) \
- || defined(__MINT__) || defined(HPUX) || defined(unix) \
- || defined(BSD)
-#  define PATH_SEP "/"
-#else
-#  if defined(__EMX__) || defined(MSDOS) || defined(OS2) || defined(WINNT) \
-   || defined(ATARIST_MWC) || defined(ATARI) || defined(ATARIST)
-#    define PATH_SEP "\\"
-#  else
-#    ifdef MAC
-#      define PATH_SEP ":" /* or is it "::"? */
-#    else
-#      ifdef VMS
-#        define PATH_SEP "."
-#      endif /* VMS */
-#    endif /* Mac */
-#  endif /* DOS filesystems */
-#endif /* UNIX filesystems */
 
 
 /* Note that you'll be happier if you have a case-insensitive string

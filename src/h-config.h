@@ -110,6 +110,32 @@
 
 
 
+/*
+ * Every system seems to use its own symbol as a path separator.
+ * Default to the standard Unix slash, but attempt to change this
+ * for various other systems.
+ */
+#undef PATH_SEP
+#define PATH_SEP "/"
+#if defined(MSDOS) || defined(OS2) || defined(WINNT) || defined(__EMX__)
+# undef PATH_SEP
+# define PATH_SEP "\\"
+#endif
+#if defined(ATARIST_MWC) || defined(ATARI) || defined(ATARIST)
+# undef PATH_SEP
+# define PATH_SEP "\\"
+#endif
+#ifdef VMS
+# undef PATH_SEP
+# define PATH_SEP "."
+#endif
+#ifdef MAC
+# undef PATH_SEP
+# define PATH_SEP ":"
+#endif
+
+
+
 #endif
 
 
