@@ -78,15 +78,6 @@ typedef struct {
 #include <sys/param.h>
 #endif
 
-#ifdef USG
-#ifndef ATARIST_MWC
-#include <string.h>
-#endif
-#else
-#ifndef VMS
-#include <strings.h>
-#endif
-#endif
 
 #ifdef USG
 void                exit();

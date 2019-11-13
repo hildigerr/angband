@@ -43,14 +43,6 @@
 #include <sys/file.h>
 #endif
 
-#ifdef USG
-#ifndef ATARIST_MWC
-#include <string.h>
-#endif
-#else
-#include <strings.h>
-#endif
-
 #if defined(USG) || defined(VMS)
 #ifndef L_SET
 #define L_SET 0

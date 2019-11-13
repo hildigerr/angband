@@ -46,12 +46,10 @@ typedef struct {
 #endif
 
 #ifdef USG
-#include <string.h>
 #ifndef __MINT__
 #include <termio.h>
 #endif
 #else
-#include <strings.h>
 #if defined(atarist) && defined(__GNUC__) && !defined(__MINT__)
 /* doesn't have <sys/wait.h> */
 #else

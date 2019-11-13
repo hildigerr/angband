@@ -14,9 +14,6 @@
 
 
 
-#ifdef __MINT__
-#include <string.h>
-#endif
 
 /* Lets do all prototypes correctly.... -CWS */
 #ifndef NO_LINT_ARGS

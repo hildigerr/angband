@@ -17,16 +17,6 @@
 #include "angband.h"
 #include "monster.h"
 
-#ifdef USG
-#ifndef ATARIST_MWC
-#include <string.h>
-#else
-#include "string.h"
-#endif
-#else
-#include <strings.h>
-#endif
-
 typedef struct statstime {
     int                 cp_time[4];
     int                 dk_xfer[4];

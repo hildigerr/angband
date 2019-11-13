@@ -76,17 +76,11 @@ typedef struct {
 #endif
 
 #ifdef USG
-#ifndef ATARIST_MWC
-#include <string.h>
-#else
-#include "string.h"
-#endif /* !ATARIST_MWC */
 #if !defined(MAC) && !defined(MSDOS) && !defined(ATARIST_MWC) && !defined(__MINT__)
 #include <termio.h>
 #endif
 #else
 #ifndef VMS
-#include <strings.h>
 #include <sys/wait.h>
 #endif /* !VMS */
 #endif /* USG */

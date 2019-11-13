@@ -2,11 +2,6 @@
 
 #include "angband.h"
 
-#if defined(SOLARIS)
-#include <string.h>
-#else
-#include <strings.h>
-#endif
 
 #include <sys/file.h>
 

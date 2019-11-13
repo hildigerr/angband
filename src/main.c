@@ -16,11 +16,6 @@
 #endif
 
 
-#ifdef USG
-#include <string.h>
-#else
-#include <strings.h>
-#endif
 
 #ifdef ultrix
 #include <sys/stat.h>

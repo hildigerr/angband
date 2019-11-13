@@ -10,11 +10,6 @@
 
 #include "angband.h"
 
-#ifdef USG
-#include <string.h>
-#else
-#include <strings.h>
-#endif
 
 /* Eat some food.					-RAK-	 */
 void 

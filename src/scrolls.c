@@ -11,11 +11,6 @@
 #include "angband.h"
 #include "monster.h"
 
-#ifdef USG
-#include <string.h>
-#else
-#include <strings.h>
-#endif
 
 /* Scrolls for the reading				-RAK-	 */
 void 

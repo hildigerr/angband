@@ -10,11 +10,6 @@
 
 #include "angband.h"
 
-#ifdef USG
-#include <string.h>
-#else
-#include <strings.h>
-#endif
 
 /* Potions for the quaffing				-RAK-	 */
 void 

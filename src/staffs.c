@@ -11,11 +11,6 @@
 #include "angband.h"
 #include "monster.h"
 
-#ifdef USG
-#include <string.h>
-#else
-#include <strings.h>
-#endif
 
 
 /* Use a staff.					-RAK-	 */

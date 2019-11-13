@@ -17,16 +17,6 @@
 #include <sys/param.h>
 #endif
 
-#ifdef USG
-#ifndef ATARIST_MWC
-#include <string.h>
-#else
-#include "string.h"
-#endif
-#else
-#include <strings.h>
-#endif
-
 #ifdef __MINT__
 #include <stat.h>		/* chmod() */
 #endif

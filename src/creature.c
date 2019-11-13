@@ -11,16 +11,6 @@
 #include "angband.h"
 #include "monster.h"
 
-#ifdef USG
-#ifndef ATARIST_MWC
-#include <string.h>
-#else
-char *strcat();
-char *strcpy();
-#endif
-#else
-#include <strings.h>
-#endif
 
 /* Lets do all prototypes correctly.... -CWS */
 #ifndef NO_LINT_ARGS

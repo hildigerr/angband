@@ -10,13 +10,6 @@
 
 #include "angband.h"
 
-#ifdef USG
-#ifndef ATARIST_MWC
-#include <string.h>
-#endif
-#else
-#include <strings.h>
-#endif
 
 /* Wands for the aiming.				 */
 void 

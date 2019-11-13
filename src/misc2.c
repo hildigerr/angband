@@ -20,12 +20,9 @@
 
 #ifdef USG
 #ifndef ATARIST_MWC
-#include <string.h>
 #else
 char               *index();
 #endif
-#else
-#include <strings.h>
 #endif
 
 /* Lets do all prototypes correctly.... -CWS */

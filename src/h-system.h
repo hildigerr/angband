@@ -62,6 +62,18 @@
 # endif
 #endif
 
+#ifdef USG
+# ifdef ATARIST_MWC
+   extern char *strcat();
+   extern char *strcpy();
+   extern int   strlen();
+# else
+#  include <string.h>
+# endif
+#else
+# include <strings.h>
+#endif
+
 
 
 #endif
