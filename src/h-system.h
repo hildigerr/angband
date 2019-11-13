@@ -16,6 +16,12 @@
 #include <ctype.h>
 #include <errno.h>
 
+#if defined(NeXT)
+# include <libc.h>
+#else
+# include <stdlib.h>
+#endif
+
 
 
 

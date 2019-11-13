@@ -135,10 +135,8 @@
 /* this takes care of almost all "implicit declaration" warnings -CWS */
 
 #if defined(NeXT)
-#include <libc.h>
 #else
 #include <unistd.h>
-#include <stdlib.h>
 #include <fcntl.h>
 #endif
 
