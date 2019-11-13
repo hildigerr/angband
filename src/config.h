@@ -115,21 +115,6 @@
 /* #define SECURE */
 
 
-/* Note that any reasonably modern compiler does better when you *don't* use
- * "register".  I've hacked it out here because I don't want to change every
- * arg list in the game.  You might want to undo this if your compiler sucks.
- *                   -CWS
- */
-
-#define register
-
-
-/* this allows intelligent compilers to do better, as they know more
- * about how certain functions behave -CWS */
-
-#if !(defined(__GNUC__) || defined(__STDC__))
-#define const
-#endif
 
 
 #if defined(SOLARIS)
@@ -249,9 +234,6 @@ char *index();
 
 
 
-#ifdef MSDOS
-#define register      /* MSC 4.0 still has a problem with register bugs ... */
-#endif
 
 #ifdef MAC
 #ifdef RSRC

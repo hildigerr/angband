@@ -69,6 +69,23 @@
 # endif
 #endif
 
+
+
+/*
+ * Note that most compilers will do better WITHOUT "register" suggestions.
+ * If your compiler is ancient or horrible, comment out the "define" below.
+ */
+#define register /* nothing */
+
+
+/*
+ * Note that old compilers do not understand "const".
+ * If you have an good compiler, comment out the "define" below.
+ */
+#if !defined(__GNUC__) && !defined(__STDC__)
+# define const /* nothing */
+#endif
+
 #endif
 
 
