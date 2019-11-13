@@ -13,7 +13,6 @@
 
 #ifndef USG
 /* stuff only needed for Berkeley UNIX */
-#include <sys/types.h>
 #include <sys/file.h>
 #include <sys/param.h>
 #endif

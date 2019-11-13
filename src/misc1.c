@@ -13,13 +13,6 @@
 #endif
 
 
-#if !defined(GEMDOS) && !defined(MAC)
-#ifndef VMS
-#include <sys/types.h>
-#else
-#include <types.h>
-#endif
-#endif
 
 #include "angband.h"
 #include "monster.h"

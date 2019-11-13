@@ -12,9 +12,6 @@
 #include "angband.h"
 #include "monster.h"
 
-#ifdef ibm032
-#include <sys/types.h>
-#endif
 
 #ifdef USG
 #if !defined(ATARIST_MWC)

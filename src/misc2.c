@@ -12,7 +12,6 @@
 
 /* include before angband.h because param.h defines NULL incorrectly */
 #ifndef USG
-#include <sys/types.h>
 #include <sys/param.h>
 #endif
 

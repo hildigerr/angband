@@ -38,7 +38,6 @@ const char *c2;
 #include <math.h>
 #include <signal.h>
 #include <errno.h>
-#include <sys/types.h>
 
 /* for those systems that don't have usleep */
 /* grabbed from the inl netrek server -cba  */

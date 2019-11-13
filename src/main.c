@@ -11,7 +11,6 @@
 
 /* include before constant, because param.h defines NULL incorrectly */
 #ifndef USG
-#include <sys/types.h>
 #include <sys/param.h>
 #include <sys/resource.h>
 #endif

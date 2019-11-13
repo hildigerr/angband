@@ -21,11 +21,9 @@
 #ifndef USG
 /* only needed for Berkeley UNIX */
 #include <sys/param.h>
-#include <sys/types.h>
 #include <sys/file.h>
 #else
 #ifdef __MINT__        
-#include <sys/types.h>
 #endif
 #include <unistd.h>
 #endif

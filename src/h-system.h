@@ -34,6 +34,16 @@
 # include <fcntl.h>
 #endif
 
+#ifdef MAC
+#else
+# ifndef GEMDOS
+#  ifdef VMS
+#   include <types.h>
+#  else
+#   include <sys/types.h>
+#  endif
+# endif
+#endif
 
 
 
