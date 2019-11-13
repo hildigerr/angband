@@ -12,12 +12,6 @@
 #define FSCALE (1<<8)
 #endif
 
-#if defined(Pyramid) || defined(NeXT) || defined(sun) || \
-defined(NCR3K) || defined(linux) || defined(ibm032) || defined (__osf__)
-#include <sys/time.h>
-#else
-#include <time.h>
-#endif
 
 #if !defined(GEMDOS) && !defined(MAC)
 #ifndef VMS

@@ -13,7 +13,6 @@
 #ifndef USG
 #include <sys/types.h>
 #include <sys/param.h>
-#include <sys/time.h>
 #include <sys/resource.h>
 #endif
 
@@ -29,9 +28,6 @@
 #endif
 
 
-#ifndef ibm032
-#include <time.h>
-#endif
 
 #if defined(ultrix) || defined(USG)
 void perror();

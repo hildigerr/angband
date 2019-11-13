@@ -16,11 +16,6 @@
 #include <signal.h>
 #include "angband.h"
 
-#ifdef Pyramid
-#include <sys/time.h>
-#else
-#include <time.h>
-#endif
 
 
 #ifndef USG

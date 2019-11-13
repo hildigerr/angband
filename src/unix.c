@@ -41,7 +41,6 @@ typedef struct {
 #endif
 
 #ifndef USG
-#include <sys/time.h>
 #include <sys/resource.h>
 #include <sys/types.h>
 #include <sys/param.h>

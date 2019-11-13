@@ -22,6 +22,14 @@
 # include <stdlib.h>
 #endif
 
+#if defined(Pyramid) || defined(NeXT) || defined(sun) || \
+    defined(NCR3K) || defined(linux) || defined(ibm032) || \
+    defined (__osf__)
+# include <sys/time.h>
+#endif
+
+#include <time.h>
+
 
 
 

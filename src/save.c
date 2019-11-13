@@ -56,7 +56,6 @@ static void rd_monster();
 
 #if !defined(ATARIST_MWC)
 #ifdef MAC
-#include <time.h>
 #else
 long time();
 
