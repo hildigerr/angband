@@ -54,6 +54,14 @@
 # include <support.h>
 #endif
 
+#if !defined(ATARIST_MWC)
+# ifdef __TURBOC__
+#  include <mem.h>
+# else
+#  include <memory.h>
+# endif
+#endif
+
 
 
 #endif
