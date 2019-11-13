@@ -257,12 +257,6 @@ char *index();
 #define exit uexit
 #endif
 
-#if defined(SYS_V) && defined(lint)
-/* to prevent <string.h> from including <NLchar.h>, this prevents a bunch
-   of lint errors. */
-#define RTPC_NO_NLS
-#endif
-
 #ifdef SECURE
 extern int PlayerUID;
 #define getuid() PlayerUID

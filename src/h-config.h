@@ -86,6 +86,18 @@
 # define const /* nothing */
 #endif
 
+
+/*
+ * Prevent "lint" messages 
+ */
+#if defined(lint)
+# if defined(SYS_V)
+#  define RTPC_NO_NLS
+# endif
+#endif
+
+
+
 #endif
 
 
