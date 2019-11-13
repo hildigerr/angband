@@ -22,13 +22,6 @@ char               *strcat();
 
 #endif
 
-#ifndef USG
-#ifndef VMS
-#include <sys/file.h>
-#else
-#include <file.h>
-#endif
-#endif
 
 #ifndef VMS
 #if defined(ultrix) || defined(USG)

@@ -3,8 +3,6 @@
 #include "angband.h"
 
 
-#include <sys/file.h>
-
 extern short        log_index;
 
 void 

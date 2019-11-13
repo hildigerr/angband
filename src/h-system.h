@@ -71,7 +71,12 @@
 #  include <string.h>
 # endif
 #else
-# include <strings.h>
+# ifdef VMS
+#  include <file.h>
+# else
+#  include <strings.h>
+#  include <sys/file.h>
+# endif
 #endif
 
 

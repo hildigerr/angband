@@ -72,7 +72,6 @@ typedef struct {
 #ifndef USG
 /* only needed for Berkeley UNIX */
 #include <sys/param.h>
-#include <sys/file.h>
 #endif
 
 #ifdef USG

@@ -21,7 +21,7 @@
 #ifndef USG
 /* only needed for Berkeley UNIX */
 #include <sys/param.h>
-#include <sys/file.h>
+# include <sys/file.h>
 #else
 #ifdef __MINT__        
 #endif
@@ -34,13 +34,13 @@
 #ifndef VMS
 #include <pwd.h>
 #else
-#include <file.h>
+# include <file.h>
 #endif
 #endif
 #endif
 
 #ifdef linux
-#include <sys/file.h>
+# include <sys/file.h>
 #endif
 
 #if defined(USG) || defined(VMS)
