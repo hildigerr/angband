@@ -98,6 +98,18 @@
 
 
 
+/*
+ * Lots of systems use USG
+ */
+#if defined(MAC) || defined(MSDOS) || \
+    defined(SYS_III) || defined(SYS_V) || defined(HPUX) || \
+    defined(ATARIST_MWC) || defined (__MINT__)
+# undef USG
+# define USG
+#endif
+
+
+
 #endif
 
 

@@ -220,17 +220,6 @@ int microsleep();
 char *index();
 #endif
 
-#if defined(SYS_III) || defined(SYS_V) || defined(MSDOS) || defined(MAC) || defined(HPUX)
-#ifndef USG
-#define USG
-#endif
-#endif
-
-#if defined(ATARIST_MWC) || defined (__MINT__)
-#ifndef USG
-#define USG
-#endif
-#endif
 
 
 
