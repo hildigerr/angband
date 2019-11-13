@@ -50,5 +50,11 @@
 
 
 
+#if defined(__MINT__)
+# include <support.h>
+#endif
+
+
+
 #endif
 

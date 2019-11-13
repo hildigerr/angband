@@ -132,12 +132,6 @@
 
 
 
-/* this takes care of almost all "implicit declaration" warnings -CWS */
-
-
-#ifdef __MINT__
-#include <support.h>
-#endif
 
 
 /* fix systems lacking usleep() -CWS 
