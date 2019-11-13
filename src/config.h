@@ -137,7 +137,6 @@
 #if defined(NeXT)
 #else
 #include <unistd.h>
-#include <fcntl.h>
 #endif
 
 #ifdef __MINT__

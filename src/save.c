@@ -21,7 +21,6 @@
 #ifdef USG
 #ifndef ATARIST_MWC
 #include <string.h>
-#include <fcntl.h>
 #else
 #include "string.h"
 #endif

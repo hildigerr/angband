@@ -51,7 +51,6 @@ typedef struct {
 #ifndef __MINT__
 #include <termio.h>
 #endif
-#include <fcntl.h>
 #else
 #include <strings.h>
 #if defined(atarist) && defined(__GNUC__) && !defined(__MINT__)

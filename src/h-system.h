@@ -30,6 +30,10 @@
 
 #include <time.h>
 
+#if !defined(NeXT) && !defined(ATARIST_MWC)
+# include <fcntl.h>
+#endif
+
 
 
 

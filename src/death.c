@@ -49,7 +49,6 @@
 #ifdef USG
 #ifndef ATARIST_MWC
 #include <string.h>
-#include <fcntl.h>
 #endif
 #else
 #include <strings.h>
