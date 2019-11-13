@@ -132,33 +132,10 @@
 #endif
 
 
-/* no system definitions are needed for 4.3BSD, SUN OS, DG/UX */
-
-/* if you are compiling on an ultrix/4.2BSD/Dynix/etc. version of UNIX,
-   define this, not needed for SUNs */
-/* #ifndef ultrix
-#define ultrix
-#endif */
-
 #if defined(SOLARIS)
-#define SYS_V
 #include <netdb.h>
 #endif
 
-/* if you are compiling on a SYS V version of UNIX, define this */
-/* #define SYS_V */
-
-/* if you are compiling on a SYS III version of UNIX, define this */
-/* #define SYS_III */
-
-/* if you are compiling on an ATARI ST with Mark Williams C, define this */
-/* #define ATARIST_MWC */
-
-/* if you are compiling on a Macintosh with MPW C 3.0, define this */
-/* #define MAC */
-
-/* if you are compiling on a HPUX version of UNIX, define this */
-/* #define HPUX */
 
 /****************************************************************************
  * System dependent defines follow, you should not need to change anything  *
@@ -270,10 +247,7 @@ char *index();
 #endif
 #endif
 
-/* Pyramid runs 4.2BSD-like UNIX version */
-#if defined(Pyramid)
-#define ultrix
-#endif
+
 
 #ifdef MSDOS
 #define register      /* MSC 4.0 still has a problem with register bugs ... */

@@ -1,5 +1,5 @@
 ####
-# Please take a look at config.h for *critical* configuration steps needed.
+# Please take a look at config.h and h-config.h for *critical* configuration steps needed.
 # BINDIR is the directory where the angband binary will be installed
 
 BINDIR = /User/games/bin
