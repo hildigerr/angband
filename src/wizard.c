@@ -12,9 +12,6 @@
 #include "monster.h"
 
 
-#ifndef linux
-long atol();
-#endif
 
 int
 is_wizard(uid)

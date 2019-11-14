@@ -11,9 +11,6 @@
 #include "angband.h"
 
 
-#ifndef linux
-long                atol();
-#endif
 
 static const char        *comment1[14] = {
     "Done! ", "Accepted! ", "Fine. ", "Agreed! ", "Ok. ", "Taken! ",

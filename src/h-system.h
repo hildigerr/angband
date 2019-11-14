@@ -86,5 +86,11 @@
 
 
 
+#if !defined(linux)
+  extern long atol();
+#endif
+
+
+
 #endif
 
