@@ -6,6 +6,61 @@
    not for profit purposes provided that this copyright and statement are
    included in all such copies. */
 
+/*****************************************************************************/
+
+
+/*
+ * Here's some functions that've been macroized rather than being called
+ * from everywhere.  They're short enough so that inlining them will probably
+ * result in a smaller executable, and speed things up, to boot. -CWS
+ */
+
+
+/*
+ * Simple integer math functions
+ * Should just use the real ones.
+ */
+#define MY_MAX	MAX
+#define MY_MIN	MIN
+#define MY_ABS	ABS
+#define MY_POM	POM
+
+
+/*
+ * Determines if a map location is fully inside the outer walls
+ */
+#define in_bounds(y, x) \
+   ((((y) > 0) && ((x) > 0) && ((y) < cur_height-1) && ((x) < cur_width-1)) ? \
+    (TRUE) : (FALSE))
+
+/*
+ * Determines if a map location is on or inside the outer walls
+ */
+#define in_bounds2(y, x) \
+   ((((y) >= 0) && ((x) >= 0) && ((y) < cur_height) && ((x) < cur_width)) ? \
+    (TRUE) : (FALSE))
+
+
+/*
+ * Determines if a map location is currently "on screen" -RAK-
+ * Note that "panel_contains(y,x)" always implies "in_bounds2(y,x)".
+ */
+#define panel_contains(y, x) \
+  ((((y) >= panel_row_min) && ((y) <= panel_row_max) && \
+    ((x) >= panel_col_min) && ((x) <= panel_col_max)) ? (TRUE) : (FALSE))
+
+
+/*
+ * Generates a random integer X where 1<=X<=MAXVAL	-RAK-
+ */
+#define randint(maxval) (((maxval) < 1) ? (1) : ((random() % (maxval)) + 1))
+
+
+
+
+/*****************************************************************************/
+
+
 #define get_Yn get_check
 
 
