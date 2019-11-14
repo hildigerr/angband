@@ -117,10 +117,6 @@
 
 
 
-#if defined(SOLARIS)
-#include <netdb.h>
-#endif
-
 
 /****************************************************************************
  * System dependent defines follow, you should not need to change anything  *

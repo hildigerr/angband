@@ -94,6 +94,10 @@
   extern char *index();
 #endif
 
+#if defined(SOLARIS)
+# include <netdb.h>
+#endif
+
 
 
 
