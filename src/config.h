@@ -183,10 +183,6 @@ int microsleep();
 #endif
 
 
-/* substitute strchr for index on USG versions of UNIX */
-#if defined(SYS_V) || defined(MSDOS) || defined(MAC)
-#define index strchr
-#endif
 
 #ifdef SYS_III
 char *index();
@@ -213,7 +209,6 @@ char *index();
 #if vms
 #define getch _getch
 #define unlink delete
-#define index strchr
 #define lstat stat
 #define exit uexit
 #endif

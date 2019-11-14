@@ -136,6 +136,13 @@
 
 
 
+/* substitute strchr for index on USG versions of UNIX */
+#if defined(SYS_V) || defined(MSDOS) || defined(MAC) || vms
+#define index strchr
+#endif
+
+
+
 #endif
 
 
