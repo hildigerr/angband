@@ -157,12 +157,6 @@ int microsleep();
 
 
 
-#ifdef SYS_III
-char *index();
-#endif
-
-
-
 
 
 #ifdef MAC

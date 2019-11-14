@@ -18,11 +18,8 @@
 #include "angband.h"
 
 
-#ifdef USG
-#ifndef ATARIST_MWC
-#else
+#ifdef ATARIST_MWC
 char               *index();
-#endif
 #endif
 
 /* Lets do all prototypes correctly.... -CWS */

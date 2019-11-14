@@ -90,6 +90,11 @@
   extern long atol();
 #endif
 
+#ifdef SYS_III
+  extern char *index();
+#endif
+
+
 
 
 #endif
