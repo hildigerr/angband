@@ -16,12 +16,6 @@
 #include "angband.h"
 
 
-#if defined(GEMDOS) && (__STDC__ == 0)
-#include <access.h>
-char               *strcat();
-
-#endif
-
 
 #ifndef VMS
 #if defined(ultrix) || defined(USG)
