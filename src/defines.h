@@ -39,12 +39,6 @@
 #ifndef FUZZY
 #define FUZZY 2
 #endif
-#ifndef TRUE
-#define TRUE 1
-#endif
-#ifndef FALSE
-#define FALSE 0
-#endif
 
 #define MAX_UCHAR       255
 #define MAX_SHORT       32767           /* maximum short/long signed ints */
@@ -288,15 +282,6 @@
 #define DELETE          0x7f
 #define ESCAPE        '\033'    /* ESCAPE character -CJS- */
 
-#ifndef NULL
-
-#ifdef __STDC__
-#define NULL ((void *)0)
-#else
-#define NULL (char *)0
-#endif /* __STDC__ */
-
-#endif /* NULL */
 
 
 /* Fval definitions: these describe the various types of dungeon floors and

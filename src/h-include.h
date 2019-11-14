@@ -17,6 +17,9 @@
 /* Basic types */
 #include "h-types.h"
 
+/* Basic constants */
+#include "h-defines.h"
+
 
 #endif
 
