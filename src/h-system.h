@@ -99,6 +99,16 @@
 #endif
 
 
+/*
+ * Hack -- trick vms
+ */
+#if vms
+# define getch _getch
+# define unlink delete
+# define lstat stat
+# define exit uexit
+#endif
+
 
 
 #endif

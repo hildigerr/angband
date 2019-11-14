@@ -169,12 +169,6 @@ int microsleep();
 #define SCRN_COLS	80
 #endif
 
-#if vms
-#define getch _getch
-#define unlink delete
-#define lstat stat
-#define exit uexit
-#endif
 
 #ifdef SECURE
 extern int PlayerUID;
