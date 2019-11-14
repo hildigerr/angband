@@ -5,19 +5,12 @@
    This software may be copied and distributed for educational, research, and
    not for profit purposes provided that this copyright and statement are
    included in all such copies. */
-#if !defined(__alpha)
-typedef unsigned long  u32b;
-typedef long	       s32b;
-#else
-typedef unsigned int   u32b;
-typedef int            s32b;
-#endif
-typedef unsigned short u16b;
-typedef short	       s16b;
-typedef unsigned char  byte;
-/* some machines will not accept 'signed char' as a type, and some accept it
-   but still treat it like an unsigned character, let's just avoid it,
-   any variable which can ever hold a negative value must be 16 or 32 bits */
+
+/*
+ * some machines will not accept 'signed char' as a type, and some accept it
+ * but still treat it like an unsigned character, let's just avoid it,
+ * any variable which can ever hold a negative value must be 16 or 32 bits 
+ */
 
 #define VTYPESIZ    160
 #define BIGVTYPESIZ 300
