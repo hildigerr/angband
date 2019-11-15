@@ -1468,8 +1468,7 @@ int yval, xval;
 		break;
 	      default:
 #if 0
-		sprintf(buf, "Cockup='%c'", *t);
-		msg_print(buf);
+		quit_fmt("Illegal vault creation char '%c'", *t);
 #endif
 		break;
 	    }

@@ -19,6 +19,9 @@
 /* Vararg interface to plog() */
 extern void plog_fmt(const char *fmt, ...);
 
+/* Vararg interface to quit() */
+extern void quit_fmt(const char *fmt, ...);
+
 
 #endif
 
