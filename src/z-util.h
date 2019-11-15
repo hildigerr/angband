@@ -6,11 +6,20 @@
 #include "h-include.h"
 
 
+/**** Available variables ****/
+
+/* A pointer to the name of the program */
+extern const char *argv0;
+
+
 /**** Available Functions ****/
 
 #ifndef HAS_STRICMP
 extern int stricmp(const char *a, const char *b);
 #endif
+
+/* Print an error message */
+extern void plog(const char *str);
 
 
 #endif

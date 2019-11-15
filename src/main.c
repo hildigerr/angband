@@ -96,6 +96,13 @@ char *argv[];
     
     strcpy(py.misc.name, "\0");
     
+
+
+
+    /* Save the "program name" */
+    argv0 = argv[0];
+
+
 #ifndef MSDOS
 #ifndef SET_UID
     (void) umask(0);

@@ -4,6 +4,13 @@
 
 
 
+/*
+ * Convenient storage of the program name
+ */
+cptr argv0 = NULL;
+
+
+
 #ifndef HAS_STRICMP
 
 /*
@@ -27,4 +34,12 @@ int stricmp(const char *c1, const char *b)
 
 #endif
 
+/*
+ * Print (or log) a "warning" message (ala "perror()")
+ */
+void plog(const char *str)
+{
+  /* Just do a labeled fprintf to stderr */
+  (fprintf(stderr, "%s: %s\n", argv0 ? argv0 : "???", str));
+}
 
