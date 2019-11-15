@@ -11,14 +11,7 @@
 #include "angband.h"
 
 
-/* Lets do all prototypes correctly.... -CWS */
-#ifndef NO_LINT_ARGS
-#ifdef __STDC__
 static void unsample(inven_type *);
-#else
-static void unsample();
-#endif
-#endif
 
 char                titles[MAX_TITLES][10];
 

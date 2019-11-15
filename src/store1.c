@@ -11,17 +11,9 @@
 #include "angband.h"
 
 
-#ifndef NO_LINT_ARGS
-#ifdef __STDC__
 static void special_offer(inven_type *);
 static void insert_store(int, int, s32b, struct inven_type *);
 static void store_create(int);
-#else
-static void special_offer();
-static void insert_store();
-static void store_create();
-#endif
-#endif
 
 /* Returns the value for any given object		-RAK-	 */
 s32b 

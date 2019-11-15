@@ -12,19 +12,9 @@
 #include "monster.h"
 
 
-/* Lets do all prototypes correctly.... -CWS */
-#ifndef NO_LINT_ARGS
-#ifdef __STDC__
 static void        regenhp(int);
 static void        regenmana(int);
 static const char *value_check(inven_type *);
-#else
-static void        regenhp();
-static void        regenmana();
-/* static int      enchanted(); */
-static const char *value_check();
-#endif
-
 static void do_cmd_feeling();
 static char original_commands();
 static void do_command();
@@ -36,7 +26,6 @@ static void go_down();
 static void do_cmd_spike();
 static void refill_lamp();
 static void regen_monsters();
-#endif
 
 /* ANGBAND game module					-RAK-	 */
 /* The code in this section has gone through many revisions, and */

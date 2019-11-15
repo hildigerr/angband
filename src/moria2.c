@@ -12,9 +12,6 @@
 #include "monster.h"
 
 
-/* Lets do all prototypes correctly.... -CWS */
-#ifndef NO_LINT_ARGS
-#ifdef __STDC__
 static int look_ray(int, int, int);
 static int look_see(int, int, int *);
 static void hit_trap(int, int);
@@ -27,23 +24,6 @@ static void drop_throw(int, int, struct inven_type *);
 static void py_bash(int, int);
 static const char *look_mon_desc(int);
 static int fearless(monster_race *);
-
-#else
-static int look_ray();
-static int look_see();
-static void hit_trap();
-static int summon_object();
-static void py_attack();
-static void chest_trap();
-static void inven_throw();
-static void facts();
-static void drop_throw();
-static void py_bash();
-static const char *look_mon_desc();
-static int fearless();
-
-#endif
-#endif
 
 
 /* Player hit a trap.	(Chuckle)			-RAK-	 */

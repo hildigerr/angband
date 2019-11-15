@@ -143,11 +143,7 @@
 #ifdef NEEDS_USLEEP
 #define usleep microsleep
 
-#ifdef __STDC__
 int microsleep(unsigned long);
-#else
-int microsleep();
-#endif /* __STDC__ */
 
 #endif
 

@@ -13,22 +13,11 @@
 #include "monster.h"
 
 
-/* Lets do all prototypes correctly.... -CWS */
-#ifndef NO_LINT_ARGS
-#ifdef __STDC__
 static char bolt_char(int, int, int, int);
 static void ball_destroy(int, int (**) ());
 static void pause_if_screen_full(int *, int);
 static void spell_hit_monster(monster_type *, int, int *, int, int *, int *, byte);
 static void replace_spot(int, int, int);
-#else
-static char bolt_char();
-static void ball_destroy();
-static void pause_if_screen_full();
-static void spell_hit_monster();
-static void replace_spot();
-#endif
-#endif
 
 /* Following are spell procedure/functions			-RAK-	 */
 /* These routines are commonly used in the scroll, potion, wands, and	 */

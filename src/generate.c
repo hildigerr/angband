@@ -13,11 +13,6 @@
 #include "monster.h"
 
 
-
-
-/* Lets do all prototypes correctly.... -CWS */
-#ifndef NO_LINT_ARGS
-#ifdef __STDC__
 static void correct_dir(int *, int *, int, int, int, int);
 static void rand_dir(int *, int *);
 static void fill_cave(int);
@@ -55,45 +50,6 @@ static void try_door(int, int);
 static void new_spot(s16b *, s16b *);
 static void build_pit(int, int);
 static void build_store(int, int, int);
-#else
-static void correct_dir();
-static void rand_dir();
-static void fill_cave();
-static void place_streamer();
-static cave_type *test_place_obj();
-static void place_open_door();
-static void place_broken_door();
-static void place_closed_door();
-static void place_locked_door();
-static void place_stuck_door();
-static void place_secret_door();
-static void place_door();
-static void place_up_stairs();
-static void place_down_stairs();
-static void place_stairs();
-static void vault_trap();
-static void vault_monster();
-static void vault_jelly();
-static void vault_orc();
-static void vault_troll();
-static void vault_undead();
-static void vault_dragon();
-static void vault_demon();
-static void vault_giant();
-static void build_room();
-static void build_type1();
-static void build_type5();
-static void build_type2();
-static void build_type3();
-static void vault_nasty();
-static void special_pit();
-static int  next_to();
-static void try_door();
-static void new_spot();
-static void build_pit();
-static void build_store();
-#endif
-
 static void place_boundary();
 static void place_destroyed();
 static void blank_cave();
@@ -101,7 +57,6 @@ static void cave_gen();
 static void tlink();
 static void mlink();
 static void town_gen();
-#endif
 
 typedef struct coords {
     int x, y;

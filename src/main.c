@@ -31,18 +31,10 @@ void perror();
 void exit();
 #endif
 
-/* Lets do all prototypes correctly.... -CWS */
-#ifndef NO_LINT_ARGS
-#ifdef __STDC__
 static int d_check(char *);
-#else
-static int d_check();
-#endif
-
 static void init_m_level();
 static void init_t_level();
 static void player_outfit();
-#endif
 
 #if (COST_ADJ != 100)
 static void price_adjust();

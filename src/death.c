@@ -66,22 +66,11 @@ struct passwd      *getpwuid();
 #endif
 #endif
 
-/* Lets do all prototypes correctly.... -CWS */
-#ifndef NO_LINT_ARGS
-#ifdef __STDC__
 static void  date(char *);
 static char *center_string(char *, const char *);
 static void  print_tomb(void);
 static void  kingly(void);
 
-#else
-static void  date();
-static char *center_string();
-static void  print_tomb();
-static void  kingly();
-
-#endif
-#endif
 
 #ifndef MAC
 char        *getlogin();

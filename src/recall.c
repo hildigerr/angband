@@ -11,14 +11,7 @@
 #include "angband.h"
 #include "monster.h"
 
-
-#ifndef NO_LINT_ARGS
-#ifdef __STDC__
 static void roff(const char *);
-#else
-static void         roff();
-#endif
-#endif
 
 static const char  *desc_atype[] = {
 				    "do something undefined",

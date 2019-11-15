@@ -11,18 +11,8 @@
 #include "angband.h"
 
 
-/* Lets do all prototypes correctly.... -CWS */
-#ifndef NO_LINT_ARGS
-#ifdef __STDC__
 static void change_stat(int, int);
 static int  monval(int);
-
-#else
-static void change_stat();
-static int  monval();
-
-#endif
-
 static void get_stats();
 static void save_prev_data();
 static int  load_prev_data();
@@ -40,7 +30,6 @@ static void get_class();
 static void choose_class();
 static void get_money();
 
-#endif
 
 struct previous {
     u16b age;

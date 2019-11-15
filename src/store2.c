@@ -96,9 +96,6 @@ static const char        *comment6[5] = {
 };
 
 
-/* Lets do all prototypes correctly.... -CWS */
-#ifndef NO_LINT_ARGS
-#ifdef __STDC__
 static void prt_comment2(s32b, s32b, int);
 static void prt_comment3(s32b, s32b, int);
 static void haggle_commands(int);
@@ -115,32 +112,12 @@ static int purchase_haggle(int, s32b *, inven_type *);
 static int sell_haggle(int, s32b *, inven_type *);
 static int store_purchase(int, int *);
 static int store_sell(int, int *);
-#else
-static void prt_comment2();
-static void prt_comment3();
-static void haggle_commands();
-static void display_inventory();
-static void display_cost();
-static void display_store();
-static int  get_store_item();
-static int  increase_insults();
-static void decrease_insults();
-static int  haggle_insults();
-static int  get_haggle();
-static int  receive_offer();
-static int  purchase_haggle();
-static int  sell_haggle();
-static int  store_purchase();
-static int  store_sell();
-#endif
-
 static void prt_comment1();
 static void prt_comment4();
 static void prt_comment5();
 static void prt_comment6();
 static void display_commands();
 static void store_prt_gold();
-#endif
 
 /* Comments vary.					-RAK-	 */
 /* Comment one : Finished haggling				 */

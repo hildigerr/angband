@@ -22,21 +22,11 @@
 char               *index();
 #endif
 
-/* Lets do all prototypes correctly.... -CWS */
-#ifndef NO_LINT_ARGS
-#ifdef __STDC__
 static void prt_lnum(const char *, s32b, int, int);
 static void prt_num(const char *, int, int, int);
 static void prt_long(s32b, int, int);
 static void prt_int(int, int, int);
-#else
-static void prt_lnum();
-static void prt_num();
-static void prt_long();
-static void prt_int();
-#endif
 static void gain_level();
-#endif
 
 static const char *stat_names[] = { "STR: ", "INT: ", "WIS: ",
 					"DEX: ", "CON: ", "CHR: "};
@@ -1599,11 +1589,7 @@ prt_stat_block()
 
 /* EQUIPMENT CHARACTER HANDLER  - DGK */
 void
-#ifdef __STDC__
 prt_equippy_chars(void)
-#else
-prt_equippy_chars()
-#endif                                    
 {                                        
     int i, j;                              
     inven_type *i_ptr;                     

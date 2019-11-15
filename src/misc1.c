@@ -37,19 +37,10 @@ typedef struct statstime {
 } statstime;
 
 
-/* Lets do all prototypes correctly.... -CWS */
-#ifndef NO_LINT_ARGS
-#ifdef __STDC__
 static int   test_place(int, int);
 static char *cap(char *);
 static void  magic_ammo(inven_type *, int, int, int, int, int);
-#else
-static int   test_place();
-static char *cap();
-static void  magic_ammo();
-#endif
 static void compact_objects();
-#endif
 
 extern int peek;
 extern int rating;

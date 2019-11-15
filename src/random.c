@@ -26,19 +26,10 @@
 #include <stdio.h>
 
 /* some prototypes - cba */
-#ifndef NO_LINT_ARGS
-#ifdef __STDC__
 extern long random(void);
 extern void srandom(unsigned int);
 extern char *initstate(unsigned int, char *, int);
 extern char *setstate(char *);
-#else
-extern long random();
-extern int srandom();
-extern char *initstate();
-extern char *setstate();
-#endif
-#endif
 
 /*
  * random.c: An improved random number generation package.  In addition to

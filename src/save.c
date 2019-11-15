@@ -21,8 +21,6 @@
 #include <stat.h>		/* chmod() */
 #endif
 
-/* Lets do all prototypes correctly.... -CWS */
-#ifndef NO_LINT_ARGS
 static int sv_write();
 static void wr_byte();
 static void wr_short();
@@ -40,7 +38,6 @@ static void rd_string();
 static void rd_shorts();
 static void rd_item();
 static void rd_monster();
-#endif
 
 #if !defined(ATARIST_MWC)
 #ifdef MAC

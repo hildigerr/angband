@@ -10,12 +10,9 @@
 
 #include "angband.h"
 
-/* Lets do all prototypes correctly.... -CWS */
-#ifndef NO_LINT_ARGS
 int door_creation();
 int detect_magic();
 int stair_creation();
-#endif
 
 /* Throw a magic spell					-RAK-	 */
 void 

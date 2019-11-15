@@ -11,14 +11,7 @@
 #include "angband.h"
 
 
-/* Lets do all prototypes correctly.... -CWS */
-#ifndef NO_LINT_ARGS
-#ifdef __STDC__
 static int direction(int *);
-#else
-static int          direction();
-#endif
-#endif
 
 static int 
 direction(dir)
