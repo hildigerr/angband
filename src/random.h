@@ -15,9 +15,9 @@
 
 /**** Available functions ****/
 
-extern long random(void);
-extern void srandom(unsigned int);
-extern char *initstate(unsigned int, char *, int);
+extern s32b random(void);
+extern void srandom(u32b);
+extern char *initstate(u32b, char *, int);
 extern char *setstate(char *);
 
 
