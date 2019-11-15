@@ -14,6 +14,8 @@
  * MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE. 
  */
 
+#include "random.h"
+
 /*
  * Some minor changes were made by me (C. Swiger): 
  *
@@ -23,13 +25,7 @@
  * ;-).... 
  */
 
-#include <stdio.h>
 
-/* some prototypes - cba */
-extern long random(void);
-extern void srandom(unsigned int);
-extern char *initstate(unsigned int, char *, int);
-extern char *setstate(char *);
 
 /*
  * random.c: An improved random number generation package.  In addition to

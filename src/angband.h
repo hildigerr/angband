@@ -22,6 +22,11 @@
 #include "h-include.h"
 
 
+/* 
+ * Include the header file for the random number generator
+ */
+#include "random.h"
+
 
 /*
  * Include the "Angband" configuration header
