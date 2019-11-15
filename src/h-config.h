@@ -170,6 +170,12 @@
 #endif
 
 
+/*
+ * OPTION: Define "HAS_MEMSET" only if "memset()" exists.
+ */
+#define HAS_MEMSET
+
+
 
 #endif
 
