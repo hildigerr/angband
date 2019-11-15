@@ -100,7 +100,6 @@
 #define STORE_MAX_INVEN  18     /* Max diff objs in stock for auto buy   */
 #define STORE_MIN_INVEN  10     /* Min diff objs in stock for auto sell  */
 #define STORE_TURN_AROUND 9     /* Amount of buying and selling normally */
-#define COST_ADJ         100    /* Adjust prices for buying and selling  */
 
 #define MAX_QUESTS        4     /* only 1 defined anyway --CFT */
 #define DEFINED_QUESTS    1 

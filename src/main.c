@@ -26,9 +26,6 @@ static void init_m_level();
 static void init_t_level();
 static void player_outfit();
 
-#if (COST_ADJ != 100)
-static void price_adjust();
-#endif
 int unfelt    = TRUE;
 int be_nasty  = FALSE;
 int rating    = 0;
@@ -294,9 +291,6 @@ char *argv[];
     /* Some necessary initializations		*/
     /* all made into constants or initialized in variables.c */
 
-#if (COST_ADJ != 100)
-    price_adjust();
-#endif
 
     /* Grab a random seed from the clock          */
     init_seeds();
@@ -608,18 +602,6 @@ init_t_level()
 }
 
 
-#if (COST_ADJ != 100)
-/* Adjust prices of objects				-RAK-	*/
-static void
-price_adjust()
-{
-    register int i;
-
-    /* round half-way cases up */
-    for (i = 0; i < MAX_OBJECTS; i++)
-	k_list[i].cost = ((k_list[i].cost * COST_ADJ) + 50) / 100;
-}
-#endif
 
 static int
 d_check(a)
