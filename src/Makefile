@@ -1,8 +1,6 @@
 ####
 # Please take a look at config.h and h-config.h for *critical* configuration steps needed.
-# BINDIR is the directory where the angband binary will be installed
 
-BINDIR = /User/games/bin
 PROGRAM = angband
 
 ####
@@ -111,20 +109,6 @@ all: $(PROGRAM)
 $(PROGRAM): $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) -o $(PROGRAM) $(LIBS)
 
-install:	$(PROGRAM)
-	cp $(PROGRAM) $(BINDIR)/$(PROGRAM)
-	chown games.bin $(BINDIR)/$(PROGRAM)
-	chmod 4511 $(BINDIR)/$(PROGRAM)
-
-clean:;
-	rm -f *.o ./core *~ .*~ temp1 temp2 gmon.*
-
-realclean: clean
-	rm -f $(PROGRAM)
-
-spotless: clean
-	rm -f $(PROGRAM)
-	rm -f $(BINDIR)/$(PROGRAM)
 
 depend:
 	/usr/local/bin/X11/makedepend $(INCLUDES) -p$(OBJDIR)/ $(SRCS)
