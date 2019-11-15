@@ -119,7 +119,7 @@ static int seps[MAX_TYPES] = {SEP_0, SEP_1, SEP_2, SEP_3, SEP_4};
  * srandom() advances the front and rear pointers 10*rand_deg times, and
  * hence the rear pointer which starts at 0 will also end up at zero; thus
  * the zeroeth element of the state information, which contains info about
- * the current position of the rear pointer is just MAX_TYPES*(rptr - state)
+ * the current position of the rear pointer is just MAX_TYPES*(tail - state)
  * + TYPE_3 == TYPE_3. 
  */
 
@@ -134,19 +134,19 @@ static long         randtbl[DEG_3 + 1] = {TYPE_3,
 					0xf5ad9d0e, 0x8999220b, 0x27fb47b9};
 
 /*
- * fptr and rptr are two pointers into the state info, a front and a rear
+ * head and tail are two pointers into the state info, a front and a rear
  * pointer.  These two pointers are always rand_sep places aparts, as they
  * cycle cyclically through the state information.  (Yes, this does mean we
  * could get away with just one pointer, but the code for random() is more
  * efficient this way).  The pointers are left positioned as they would be
  * from the call initstate( 1, randtbl, 128 ) (The position of the rear
- * pointer, rptr, is really 0 (as explained above in the initialization of
+ * pointer, tail, is really 0 (as explained above in the initialization of
  * randtbl) because the state table pointer is set to point to randtbl[1] (as
  * explained below). 
  */
 
-static long        *fptr = &randtbl[SEP_3 + 1];
-static long        *rptr = &randtbl[1];
+static long        *head = &randtbl[SEP_3 + 1];
+static long        *tail = &randtbl[1];
 
 
 
@@ -168,7 +168,7 @@ static int          rand_type = TYPE_3;
 static int          rand_deg = DEG_3;
 static int          rand_sep = SEP_3;
 
-static long        *end_ptr = &randtbl[DEG_3 + 1];
+static long        *rand_end = &randtbl[DEG_3 + 1];
 
 
 
@@ -193,15 +193,15 @@ long random()
     }
 
     else {
-	*fptr += *rptr;
-	i = (*fptr >> 1) & 0x7fffffff;	/* chucking least random bit */
-	if (++fptr >= end_ptr) {
-	    fptr = state;
-	    ++rptr;
+	*head += *tail;
+	i = (*head >> 1) & 0x7fffffff;	/* chucking least random bit */
+	if (++head >= rand_end) {
+	    head = state;
+	    ++tail;
 	}
 	else {
-	    if (++rptr >= end_ptr) {
-		rptr = state;
+	    if (++tail >= rand_end) {
+		tail = state;
 	    }
 	}
     }
@@ -239,8 +239,8 @@ srandom(x)
 	for (i = 1; i < rand_deg; i++) {
 	    state[i] = 1103515245 * state[i - 1] + 12345;
 	}
-	fptr = &state[rand_sep];
-	rptr = &state[0];
+	head = &state[rand_sep];
+	tail = &state[0];
 	for (i = 0; i < 10 * rand_deg; i++) random();
     }
 }
@@ -272,7 +272,7 @@ initstate(seed, arg_state, n)
 	state[-1] = rand_type;
     }
     else {
-	state[-1] = MAX_TYPES * (rptr - state) + rand_type;
+	state[-1] = MAX_TYPES * (tail - state) + rand_type;
     }
 
     if (n < BREAK_0) {
@@ -313,8 +313,8 @@ initstate(seed, arg_state, n)
     /* first location */
     state = &(((long *)arg_state)[1]);
 
-    /* must set end_ptr before srandom */
-    end_ptr = &state[rand_deg];
+    /* must set rand_end before srandom */
+    rand_end = &state[rand_deg];
 
     srandom(seed);
 
@@ -322,7 +322,7 @@ initstate(seed, arg_state, n)
 	state[-1] = rand_type;
     }
     else {
-	state[-1] = MAX_TYPES * (rptr - state) + rand_type;
+	state[-1] = MAX_TYPES * (tail - state) + rand_type;
     }
 
     return (ostate);
@@ -354,7 +354,7 @@ setstate(arg_state)
 	state[-1] = rand_type;
     }
     else {
-	state[-1] = MAX_TYPES * (rptr - state) + rand_type;
+	state[-1] = MAX_TYPES * (tail - state) + rand_type;
     }
 
     switch (type) {
@@ -375,12 +375,12 @@ setstate(arg_state)
 
     state = &new_state[1];
     if (rand_type != TYPE_0) {
-	rptr = &state[rear];
-	fptr = &state[(rear + rand_sep) % rand_deg];
+	tail = &state[rear];
+	head = &state[(rear + rand_sep) % rand_deg];
     }
 
-    /* set end_ptr too */
-    end_ptr = &state[rand_deg];
+    /* Note rand_end too */
+    rand_end = &state[rand_deg];
 
     return (ostate);
 }
