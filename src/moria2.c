@@ -2855,7 +2855,7 @@ int mnum;
 		(c_list[m->mptr].cchar == 'X')));
     
     if (m->maxhp == 0) {	   /* then we're just going to fix it! -CFT */
-	if ((c_list[m->mptr].cdefense & MAX_HP) || be_nasty)
+	if ((c_list[m->mptr].cdefense & MAX_HP) )
 	    m->maxhp = max_hp(c_list[m->mptr].hd);
 	else
 	    m->maxhp = pdamroll(c_list[m->mptr].hd);

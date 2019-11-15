@@ -787,7 +787,7 @@ int          slp;
     mon_ptr->fy = y;
     mon_ptr->fx = x;
     mon_ptr->mptr = z;
-    if ((c_list[z].cdefense & MAX_HP) || be_nasty)
+    if ((c_list[z].cdefense & MAX_HP) )
 	mon_ptr->hp = max_hp(c_list[z].hd);
     else
 	mon_ptr->hp = pdamroll(c_list[z].hd);
@@ -2497,8 +2497,6 @@ inven_type *t_ptr;
 {
     const char *name;
 
-    if (be_nasty)
-	return 0;
     name = k_list[t_ptr->index].name;
     if (!stricmp("& Longsword", name)) {
 	switch (randint(15)) {
@@ -3600,8 +3598,6 @@ inven_type *t_ptr;
 {
     const char *name;
 
-    if (be_nasty)
-	return 0;
     name = k_list[t_ptr->index].name;
     if (!strncmp("Adamantite", name, 10)) {
 	if (SOULKEEPER)

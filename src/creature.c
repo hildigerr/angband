@@ -2110,7 +2110,7 @@ int monptr, *took_turn;
 	    monster_is_afraid = 0;
 	    if (m_ptr->maxhp == 0) {	/* then we're just going to fix it!
 					 * -CFT */
-		if ((c_list[m_ptr->mptr].cdefense & MAX_HP) || be_nasty)
+		if ((c_list[m_ptr->mptr].cdefense & MAX_HP) )
 		    m_ptr->maxhp = max_hp(c_list[m_ptr->mptr].hd);
 		else
 		    m_ptr->maxhp = pdamroll(c_list[m_ptr->mptr].hd);

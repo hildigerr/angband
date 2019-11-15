@@ -27,7 +27,6 @@ static void init_t_level();
 static void player_outfit();
 
 int unfelt    = TRUE;
-int be_nasty  = FALSE;
 int rating    = 0;
 int peek      = FALSE;
 int player_uid;
@@ -137,15 +136,7 @@ char *argv[];
     }
 #endif
     
-#ifdef ANNOY
-    if (player_uid == ANNOY)
-	be_nasty=TRUE;
-    else
-	be_nasty=FALSE;
-#else
-    be_nasty=FALSE;
-#endif
-    
+
 #if !defined(MSDOS) && !defined(__MINT__)
     (void)gethostname(thishost, (sizeof thishost) - 1);	/* get host */
     fp = my_tfopen(ANGBAND_LOAD, "r");

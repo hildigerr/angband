@@ -157,7 +157,6 @@ extern int weapon_heavy;		/* Flag if the weapon too heavy -CJS- */
 extern int pack_heavy;			/* Flag if the pack too heavy -CJS- */
 extern char doing_inven;		/* Track inventory commands */
 extern int screen_change;		/* Screen changes (used in inven_commands) */
-extern int be_nasty;
 extern int monster_is_afraid;	/* redo monster fear messages -CWS */
 
 extern int character_generated;	/* don't save score until char gen finished */
