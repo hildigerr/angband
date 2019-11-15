@@ -277,7 +277,7 @@ char *initstate(u32b seed, char *arg_state, int n)
 
     /* Invalid input */
     if (n < BREAK_0) {
-	fprintf(stderr, "initstate(): ignoring invalid state (%d bytes)", n);
+	/* plog_fmt("initstate(): ignoring invalid state (%d bytes)", n); */
 	return ((char*)0);
     }
 
@@ -368,7 +368,7 @@ char *setstate(char *arg_state)
 	    break;
 	}
 	default:
-	    fprintf(stderr, "setstate(): ignoring munged info (%d)", type);
+	    /* plog_fmt("setstate(): ignoring munged info (%d)", type); */
 	    break;
     }
 

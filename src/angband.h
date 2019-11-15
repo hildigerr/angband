@@ -26,6 +26,7 @@
  */
 #include "z-util.h"
 #include "z-virt.h"
+#include "z-form.h"
 
 
 /* 
