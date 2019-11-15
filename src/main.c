@@ -17,9 +17,6 @@
 
 
 
-#ifdef ultrix
-#include <sys/stat.h>
-#endif
 
 
 

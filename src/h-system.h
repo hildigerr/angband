@@ -96,6 +96,7 @@
 
 #if defined(SOLARIS)
 # include <netdb.h>
+# include <sys/stat.h>
 #endif
 
 

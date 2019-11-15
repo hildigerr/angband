@@ -18,7 +18,7 @@
 #endif
 
 #ifdef __MINT__
-#include <stat.h>		/* chmod() */
+# include <stat.h>		/* chmod() */
 #endif
 
 static int sv_write();
@@ -50,9 +50,19 @@ char *malloc();
 
 #endif
 
-#ifndef SET_UID
-#include <sys/stat.h>
+#if !defined(SET_UID)
+# if defined(__EMX__)
+#  include <sys/stat.h>
+# else
+#  include <stat.h>
+# endif
 #endif
+
+#ifdef linux
+# include <sys/stat.h>
+#endif
+
+
 
 /*
  * these are used for the save file, to avoid having to pass them to every
