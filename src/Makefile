@@ -1,7 +1,6 @@
 ####
 # Please take a look at config.h and h-config.h for *critical* configuration steps needed.
 
-PROGRAM = angband
 
 ####
 # If you use gcc, you may find that adding '-traditional-cpp' will fix
@@ -99,15 +98,13 @@ OBJECTS = main.o misc1.o misc2.o store1.o files.o io.o birth.o desc.o\
 LIBFILES = hours news.hlp cmds_o.hlp owizcmds.hlp cmds_r.hlp cmds_w.hlp \
 	scores version.hlp welcome.hlp
 
-default: all
-
-all: $(PROGRAM)
+default: angband
 
 .c.o:
 	$(CC) $(CFLAGS) -c $*.c
 
-$(PROGRAM): $(OBJECTS)
-	$(CC) $(CFLAGS) $(OBJECTS) -o $(PROGRAM) $(LIBS)
+angband: $(OBJECTS)
+	$(CC) $(CFLAGS) $(OBJECTS) -o angband $(LIBS)
 
 
 depend:
