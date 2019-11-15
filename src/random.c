@@ -25,6 +25,8 @@
  * ;-).... 
  *
  * And the same person has a wierd idea about "else if" indentation.
+ *
+ * Cleaned up various pieces of the code.  -BEN-
  */
 
 
@@ -218,15 +220,11 @@ long random()
  * locations that are exactly rand_sep places apart.  Lastly, it cycles the
  * state information a given number of times to get rid of any initial
  * dependencies introduced by the L.C.R.N.G. Note that the initialization of
- * randtbl[] for default usage relies on values produced by this routine. 
+ * randtbl[] for default usage relies on values produced by this routine.
+ *
+ * Note: this function no longer returns "int" if __STDC__ is undefined.
  */
-
-#ifdef __STDC__
-void
-#else
-int
-#endif /* __STDC__ */
-srandom(x)
+void srandom(x)
     unsigned int        x;
 {
     register int        i;
@@ -258,13 +256,13 @@ srandom(x)
  * thing we do is save the current state, if any, just like setstate() so
  * that it doesn't matter when initstate is called. Returns a pointer to the
  * old state. 
+ *
+ * Input:
+ *   seed:       seed for R.N.G.
+ *   arg_state:  pointer to state array
+ *   n:          size (in bytes) of arg_state
  */
-
-char               *
-initstate(seed, arg_state, n)
-    unsigned            seed;	   /* seed for R. N. G. */
-    char               *arg_state; /* pointer to state array */
-    int                 n;	   /* # bytes of state info */
+char * initstate(unsigned seed, char *arg_state, int n)
 {
     register char      *ostate = (char *)(&state[-1]);
 
@@ -275,8 +273,9 @@ initstate(seed, arg_state, n)
 	state[-1] = MAX_TYPES * (tail - state) + rand_type;
     }
 
+    /* Invalid input */
     if (n < BREAK_0) {
-	fprintf(stderr, "initstate: not enough state (%d bytes) with which to do jack; ignored.", n);
+	fprintf(stderr, "initstate(): ignoring invalid state (%d bytes)", n);
 	return ((char*)0);
     }
 
@@ -316,6 +315,7 @@ initstate(seed, arg_state, n)
     /* must set rand_end before srandom */
     rand_end = &state[rand_deg];
 
+    /* Seed it */
     srandom(seed);
 
     if (rand_type == TYPE_0) {
@@ -340,10 +340,7 @@ initstate(seed, arg_state, n)
  * same state as the current state. Returns a pointer to the old state
  * information. 
  */
-
-char               *
-setstate(arg_state)
-    char               *arg_state;
+char *setstate(char *arg_state)
 {
     register long      *new_state = (long *)arg_state;
     register int        type = new_state[0] % MAX_TYPES;
@@ -369,10 +366,11 @@ setstate(arg_state)
 	    break;
 	}
 	default:
-	    fprintf(stderr, "setstate: state info has been munged (%d); not changed.", type);
+	    fprintf(stderr, "setstate(): ignoring munged info (%d)", type);
 	    break;
     }
 
+    /* Note the beginning */
     state = &new_state[1];
     if (rand_type != TYPE_0) {
 	tail = &state[rear];
@@ -382,6 +380,7 @@ setstate(arg_state)
     /* Note rand_end too */
     rand_end = &state[rand_deg];
 
+    /* Return the old state */
     return (ostate);
 }
 
