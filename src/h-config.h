@@ -153,17 +153,20 @@
 
 
 /*
- * Note that you'll be happier if you have a case-insensitive string
- * comparision routine on your system.  If your system lacks this,
- * you're still in luck, as we now provide one.  -CWS
+ * OPTION: Define "HAS_STRICMP" only if stricmp() exists.
  */
 #if defined (NeXT) || defined(HPUX) || defined(ultrix) || \
     defined(NCR3K) || defined(linux) || defined(ibm032) || \
     defined(__386BSD__) || defined(SOLARIS) || defined (__osf__)
 # define stricmp strcasecmp
-#else /* Let's make this work on systems lacking a such a routine. */
-# define stricmp my_stricmp
-# define NEEDS_STRICMP
+# define HAS_STRICMP
+#endif
+
+/*
+ * Note that "Turbo C" defines "stricmp"
+ */
+#ifdef __TURBOC__
+#define HAS_STRICMP
 #endif
 
 

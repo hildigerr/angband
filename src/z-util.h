@@ -8,8 +8,8 @@
 
 /**** Available Functions ****/
 
-#ifdef NEEDS_STRICMP
-extern int my_stricmp(const char *, const char *);
+#ifndef HAS_STRICMP
+extern int stricmp(const char *a, const char *b);
 #endif
 
 
