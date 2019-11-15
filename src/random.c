@@ -23,6 +23,8 @@
  * compilers removed unused variable "j" from srandom() re-indented and
  * respaced the code -- someone has one ugly coding style wrt whitespace
  * ;-).... 
+ *
+ * And the same person has a wierd idea about "else if" indentation.
  */
 
 
@@ -182,23 +184,25 @@ static long        *end_ptr = &randtbl[DEG_3 + 1];
  * pointers can't wrap on the same call by not testing the rear pointer if
  * the front one has wrapped. Returns a 31-bit random number. 
  */
-
-long
-random()
+long random()
 {
     long                i;
 
     if (rand_type == TYPE_0) {
 	i = state[0] = (state[0] * 1103515245 + 12345) & 0x7fffffff;
-    } else {
+    }
+
+    else {
 	*fptr += *rptr;
 	i = (*fptr >> 1) & 0x7fffffff;	/* chucking least random bit */
 	if (++fptr >= end_ptr) {
 	    fptr = state;
 	    ++rptr;
-	} else {
-	    if (++rptr >= end_ptr)
+	}
+	else {
+	    if (++rptr >= end_ptr) {
 		rptr = state;
+	    }
 	}
     }
     return (i);
@@ -229,15 +233,15 @@ srandom(x)
 
     if (rand_type == TYPE_0) {
 	state[0] = x;
-    } else {
+    }
+    else {
 	state[0] = x;
 	for (i = 1; i < rand_deg; i++) {
 	    state[i] = 1103515245 * state[i - 1] + 12345;
 	}
 	fptr = &state[rand_sep];
 	rptr = &state[0];
-	for (i = 0; i < 10 * rand_deg; i++)
-	    random();
+	for (i = 0; i < 10 * rand_deg; i++) random();
     }
 }
 
@@ -264,49 +268,63 @@ initstate(seed, arg_state, n)
 {
     register char      *ostate = (char *)(&state[-1]);
 
-    if (rand_type == TYPE_0)
+    if (rand_type == TYPE_0) {
 	state[-1] = rand_type;
-    else
+    }
+    else {
 	state[-1] = MAX_TYPES * (rptr - state) + rand_type;
-    if (n < BREAK_1) {
-	if (n < BREAK_0) {
-	    fprintf(stderr,
-		    "initstate: not enough state (%d bytes) with which to do jack; ignored.", n);
-	    return (char *)0;
-	}
+    }
+
+    if (n < BREAK_0) {
+	fprintf(stderr, "initstate: not enough state (%d bytes) with which to do jack; ignored.", n);
+	return ((char*)0);
+    }
+
+    else if (n < BREAK_1) {
 	rand_type = TYPE_0;
 	rand_deg = DEG_0;
 	rand_sep = SEP_0;
-    } else {
-	if (n < BREAK_2) {
-	    rand_type = TYPE_1;
-	    rand_deg = DEG_1;
-	    rand_sep = SEP_1;
-	} else {
-	    if (n < BREAK_3) {
-		rand_type = TYPE_2;
-		rand_deg = DEG_2;
-		rand_sep = SEP_2;
-	    } else {
-		if (n < BREAK_4) {
-		    rand_type = TYPE_3;
-		    rand_deg = DEG_3;
-		    rand_sep = SEP_3;
-		} else {
-		    rand_type = TYPE_4;
-		    rand_deg = DEG_4;
-		    rand_sep = SEP_4;
-		}
-	    }
-	}
     }
-    state = &(((long *)arg_state)[1]);	/* first location */
-    end_ptr = &state[rand_deg];	   /* must set end_ptr before srandom */
+
+    else if (n < BREAK_2) {
+	rand_type = TYPE_1;
+	rand_deg = DEG_1;
+	rand_sep = SEP_1;
+    }
+
+    else if (n < BREAK_3) {
+	rand_type = TYPE_2;
+	rand_deg = DEG_2;
+	rand_sep = SEP_2;
+    }
+
+    else if (n < BREAK_4) {
+	rand_type = TYPE_3;
+	rand_deg = DEG_3;
+	rand_sep = SEP_3;
+    }
+
+    else {
+	rand_type = TYPE_4;
+	rand_deg = DEG_4;
+	rand_sep = SEP_4;
+    }
+
+    /* first location */
+    state = &(((long *)arg_state)[1]);
+
+    /* must set end_ptr before srandom */
+    end_ptr = &state[rand_deg];
+
     srandom(seed);
-    if (rand_type == TYPE_0)
+
+    if (rand_type == TYPE_0) {
 	state[-1] = rand_type;
-    else
+    }
+    else {
 	state[-1] = MAX_TYPES * (rptr - state) + rand_type;
+    }
+
     return (ostate);
 }
 
@@ -332,31 +350,38 @@ setstate(arg_state)
     register int        rear = new_state[0] / MAX_TYPES;
     char               *ostate = (char *)(&state[-1]);
 
-    if (rand_type == TYPE_0)
+    if (rand_type == TYPE_0) {
 	state[-1] = rand_type;
-    else
+    }
+    else {
 	state[-1] = MAX_TYPES * (rptr - state) + rand_type;
+    }
+
     switch (type) {
-      case TYPE_0:
-      case TYPE_1:
-      case TYPE_2:
-      case TYPE_3:
-      case TYPE_4:{
+	case TYPE_0:
+	case TYPE_1:
+	case TYPE_2:
+	case TYPE_3:
+	case TYPE_4: {
 	    rand_type = type;
 	    rand_deg = degrees[type];
 	    rand_sep = seps[type];
 	    break;
 	}
-      default:
-	fprintf(stderr, "setstate: state info has been munged (%d); not changed.", type);
-	break;
+	default:
+	    fprintf(stderr, "setstate: state info has been munged (%d); not changed.", type);
+	    break;
     }
+
     state = &new_state[1];
     if (rand_type != TYPE_0) {
 	rptr = &state[rear];
 	fptr = &state[(rear + rand_sep) % rand_deg];
     }
-    end_ptr = &state[rand_deg];	   /* set end_ptr too */
+
+    /* set end_ptr too */
+    end_ptr = &state[rand_deg];
+
     return (ostate);
 }
 
