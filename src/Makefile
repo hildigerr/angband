@@ -1,3 +1,24 @@
+
+
+SRCS = \
+  main.c misc1.c misc2.c store1.c files.c io.c birth.c desc.c\
+  generate.c sets.c dungeon.c creature.c death.c eat.c help.c magic.c\
+  potions.c prayer.c save.c staffs.c wands.c scrolls.c spells.c\
+  wizard.c store2.c signals.c moria1.c moria2.c monsters.c\
+  treasure.c variable.c recall.c unix.c undef.c\
+  player.c tables.c describe_mon.c rods.c random.c util.c z-util.c z-virt.c
+
+OBJS = \
+  main.o misc1.o misc2.o store1.o files.o io.o birth.o desc.o\
+  generate.o sets.o dungeon.o creature.o death.o eat.o help.o magic.o\
+  potions.o prayer.o save.o staffs.o wands.o scrolls.o spells.o\
+  wizard.o store2.o signals.o moria1.o moria2.o monsters.o\
+  treasure.o variable.o recall.o unix.o undef.o\
+  player.o tables.o describe_mon.o rods.o util.o random.o z-util.o z-virt.o
+
+
+
+
 ####
 # Please take a look at config.h and h-config.h for *critical* configuration steps needed.
 
@@ -81,30 +102,14 @@ LIBS = -lcurses -ltermcap -lrpcsvc
 # end of user configurable stuff
 #######
 
-SOURCES = main.c misc1.c misc2.c store1.c files.c io.c birth.c desc.c\
-	generate.c sets.c dungeon.c creature.c death.c eat.c help.c magic.c\
-	potions.c prayer.c save.c staffs.c wands.c scrolls.c spells.c\
-	wizard.c store2.c signals.c moria1.c moria2.c monsters.c\
-	treasure.c variable.c recall.c unix.c undef.c\
-	player.c tables.c describe_mon.c rods.c random.c util.c z-util.c z-virt.c
-
-OBJECTS = main.o misc1.o misc2.o store1.o files.o io.o birth.o desc.o\
-	generate.o sets.o dungeon.o creature.o death.o eat.o help.o magic.o\
-	potions.o prayer.o save.o staffs.o wands.o scrolls.o spells.o\
-	wizard.o store2.o signals.o moria1.o moria2.o monsters.o\
-	treasure.o variable.o recall.o unix.o undef.o\
-	player.o tables.o describe_mon.o rods.o util.o random.o z-util.o z-virt.o
-
-LIBFILES = hours news.hlp cmds_o.hlp owizcmds.hlp cmds_r.hlp cmds_w.hlp \
-	scores version.hlp welcome.hlp
 
 default: angband
 
 .c.o:
 	$(CC) $(CFLAGS) -c $*.c
 
-angband: $(OBJECTS)
-	$(CC) $(CFLAGS) $(OBJECTS) -o angband $(LIBS)
+angband: $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o angband $(LIBS)
 
 
 depend:
