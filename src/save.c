@@ -580,7 +580,7 @@ sv_write()
      if (!c_list[MAX_R_IDX - 1].name) {
                                   /* Can't dereference NULL! */
 	 c_list[MAX_R_IDX - 1].name = (char*)malloc(101);
-	 bzero((char *)c_list[MAX_R_IDX - 1].name, 101);
+	 C_WIPE(c_list[MAX_R_IDX - 1].name, 101, char);
      }
     wr_bytes(c_list[MAX_R_IDX - 1].name, 100);
     wr_long((u32b) c_list[MAX_R_IDX - 1].cmove);
@@ -1427,7 +1427,7 @@ int *generate;
 				/* Restore ghost names & stats etc... */
 				/* Allocate storage for name */
 	c_list[MAX_R_IDX - 1].name = (char*)malloc(101);
-	bzero((char *)c_list[MAX_R_IDX - 1].name, 101);
+	C_WIPE(c_list[MAX_R_IDX - 1].name, 101, char);
 	*((char *) c_list[MAX_R_IDX - 1].name) = 'A';
 	rd_bytes((byte *) (c_list[MAX_R_IDX - 1].name), 100);
 	rd_long((u32b *) & (c_list[MAX_R_IDX - 1].cmove));

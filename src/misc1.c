@@ -923,7 +923,7 @@ int                 r, c, l;
     /* Allocate storage for name -TL -- braindamaged ghost name spoo -CWS */
     if (c_list[MAX_R_IDX - 1].name == NULL) {
 	c_list[MAX_R_IDX - 1].name = (char*)malloc(101);
-	bzero((char *) c_list[MAX_R_IDX - 1].name, 101);
+	C_WIPE(c_list[MAX_R_IDX - 1].name, 101, char);
 	*((char *) c_list[MAX_R_IDX - 1].name) = 'A';
     }
 

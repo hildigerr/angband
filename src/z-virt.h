@@ -21,6 +21,16 @@ extern char *memset(char*, int, unsigned long);
 
 
 
+
+/**** Memory Macros ****/
+
+
+/* Wipe an array of N things of type T at location P, return T */
+#define C_WIPE(P,N,T) \
+	memset((char*)(P),0,C_SIZE(N,T))
+
+
+
 #endif
 
 
