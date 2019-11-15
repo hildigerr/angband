@@ -21,6 +21,11 @@
  */
 #include "h-include.h"
 
+/*
+ * Then, include the header files for the low-level code
+ */
+#include "z-util.h"
+
 
 /* 
  * Include the header file for the random number generator

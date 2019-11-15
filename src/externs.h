@@ -911,9 +911,6 @@ int my_topen(const char *, int, int);
 #endif
 
 /* util.c */
-#ifdef NEEDS_STRICMP
-int my_stricmp(const char *, const char *);
-#endif
 #ifdef NEEDS_USLEEP
 int microsleep(unsigned long);
 #endif
