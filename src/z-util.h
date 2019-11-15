@@ -21,6 +21,9 @@ extern int stricmp(const char *a, const char *b);
 /* Print an error message */
 extern void plog(const char *str);
 
+/* Exit, perhaps with a message */
+extern void quit(const char *str);
+
 
 #endif
 

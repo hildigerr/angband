@@ -183,7 +183,7 @@ int from, to;
 	    signals_ignore_tstp();	   /* Can't interrupt or suspend. */
 	    (void)save_player();	   /* Save the memory at least. */
 	    restore_term();
-	    exit(0);
+	    quit(NULL);
 	}
 	clear_screen();
     } while (k < (to * 2) && k < i);
@@ -597,5 +597,5 @@ exit_game()
 	display_scores(0, 10);
     erase_line(23, 0);
     restore_term();
-    exit(0);
+    quit(NULL);
 }

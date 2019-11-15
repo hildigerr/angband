@@ -20,13 +20,6 @@
 
 
 
-#if defined(ultrix) || defined(USG)
-void perror();
-#endif
-
-#ifdef USG
-void exit();
-#endif
 
 static int d_check(char *);
 static void init_m_level();
@@ -133,8 +126,7 @@ char *argv[];
     
 #ifndef MSDOS
     if ((player_uid = getuid()) < 0) {
-	perror("Can't set permissions correctly!  Getuid call failed.\n");
-	exit(0);
+	quit("Can't set permissions correctly!  Getuid call failed.\n");
     }
     user_name(py.misc.name, player_uid);
 #else
@@ -142,9 +134,9 @@ char *argv[];
 #endif
     
 #if defined(SET_UID) && !defined(SECURE)
+    /* Set the user id or quit */
     if (setuid(geteuid()) != 0) {
-	perror("Can't set permissions correctly!  Setuid call failed.\n");
-	exit(0);
+	quit("setuid(): cannot set permissions correctly!");
     }
 #endif
     
@@ -159,10 +151,9 @@ char *argv[];
     
 #if !defined(MSDOS) && !defined(__MINT__)
     (void)gethostname(thishost, (sizeof thishost) - 1);	/* get host */
-    if ((fp=my_tfopen(ANGBAND_LOAD, "r")) == NULL) {
-	perror("Can't get load-check.\n");
-	exit(0);
-    }
+    fp = my_tfopen(ANGBAND_LOAD, "r");
+    if (!fp) quit("cannot get load-check!");
+
     
     do {
 	if (fscanf(fp, "%s%d", temphost, &LOAD) == EOF) {
@@ -289,7 +280,7 @@ char *argv[];
 #endif
 		puts("Each option must be listed separately (ie '-r -n', not '-rn')");
 	    }
-	    exit(1);
+	    quit(NULL);
 	}
 
     /* catch those nasty signals */

@@ -188,7 +188,9 @@ signal_handler(sig)
     (void)kill(getpid(), sig);
     (void)sleep(5);
 #endif
-    exit(1);
+
+    /* Quit anyway */
+    quit(NULL);
 }
 
 #endif				   /* ATARIST_MWC */
