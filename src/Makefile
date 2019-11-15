@@ -77,15 +77,9 @@ LIBS = -lcurses -ltermcap -lrpcsvc
 
 
 ####
-# If your system lacks the random() call, define EXTRAOBJS to include
-# random.o.  Otherwise, you can leave it out.
-
-#EXTRAOBJS=random.o
-
-####
 # For SunOS 5.X (Solaris 2.X), if you don't have the BSD/SunOS 4.x
 # compatibility kit.  Also, be sure to define NEEDS_USLEEP in config.h
-# EXTRAOBJS=random.o bzero.o
+# EXTRAOBJS=bzero.o
 
 # Otherwise, just use this:
 EXTRAOBJS=
@@ -105,7 +99,7 @@ OBJECTS = main.o misc1.o misc2.o store1.o files.o io.o birth.o desc.o\
 	potions.o prayer.o save.o staffs.o wands.o scrolls.o spells.o\
 	wizard.o store2.o signals.o moria1.o moria2.o monsters.o\
 	treasure.o variable.o recall.o unix.o undef.o\
-	player.o tables.o describe_mon.o rods.o util.o $(EXTRAOBJS)
+	player.o tables.o describe_mon.o rods.o util.o random.o $(EXTRAOBJS)
 
 LIBFILES = hours news.hlp cmds_o.hlp owizcmds.hlp cmds_r.hlp cmds_w.hlp \
 	scores version.hlp welcome.hlp

@@ -24,6 +24,10 @@
 
 /* 
  * Include the header file for the random number generator
+ * Note that ALL machines can safely include this file now,
+ * it simply "redefines" the standard name space to prevent
+ * conflicts.  If you include the header (random.h) you must
+ * compile the source (random.c).
  */
 #include "random.h"
 
