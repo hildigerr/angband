@@ -24,22 +24,19 @@
  */
 int usleep(unsigned long microSeconds)
 {
-    unsigned int        Seconds, uSec;
     int                 nfds, readfds, writefds, exceptfds;
     struct timeval      Timer;
 
     nfds = readfds = writefds = exceptfds = 0;
     
-    if (microSeconds > (unsigned long)4000000) {
+    if (microSeconds > 4000000L) {
 	errno = ERANGE;		   /* value out of range */
 	perror("usleep time out of range ( 0 -> 4000000 ) ");
 	return -1;
     }
-    Seconds = microSeconds / (unsigned long)1000000;
-    uSec = microSeconds % (unsigned long)1000000;
+    Timer.tv_sec = (microSeconds / 1000000L);
+    Timer.tv_usec = (microSeconds % 1000000L);
 
-    Timer.tv_sec = Seconds;
-    Timer.tv_usec = uSec;
     if (select(nfds, &readfds, &writefds, &exceptfds, &Timer) < 0) {
 	if (errno != EINTR) {
 	    perror("usleep (select) failed");
