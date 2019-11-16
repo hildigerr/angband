@@ -24,6 +24,10 @@ extern void plog(const char *str);
 /* Exit, perhaps with a message */
 extern void quit(const char *str);
 
+/* Dump core, with optional message */
+extern void core(const cahr *str);
+
+
 
 #endif
 

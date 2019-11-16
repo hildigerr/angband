@@ -67,3 +67,24 @@ void quit(const char *str)
 }
 
 
+
+/*
+ * Dump a core file, after printing a warning message
+ */
+void core(const char *str)
+{
+  char *crash = NULL;
+
+  /* Dump the warning string */
+  if (str) plog(str);
+
+  /* Attempt to Crash */
+  (*crash) = (*crash);
+
+  /* Be sure we exited */
+  quit("core() failed");
+}
+
+
+
+
