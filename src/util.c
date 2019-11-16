@@ -24,25 +24,35 @@
  */
 int usleep(unsigned long microSeconds)
 {
-    int                 nfds, readfds, writefds, exceptfds;
     struct timeval      Timer;
 
-    nfds = readfds = writefds = exceptfds = 0;
-    
+    int                 nfds = 0;
+
+    int			*no_fds = NULL;
+
+
+    /* Was: int readfds, writefds, exceptfds; */
+    /* Was: readfds = writefds = exceptfds = 0; */
+
+
     if (microSeconds > 4000000L) {
 	errno = ERANGE;		   /* value out of range */
 	perror("usleep time out of range ( 0 -> 4000000 ) ");
 	return -1;
     }
+
+    /* Wait for it */
     Timer.tv_sec = (microSeconds / 1000000L);
     Timer.tv_usec = (microSeconds % 1000000L);
 
-    if (select(nfds, &readfds, &writefds, &exceptfds, &Timer) < 0) {
-	if (errno != EINTR) {
-	    perror("usleep (select) failed");
-	    return -1;
-	}
+    /* Wait for it */
+    if (select(nfds, no_fds, no_fds, no_fds, &Timer) < 0) {
+
+	/* Hack -- ignore interrupts */
+	if (errno != EINTR) return -1;
     }
+    
+    /* Success */
     return 0;
 }
 
