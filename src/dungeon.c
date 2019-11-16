@@ -162,7 +162,7 @@ dungeon()
     do {
     /* Increment turn counter			 */
 	turn++;
-#ifdef CHECKHOURS
+#ifdef CHECK_HOURS
 #ifndef MAC
     /* The Mac ignores the game hours file		 */
     /* Check for game hours			       */
@@ -182,7 +182,7 @@ dungeon()
 		msg_print("Please finish up or save your game.");
 	    }
 #endif
-#endif				   /* CHECKHOURS */
+#endif				   /* CHECK_HOURS */
 
     /* turn over the store contents every, say, 1000 turns */
 	if ((dun_level != 0) && ((turn % 1000) == 0)) {

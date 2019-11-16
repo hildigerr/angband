@@ -136,7 +136,7 @@ reset_seed()
 int 
 check_time()
 {
-#ifdef CHECKHOURS
+#ifdef CHECK_HOURS
     time_t              c;
     register struct tm *tp;
 #ifndef __MINT__
@@ -157,7 +157,7 @@ check_time()
 	}
     }
 #endif /* MINT, etc */
-#endif /* CHECKHOURS - [cjh] */
+#endif /* CHECK_HOURS - [cjh] */
     return TRUE;
 }
 

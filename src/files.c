@@ -276,7 +276,7 @@ read_times()
     vtype        in_line;
     FILE        *file1;
 
-#ifdef CHECKHOURS
+#ifdef CHECK_HOURS
 /* Attempt to read hours.dat.	 If it does not exist,	   */
 /* inform the user so he can tell the wizard about it	 */
     if ((file1 = my_tfopen(ANGBAND_HOURS, "r")) != NULL) {

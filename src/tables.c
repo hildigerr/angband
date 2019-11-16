@@ -10,7 +10,7 @@
 #include "config.h"
 #include "types.h"
 
-#if defined(CHECKHOURS)
+#if defined(CHECK_HOURS)
 /* Operating hours for ANGBAND				-RAK-	*/
 /*	 X = Open; . = Closed					*/
 char days[7][29] = { "SUN:XXXXXXXXXXXXXXXXXXXXXXXX",
