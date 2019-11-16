@@ -11,18 +11,18 @@
 #include "angband.h"
 
 
-#if defined(NEEDS_USLEEP)
+
+#ifndef HAS_USLEEP
 #include <stdio.h>
 #include <math.h>
 #include <signal.h>
 #include <errno.h>
 
-/* for those systems that don't have usleep */
-/* grabbed from the inl netrek server -cba  */
-
-int
-microsleep(microSeconds)
-unsigned long microSeconds;
+/*
+ * for those systems that don't have usleep
+ * grabbed from the inl netrek server -cba 
+ */
+int usleep(unsigned long microSeconds)
 {
     unsigned int        Seconds, uSec;
     int                 nfds, readfds, writefds, exceptfds;

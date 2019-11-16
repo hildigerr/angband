@@ -94,9 +94,6 @@ LIBS = -lcurses -ltermcap -lrpcsvc
 # LIBS = -ltermlib -ltermcap -lrpcsvc -lnsl
 
 
-####
-# For SunOS 5.X (Solaris 2.X), if you don't have the BSD/SunOS 4.x
-# compatibility kit.  Also, be sure to define NEEDS_USLEEP in config.h
 
 
 # end of user configurable stuff

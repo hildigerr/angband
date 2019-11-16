@@ -909,8 +909,8 @@ int my_topen(const char *, int, int);
 #endif
 
 /* util.c */
-#ifdef NEEDS_USLEEP
-int microsleep(unsigned long);
+#ifndef HAS_USLEEP
+int usleep(unsigned long);
 #endif
 
 /* variable.c */

@@ -120,22 +120,6 @@
 
 
 
-/* fix systems lacking usleep() -CWS 
- *
- * Note that Solaris 2.x users without the BSD compatibilty kit need to
- * define this as well.
- */
-
-#if defined(HPUX) || defined(ultrix)
-#define NEEDS_USLEEP
-#endif
-
-#ifdef NEEDS_USLEEP
-#define usleep microsleep
-
-int microsleep(unsigned long);
-
-#endif
 
 
 
@@ -161,5 +145,16 @@ extern int PlayerUID;
 #define getuid() PlayerUID
 #define geteuid() PlayerUID
 #endif
+
+
+/*
+ * Make sure that "usleep()" works.
+ *
+ * In general, this is only referenced by "Unix" machines.
+ */
+#if !defined(HPUX) && !defined(ultrix) && !defined(SOLARIS)
+# define HAS_USLEEP
+#endif
+
 
 
