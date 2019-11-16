@@ -222,7 +222,6 @@ char *argv[];
 	    if (argv[0][2]) {
 		strcpy(py.misc.name, &argv[0][2]);
 		d_check(py.misc.name);
-		NO_SAVE=TRUE;
 	    } else {
 		goto usage;
 	    }

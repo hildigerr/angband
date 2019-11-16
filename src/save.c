@@ -635,8 +635,6 @@ save_player()
 #ifdef SECURE
     beGames();
 #endif
-    if (death && NO_SAVE)
-	return TRUE;
 
     if (_save_player(savefile)) {
 

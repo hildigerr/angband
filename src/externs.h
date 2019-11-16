@@ -83,7 +83,6 @@ extern int errno;
 extern char *copyright[5];
 
 extern int player_uid;
-extern int NO_SAVE;
 
 /* horrible hack: needed because compact_monster() can be called from deep
    within creatures() via place_monster() and summon_monster() */
