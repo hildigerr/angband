@@ -35,11 +35,9 @@ int usleep(unsigned long microSeconds)
     /* Was: readfds = writefds = exceptfds = 0; */
 
 
-    if (microSeconds > 4000000L) {
-	errno = ERANGE;		   /* value out of range */
-	perror("usleep time out of range ( 0 -> 4000000 ) ");
-	return -1;
-    }
+    /* Paranoia -- No excessive sleeping */
+    if (microSeconds > 4000000L) core("Illegal usleep() call");
+    
 
     /* Wait for it */
     Timer.tv_sec = (microSeconds / 1000000L);
