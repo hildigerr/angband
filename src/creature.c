@@ -91,23 +91,6 @@ int monptr;
 	if (los(char_row, char_col, (int)m_ptr->fy, (int)m_ptr->fx)) {
 	    c_ptr = &cave[m_ptr->fy][m_ptr->fx];
 
-#ifdef GROSS_HACK
-	/* Try to debug invis monsters...this is not 'fixed', per se
-	 * but it will correct the observed problem and also give me
-	 * a chance to trap the thing with a debugger.   -CWS
-         *******
-         * This should no longer be necessary, but it's harmless  -CWS
-         */
-	    if (c_ptr->cptr != monptr) {
-		char                BUF[100];
-
-		sprintf(BUF, "Help! cptr = %d / monptr = %d, x = %d, y = %d",
-			c_ptr->cptr, monptr, m_ptr->fx, m_ptr->fy);
-		if (wizard)
-		    msg_print(BUF);
-		c_ptr->cptr = monptr;
-	    }
-#endif  /* GROSS_HACK */
 	    r_ptr = &c_list[m_ptr->mptr];
 	/* moved here to allow infra to see invis -CFT */
 	    if ((py.flags.see_infra > 0) &&

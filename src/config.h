@@ -13,16 +13,6 @@
 
 #define WIZARD	"root"
 
-/* There's a bug that results in invisible monsters for some reason.  I have a
- * workaround that may fix this, but it is a HACK and may result in other
- * problems, as I have not tested it enough.  Comment out the
- * "#define GROSS_HACK" to disable this.  (this is in creature.c at line 73)
- ******
- * This should no longer be needed for Angband 2.6, but it doesn't hurt to
- * leave it in. -CWS
- */
-
-#define GROSS_HACK
 
 
 /* Other miscellaneous defines that can be configured as the local maintainer
