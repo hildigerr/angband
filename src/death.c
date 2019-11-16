@@ -66,7 +66,6 @@ struct passwd      *getpwuid();
 #endif
 #endif
 
-static void  date(char *);
 static char *center_string(char *, const char *);
 static void  print_tomb(void);
 static void  kingly(void);
@@ -80,18 +79,6 @@ char        *getlogin();
 #define time_t long
 #endif
 
-static void 
-date(day)
-char *day;
-{
-    register char *tmp;
-    time_t         c;
-
-    c = time((time_t *)0);
-    tmp = ctime(&c);
-    tmp[10] = '\0';
-    (void)strcpy(day, tmp);
-}
 
 /* Centers a string within a 31 character string		-JWT-	 */
 static char *
@@ -216,6 +203,8 @@ print_tomb()
     register const char *p;
     FILE                *fp;
 
+    time_t ct = time((time_t)0);
+
     if (stricmp(died_from, "Interrupting") && !wizard) {
 	sprintf(str, "%s/%d", ANGBAND_DIR_BONES, dun_level);
 	if ((fp = my_tfopen(str, "r")) == NULL && (dun_level > 1)) {
@@ -284,7 +273,7 @@ print_tomb()
     (void)sprintf(str, "| %s |", center_string(tmp_str, p));
     put_str(str, 16, 9);
     died_from[i] = '\0';		   /* strip off the period */
-    date(day);
+    sprintf(day, "%-.24s", ctime(&ct));
     (void)sprintf(str, "| %s |", center_string(tmp_str, day));
     put_str(str, 17, 9);
     put_str("*|   *     *     *    *   *     *  | *", 18, 8);
