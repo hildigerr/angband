@@ -81,7 +81,7 @@ void user_name(char *buf, int id)
 /*
  * expands a tilde at the beginning of a file name to a users home directory
  */
-int tilde(const char *file, char *exp)
+static int tilde(const char *file, char *exp)
 {
     *exp = '\0';
     if (file) {
@@ -110,6 +110,37 @@ int tilde(const char *file, char *exp)
     return 0;
 }
 
+
+
+
+/*
+ * Replacement for "fopen" which parses leading tilde's
+ */
+FILE *my_tfopen(const char *file, const char *mode)
+{
+    char                buf[1024];
+    extern int          errno;
+
+    if (tilde(file, buf))
+    return (fopen(buf, mode));
+    errno = ENOENT;
+    return NULL;
+}
+
+
+/*
+ * Replacement for "open" which parses leading tilde's
+ */
+int my_topen(const char *file, int flags, int mode)
+{
+    char                buf[1024];
+    extern int          errno;
+
+    if (tilde(file, buf))
+    return (open(buf, flags, mode));
+    errno = ENOENT;
+    return -1;
+}
+
+
 #endif
-
-

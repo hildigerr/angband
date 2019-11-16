@@ -252,40 +252,5 @@ system_cmd(p)
 
 
 
-/*
- * open a file just as does fopen, but allow a leading ~ to specify a home
- * directory 
- */
-FILE               *
-my_tfopen(file, mode)
-    const char               *file;
-    const char               *mode;
-{
-    char                buf[1024];
-    extern int          errno;
-
-    if (tilde(file, buf))
-	return (fopen(buf, mode));
-    errno = ENOENT;
-    return NULL;
-}
-
-/*
- * open a file just as does open, but expand a leading ~ into a home
- * directory name 
- */
-int 
-my_topen(file, flags, mode)
-    const char               *file;
-    int                 flags, mode;
-{
-    char                buf[1024];
-    extern int          errno;
-
-    if (tilde(file, buf))
-	return (open(buf, flags, mode));
-    errno = ENOENT;
-    return -1;
-}
 
 #endif
