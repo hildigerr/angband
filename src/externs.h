@@ -902,8 +902,6 @@ int check_input(int);
 #if 0
 int system_cmd(char *);
 #endif
-void user_name(char *, int);
-int tilde(const char *, char *);
 FILE *my_tfopen(const char *, const char *);
 int my_topen(const char *, int, int);
 #endif
@@ -911,6 +909,10 @@ int my_topen(const char *, int, int);
 /* util.c */
 #ifndef HAS_USLEEP
 int usleep(unsigned long);
+#endif
+#ifdef unix
+void user_name(char *buf, int id);
+int tilde(const char *, char *);
 #endif
 
 /* variable.c */

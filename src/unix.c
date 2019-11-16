@@ -20,7 +20,6 @@
 #include <curses.h>
 #endif
 
-#include <pwd.h>
 #include "angband.h"
 
 #if defined(SYS_V) && defined(lint)
@@ -57,10 +56,6 @@ typedef struct {
 #endif
 #endif
 
-/* #include <pwd.h> */
-
-struct passwd      *getpwuid();
-struct passwd      *getpwnam();
 
 #if defined(SYS_V) && defined(lint)
 struct screen {
@@ -256,55 +251,6 @@ system_cmd(p)
 #endif
 
 
-/* Find a default user name from the system. */
-void 
-user_name(buf, id)
-    char               *buf;
-    int id;
-{
-    struct passwd      *pwd;
-
-    pwd = getpwuid(id);
-    (void)strcpy(buf, pwd->pw_name);
-    if (*buf >= 'a' && *buf <= 'z')
-	*buf = (*buf - 'a') + 'A';
-}
-
-/* expands a tilde at the beginning of a file name to a users home directory */
-int 
-tilde(file, exp)
-    const char   *file;
-    char         *exp;
-{
-    *exp = '\0';
-    if (file) {
-	if (*file == '~') {
-	    char                user[128];
-	    struct passwd      *pw = NULL;
-	    int                 i = 0;
-
-	    user[0] = '\0';
-	    file++;
-	    while (*file != PATH_SEP && i < sizeof(user))
-		user[i++] = *file++;
-	    user[i] = '\0';
-	    if (i == 0) {
-		char               *login = (char *)getlogin();
-
-		if (login != NULL)
-		    (void)strcpy(user, login);
-		else if ((pw = getpwuid(getuid())) == NULL)
-		    return 0;
-	    }
-	    if (pw == NULL && (pw = getpwnam(user)) == NULL)
-		return 0;
-	    (void)strcpy(exp, pw->pw_dir);
-	}
-	(void)strcat(exp, file);
-	return 1;
-    }
-    return 0;
-}
 
 /*
  * open a file just as does fopen, but allow a leading ~ to specify a home
