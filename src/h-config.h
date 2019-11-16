@@ -97,6 +97,19 @@
 #endif
 
 
+
+/*
+ * Assume this is a multi-user machine, then cancel if necessary
+ * OPTION: If you are using a personal computer, undef SET_UID.
+ */
+#undef SET_UID
+#define SET_UID
+#if defined(MAC) || defined(MSDOS) || \
+    defined(__MINT__) || defined(__EMX__)
+# undef SET_UID
+#endif
+
+
 /*
  * Prevent "lint" messages 
  */

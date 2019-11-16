@@ -19,7 +19,6 @@
  * wishes.
  */
 
-#define SET_UID		         /* define on multi-user systems                 */
 #undef CHECK_HOURS            /* define if checking the 'hours' file          */
 #define ALLOW_FIDDLING       /* Allow the players to copy save files         */
 #define ALLOW_SCORE          /* Allow the user to check his score (v-key)    */
