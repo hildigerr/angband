@@ -54,7 +54,7 @@ int usleep(unsigned long microSeconds)
 #endif
 
 
-#if defined(unix) || defined(__MINT__)
+#if defined(SET_UID)
 
 #include <pwd.h>
 
@@ -111,6 +111,28 @@ static int tilde(const char *file, char *exp)
 }
 
 
+#else
+
+/*
+ * No default user name
+ */
+void user_name(char *buf, int id)
+{
+    /* No name */
+    buf[0] = '\0';
+}
+
+/*
+ * There is no expansion on single-user machines
+ */
+static int tilde(const char *file, char *exp)
+{
+    /* Always fails */
+    return (0);
+}
+
+#endif
+
 
 
 /*
@@ -137,10 +159,14 @@ int my_topen(const char *file, int flags, int mode)
     extern int          errno;
 
     if (tilde(file, buf))
+#ifdef MACINTOSH    
+    /* Macintosh "open()" is brain-dead */
+    return (open((char*)buf, flags, mode));
+#else
     return (open(buf, flags, mode));
+#endif
     errno = ENOENT;
     return -1;
 }
 
 
-#endif

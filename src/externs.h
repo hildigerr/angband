@@ -908,11 +908,9 @@ int system_cmd(char *);
 #ifndef HAS_USLEEP
 int usleep(unsigned long);
 #endif
-#ifdef unix
 void user_name(char *buf, int id);
 int my_topen(const char *, int, int);
 FILE *my_tfopen(const char *, const char *);
-#endif
 
 /* variable.c */
 
