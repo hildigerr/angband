@@ -81,7 +81,7 @@ void user_name(char *buf, int id)
 /*
  * expands a tilde at the beginning of a file name to a users home directory
  */
-static int tilde(const char *file, char *exp)
+static int parse_path(const char *file, char *exp)
 {
     *exp = '\0';
     if (file) {
@@ -125,7 +125,7 @@ void user_name(char *buf, int id)
 /*
  * There is no expansion on single-user machines
  */
-static int tilde(const char *file, char *exp)
+static int parse_path(const char *file, char *exp)
 {
     /* Always fails */
     return (0);
@@ -143,7 +143,8 @@ FILE *my_tfopen(const char *file, const char *mode)
     char                buf[1024];
     extern int          errno;
 
-    if (tilde(file, buf))
+    /* Try to parse the path */
+    if (parse_path(file, buf))
     return (fopen(buf, mode));
     errno = ENOENT;
     return NULL;
@@ -158,7 +159,8 @@ int my_topen(const char *file, int flags, int mode)
     char                buf[1024];
     extern int          errno;
 
-    if (tilde(file, buf))
+    /* Try to parse the path */
+    if (parse_path(file, buf))
 #ifdef MACINTOSH    
     /* Macintosh "open()" is brain-dead */
     return (open((char*)buf, flags, mode));
