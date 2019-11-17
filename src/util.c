@@ -89,50 +89,49 @@ void user_name(char *buf, int id)
  */
 static int parse_path(const char *file, char *exp)
 {
+    int	i = 0;
+    struct passwd	*pw;
+    char		user[128];
+
+
     /* Assume no result */
-    *exp = '\0';
+    exp[0] = '\0';
 
     /* No file? */    
-    if (file) {
+    if (!file) return (0);
 
     /* No tilde? */
-    if (*file == '~') {
-	    char                user[128];
-	    struct passwd      *pw = NULL;
-	    int                 i = 0;
+    if (file[0] != '~') return (1);
 
-	    user[0] = '\0';
+    user[0] = '\0';
 
     /* Point at the user */
-	    file++;
+    file++;
 
     /* Look for non-user portion of the file */
-	    while (*file != PATH_SEP && i < sizeof(user))
-		user[i++] = *file++;
-	    user[i] = '\0';
+    while (*file != PATH_SEP && i < sizeof(user))
+	user[i++] = *file++;
+    user[i] = '\0';
 
     /* Look up the "current" user */
-	    if (i == 0) {
-		char               *login = (char *)getlogin();
+    if (i == 0) {
+	char               *login = (char *)getlogin();
 
-	    if (login != NULL) (void)strcpy(user, login);
+    if (login != NULL) (void)strcpy(user, login);
 
     /* Look up a user (or "current" user) */
-	    else if ((pw = getpwuid(getuid())) == NULL) return 0;
-	    }
-	    if (pw == NULL && (pw = getpwnam(user)) == NULL) return 0;
+    else if ((pw = getpwuid(getuid())) == NULL) return 0;
+    }
+    if (pw == NULL && (pw = getpwnam(user)) == NULL) return 0;
 
     /* Make use of the info */
-	    (void)strcpy(exp, pw->pw_dir);
-	}
+    (void)strcpy(exp, pw->pw_dir);
 
     /* Append the rest of the filename, if any */
     (void)strcat(exp, file);
 
     /* Success */
     return 1;
-    }
-    return 0;
 }
 
 
