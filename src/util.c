@@ -101,7 +101,7 @@ static int parse_path(const char *file, char *exp)
     if (!file) return (0);
 
     /* No tilde? */
-    if (file[0] != '~') return (1);
+    if (file[0] != '~') return (0);
 
     /* Point at the user */
     u = file+1;
@@ -171,13 +171,12 @@ static int parse_path(const char *file, char *exp)
 FILE *my_tfopen(const char *file, const char *mode)
 {
     char                buf[1024];
-    extern int          errno;
 
     /* Try to parse the path */
-    if (parse_path(file, buf))
-    return (fopen(buf, mode));
-    errno = ENOENT;
-    return NULL;
+    if (parse_path(file, buf)) file = buf;
+
+    /* Attempt to fopen the file anyway */
+    return (fopen(file, mode));
 }
 
 
@@ -187,18 +186,19 @@ FILE *my_tfopen(const char *file, const char *mode)
 int my_topen(const char *file, int flags, int mode)
 {
     char                buf[1024];
-    extern int          errno;
 
     /* Try to parse the path */
-    if (parse_path(file, buf))
+    if (parse_path(file, buf)) file = buf;
+
 #ifdef MACINTOSH    
+    /* Attempt to open the file anyway */
     /* Macintosh "open()" is brain-dead */
-    return (open((char*)buf, flags, mode));
+    return (open((char*)(file), flags));
 #else
-    return (open(buf, flags, mode));
+    /* Attempt to open the file anyway */
+    return (open(file, flags, mode));
 #endif
-    errno = ENOENT;
-    return -1;
+
 }
 
 
