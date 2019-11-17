@@ -90,7 +90,7 @@ void user_name(char *buf, int id)
 static int parse_path(const char *file, char *exp)
 {
     int	i = 0;
-    char *login = NULL;
+    char	*u = NULL;
     struct passwd	*pw;
     char		user[128];
 
@@ -115,12 +115,12 @@ static int parse_path(const char *file, char *exp)
     user[i] = '\0';
 
     /* Look up the "current" user */
-    if (i == 0) login = getlogin();
+    if (i == 0) u = getlogin();
 
-    if (login != NULL) (void)strcpy(user, login);
+    if (u != NULL) (void)strcpy(user, u);
 
     /* Look up a user (or "current" user) */
-    if (!login) pw = getpwuid(getuid());
+    if (!u) pw = getpwuid(getuid());
     else pw = getpwnam(user);
 
     /* Nothing found? */
