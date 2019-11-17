@@ -79,32 +79,57 @@ void user_name(char *buf, int id)
 
 
 /*
- * expands a tilde at the beginning of a file name to a users home directory
+ * Attempt to expand leading tilde's at the beginning of file names
+ * Replace "~user" by the home directory of the user named "user"
+ * Thus "~user" refers to the home directory of "user",
+ * and "~" refers to the home directory of the current user
+ * Note that the empty username is considered to be the current user
+ * If successful, load the result into "exp" and return "TRUE"
+ * When FALSE is returned, the original file may be fine by itself.
  */
 static int parse_path(const char *file, char *exp)
 {
+    /* Assume no result */
     *exp = '\0';
+
+    /* No file? */    
     if (file) {
+
+    /* No tilde? */
     if (*file == '~') {
 	    char                user[128];
 	    struct passwd      *pw = NULL;
 	    int                 i = 0;
 
 	    user[0] = '\0';
+
+    /* Point at the user */
 	    file++;
+
+    /* Look for non-user portion of the file */
 	    while (*file != PATH_SEP && i < sizeof(user))
 		user[i++] = *file++;
 	    user[i] = '\0';
+
+    /* Look up the "current" user */
 	    if (i == 0) {
 		char               *login = (char *)getlogin();
 
 	    if (login != NULL) (void)strcpy(user, login);
+
+    /* Look up a user (or "current" user) */
 	    else if ((pw = getpwuid(getuid())) == NULL) return 0;
 	    }
 	    if (pw == NULL && (pw = getpwnam(user)) == NULL) return 0;
+
+    /* Make use of the info */
 	    (void)strcpy(exp, pw->pw_dir);
 	}
+
+    /* Append the rest of the filename, if any */
     (void)strcat(exp, file);
+
+    /* Success */
     return 1;
     }
     return 0;
