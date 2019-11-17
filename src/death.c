@@ -20,7 +20,7 @@
 
 #ifndef USG
 /* only needed for Berkeley UNIX */
-#include <sys/param.h>
+# include <sys/param.h>
 # include <sys/file.h>
 #else
 #ifdef __MINT__        
@@ -54,7 +54,6 @@
 #if defined(ultrix) || defined(USG)
 void                perror();
 void                exit();
-
 #endif
 #endif
 #endif
@@ -78,6 +77,371 @@ char        *getlogin();
 #if !defined(time_t)
 #define time_t long
 #endif
+
+
+/*
+ * Open the score file while we still have the setuid privileges.
+ * Later when the score is being written out, you must be sure
+ * to flock the file so we don't have multiple people trying to
+ * write to it at the same time.
+ *  Craig Norborg (doc)	Mon Aug 10 16:41:59 EST 1987 
+ */
+void init_scorefile()
+{
+#ifdef SET_UID
+    if (1 > (highscore_fd = my_topen(ANGBAND_TOP, O_RDWR | O_CREAT, 0644)))
+#else
+    if (1 > (highscore_fd = my_topen(ANGBAND_TOP, O_RDWR | O_CREAT, 0666)))
+#endif
+    {
+    (void)fprintf(stderr, "Can't open score file \"%s\"\n", ANGBAND_TOP);
+    exit(1);
+    }
+}
+
+
+/* 
+ * Attempt to open the intro file			-RAK-
+ * This routine also checks the hours file vs. what time it is	-Doc
+ */
+void read_times(void)
+{
+    register int i;
+    vtype        in_line;
+    FILE        *file1;
+
+#ifdef CHECK_HOURS
+/* Attempt to read hours.dat.	 If it does not exist,	   */
+/* inform the user so he can tell the wizard about it	 */
+
+    file1 = my_tfopen(ANGBAND_HOURS, "r");
+    if (file1) {
+	while (fgets(in_line, 80, file1)) {
+	    if (strlen(in_line) > 3) {
+		if (!strncmp(in_line, "SUN:", 4))
+		    (void)strcpy(days[0], in_line);
+		else if (!strncmp(in_line, "MON:", 4))
+		    (void)strcpy(days[1], in_line);
+		else if (!strncmp(in_line, "TUE:", 4))
+		    (void)strcpy(days[2], in_line);
+		else if (!strncmp(in_line, "WED:", 4))
+		    (void)strcpy(days[3], in_line);
+		else if (!strncmp(in_line, "THU:", 4))
+		    (void)strcpy(days[4], in_line);
+		else if (!strncmp(in_line, "FRI:", 4))
+		    (void)strcpy(days[5], in_line);
+		else if (!strncmp(in_line, "SAT:", 4))
+		    (void)strcpy(days[6], in_line);
+	    }
+	}
+	(void)fclose(file1);
+    }
+
+    else {
+	restore_term();
+	(void)fprintf(stderr, "There is no hours file \"%s\".\nPlease inform the wizard, %s, so he can correct this!\n", ANGBAND_HOURS, WIZARD);
+	exit(1);
+    }
+
+/* Check the hours, if closed	then exit. */
+    if (!check_time()) {
+	file1 = my_tfopen(ANGBAND_HOURS, "r");
+	if (file1) {
+	    clear_screen();
+	    for (i = 0; fgets(in_line, 80, file1); i++) {
+		put_str(in_line, i, 0);
+	    }
+	    (void)fclose(file1);
+	    pause_line(23);
+	}
+	exit_game();
+    }
+#endif				   /* CHECK_HOURS */
+
+/* Print the introduction message, news, etc.		 */
+    if ((file1 = my_tfopen(ANGBAND_NEWS, "r")) != NULL) {
+	clear_screen();
+	for (i = 0; fgets(in_line, 80, file1) != NULL; i++)
+	    put_str(in_line, i, 0);
+	pause_line(23);
+	(void)fclose(file1);
+    }
+}
+
+
+/*
+ * File perusal.	    -CJS- primitive, but portable 
+ */
+void helpfile(const char *filename)
+{
+    bigvtype tmp_str;
+    FILE    *file;
+    char     input;
+    int      i;
+
+    file = my_tfopen(filename, "r");
+    if (!file) {
+	(void)sprintf(tmp_str, "Can not find help file \"%s\".\n", filename);
+	prt(tmp_str, 0, 0);
+	return;
+    }
+
+    save_screen();
+
+    while (!feof(file))
+    {
+	clear_screen();
+	for (i = 0; i < 23; i++) {
+	    if (fgets(tmp_str, BIGVTYPESIZ - 1, file)) {
+		put_str(tmp_str, i, 0);
+	    }
+	}
+
+	prt("[Press any key to continue.]", 23, 23);
+	input = inkey();
+	if (input == ESCAPE) break;
+    }
+
+    (void)fclose(file);
+
+    restore_screen();
+}
+
+
+
+
+
+/*
+ * Print the character to a file or device		-RAK-
+ */
+int file_character(char *filename1)
+{
+    register int          i;
+    int                   j, xbth, xbthb, xfos, xsrh, xstl, xdis, xsave, xdev;
+    vtype                 xinfra;
+    int                   fd;
+    register FILE        *file1;
+    bigvtype              prt2;
+    register struct misc *p_ptr;
+    register inven_type  *i_ptr;
+    vtype                 out_val, prt1;
+    const char           *p, *colon, *blank;
+
+    fd = my_topen(filename1, O_WRONLY | O_CREAT | O_EXCL, 0644);
+    if (fd < 0 && errno == EEXIST) {
+	(void)sprintf(out_val, "Replace existing file %s?", filename1);
+	if (get_Yn(out_val)) {
+	    fd = my_topen(filename1, O_WRONLY, 0644);
+	}
+    }
+    if (fd >= 0) {
+	/* on some non-unix machines, fdopen() is not reliable, */
+	/* hence must call close() and then fopen()  */
+	(void)close(fd);
+	file1 = my_tfopen(filename1, "w");
+    }
+    else {
+	file1 = NULL;
+    }
+
+    if (file1) {
+
+	prt("Writing character sheet...", 0, 0);
+	put_qio();
+
+	colon = ":";
+	blank = " ";
+
+	(void)fprintf(file1, "%c\n\n", CTRL('L'));
+	(void)fprintf(file1, " Name%9s %-23s", colon, py.misc.name);
+	(void)fprintf(file1, "Age%11s %6d ", colon, (int)py.misc.age);
+	cnv_stat(py.stats.use_stat[A_STR], prt1);
+	(void)fprintf(file1, "   STR : %s\n", prt1);
+	(void)fprintf(file1, " Race%9s %-23s", colon, race[py.misc.prace].trace);
+	(void)fprintf(file1, "Height%8s %6d ", colon, (int)py.misc.ht);
+	cnv_stat(py.stats.use_stat[A_INT], prt1);
+	(void)fprintf(file1, "   INT : %s\n", prt1);
+	(void)fprintf(file1, " Sex%10s %-23s", colon,
+		      (py.misc.male ? "Male" : "Female"));
+	(void)fprintf(file1, "Weight%8s %6d ", colon, (int)py.misc.wt);
+	cnv_stat(py.stats.use_stat[A_WIS], prt1);
+	(void)fprintf(file1, "   WIS : %s\n", prt1);
+	(void)fprintf(file1, " Class%8s %-23s", colon,
+		      class[py.misc.pclass].title);
+	(void)fprintf(file1, "Social Class : %6d ", py.misc.sc);
+	cnv_stat(py.stats.use_stat[A_DEX], prt1);
+	(void)fprintf(file1, "   DEX : %s\n", prt1);
+	(void)fprintf(file1, " Title%8s %-23s", colon, title_string());
+	(void)fprintf(file1, "%22s", blank);
+	cnv_stat(py.stats.use_stat[A_CON], prt1);
+	(void)fprintf(file1, "   CON : %s\n", prt1);
+	(void)fprintf(file1, "%34s", blank);
+	(void)fprintf(file1, "%26s", blank);
+	cnv_stat(py.stats.use_stat[A_CHR], prt1);
+	(void)fprintf(file1, "   CHR : %s\n\n", prt1);
+
+	(void)fprintf(file1, " + To Hit    : %6d", py.misc.dis_th);
+	(void)fprintf(file1, "%7sLevel      :%9d", blank, (int)py.misc.lev);
+	(void)fprintf(file1, "   Max Hit Points : %6d\n", py.misc.mhp);
+	(void)fprintf(file1, " + To Damage : %6d", py.misc.dis_td);
+	(void)fprintf(file1, "%7sExperience :%9ld", blank, (long)py.misc.exp);
+	(void)fprintf(file1, "   Cur Hit Points : %6d\n", py.misc.chp);
+	(void)fprintf(file1, " + To AC     : %6d", py.misc.dis_tac);
+	(void)fprintf(file1, "%7sMax Exp    :%9ld", blank, (long)py.misc.max_exp);
+	(void)fprintf(file1, "   Max Mana%8s %6d\n", colon, py.misc.mana);
+	(void)fprintf(file1, "   Total AC  : %6d", py.misc.dis_ac);
+	
+	if (py.misc.lev >= MAX_PLAYER_LEVEL) {
+	    (void)fprintf(file1, "%7sExp to Adv.:%9s", blank, "****");
+	}
+	else {
+	    (void)fprintf(file1, "%7sExp to Adv.:%9ld", blank,
+			  (long) (player_exp[py.misc.lev - 1] *
+				   py.misc.expfact / 100));
+	}
+
+	(void)fprintf(file1, "   Cur Mana%8s %6d\n", colon, py.misc.cmana);
+	(void)fprintf(file1, "%28sGold%8s%9ld\n", blank, colon, (long)py.misc.au);
+
+	p_ptr = &py.misc;
+	xbth = p_ptr->bth + p_ptr->ptohit * BTH_PLUS_ADJ
+	    + (class_level_adj[p_ptr->pclass][CLA_BTH] * p_ptr->lev);
+	xbthb = p_ptr->bthb + p_ptr->ptohit * BTH_PLUS_ADJ
+	    + (class_level_adj[p_ptr->pclass][CLA_BTHB] * p_ptr->lev);
+    /* this results in a range from 0 to 29 */
+	xfos = 40 - p_ptr->fos;
+	if (xfos < 0)
+	    xfos = 0;
+	xsrh = p_ptr->srh;
+    /* this results in a range from 0 to 9 */
+	xstl = p_ptr->stl + 1;
+	xdis = p_ptr->disarm + 2 * todis_adj() + stat_adj(A_INT)
+	    + (class_level_adj[p_ptr->pclass][CLA_DISARM] * p_ptr->lev / 3);
+	xsave = p_ptr->save + stat_adj(A_WIS)
+	    + (class_level_adj[p_ptr->pclass][CLA_SAVE] * p_ptr->lev / 3);
+	xdev = p_ptr->save + stat_adj(A_INT)
+	    + (class_level_adj[p_ptr->pclass][CLA_DEVICE] * p_ptr->lev / 3);
+
+	(void)sprintf(xinfra, "%d feet", py.flags.see_infra * 10);
+
+	(void)fprintf(file1, "(Miscellaneous Abilities)\n\n");
+	(void)fprintf(file1, " Fighting    : %-10s", likert(xbth, 12));
+	(void)fprintf(file1, "   Stealth     : %-10s", likert(xstl, 1));
+	(void)fprintf(file1, "   Perception  : %s\n", likert(xfos, 3));
+	(void)fprintf(file1, " Bows/Throw  : %-10s", likert(xbthb, 12));
+	(void)fprintf(file1, "   Disarming   : %-10s", likert(xdis, 8));
+	(void)fprintf(file1, "   Searching   : %s\n", likert(xsrh, 6));
+	(void)fprintf(file1, " Saving Throw: %-10s", likert(xsave, 6));
+	(void)fprintf(file1, "   Magic Device: %-10s", likert(xdev, 6));
+	(void)fprintf(file1, "   Infra-Vision: %s\n\n", xinfra);
+
+	/* Write out the character's history     */
+	(void)fprintf(file1, "Character Background\n");
+	for (i = 0; i < 4; i++) {
+	    (void)fprintf(file1, " %s\n", py.misc.history[i]);
+	}
+
+	/* Write out the equipment list.	     */
+	j = 0;
+	(void)fprintf(file1, "\n  [Character's Equipment List]\n\n");
+	if (!equip_ctr) {
+	    (void)fprintf(file1, "  Character has no equipment in use.\n");
+	}
+	else {
+	    for (i = INVEN_WIELD; i < INVEN_ARRAY_SIZE; i++) {
+		i_ptr = &inventory[i];
+		if (i_ptr->tval != TV_NOTHING) {
+		    switch (i) {
+		      case INVEN_WIELD:
+			p = "You are wielding";
+			break;
+		      case INVEN_HEAD:
+			p = "Worn on head";
+			break;
+		      case INVEN_NECK:
+			p = "Worn around neck";
+			break;
+		      case INVEN_BODY:
+			p = "Worn on body";
+			break;
+		      case INVEN_ARM:
+			p = "Worn on shield arm";
+			break;
+		      case INVEN_HANDS:
+			p = "Worn on hands";
+			break;
+		      case INVEN_RIGHT:
+			p = "Right ring finger";
+			break;
+		      case INVEN_LEFT:
+			p = "Left  ring finger";
+			break;
+		      case INVEN_FEET:
+			p = "Worn on feet";
+			break;
+		      case INVEN_OUTER:
+			p = "Worn about body";
+			break;
+		      case INVEN_LIGHT:
+			p = "Light source is";
+			break;
+		      case INVEN_AUX:
+			p = "Secondary weapon";
+			break;
+		      default:
+			p = "*Unknown value*";
+			break;
+		    }
+		    objdes(prt2, &inventory[i], TRUE);
+		    (void)fprintf(file1, "  %c) %-19s: %s\n", j + 'a', p, prt2);
+		    j++;
+		}
+	    }
+	}
+
+	/* Write out the character's inventory.	     */
+	(void)fprintf(file1, "%c\n\n", CTRL('L'));
+	(void)fprintf(file1, "  [General Inventory List]\n\n");
+	if (!inven_ctr) {
+	    (void)fprintf(file1, "  Character has no objects in inventory.\n");
+	}
+	else {
+	    for (i = 0; i < inven_ctr; i++) {
+		objdes(prt2, &inventory[i], TRUE);
+		(void)fprintf(file1, "%c) %s\n", i + 'a', prt2);
+	    }
+	}
+	(void)fprintf(file1, "%c", CTRL('L'));
+
+	fprintf(file1, "  [%s%s Home Inventory]\n\n", py.misc.name,
+		(toupper(py.misc.name[strlen(py.misc.name)-1]) == 'S' ? "'" : "'s"));
+	if (store[MAX_STORES-1].store_ctr == 0) {
+	    (void) fprintf(file1, "  Character has no objects at home.\n");
+	}
+	else {
+	    for (i = 0; i < store[MAX_STORES-1].store_ctr; i++) {
+		if (i == 12) fprintf(file1, "\n");  
+		objdes(prt2, &store[MAX_STORES-1].store_inven[i].sitem, TRUE);
+		(void) fprintf(file1, "%c) %s\n", (i%12)+'a', prt2);
+	    }
+	}
+	(void) fprintf(file1, "%c", CTRL('L'));
+
+	(void)fclose(file1);
+	prt("Completed.", 0, 0);
+	return TRUE;
+    }
+
+    else {
+	if (fd >= 0)
+	    (void)close(fd);
+	(void)sprintf(out_val, "Can't open file %s:", filename1);
+	msg_print(out_val);
+	return FALSE;
+    }
+}
+
+
 
 
 /* Centers a string within a 31 character string		-JWT-	 */

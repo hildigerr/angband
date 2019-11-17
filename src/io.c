@@ -623,10 +623,6 @@ shell_out()
 #ifndef MSDOS
     /* close scoreboard descriptor */
     /* it is not open on MSDOS machines */
-#if 0
-    /* this file is not open now, see init_file() in files.c */
-	(void)close(highscore_fd);
-#endif
 #endif
 	if ((str = getenv("SHELL")))
 #ifndef ATARIST_MWC

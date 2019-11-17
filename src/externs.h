@@ -161,7 +161,6 @@ extern int monster_is_afraid;	/* redo monster fear messages -CWS */
 extern int character_generated;	/* don't save score until char gen finished */
 extern int character_saved;		/* prevents save on kill after save_player() */
 extern int feeling;				/* level feeling */
-extern int highscore_fd;		/* High score file descriptor */
 extern int command_count;		/* Repetition of commands. -CJS- */
 extern int default_dir;			/* Use last direction in repeated commands */
 extern s16b noscore;			/* Don't score this game. -CJS- */
@@ -387,6 +386,7 @@ int multiply_monster(int, int, int, int);
 void creatures(int);
 
 /* death.c */
+void init_scorefile(void);
 void exit_game(void);
 void display_scores(int, int);
 void delete_entry(int);
@@ -427,16 +427,11 @@ int ruin_stat(int);
 void eat(void);
 
 /* files.c */
-void init_scorefile(void);
 void init_files(void);
 void read_times(void);
 void helpfile(const char *);
 void print_objects(void);
-#ifdef MAC
-int file_character(void)
-#else
 int file_character(char *);
-#endif
 #ifdef NEW_FILEPATHS
 void get_file_paths( void );
 #endif

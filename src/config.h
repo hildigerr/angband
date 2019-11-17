@@ -8,7 +8,6 @@
  */
 
 /* Person to bother if something goes wrong.
- * Recompile files.c and misc2.c if these change.
  */
 
 #define WIZARD	"root"
