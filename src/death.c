@@ -25,7 +25,6 @@
 #else
 #ifdef __MINT__        
 #endif
-#include <unistd.h>
 #endif
 
 #ifdef MSDOS

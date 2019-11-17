@@ -36,6 +36,9 @@
 
 #ifdef MAC
 #else
+# ifndef __TURBOC__
+#  include <unistd.h>
+# endif
 # ifndef GEMDOS
 #  ifdef VMS
 #   include <types.h>

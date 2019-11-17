@@ -134,10 +134,6 @@
 
 /* this takes care of almost all "implicit declaration" warnings -CWS */
 
-#if defined(NeXT)
-#else
-#include <unistd.h>
-#endif
 
 #ifdef __MINT__
 #include <support.h>
