@@ -89,8 +89,7 @@ void user_name(char *buf, int id)
  */
 static int parse_path(const char *file, char *exp)
 {
-    int	i = 0;
-    char	*u = NULL;
+    register const char *	u, s;
     struct passwd	*pw;
     char		user[128];
 
@@ -104,24 +103,29 @@ static int parse_path(const char *file, char *exp)
     /* No tilde? */
     if (file[0] != '~') return (1);
 
-    user[0] = '\0';
-
     /* Point at the user */
-    file++;
+    u = file+1;
 
     /* Look for non-user portion of the file */
-    while (*file != PATH_SEP && i < sizeof(user))
-	user[i++] = *file++;
-    user[i] = '\0';
+    s = strstr(u, PATH_SEP);
+
+    /* Hack -- no long user names */
+    if (s && (s >= u + sizeof(user))) return (0);
+
+    /* Extract a user name */
+    if (s) {
+	register int i;
+	for (i = 0; u < s; ++i) user[i] = *u++;
+	user[i] = '\0';
+	u = user;
+    }
 
     /* Look up the "current" user */
-    if (i == 0) u = getlogin();
-
-    if (u != NULL) (void)strcpy(user, u);
+    if (u[0] == '\0') u = getlogin();
 
     /* Look up a user (or "current" user) */
-    if (!u) pw = getpwuid(getuid());
-    else pw = getpwnam(user);
+    if (u) pw = getpwnam(u);
+    else pw = getpwuid(getuid());
 
     /* Nothing found? */
     if (!pw) return (0);
@@ -130,7 +134,7 @@ static int parse_path(const char *file, char *exp)
     (void)strcpy(exp, pw->pw_dir);
 
     /* Append the rest of the filename, if any */
-    (void)strcat(exp, file);
+    if (s) (void)strcat(exp, s);
 
     /* Success */
     return 1;
