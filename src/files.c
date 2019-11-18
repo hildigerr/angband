@@ -63,12 +63,6 @@ void get_file_paths()
     angband_path = getenv( "ANGBAND_PATH" );
     if (angband_path == NULL) {
 
-#if 0 /* I don't think this is appropriate, particularly since this may
-       * well be set by a system-wide games administrator.  -CWS */
-
-       fprintf(stderr, "Warning: ANGBAND_PATH not set!\n" );
-       fprintf(stderr, "Warning: Using %s for ANGBAND_PATH.\n", DEFAULT_PATH );
-#endif
 	angband_path = (char *)malloc( strlen( DEFAULT_PATH ) + 1 );
 	strcpy( angband_path, DEFAULT_PATH );
     }

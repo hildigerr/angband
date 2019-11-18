@@ -105,8 +105,13 @@ default: angband
 .c.o:
 	$(CC) $(CFLAGS) -c $*.c
 
+#
+# Build the "Angband" program and move it up one directory
+#
+
 angband: $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o angband $(LIBS)
+	$(CC) $(CFLAGS)  -o angband $(OBJS) $(LIBS)
+	mv angband ..
 
 
 depend:

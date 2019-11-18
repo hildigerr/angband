@@ -35,12 +35,15 @@
  *****************************************************/
 
 
-/* Change this to something sensible, if necessary.  Angband will look
- * in this directory if the ANGBAND_PATH environment variable isn't   
- * set, or if the files aren't found in ANGBAND_PATH.            [cjh]
+/*
+ * OPTION: Set the "default" path to the angband "lib" directory.
+ * Angband will use this value if it cannot getenv("ANGBAND_PATH").
+ * The final slash is optional in either case.  Not used on Macintosh.
+ * By default, the system expects the "angband" program to be located
+ * in the same directory as the "lib" directory.  This can be changed.
+ * Note that the "ANGBAND_PATH" environment variable over-rides this.
  */
-
-#define DEFAULT_PATH "/User/games/lib/angband"
+#define DEFAULT_PATH "./lib/"
 
 
 /* this sets the default user interface
