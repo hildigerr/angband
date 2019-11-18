@@ -10,7 +10,6 @@
 ^V - Allocate quality treasures.
 ^I - Identify.
 ^^ - (HOME) Identify all objects upto a certain level.
-^O - Print random objects sample.
 ^T - Teleport player.
 ^W - Wizard password on/off.
 @  - Create any object *CAN CAUSE FATAL ERROR*

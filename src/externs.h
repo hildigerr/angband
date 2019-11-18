@@ -433,7 +433,6 @@ void eat(void);
 void init_files(void);
 void read_times(void);
 void helpfile(const char *);
-void print_objects(void);
 int file_character(char *);
 void get_file_paths( void );
 

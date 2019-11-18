@@ -1964,9 +1964,6 @@ char com_val;
 	      case CTRL('I'):	/* ^I = identify */
 		(void)ident_spell();
 		break;
-	      case CTRL('O'):	/* ^O = objects */
-		print_objects();
-		break;
 	      case CTRL('T'):	/* ^T = teleport */
 		teleport(100);
 		break;
