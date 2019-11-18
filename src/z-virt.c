@@ -5,6 +5,15 @@
 #include "z-util.h"
 
 
+/*
+ * Allow debugging messages to track memory usage.
+ */
+#ifdef VERBOSE_RALLOC
+static long ralloc_total = 0;
+static long ralloc_block = 0;
+#endif
+
+
 #ifndef HAS_MEMSET
 
 /*
@@ -31,6 +40,24 @@ int rnfree(void *p, unsigned long len)
   /* Easy to free zero bytes */
   if (len == 0) return (0);
 
+#ifdef VERBOSE_RALLOC
+
+  /* Decrease memory count */
+  ralloc_total -= len;
+
+  /* Message */
+  if (len > ralloc_block)
+  {
+    char buf[128];
+
+    sprintf(buf, "rnfree(%ld bytes).  Allocated: %ld bytes",
+	    len, ralloc_total);
+
+    plog(buf);
+  }
+
+#endif
+
   /* just use "free" */
   free ((char*)(p));
 
@@ -48,6 +75,25 @@ void *ralloc(unsigned long len)
 
   /* Allow allocation of "zero bytes" */
   if (len == 0) return ((void *)NULL);
+
+#ifdef VERBOSE_RALLOC
+
+  /* Remember how much memory is allocated */
+  ralloc_total += len;
+
+  /* Log if the change was meaningful */
+  if (len > ralloc_block)
+  {
+    /* Log a message */
+    char buf[128];
+
+    sprintf(buf, "ralloc(%ld bytes).  Allocated: %ld bytes",
+	    len, ralloc_total);
+
+    plog(buf);
+  }
+
+#endif
 
   /* Use malloc() to allocate some memory */
   mem = ((void *)(malloc((size_t)(len))));
