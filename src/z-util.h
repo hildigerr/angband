@@ -14,6 +14,9 @@ extern const char *argv0;
 
 /**** Available Functions ****/
 
+/* Test suffix */
+extern bool suffix(const char *big, const char *small);
+
 #ifndef HAS_STRICMP
 extern int stricmp(const char *a, const char *b);
 #endif

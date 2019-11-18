@@ -11,6 +11,22 @@ cptr argv0 = NULL;
 
 
 
+/*
+ * Is string 'small' the suffix of string 'big'?
+ */
+bool suffix(const char *big, const char *small)
+{
+  register int blen = strlen (big);
+  register int slen = strlen (small);
+
+  /* Degenerate case: 'big' is smaller than 'small' */
+  if (slen > blen) return (FALSE);
+
+  /* Compare small to the end of big */
+  return (!strcmp(big + blen - slen, small));
+}
+
+
 #ifndef HAS_STRICMP
 
 /*
