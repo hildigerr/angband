@@ -32,7 +32,6 @@
  * the variables below constant "initial values".
  */
 
-char *ANGBAND_TST = NULL;		/* was LIBDIR(test)			*/
 char *ANGBAND_DIR_BONES = NULL;		/* was LIBDIR(bones)			*/
 char *ANGBAND_DIR_SAVE = NULL;		/* was LIBDIR(save)			*/
 
@@ -72,12 +71,6 @@ void get_file_paths()
 	angband_path = (char *)malloc( strlen( DEFAULT_PATH ) + 1 );
 	strcpy( angband_path, DEFAULT_PATH );
     }
-
-    ANGBAND_TST = (char *)malloc( MAXPATHLEN );
-    strcpy( ANGBAND_TST, angband_path );
-    strcat( ANGBAND_TST, PATH_SEP );
-    strcat( ANGBAND_TST, "test" );
-    ANGBAND_TST = (char *)realloc( ANGBAND_TST, strlen( ANGBAND_TST ) + 1 );
 
     ANGBAND_DIR_SAVE = (char *)malloc( MAXPATHLEN );
     strcpy( ANGBAND_DIR_SAVE, angband_path );

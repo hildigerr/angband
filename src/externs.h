@@ -350,7 +350,6 @@ extern char	moriatop[], moriasav[];
  * The FILEPATHS to various files
  */
 
-extern char *ANGBAND_TST;		/* was LIBDIR(test)					*/
 extern char *ANGBAND_DIR_BONES;		/* was LIBDIR(bones)				*/
 extern char *ANGBAND_DIR_SAVE;		/* was LIBDIR(save)					*/
 
