@@ -22,6 +22,9 @@
 /* De-allocate a given amount of memory */
 int rnfree(void *p, unsigned long len);
 
+/* Panic, attempt to Allocate 'len' bytes */
+extern void *rpanic(unsigned long len);
+
 /* Allocate (and return) 'len', or dump core */
 void *ralloc(unsigned long len);
 

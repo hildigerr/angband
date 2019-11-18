@@ -14,6 +14,15 @@ static long ralloc_block = 0;
 #endif
 
 
+/*
+ * The "lifeboat" in "rpanic()" can sometimes prevent crashes
+ */
+#ifndef RPANIC_LIFEBOAT
+# define RPANIC_LIFEBOAT 256
+#endif
+
+
+
 #ifndef HAS_MEMSET
 
 /*
@@ -67,6 +76,28 @@ int rnfree(void *p, unsigned long len)
 
 
 /*
+ * The system is out of memory, so panic.
+ */
+void *rpanic(unsigned long len)
+{
+  static byte lifeboat[RPANIC_LIFEBOAT];
+  static unsigned long lifesize = RPANIC_LIFEBOAT;
+
+  /* We are probably going to crash anyway */
+  plog("Running out of memory!!!");
+
+  /* Lifeboat is too small! */
+  if (lifesize < len) return ((void *)NULL);
+
+  /* Hack -- decrease the lifeboat */
+  lifesize -= len;
+
+  /* Hack -- use part of the lifeboat */
+  return (lifeboat + lifesize);
+}
+
+
+/*
  * Allocate some memory
  */
 void *ralloc(unsigned long len)
@@ -97,6 +128,12 @@ void *ralloc(unsigned long len)
 
   /* Use malloc() to allocate some memory */
   mem = ((void *)(malloc((size_t)(len))));
+
+  /* We were able to acquire memory */
+  if (mem) return (mem);
+
+  /* If necessary, panic */
+  mem = rpanic(len);
 
   /* We were able to acquire memory */
   if (mem) return (mem);
