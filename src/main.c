@@ -105,12 +105,10 @@ char *argv[];
 #ifdef MSDOS			/* -CFT */
     msdos_init();		/* set up some screen stuff + get cnf file */
 #endif
-    
-#ifdef NEW_FILEPATHS
-    /* This looks like a good spot to check for our files. - [cjh] */
+
+    /* Get the file paths */
     get_file_paths();
-#endif
-    
+
     /* call this routine to grab a file pointer to the highscore file */
     /* and prepare things to relinquish setuid privileges */
     init_scorefile();

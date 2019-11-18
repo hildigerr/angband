@@ -15,19 +15,21 @@
 
 
 
-/* This is done first in main.c, so I'll rudely drop it into the front
- * of files.c...  If NEW_FILEPATHS is defined, we'll look for the ANGBAND_PATH
- * environment variable, and then look for the files in there.  This is
- * much nicer than having explicit paths, and should help us make things
- * more portable.  Now, if only someone would graft on the NetHack display
- * code...
+/*
+ * ANGBAND_xxx filepath "constants".
+ *
+ * First, we'll look for the ANGBAND_PATH environment variable,
+ * and then look for the files in there.  If that doesn't work,
+ * we'll try the DEFAULT_PATH constant.  So be sure that one of
+ * these two things works...
  *
  * This is rather inelegant code; no checks are made for malloc() or
  * realloc() failures.  If you malloc/realloc are broken, you're in
  * trouble, and your compiler vendor needs a good swift kick in the
  * forehead. [cjh]
+ * And it is no longer optional, everyone must use it.
  */
-#ifdef NEW_FILEPATHS
+
 char *ANGBAND_TST;		/* was LIBDIR(test)			*/
 char *ANGBAND_HOURS;		/* was LIBDIR(files/hours)		*/
 char *ANGBAND_NEWS;		/* was LIBDIR(files/news.hlp)		*/
@@ -196,7 +198,6 @@ void get_file_paths()
 #undef MAXPATHLEN
 #endif /* BOZO_MAXPATHLEN */
 
-#endif /* NEW_FILEPATHS */
 
 
 

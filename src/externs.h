@@ -346,9 +346,10 @@ extern char	moriatop[], moriasav[];
 #endif
 
 
-/* If you use NEW_FILEPATHS, we need these externs; if you use OLD_FILEPATHS */
-/* these are #define'd to something, so they aren't variables.         [cjh] */
-#ifdef NEW_FILEPATHS
+/*
+ * The FILEPATHS to various files
+ */
+
 extern char *ANGBAND_TST;		/* was LIBDIR(test)					*/
 extern char *ANGBAND_HOURS;		/* was LIBDIR(files/hours)			*/
 extern char *ANGBAND_NEWS;		/* was LIBDIR(files/news.hlp)			*/
@@ -364,7 +365,6 @@ extern char *ANGBAND_VERSION;		/* was LIBDIR(files/version.hlp)	*/
 extern char *ANGBAND_LOAD;		/* was LIBDIR(files/loadcheck)		*/
 extern char *ANGBAND_WIZ;		/* was LIBDIR(files/wizards.txt)		*/
 extern char *ANGBAND_DIR_SAVE;		/* was LIBDIR(save)					*/
-#endif /* NEW_FILEPATHS */
 
 
 
@@ -432,9 +432,7 @@ void read_times(void);
 void helpfile(const char *);
 void print_objects(void);
 int file_character(char *);
-#ifdef NEW_FILEPATHS
 void get_file_paths( void );
-#endif
 
 /* generate.c */
 void generate_cave(void);

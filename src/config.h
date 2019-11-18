@@ -34,55 +34,13 @@
  * files used by moria, set these to valid pathnames *
  *****************************************************/
 
-/* Define OLD_FILEPATHS to use the old, nasty way of putting complete
- * paths directly into Angband.  Define NEW_FILEPATHS to use the new,
- * studly method (which uses the ANGBAND_PATH environment variable to
- * look for the files).                                         [cjh]
- */
-
-#undef  OLD_FILEPATHS
-#define NEW_FILEPATHS
-
 
 /* Change this to something sensible, if necessary.  Angband will look
  * in this directory if the ANGBAND_PATH environment variable isn't   
  * set, or if the files aren't found in ANGBAND_PATH.            [cjh]
  */
 
-#ifdef NEW_FILEPATHS
 #define DEFAULT_PATH "/User/games/lib/angband"
-#endif
-
-#ifdef OLD_FILEPATHS
-
-/* Try to fix filename inclusion in a portable fashion.
- * John Whitly@cs.Buffalo.edu says this works under gcc 2.5.5, but my
- * older version chokes.  I dunno. -CWS
- */
-
-#ifdef __STDC__
-#define LIBDIR(FILE) "/User/games/lib/angband/" #FILE
-#else
-#define LIBDIR(FILE) "/User/games/lib/angband/FILE"
-#endif
-
-/* probably unix */
-#define ANGBAND_TST       LIBDIR(test)
-#define ANGBAND_HOURS       LIBDIR(files/hours)
-#define ANGBAND_NEWS       LIBDIR(files/news.hlp)
-#define ANGBAND_TOP       LIBDIR(files/newscores)
-#define ANGBAND_DIR_BONES     LIBDIR(bones)
-#define ANGBAND_R_HELP      LIBDIR(files/cmds_r.hlp)
-#define ANGBAND_O_HELP LIBDIR(files/cmds_o.hlp)
-#define ANGBAND_W_HELP  LIBDIR(files/cmds_w.hlp)
-#define ANGBAND_OWIZ_HELP LIBDIR(files/owizcmds.hlp)
-#define ANGBAND_WELCOME   LIBDIR(files/welcome.hlp)
-#define ANGBAND_LOG       LIBDIR(files/ANGBAND.log)
-#define ANGBAND_VERSION       LIBDIR(files/version.hlp)
-#define ANGBAND_LOAD      LIBDIR(files/loadcheck)
-#define ANGBAND_WIZ       LIBDIR(files/wizards.txt)
-#define ANGBAND_DIR_SAVE       LIBDIR(save)
-#endif /* OLD_FILEPATHS */
 
 
 /* this sets the default user interface
