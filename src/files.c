@@ -32,29 +32,30 @@
  * the variables below constant "initial values".
  */
 
-char *ANGBAND_DIR_BONES = NULL;		/* was LIBDIR(bones)			*/
-char *ANGBAND_DIR_SAVE = NULL;		/* was LIBDIR(save)			*/
+char *ANGBAND_DIR_BONES = NULL;		/* Dir: ascii bones files */
+char *ANGBAND_DIR_SAVE = NULL;		/* Dir: binary save files */
 
-char *ANGBAND_NEWS = NULL;		/* was LIBDIR(files/news.hlp)		*/
-char *ANGBAND_TOP = NULL;		/* was LIBDIR(files/newscores)		*/
-char *ANGBAND_WELCOME = NULL;		/* was LIBDIR(files/welcome.hlp)	*/
-char *ANGBAND_VERSION = NULL;		/* was LIBDIR(files/version.hlp)	*/
+char *ANGBAND_NEWS = NULL;		/* News file */
+char *ANGBAND_TOP = NULL;		/* was LIBDIR(files/newscores) */
+char *ANGBAND_WELCOME = NULL;		/* Player generation help */
+char *ANGBAND_VERSION = NULL;		/* Version information */
 
-char *ANGBAND_WIZ = NULL;		/* was LIBDIR(files/wizards.txt)		*/
-char *ANGBAND_HOURS = NULL;		/* was LIBDIR(files/hours)		*/
-char *ANGBAND_LOAD = NULL;		/* was LIBDIR(files/loadcheck)		*/
-char *ANGBAND_LOG = NULL;		/* was LIBDIR(files/ANGBAND.log)	*/
+char *ANGBAND_WIZ = NULL;		/* Acceptable wizard uid's */
+char *ANGBAND_HOURS = NULL;		/* Hours of operation */
+char *ANGBAND_LOAD = NULL;		/* Load information */
+char *ANGBAND_LOG = NULL;		/* Log file of some form */
 
-char *ANGBAND_R_HELP = NULL;		/* was LIBDIR(files/cmds_r.hlp)	*/
-char *ANGBAND_O_HELP = NULL;	/* was LIBDIR(files/cmds_o.hlp)	*/
-char *ANGBAND_W_HELP = NULL;		/* was LIBDIR(files/cmds_w.hlp)	*/
-char *ANGBAND_OWIZ_HELP = NULL;	/* was LIBDIR(files/owizcmds.hlp)	*/
+char *ANGBAND_R_HELP = NULL;		/* Roguelike command help */
+char *ANGBAND_O_HELP = NULL;		/* Original command help */
+char *ANGBAND_W_HELP = NULL;		/* Wizard command help */
+char *ANGBAND_OWIZ_HELP = NULL;	/* was LIBDIR(files/owizcmds.hlp) */
 
 
 
-/* Find the path to our files...  if the ANGBAND_PATH environment var
- * isn't set, use DEFAULT_PATH to look for the files.  If your system
- * can't do environment variables, you'll have to kludge this.  [cjh]
+/* Find the paths to all of our important files and directories...
+ * Use the ANGBAND_PATH environment var if possible, else use DEFAULT_PATH.
+ *
+ * If your system can't do "getenv()", you'll have to kludge this.  [cjh]
  */
 void get_file_paths()
 {
@@ -63,15 +64,19 @@ void get_file_paths()
 #define MAXPATHLEN 512
 #endif
 
+    /* Grab the base "path" */
     char *angband_path = NULL;
 
-    angband_path = getenv( "ANGBAND_PATH" );
-    if (angband_path == NULL) {
+    /* Get the environment variable */
+    angband_path = getenv("ANGBAND_PATH");
 
+    /* Use the angband_path, or a default */
+    if (angband_path == NULL) {
 	angband_path = (char *)malloc( strlen( DEFAULT_PATH ) + 1 );
 	strcpy( angband_path, DEFAULT_PATH );
     }
 
+    /* Find some directory names */
     ANGBAND_DIR_SAVE = (char *)malloc( MAXPATHLEN );
     strcpy( ANGBAND_DIR_SAVE, angband_path );
     strcat( ANGBAND_DIR_SAVE, PATH_SEP );
@@ -84,6 +89,7 @@ void get_file_paths()
     strcat( ANGBAND_DIR_BONES, "bones" );
     ANGBAND_DIR_BONES = (char *)realloc( ANGBAND_DIR_BONES, strlen( ANGBAND_DIR_BONES ) + 1 );
 
+    /* The basic info files */
     ANGBAND_NEWS = (char *)malloc( MAXPATHLEN );
     strcpy( ANGBAND_NEWS, angband_path );
     strcat( ANGBAND_NEWS, PATH_SEP );
@@ -116,6 +122,7 @@ void get_file_paths()
     strcat( ANGBAND_VERSION, "version.hlp" );
     ANGBAND_VERSION = (char *)realloc( ANGBAND_VER, strlen( ANGBAND_VER ) + 1 );
 
+    /* The command help files */
     ANGBAND_R_HELP = (char *)malloc( MAXPATHLEN );
     strcpy( ANGBAND_R_HELP, angband_path );
     strcat( ANGBAND_R_HELP, PATH_SEP );
@@ -151,6 +158,7 @@ void get_file_paths()
     ANGBAND_OWIZ_HELP = (char *)realloc(ANGBAND_OWIZ_HELP,
 					strlen( ANGBAND_OWIZ_HELP ) + 1 );
 
+    /* Some parsable text files */
     ANGBAND_WIZ = (char *)malloc( MAXPATHLEN );
     strcpy( ANGBAND_WIZ, angband_path );
     strcat( ANGBAND_WIZ, PATH_SEP );

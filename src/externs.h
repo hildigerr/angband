@@ -350,23 +350,23 @@ extern char	moriatop[], moriasav[];
  * The FILEPATHS to various files
  */
 
-extern char *ANGBAND_DIR_BONES;		/* was LIBDIR(bones)				*/
-extern char *ANGBAND_DIR_SAVE;		/* was LIBDIR(save)					*/
+extern char *ANGBAND_DIR_BONES;		/* Dir: ascii bones files */
+extern char *ANGBAND_DIR_SAVE;		/* Dir: binary save files */
 
-extern char *ANGBAND_NEWS;		/* was LIBDIR(files/news.hlp)			*/
-extern char *ANGBAND_TOP;		/* was LIBDIR(files/newscores)		*/
-extern char *ANGBAND_WELCOME;	/* was LIBDIR(files/welcome.hlp)	*/
-extern char *ANGBAND_VERSION;		/* was LIBDIR(files/version.hlp)	*/
+extern char *ANGBAND_NEWS;		/* News file */
+extern char *ANGBAND_TOP;		/* was LIBDIR(files/newscores) */
+extern char *ANGBAND_WELCOME;		/* Player generation help */
+extern char *ANGBAND_VERSION;		/* Version information */
 
-extern char *ANGBAND_WIZ;		/* was LIBDIR(files/wizards.txt)		*/
-extern char *ANGBAND_HOURS;		/* was LIBDIR(files/hours)			*/
-extern char *ANGBAND_LOAD;		/* was LIBDIR(files/loadcheck)		*/
-extern char *ANGBAND_LOG;		/* was LIBDIR(files/ANGBAND.log)	*/
+extern char *ANGBAND_WIZ;		/* Acceptable wizard uid's */
+extern char *ANGBAND_HOURS;		/* Hours of operation */
+extern char *ANGBAND_LOAD;		/* Load information */
+extern char *ANGBAND_LOG;		/* Log file of some form */
 
-extern char *ANGBAND_R_HELP;		/* was LIBDIR(files/cmds_r.hlp)	*/
-extern char *ANGBAND_O_HELP;	/* was LIBDIR(files/cmds_o.hlp)	*/
-extern char *ANGBAND_W_HELP;	/* was LIBDIR(files/cmds_w.hlp)	*/
-extern char *ANGBAND_OWIZ_HELP;	/* was LIBDIR(files/owizcmds.hlp)	*/
+extern char *ANGBAND_R_HELP;		/* Roguelike command help */
+extern char *ANGBAND_O_HELP;		/* Original command help */
+extern char *ANGBAND_W_HELP;		/* Wizard command help */
+extern char *ANGBAND_OWIZ_HELP;	/* was LIBDIR(files/owizcmds.hlp) */
 
 
 
