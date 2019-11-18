@@ -16,7 +16,7 @@
 
 
 /*
- * ANGBAND_xxx filepath "constants".
+ * Prepare the ANGBAND_xxx filepath "constants".
  *
  * First, we'll look for the ANGBAND_PATH environment variable,
  * and then look for the files in there.  If that doesn't work,
@@ -27,27 +27,29 @@
  * realloc() failures.  If you malloc/realloc are broken, you're in
  * trouble, and your compiler vendor needs a good swift kick in the
  * forehead. [cjh]
- * And it is no longer optional, everyone must use it.
+ * And it is no longer optional, everyone must use it.  If you
+ * wish to reinstate "constant paths", please do so by giving
+ * the variables below constant "initial values".
  */
 
-char *ANGBAND_TST;		/* was LIBDIR(test)			*/
-char *ANGBAND_DIR_BONES;		/* was LIBDIR(bones)			*/
-char *ANGBAND_DIR_SAVE;		/* was LIBDIR(save)			*/
+char *ANGBAND_TST = NULL;		/* was LIBDIR(test)			*/
+char *ANGBAND_DIR_BONES = NULL;		/* was LIBDIR(bones)			*/
+char *ANGBAND_DIR_SAVE = NULL;		/* was LIBDIR(save)			*/
 
-char *ANGBAND_NEWS;		/* was LIBDIR(files/news.hlp)		*/
-char *ANGBAND_TOP;		/* was LIBDIR(files/newscores)		*/
-char *ANGBAND_WELCOME;		/* was LIBDIR(files/welcome.hlp)	*/
-char *ANGBAND_VERSION;		/* was LIBDIR(files/version.hlp)	*/
+char *ANGBAND_NEWS = NULL;		/* was LIBDIR(files/news.hlp)		*/
+char *ANGBAND_TOP = NULL;		/* was LIBDIR(files/newscores)		*/
+char *ANGBAND_WELCOME = NULL;		/* was LIBDIR(files/welcome.hlp)	*/
+char *ANGBAND_VERSION = NULL;		/* was LIBDIR(files/version.hlp)	*/
 
-char *ANGBAND_WIZ;		/* was LIBDIR(files/wizards.txt)		*/
-char *ANGBAND_HOURS;		/* was LIBDIR(files/hours)		*/
-char *ANGBAND_LOAD;		/* was LIBDIR(files/loadcheck)		*/
-char *ANGBAND_LOG;		/* was LIBDIR(files/ANGBAND.log)	*/
+char *ANGBAND_WIZ = NULL;		/* was LIBDIR(files/wizards.txt)		*/
+char *ANGBAND_HOURS = NULL;		/* was LIBDIR(files/hours)		*/
+char *ANGBAND_LOAD = NULL;		/* was LIBDIR(files/loadcheck)		*/
+char *ANGBAND_LOG = NULL;		/* was LIBDIR(files/ANGBAND.log)	*/
 
-char *ANGBAND_R_HELP;		/* was LIBDIR(files/cmds_r.hlp)	*/
-char *ANGBAND_O_HELP;	/* was LIBDIR(files/cmds_o.hlp)	*/
-char *ANGBAND_W_HELP;		/* was LIBDIR(files/cmds_w.hlp)	*/
-char *ANGBAND_OWIZ_HELP;	/* was LIBDIR(files/owizcmds.hlp)	*/
+char *ANGBAND_R_HELP = NULL;		/* was LIBDIR(files/cmds_r.hlp)	*/
+char *ANGBAND_O_HELP = NULL;	/* was LIBDIR(files/cmds_o.hlp)	*/
+char *ANGBAND_W_HELP = NULL;		/* was LIBDIR(files/cmds_w.hlp)	*/
+char *ANGBAND_OWIZ_HELP = NULL;	/* was LIBDIR(files/owizcmds.hlp)	*/
 
 
 
@@ -62,7 +64,7 @@ void get_file_paths()
 #define MAXPATHLEN 512
 #endif
 
-    char *angband_path;
+    char *angband_path = NULL;
 
     angband_path = getenv( "ANGBAND_PATH" );
     if (angband_path == NULL) {
