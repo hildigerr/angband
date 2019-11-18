@@ -350,6 +350,7 @@ extern char	moriatop[], moriasav[];
  * The FILEPATHS to various files
  */
 
+extern cptr ANGBAND_DIR_FILES;		/* Dir: ascii files  */
 extern char *ANGBAND_DIR_BONES;		/* Dir: ascii bones files */
 extern char *ANGBAND_DIR_SAVE;		/* Dir: binary save files */
 
