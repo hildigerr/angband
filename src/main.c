@@ -112,12 +112,7 @@ char *argv[];
     /* call this routine to grab a file pointer to the highscore file */
     /* and prepare things to relinquish setuid privileges */
     init_scorefile();
-    
-    /* Call this routine to grab a file pointer to the log files and
-       start the backup process before relinquishing setuid privileges */
-    
-    init_files();
-    
+
 #ifndef MSDOS
     if ((player_uid = getuid()) < 0) {
 	quit("Can't set permissions correctly!  Getuid call failed.\n");

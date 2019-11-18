@@ -5,11 +5,6 @@
 
 extern short        log_index;
 
-void 
-init_files()
-{
-}
-
 int 
 _new_log()
 {

@@ -430,7 +430,6 @@ int ruin_stat(int);
 void eat(void);
 
 /* files.c */
-void init_files(void);
 void read_times(void);
 void helpfile(const char *);
 int file_character(char *);
@@ -888,7 +887,6 @@ void enter_store(int);
 /* treasur2.c */
 
 /* undef.c */
-void init_files(void);
 int _new_log(void);
 
 #ifdef unix
