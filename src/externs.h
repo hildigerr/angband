@@ -351,20 +351,23 @@ extern char	moriatop[], moriasav[];
  */
 
 extern char *ANGBAND_TST;		/* was LIBDIR(test)					*/
-extern char *ANGBAND_HOURS;		/* was LIBDIR(files/hours)			*/
+extern char *ANGBAND_DIR_BONES;		/* was LIBDIR(bones)				*/
+extern char *ANGBAND_DIR_SAVE;		/* was LIBDIR(save)					*/
+
 extern char *ANGBAND_NEWS;		/* was LIBDIR(files/news.hlp)			*/
 extern char *ANGBAND_TOP;		/* was LIBDIR(files/newscores)		*/
-extern char *ANGBAND_DIR_BONES;		/* was LIBDIR(bones)				*/
+extern char *ANGBAND_WELCOME;	/* was LIBDIR(files/welcome.hlp)	*/
+extern char *ANGBAND_VERSION;		/* was LIBDIR(files/version.hlp)	*/
+
+extern char *ANGBAND_WIZ;		/* was LIBDIR(files/wizards.txt)		*/
+extern char *ANGBAND_HOURS;		/* was LIBDIR(files/hours)			*/
+extern char *ANGBAND_LOAD;		/* was LIBDIR(files/loadcheck)		*/
+extern char *ANGBAND_LOG;		/* was LIBDIR(files/ANGBAND.log)	*/
+
 extern char *ANGBAND_R_HELP;		/* was LIBDIR(files/cmds_r.hlp)	*/
 extern char *ANGBAND_O_HELP;	/* was LIBDIR(files/cmds_o.hlp)	*/
 extern char *ANGBAND_W_HELP;	/* was LIBDIR(files/cmds_w.hlp)	*/
 extern char *ANGBAND_OWIZ_HELP;	/* was LIBDIR(files/owizcmds.hlp)	*/
-extern char *ANGBAND_WELCOME;	/* was LIBDIR(files/welcome.hlp)	*/
-extern char *ANGBAND_LOG;		/* was LIBDIR(files/ANGBAND.log)	*/
-extern char *ANGBAND_VERSION;		/* was LIBDIR(files/version.hlp)	*/
-extern char *ANGBAND_LOAD;		/* was LIBDIR(files/loadcheck)		*/
-extern char *ANGBAND_WIZ;		/* was LIBDIR(files/wizards.txt)		*/
-extern char *ANGBAND_DIR_SAVE;		/* was LIBDIR(save)					*/
 
 
 

@@ -31,21 +31,30 @@
  */
 
 char *ANGBAND_TST;		/* was LIBDIR(test)			*/
-char *ANGBAND_HOURS;		/* was LIBDIR(files/hours)		*/
+char *ANGBAND_DIR_BONES;		/* was LIBDIR(bones)			*/
+char *ANGBAND_DIR_SAVE;		/* was LIBDIR(save)			*/
+
 char *ANGBAND_NEWS;		/* was LIBDIR(files/news.hlp)		*/
 char *ANGBAND_TOP;		/* was LIBDIR(files/newscores)		*/
-char *ANGBAND_DIR_BONES;		/* was LIBDIR(bones)			*/
+char *ANGBAND_WELCOME;		/* was LIBDIR(files/welcome.hlp)	*/
+char *ANGBAND_VERSION;		/* was LIBDIR(files/version.hlp)	*/
+
+char *ANGBAND_WIZ;		/* was LIBDIR(files/wizards.txt)		*/
+char *ANGBAND_HOURS;		/* was LIBDIR(files/hours)		*/
+char *ANGBAND_LOAD;		/* was LIBDIR(files/loadcheck)		*/
+char *ANGBAND_LOG;		/* was LIBDIR(files/ANGBAND.log)	*/
+
 char *ANGBAND_R_HELP;		/* was LIBDIR(files/cmds_r.hlp)	*/
 char *ANGBAND_O_HELP;	/* was LIBDIR(files/cmds_o.hlp)	*/
 char *ANGBAND_W_HELP;		/* was LIBDIR(files/cmds_w.hlp)	*/
 char *ANGBAND_OWIZ_HELP;	/* was LIBDIR(files/owizcmds.hlp)	*/
-char *ANGBAND_WELCOME;		/* was LIBDIR(files/welcome.hlp)	*/
-char *ANGBAND_LOG;		/* was LIBDIR(files/ANGBAND.log)	*/
-char *ANGBAND_VERSION;		/* was LIBDIR(files/version.hlp)	*/
-char *ANGBAND_LOAD;		/* was LIBDIR(files/loadcheck)		*/
-char *ANGBAND_WIZ;		/* was LIBDIR(files/wizards.txt)		*/
-char *ANGBAND_DIR_SAVE;		/* was LIBDIR(save)			*/
 
+
+
+/* Find the path to our files...  if the ANGBAND_PATH environment var
+ * isn't set, use DEFAULT_PATH to look for the files.  If your system
+ * can't do environment variables, you'll have to kludge this.  [cjh]
+ */
 void get_file_paths()
 {
 #ifndef MAXPATHLEN
@@ -54,11 +63,6 @@ void get_file_paths()
 #endif
 
     char *angband_path;
-
-/* Find the path to our files...  if the ANGBAND_PATH environment var
- * isn't set, use DEFAULT_PATH to look for the files.  If your system
- * can't do environment variables, you'll have to kludge this.  [cjh]
- */
 
     angband_path = getenv( "ANGBAND_PATH" );
     if (angband_path == NULL) {
@@ -73,13 +77,17 @@ void get_file_paths()
     strcat( ANGBAND_TST, "test" );
     ANGBAND_TST = (char *)realloc( ANGBAND_TST, strlen( ANGBAND_TST ) + 1 );
 
-    ANGBAND_HOURS = (char *)malloc( MAXPATHLEN );
-    strcpy( ANGBAND_HOURS, angband_path );
-    strcat( ANGBAND_HOURS, PATH_SEP );
-    strcat( ANGBAND_HOURS, "files" );
-    strcat( ANGBAND_HOURS, PATH_SEP );
-    strcat( ANGBAND_HOURS, "hours" );
-    ANGBAND_HOURS = (char *)realloc( ANGBAND_HOURS, strlen( ANGBAND_HOURS ) + 1 );
+    ANGBAND_DIR_SAVE = (char *)malloc( MAXPATHLEN );
+    strcpy( ANGBAND_DIR_SAVE, angband_path );
+    strcat( ANGBAND_DIR_SAVE, PATH_SEP );
+    strcat( ANGBAND_DIR_SAVE, "save" );
+    ANGBAND_DIR_SAVE = (char *)realloc( ANGBAND_DIR_SAVE, strlen( ANGBAND_DIR_SAVE ) + 1 );
+
+    ANGBAND_DIR_BONES = (char *)malloc( MAXPATHLEN );
+    strcpy( ANGBAND_DIR_BONES, angband_path );
+    strcat( ANGBAND_DIR_BONES, PATH_SEP );
+    strcat( ANGBAND_DIR_BONES, "bones" );
+    ANGBAND_DIR_BONES = (char *)realloc( ANGBAND_DIR_BONES, strlen( ANGBAND_DIR_BONES ) + 1 );
 
     ANGBAND_NEWS = (char *)malloc( MAXPATHLEN );
     strcpy( ANGBAND_NEWS, angband_path );
@@ -97,11 +105,21 @@ void get_file_paths()
     strcat( ANGBAND_TOP, "newscores" );
     ANGBAND_TOP = (char *)realloc( ANGBAND_TOP, strlen( ANGBAND_TOP ) + 1 );
 
-    ANGBAND_DIR_BONES = (char *)malloc( MAXPATHLEN );
-    strcpy( ANGBAND_DIR_BONES, angband_path );
-    strcat( ANGBAND_DIR_BONES, PATH_SEP );
-    strcat( ANGBAND_DIR_BONES, "bones" );
-    ANGBAND_DIR_BONES = (char *)realloc( ANGBAND_DIR_BONES, strlen( ANGBAND_DIR_BONES ) + 1 );
+    ANGBAND_WELCOME = (char *)malloc( MAXPATHLEN );
+    strcpy( ANGBAND_WELCOME, angband_path );
+    strcat( ANGBAND_WELCOME, PATH_SEP );
+    strcat( ANGBAND_WELCOME, "files" );
+    strcat( ANGBAND_WELCOME, PATH_SEP );
+    strcat( ANGBAND_WELCOME, "welcome.hlp" );
+    ANGBAND_WELCOME = (char *)realloc( ANGBAND_WELCOME, strlen( ANGBAND_WELCOME ) + 1 );
+
+    ANGBAND_VERSION = (char *)malloc( MAXPATHLEN );
+    strcpy( ANGBAND_VERSION, angband_path );
+    strcat( ANGBAND_VERSION, PATH_SEP );
+    strcat( ANGBAND_VERSION, "files" );
+    strcat( ANGBAND_VERSION, PATH_SEP );
+    strcat( ANGBAND_VERSION, "version.hlp" );
+    ANGBAND_VERSION = (char *)realloc( ANGBAND_VER, strlen( ANGBAND_VER ) + 1 );
 
     ANGBAND_R_HELP = (char *)malloc( MAXPATHLEN );
     strcpy( ANGBAND_R_HELP, angband_path );
@@ -138,13 +156,13 @@ void get_file_paths()
     ANGBAND_OWIZ_HELP = (char *)realloc(ANGBAND_OWIZ_HELP,
 					strlen( ANGBAND_OWIZ_HELP ) + 1 );
 
-    ANGBAND_WELCOME = (char *)malloc( MAXPATHLEN );
-    strcpy( ANGBAND_WELCOME, angband_path );
-    strcat( ANGBAND_WELCOME, PATH_SEP );
-    strcat( ANGBAND_WELCOME, "files" );
-    strcat( ANGBAND_WELCOME, PATH_SEP );
-    strcat( ANGBAND_WELCOME, "welcome.hlp" );
-    ANGBAND_WELCOME = (char *)realloc( ANGBAND_WELCOME, strlen( ANGBAND_WELCOME ) + 1 );
+    ANGBAND_WIZ = (char *)malloc( MAXPATHLEN );
+    strcpy( ANGBAND_WIZ, angband_path );
+    strcat( ANGBAND_WIZ, PATH_SEP );
+    strcat( ANGBAND_WIZ, "files" );
+    strcat( ANGBAND_WIZ, PATH_SEP );
+    strcat( ANGBAND_WIZ, "wizards.txt" );
+    ANGBAND_WIZ = (char *)realloc( ANGBAND_WIZ, strlen( ANGBAND_WIZ ) + 1 );
 
     ANGBAND_LOG = (char *)malloc( MAXPATHLEN );
     strcpy( ANGBAND_LOG, angband_path );
@@ -154,13 +172,13 @@ void get_file_paths()
     strcat( ANGBAND_LOG, "ANGBAND.log" );
     ANGBAND_LOG = (char *)realloc( ANGBAND_LOG, strlen( ANGBAND_LOG ) + 1 );
 
-    ANGBAND_VERSION = (char *)malloc( MAXPATHLEN );
-    strcpy( ANGBAND_VERSION, angband_path );
-    strcat( ANGBAND_VERSION, PATH_SEP );
-    strcat( ANGBAND_VERSION, "files" );
-    strcat( ANGBAND_VERSION, PATH_SEP );
-    strcat( ANGBAND_VERSION, "version.hlp" );
-    ANGBAND_VERSION = (char *)realloc( ANGBAND_VER, strlen( ANGBAND_VER ) + 1 );
+    ANGBAND_HOURS = (char *)malloc( MAXPATHLEN );
+    strcpy( ANGBAND_HOURS, angband_path );
+    strcat( ANGBAND_HOURS, PATH_SEP );
+    strcat( ANGBAND_HOURS, "files" );
+    strcat( ANGBAND_HOURS, PATH_SEP );
+    strcat( ANGBAND_HOURS, "hours" );
+    ANGBAND_HOURS = (char *)realloc( ANGBAND_HOURS, strlen( ANGBAND_HOURS ) + 1 );
 
     ANGBAND_LOAD = (char *)malloc( MAXPATHLEN );
     strcpy( ANGBAND_LOAD, angband_path );
@@ -169,20 +187,6 @@ void get_file_paths()
     strcat( ANGBAND_LOAD, PATH_SEP );
     strcat( ANGBAND_LOAD, "loadcheck" );
     ANGBAND_LOAD = (char *)realloc( ANGBAND_LOAD, strlen( ANGBAND_LOAD ) + 1 );
-
-    ANGBAND_WIZ = (char *)malloc( MAXPATHLEN );
-    strcpy( ANGBAND_WIZ, angband_path );
-    strcat( ANGBAND_WIZ, PATH_SEP );
-    strcat( ANGBAND_WIZ, "files" );
-    strcat( ANGBAND_WIZ, PATH_SEP );
-    strcat( ANGBAND_WIZ, "wizards.txt" );
-    ANGBAND_WIZ = (char *)realloc( ANGBAND_WIZ, strlen( ANGBAND_WIZ ) + 1 );
-
-    ANGBAND_DIR_SAVE = (char *)malloc( MAXPATHLEN );
-    strcpy( ANGBAND_DIR_SAVE, angband_path );
-    strcat( ANGBAND_DIR_SAVE, PATH_SEP );
-    strcat( ANGBAND_DIR_SAVE, "save" );
-    ANGBAND_DIR_SAVE = (char *)realloc( ANGBAND_DIR_SAVE, strlen( ANGBAND_DIR_SAVE ) + 1 );
 
     return;
 }
