@@ -15,7 +15,6 @@ int hack_monptr = (-1);
 
 int weapon_heavy = FALSE;
 int pack_heavy = FALSE;
-s16b log_index = (-1);		/* Index to log file. (<= 0 means no log) */
 vtype died_from;
 
 vtype savefile;			/* The savefile to use. */

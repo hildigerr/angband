@@ -324,7 +324,6 @@ sv_write()
     }
     wr_short((u16b) 0xFFFF);	   /* sentinel to indicate no more monster info */
 
-    wr_short((u16b) log_index);
     wr_long(l);
     wr_long(l);	/* added some duplicates, for future flags expansion -CWS */
     wr_long(l);
@@ -660,9 +659,6 @@ char *fnam;
     int   ok, fd;
     byte char_tmp;
 
-    if (log_index < 0)
-	return TRUE;		   /* Nothing to save. */
-
     signals_ignore_tstp();
     put_qio();
     disturb(1, 0);		   /* Turn off resting and searching. */
@@ -734,7 +730,6 @@ char *fnam;
 	character_saved = 1;
 
     turn = (-1);
-    log_index = (-1);
 
     signals();
 
@@ -790,7 +785,6 @@ int *generate;
 
 #endif
 	turn = (-1);
-	log_index = (-1);
 	ok = TRUE;
 
 #ifndef SET_UID
@@ -988,7 +982,6 @@ int *generate;
 	if (to_be_wizard)
 	    prt("Loaded Recall Memory", 6, 0);
 	put_qio();
-	rd_short((u16b *) & log_index);
         rd_long(&l);
 	if ((version_maj >= 2) && (version_min >= 6)) {
 	  rd_long(&l);
@@ -1323,10 +1316,6 @@ int *generate;
 		old_turn = (-1);
 	    }
 	    put_qio();
-	/* The log_index of the previous incarnation is here if later version
-	 * want to use it. For now, throw it away and get a new log. 
-	 */
-	    log_index = (-1);
 	    goto closefiles;
 	}
 	if (ungetc(c, fileptr) == EOF) {
@@ -1527,8 +1516,6 @@ closefiles:
 
 	if (!ok)
 	    msg_print("Error during reading of file.");
-	else if (turn >= 0 && !_new_log())
-	    msg_print("Can't log player in the log file.");
 	else {
 	/* let the user overwrite the old savefile when save/quit */
 	    from_savefile = 1;
@@ -1585,7 +1572,6 @@ closefiles:
 	}
     }
     turn = (-1);
-    log_index = (-1);
     prt("Please try again without that savefile.", 1, 0);
     signals();
 #ifdef MAC

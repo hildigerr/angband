@@ -74,7 +74,6 @@ total 1685
 -rw-r--r--   1 root     staff       12755 Sep 18 10:36 tables.c
 -rw-r--r--   1 root     staff       71302 Sep 18 10:36 treasure.c
 -rw-r--r--   1 root     staff       16237 Sep 18 10:37 types.h
--rw-r--r--   1 root     staff         305 Sep 18 10:36 undef.c
 -rw-r--r--   1 root     staff        8193 Sep 18 12:17 unix.c
 -rw-r--r--   1 root     staff        1768 Sep 18 12:01 util.c
 -rw-r--r--   1 root     staff        4636 Sep 18 10:36 variable.c

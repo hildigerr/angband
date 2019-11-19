@@ -88,7 +88,6 @@ extern int player_uid;
    within creatures() via place_monster() and summon_monster() */
 extern int hack_monptr;
 
-extern s16b log_index;			/* Index to log file. -CJS- */
 extern vtype died_from;
 extern vtype savefile;			/* The save file. -CJS- */
 
@@ -887,9 +886,6 @@ void enter_store(int);
 /* treasur1.c */
 
 /* treasur2.c */
-
-/* undef.c */
-int _new_log(void);
 
 #ifdef unix
 /* unix.c */

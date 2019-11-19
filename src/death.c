@@ -924,7 +924,6 @@ kingly()
 void 
 exit_game()
 {
-    register int        i;
 
 #ifdef MAC
 /* Prevent strange things from happening */
@@ -944,10 +943,7 @@ exit_game()
 	else
 	    msg_print("Score not registered.");
     }
-    i = log_index;
     (void)save_player();		   /* Save the memory at least. */
-    if (i > 0)
-	display_scores(0, 10);
     erase_line(23, 0);
     restore_term();
     quit(NULL);

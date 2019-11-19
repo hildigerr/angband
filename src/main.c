@@ -458,12 +458,6 @@ char *argv[];
 	    clear_screen();	/* force out the 'learn prayer' message */
 	    calc_mana(A_WIS);
 	}
-        if (!_new_log())
-	{
-	    (void) sprintf(string, "Can't get at log file \"%s\".", ANGBAND_LOG);
-	    msg_print(string);
-	    exit_game();
-	}
 	/* prevent ^c quit from entering score into scoreboard,
 	   and prevent signal from creating panic save until this point,
 	   all info needed for save file is now valid */
