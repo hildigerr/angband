@@ -43,7 +43,7 @@ total 1685
 -rw-r--r--   1 root     staff       92942 Sep 18 11:33 dungeon.c
 -rw-r--r--   1 root     staff        4752 Sep 18 10:36 eat.c
 -rw-r--r--   1 root     staff       35090 Sep 18 10:50 externs.h
--rw-r--r--   1 root     staff       24187 Sep 18 10:36 files.c
+-rw-r--r--   1 root     staff       24187 Sep 18 10:36 arrays.c
 -rw-r--r--   1 root     staff        4428 Sep 18 10:36 gamecheck.c
 -rw-r--r--   1 root     staff         313 Sep 18 10:36 gamecheck.h
 -rw-r--r--   1 root     staff       69462 Sep 18 12:15 generate.c

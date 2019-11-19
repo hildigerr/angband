@@ -347,7 +347,7 @@ extern char	moriatop[], moriasav[];
 
 
 /*
- * The FILEPATHS to various files
+ * The FILEPATHS to various files, see "arrays.c"
  */
 
 extern cptr ANGBAND_DIR_FILES;		/* Dir: ascii files  */
@@ -433,7 +433,6 @@ void eat(void);
 void read_times(void);
 void helpfile(const char *);
 int file_character(char *);
-void get_file_paths( void );
 
 /* generate.c */
 void generate_cave(void);
@@ -474,6 +473,9 @@ void print(int, int, int);
 
 /* magic.c */
 void cast(void);
+
+/* arrays.c */
+void get_file_paths(void);
 
 /* main.c */
 int main(int, char **);
