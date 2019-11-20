@@ -436,6 +436,10 @@ int file_character(char *);
 /* generate.c */
 void generate_cave(void);
 
+/* cave.c */
+
+int los(int, int, int, int);
+
 /* help.c */
 void ident_char(void);
 
@@ -492,7 +496,6 @@ int next_to_wall(int, int);
 int next_to_corr(int, int);
 int damroll(int, int);
 int pdamroll(byte *);
-int los(int, int, int, int);
 unsigned char loc_symbol(int, int);
 int test_lite(int, int);
 void prt_map(void);
