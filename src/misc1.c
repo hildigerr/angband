@@ -409,19 +409,6 @@ int y, x;
 }
 
 
-/* Tests a spot for light or field mark status		-RAK-	 */
-int 
-test_lite(y, x)
-int y, x;
-{
-    register cave_type *cave_ptr;
-
-    cave_ptr = &cave[y][x];
-    if (cave_ptr->pl || cave_ptr->tl || cave_ptr->fm)
-	return (TRUE);
-    else
-	return (FALSE);
-}
 
 
 /* Prints the map of the dungeon			-RAK-	 */

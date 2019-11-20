@@ -1488,21 +1488,6 @@ int       (*test) ();
     return (item);
 }
 
-/* I may have written the town level code, but I'm not exactly	 */
-/* proud of it.	 Adding the stores required some real slucky	 */
-/* hooks which I have not had time to re-think.		 -RAK-	 */
-
-/* Returns true if player has no light			-RAK-	 */
-int 
-no_lite()
-{
-    register cave_type *c_ptr;
-
-    c_ptr = &cave[char_row][char_col];
-    if (!c_ptr->tl && !c_ptr->pl)
-	return TRUE;
-    return FALSE;
-}
 
 
 /* map rogue_like direction commands into numbers */

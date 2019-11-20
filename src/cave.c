@@ -243,3 +243,35 @@ int los(int fromY, int fromX, int toY, int toX)
 
 
 
+/*
+ * Tests a spot for light or field mark status		-RAK-	
+ */
+int test_lite(int y, int x)
+{
+    register cave_type *cave_ptr;
+
+    cave_ptr = &cave[y][x];
+    if (cave_ptr->pl || cave_ptr->tl || cave_ptr->fm)
+	return (TRUE);
+    else
+	return (FALSE);
+}
+
+
+/*
+ * Returns true if player has no light			-RAK-	
+ */
+int no_lite(void)
+{
+    register cave_type *c_ptr;
+
+    c_ptr = &cave[char_row][char_col];
+    if (!c_ptr->tl && !c_ptr->pl)
+	return TRUE;
+    return FALSE;
+}
+
+
+
+
+

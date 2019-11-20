@@ -439,6 +439,8 @@ void generate_cave(void);
 /* cave.c */
 
 int los(int, int, int, int);
+int test_lite(int, int);
+int no_lite(void);
 
 /* help.c */
 void ident_char(void);
@@ -497,7 +499,6 @@ int next_to_corr(int, int);
 int damroll(int, int);
 int pdamroll(byte *);
 unsigned char loc_symbol(int, int);
-int test_lite(int, int);
 void prt_map(void);
 void add_food(int);
 int m_pop(void);
@@ -637,7 +638,6 @@ void inven_takeoff(int, int);
 int verify(const char *, int);
 void inven_command(int);
 int get_item(int *, const char *, int, int, int ());
-int no_lite(void);
 int get_dir(const char *, int *);
 int get_alldir(const char *, int *);
 void move_rec(int, int, int, int);
