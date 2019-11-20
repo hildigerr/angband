@@ -31,25 +31,25 @@
 
 /*
  * Because this function uses (short) ints for all calculations, overflow may
- * occur if deltaX and deltaY exceed 90.
+ * occur if d_x and d_y exceed 90.
  */
 int los(int fromY, int fromX, int toY, int toX)
 {
-    register int tmp, deltaX, deltaY;
+    register int tmp, d_x, d_y;
 
-    deltaY = toY - fromY;
-    deltaX = toX - fromX;
+    d_y = toY - fromY;
+    d_x = toX - fromX;
 
     /* Adjacent? */
-    if ((deltaX < 2) && (deltaX > -2) && (deltaY < 2) && (deltaY > -2))
+    if ((d_x < 2) && (d_x > -2) && (d_y < 2) && (d_y > -2))
 	return TRUE;
 
-    /* Handle the cases where deltaX or deltaY == 0. */
-    if (!deltaX) {
+    /* Handle the cases where d_x or d_y == 0. */
+    if (!d_x) {
 
 	register int p_y; /* y position -- loop variable	 */
 
-	if (deltaY < 0) {
+	if (d_y < 0) {
 	    tmp = fromY;
 	    fromY = toY;
 	    toY = tmp;
@@ -61,11 +61,11 @@ int los(int fromY, int fromX, int toY, int toX)
 	return TRUE;
     }
 
-    else if (!deltaY) {
+    else if (!d_y) {
     
 	register int px; /* x position -- loop variable	 */
 
-	if (deltaX < 0) {
+	if (d_x < 0) {
 	    tmp = fromX;
 	    fromX = toX;
 	    toX = tmp;
@@ -79,19 +79,19 @@ int los(int fromY, int fromX, int toY, int toX)
 
 
     /* Handle Knightlike shapes -CWS */
-    if (MY_ABS(deltaX) == 1) {
-	if (deltaY == 2) {
+    if (MY_ABS(d_x) == 1) {
+	if (d_y == 2) {
 	    if (cave[fromY + 1][fromX].fval <= MAX_OPEN_SPACE) return TRUE;
 	}
-	else if (deltaY == (-2)) {
+	else if (d_y == (-2)) {
 	    if (cave[fromY - 1][fromX].fval <= MAX_OPEN_SPACE) return TRUE;
 	}
     }
-    else if (MY_ABS(deltaY) == 1) {
-	if (deltaX == 2) {
+    else if (MY_ABS(d_y) == 1) {
+	if (d_x == 2) {
 	    if (cave[fromY][fromX + 1].fval <= MAX_OPEN_SPACE) return TRUE;
 	}
-	else if (deltaX == (-2)) {
+	else if (d_x == (-2)) {
 	    if (cave[fromY][fromX - 1].fval <= MAX_OPEN_SPACE) return TRUE;
 	}
     }
@@ -99,8 +99,8 @@ int los(int fromY, int fromX, int toY, int toX)
 
 /*
  * Now, we've eliminated all the degenerate cases. In the computations below,
- * dy (or dx) and m are multiplied by a scale factor, scale = abs(deltaX *
- * deltaY * 2), so that we can use integer arithmetic. 
+ * dy (or dx) and m are multiplied by a scale factor, scale = abs(d_x *
+ * d_y * 2), so that we can use integer arithmetic. 
  */
 
     {
@@ -109,21 +109,21 @@ int los(int fromY, int fromX, int toY, int toX)
 			    scale,	/* above scale factor		 */
 			    scale2;	/* above scale factor / 2	 */
 
-	int		    xSign,	/* sign of deltaX		 */
-			    ySign,	/* sign of deltaY		 */
+	int		    xSign,	/* sign of d_x		 */
+			    ySign,	/* sign of d_y		 */
 			    m;		/* slope or 1/slope of LOS	 */
 
-	scale2 = MY_ABS(deltaX * deltaY);
+	scale2 = MY_ABS(d_x * d_y);
 	scale = scale2 << 1;
 
-	xSign = (deltaX < 0) ? -1 : 1;
-	ySign = (deltaY < 0) ? -1 : 1;
+	xSign = (d_x < 0) ? -1 : 1;
+	ySign = (d_y < 0) ? -1 : 1;
 
 
 	/* Travel from one end of the line to the other, */
 	/* oriented along the longer axis. */
 
-	if (MY_ABS(deltaX) >= MY_ABS(deltaY)) {
+	if (MY_ABS(d_x) >= MY_ABS(d_y)) {
 
 	    register int        dy;  /* "fractional" y position	 */
 
@@ -131,10 +131,10 @@ int los(int fromY, int fromX, int toY, int toX)
 	 * We start at the border between the first and second tiles, where
 	 * the y offset = .5 * slope.  Remember the scale factor.  We have: 
 	 *
-	 * m = deltaY / deltaX * 2 * (deltaY * deltaX) = 2 * deltaY * deltaY. 
+	 * m = d_y / d_x * 2 * (d_y * d_x) = 2 * d_y * d_y. 
 	 */
 
-	    dy = deltaY * deltaY;
+	    dy = d_y * d_y;
 	    m = dy << 1;
 	    px = fromX + xSign;
 
@@ -176,7 +176,7 @@ int los(int fromY, int fromX, int toY, int toX)
 	
 	    register int        dx;	/* "fractional" x position	 */
 
-	    dx = deltaX * deltaX;
+	    dx = d_x * d_x;
 	    m = dx << 1;
 
 	    p_y = fromY + ySign;
