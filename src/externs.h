@@ -442,6 +442,9 @@ int los(int, int, int, int);
 int test_lite(int, int);
 int no_lite(void);
 
+void move_cursor_relative(int, int);
+
+
 /* help.c */
 void ident_char(void);
 
@@ -460,7 +463,6 @@ void flush(void);
 void erase_line(int, int);
 void clear_screen(void);
 void clear_from(int);
-void move_cursor_relative(int, int);
 void count_msg_print(const char *);
 void prt(const char *, int, int);
 void move_cursor(int, int);
