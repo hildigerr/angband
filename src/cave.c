@@ -35,14 +35,21 @@
  */
 int los(int fromY, int fromX, int toY, int toX)
 {
-    register int tmp, p_x, p_y, d_x, d_y;
+    register int tmp, p_x, p_y, d_x, d_y, a_x, a_y;
 
+
+    /* Extract the offset */    
     d_y = toY - fromY;
     d_x = toX - fromX;
 
-    /* Adjacent? */
-    if ((d_x < 2) && (d_x > -2) && (d_y < 2) && (d_y > -2))
-	return TRUE;
+    /* Extract the absolute offset */
+    a_y = MY_ABS(d_y);
+    a_x = MY_ABS(d_x);
+
+
+    /* Handle adjacent (or identical) grids */
+    if ((a_x < 2) && (a_y < 2)) return (TRUE);
+
 
     /* Handle the cases where d_x or d_y == 0. */
     if (!d_x) {
@@ -79,7 +86,7 @@ int los(int fromY, int fromX, int toY, int toX)
 
 
     /* Handle Knightlike shapes -CWS */
-    if (MY_ABS(d_x) == 1) {
+    if (a_x == 1) {
 	if (d_y == 2) {
 	    if (cave[fromY + 1][fromX].fval <= MAX_OPEN_SPACE) return TRUE;
 	}
@@ -87,7 +94,7 @@ int los(int fromY, int fromX, int toY, int toX)
 	    if (cave[fromY - 1][fromX].fval <= MAX_OPEN_SPACE) return TRUE;
 	}
     }
-    else if (MY_ABS(d_y) == 1) {
+    else if (a_y == 1) {
 	if (d_x == 2) {
 	    if (cave[fromY][fromX + 1].fval <= MAX_OPEN_SPACE) return TRUE;
 	}
@@ -111,7 +118,7 @@ int los(int fromY, int fromX, int toY, int toX)
 			    ySign,	/* sign of d_y		 */
 			    m;		/* slope or 1/slope of LOS	 */
 
-	scale2 = MY_ABS(d_x * d_y);
+	scale2 = (a_x * a_y);
 	scale = scale2 << 1;
 
 	xSign = (d_x < 0) ? -1 : 1;
@@ -121,7 +128,7 @@ int los(int fromY, int fromX, int toY, int toX)
 	/* Travel from one end of the line to the other, */
 	/* oriented along the longer axis. */
 
-	if (MY_ABS(d_x) >= MY_ABS(d_y)) {
+	if (a_x >= a_y) {
 
 	    register int        dy;  /* "fractional" y position	 */
 
@@ -132,7 +139,7 @@ int los(int fromY, int fromX, int toY, int toX)
 	 * m = d_y / d_x * 2 * (d_y * d_x) = 2 * d_y * d_y. 
 	 */
 
-	    dy = d_y * d_y;
+	    dy = a_y * a_y;
 	    m = dy << 1;
 	    p_x = fromX + xSign;
 
@@ -174,7 +181,7 @@ int los(int fromY, int fromX, int toY, int toX)
 	
 	    register int        dx;	/* "fractional" x position	 */
 
-	    dx = d_x * d_x;
+	    dx = a_x * a_x;
 	    m = dx << 1;
 
 	    p_y = fromY + ySign;
