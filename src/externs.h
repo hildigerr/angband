@@ -444,6 +444,8 @@ int no_lite(void);
 
 void move_cursor_relative(int, int);
 
+void lite_spot(int, int);
+
 
 /* help.c */
 void ident_char(void);
@@ -867,7 +869,6 @@ int fear_monster(int, int, int, int);
 int banish_creature(u32b, int);
 int remove_all_curse(void);
 void darken_room(int, int);
-void lite_spot(int, int);
 const char *pain_message(int, int);
 void line_spell(int, int, int, int, int);
 

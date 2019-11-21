@@ -273,6 +273,17 @@ int no_lite(void)
 
 
 
+/* 
+ * Lights up given location				-RAK-
+ */
+void lite_spot(int y, int x)
+{
+    if (panel_contains(y, x))
+	print(loc_symbol(y, x), y, x);
+}
+
+
+
 
 
 

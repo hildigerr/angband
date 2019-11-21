@@ -1844,14 +1844,6 @@ darken_room(y, x)
     }
 }
 
-/* Lights up given location				-RAK-	 */
-void 
-lite_spot(y, x)
-    register int        y, x;
-{
-    if (panel_contains(y, x))
-	print(loc_symbol(y, x), y, x);
-}
 
 /* Normal movement					 */
 /* When FIND_FLAG,  light only permanent features	 */
