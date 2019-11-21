@@ -35,7 +35,7 @@
  */
 int los(int fromY, int fromX, int toY, int toX)
 {
-    register int tmp, d_x, d_y;
+    register int tmp, p_x, p_y, d_x, d_y;
 
     d_y = toY - fromY;
     d_x = toX - fromX;
@@ -47,7 +47,7 @@ int los(int fromY, int fromX, int toY, int toX)
     /* Handle the cases where d_x or d_y == 0. */
     if (!d_x) {
 
-	register int p_y; /* y position -- loop variable	 */
+	register int p_y;
 
 	if (d_y < 0) {
 	    tmp = fromY;
@@ -63,15 +63,15 @@ int los(int fromY, int fromX, int toY, int toX)
 
     else if (!d_y) {
     
-	register int px; /* x position -- loop variable	 */
+	register int p_x;
 
 	if (d_x < 0) {
 	    tmp = fromX;
 	    fromX = toX;
 	    toX = tmp;
 	}
-	for (px = fromX + 1; px < toX; px++) {
-		if (cave[fromY][px].fval >= MIN_CLOSED_SPACE) return FALSE;
+	for (p_x = fromX + 1; p_x < toX; p_x++) {
+		if (cave[fromY][p_x].fval >= MIN_CLOSED_SPACE) return FALSE;
 	    }
 		
 	return TRUE;
@@ -104,9 +104,7 @@ int los(int fromY, int fromX, int toY, int toX)
  */
 
     {
-	register int        px,	   /* x position			 */
-	                    p_y,   /* y position			 */
-			    scale,	/* above scale factor		 */
+	register int        scale,	/* above scale factor		 */
 			    scale2;	/* above scale factor / 2	 */
 
 	int		    xSign,	/* sign of d_x		 */
@@ -136,7 +134,7 @@ int los(int fromY, int fromX, int toY, int toX)
 
 	    dy = d_y * d_y;
 	    m = dy << 1;
-	    px = fromX + xSign;
+	    p_x = fromX + xSign;
 
 	    /* Consider the special case where slope == 1. */
 	    if (dy == scale2) {
@@ -147,17 +145,17 @@ int los(int fromY, int fromX, int toY, int toX)
 		p_y = fromY;
 	    }
 
-	    while (toX - px) {
-		if (cave[p_y][px].fval >= MIN_CLOSED_SPACE) return FALSE;
+	    while (toX - p_x) {
+		if (cave[p_y][p_x].fval >= MIN_CLOSED_SPACE) return FALSE;
 		dy += m;
 		if (dy < scale2) {
-		    px += xSign;
+		    p_x += xSign;
 		}
 		else if (dy > scale2) {
 		    p_y += ySign;
-		    if (cave[p_y][px].fval >= MIN_CLOSED_SPACE) return FALSE;
+		    if (cave[p_y][p_x].fval >= MIN_CLOSED_SPACE) return FALSE;
 		    dy -= scale;
-		    px += xSign;
+		    p_x += xSign;
 		}
 		else {
 		/*
@@ -166,7 +164,7 @@ int los(int fromY, int fromX, int toY, int toX)
 		 */
 		    p_y += ySign;
 		    dy -= scale;
-		    px += xSign;
+		    p_x += xSign;
 		}
 	    }
 	    return TRUE;
@@ -181,27 +179,27 @@ int los(int fromY, int fromX, int toY, int toX)
 
 	    p_y = fromY + ySign;
 	    if (dx == scale2) {
-		px = fromX + xSign;
+		p_x = fromX + xSign;
 		dx -= scale;
 	    }
 	    else {
-		px = fromX;
+		p_x = fromX;
 	    }
 
 	    while (toY - p_y) {
-		if (cave[p_y][px].fval >= MIN_CLOSED_SPACE) return FALSE;
+		if (cave[p_y][p_x].fval >= MIN_CLOSED_SPACE) return FALSE;
 		dx += m;
 		if (dx < scale2) {
 		    p_y += ySign;
 		}
 		else if (dx > scale2) {
-		    px += xSign;
-		    if (cave[p_y][px].fval >= MIN_CLOSED_SPACE) return FALSE;
+		    p_x += xSign;
+		    if (cave[p_y][p_x].fval >= MIN_CLOSED_SPACE) return FALSE;
 		    dx -= scale;
 		    p_y += ySign;
 		}
 		else {
-		    px += xSign;
+		    p_x += xSign;
 		    dx -= scale;
 		    p_y += ySign;
 		}
