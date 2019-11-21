@@ -446,6 +446,7 @@ void move_cursor_relative(int, int);
 
 void lite_spot(int, int);
 
+void screen_map(void);
 
 /* help.c */
 void ident_char(void);
@@ -477,7 +478,6 @@ void pause_exit(int, int);
 void save_screen(void);
 void restore_screen(void);
 void bell(void);
-void screen_map(void);
 void print(int, int, int);
 
 /* magic.c */
