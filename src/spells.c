@@ -620,34 +620,6 @@ int y, x;
 }
 
 
-/* Map the current area plus some			-RAK-	 */
-void 
-map_area()
-{
-    register cave_type *c_ptr;
-    register int        i7, i8, n, m;
-    int                 i, j, k, l;
-
-    i = panel_row_min - randint(10);
-    j = panel_row_max + randint(10);
-    k = panel_col_min - randint(20);
-    l = panel_col_max + randint(20);
-    for (m = i; m <= j; m++)
-	for (n = k; n <= l; n++)
-	    if (in_bounds(m, n) && (cave[m][n].fval <= MAX_CAVE_FLOOR))
-		for (i7 = m - 1; i7 <= m + 1; i7++)
-		    for (i8 = n - 1; i8 <= n + 1; i8++) {
-			c_ptr = &cave[i7][i8];
-			if (c_ptr->fval >= MIN_CAVE_WALL)
-			    c_ptr->pl = TRUE;
-			else if ((c_ptr->tptr != 0) &&
-			     (i_list[c_ptr->tptr].tval >= TV_MIN_VISIBLE) &&
-			       (i_list[c_ptr->tptr].tval <= TV_MAX_VISIBLE))
-			    c_ptr->fm = TRUE;
-		    }
-    prt_map();
-}
-
 
 /* Identify an object					-RAK-	 */
 int 
