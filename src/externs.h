@@ -746,9 +746,6 @@ int load_player(int *);
 void read_scroll(void);
 
 /* sets.c */
-int set_room(int);
-int set_corr(int);
-int set_floor(int);
 int set_corrodes(inven_type *);
 int set_flammable(inven_type *);
 int set_frost_destroy(inven_type *);

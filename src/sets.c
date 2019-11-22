@@ -10,34 +10,6 @@
 
 #include "angband.h"
 
-int 
-set_room(element)
-register int element;
-{
-    if ((element == DARK_FLOOR) || (element == LIGHT_FLOOR) ||
-	(element == NT_DARK_FLOOR) || (element == NT_LIGHT_FLOOR))
-	return (TRUE);
-    return (FALSE);
-}
-
-int 
-set_corr(element)
-register int element;
-{
-    if (element == CORR_FLOOR || element == BLOCKED_FLOOR)
-	return (TRUE);
-    return (FALSE);
-}
-
-int 
-set_floor(element)
-int element;
-{
-    if (element <= MAX_CAVE_FLOOR)
-	return (TRUE);
-    else
-	return (FALSE);
-}
 
 int 
 set_corrodes(e)			   /* changed -CFT */

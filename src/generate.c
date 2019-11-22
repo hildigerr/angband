@@ -200,11 +200,12 @@ static void alloc_object(int set, int typ, int num)
 	    y = randint(cur_height) - 1;
 	    x = randint(cur_width) - 1;
 
-	    if ((set == ALLOC_SET_CORR) && set_corr(cave[y][x].fval)) continue;
+	    if ((set == ALLOC_SET_CORR) && (cave[y][x].fval == CORR_FLOOR || cave[y][x].fval == BLOCKED_FLOOR)) continue;
 
-	    if ((set == ALLOC_SET_ROOM) && set_room(cave[y][x].fval)) continue;
+	    if ((set == ALLOC_SET_ROOM) && ((cave[y][x].fval == DARK_FLOOR) || (cave[y][x].fval == LIGHT_FLOOR) ||
+	    (cave[y][x].fval == NT_DARK_FLOOR) || (cave[y][x].fval == NT_LIGHT_FLOOR))) continue;
 
-	    if ((set == ALLOC_SET_BOTH) && set_floor(cave[y][x].fval)) continue;
+	    if ((set == ALLOC_SET_BOTH) && (cave[y][x].fval <= MAX_CAVE_FLOOR)) continue;
 
 	    if ((cave[y][x].tptr != 0) || (y == char_row && x == char_col)) continue;
 
