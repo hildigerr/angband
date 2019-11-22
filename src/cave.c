@@ -396,21 +396,21 @@ void check_view(void)
 void map_area(void)
 {
     register cave_type *c_ptr;
-    register int        i7, i8, n, m;
-    int                 i, j, k, l;
+    register int        i7, i8, x, y;
+    int                 y1, y2, x1, x2;
 
-    i = panel_row_min - randint(10);
-    j = panel_row_max + randint(10);
-    k = panel_col_min - randint(20);
-    l = panel_col_max + randint(20);
+    y1 = panel_row_min - randint(10);
+    y2 = panel_row_max + randint(10);
+    x1 = panel_col_min - randint(20);
+    x2 = panel_col_max + randint(20);
 
-    for (m = i; m <= j; m++) {
-	for (n = k; n <= l; n++) {
+    for (y = y1; y <= y2; y++) {
+	for (x = x1; x <= x2; x++) {
 
-	    if (in_bounds(m, n) && (cave[m][n].fval <= MAX_CAVE_FLOOR))
+	    if (in_bounds(y, x) && (cave[y][x].fval <= MAX_CAVE_FLOOR))
 
-		for (i7 = m - 1; i7 <= m + 1; i7++) {
-		    for (i8 = n - 1; i8 <= n + 1; i8++) {
+		for (i7 = y - 1; i7 <= y + 1; i7++) {
+		    for (i8 = x - 1; i8 <= x + 1; i8++) {
 
 			c_ptr = &cave[i7][i8];
 
