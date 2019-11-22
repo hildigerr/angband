@@ -168,6 +168,12 @@ static int next_to_corr(int y, int x)
 
 /*
  * Allocates an object for tunnels and rooms		-RAK-	 
+ *
+ * Type 1 is trap
+ * Type 2 is unused (was visible traps)
+ * Type 3 is rubble
+ * Type 4 is gold
+ * Type 5 is object
  */
 static void alloc_object(alloc_set, typ, num)
 int (*alloc_set) ();
@@ -175,15 +181,19 @@ int typ, num;
 {
     register int y, x, k;
 
+    /* Place some objects */
     for (k = 0; k < num; k++) {
+
+	/* Don't put an object beneath the player, this could cause */
+	/* problems if player is standing under rubble, or on a trap */
+
+	/* Pick a "legal" spot */
 	while (1) {
 
+	    /* Location */
 	    y = randint(cur_height) - 1;
 	    x = randint(cur_width) - 1;
-    /*
-     * don't put an object beneath the player, this could cause problems if
-     * player is standing under rubble, or on a trap 
-     */
+
 	    if (!(*alloc_set) (cave[y][x].fval) continue;
 	    if ((cave[y][x].tptr != 0) || (y == char_row && x == char_col)) continue;
 
@@ -191,22 +201,21 @@ int typ, num;
 	    break;
 	}
 
-	if (typ < 4) {		   /* typ == 2 not used, used to be visible
-				    * traps */
+	if (typ < 4) {
 	    if (typ == 1) {
-		place_trap(y, x, randint(MAX_TRAP) - 1);	/* typ == 1 */
+		place_trap(y, x, randint(MAX_TRAP) - 1);
 	    }
-	    else {
-		place_rubble(y, x);/* typ == 3 */
+	    else /* (typ == 3) */ {
+		place_rubble(y, x);
 	    }
 	}       
 	else {
 	    object_level = dun_level;
 	    if (typ == 4) {
-		place_gold(y, x);  /* typ == 4 */
+		place_gold(y, x);
 	    }
-	    else {
-		place_object(y, x);/* typ == 5 */
+	    else /* (typ == 5) */ {
+		place_object(y, x);
 	    }
 	}
     }
