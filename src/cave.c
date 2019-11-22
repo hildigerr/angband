@@ -433,24 +433,26 @@ void map_area(void)
 
 
 
-/* definitions used by screen_map() */
-/* index into border character array */
-#define TL 0			   /* top left */
-#define TR 1
-#define BL 2
-#define BR 3
-#define HE 4			   /* horizontal edge */
-#define VE 5
+/* "symbol" definitions used by screen_map() */
 
-/* character set to use */
-#ifdef MSDOS
-# ifdef ANSI
-#   define CH(x)	(ansi ? screen_border[0][x] : screen_border[1][x])
-# else
-#   define CH(x)	(screen_border[1][x])
-# endif
+#if defined(MSDOS) && defined(ANSI)
+
+# define CH_TL (ansi ? 201 : '+')
+# define CH_TR (ansi ? 187 : '+')
+# define CH_BL (ansi ? 200 : '+')
+# define CH_BR (ansi ? 188 : '+')
+# define CH_HE (ansi ? 205 : '-')
+# define CH_VE (ansi ? 186 : '|')
+
 #else
-#   define CH(x)	(screen_border[0][x])
+
+# define CH_TL '+'
+# define CH_TR '+'
+# define CH_BL '+'
+# define CH_BR '+'
+# define CH_HE '-'
+# define CH_VE '|'
+
 #endif
 
 /* Display highest priority object in the RATIO by RATIO area */
@@ -459,10 +461,7 @@ void map_area(void)
 void screen_map(void)
 {
     register int i, j;
-    static byte screen_border[2][6] = {
-    {'+', '+', '+', '+', '-', '|'},	/* normal chars */
-    {201, 187, 200, 188, 205, 186}	/* graphics chars */
-    };
+
     byte map[MAX_WIDTH / RATIO + 1];
     byte tmp;
     int   priority[256];
@@ -494,16 +493,16 @@ void screen_map(void)
     clear_screen();
 #ifdef MAC
     DSetScreenCursor(0, 0);
-    DWriteScreenCharAttr(CH(TL), ATTR_NORMAL);
+    DWriteScreenCharAttr(CH_TL, ATTR_NORMAL);
     for (i = 0; i < MAX_WIDTH / RATIO; i++)
-	DWriteScreenCharAttr(CH(HE), ATTR_NORMAL);
-    DWriteScreenCharAttr(CH(TR), ATTR_NORMAL);
+	DWriteScreenCharAttr(CH_HE, ATTR_NORMAL);
+    DWriteScreenCharAttr(CH_TR, ATTR_NORMAL);
 #else
-    use_value2          mvaddch(0, 0, CH(TL));
+    use_value2          mvaddch(0, 0, CH_TL);
 
     for (i = 0; i < MAX_WIDTH / RATIO; i++)
-	(void)addch(CH(HE));
-    (void)addch(CH(TR));
+	(void)addch(CH_HE);
+    (void)addch(CH_TR);
 #endif
     orow = (-1);
     map[MAX_WIDTH / RATIO] = '\0';
@@ -513,16 +512,16 @@ void screen_map(void)
 	    if (orow >= 0) {
 #ifdef MAC
 		DSetScreenCursor(0, orow + 1);
-		DWriteScreenCharAttr(CH(VE), ATTR_NORMAL);
+		DWriteScreenCharAttr(CH_VE, ATTR_NORMAL);
 		DWriteScreenString(map);
-		DWriteScreenCharAttr(CH(VE), ATTR_NORMAL);
+		DWriteScreenCharAttr(CH_VE, ATTR_NORMAL);
 #else
 	    /* can not use mvprintw() on ibmpc, because PC-Curses is horribly
 	     * written, and mvprintw() causes the fp emulation library to be
 	     * linked with PC-Moria, makes the program 10K bigger 
 	     */
 		(void)sprintf(prntscrnbuf, "%c%s%c",
-			      CH(VE), map, CH(VE));
+			      CH_VE, map, CH_VE);
 		use_value2          mvaddstr(orow + 1, 0, prntscrnbuf);
 
 #endif
@@ -545,28 +544,28 @@ void screen_map(void)
     if (orow >= 0) {
 #ifdef MAC
 	DSetScreenCursor(0, orow + 1);
-	DWriteScreenCharAttr(CH(VE), ATTR_NORMAL);
+	DWriteScreenCharAttr(CH_VE, ATTR_NORMAL);
 	DWriteScreenString(map);
-	DWriteScreenCharAttr(CH(VE), ATTR_NORMAL);
+	DWriteScreenCharAttr(CH_VE, ATTR_NORMAL);
 #else
 	(void)sprintf(prntscrnbuf, "%c%s%c",
-		      CH(VE), map, CH(VE));
+		      CH_VE, map, CH_VE);
 	use_value2          mvaddstr(orow + 1, 0, prntscrnbuf);
 
 #endif
     }
 #ifdef MAC
     DSetScreenCursor(0, orow + 2);
-    DWriteScreenCharAttr(CH(BL), ATTR_NORMAL);
+    DWriteScreenCharAttr(CH_BL, ATTR_NORMAL);
     for (i = 0; i < MAX_WIDTH / RATIO; i++)
-	DWriteScreenCharAttr(CH(HE), ATTR_NORMAL);
-    DWriteScreenCharAttr(CH(BR), ATTR_NORMAL);
+	DWriteScreenCharAttr(CH_HE, ATTR_NORMAL);
+    DWriteScreenCharAttr(CH_BR, ATTR_NORMAL);
 #else
-    use_value2          mvaddch(orow + 2, 0, CH(BL));
+    use_value2          mvaddch(orow + 2, 0, CH_BL);
 
     for (i = 0; i < MAX_WIDTH / RATIO; i++)
-	(void)addch(CH(HE));
-    (void)addch(CH(BR));
+	(void)addch(CH_HE);
+    (void)addch(CH_BR);
 #endif
 
 #ifdef MAC
