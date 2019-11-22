@@ -32,6 +32,11 @@
 /*
  * Because this function uses (short) ints for all calculations, overflow may
  * occur if d_x and d_y exceed 90.
+ *
+ * Also note that this function and the "move towards target" code do NOT
+ * share the same properties.  Thus, you can see someone, target them, and
+ * then fire a bolt at them, but the bolt may hit a wall, not them.  However,
+ * by clever choice of target locations, you can sometimes throw a "curve".
  */
 int los(int fromY, int fromX, int toY, int toX)
 {
@@ -55,17 +60,19 @@ int los(int fromY, int fromX, int toY, int toX)
     if (!in_bounds(fromY, fromX)) return (FALSE);
 
 
-    /* Handle the cases where d_x or d_y == 0. */
+    /* Directly South/North */
     if (!d_x) {
 
 	register int p_y;
 
+	/* South -- check for walls */
 	if (d_y > 0) {
 	    for (p_y = fromY + 1; p_y < toY; p_y++) {
 		if (cave[p_y][fromX].fval >= MIN_CLOSED_SPACE) return FALSE;
 	    }
 	}
 	
+	/* North -- check for walls */
 	else {
 	    for (p_y = fromY - 1; p_y > toY; p_y--) {
 		if (cave[p_y][fromX].fval >= MIN_CLOSED_SPACE) return FALSE;
@@ -75,22 +82,26 @@ int los(int fromY, int fromX, int toY, int toX)
 	return TRUE;
     }
 
-    else if (!d_y) {
+    /* Directly East/West */
+    if (!d_y) {
     
 	register int p_x;
 
+	/* East -- check for walls */
 	if (d_x > 0) {
 	    for (p_x = fromX + 1; p_x < toX; p_x++) {
 		if (cave[fromY][p_x].fval >= MIN_CLOSED_SPACE) return FALSE;
 	    }
 	}
 
+	/* West -- check for walls */
 	else {
 	    for (p_x = fromX - 1; p_x > toX; p_x--) {
 		if (cave[fromY][p_x].fval >= MIN_CLOSED_SPACE) return FALSE;
 	    }
 	}
 		
+	/* Assume los */
 	return TRUE;
     }
 
@@ -121,7 +132,7 @@ int los(int fromY, int fromX, int toY, int toX)
  */
 
     {
-	register int        scale,	/* above scale factor		 */
+	register int        scale,	/* a scale factor		 */
 			    scale2;	/* above scale factor / 2	 */
 
 	int		    xSign,	/* sign of d_x		 */
@@ -162,6 +173,8 @@ int los(int fromY, int fromX, int toY, int toX)
 		p_y = fromY;
 	    }
 
+	    /* Note (below) the case (dy == scale2), where */
+	    /* the LOS exactly meets the corner of a tile. */
 	    while (toX - p_x) {
 		if (cave[p_y][p_x].fval >= MIN_CLOSED_SPACE) return FALSE;
 		dy += m;
@@ -175,10 +188,6 @@ int los(int fromY, int fromX, int toY, int toX)
 		    p_x += xSign;
 		}
 		else {
-		/*
-		 * This is the case, dy == scale2, where the LOS exactly
-		 * meets the corner of a tile. 
-		 */
 		    p_y += ySign;
 		    dy -= scale;
 		    p_x += xSign;
@@ -203,6 +212,8 @@ int los(int fromY, int fromX, int toY, int toX)
 		p_x = fromX;
 	    }
 
+	    /* Note (below) the case (dx == scale2), where */
+	    /* the LOS exactly meets the corner of a tile. */
 	    while (toY - p_y) {
 		if (cave[p_y][p_x].fval >= MIN_CLOSED_SPACE) return FALSE;
 		dx += m;
@@ -221,9 +232,11 @@ int los(int fromY, int fromX, int toY, int toX)
 		    p_y += ySign;
 		}
 	    }
-	    return TRUE;
 	}
     }
+
+    /* Assume los */
+    return TRUE;
 }
 
 
