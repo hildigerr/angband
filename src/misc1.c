@@ -2070,24 +2070,6 @@ int *y, *x;
     return (summon);
 }
 
-/* Place a sleepy jelly at the required coordinates ~Ludwig */
-int 
-summon_jelly(y, x)
-int *y, *x;
-{
-    int l, m, summon;
-
-    summon = FALSE;
-    l = m_level[MAX_R_LEV];
-    do {
-	m = randint(l) - 1;
-	if (c_list[m].cchar == 'J') {
-	    summon = TRUE;
-	    place_monster(*y, *x, m, TRUE);
-	}
-    } while (!summon);
-    return (summon);
-}
 
 /* If too many objects on floor level, delete some of them */
 static void 

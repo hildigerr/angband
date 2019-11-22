@@ -524,7 +524,6 @@ int summon_jabberwock(int *, int *);
 int summon_gundead(int *, int *);
 int summon_ancientd(int *, int *);
 int summon_hound(int *, int *);
-int summon_jelly(int *, int *);
 int i_pop(void);
 void pusht(int);
 int magik(int);
