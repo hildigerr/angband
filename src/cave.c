@@ -51,6 +51,10 @@ int los(int fromY, int fromX, int toY, int toX)
     if ((a_x < 2) && (a_y < 2)) return (TRUE);
 
 
+    /* XXX XXX Paranoia -- require "safe" origin */
+    if (!in_bounds(fromY, fromX)) return (FALSE);
+
+
     /* Handle the cases where d_x or d_y == 0. */
     if (!d_x) {
 
