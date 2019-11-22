@@ -124,13 +124,13 @@ static int next_to_walls(int y, int x)
     register cave_type *c_ptr;
 
     c_ptr = &cave[y - 1][x];
-    if (c_ptr->fval >= MIN_CAVE_WALL) i++;
+    if (c_ptr->fval >= MIN_WALL) i++;
     c_ptr = &cave[y + 1][x];
-    if (c_ptr->fval >= MIN_CAVE_WALL) i++;
+    if (c_ptr->fval >= MIN_WALL) i++;
     c_ptr = &cave[y][x - 1];
-    if (c_ptr->fval >= MIN_CAVE_WALL) i++;
+    if (c_ptr->fval >= MIN_WALL) i++;
     c_ptr = &cave[y][x + 1];
-    if (c_ptr->fval >= MIN_CAVE_WALL) i++;
+    if (c_ptr->fval >= MIN_WALL) i++;
 
     return (i);
 }
@@ -2409,11 +2409,11 @@ register int y, x;
     if (!in_bounds(y, x))
 	return 0;		   /* abort! -CFT */
     if (next_to_corr(y, x) > 2)
-	if ((cave[y - 1][x].fval >= MIN_CAVE_WALL)
-	    && (cave[y + 1][x].fval >= MIN_CAVE_WALL))
+	if ((cave[y - 1][x].fval >= MIN_WALL)
+	    && (cave[y + 1][x].fval >= MIN_WALL))
 	    next = TRUE;
-	else if ((cave[y][x - 1].fval >= MIN_CAVE_WALL)
-		 && (cave[y][x + 1].fval >= MIN_CAVE_WALL))
+	else if ((cave[y][x - 1].fval >= MIN_WALL)
+		 && (cave[y][x + 1].fval >= MIN_WALL))
 	    next = TRUE;
 	else
 	    next = FALSE;

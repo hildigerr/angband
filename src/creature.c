@@ -2760,7 +2760,7 @@ u32b             *rcmove;
 
 /* if in wall, must immediately escape to a clear area */
     if (!(r_ptr->cmove & CM_PHASE) &&
-	(cave[m_ptr->fy][m_ptr->fx].fval >= MIN_CAVE_WALL)) {
+	(cave[m_ptr->fy][m_ptr->fx].fval >= MIN_WALL)) {
 
     /* If the monster is already dead, don't kill it again! This can happen
      * for monsters moving faster than the player.  They will get multiple
@@ -2791,7 +2791,7 @@ u32b             *rcmove;
 	}
 
 /* if still in a wall, let it dig itself out, but also apply some more damage */
-	if (cave[m_ptr->fy][m_ptr->fx].fval >= MIN_CAVE_WALL) {
+	if (cave[m_ptr->fy][m_ptr->fx].fval >= MIN_WALL) {
 /* in case the monster dies, may need to call fix1_delete_monster()
  * instead of delete_monsters() 
  */
@@ -2942,7 +2942,7 @@ int attack;
 #else
 			|| ((!(c_list[m_ptr->mptr].cmove & CM_PHASE))
 #endif
-		     && cave[m_ptr->fy][m_ptr->fx].fval >= MIN_CAVE_WALL)) {
+		     && cave[m_ptr->fy][m_ptr->fx].fval >= MIN_WALL)) {
 			if (m_ptr->csleep > 0)
 			    if (py.flags.aggravate)
 				m_ptr->csleep = 0;
@@ -3175,7 +3175,7 @@ int mon_y, mon_x;
 		    else
 			(void)delete_object(i, j);
 
-		if ((c_ptr->fval >= MIN_CAVE_WALL) && (c_ptr->fval != BOUNDARY_WALL)) {
+		if ((c_ptr->fval >= MIN_WALL) && (c_ptr->fval != BOUNDARY_WALL)) {
 		    c_ptr->fval = CORR_FLOOR;
 		    c_ptr->pl = FALSE;
 		    c_ptr->fm = FALSE;

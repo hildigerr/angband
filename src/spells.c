@@ -2645,7 +2645,7 @@ int dir, y, x;
 	    flag = TRUE;
 	    if (test_lite(y, x))
 		msg_print("The wall resists your spell.");
-	} else if ((c_ptr->fval >= MIN_CAVE_WALL)) {
+	} else if ((c_ptr->fval >= MIN_WALL)) {
 	    flag = TRUE;
 	    (void)twall(y, x, 1, 0);
 	    if (test_lite(y, x)) {
@@ -3394,7 +3394,7 @@ earthquake()
 			}
 		    }
 		}
-		if ((c_ptr->fval >= MIN_CAVE_WALL) && (c_ptr->fval != BOUNDARY_WALL)) {
+		if ((c_ptr->fval >= MIN_WALL) && (c_ptr->fval != BOUNDARY_WALL)) {
 		    c_ptr->fval = CORR_FLOOR;
 		    c_ptr->pl = FALSE;
 		    c_ptr->fm = FALSE;

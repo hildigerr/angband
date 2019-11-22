@@ -414,7 +414,7 @@ void map_area(void)
 
 			c_ptr = &cave[i7][i8];
 
-			if (c_ptr->fval >= MIN_CAVE_WALL)
+			if (c_ptr->fval >= MIN_WALL)
 			    c_ptr->pl = TRUE;
 
 			else if ((c_ptr->tptr != 0) &&

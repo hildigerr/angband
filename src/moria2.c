@@ -1598,7 +1598,7 @@ int dir;
  * prevent the player from getting a free attack by trying to tunnel
  * somewhere where it has no effect.  
  */
-    if (c_ptr->fval < MIN_CAVE_WALL
+    if (c_ptr->fval < MIN_WALL
 	&& (c_ptr->tptr == 0 || (i_list[c_ptr->tptr].tval != TV_RUBBLE
 			  && i_list[c_ptr->tptr].tval != TV_SECRET_DOOR))) {
 	if (c_ptr->tptr == 0) {
@@ -2827,7 +2827,7 @@ bash()
 	     */
 		msg_print("You bash it, but nothing interesting happens.");
 	} else {
-	    if (c_ptr->fval < MIN_CAVE_WALL)
+	    if (c_ptr->fval < MIN_WALL)
 		msg_print("You bash at empty space.");
 	    else
 	    /* same message for wall as for secret door */

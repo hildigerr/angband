@@ -285,7 +285,7 @@
 
 /* Fval definitions: these describe the various types of dungeon floors and
  * walls, if numbers above 15 are ever used, then the test against
- * MIN_CAVE_WALL will have to be changed, also the save routines will have
+ * MIN_WALL will have to be changed, also the save routines will have
  * to be changed.
  */
 
@@ -305,7 +305,7 @@
 #define TMP1_WALL       8
 #define TMP2_WALL       9
 
-#define MIN_CAVE_WALL   12
+#define MIN_WALL   12
 #define GRANITE_WALL    12
 #define MAGMA_WALL      13
 #define QUARTZ_WALL     14
