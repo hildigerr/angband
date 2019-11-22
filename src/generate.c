@@ -166,6 +166,14 @@ static int next_to_corr(int y, int x)
 }
 
 
+/* 
+ * Semi-Hack -- types of "places" we can allocate (below)
+ */
+#define ALLOC_SET_CORR	1
+#define ALLOC_SET_ROOM	2
+#define ALLOC_SET_BOTH	3
+
+
 /*
  * Allocates an object for tunnels and rooms		-RAK-	 
  *
@@ -175,9 +183,7 @@ static int next_to_corr(int y, int x)
  * Type 4 is gold
  * Type 5 is object
  */
-static void alloc_object(alloc_set, typ, num)
-int (*alloc_set) ();
-int typ, num;
+static void alloc_object(int set, int typ, int num)
 {
     register int y, x, k;
 
@@ -194,7 +200,12 @@ int typ, num;
 	    y = randint(cur_height) - 1;
 	    x = randint(cur_width) - 1;
 
-	    if (!(*alloc_set) (cave[y][x].fval) continue;
+	    if ((set == ALLOC_SET_CORR) && set_corr(cave[y][x].fval)) continue;
+
+	    if ((set == ALLOC_SET_ROOM) && set_room(cave[y][x].fval)) continue;
+
+	    if ((set == ALLOC_SET_BOTH) && set_floor(cave[y][x].fval)) continue;
+
 	    if ((cave[y][x].tptr != 0) || (y == char_row && x == char_col)) continue;
 
 	    /* Accept it */
@@ -2655,11 +2666,11 @@ cave_gen()
 /* Set up the character co-ords, used by alloc_monster, place_win_monster */
     new_spot(&char_row, &char_col);
     alloc_monster((randint(8) + MIN_M_ALLOC_LEVEL + alloc_level), 0, TRUE);
-    alloc_object(set_corr, 3, randint(alloc_level));
-    alloc_object(set_room, 5, randnor(TREAS_ROOM_ALLOC, 3));
-    alloc_object(set_floor, 5, randnor(TREAS_ANY_ALLOC, 3));
-    alloc_object(set_floor, 4, randnor(TREAS_GOLD_ALLOC, 3));
-    alloc_object(set_floor, 1, randint(alloc_level));
+    alloc_object(ALLOC_SET_CORR, 3, randint(alloc_level));
+    alloc_object(ALLOC_SET_ROOM, 5, randnor(TREAS_ROOM_ALLOC, 3));
+    alloc_object(ALLOC_SET_BOTH, 5, randnor(TREAS_ANY_ALLOC, 3));
+    alloc_object(ALLOC_SET_BOTH, 4, randnor(TREAS_GOLD_ALLOC, 3));
+    alloc_object(ALLOC_SET_BOTH, 1, randint(alloc_level));
     if (place_ghost())
 	good_item_flag = TRUE;
     else if (spec_level == SPEC_DEST) {
