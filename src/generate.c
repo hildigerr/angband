@@ -176,16 +176,20 @@ int typ, num;
     register int y, x, k;
 
     for (k = 0; k < num; k++) {
-	do {
+	while (1) {
+
 	    y = randint(cur_height) - 1;
 	    x = randint(cur_width) - 1;
-	}
     /*
      * don't put an object beneath the player, this could cause problems if
      * player is standing under rubble, or on a trap 
      */
-	while ((!(*alloc_set) (cave[y][x].fval)) ||
-	       (cave[y][x].tptr != 0) || (y == char_row && x == char_col));
+	    if (!(*alloc_set) (cave[y][x].fval) continue;
+	    if ((cave[y][x].tptr != 0) || (y == char_row && x == char_col)) continue;
+
+	    /* Accept it */
+	    break;
+	}
 
 	if (typ < 4) {		   /* typ == 2 not used, used to be visible
 				    * traps */
