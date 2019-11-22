@@ -144,6 +144,7 @@ static int next_to_corr(int y, int x)
 {
     register int        k, j, i = 0;
     register cave_type *c_ptr;
+    register inven_type *i_ptr;
     
     for (j = y - 1; j <= (y + 1); j++) {
 	for (k = x - 1; k <= (x + 1); k++) {
@@ -153,8 +154,11 @@ static int next_to_corr(int y, int x)
 	    /* Skip non-corridors */
 	    if (c_ptr->fval != CORR_FLOOR) continue;
 
+	    /* Access the item */
+	    i_ptr = &i_list[c_ptr->tptr];
+
 	    /* should fail if there is already a door present */
-	    if (c_ptr->tptr == 0 || i_list[c_ptr->tptr].tval < TV_MIN_DOORS)
+	    if (c_ptr->tptr == 0 || i_ptr->tval < TV_MIN_DOORS)
 	    i++;
 	}
     }
