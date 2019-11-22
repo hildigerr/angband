@@ -629,7 +629,6 @@ void get_coin_type(monster_race *);
 /* monsters.c */
 
 /* moria1.c */
-void change_speed(int);
 void py_bonuses(struct inven_type *, int);
 void calc_bonuses(void);
 int show_inven(int, int, int, int, int ());

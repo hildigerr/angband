@@ -422,15 +422,17 @@ dungeon()
 	if (f_ptr->fast > 0) {
 	    if ((PY_FAST & f_ptr->status) == 0) {
 		f_ptr->status |= PY_FAST;
-		change_speed(-1);
 		msg_print("You feel yourself moving faster.");
+		py.flags.speed -= 1;
+		py.flags.status |= PY_SPEED;
 		disturb(0, 0);
 	    }
 	    f_ptr->fast--;
 	    if (f_ptr->fast == 0) {
 		f_ptr->status &= ~PY_FAST;
-		change_speed(1);
 		msg_print("You feel yourself slow down.");
+		py.flags.speed += 1;
+		py.flags.status |= PY_SPEED;
 		disturb(0, 0);
 	    }
 	}
@@ -438,15 +440,17 @@ dungeon()
 	if (f_ptr->slow > 0) {
 	    if ((PY_SLOW & f_ptr->status) == 0) {
 		f_ptr->status |= PY_SLOW;
-		change_speed(1);
 		msg_print("You feel yourself moving slower.");
+		py.flags.speed += 1;
+		py.flags.status |= PY_SPEED;
 		disturb(0, 0);
 	    }
 	    f_ptr->slow--;
 	    if (f_ptr->slow == 0) {
 		f_ptr->status &= ~PY_SLOW;
-		change_speed(-1);
 		msg_print("You feel yourself speed up.");
+		py.flags.speed -= 1;
+		py.flags.status |= PY_SPEED;
 		disturb(0, 0);
 	    }
 	}

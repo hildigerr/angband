@@ -662,7 +662,9 @@ char *fnam;
     signals_ignore_tstp();
     put_qio();
     disturb(1, 0);		   /* Turn off resting and searching. */
-    change_speed(-pack_heavy);	   /* Fix the speed */
+    /* Fix the speed */
+    py.flags.speed -= pack_heavy;
+    py.flags.status |= PY_SPEED;
     pack_heavy = 0;
     ok = FALSE;
 #ifndef ATARIST_MWC

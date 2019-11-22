@@ -2076,7 +2076,8 @@ check_strength()
 	    msg_print("Your pack is so heavy that it slows you down.");
 	else
 	    msg_print("You move more easily under the weight of your pack.");
-	change_speed(i - pack_heavy);
+	py.flags.speed += i - pack_heavy;
+	py.flags.status |= PY_SPEED;
 	pack_heavy = i;
     }
     py.flags.status &= ~PY_STR_WGT;

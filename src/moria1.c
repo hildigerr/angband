@@ -20,21 +20,6 @@ static int see_wall(int, int, int);
 static int see_nothing(int, int, int);
 
 
-/* Changes speed of monsters relative to player		-RAK-
- * Note: When the player is sped up or slowed down, I simply change the
- * speed of all the monsters.  This greatly simplified the logic.
- *****
- * No LONGER!  A change in player speed only affect player's speed.  The new
- * code in movement_rate() allows monsters to have attacks in correct
- * proportions, and still uses only int math -CFT 
- */
-void 
-change_speed(num)
-register int num;
-{
-    py.flags.speed += num;
-    py.flags.status |= PY_SPEED;
-}
 
 
 /* Player bonuses					-RAK-	 */
@@ -77,7 +62,8 @@ register int         factor;
 			 k_list[inventory[INVEN_LEFT].index].name) &&
 		(inventory[INVEN_RIGHT].p1 > 0))
 		return;
-	change_speed(-amount);
+	py.flags.speed -= amount;
+	py.flags.status |= PY_SPEED;
     }
     if (TR_INFRA & t_ptr->flags)
 	py.flags.see_infra += amount;
@@ -1988,7 +1974,8 @@ int s, l;
 void 
 search_on()
 {
-    change_speed(1);
+    py.flags.speed += 1;
+    py.flags.status |= PY_SPEED;
     py.flags.status |= PY_SEARCH;
     prt_state();
     prt_speed();
@@ -1999,7 +1986,8 @@ void
 search_off()
 {
     check_view();
-    change_speed(-1);
+    py.flags.speed -= 1;
+    py.flags.status |= PY_SPEED;
     py.flags.status &= ~PY_SEARCH;
     prt_state();
     prt_speed();

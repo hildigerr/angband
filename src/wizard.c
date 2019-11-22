@@ -507,10 +507,14 @@ change_character()
 	return;
 
     while (get_com("Alter speed? (+/-)", tmp_str)) {
-	if (*tmp_str == '+')
-	    change_speed(-1);
-	else if (*tmp_str == '-')
-	    change_speed(1);
+	if (*tmp_str == '+') {
+	    py.flags.speed -= 1;
+	    py.flags.status |= PY_SPEED;
+	}
+	else if (*tmp_str == '-') {
+	    py.flags.speed += 1;
+	    py.flags.status |= PY_SPEED;
+	}
 	else
 	    break;
 	prt_speed();
