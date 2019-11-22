@@ -35,7 +35,7 @@
  */
 int los(int fromY, int fromX, int toY, int toX)
 {
-    register int tmp, p_x, p_y, d_x, d_y, a_x, a_y;
+    register int p_x, p_y, d_x, d_y, a_x, a_y;
 
 
     /* Extract the offset */    
@@ -60,14 +60,17 @@ int los(int fromY, int fromX, int toY, int toX)
 
 	register int p_y;
 
-	if (d_y < 0) {
-	    tmp = fromY;
-	    fromY = toY;
-	    toY = tmp;
-	}
-	for (p_y = fromY + 1; p_y < toY; p_y++) {
+	if (d_y > 0) {
+	    for (p_y = fromY + 1; p_y < toY; p_y++) {
 		if (cave[p_y][fromX].fval >= MIN_CLOSED_SPACE) return FALSE;
 	    }
+	}
+	
+	else {
+	    for (p_y = fromY - 1; p_y > toY; p_y--) {
+		if (cave[p_y][fromX].fval >= MIN_CLOSED_SPACE) return FALSE;
+	    }
+	}
 	
 	return TRUE;
     }
@@ -76,14 +79,17 @@ int los(int fromY, int fromX, int toY, int toX)
     
 	register int p_x;
 
-	if (d_x < 0) {
-	    tmp = fromX;
-	    fromX = toX;
-	    toX = tmp;
-	}
-	for (p_x = fromX + 1; p_x < toX; p_x++) {
+	if (d_x > 0) {
+	    for (p_x = fromX + 1; p_x < toX; p_x++) {
 		if (cave[fromY][p_x].fval >= MIN_CLOSED_SPACE) return FALSE;
 	    }
+	}
+
+	else {
+	    for (p_x = fromX - 1; p_x > toX; p_x--) {
+		if (cave[fromY][p_x].fval >= MIN_CLOSED_SPACE) return FALSE;
+	    }
+	}
 		
 	return TRUE;
     }
