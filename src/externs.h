@@ -418,6 +418,9 @@ void desc_charges(int);
 void inven_item_describe(int);
 s16b flavor_p(inven_type *);
 
+/* command.c */
+void do_cmd_options(void);
+
 /* dungeon.c */
 void dungeon(void);
 int special_check(inven_type *);
@@ -529,7 +532,6 @@ void pusht(int);
 int magik(int);
 int m_bonus(int, int, int);
 void magic_treasure(int, int, int, int);
-void do_cmd_options(void);
 int compact_monsters(void);
 int get_nmons_num(int);
 int distance(int, int, int, int);
