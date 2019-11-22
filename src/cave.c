@@ -458,11 +458,15 @@ void map_area(void)
 /* Display highest priority object in the RATIO by RATIO area */
 #define	RATIO 3
 
+/* Display the entire map */
+#define MAP_HGT (MAX_HEIGHT / RATIO)
+#define MAP_WID (MAX_WIDTH / RATIO)
+
 void screen_map(void)
 {
     register int i, j;
 
-    byte map[MAX_WIDTH / RATIO + 1];
+    byte map[MAP_WID + 1];
     byte tmp;
     int   priority[256];
     int   row, orow, col, myrow = 0, mycol = 0;
@@ -494,18 +498,18 @@ void screen_map(void)
 #ifdef MAC
     DSetScreenCursor(0, 0);
     DWriteScreenCharAttr(CH_TL, ATTR_NORMAL);
-    for (i = 0; i < MAX_WIDTH / RATIO; i++)
+    for (i = 0; i < MAP_WID; i++)
 	DWriteScreenCharAttr(CH_HE, ATTR_NORMAL);
     DWriteScreenCharAttr(CH_TR, ATTR_NORMAL);
 #else
     use_value2          mvaddch(0, 0, CH_TL);
 
-    for (i = 0; i < MAX_WIDTH / RATIO; i++)
+    for (i = 0; i < MAP_WID; i++)
 	(void)addch(CH_HE);
     (void)addch(CH_TR);
 #endif
     orow = (-1);
-    map[MAX_WIDTH / RATIO] = '\0';
+    map[MAP_WID] = '\0';
     for (i = 0; i < MAX_HEIGHT; i++) {
 	row = i / RATIO;
 	if (row != orow) {
@@ -526,7 +530,7 @@ void screen_map(void)
 
 #endif
 	    }
-	    for (j = 0; j < MAX_WIDTH / RATIO; j++)
+	    for (j = 0; j < MAP_WID; j++)
 		map[j] = ' ';
 	    orow = row;
 	}
@@ -557,13 +561,13 @@ void screen_map(void)
 #ifdef MAC
     DSetScreenCursor(0, orow + 2);
     DWriteScreenCharAttr(CH_BL, ATTR_NORMAL);
-    for (i = 0; i < MAX_WIDTH / RATIO; i++)
+    for (i = 0; i < MAP_WID; i++)
 	DWriteScreenCharAttr(CH_HE, ATTR_NORMAL);
     DWriteScreenCharAttr(CH_BR, ATTR_NORMAL);
 #else
     use_value2          mvaddch(orow + 2, 0, CH_BL);
 
-    for (i = 0; i < MAX_WIDTH / RATIO; i++)
+    for (i = 0; i < MAP_WID; i++)
 	(void)addch(CH_HE);
     (void)addch(CH_BR);
 #endif
