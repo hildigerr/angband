@@ -113,6 +113,53 @@ int *rdir, *cdir;
 }
 
 
+/* Checks points north, south, east, and west for a wall -RAK-
+ *
+ * note that y,x is always in_bounds(), i.e. 0 < y < cur_height-1, and 0 < x
+ * < cur_width-1	 
+ */
+static int next_to_walls(int y, int x)
+{
+    register int        i = 0;
+    register cave_type *c_ptr;
+
+    c_ptr = &cave[y - 1][x];
+    if (c_ptr->fval >= MIN_CAVE_WALL) i++;
+    c_ptr = &cave[y + 1][x];
+    if (c_ptr->fval >= MIN_CAVE_WALL) i++;
+    c_ptr = &cave[y][x - 1];
+    if (c_ptr->fval >= MIN_CAVE_WALL) i++;
+    c_ptr = &cave[y][x + 1];
+    if (c_ptr->fval >= MIN_CAVE_WALL) i++;
+
+    return (i);
+}
+
+/* Checks all adjacent spots for corridors		-RAK-
+ *
+ * note that y, x is always in_bounds(), hence no need to check that j, k are
+ * in_bounds(), even if they are 0 or cur_x-1 is still works 
+ */
+static int next_to_corr(int y, int x)
+{
+    register int        k, j, i = 0;
+    register cave_type *c_ptr;
+    
+    for (j = y - 1; j <= (y + 1); j++) {
+	for (k = x - 1; k <= (x + 1); k++) {
+
+	    c_ptr = &cave[j][k];
+
+	    /* should fail if there is already a door present */
+	    if (c_ptr->fval == CORR_FLOOR
+	    && (c_ptr->tptr == 0 || i_list[c_ptr->tptr].tval < TV_MIN_DOORS))
+	    i++;
+	}
+    }
+    return (i);
+}
+
+
 /* 
  * Blank a cave -- note new definition
  */

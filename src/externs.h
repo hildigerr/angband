@@ -498,8 +498,6 @@ int randnor(int, int);
 int bit_pos(u32b *);
 void panel_bounds(void);
 int get_panel(int, int, int);
-int next_to_wall(int, int);
-int next_to_corr(int, int);
 int damroll(int, int);
 int pdamroll(byte *);
 unsigned char loc_symbol(int, int);
@@ -534,7 +532,6 @@ int m_bonus(int, int, int);
 void magic_treasure(int, int, int, int);
 void do_cmd_options(void);
 int compact_monsters(void);
-int next_to_walls(int, int);
 int get_nmons_num(int);
 int distance(int, int, int, int);
 
