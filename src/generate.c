@@ -166,6 +166,49 @@ static int next_to_corr(int y, int x)
 }
 
 
+/*
+ * Allocates an object for tunnels and rooms		-RAK-	 
+ */
+static void alloc_object(alloc_set, typ, num)
+int (*alloc_set) ();
+int typ, num;
+{
+    register int i, j, k;
+
+    for (k = 0; k < num; k++) {
+	do {
+	    i = randint(cur_height) - 1;
+	    j = randint(cur_width) - 1;
+	}
+    /*
+     * don't put an object beneath the player, this could cause problems if
+     * player is standing under rubble, or on a trap 
+     */
+	while ((!(*alloc_set) (cave[i][j].fval)) ||
+	       (cave[i][j].tptr != 0) || (i == char_row && j == char_col));
+
+	if (typ < 4) {		   /* typ == 2 not used, used to be visible
+				    * traps */
+	    if (typ == 1) {
+		place_trap(i, j, randint(MAX_TRAP) - 1);	/* typ == 1 */
+	    }
+	    else {
+		place_rubble(i, j);/* typ == 3 */
+	    }
+	}       
+	else {
+	    object_level = dun_level;
+	    if (typ == 4) {
+		place_gold(i, j);  /* typ == 4 */
+	    }
+	    else {
+		place_object(i, j);/* typ == 5 */
+	    }
+	}
+    }
+}
+
+
 /* 
  * Blank a cave -- note new definition
  */

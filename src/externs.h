@@ -541,7 +541,6 @@ void place_rubble(int, int);
 void place_gold(int, int);
 int get_obj_num(int,int);
 void place_object(int, int);
-void alloc_object(int (*)(), int, int);
 void random_object(int, int, int);
 void cnv_stat(int, char *);
 void prt_stat(int);
