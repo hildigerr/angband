@@ -150,9 +150,11 @@ static int next_to_corr(int y, int x)
 
 	    c_ptr = &cave[j][k];
 
+	    /* Skip non-corridors */
+	    if (c_ptr->fval != CORR_FLOOR) continue;
+
 	    /* should fail if there is already a door present */
-	    if (c_ptr->fval == CORR_FLOOR
-	    && (c_ptr->tptr == 0 || i_list[c_ptr->tptr].tval < TV_MIN_DOORS))
+	    if (c_ptr->tptr == 0 || i_list[c_ptr->tptr].tval < TV_MIN_DOORS)
 	    i++;
 	}
     }
