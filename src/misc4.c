@@ -16,6 +16,26 @@
 
 #define COL_STAT 0
 
+#define ROW_RACE    1
+#define ROW_CLASS   2
+#define ROW_TITLE   3
+
+#define ROW_LEVEL   12
+#define ROW_EXP     13
+
+#define ROW_STAT    5
+
+#define ROW_AC      18
+#define ROW_CURHP   16
+#define ROW_MAXHP   15
+#define ROW_MANA    14
+#define ROW_GOLD    19
+
+#define ROW_WINNER  20
+#define ROW_EQUIPPY 4
+#define ROW_CUT     21
+#define ROW_STUN    22
+
 
 static const char *stat_names[] = {
     "STR: ", "INT: ", "WIS: ", "DEX: ", "CON: ", "CHR: "
@@ -70,8 +90,8 @@ void prt_stat(int stat)
     vtype out_val1;
 
 	cnv_stat(py.stats.use_stat[stat], out_val1);
-	put_str(stat_names[stat], 5 + stat, COL_STAT);
-	put_str(out_val1, 5 + stat, COL_STAT + 6);
+	put_str(stat_names[stat], ROW_STAT + stat, COL_STAT);
+	put_str(out_val1, ROW_STAT + stat, COL_STAT + 6);
 }
 
 
@@ -219,7 +239,7 @@ const char *title_string()
  */
 void prt_title()
 {
-    prt_field(title_string(), 3, COL_STAT);
+    prt_field(title_string(), ROW_TITLE, COL_STAT);
 }
 
 
@@ -230,7 +250,7 @@ void prt_level()
 {
     char tmp[32];
     sprintf(tmp, "%6d", py.misc.lev);
-    put_str(tmp, 12, COL_STAT + 6);
+    put_str(tmp, ROW_LEVEL, COL_STAT + 6);
 }
 
 
@@ -242,7 +262,7 @@ void prt_cmana()
     char tmp[32];
 
     sprintf(tmp, "%6d", py.misc.cmana);
-    put_str(tmp, 14, COL_STAT + 6);
+    put_str(tmp, ROW_MANA, COL_STAT + 6);
 }
 
 
@@ -253,7 +273,7 @@ void prt_mhp()
 {
     char tmp[32];
     sprintf(tmp, "%6d", py.misc.mhp);
-    put_str(tmp, 15, COL_STAT + 6);
+    put_str(tmp, ROW_MAXHP, COL_STAT + 6);
 }
 
 
@@ -264,7 +284,7 @@ void prt_chp()
 {
     char tmp[32];
     sprintf(tmp, "%6d", py.misc.chp);
-    put_str(tmp, 16, COL_STAT + 6);
+    put_str(tmp, ROW_CURHP, COL_STAT + 6);
 }
 
 
@@ -275,7 +295,7 @@ void prt_pac()
 {
     char tmp[32];
     sprintf(tmp, "%6d", py.misc.dis_ac);
-    put_str(tmp, 18, COL_STAT + 6);
+    put_str(tmp, ROW_AC, COL_STAT + 6);
 }
 
 
@@ -287,7 +307,7 @@ void prt_gold()
     char tmp[32];
 
     sprintf(tmp, "%9ld", (long)py.misc.au);
-    put_str(tmp, 19, COL_STAT + 3);
+    put_str(tmp, ROW_GOLD, COL_STAT + 3);
 }
 
 
@@ -474,21 +494,21 @@ void prt_cut()
     int c = py.flags.cut;
 
     if (c > 900)
-	put_str("Mortal wound", 21, 0);
+	put_str("Mortal wound", ROW_CUT, 0);
     else if (c > 300)
-	put_str("Deep gash   ", 21, 0);
+	put_str("Deep gash   ", ROW_CUT, 0);
     else if (c > 200)
-	put_str("Severe cut  ", 21, 0);
+	put_str("Severe cut  ", ROW_CUT, 0);
     else if (c > 45)
-	put_str("Nasty cut   ", 21, 0);
+	put_str("Nasty cut   ", ROW_CUT, 0);
     else if (c > 15)
-	put_str("Bad cut     ", 21, 0);
+	put_str("Bad cut     ", ROW_CUT, 0);
     else if (c > 5)
-	put_str("Light cut   ", 21, 0);
+	put_str("Light cut   ", ROW_CUT, 0);
     else if (c > 0)
-	put_str("Graze       ", 21, 0);
+	put_str("Graze       ", ROW_CUT, 0);
     else
-	put_str("            ", 21, 0);
+	put_str("            ", ROW_CUT, 0);
 }
 
 
@@ -499,16 +519,16 @@ void prt_stun(void)
 
     if (!py.flags.resist_sound) {
 	if (s > 100) {
-	    put_str("Knocked out ", 22, 0);
+	    put_str("Knocked out ", ROW_STUN, 0);
 	}
 	else if (s > 50) {
-	    put_str("Heavy stun  ", 22, 0);
+	    put_str("Heavy stun  ", ROW_STUN, 0);
 	}
 	else if (s > 0) {
-	    put_str("Stun        ", 22, 0);
+	    put_str("Stun        ", ROW_STUN, 0);
 	}
 	else {
-	    put_str("            ", 22, 0);
+	    put_str("            ", ROW_STUN, 0);
 	}
     }
 }
@@ -520,13 +540,13 @@ void prt_stun(void)
 void prt_winner(void)
 {
     if (wizard) {
-	put_str("Wizard", 20, 0);
+	put_str("Wizard", ROW_WINNER, 0);
     }
     else if (total_winner) {
-	put_str("Winner", 20, 0);
+	put_str("Winner", ROW_WINNER, 0);
     }
     else {
-	put_str("       ", 20, 0);
+	put_str("       ", ROW_WINNER, 0);
     }
 }
 
@@ -551,7 +571,7 @@ void prt_equippy_chars(void)
 	else
 	    out_val[0] = (int)(i_ptr->tchar);                
 	
-	put_str(out_val, 4, j);
+	put_str(out_val, ROW_EQUIPPY, j);
     }
 }
 
@@ -567,19 +587,19 @@ void prt_stat_block()
     register int          i;
 
     m_ptr = &py.misc;
-    prt_field(race[py.misc.prace].trace, 1, COL_STAT);
-    prt_field(class[py.misc.pclass].title, 2, COL_STAT);
-    prt_field(title_string(), 3, COL_STAT);
+    prt_field(race[py.misc.prace].trace, ROW_RACE, COL_STAT);
+    prt_field(class[py.misc.pclass].title, ROW_CLASS, COL_STAT);
+    prt_field(title_string(), ROW_TITLE, COL_STAT);
     for (i = 0; i < 6; i++) prt_stat(i);
-    prt_num("LEV", (int)m_ptr->lev, 12, COL_STAT);
-    prt_lnum("EXP", m_ptr->exp, 13, COL_STAT);
-    prt_num("MNA", m_ptr->cmana, 14, COL_STAT);
-    prt_num("MHP", m_ptr->mhp, 15, COL_STAT);
-    prt_num("CHP", m_ptr->chp, 16, COL_STAT);
+    prt_num("LEV", (int)m_ptr->lev, ROW_LEVEL, COL_STAT);
+    prt_lnum("EXP", m_ptr->exp, ROW_EXP, COL_STAT);
+    prt_num("MNA", m_ptr->cmana, ROW_MANA, COL_STAT);
+    prt_num("MHP", m_ptr->mhp, ROW_MAXHP, COL_STAT);
+    prt_num("CHP", m_ptr->chp, ROW_CURHP, COL_STAT);
     prt_chp();			   /* this will overwrite hp, in color, if
 				    * needed. -CFT */
-    prt_num("AC ", m_ptr->dis_ac, 18, COL_STAT);
-    prt_lnum("AU ", m_ptr->au, 19, COL_STAT);
+    prt_num("AC ", m_ptr->dis_ac, ROW_AC, COL_STAT);
+    prt_lnum("AU ", m_ptr->au, ROW_GOLD, COL_STAT);
     prt_winner();
     prt_cut();
     prt_stun();
@@ -1754,7 +1774,7 @@ void prt_experience()
     if (p_ptr->exp > p_ptr->max_exp) p_ptr->max_exp = p_ptr->exp;
 
     (void) sprintf(out_val, "%8ld", (long)p_ptr->exp);
-    put_str(out_val, 13, COL_STAT+4);
+    put_str(out_val, ROW_EXP, COL_STAT+4);
 }
 
 
