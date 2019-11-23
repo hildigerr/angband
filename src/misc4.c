@@ -18,8 +18,7 @@ static const char *stat_names[] = {
     "STR: ", "INT: ", "WIS: ", "DEX: ", "CON: ", "CHR: "
 };
 
-#define BLANK_LENGTH	24
-static char blank_string[] = "                        ";
+
 
 
 /*
@@ -28,8 +27,9 @@ static char blank_string[] = "                        ";
  */
 void prt_field(const char *info, int row, int col)
 {
-    put_str(&blank_string[BLANK_LENGTH - 13], row, col);
-    put_str(info, row, col);
+    char tmp[16];
+    sprintf(tmp, "%-13.13s", info);
+    put_str(tmp, row, col);
 }
 
 
@@ -1227,7 +1227,7 @@ void get_name()
 
     strcpy(tmp, py.misc.name);
     prt("Enter your player's name  [press <RETURN> when finished]", 21, 2);
-    put_str(&blank_string[BLANK_LENGTH - 15], 2, 15);
+
 #ifdef MAC
 /*
  * Force player to give a name, would be nice to get name from chooser (STR
