@@ -125,21 +125,7 @@ check_time()
     return TRUE;
 }
 
-#ifdef RI
-/* Generates a random integer x where 1<=X<=MAXVAL	-RAK-	 */
-int 
-randint(maxval)
-int maxval;
-{
-    register long randval;
 
-    if (maxval < 1)
-	return 1;
-    randval = random();
-    return ((randval % maxval) + 1);
-}
-
-#endif
 
 /* Generates a random integer number of NORMAL distribution -RAK- */
 int 
