@@ -83,24 +83,24 @@ int stat_adj(int stat)
 
     value = py.stats.use_stat[stat];
     if (value > 228) return (20);
-    else if (value > 218) return (18);
-    else if (value > 198) return (16);
-    else if (value > 188) return (15);
-    else if (value > 178) return (14);
-    else if (value > 168) return (13);
-    else if (value > 158) return (12);
-    else if (value > 148) return (11);
-    else if (value > 138) return (10);
-    else if (value > 128) return (9);
-    else if (value > 118) return (8);
-    else if (value == 118) return (7);
-    else if (value > 107) return (6);
-    else if (value > 87) return (5);
-    else if (value > 67) return (4);
-    else if (value > 17) return (3);
-    else if (value > 14) return (2);
-    else if (value > 7) return (1);
-    else return (0);
+    if (value > 218) return (18);
+    if (value > 198) return (16);
+    if (value > 188) return (15);
+    if (value > 178) return (14);
+    if (value > 168) return (13);
+    if (value > 158) return (12);
+    if (value > 148) return (11);
+    if (value > 138) return (10);
+    if (value > 128) return (9);
+    if (value > 118) return (8);
+    if (value == 118) return (7);
+    if (value > 107) return (6);
+    if (value > 87) return (5);
+    if (value > 67) return (4);
+    if (value > 17) return (3);
+    if (value > 14) return (2);
+    if (value > 7) return (1);
+    return (0);
 }
 
 
@@ -115,15 +115,14 @@ int chr_adj()
     charisma = py.stats.use_stat[A_CHR];
 
     if (charisma > 217) return (80);
-    else if (charisma > 187) return (86);
-    else if (charisma > 147) return (88);
-    else if (charisma > 117) return (90);
-    else if (charisma > 107) return (92);
-    else if (charisma > 87) return (94);
-    else if (charisma > 67) return (96);
-    else if (charisma > 18) return (98);
+    if (charisma > 187) return (86);
+    if (charisma > 147) return (88);
+    if (charisma > 117) return (90);
+    if (charisma > 107) return (92);
+    if (charisma > 87) return (94);
+    if (charisma > 67) return (96);
+    if (charisma > 18) return (98);
 
-    else
     switch (charisma) {
 	case 18:
 	    return (100);
@@ -173,21 +172,20 @@ int con_adj()
     con = py.stats.use_stat[A_CON];
 
     if (con < 7) return (con - 7);
-    else if (con < 17) return (0);
-    else if (con == 17) return (1);
-    else if (con < 94) return (2);
-    else if (con < 117) return (3);
-    else if (con < 119) return (4);
-    else if (con < 128) return (5);
-    else if (con < 138) return (6);
-    else if (con < 158) return (7);
-    else if (con < 168) return (8);
-    else if (con < 178) return (9);
-    else if (con < 188) return (10);
-    else if (con < 198) return (11);
-    else if (con < 208) return (12);
-    else if (con < 228) return (13);
-    else
+    if (con < 17) return (0);
+    if (con == 17) return (1);
+    if (con < 94) return (2);
+    if (con < 117) return (3);
+    if (con < 119) return (4);
+    if (con < 128) return (5);
+    if (con < 138) return (6);
+    if (con < 158) return (7);
+    if (con < 168) return (8);
+    if (con < 178) return (9);
+    if (con < 188) return (10);
+    if (con < 198) return (11);
+    if (con < 208) return (12);
+    if (con < 228) return (13);
     return (14);
 }
 
@@ -781,7 +779,8 @@ int inc_stat(int stat)
 	set_use_stat(stat);
 	prt_stat(stat);
 	return TRUE;
-    } else
+    }
+
     return FALSE;
 }
 
@@ -812,7 +811,7 @@ int dec_stat(int stat)
 	set_use_stat(stat);
 	prt_stat(stat);
 	return TRUE;
-    } else
+    }
     return FALSE;
 }
 
@@ -1329,7 +1328,7 @@ int inven_check_num(inven_type *t_ptr)
 
     if (inven_ctr < INVEN_WIELD) return TRUE;
 
-    else if (t_ptr->sval >= ITEM_SINGLE_STACK_MIN)
+    if (t_ptr->sval >= ITEM_SINGLE_STACK_MIN)
     for (i = 0; i < inven_ctr; i++) {
 	    if (inventory[i].tval == t_ptr->tval &&
 		inventory[i].sval == t_ptr->sval &&
@@ -1455,10 +1454,7 @@ int spell_chance(int spell)
 
     s_ptr = &magic_spell[py.misc.pclass - 1][spell];
     chance = s_ptr->sfail - 3 * (py.misc.lev - s_ptr->slevel);
-    if (class[py.misc.pclass].spell == MAGE)
-	stat = A_INT;
-    else
-	stat = A_WIS;
+    stat = (class[py.misc.pclass].spell == MAGE) ? A_INT : A_WIS;
     chance -= 3 * (stat_adj(stat) - 1);
     if (s_ptr->smana > py.misc.cmana) {
 	chance += 5 * (s_ptr->smana - py.misc.cmana);
@@ -1528,9 +1524,9 @@ int spell_chance(int spell)
 	}
     }
 
-    if (chance > 95) chance = 95;
+    if (chance > 95) return (95);
 
-    else if (chance < minfail) chance = minfail;
+    if (chance < minfail) return (minfail);
 
     return chance;
 }
@@ -1551,10 +1547,7 @@ void print_spells(int *spell, int num, int comment, int nonconsec)
     char                 spell_char;
     vtype                out_val;
 
-    if (comment)
-	col = 22;
-    else
-	col = 31;
+    col = (comment ? 22 : 31);
 
     offset = (class[py.misc.pclass].spell == MAGE ? SPELL_OFFSET : PRAYER_OFFSET);
     erase_line(1, col);
@@ -1875,7 +1868,7 @@ int attack_blows(int weight, int *wtohit)
     if (s * 15 < weight) {
 	*wtohit = s * 15 - weight;
 	return 1;
-    } else {
+    }
 	*wtohit = 0;
 
 	if (d < 10) dex_index = 0;
@@ -1943,7 +1936,6 @@ int attack_blows(int weight, int *wtohit)
 
 	d += s;
 	return ((d < 1) ? 1 : d);
-    }
 }
 
 
