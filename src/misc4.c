@@ -14,6 +14,9 @@
 
 
 
+#define COL_STAT 0
+
+
 static const char *stat_names[] = {
     "STR: ", "INT: ", "WIS: ", "DEX: ", "CON: ", "CHR: "
 };
@@ -67,8 +70,8 @@ void prt_stat(int stat)
     vtype out_val1;
 
 	cnv_stat(py.stats.use_stat[stat], out_val1);
-	put_str(stat_names[stat], 5 + stat, STAT_COLUMN);
-	put_str(out_val1, 5 + stat, STAT_COLUMN + 6);
+	put_str(stat_names[stat], 5 + stat, COL_STAT);
+	put_str(out_val1, 5 + stat, COL_STAT + 6);
 }
 
 
@@ -216,7 +219,7 @@ const char *title_string()
  */
 void prt_title()
 {
-    prt_field(title_string(), 3, STAT_COLUMN);
+    prt_field(title_string(), 3, COL_STAT);
 }
 
 
@@ -227,7 +230,7 @@ void prt_level()
 {
     char tmp[32];
     sprintf(tmp, "%6d", py.misc.lev);
-    put_str(tmp, 12, STAT_COLUMN + 6);
+    put_str(tmp, 12, COL_STAT + 6);
 }
 
 
@@ -239,7 +242,7 @@ void prt_cmana()
     char tmp[32];
 
     sprintf(tmp, "%6d", py.misc.cmana);
-    put_str(tmp, 14, STAT_COLUMN + 6);
+    put_str(tmp, 14, COL_STAT + 6);
 }
 
 
@@ -250,7 +253,7 @@ void prt_mhp()
 {
     char tmp[32];
     sprintf(tmp, "%6d", py.misc.mhp);
-    put_str(tmp, 15, STAT_COLUMN + 6);
+    put_str(tmp, 15, COL_STAT + 6);
 }
 
 
@@ -261,7 +264,7 @@ void prt_chp()
 {
     char tmp[32];
     sprintf(tmp, "%6d", py.misc.chp);
-    put_str(tmp, 16, STAT_COLUMN + 6);
+    put_str(tmp, 16, COL_STAT + 6);
 }
 
 
@@ -272,7 +275,7 @@ void prt_pac()
 {
     char tmp[32];
     sprintf(tmp, "%6d", py.misc.dis_ac);
-    put_str(tmp, 18, STAT_COLUMN + 6);
+    put_str(tmp, 18, COL_STAT + 6);
 }
 
 
@@ -284,7 +287,7 @@ void prt_gold()
     char tmp[32];
 
     sprintf(tmp, "%9ld", (long)py.misc.au);
-    put_str(tmp, 19, STAT_COLUMN + 3);
+    put_str(tmp, 19, COL_STAT + 3);
 }
 
 
@@ -564,19 +567,19 @@ void prt_stat_block()
     register int          i;
 
     m_ptr = &py.misc;
-    prt_field(race[py.misc.prace].trace, 1, STAT_COLUMN);
-    prt_field(class[py.misc.pclass].title, 2, STAT_COLUMN);
-    prt_field(title_string(), 3, STAT_COLUMN);
+    prt_field(race[py.misc.prace].trace, 1, COL_STAT);
+    prt_field(class[py.misc.pclass].title, 2, COL_STAT);
+    prt_field(title_string(), 3, COL_STAT);
     for (i = 0; i < 6; i++) prt_stat(i);
-    prt_num("LEV", (int)m_ptr->lev, 12, STAT_COLUMN);
-    prt_lnum("EXP", m_ptr->exp, 13, STAT_COLUMN);
-    prt_num("MNA", m_ptr->cmana, 14, STAT_COLUMN);
-    prt_num("MHP", m_ptr->mhp, 15, STAT_COLUMN);
-    prt_num("CHP", m_ptr->chp, 16, STAT_COLUMN);
+    prt_num("LEV", (int)m_ptr->lev, 12, COL_STAT);
+    prt_lnum("EXP", m_ptr->exp, 13, COL_STAT);
+    prt_num("MNA", m_ptr->cmana, 14, COL_STAT);
+    prt_num("MHP", m_ptr->mhp, 15, COL_STAT);
+    prt_num("CHP", m_ptr->chp, 16, COL_STAT);
     prt_chp();			   /* this will overwrite hp, in color, if
 				    * needed. -CFT */
-    prt_num("AC ", m_ptr->dis_ac, 18, STAT_COLUMN);
-    prt_lnum("AU ", m_ptr->au, 19, STAT_COLUMN);
+    prt_num("AC ", m_ptr->dis_ac, 18, COL_STAT);
+    prt_lnum("AU ", m_ptr->au, 19, COL_STAT);
     prt_winner();
     prt_cut();
     prt_stun();
@@ -1751,7 +1754,7 @@ void prt_experience()
     if (p_ptr->exp > p_ptr->max_exp) p_ptr->max_exp = p_ptr->exp;
 
     (void) sprintf(out_val, "%8ld", (long)p_ptr->exp);
-    put_str(out_val, 13, STAT_COLUMN+4);
+    put_str(out_val, 13, COL_STAT+4);
 }
 
 

@@ -311,9 +311,6 @@
 #define QUARTZ_WALL     14
 #define BOUNDARY_WALL   15
 
-/* Column for stats    */
-#define STAT_COLUMN     0
-
 /* Class spell types */
 #define NONE            0
 #define MAGE            1
