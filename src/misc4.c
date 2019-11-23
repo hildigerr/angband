@@ -222,22 +222,14 @@ void prt_title()
 }
 
 
-/* Print number at given row, column	-RAK-	 */
-static void prt_int(int num, int row, int column)
-{
-    vtype out_val;
-
-    (void)sprintf(out_val, "%6d", num);
-    put_str(out_val, row, column);
-}
-
-
 /*
  * Prints level -RAK-
  */
 void prt_level()
 {
-    prt_int((int)py.misc.lev, 12, STAT_COLUMN + 6);
+    char tmp[32];
+    sprintf(tmp, "%6d", py.misc.lev);
+    put_str(tmp, 12, STAT_COLUMN + 6);
 }
 
 
@@ -246,7 +238,10 @@ void prt_level()
  */
 void prt_cmana()
 {
-    prt_int(py.misc.cmana, 14, STAT_COLUMN + 6);
+    char tmp[32];
+
+    sprintf(tmp, "%6d", py.misc.cmana);
+    put_str(tmp, 14, STAT_COLUMN + 6);
 }
 
 
@@ -255,7 +250,9 @@ void prt_cmana()
  */
 void prt_mhp()
 {
-    prt_int(py.misc.mhp, 15, STAT_COLUMN + 6);
+    char tmp[32];
+    sprintf(tmp, "%6d", py.misc.mhp);
+    put_str(tmp, 15, STAT_COLUMN + 6);
 }
 
 
@@ -264,7 +261,9 @@ void prt_mhp()
  */
 void prt_chp()
 {
-    prt_int(py.misc.chp, 16, STAT_COLUMN + 6);
+    char tmp[32];
+    sprintf(tmp, "%6d", py.misc.chp);
+    put_str(tmp, 16, STAT_COLUMN + 6);
 }
 
 
@@ -273,25 +272,21 @@ void prt_chp()
  */
 void prt_pac()
 {
-    prt_int(py.misc.dis_ac, 18, STAT_COLUMN + 6);
+    char tmp[32];
+    sprintf(tmp, "%6d", py.misc.dis_ac);
+    put_str(tmp, 18, STAT_COLUMN + 6);
 }
 
-
-/* Print long number at given row, column */
-static void prt_long(s32b num, int row, int column)
-{
-    vtype out_val;
-
-    (void)sprintf(out_val, "%9ld", (long)num);
-    put_str(out_val, row, column);
-}
 
 /*
  * Prints current gold -RAK-
  */
 void prt_gold()
 {
-    prt_long(py.misc.au, 19, STAT_COLUMN + 3);
+    char tmp[32];
+
+    sprintf(tmp, "%9ld", (long)py.misc.au);
+    put_str(tmp, 19, STAT_COLUMN + 3);
 }
 
 
