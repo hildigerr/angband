@@ -1343,8 +1343,9 @@ int weight_limit(void)
 {
     register s32b weight_cap;
 
-    weight_cap = (long)py.stats.use_stat[A_STR] * (long)PLAYER_WEIGHT_CAP
-    + (long)py.misc.wt;
+    weight_cap = (long)py.stats.use_stat[A_STR] * (long)PLAYER_WEIGHT_CAP;
+
+    weight_cap += (long)py.misc.wt;
 
     if (weight_cap > 3000L) weight_cap = 3000L;
 
@@ -2125,14 +2126,10 @@ int critical_blow(int weight, int plus, int dam, int attack_type)
  */
 int player_saves(void)
 {
-    /* MPW C couldn't handle the expression, so split it into two parts */
-    s16b temp = class_level_adj[py.misc.pclass][CLA_SAVE];
-
-    if (randint(100) <= (py.misc.save + stat_adj(A_WIS)
-			 + (temp * py.misc.lev / 3)))
-	return (TRUE);
-    else
-	return (FALSE);
+    int t1 = class_level_adj[py.misc.pclass][CLA_SAVE];
+    int t2 = py.misc.save + stat_adj(A_WIS);
+    int t3 = t2 + (t1 * py.misc.lev / 3);
+    return (randint(100) <= t3);
 }
 
 
