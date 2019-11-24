@@ -61,7 +61,6 @@
 /*****************************************************************************/
 
 
-#define get_Yn get_check
 
 
 /* many systems don't define these anywhere */

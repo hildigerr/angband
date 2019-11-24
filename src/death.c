@@ -230,7 +230,7 @@ int file_character(char *filename1)
     fd = my_topen(filename1, O_WRONLY | O_CREAT | O_EXCL, 0644);
     if (fd < 0 && errno == EEXIST) {
 	(void)sprintf(out_val, "Replace existing file %s?", filename1);
-	if (get_Yn(out_val)) {
+	if (get_check(out_val)) {
 	    fd = my_topen(filename1, O_WRONLY, 0644);
 	}
     }

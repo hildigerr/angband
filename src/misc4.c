@@ -1870,7 +1870,7 @@ int enter_wiz_mode(void)
 
     if (!noscore) {
 	msg_print("Wizard mode is for debugging and experimenting.");
-	answer = get_Yn(
+	answer = get_check(
 			"The game will not be scored if you enter wizard mode. Are you sure?");
     }
 

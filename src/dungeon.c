@@ -1493,8 +1493,8 @@ char com_val;
     switch (com_val) {
       case 'Q':			/* (Q)uit		(^K)ill */
 	flush();
-	if ((!total_winner) ? get_Yn("Do you really want to quit?")
-	    : get_Yn("Do you want to retire?")) {
+	if ((!total_winner) ? get_check("Do you really want to quit?")
+	    : get_check("Do you want to retire?")) {
 	    new_level_flag = TRUE;
 	    death = TRUE;
 	    (void)strcpy(died_from, "Quitting");

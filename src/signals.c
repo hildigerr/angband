@@ -133,8 +133,8 @@ signal_handler(sig)
 	if (death)
 	    (void)signal(sig, SIG_IGN);	/* Can't quit after death. */
 	else if (!character_saved && character_generated) {
-	    if ((!total_winner) ? (!get_Yn("Really commit *Suicide*?"))
-		: (!get_Yn("Do you want to retire?"))) {
+	    if ((!total_winner) ? (!get_check("Really commit *Suicide*?"))
+		: (!get_check("Do you want to retire?"))) {
 		if (turn > 0)
 		    disturb(1, 0);
 		erase_line(0, 0);

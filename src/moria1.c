@@ -2084,7 +2084,7 @@ const char *hit_from;
 	damage = 0;
     py.misc.chp -= damage;
     if (py.misc.chp < 0) {
-	if ((wizard) && !(get_Yn("Die?"))) {
+	if ((wizard) && !(get_check("Die?"))) {
 	    py.misc.chp=py.misc.mhp;
 	    death=FALSE;
 	    prt_chp();
