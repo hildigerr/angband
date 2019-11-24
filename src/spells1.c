@@ -6,19 +6,14 @@
 
 
 
+/* This seems like a pretty standard "typedef" */
+/* For some reason, it was not being used on Unix */
+typedef int (*inven_func)(inven_type *);
+
 /*
  * Destroys a type of item on a given percent chance	-RAK-	 
  */
-static int inven_damage(typ, perc)
-#ifdef MSDOS
-int (*typ) (inven_type *);
-
-#else
-int (*typ) ();
-
-#endif
-register int perc;
-
+static int inven_damage(inven_func typ, int perc)
 {
     register int index, i, j, offset;
     vtype	tmp_str, out_val;
