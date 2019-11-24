@@ -814,23 +814,23 @@ int inc_stat(int stat)
  */
 int dec_stat(int stat)
 {
-    register int tmp_stat, loss;
+    register int cur, loss;
 
-    tmp_stat = py.stats.cur_stat[stat];
+    cur = py.stats.cur_stat[stat];
 
-    if (tmp_stat > 3) {
+    if (cur > 3) {
 
-	if (tmp_stat < 19)
-	    tmp_stat--;
-	else if (tmp_stat < 117) {
-	    loss = (((118 - tmp_stat) >> 1) + 1) >> 1;
-	    tmp_stat += -randint(loss) - loss;
-	    if (tmp_stat < 18)
-		tmp_stat = 18;
+	if (cur < 19)
+	    cur--;
+	else if (cur < 117) {
+	    loss = (((118 - cur) >> 1) + 1) >> 1;
+	    cur += -randint(loss) - loss;
+	    if (cur < 18)
+		cur = 18;
 	} else
-	    tmp_stat--;
+	    cur--;
 
-	py.stats.cur_stat[stat] = tmp_stat;
+	py.stats.cur_stat[stat] = cur;
 	set_use_stat(stat);
 	prt_stat(stat);
 	return TRUE;
