@@ -253,6 +253,17 @@ void prt_level()
     put_str(tmp, ROW_LEVEL, COL_STAT + 6);
 }
 
+/*
+ * Display the experience
+ */
+static void prt_exp()
+{
+    char out_val[32];
+
+    (void) sprintf(out_val, "%8ld", (long)p_ptr->exp);
+    put_str(out_val, ROW_EXP, COL_STAT+4);
+}
+
 
 /*
  * Prints players current mana points. -RAK-
@@ -1748,7 +1759,6 @@ static void gain_level(void)
 void prt_experience()
 {
     register struct misc *p_ptr = &py.misc;
-    char out_val[100];
     
     if (p_ptr->exp > MAX_EXP) p_ptr->exp = MAX_EXP;
 
@@ -1771,8 +1781,7 @@ void prt_experience()
 
     if (p_ptr->exp > p_ptr->max_exp) p_ptr->max_exp = p_ptr->exp;
 
-    (void) sprintf(out_val, "%8ld", (long)p_ptr->exp);
-    put_str(out_val, ROW_EXP, COL_STAT+4);
+    prt_exp();
 }
 
 
