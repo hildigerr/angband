@@ -429,8 +429,8 @@ void prt_state(void)
 	put_str(tmp, 23, 38);
     }
 
-    else if (command_count > 0) {
-	(void)sprintf(tmp, "Repeat %-3d", command_count);
+    else if (command_rep > 0) {
+	(void)sprintf(tmp, "Repeat %-3d", command_rep);
 	py.flags.status |= PY_REPEAT;
 	put_str(tmp, 23, 38);
 	if (PY_SEARCH & py.flags.status)

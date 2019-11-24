@@ -41,7 +41,7 @@ s16b last_msg = 0;		/* Where last is held */
 int death = FALSE;		/* True if died	      */
 int find_flag;			/* Used in ANGBAND for .(dir) */
 int free_turn_flag;		/* Used in ANGBAND, do not move creatures  */
-int command_count;		/* Gives repetition of commands. -CJS- */
+int command_rep;		/* Gives repetition of commands. -CJS- */
 int default_dir = FALSE;	/* Use last direction for repeated command */
 s32b turn = (-1);		/* Cur turn of game    */
 s32b old_turn = (-1);		/* Last feeling message */

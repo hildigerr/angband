@@ -160,7 +160,7 @@ extern int monster_is_afraid;	/* redo monster fear messages -CWS */
 extern int character_generated;	/* don't save score until char gen finished */
 extern int character_saved;		/* prevents save on kill after save_player() */
 extern int feeling;				/* level feeling */
-extern int command_count;		/* Repetition of commands. -CJS- */
+extern int command_rep;		/* Repetition of commands. -CJS- */
 extern int default_dir;			/* Use last direction in repeated commands */
 extern s16b noscore;			/* Don't score this game. -CJS- */
 extern u32b randes_seed;		/* For encoding colors */

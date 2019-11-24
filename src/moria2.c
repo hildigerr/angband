@@ -1369,7 +1369,7 @@ do_cmd_open()
 		    c_ptr->fval = CORR_FLOOR;
 		    lite_spot(y, x);
 		    check_view();
-		    command_count = 0;
+		    command_rep = 0;
 		}
 	    }
     /* Open a closed chest.		     */
@@ -2808,7 +2808,7 @@ bash()
 		} else if (randint(150) > py.stats.use_stat[A_DEX]) {
 		    msg_print("You are off-balance.");
 		    py.flags.paralysis = 1 + randint(2);
-		} else if (command_count == 0)
+		} else if (command_rep == 0)
 		    msg_print("The door holds firm.");
 	    } else if (t_ptr->tval == TV_CHEST) {
 		if (randint(10) == 1) {

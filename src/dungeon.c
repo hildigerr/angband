@@ -73,7 +73,7 @@ dungeon()
 	p_ptr->max_dlv = dun_level;
 
 /* Reset flags and initialize variables  */
-    command_count  = 0;
+    command_rep  = 0;
     eof_flag       = FALSE;
     find_count     = 0;
     new_level_flag = FALSE;
@@ -479,7 +479,7 @@ dungeon()
 	    }
 	}
     /* Check for interrupts to find or rest. */
-	if ((command_count > 0 || find_flag || f_ptr->rest > 0 || f_ptr->rest == -1
+	if ((command_rep > 0 || find_flag || f_ptr->rest > 0 || f_ptr->rest == -1
 	     || f_ptr->rest == -2)
 #if defined(MSDOS) || defined(VMS) /* stolen from Um55 src -CFT */
 	    && kbhit()
@@ -959,8 +959,8 @@ dungeon()
 		else {
 		/* move the cursor to the players character */
 		    move_cursor_relative(char_row, char_col);
-		    if (command_count > 0) {
-			command_count--;
+		    if (command_rep > 0) {
+			command_rep--;
 			msg_flag = FALSE;
 			default_dir = TRUE;
 		    } else {
@@ -1016,7 +1016,7 @@ dungeon()
 			}
 		    /* Another way of typing control codes -CJS- */
 			if (command == '^') {
-			    if (command_count > 0)
+			    if (command_rep > 0)
 				prt_state();
 			    if (get_com("Control-", &command)) {
 				if (command >= 'A' && command <= 'Z')
@@ -1041,9 +1041,9 @@ dungeon()
 				msg_print("Invalid command with a count.");
 				command = ' ';
 			    } else {
-				command_count = i;
+				command_rep = i;
 				prt_state();
-				command_count--;	/* count this pass as
+				command_rep--;	/* count this pass as
 							 * one */
 			    }
 			}
@@ -1056,14 +1056,14 @@ dungeon()
 		    do_command(command);
 		/* Find is counted differently, as the command changes. */
 		    if (find_flag) {
-			find_count = command_count;
-			command_count = 0;
+			find_count = command_rep;
+			command_rep = 0;
 		    } else if (old_lite >= 0) {
 			cur_lite = old_lite;
 			old_lite = (-1);
 		    }
 		    if (free_turn_flag)
-			command_count = 0;
+			command_rep = 0;
 		}
 	    /* End of commands				     */
 	    }
@@ -1441,7 +1441,7 @@ char com_val;
 /* hack for move without pickup.  Map '-' to a movement command. */
     if (com_val == '-') {
 	do_pickup = FALSE;
-	i = command_count;
+	i = command_rep;
 #ifdef TARGET
 	{
 /* If in target_mode, player will not be given a chance to pick a direction.
@@ -1451,7 +1451,7 @@ char com_val;
 	target_mode = FALSE;
 #endif
 	if (get_dir(NULL, &dir_val)) {
-	    command_count = i;
+	    command_rep = i;
 	    switch (dir_val) {
 	      case 1:
 		com_val = 'b';
@@ -1502,11 +1502,11 @@ char com_val;
 	free_turn_flag = TRUE;
 	break;
       case CTRL('P'):		/* (^P)revious message. */
-	if (command_count > 0) {
-	    i = command_count;
+	if (command_rep > 0) {
+	    i = command_rep;
 	    if (i > MAX_SAVE_MSG)
 		i = MAX_SAVE_MSG;
-	    command_count = 0;
+	    command_rep = 0;
 	} else if (last_command != 16)
 	    i = 1;
 	else
@@ -1662,8 +1662,8 @@ char com_val;
 	break;
       case '.':			/* (.) stay in one place (5) */
 	move_player(5, do_pickup);
-	if (command_count > 1) {
-	    command_count--;
+	if (command_rep > 1) {
+	    command_rep--;
 	    rest();
 	}
 	break;
@@ -1930,12 +1930,12 @@ char com_val;
 		    f_ptr->stun = 1;
 		break;
 	      case CTRL('D'):	/* ^D = up/down */
-		if (command_count > 0) {
-		    if (command_count > 99)
+		if (command_rep > 0) {
+		    if (command_rep > 99)
 			i = 0;
 		    else
-			i = command_count;
-		    command_count = 0;
+			i = command_rep;
+		    command_rep = 0;
 		} else {
 		    prt("Go to which level (0-10000) ? ", 0, 0);
 		    i = (-1);
@@ -1957,9 +1957,9 @@ char com_val;
 		erase_line(MSG_LINE, 0); /* from um55 -CFT */
 		break;
 	      case CTRL('G'):	/* ^G = treasure */
-		if (command_count > 0) {
-		    i = command_count;
-		    command_count = 0;
+		if (command_rep > 0) {
+		    i = command_rep;
+		    command_rep = 0;
 		} else
 		    i = 1;
 		random_object(char_row, char_col, i);
@@ -1972,9 +1972,9 @@ char com_val;
 		teleport(100);
 		break;
 	      case CTRL('V'):	/* ^V special treasure */
-		if (command_count > 0) {
-		    i = command_count;
-		    command_count = 0;
+		if (command_rep > 0) {
+		    i = command_rep;
+		    command_rep = 0;
 		} else
 		    i = 1;
 		special_random_object(char_row, char_col, i);
@@ -2028,9 +2028,9 @@ char com_val;
 		erase_line(MSG_LINE, 0);
 		break;
 	      case '+':
-		if (command_count > 0) {
-		    py.misc.exp = command_count;
-		    command_count = 0;
+		if (command_rep > 0) {
+		    py.misc.exp = command_rep;
+		    command_rep = 0;
 		} else if (py.misc.exp == 0)
 		    py.misc.exp = 1;
 		else

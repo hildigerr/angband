@@ -1554,7 +1554,7 @@ int        *dir;
     if (prompt == NULL)
 	prompt = "Which direction?";
     for (;;) {
-	save = command_count;	   /* Don't end a counted command. -CJS- */
+	save = command_rep;	   /* Don't end a counted command. -CJS- */
 #ifdef MAC
 	if (!get_comdir(prompt, &command))
 #else
@@ -1564,7 +1564,7 @@ int        *dir;
 	    free_turn_flag = TRUE;
 	    return FALSE;
 	}
-	command_count = save;
+	command_rep = save;
 	if (rogue_like_commands)
 	    command = map_roguedir(command);
 	if (command >= '1' && command <= '9' && command != '5') {
@@ -1957,7 +1957,7 @@ void
 disturb(s, l)
 int s, l;
 {
-    command_count = 0;
+    command_rep = 0;
     if (s && (py.flags.status & PY_SEARCH))
 	search_off();
     if (py.flags.rest != 0)
@@ -2002,9 +2002,9 @@ rest()
     int   rest_num;
     vtype rest_str;
 
-    if (command_count > 0) {
-	rest_num = command_count;
-	command_count = 0;
+    if (command_rep > 0) {
+	rest_num = command_rep;
+	command_rep = 0;
     } else {
 	char                ch;
 
@@ -2386,7 +2386,7 @@ int dir;
 
     move_player(dir, TRUE);
     if (find_flag == FALSE)
-	command_count = 0;
+	command_rep = 0;
 }
 
 void 

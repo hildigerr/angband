@@ -704,7 +704,7 @@ inkey()
     int  shift_flag, ctrl_flag;
 
     put_qio();
-    command_count = 0;
+    command_rep = 0;
 
     do {
 	macgetkey(&ch, FALSE);
@@ -722,7 +722,7 @@ inkey()
     int i;
 
     put_qio();			   /* Dump IO buffer		 */
-    command_count = 0;		   /* Just to be safe -CJS- */
+    command_rep = 0;		   /* Just to be safe -CJS- */
     while (TRUE) {
 #ifdef MSDOS
 	i = msdos_getch();
@@ -792,7 +792,7 @@ inkeydir()
     };
 
     put_qio();
-    command_count = 0;
+    command_rep = 0;
 
     do {
 	macgetkey(&ch, FALSE);
@@ -970,9 +970,9 @@ const char *p;
 {
     int i;
 
-    i = command_count;
+    i = command_rep;
     msg_print(p);
-    command_count = i;
+    command_rep = i;
 }
 
 
@@ -1057,7 +1057,7 @@ const char *str_buff;
 	/* Make the null string a special case.  -CJS- */
 	    if (str_buff) {
 		put_str(str_buff, MSG_LINE, 0);
-		command_count = 0;
+		command_rep = 0;
 		last_msg++;
 		if (last_msg >= MAX_SAVE_MSG)
 		    last_msg = 0;
@@ -1088,7 +1088,7 @@ const char *str_buff;
 	    } else {
 		put_str(str_buff, MSG_LINE, len);
 		len += strlen(str_buff) + 1;
-		command_count = 0;
+		command_rep = 0;
 		last_msg++;
 		if (last_msg >= MAX_SAVE_MSG)
 		    last_msg = 0;
@@ -1102,7 +1102,7 @@ const char *str_buff;
 	clrtoeol();
 	if (str_buff) {
 	    put_str(str_buff, MSG_LINE, 0);
-	    command_count = 0;
+	    command_rep = 0;
 	    len = strlen(str_buff) + 1;
 	    last_msg++;
 	    if (last_msg >= MAX_SAVE_MSG)
