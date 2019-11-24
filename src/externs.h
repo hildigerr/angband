@@ -604,7 +604,6 @@ void calc_mana(int);
 void prt_experience(void);
 void calc_hitpoints(void);
 void insert_str(char *, const char *, const char *);
-void insert_lnum(char *, const char *, s32b, int);
 int enter_wiz_mode(void);
 int attack_blows(int, int *);
 int tot_dam(struct inven_type *, int, int);
