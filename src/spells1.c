@@ -7,6 +7,48 @@
 
 
 /*
+ * Destroys a type of item on a given percent chance	-RAK-	 
+ */
+static int inven_damage(typ, perc)
+#ifdef MSDOS
+int (*typ) (inven_type *);
+
+#else
+int (*typ) ();
+
+#endif
+register int perc;
+
+{
+    register int index, i, j, offset;
+    vtype	tmp_str, out_val;
+
+    j = 0;
+    offset = randint(inven_ctr);
+    for (index = 0; index < inven_ctr; index++) {
+	i = (index + offset) % inven_ctr; /* be clever and not destroy the first item */
+	if ((*typ) (&inventory[i]) && (randint(100) < perc)) {
+	    objdes(tmp_str, &inventory[i], FALSE);
+	    sprintf(out_val, "%sour %s (%c) %s destroyed!",
+		    ((inventory[i].sval <= ITEM_SINGLE_STACK_MAX) &&
+		     (inventory[i].number > 1))	/* stacked single items */
+		    ? "One of y" : "Y",
+		    tmp_str, i + 'a',
+		    ((inventory[i].sval > ITEM_SINGLE_STACK_MAX) &&
+		     (inventory[i].number > 1))	/* stacked group items */
+		    ? "were" : "was");
+	    msg_print(out_val);
+	    inven_destroy(i);
+	    j++;
+	}
+    }
+    return (j);
+}
+
+
+
+
+/*
  * Corrode the unsuspecting person's armor		 -RAK-
  */
 void corrode_gas(const char *kb_str)
