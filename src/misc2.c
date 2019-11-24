@@ -625,22 +625,6 @@ int y, x, num;
 }
 
 
-/*
- * Boost a stat artificially (by wearing something). If the display argument
- * is TRUE, then increase is shown on the screen. 
- */
-void 
-bst_stat(stat, amount)
-int stat, amount;
-{
-    py.stats.mod_stat[stat] += amount;
-
-    set_use_stat(stat);
-/* can not call prt_stat() here, may be in store, may be in inven_command */
-    py.flags.status |= (PY_STR << stat);
-}
-
-
 
 
 /* Destroy an item in the inventory			-RAK-	 */

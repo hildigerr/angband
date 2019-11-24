@@ -39,8 +39,11 @@ register int         factor;
     amount = t_ptr->p1 * factor;
     if (t_ptr->flags & TR_STATS) {
 	for (i = 0; i < 6; i++)
-	    if ((1 << i) & t_ptr->flags)
-		bst_stat(i, amount);
+	    if ((1 << i) & t_ptr->flags) {
+		py.stats.mod_stat[i] += amount;
+		set_use_stat(i);
+		py.flags.status |= (PY_STR << i);
+	    }
     }
     if (TR_SEARCH & t_ptr->flags) {
 	py.misc.srh += amount;

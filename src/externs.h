@@ -571,7 +571,6 @@ void set_use_stat(int);
 int inc_stat(int);
 int dec_stat(int);
 int res_stat(int);
-void bst_stat(int, int);
 int tohit_adj(void);
 int toac_adj(void);
 int todis_adj(void);
