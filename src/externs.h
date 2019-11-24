@@ -654,12 +654,6 @@ void find_run(void);
 void end_find(void);
 void area_affect(int, int, int);
 int minus_ac(u32b);
-void corrode_gas(const char *);
-void poison_gas(int, const char *);
-void fire_dam(int, const char *);
-void cold_dam(int, const char *);
-void light_dam(int, const char *);
-void acid_dam(int, const char *);
 void darken_player(int, int);
 
 /* moria2.c */
@@ -775,6 +769,12 @@ void default_signals(void);
 void restore_signals(void);
 
 /* spells.c */
+void corrode_gas(const char *);
+void fire_dam(int, const char *);
+void cold_dam(int, const char *);
+void light_dam(int, const char *);
+void acid_dam(int, const char *);
+void poison_gas(int, const char *);
 void monster_name(char *, struct monster_type *, struct monster_race *);
 void lower_monster_name(char *, struct monster_type *, struct monster_race *);
 int sleep_monsters1(int, int);
