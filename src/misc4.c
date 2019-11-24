@@ -1283,9 +1283,10 @@ void change_name()
 
 #endif
 
-    flag = FALSE;
     display_player();
-    do {
+
+    for (flag = FALSE; !flag; ) {
+
 	prt("<f>ile character description. <c>hange character name.", 21, 2);
 	c = inkey();
 	switch (c) {
@@ -1319,7 +1320,6 @@ void change_name()
 	    break;
 	}
     }
-    while (!flag);
 }
 
 
