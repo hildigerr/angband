@@ -1723,7 +1723,6 @@ static void gain_level(void)
 {
     vtype               out_val;
     register struct misc *p_ptr = &py.misc;
-    register player_class *c_ptr;
 
     p_ptr->lev++;
     (void)sprintf(out_val, "Welcome to level %d.", (int)p_ptr->lev);
@@ -1731,13 +1730,12 @@ static void gain_level(void)
     calc_hitpoints();
     prt_level();
     prt_title();
-    c_ptr = &class[p_ptr->pclass];
 
-    if (c_ptr->spell == MAGE) {
+    if (class[p_ptr->pclass].spell == MAGE) {
 	calc_spells(A_INT);
 	calc_mana(A_INT);
     }
-    else if (c_ptr->spell == PRIEST) {
+    else if (class[p_ptr->pclass].spell == PRIEST) {
 	calc_spells(A_WIS);
 	calc_mana(A_WIS);
     }
