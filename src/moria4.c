@@ -61,22 +61,24 @@ void target()
 
     for (m_idx = 0; (m_idx < mfptr) && (!exit); m_idx++) {
 
-	if (m_list[m_idx].cdis>MAX_SIGHT) continue;
+	monster_type *m_ptr = &m_list[m_idx];
 
-	if (!m_list[m_idx].ml ||
-		!los(char_row,char_col,m_list[m_idx].fy,m_list[m_idx].fx)) continue;
+	if (m_ptr->cdis>MAX_SIGHT) continue;
 
-	    move_cursor_relative(m_list[m_idx].fy,m_list[m_idx].fx);
+	if (!m_ptr->ml ||
+		!los(char_row,char_col,m_ptr->fy,m_ptr->fx)) continue;
+
+	    move_cursor_relative(m_ptr->fy,m_ptr->fx);
 	    sprintf(desc, "%s [(r)ecall] [(t)arget] [(l)ocation] [ESC quits]",
 		    c_list[m_list[m_idx].mptr].name);
 	    prt(desc,0,0);
-	    move_cursor_relative(m_list[m_idx].fy,m_list[m_idx].fx);
+	    move_cursor_relative(m_ptr->fy,m_ptr->fx);
 	    query = inkey();
 	    while ((query == 'r') || (query == 'R')) {
 		save_screen();
 		query = roff_recall(m_list[m_idx].mptr);
 		restore_screen();
-		move_cursor_relative(m_list[m_idx].fy, m_list[m_idx].fx);
+		move_cursor_relative(m_ptr->fy, m_ptr->fx);
 		query = inkey();
 	    }
 
@@ -91,8 +93,8 @@ void target()
 	    case 'T': case 't':
 		target_mode = TRUE;
 		target_mon  = m_idx;
-		target_row  = m_list[m_idx].fy;
-		target_col  = m_list[m_idx].fx;
+		target_row  = m_ptr->fy;
+		target_col  = m_ptr->fx;
 		exit2 = TRUE;
 	    case 'l': case'L':
 		exit = TRUE;
