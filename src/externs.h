@@ -652,7 +652,6 @@ void find_init(int);
 void find_run(void);
 void end_find(void);
 void area_affect(int, int, int);
-int minus_ac(u32b);
 void darken_player(int, int);
 
 /* moria2.c */

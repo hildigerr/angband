@@ -42,6 +42,75 @@ static int inven_damage(inven_func typ, int perc)
 
 
 
+/*
+ * AC gets worse					-RAK-
+ * Note: This routine affects magical AC bonuses so that stores
+ * can detect the damage.
+static int minus_ac(u32b typ_dam)
+{
+    register int         i, j;
+    int                  tmp[6], minus, do_damage;
+    inven_type		*i_ptr;
+    bigvtype		out_val, tmp_str;
+
+    i = 0;
+    if (inventory[INVEN_BODY].tval != TV_NOTHING) {
+	tmp[i] = INVEN_BODY;
+	i++;
+    }
+    if (inventory[INVEN_ARM].tval != TV_NOTHING) {
+	tmp[i] = INVEN_ARM;
+	i++;
+    }
+    if (inventory[INVEN_OUTER].tval != TV_NOTHING) {
+	tmp[i] = INVEN_OUTER;
+	i++;
+    }
+    if (inventory[INVEN_HANDS].tval != TV_NOTHING) {
+	tmp[i] = INVEN_HANDS;
+	i++;
+    }
+    if (inventory[INVEN_HEAD].tval != TV_NOTHING) {
+	tmp[i] = INVEN_HEAD;
+	i++;
+    }
+/* also affect boots */
+    if (inventory[INVEN_FEET].tval != TV_NOTHING) {
+	tmp[i] = INVEN_FEET;
+	i++;
+    }
+    minus = FALSE;
+    if (i > 0) {
+	j = tmp[randint(i) - 1];
+	i_ptr = &inventory[j];
+	switch (typ_dam) {
+	  case TR_RES_ACID:
+	    if ((i_ptr->flags & TR_RES_ACID) || (i_ptr->flags2 & TR_IM_ACID) ||
+		((i_ptr->flags2 & TR_ARTIFACT) && (randint(5)>2)))
+		do_damage = FALSE;
+	    else
+		do_damage = TRUE;
+	    break;
+	  default:		   /* unknown damage type... */
+	    do_damage = FALSE;
+	}
+	if (do_damage == FALSE) {
+	    objdes(tmp_str, &inventory[j], FALSE);
+	    (void)sprintf(out_val, "Your %s resists damage!", tmp_str);
+	    msg_print(out_val);
+	    minus = FALSE;
+	} else if ((i_ptr->ac + i_ptr->toac) > 0) {
+	    objdes(tmp_str, &inventory[j], FALSE);
+	    (void)sprintf(out_val, "Your %s is damaged!", tmp_str);
+	    msg_print(out_val);
+	    i_ptr->toac--;
+	    calc_bonuses();
+	    minus = TRUE;
+	}
+    }
+    return (minus);
+}
+
 
 /*
  * Corrode the unsuspecting person's armor		 -RAK-
