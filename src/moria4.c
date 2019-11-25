@@ -50,57 +50,55 @@ void target()
     exit = FALSE;
     exit2 = FALSE;
 
-    if (py.flags.blind > 0)
+    if (py.flags.blind > 0) {
 	msg_print("You can't see anything to target!");
+    return;
+    }
 
     /* Check monsters first */
-    else {
 
     target_mode = FALSE;
 
     for (m_idx = 0; (m_idx < mfptr) && (!exit); m_idx++) {
 
-	    if (m_list[m_idx].cdis<MAX_SIGHT) {
+	if (m_list[m_idx].cdis>MAX_SIGHT) continue;
 
-		if ((m_list[m_idx].ml) &&
-		    (los(char_row,char_col,m_list[m_idx].fy,m_list[m_idx].fx))) {
+	if (!m_list[m_idx].ml ||
+		!los(char_row,char_col,m_list[m_idx].fy,m_list[m_idx].fx)) continue;
 
-		    move_cursor_relative(m_list[m_idx].fy,m_list[m_idx].fx);
-		    sprintf(desc, "%s [(r)ecall] [(t)arget] [(l)ocation] [ESC quits]",
-			    c_list[m_list[m_idx].mptr].name);
-		    prt(desc,0,0);
-		    move_cursor_relative(m_list[m_idx].fy,m_list[m_idx].fx);
-		    query = inkey();
-		    while ((query == 'r') || (query == 'R')) {
-			save_screen();
-			query = roff_recall(m_list[m_idx].mptr);
-			restore_screen();
-			move_cursor_relative(m_list[m_idx].fy, m_list[m_idx].fx);
-			query = inkey();
-		    }
-
-		    switch (query) {
-
-		    case ESCAPE:
-			exit = TRUE;
-			exit2 = TRUE;
-			break;
-		    case '.':	/* for NetHack players, '.' is used to select a target,
-				   so I'm changing this... -CFT */
-
-		    case 'T': case 't':
-			target_mode = TRUE;
-			target_mon  = m_idx;
-			target_row  = m_list[m_idx].fy;
-			target_col  = m_list[m_idx].fx;
-			exit2 = TRUE;
-		    case 'l': case'L':
-			exit = TRUE;
-		    default:
-			break;
-		    }
-		}
+	    move_cursor_relative(m_list[m_idx].fy,m_list[m_idx].fx);
+	    sprintf(desc, "%s [(r)ecall] [(t)arget] [(l)ocation] [ESC quits]",
+		    c_list[m_list[m_idx].mptr].name);
+	    prt(desc,0,0);
+	    move_cursor_relative(m_list[m_idx].fy,m_list[m_idx].fx);
+	    query = inkey();
+	    while ((query == 'r') || (query == 'R')) {
+		save_screen();
+		query = roff_recall(m_list[m_idx].mptr);
+		restore_screen();
+		move_cursor_relative(m_list[m_idx].fy, m_list[m_idx].fx);
+		query = inkey();
 	    }
+
+	switch (query) {
+
+	    case ESCAPE:
+		exit = TRUE;
+		exit2 = TRUE;
+		break;
+	    case '.':	/* for NetHack players, '.' is used to select a target,
+			   so I'm changing this... -CFT */
+	    case 'T': case 't':
+		target_mode = TRUE;
+		target_mon  = m_idx;
+		target_row  = m_list[m_idx].fy;
+		target_col  = m_list[m_idx].fx;
+		exit2 = TRUE;
+	    case 'l': case'L':
+		exit = TRUE;
+	    default:
+		break;
+	}
     }
 
 	if (exit2 == FALSE) {
@@ -193,7 +191,6 @@ void target()
 	    msg_print("Target selected.");
 	else
 	    msg_print("Aborting Target.");
-    }
 }
 
 #endif /* TARGET */
