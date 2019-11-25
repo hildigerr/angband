@@ -43,7 +43,7 @@ int target_at(int row,int col)
  */
 void target()
 {
-    int monptr,exit,exit2;
+    int m_idx,exit,exit2;
     char query;
     vtype desc;
 
@@ -58,24 +58,24 @@ void target()
 
     target_mode = FALSE;
 
-    for (monptr = 0; (monptr < mfptr) && (!exit); monptr++) {
+    for (m_idx = 0; (m_idx < mfptr) && (!exit); m_idx++) {
 
-	    if (m_list[monptr].cdis<MAX_SIGHT) {
+	    if (m_list[m_idx].cdis<MAX_SIGHT) {
 
-		if ((m_list[monptr].ml) &&
-		    (los(char_row,char_col,m_list[monptr].fy,m_list[monptr].fx))) {
+		if ((m_list[m_idx].ml) &&
+		    (los(char_row,char_col,m_list[m_idx].fy,m_list[m_idx].fx))) {
 
-		    move_cursor_relative(m_list[monptr].fy,m_list[monptr].fx);
+		    move_cursor_relative(m_list[m_idx].fy,m_list[m_idx].fx);
 		    sprintf(desc, "%s [(r)ecall] [(t)arget] [(l)ocation] [ESC quits]",
-			    c_list[m_list[monptr].mptr].name);
+			    c_list[m_list[m_idx].mptr].name);
 		    prt(desc,0,0);
-		    move_cursor_relative(m_list[monptr].fy,m_list[monptr].fx);
+		    move_cursor_relative(m_list[m_idx].fy,m_list[m_idx].fx);
 		    query = inkey();
 		    while ((query == 'r') || (query == 'R')) {
 			save_screen();
-			query = roff_recall(m_list[monptr].mptr);
+			query = roff_recall(m_list[m_idx].mptr);
 			restore_screen();
-			move_cursor_relative(m_list[monptr].fy, m_list[monptr].fx);
+			move_cursor_relative(m_list[m_idx].fy, m_list[m_idx].fx);
 			query = inkey();
 		    }
 
@@ -90,9 +90,9 @@ void target()
 
 		    case 'T': case 't':
 			target_mode = TRUE;
-			target_mon  = monptr;
-			target_row  = m_list[monptr].fy;
-			target_col  = m_list[monptr].fx;
+			target_mon  = m_idx;
+			target_row  = m_list[m_idx].fy;
+			target_col  = m_list[m_idx].fx;
 			exit2 = TRUE;
 		    case 'l': case'L':
 			exit = TRUE;
