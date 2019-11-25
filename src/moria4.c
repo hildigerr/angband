@@ -29,13 +29,11 @@
  */
 int target_at(int row,int col)
 {
-/* don't ever assume a condition holds, especially when it's so easy to test for. -CFT */
-    if (target_mode == FALSE) return FALSE;
 
-    if ((row==target_row) && (col==target_col)) {
+    if (target_mode && (row==target_row) && (col==target_col)) {
 	return (TRUE);
     }
-    else return (FALSE);
+    return (FALSE);
 }
 
 
