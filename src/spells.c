@@ -980,7 +980,7 @@ int typ, dir, y, x, dam_hp;
 	oldy = y;
 	oldx = x;
 #ifdef TARGET
-	if (target_mode && at_target(y,x))
+	if (target_mode && target_at(y,x))
 	    flag = TRUE; /* must have hit "targeted" area -CFT */
 #endif
     }
@@ -1489,7 +1489,7 @@ int typ, dir, y, x, dam_hp, max_dis;
 /* we don't call mmove if targetting and at target.  This allow player to target
  * a ball spell at his position, to explode it around himself -CFT
  */
-	if (dir || !at_target(y,x))	    
+	if (dir || !target_at(y,x))	    
 	    (void)mmove(dir, &y, &x);
 
     /* choose the right shape for the bolt... -CFT */
@@ -1529,10 +1529,10 @@ int typ, dir, y, x, dam_hp, max_dis;
 #else
 	    if ((c_ptr->fval >= MIN_CLOSED_SPACE) ||
 		((c_ptr->cptr > 1) &&
-		 (!target_mode || at_target(y, x) ||
+		 (!target_mode || target_at(y, x) ||
 		  !los(target_row, target_col, char_row, char_col) ||
 		  ((target_mon < MAX_M_IDX) && !m_list[target_mon].ml))) ||
-		(target_mode && at_target(y, x))) {
+		(target_mode && target_at(y, x))) {
 	        flag = TRUE;	   /* THEN we decide to explode here. -CFT */
 	        if (c_ptr->fval >= MIN_CLOSED_SPACE) {
 		    y = oldy;
@@ -1664,7 +1664,7 @@ int typ, dir, y, x, dam_hp, max_dis;
 	    oldy = y;
 	    oldx = x;
 #ifdef TARGET
-	    if (target_mode && at_target(y,x))
+	    if (target_mode && target_at(y,x))
 		flag = TRUE; /* must have hit "targetted" area -CFT */
 #endif
 	}

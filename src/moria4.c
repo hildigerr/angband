@@ -27,7 +27,7 @@
  * This targetting code stolen from Morgul -CFT 
  * Assuming target_mode == TRUE, returns if the position is the target. -CDW 
  */
-int at_target(int row,int col)
+int target_at(int row,int col)
 {
 /* don't ever assume a condition holds, especially when it's so easy to test for. -CFT */
     if (target_mode == FALSE) return FALSE;
