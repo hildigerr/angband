@@ -15,6 +15,193 @@
 
 
 
+
+/*** Targetting Code ***/
+
+
+#ifdef TARGET
+
+
+
+/*
+ * This targetting code stolen from Morgul -CFT 
+ * Assuming target_mode == TRUE, returns if the position is the target. -CDW 
+ */
+int at_target(int row,int col)
+{
+/* don't ever assume a condition holds, especially when it's so easy to test for. -CFT */
+    if (target_mode == FALSE) return FALSE;
+
+    if ((row==target_row) && (col==target_col)) {
+	return (TRUE);
+    }
+    else return (FALSE);
+}
+
+
+/*
+ * This targetting code stolen from Morgul -CFT
+ * Targetting routine 					CDW
+ */
+void target()
+{
+    int monptr,exit,exit2;
+    char query;
+    vtype desc;
+
+    exit = FALSE;
+    exit2 = FALSE;
+
+    if (py.flags.blind > 0)
+	msg_print("You can't see anything to target!");
+
+    /* Check monsters first */
+    else {
+
+    target_mode = FALSE;
+
+    for (monptr = 0; (monptr < mfptr) && (!exit); monptr++) {
+
+	    if (m_list[monptr].cdis<MAX_SIGHT) {
+
+		if ((m_list[monptr].ml) &&
+		    (los(char_row,char_col,m_list[monptr].fy,m_list[monptr].fx))) {
+
+		    move_cursor_relative(m_list[monptr].fy,m_list[monptr].fx);
+		    sprintf(desc, "%s [(r)ecall] [(t)arget] [(l)ocation] [ESC quits]",
+			    c_list[m_list[monptr].mptr].name);
+		    prt(desc,0,0);
+		    move_cursor_relative(m_list[monptr].fy,m_list[monptr].fx);
+		    query = inkey();
+		    while ((query == 'r') || (query == 'R')) {
+			save_screen();
+			query = roff_recall(m_list[monptr].mptr);
+			restore_screen();
+			move_cursor_relative(m_list[monptr].fy, m_list[monptr].fx);
+			query = inkey();
+		    }
+
+		    switch (query) {
+
+		    case ESCAPE:
+			exit = TRUE;
+			exit2 = TRUE;
+			break;
+		    case '.':	/* for NetHack players, '.' is used to select a target,
+				   so I'm changing this... -CFT */
+
+		    case 'T': case 't':
+			target_mode = TRUE;
+			target_mon  = monptr;
+			target_row  = m_list[monptr].fy;
+			target_col  = m_list[monptr].fx;
+			exit2 = TRUE;
+		    case 'l': case'L':
+			exit = TRUE;
+		    default:
+			break;
+		    }
+		}
+	    }
+    }
+
+	if (exit2 == FALSE) {
+	    prt("Use cursor to designate target. [(t)arget]",0,0);
+
+	    target_row = char_row;
+	    target_col = char_col;
+
+	    for (exit = FALSE; exit==FALSE ;) {
+
+		move_cursor_relative(target_row, target_col);
+
+		query = inkey();
+
+		if (rogue_like_commands==FALSE) {
+		    switch (query) {
+
+		    case '1': query = 'b'; break;
+		    case '2': query = 'j'; break;
+		    case '3': query = 'n'; break;
+		    case '4': query = 'h'; break;
+		    case '5': query = '.';
+		    case '6': query = 'l'; break;
+		    case '7': query = 'y'; break;
+		    case '8': query = 'k'; break;
+		    case '9': query = 'u'; break;
+
+		    default: break;
+		    }
+		}
+
+	    switch (query) {
+
+	    case ESCAPE:
+		case 'Q': case'q': exit = TRUE; break;
+
+	    case '.':	/* for NetHack players, '.' is used to select a target,
+				   so I'm changing this... -CFT */
+
+	    case 'T': case 't':
+		    if (distance(char_row,char_col,target_row,target_col)>MAX_SIGHT)
+			prt(
+			    "Target beyond range. Use cursor to designate target. [(t)arget].",
+			    0,0);
+		    else if (cave[target_row][target_col].fval>CORR_FLOOR)
+			prt(
+			    "Invalid target. Use cursor to designate target. [(t)arget].",
+			    0,0);
+		    else {
+			target_mode = TRUE;
+			target_mon  = MAX_M_IDX;
+			exit = TRUE;
+		    }
+		    break;
+
+	    case 'b':
+		    target_col--;
+	    case 'j':
+		    target_row++;
+		    break;
+	    case 'n':
+		    target_row++;
+	    case 'l':
+		    target_col++;
+		    break;
+	    case 'y':
+		    target_row--;
+	    case 'h':
+		    target_col--;
+		    break;
+	    case 'u':
+		    target_col++;
+	    case 'k':
+		    target_row--;
+		    break;
+		
+	    default:
+		    break;
+		}
+
+		if ((target_col>MAX_WIDTH-2) || (target_col>panel_col_max)) target_col--;
+		else if ((target_col<1) || (target_col<panel_col_min))  target_col++;
+
+		if ((target_row>MAX_HEIGHT-2) || (target_row>panel_row_max)) target_row--;
+		else if ((target_row<1) || (target_row<panel_row_min)) target_row++;
+	    }
+	}
+
+	if (target_mode==TRUE)
+	    msg_print("Target selected.");
+	else
+	    msg_print("Aborting Target.");
+    }
+}
+
+#endif /* TARGET */
+
+
+
 void mmove2(int *y, int *x, int sourcey, int sourcex, int desty, int destx)
 {
     int d_y, d_x, k, dist, max_dist, min_dist, shift;
