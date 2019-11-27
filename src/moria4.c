@@ -24,20 +24,25 @@
 
 
 /*
- * This targetting code stolen from Morgul -CFT 
- * Assuming target_mode == TRUE, returns if the position is the target. -CDW 
+ * This targetting code stolen from Morgul
+ * Returns TRUE if the given position is the target. -CDW 
  */
 int target_at(int row,int col)
 {
 
+    /* Compare the locations */
     if (target_mode && (row==target_row) && (col==target_col)) {
 	return (TRUE);
     }
+
+    /* Assume target is not at (row,col) */
     return (FALSE);
 }
 
 
 /*
+ * Set a new target.
+ *
  * This targetting code stolen from Morgul -CFT
  * Targetting routine 					CDW
  */
@@ -50,14 +55,15 @@ int target_set()
 
     exit_1 = FALSE;
 
-    /* Check monsters first */
-
+    /* Go ahead and turn off target mode */
     target_mode = FALSE;
 
+    /* Check monsters first */
     for (m_idx = 0; (m_idx < mfptr) && (!exit_1); m_idx++) {
 
 	monster_type *m_ptr = &m_list[m_idx];
 
+	/* Ignore "unseen" monsters */
 	if (!m_ptr->ml ||
 		!los(char_row,char_col,m_ptr->fy,m_ptr->fx)) continue;
 
@@ -66,19 +72,29 @@ int target_set()
 	col = m_ptr->fx;
 
 	    move_cursor_relative(row,col);
+
+	    /* Describe, prompt for recall */
 	    sprintf(desc, "%s [(t)arget] [(p)osition] [(r)ecall] [ESC quits]",
 		    c_list[m_list[m_idx].mptr].name);
 	    prt(desc,0,0);
 	    move_cursor_relative(row,col);
+
+	    /* Get a command, processing recall requests */
 	    query = inkey();
 	    while ((query == 'r') || (query == 'R')) {
+
+		/* Recall on screen */
 		save_screen();
 		query = roff_recall(m_list[m_idx].mptr);
 		restore_screen();
+
+		/* This is done by "good" restore_screen() */
 		move_cursor_relative(row, col);
 		query = inkey();
 	    }
 
+
+	/* Analyze (non "recall") command */
 	switch (query) {
 
 	    case ESCAPE:
@@ -100,13 +116,18 @@ int target_set()
 	}
     }
 
+
+    /* Now try a location */
     prt("Use cursor to designate target. [(t)arget]",0,0);
 
+    /* Start on the player */
     row = char_row;
     col = char_col;
 
-    for (exit_1 = FALSE; exit_1==FALSE ;) {
+    /* Query until done */
+    while (TRUE) {
 
+	/* Light up the current location */
 	move_cursor_relative(row, col);
 
 	/* Get a command, and convert it to standard form */
@@ -176,20 +197,25 @@ int target_set()
 		break;
 	}
 
+	/* Verify column */
 	if ((col>=cur_width-1) || (col>panel_col_max)) col--;
 	else if ((col<=0) || (col<panel_col_min)) col++;
 
+	/* Verify row */
 	if ((row>=cur_height-1) || (row>panel_row_max)) row--;
 	else if ((row<=0) || (row<panel_row_min)) row++;
     }
 
+    /* Assume no target */
     return (FALSE);
 }
 
 #endif /* TARGET */
 
 
-
+/*
+ * A more "correct" movement calculator.
+ */
 void mmove2(int *y, int *x, int sourcey, int sourcex, int desty, int destx)
 {
     int d_y, d_x, k, dist, max_dist, min_dist, shift;
