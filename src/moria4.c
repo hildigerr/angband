@@ -86,9 +86,9 @@ int target_set()
 	    case ESCAPE:
 		return (FALSE);
 
-	    case '.':	/* for NetHack players, '.' is used to select a target,
-			   so I'm changing this... -CFT */
 	    case 'T': case 't':
+	    case '5': case '.':
+	    case '0':
 		target_mode = TRUE;
 		target_mon  = m_idx;
 		target_row  = row;
@@ -111,23 +111,22 @@ int target_set()
 
 	move_cursor_relative(target_row, target_col);
 
+	/* Get a command, and convert it to standard form */
 	query = inkey();
 
-	if (rogue_like_commands==FALSE) {
 	switch (query) {
 
-	    case '1': query = 'b'; break;
-	    case '2': query = 'j'; break;
-	    case '3': query = 'n'; break;
-	    case '4': query = 'h'; break;
-	    case '5': query = '.';
-	    case '6': query = 'l'; break;
-	    case '7': query = 'y'; break;
-	    case '8': query = 'k'; break;
-	    case '9': query = 'u'; break;
+	    case '1': case 'B': case 'b': query = '1'; break;
+	    case '2': case 'J': case 'j': query = '2'; break;
+	    case '3': case 'N': case 'n': query = '3'; break;
+	    case '4': case 'H': case 'h': query = '4'; break;
+	    case '5': case '.': case '0': query = '0'; break;
+	    case '6': case 'L': case 'l': query = '6'; break;
+	    case '7': case 'Y': case 'y': query = '7'; break;
+	    case '8': case 'K': case 'k': query = '8'; break;
+	    case '9': case 'U': case 'u': query = '9'; break;
 
 	    default: break;
-	    }
 	}
 
 	switch (query) {
@@ -135,8 +134,7 @@ int target_set()
 	    case ESCAPE:
 		case 'Q': case'q': exit_1 = TRUE; break;
 
-	    case '.':	/* for NetHack players, '.' is used to select a target,
-				   so I'm changing this... -CFT */
+	    case '0':
 
 	    case 'T': case 't':
 		if (distance(char_row,char_col,target_row,target_col)>MAX_SIGHT)
@@ -154,24 +152,24 @@ int target_set()
 		}
 		break;
 
-	    case 'b':
+	    case '1':
 		target_col--;
-	    case 'j':
+	    case '2':
 		target_row++;
 		break;
-	    case 'n':
+	    case '3':
 		target_row++;
-	    case 'l':
+	    case '6':
 		target_col++;
 		break;
-	    case 'y':
+	    case '7':
 		target_row--;
-	    case 'h':
+	    case '4':
 		target_col--;
 		break;
-	    case 'u':
+	    case '9':
 		target_col++;
-	    case 'k':
+	    case '8':
 		target_row--;
 		break;
 		
