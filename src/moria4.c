@@ -44,11 +44,11 @@ int target_at(int row,int col)
 void target()
 {
     int row, col;
-    int m_idx,exit,exit2;
+    int m_idx,exit_1,exit2;
     char query;
     vtype desc;
 
-    exit = FALSE;
+    exit_1 = FALSE;
     exit2 = FALSE;
 
     if (py.flags.blind > 0) {
@@ -60,7 +60,7 @@ void target()
 
     target_mode = FALSE;
 
-    for (m_idx = 0; (m_idx < mfptr) && (!exit); m_idx++) {
+    for (m_idx = 0; (m_idx < mfptr) && (!exit_1); m_idx++) {
 
 	monster_type *m_ptr = &m_list[m_idx];
 
@@ -90,7 +90,7 @@ void target()
 	switch (query) {
 
 	    case ESCAPE:
-		exit = TRUE;
+		exit_1 = TRUE;
 		exit2 = TRUE;
 		break;
 	    case '.':	/* for NetHack players, '.' is used to select a target,
@@ -102,7 +102,7 @@ void target()
 		target_col  = col;
 		exit2 = TRUE;
 	    case 'l': case'L':
-		exit = TRUE;
+		exit_1 = TRUE;
 	    default:
 		break;
 	}
@@ -114,7 +114,7 @@ void target()
 	    target_row = char_row;
 	    target_col = char_col;
 
-	    for (exit = FALSE; exit==FALSE ;) {
+	    for (exit_1 = FALSE; exit_1==FALSE ;) {
 
 		move_cursor_relative(target_row, target_col);
 
@@ -140,7 +140,7 @@ void target()
 	    switch (query) {
 
 	    case ESCAPE:
-		case 'Q': case'q': exit = TRUE; break;
+		case 'Q': case'q': exit_1 = TRUE; break;
 
 	    case '.':	/* for NetHack players, '.' is used to select a target,
 				   so I'm changing this... -CFT */
@@ -157,7 +157,7 @@ void target()
 		    else {
 			target_mode = TRUE;
 			target_mon  = MAX_M_IDX;
-			exit = TRUE;
+			exit_1 = TRUE;
 		    }
 		    break;
 
