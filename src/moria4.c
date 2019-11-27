@@ -114,29 +114,39 @@ int target_set()
 	/* Get a command, and convert it to standard form */
 	query = inkey();
 
+	/* Analyze the keypress */
 	switch (query) {
 
+	    case ESCAPE: break;
+	    case 'Q': case 'q': query = ESCAPE; break;
+
+	    /* Nowhere means "target" */
+	    case '5': case '.': query = '0'; break;
+
+	    /* Target means "target" */
+	    case 'T': case 't': case '0': query = '0'; break;
+
+	    /* Real directions */
 	    case '1': case 'B': case 'b': query = '1'; break;
 	    case '2': case 'J': case 'j': query = '2'; break;
 	    case '3': case 'N': case 'n': query = '3'; break;
 	    case '4': case 'H': case 'h': query = '4'; break;
-	    case '5': case '.': case '0': query = '0'; break;
 	    case '6': case 'L': case 'l': query = '6'; break;
 	    case '7': case 'Y': case 'y': query = '7'; break;
 	    case '8': case 'K': case 'k': query = '8'; break;
 	    case '9': case 'U': case 'u': query = '9'; break;
 
-	    default: break;
+	    /* Ignore all other keys */
+	    default: query = ' '; break;
 	}
 
+	/* Analyze the command */
 	switch (query) {
 
 	    case ESCAPE:
-		case 'Q': case'q': exit_1 = TRUE; break;
+		return (FALSE);
 
 	    case '0':
-
-	    case 'T': case 't':
 		if (distance(char_row,char_col,target_row,target_col)>MAX_SIGHT)
 		prt(
 			"Target beyond range. Use cursor to designate target. [(t)arget].",
