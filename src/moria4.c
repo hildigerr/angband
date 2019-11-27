@@ -104,12 +104,12 @@ int target_set()
 
     prt("Use cursor to designate target. [(t)arget]",0,0);
 
-    target_row = char_row;
-    target_col = char_col;
+    row = char_row;
+    col = char_col;
 
     for (exit_1 = FALSE; exit_1==FALSE ;) {
 
-	move_cursor_relative(target_row, target_col);
+	move_cursor_relative(row, col);
 
 	/* Get a command, and convert it to standard form */
 	query = inkey();
@@ -147,51 +147,53 @@ int target_set()
 		return (FALSE);
 
 	    case '0':
-		if (distance(char_row,char_col,target_row,target_col)>MAX_SIGHT)
+		if (distance(char_row,char_col,row,col)>MAX_SIGHT)
 		prt(
 			"Target beyond range. Use cursor to designate target. [(t)arget].",
 			0,0);
-		else if (cave[target_row][target_col].fval>CORR_FLOOR)
+		else if (cave[row][col].fval>CORR_FLOOR)
 		prt(
 			"Invalid target. Use cursor to designate target. [(t)arget].",
 			0,0);
 		else {
 		target_mode = TRUE;
 		target_mon  = MAX_M_IDX;
+		target_row  = row;
+		target_col  = col;
 		return (TRUE);
 		}
 		break;
 
 	    case '1':
-		target_col--;
+		col--;
 	    case '2':
-		target_row++;
+		row++;
 		break;
 	    case '3':
-		target_row++;
+		row++;
 	    case '6':
-		target_col++;
+		col++;
 		break;
 	    case '7':
-		target_row--;
+		row--;
 	    case '4':
-		target_col--;
+		col--;
 		break;
 	    case '9':
-		target_col++;
+		col++;
 	    case '8':
-		target_row--;
+		row--;
 		break;
 		
 	    default:
 		break;
 	}
 
-	if ((target_col>MAX_WIDTH-2) || (target_col>panel_col_max)) target_col--;
-	else if ((target_col<1) || (target_col<panel_col_min))  target_col++;
+	if ((col>MAX_WIDTH-2) || (col>panel_col_max)) col--;
+	else if ((col<1) || (col<panel_col_min)) col++;
 
-	if ((target_row>MAX_HEIGHT-2) || (target_row>panel_row_max)) target_row--;
-	else if ((target_row<1) || (target_row<panel_row_min)) target_row++;
+	if ((row>MAX_HEIGHT-2) || (row>panel_row_max)) row--;
+	else if ((row<1) || (row<panel_row_min)) row++;
     }
 
     return (FALSE);
