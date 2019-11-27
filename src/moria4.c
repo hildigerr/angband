@@ -66,7 +66,7 @@ int target_set()
 	col = m_ptr->fx;
 
 	    move_cursor_relative(row,col);
-	    sprintf(desc, "%s [(r)ecall] [(t)arget] [(l)ocation] [ESC quits]",
+	    sprintf(desc, "%s [(t)arget] [(p)osition] [(r)ecall] [ESC quits]",
 		    c_list[m_list[m_idx].mptr].name);
 	    prt(desc,0,0);
 	    move_cursor_relative(row,col);
@@ -93,7 +93,7 @@ int target_set()
 		target_col  = col;
 		return (TRUE);
 
-	    case 'l': case'L':
+	    case 'P': case 'p':
 		exit_1 = TRUE;
 	    default:
 		break;
