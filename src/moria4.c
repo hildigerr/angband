@@ -58,8 +58,6 @@ int target_set()
 
 	monster_type *m_ptr = &m_list[m_idx];
 
-	if (m_ptr->cdis>MAX_SIGHT) continue;
-
 	if (!m_ptr->ml ||
 		!los(char_row,char_col,m_ptr->fy,m_ptr->fx)) continue;
 
@@ -147,22 +145,11 @@ int target_set()
 		return (FALSE);
 
 	    case '0':
-		if (distance(char_row,char_col,row,col)>MAX_SIGHT)
-		prt(
-			"Target beyond range. Use cursor to designate target. [(t)arget].",
-			0,0);
-		else if (cave[row][col].fval>CORR_FLOOR)
-		prt(
-			"Invalid target. Use cursor to designate target. [(t)arget].",
-			0,0);
-		else {
 		target_mode = TRUE;
 		target_mon  = MAX_M_IDX;
 		target_row  = row;
 		target_col  = col;
 		return (TRUE);
-		}
-		break;
 
 	    case '1':
 		col--;
@@ -189,11 +176,11 @@ int target_set()
 		break;
 	}
 
-	if ((col>MAX_WIDTH-2) || (col>panel_col_max)) col--;
-	else if ((col<1) || (col<panel_col_min)) col++;
+	if ((col>=cur_width-1) || (col>panel_col_max)) col--;
+	else if ((col<=0) || (col<panel_col_min)) col++;
 
-	if ((row>MAX_HEIGHT-2) || (row>panel_row_max)) row--;
-	else if ((row<1) || (row<panel_row_min)) row++;
+	if ((row>=cur_height-1) || (row>panel_row_max)) row--;
+	else if ((row<=0) || (row<panel_row_min)) row++;
     }
 
     return (FALSE);
