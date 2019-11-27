@@ -1579,7 +1579,15 @@ char com_val;
  *  were all already taken.  Wiz light command moved to '$', which was unused. -CFT
  */
       case '*':
-	target();		/* target code taken from Morgul -CFT */
+    if (py.flags.blind > 0) {
+	msg_print("You can't see anything to target!");
+    }
+    else if (!target_set()) {
+	msg_print("Aborting Target.");
+    }
+    else {
+	msg_print("Target selected.");
+    }
 	free_turn_flag = TRUE;
 	break;    			
 #endif

@@ -41,20 +41,14 @@ int target_at(int row,int col)
  * This targetting code stolen from Morgul -CFT
  * Targetting routine 					CDW
  */
-void target()
+int target_set()
 {
     int row, col;
-    int m_idx,exit_1,exit2;
+    int m_idx,exit_1;
     char query;
     vtype desc;
 
     exit_1 = FALSE;
-    exit2 = FALSE;
-
-    if (py.flags.blind > 0) {
-	msg_print("You can't see anything to target!");
-    return;
-    }
 
     /* Check monsters first */
 
@@ -90,9 +84,8 @@ void target()
 	switch (query) {
 
 	    case ESCAPE:
-		exit_1 = TRUE;
-		exit2 = TRUE;
-		break;
+		return (FALSE);
+
 	    case '.':	/* for NetHack players, '.' is used to select a target,
 			   so I'm changing this... -CFT */
 	    case 'T': case 't':
@@ -100,7 +93,8 @@ void target()
 		target_mon  = m_idx;
 		target_row  = row;
 		target_col  = col;
-		exit2 = TRUE;
+		return (TRUE);
+
 	    case 'l': case'L':
 		exit_1 = TRUE;
 	    default:
@@ -108,36 +102,35 @@ void target()
 	}
     }
 
-	if (exit2 == FALSE) {
-	    prt("Use cursor to designate target. [(t)arget]",0,0);
+    prt("Use cursor to designate target. [(t)arget]",0,0);
 
-	    target_row = char_row;
-	    target_col = char_col;
+    target_row = char_row;
+    target_col = char_col;
 
-	    for (exit_1 = FALSE; exit_1==FALSE ;) {
+    for (exit_1 = FALSE; exit_1==FALSE ;) {
 
-		move_cursor_relative(target_row, target_col);
+	move_cursor_relative(target_row, target_col);
 
-		query = inkey();
+	query = inkey();
 
-		if (rogue_like_commands==FALSE) {
-		    switch (query) {
+	if (rogue_like_commands==FALSE) {
+	switch (query) {
 
-		    case '1': query = 'b'; break;
-		    case '2': query = 'j'; break;
-		    case '3': query = 'n'; break;
-		    case '4': query = 'h'; break;
-		    case '5': query = '.';
-		    case '6': query = 'l'; break;
-		    case '7': query = 'y'; break;
-		    case '8': query = 'k'; break;
-		    case '9': query = 'u'; break;
+	    case '1': query = 'b'; break;
+	    case '2': query = 'j'; break;
+	    case '3': query = 'n'; break;
+	    case '4': query = 'h'; break;
+	    case '5': query = '.';
+	    case '6': query = 'l'; break;
+	    case '7': query = 'y'; break;
+	    case '8': query = 'k'; break;
+	    case '9': query = 'u'; break;
 
-		    default: break;
-		    }
-		}
+	    default: break;
+	    }
+	}
 
-	    switch (query) {
+	switch (query) {
 
 	    case ESCAPE:
 		case 'Q': case'q': exit_1 = TRUE; break;
@@ -146,58 +139,54 @@ void target()
 				   so I'm changing this... -CFT */
 
 	    case 'T': case 't':
-		    if (distance(char_row,char_col,target_row,target_col)>MAX_SIGHT)
-			prt(
-			    "Target beyond range. Use cursor to designate target. [(t)arget].",
-			    0,0);
-		    else if (cave[target_row][target_col].fval>CORR_FLOOR)
-			prt(
-			    "Invalid target. Use cursor to designate target. [(t)arget].",
-			    0,0);
-		    else {
-			target_mode = TRUE;
-			target_mon  = MAX_M_IDX;
-			exit_1 = TRUE;
-		    }
-		    break;
+		if (distance(char_row,char_col,target_row,target_col)>MAX_SIGHT)
+		prt(
+			"Target beyond range. Use cursor to designate target. [(t)arget].",
+			0,0);
+		else if (cave[target_row][target_col].fval>CORR_FLOOR)
+		prt(
+			"Invalid target. Use cursor to designate target. [(t)arget].",
+			0,0);
+		else {
+		target_mode = TRUE;
+		target_mon  = MAX_M_IDX;
+		return (TRUE);
+		}
+		break;
 
 	    case 'b':
-		    target_col--;
+		target_col--;
 	    case 'j':
-		    target_row++;
-		    break;
+		target_row++;
+		break;
 	    case 'n':
-		    target_row++;
+		target_row++;
 	    case 'l':
-		    target_col++;
-		    break;
+		target_col++;
+		break;
 	    case 'y':
-		    target_row--;
+		target_row--;
 	    case 'h':
-		    target_col--;
-		    break;
+		target_col--;
+		break;
 	    case 'u':
-		    target_col++;
+		target_col++;
 	    case 'k':
-		    target_row--;
-		    break;
+		target_row--;
+		break;
 		
 	    default:
-		    break;
-		}
-
-		if ((target_col>MAX_WIDTH-2) || (target_col>panel_col_max)) target_col--;
-		else if ((target_col<1) || (target_col<panel_col_min))  target_col++;
-
-		if ((target_row>MAX_HEIGHT-2) || (target_row>panel_row_max)) target_row--;
-		else if ((target_row<1) || (target_row<panel_row_min)) target_row++;
-	    }
+		break;
 	}
 
-	if (target_mode==TRUE)
-	    msg_print("Target selected.");
-	else
-	    msg_print("Aborting Target.");
+	if ((target_col>MAX_WIDTH-2) || (target_col>panel_col_max)) target_col--;
+	else if ((target_col<1) || (target_col<panel_col_min))  target_col++;
+
+	if ((target_row>MAX_HEIGHT-2) || (target_row>panel_row_max)) target_row--;
+	else if ((target_row<1) || (target_row<panel_row_min)) target_row++;
+    }
+
+    return (FALSE);
 }
 
 #endif /* TARGET */

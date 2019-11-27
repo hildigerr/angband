@@ -1,5 +1,6 @@
 
 Rewrite of the "pathname constructor" code.
+Redid the targetting code.
 Cleaned up the header files (a lot).
 Separated out some generic "non-angband" files (like random.c).
 Added files to do "memory management" and "string formatting".
