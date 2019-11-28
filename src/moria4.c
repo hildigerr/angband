@@ -377,6 +377,7 @@ int mmove(int dir, int *y, int *x)
 int get_a_dir(const char *prompt, int *dir)
 {
     char        command;
+    char	pbuf[80];
     int         save;
     static char prev_dir;  /* Direction memory. -CJS- */
 
@@ -394,15 +395,19 @@ int get_a_dir(const char *prompt, int *dir)
     else {
 #endif
 
-    if (prompt == NULL) {
-	prompt = "Which direction?";
+    if (prompt) {
+		strcpy(pbuf, prompt);
     }
+    else {
+		sprintf(pbuf, "Which direction?");
+    }
+
     for (;;) {
 	save = command_rep;	   /* Don't end a counted command. -CJS- */
 #ifdef MAC
-    if (!get_comdir(prompt, &command))
+    if (!get_comdir(pbuf, &command))
 #else
-    if (!get_com(prompt, &command))
+    if (!get_com(pbuf, &command))
 #endif
     {
 	    free_turn_flag = TRUE;
