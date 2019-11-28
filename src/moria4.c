@@ -351,7 +351,7 @@ int mmove(int dir, int *y, int *x)
    and then continue to hit it when the see inv goes away.  Also,
    targetting mode shouldn't help the player shoot a monster in a
    dark room.  If he can't see it, he shouldn't be able to aim... -CFT */
-int get_dir(const char *prompt, int *dir)
+int get_a_dir(const char *prompt, int *dir)
 {
     char        command;
     int         save;
@@ -431,6 +431,21 @@ int get_alldir(const char *prompt, int *dir)
 	}
     bell();
 	}
+}
+
+
+
+
+
+/*
+ * See "get_a_dir" above
+ */
+int get_dir(const char *prompt, int *dir)
+{
+    if (get_a_dir(prompt, dir)) return (TRUE);
+
+    /* Command aborted */
+    return FALSE;
 }
 
 
