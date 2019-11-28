@@ -383,17 +383,16 @@ int get_a_dir(const char *prompt, int *dir)
 
     if (default_dir) {		   /* used in counted commands. -CJS- */
 	*dir = prev_dir;
-	return TRUE;
     }
 #ifdef TARGET
 
-    if (target_okay()) {
+    else if (target_okay()) {
       /* It don't get no better than this */
 	*dir = 0;
-	return TRUE;
     }
-    else {
 #endif
+
+    else {
 
 	/* Ask until satisfied */    
 	while (1) {
@@ -413,7 +412,7 @@ int get_a_dir(const char *prompt, int *dir)
 #endif
 	    {
 		    free_turn_flag = TRUE;
-		    return FALSE;
+		    return (FALSE);
 		}
 		command_rep = save;
 		if (rogue_like_commands)
@@ -421,13 +420,14 @@ int get_a_dir(const char *prompt, int *dir)
 		if (command >= '1' && command <= '9' && command != '5') {
 		    prev_dir = command - '0';
 		    *dir = prev_dir;
-		    return TRUE;
+		    break;
 		}
 	    bell();
 	}
-#ifdef TARGET
     }
-#endif
+
+    /* A "valid" direction was entered */    
+    return (TRUE);
 }
 
 
