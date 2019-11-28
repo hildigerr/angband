@@ -40,6 +40,29 @@ int target_at(int row,int col)
 }
 
 
+
+/*
+ * Simple query -- is the "target" okay to use?
+ * Obviously, if target mode is disabled, it is not.
+ */
+int target_okay()
+{
+
+    if ((target_mode)&&
+    (((target_mon<MAX_M_IDX)&& m_list[target_mon].ml &&
+    (los(char_row,char_col,m_list[target_mon].fy,m_list[target_mon].fx))||
+    ((target_mon>=MAX_M_IDX) &&
+    (los(char_row,char_col,target_row,target_col)))))) return (TRUE);
+
+    /* The "target" is invalid */
+    return (FALSE);
+}
+
+
+
+
+
+
 /*
  * Set a new target.
  *
@@ -363,11 +386,7 @@ int get_a_dir(const char *prompt, int *dir)
     }
 #ifdef TARGET
 
-    if ((target_mode)&&
-	(((target_mon<MAX_M_IDX)&& m_list[target_mon].ml &&
-	  (los(char_row,char_col,m_list[target_mon].fy,m_list[target_mon].fx))||
-	  ((target_mon>=MAX_M_IDX) &&
-	   (los(char_row,char_col,target_row,target_col)))))) {
+    if (target_okay()) {
       /* It don't get no better than this */
 	*dir = 0;
 	return TRUE;
