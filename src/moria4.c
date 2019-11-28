@@ -395,33 +395,35 @@ int get_a_dir(const char *prompt, int *dir)
     else {
 #endif
 
-    if (prompt) {
-		strcpy(pbuf, prompt);
-    }
-    else {
-		sprintf(pbuf, "Which direction?");
-    }
+	/* Ask until satisfied */    
+	while (1) {
 
-    for (;;) {
+	    if (prompt) {
+		strcpy(pbuf, prompt);
+	    }
+	    else {
+		sprintf(pbuf, "Which direction?");
+	    }
+
 	save = command_rep;	   /* Don't end a counted command. -CJS- */
 #ifdef MAC
-    if (!get_comdir(pbuf, &command))
+	    if (!get_comdir(pbuf, &command))
 #else
-    if (!get_com(pbuf, &command))
+	    if (!get_com(pbuf, &command))
 #endif
-    {
-	    free_turn_flag = TRUE;
-	    return FALSE;
-	}
-	command_rep = save;
-	if (rogue_like_commands)
-	    command = map_roguedir(command);
-	if (command >= '1' && command <= '9' && command != '5') {
-	    prev_dir = command - '0';
-	    *dir = prev_dir;
-	    return TRUE;
-	}
-    bell();
+	    {
+		    free_turn_flag = TRUE;
+		    return FALSE;
+		}
+		command_rep = save;
+		if (rogue_like_commands)
+		    command = map_roguedir(command);
+		if (command >= '1' && command <= '9' && command != '5') {
+		    prev_dir = command - '0';
+		    *dir = prev_dir;
+		    return TRUE;
+		}
+	    bell();
 	}
 #ifdef TARGET
     }
