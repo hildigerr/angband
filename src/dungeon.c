@@ -1855,7 +1855,7 @@ char com_val;
 	do_cmd_spike();
 	break;
       case 'x':			/* e(x)amine surrounds	(l)ook about */
-	look();
+	do_cmd_look();
 	free_turn_flag = TRUE;
 	break;
       case 'm':			/* (m)agic spells */

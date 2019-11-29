@@ -387,7 +387,7 @@ init_transparent:
  * all other things have been seen.  Only looks at rock types if the
  * notice_seams option is set. 
  */
-void look()
+void do_cmd_look()
 {
     register int        i, abort;
     int                 dir, dummy;

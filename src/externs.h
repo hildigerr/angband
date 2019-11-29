@@ -675,7 +675,7 @@ void carry(int, int, int);
 void check_unique(monster_type *);
 
 /* moria3.c */
-void look(void);
+void do_cmd_look(void);
 
 /* moria4.c */
 int target_set(void); /* target fns stolen from Morgul -CFT */
