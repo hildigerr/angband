@@ -13,7 +13,6 @@
 
 
 static void inven_screen(int);
-static char map_roguedir(int);
 static void sub1_move_light(int, int, int, int);
 static void sub3_move_light(int, int, int, int);
 static int see_wall(int, int, int);
@@ -1478,45 +1477,6 @@ int       (*test) ();
 }
 
 
-
-/* map rogue_like direction commands into numbers */
-static char 
-map_roguedir(my_comval)
-register int my_comval;
-{
-    char comval = (char)my_comval;
-
-    switch (comval) {
-      case 'h':
-	comval = '4';
-	break;
-      case 'y':
-	comval = '7';
-	break;
-      case 'k':
-	comval = '8';
-	break;
-      case 'u':
-	comval = '9';
-	break;
-      case 'l':
-	comval = '6';
-	break;
-      case 'n':
-	comval = '3';
-	break;
-      case 'j':
-	comval = '2';
-	break;
-      case 'b':
-	comval = '1';
-	break;
-      case '.':
-	comval = '5';
-	break;
-    }
-    return (comval);
-}
 
 
 

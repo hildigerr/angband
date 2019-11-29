@@ -415,8 +415,24 @@ int get_a_dir(const char *prompt, int *dir)
 		    return (FALSE);
 		}
 		command_rep = save;
-		if (rogue_like_commands)
-		    command = map_roguedir(command);
+
+	    /* Convert various keys to "standard" keys */
+	    switch (command) {
+
+		/* Standard directions */
+		case '1': case 'B': case 'b': command = '1'; break;
+		case '2': case 'J': case 'j': command = '2'; break;
+		case '3': case 'N': case 'n': command = '3'; break;
+		case '4': case 'H': case 'h': command = '4'; break;
+		case '6': case 'L': case 'l': command = '6'; break;
+		case '7': case 'Y': case 'y': command = '7'; break;
+		case '8': case 'K': case 'k': command = '8'; break;
+		case '9': case 'U': case 'u': command = '9'; break;
+
+		/* Central "direction" often means "target" */
+		case '5': case '.': command = '5'; break;
+	    }
+
 		if (command >= '1' && command <= '9' && command != '5') {
 		    prev_dir = command - '0';
 		    *dir = prev_dir;
