@@ -94,10 +94,7 @@ static const char *look_mon_desc(int mnum)
     s32b           thp, tmax, perc;
 
     living = !((c_list[m->mptr].cdefense & (UNDEAD|DEMON)) ||
-	    ((c_list[m->mptr].cchar == 'E') ||
-	    (c_list[m->mptr].cchar == 'g') ||
-	    (c_list[m->mptr].cchar == 'v') ||
-	    (c_list[m->mptr].cchar == 'X')));
+	    (strchr("EgvX", c_list[m->mptr].cchar)));
 
     if (m->maxhp == 0) {	   /* then we're just going to fix it! -CFT */
 	if ((c_list[m->mptr].cdefense & MAX_HP) )
