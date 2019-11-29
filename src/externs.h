@@ -668,12 +668,14 @@ void do_cmd_close(void);
 int twall(int, int, int, int);
 void tunnel(int);
 void do_cmd_disarm(void);
-void look(void);
 void do_cmd_fire(void);
 void bash(void);
 void delete_unique(void);
 void carry(int, int, int);
 void check_unique(monster_type *);
+
+/* moria3.c */
+void look(void);
 
 /* moria4.c */
 int target_set(void); /* target fns stolen from Morgul -CFT */
