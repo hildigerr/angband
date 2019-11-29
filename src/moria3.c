@@ -433,7 +433,7 @@ void do_cmd_look()
     }
 
     /* Get a direction (or "5"), ignoring target and confusion */
-    else if (get_alldir("Look which direction? ", &dir)) {
+    else if (get_a_dir("Look which direction? ", &dir, 0x04)) {
 
 	abort_look = FALSE;
 	gl_nseen = 0;

@@ -373,8 +373,19 @@ int mmove(int dir, int *y, int *x)
    "lock phasers" on an invis monster while a potion of see inv lasts,
    and then continue to hit it when the see inv goes away.  Also,
    targetting mode shouldn't help the player shoot a monster in a
-   dark room.  If he can't see it, he shouldn't be able to aim... -CFT */
-int get_a_dir(const char *prompt, int *dir)
+   dark room.  If he can't see it, he shouldn't be able to aim... -CFT
+ *
+ * Modes are composed of the or-ing of these bit flags:
+ *   0x01 =  ??
+ *   0x02 = ???
+ *   0x04 = Allow the "here" direction ('5')
+ *   0x08 = ??? 
+ *   0x10 = ???
+ *   0x20 = ???
+ *   0x40 = ???
+ *   0x80 = ???
+ */
+int get_a_dir(const char *prompt, int *dir, int mode)
 {
     char        command;
     char	pbuf[80];
@@ -433,6 +444,12 @@ int get_a_dir(const char *prompt, int *dir)
 		case '5': case '.': command = '5'; break;
 	    }
 
+	    /* Hack -- Perhaps accept '5' as itself */
+	    if ((mode & 0x04) && (command == '5')) {
+		*dir = 5; break;
+	    }
+
+
 		if (command >= '1' && command <= '9' && command != '5') {
 		    prev_dir = command - '0';
 		    *dir = prev_dir;
@@ -447,35 +464,6 @@ int get_a_dir(const char *prompt, int *dir)
 }
 
 
-/*
- * Similar to get_dir, except that no memory exists, and it is		-CJS-
- * allowed to enter the null direction. 
- */
-int get_alldir(const char *prompt, int *dir)
-{
-    char command;
-
-    for (;;) {
-#ifdef MAC
-	if (!get_comdir(prompt, &command))
-#else
-	if (!get_com(prompt, &command))
-#endif
-	{
-	    free_turn_flag = TRUE;
-	    return FALSE;
-	}
-	if (rogue_like_commands)
-	    command = map_roguedir(command);
-	if (command >= '1' && command <= '9') {
-	    *dir = command - '0';
-	    return TRUE;
-	}
-    bell();
-	}
-}
-
-
 
 
 
@@ -484,7 +472,7 @@ int get_alldir(const char *prompt, int *dir)
  */
 int get_dir(const char *prompt, int *dir)
 {
-    if (get_a_dir(prompt, dir)) return (TRUE);
+    if (get_a_dir(prompt, dir, 0x0)) return (TRUE);
 
     /* Command aborted */
     return FALSE;
