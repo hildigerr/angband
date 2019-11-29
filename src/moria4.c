@@ -406,11 +406,11 @@ int get_a_dir(const char *prompt, int *dir)
 
 	save = command_rep;	   /* Don't end a counted command. -CJS- */
 #ifdef MAC
-	    if (!get_comdir(pbuf, &command))
+	    if (!get_comdir(pbuf, &command)) command = ESCAPE;
 #else
-	    if (!get_com(pbuf, &command))
+	    if (!get_com(pbuf, &command)) command = ESCAPE;
 #endif
-	    {
+	    if (command == ESCAPE) {
 		    free_turn_flag = TRUE;
 		    return (FALSE);
 		}
