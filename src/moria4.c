@@ -657,3 +657,80 @@ void rest_off()
 
 
 
+
+/*
+ * Player is on an object.  Many things can happen based -RAK-
+ * on the TVAL of the object.  Traps are set off, money and most
+ * objects are picked up.  Some objects, such as open doors, just
+ * sit there.
+ */
+void carry(int y, int x, int pickup)
+{
+    register int         locn, i;
+    bigvtype             out_val, tmp_str;
+    register cave_type  *c_ptr;
+    register inven_type *i_ptr;
+
+    c_ptr = &cave[y][x];
+    i_ptr = &i_list[c_ptr->tptr];
+    i = i_ptr->tval;
+
+    if (i <= TV_MAX_PICK_UP) {
+
+	end_find();
+
+    /* There's GOLD in them thar hills! */
+    if (i_ptr->tval == TV_GOLD) {
+	py.misc.au += i_ptr->cost;
+	objdes(tmp_str, i_ptr, TRUE);
+	(void)sprintf(out_val,
+		      "You have found %ld gold pieces worth of %s.",
+		      (long)i_ptr->cost, tmp_str);
+	prt_gold();
+	delete_object(y, x);
+	msg_print(out_val);
+    }
+
+    else {
+
+	if (pickup && inven_check_num(i_ptr)) { /* Too many objects? */
+
+	    if (carry_query_flag) {	/* Okay,  pick it up  */
+
+		objdes(tmp_str, i_ptr, TRUE);
+		(void)sprintf(out_val, "Pick up %s? ", tmp_str);
+		pickup = get_check(out_val);
+	    }
+	    
+	    /* Check to see if it will change the players speed. */
+	    if (pickup && !inven_check_weight(i_ptr)) {
+		objdes(tmp_str, i_ptr, TRUE);
+		(void)sprintf(out_val,
+				  "Exceed your weight limit to pick up %s? ",
+				  tmp_str);
+		pickup = get_check(out_val);
+	    }
+
+	    /* Attempt to pick up an object. */
+	    if (pickup) {
+		locn = inven_carry(i_ptr);
+		objdes(tmp_str, &inventory[locn], TRUE);
+		(void)sprintf(out_val, "You have %s. (%c)",
+			      tmp_str, locn + 'a');
+		msg_print(out_val);
+		delete_object(y, x);
+		}
+	    } else if (pickup) {   /* only if was trying to pick it up... -CFT */
+		objdes(tmp_str, i_ptr, TRUE);
+		(void)sprintf(out_val, "You can't carry %s.", tmp_str);
+		msg_print(out_val);
+	    }
+	}
+    }
+    /* OOPS! */
+    else if (i == TV_INVIS_TRAP || i == TV_VIS_TRAP || i == TV_STORE_DOOR) hit_trap(y, x);
+}
+
+
+
+

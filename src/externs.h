@@ -664,7 +664,6 @@ void do_cmd_disarm(void);
 void do_cmd_fire(void);
 void bash(void);
 void delete_unique(void);
-void carry(int, int, int);
 void check_unique(monster_type *);
 
 /* moria3.c */
@@ -683,6 +682,7 @@ void search_on(void);
 void search_off(void);
 void search(int, int, int);
 void rest_off(void);
+void carry(int, int, int);
 
 #ifdef MSDOS
 /* ms_misc.c */
