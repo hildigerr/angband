@@ -583,7 +583,7 @@ void search(int y, int x, int chance)
 {
     register int           i, j;
     register cave_type    *c_ptr;
-    register inven_type   *t_ptr;
+    register inven_type   *i_ptr;
     register struct flags *p_ptr = &py.flags;
     bigvtype               tmp_str, tmp_str2;
 
@@ -602,11 +602,11 @@ void search(int y, int x, int chance)
 		/* Search for hidden objects */
 		if (c_ptr->tptr != 0) {
 
-		    t_ptr = &i_list[c_ptr->tptr];
+		    i_ptr = &i_list[c_ptr->tptr];
 
 		/* Trap on floor? */
-		    if (t_ptr->tval == TV_INVIS_TRAP) {
-		    objdes(tmp_str2, t_ptr, TRUE);
+		    if (i_ptr->tval == TV_INVIS_TRAP) {
+		    objdes(tmp_str2, i_ptr, TRUE);
 		    (void)sprintf(tmp_str, "You have found %s.", tmp_str2);
 		    msg_print(tmp_str);
 		    change_trap(i, j);
@@ -614,7 +614,7 @@ void search(int y, int x, int chance)
 		    }
 
 		/* Secret door?	*/
-		    else if (t_ptr->tval == TV_SECRET_DOOR) {
+		    else if (i_ptr->tval == TV_SECRET_DOOR) {
 		    msg_print("You have found a secret door.");
 
 			change_trap(i, j);
@@ -622,11 +622,11 @@ void search(int y, int x, int chance)
 		    }
 
 		/* Chest is trapped? */
-		    else if (t_ptr->tval == TV_CHEST) {
+		    else if (i_ptr->tval == TV_CHEST) {
 		    /* mask out the treasure bits */
-		    if ((t_ptr->flags & CH_TRAPPED) > 1)
-			    if (!known2_p(t_ptr)) {
-				known2(t_ptr);
+		    if ((i_ptr->flags & CH_TRAPPED) > 1)
+			    if (!known2_p(i_ptr)) {
+				known2(i_ptr);
 				msg_print("You have discovered a trap on the chest!");
 			    } else
 				msg_print("The chest is trapped!");
