@@ -153,9 +153,11 @@ static int look_see(int x, int y, int *transparent)
     /* Assume not transparent */
     *transparent = FALSE;
 
+    /* Paranoia */    
     if (x < 0 || y < 0 || y > x) {
 	(void)sprintf(tmp_str, "Illegal call to look_see(%d, %d)", x, y);
 	msg_print(tmp_str);
+	return FALSE;
     }
 
     /* Default to looking at an object */
