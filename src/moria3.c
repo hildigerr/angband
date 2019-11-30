@@ -155,8 +155,11 @@ static int look_see(int x, int y, int *transparent)
 	msg_print(tmp_str);
     }
 
-    if (x == 0 && y == 0) dstring = "You are on";
-    else dstring = "You see";
+    /* Default to looking at an object */
+    dstring = "You see";
+
+    /* Looking under the player */
+    if (!x && !y) dstring = "You are on";
 
     j = char_col + gl_fxx * x + gl_fxy * y;
     i = char_row + gl_fyx * x + gl_fyy * y;
