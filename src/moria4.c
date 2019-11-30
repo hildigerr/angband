@@ -693,17 +693,25 @@ void carry(int y, int x, int pickup)
 
     else if (i <= TV_MAX_PICK_UP) {
 
-	if (pickup && inven_check_num(i_ptr)) { /* Too many objects? */
+	if (pickup) {
 
-	    if (carry_query_flag) {	/* Okay,  pick it up  */
-
+	    /* Too many objects? */
+	    if (!inven_check_num(i_ptr)) {
+		objdes(tmp_str, i_ptr, TRUE);
+		(void)sprintf(out_val, "You can't carry %s.", tmp_str);
+		msg_print(out_val);
+		return;
+	    }
+	    
+	    /* Okay,  pick it up  */
+	    else if (carry_query_flag) {	
 		objdes(tmp_str, i_ptr, TRUE);
 		(void)sprintf(out_val, "Pick up %s? ", tmp_str);
 		pickup = get_check(out_val);
 	    }
 	    
 	    /* Check to see if it will change the players speed. */
-	    if (pickup && !inven_check_weight(i_ptr)) {
+	    else if (!inven_check_weight(i_ptr)) {
 		objdes(tmp_str, i_ptr, TRUE);
 		(void)sprintf(out_val,
 				  "Exceed your weight limit to pick up %s? ",
@@ -720,10 +728,6 @@ void carry(int y, int x, int pickup)
 		msg_print(out_val);
 		delete_object(y, x);
 		}
-	    } else if (pickup) {   /* only if was trying to pick it up... -CFT */
-		objdes(tmp_str, i_ptr, TRUE);
-		(void)sprintf(out_val, "You can't carry %s.", tmp_str);
-		msg_print(out_val);
 	    }
 	}
     }
