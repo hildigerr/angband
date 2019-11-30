@@ -419,7 +419,7 @@ init_transparent:
  */
 void do_cmd_look()
 {
-    register int        i, abort;
+    register int        i, abort_look;
     int                 dir, dummy;
 
     if (py.flags.blind > 0) {
@@ -432,17 +432,17 @@ void do_cmd_look()
 
     else if (get_alldir("Look which direction? ", &dir)) {
 
-	abort = FALSE;
+	abort_look = FALSE;
 	gl_nseen = 0;
 	gl_rock = 0;
 	gl_noquery = FALSE;	   /* Have to set this up for the look_see */
 
 	if (look_see(0, 0, &dummy)) {
-	    abort = TRUE;
+	    abort_look = TRUE;
 	}
 	else {
 	    do {
-		abort = FALSE;
+		abort_look = FALSE;
 		if (dir == 5) {
 
 		    for (i = 1; i <= 4; i++) {
@@ -451,13 +451,13 @@ void do_cmd_look()
 			gl_fxy = set_fxy[i];
 			gl_fyy = set_fyy[i];
 			if (look_ray(0, 2 * GRADF - 1, 1)) {
-			    abort = TRUE;
+			    abort_look = TRUE;
 			    break;
 			}
 			gl_fxy = (-gl_fxy);
 			gl_fyy = (-gl_fyy);
 			if (look_ray(0, 2 * GRADF, 2)) {
-			    abort = TRUE;
+			    abort_look = TRUE;
 			    break;
 			}
 		    }
@@ -471,12 +471,12 @@ void do_cmd_look()
 		    gl_fxy = set_fxy[i];
 		    gl_fyy = set_fyy[i];
 		    if (look_ray(0, GRADF, 1)) {
-			abort = TRUE;
+			abort_look = TRUE;
 		    }
 		    else {
 			gl_fxy = (-gl_fxy);
 			gl_fyy = (-gl_fyy);
-			abort = look_ray(0, GRADF, 2);
+			abort_look = look_ray(0, GRADF, 2);
 		    }
 		}
 
@@ -487,7 +487,7 @@ void do_cmd_look()
 		    gl_fxy = (-set_fxy[i]);
 		    gl_fyy = (-set_fyy[i]);
 		    if (look_ray(1, 2 * GRADF, GRADF)) {
-			abort = TRUE;
+			abort_look = TRUE;
 		    }
 		    else {
 			i = map_diag2[dir >> 1];
@@ -495,13 +495,13 @@ void do_cmd_look()
 			gl_fyx = set_fyx[i];
 			gl_fxy = set_fxy[i];
 			gl_fyy = set_fyy[i];
-			abort = look_ray(1, 2 * GRADF - 1, GRADF);
+			abort_look = look_ray(1, 2 * GRADF - 1, GRADF);
 		    }
 		}
 	    }
-	    while (abort == FALSE && notice_seams && (++gl_rock < 2));
+	    while (abort_look == FALSE && notice_seams && (++gl_rock < 2));
 
-	    if (abort) {
+	    if (abort_look) {
 		msg_print("--Aborting look--");
 	    }
 	    else {
