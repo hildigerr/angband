@@ -364,6 +364,36 @@ int mmove(int dir, int *y, int *x)
 
 
 
+/*
+ * Given a direction, apply "confusion" to it
+ *
+ * Mode is as in "get_a_dir()" below, using:
+ *   0x01 = Apply total Confusion
+ *   0x02 = ???
+ *   0x04 = ???
+ *   0x08 = ???
+ */
+void confuse_dir (int *dir, int mode)
+{
+    /* Check for confusion */
+    if (py.flags.confused > 0) {
+
+	/* Does the confusion get a chance to activate? */
+	if ((mode & 0x01) {
+
+	    /* Warn the user */
+	    msg_print("You are confused.");
+
+	    /* Pick a random (valid) direction */
+	    do {
+		*dir = randint(9);
+	    } while (dir == 5);
+	}
+    }
+}
+
+
+
 /* Prompts for a direction				-RAK-	 */
 /* Direction memory added, for repeated commands.  -CJS */
 /* This targetting code stolen from Morgul -CFT */
@@ -459,6 +489,9 @@ int get_a_dir(const char *prompt, int *dir, int mode)
 	}
     }
 
+    /* Confuse the direction */
+    confuse_dir(dir, mode);
+
     /* A "valid" direction was entered */    
     return (TRUE);
 }
@@ -478,6 +511,18 @@ int get_dir(const char *prompt, int *dir)
     return FALSE;
 }
 
+
+/*
+ * Like get_dir(), but if "confused", pick randomly
+ */
+
+int get_dir_c(const char *prompt, int *dir)
+{
+    if (get_a_dir(prompt, dir, 0x1)) return (TRUE);
+
+    /* Command aborted */
+    return FALSE;
+}
 
 
 

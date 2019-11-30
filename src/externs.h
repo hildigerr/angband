@@ -679,8 +679,10 @@ void do_cmd_look(void);
 int target_set(void); /* target fns stolen from Morgul -CFT */
 int target_at(int, int); /* target fns stolen from Morgul -CFT */
 void mmove2(int *, int *, int, int, int, int);
+void confuse_dir(int *, int);
 int get_a_dir(const char *, int *, int);
 int get_dir(const char *, int *);
+int get_dir_c(const char *, int *);
 
 #ifdef MSDOS
 /* ms_misc.c */

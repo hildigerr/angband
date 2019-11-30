@@ -29,14 +29,7 @@ aim()
     else if (get_item(&item_val, "Aim which wand?", j, k, 0)) {
 	i_ptr = &inventory[item_val];
 	free_turn_flag = FALSE;
-	if (get_dir(NULL, &dir)) {
-	    if (py.flags.confused > 0) {
-		msg_print("You are confused.");
-		do {
-		    dir = randint(9);
-		}
-		while (dir == 5);
-	    }
+	if (get_dir_c(NULL, &dir)) {
 	    ident = FALSE;
 	    m_ptr = &py.misc;
 	    chance = m_ptr->save + stat_adj(A_INT)

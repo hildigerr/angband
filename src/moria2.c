@@ -2130,14 +2130,8 @@ do_cmd_fire()
 
     if (ok_throw) { /* can only be true if selected item, and it either looked
 		     * okay, or user said yes... */
-	if (get_dir(NULL, &dir)) {
+	if (get_dir_c(NULL, &dir)) {
 	    inven_item_describe(item_val);
-	    if (py.flags.confused > 0) {
-		msg_print("You are confused.");
-		do {
-		    dir = randint(9);
-		}
-		while (dir == 5);
 	    }
 	    max_shots = inventory[item_val].number;
 	    inven_throw(item_val, &throw_obj);
@@ -2410,14 +2404,7 @@ bash()
 #ifdef TARGET
     target_mode = FALSE;
 #endif
-    if (get_dir(NULL, &dir)) {
-	if (py.flags.confused > 0) {
-	    msg_print("You are confused.");
-	    do {
-		dir = randint(9);
-	    }
-	    while (dir == 5);
-	}
+    if (get_dir_c(NULL, &dir)) {
 	(void)mmove(dir, &y, &x);
 	c_ptr = &cave[y][x];
 	if (c_ptr->cptr > 1) {

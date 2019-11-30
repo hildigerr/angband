@@ -2366,61 +2366,31 @@ activate()
 	      case (397):
 		if (inventory[i].name2 == ART_NARTHANC) {
 		    msg_print("Your dagger is covered in fire...");
-		    if (get_dir(NULL, &dir)) {
-			if (py.flags.confused > 0) {
-			    msg_print("You are confused.");
-			    do {
-				dir = randint(9);
-			    } while (dir == 5);
-			}
+		    get_dir_c(NULL, &dir);
 			fire_bolt(GF_FIRE, dir, char_row, char_col, damroll(9, 8));
 			inventory[i].timeout = 5 + randint(10);
 		    }
 		} else if (inventory[i].name2 == ART_NIMTHANC) {
 		    msg_print("Your dagger is covered in frost...");
-		    if (get_dir(NULL, &dir)) {
-			if (py.flags.confused > 0) {
-			    msg_print("You are confused.");
-			    do {
-				dir = randint(9);
-			    } while (dir == 5);
-			}
+		    get_dir_c(NULL, &dir);
 			fire_bolt(GF_COLD, dir, char_row, char_col, damroll(6, 8));
 			inventory[i].timeout = 4 + randint(8);
 		    }
 		} else if (inventory[i].name2 == ART_DETHANC) {
 		    msg_print("Your dagger is covered in sparks...");
-		    if (get_dir(NULL, &dir)) {
-			if (py.flags.confused > 0) {
-			    msg_print("You are confused.");
-			    do {
-				dir = randint(9);
-			    } while (dir == 5);
-			}
+		    get_dir_c(NULL, &dir);
 			fire_bolt(GF_ELEC, dir, char_row, char_col, damroll(4, 8));
 			inventory[i].timeout = 3 + randint(7);
 		    }
 		} else if (inventory[i].name2 == ART_RILIA) {
 		    msg_print("Your dagger throbs deep green...");
-		    if (get_dir(NULL, &dir)) {
-			if (py.flags.confused > 0) {
-			    msg_print("You are confused.");
-			    do {
-				dir = randint(9);
-			    } while (dir == 5);
-			}
+		    get_dir_c(NULL, &dir);
 			fire_ball(GF_POIS, dir, char_row, char_col, 12, 3);
 			inventory[i].timeout = 3 + randint(3);
 		    }
 		} else if (inventory[i].name2 == ART_BELANGIL) {
 		    msg_print("Your dagger is covered in frost...");
-		    if (get_dir(NULL, &dir)) {
-			if (py.flags.confused > 0) {
-			    msg_print("You are confused.");
-			    do {
-				dir = randint(9);
-			    } while (dir == 5);
-			}
+		    get_dir_c(NULL, &dir);
 			fire_ball(GF_COLD, dir, char_row, char_col, 48, 2);
 			inventory[i].timeout = 3 + randint(7);
 		    }
@@ -2438,25 +2408,13 @@ activate()
 	      case (43):
 		if (inventory[i].name2 == ART_RINGIL) {
 		    msg_print("Your sword glows an intense blue...");
-		    if (get_dir(NULL, &dir)) {
-			if (py.flags.confused > 0) {
-			    msg_print("You are confused.");
-			    do {
-				dir = randint(9);
-			    } while (dir == 5);
-			}
+		    get_dir_c(NULL, &dir);
 			fire_ball(GF_COLD, dir, char_row, char_col, 100, 2);
 			inventory[i].timeout = 300;
 		    }
 		} else if (inventory[i].name2 == ART_ANDURIL) {
 		    msg_print("Your sword glows an intense red...");
-		    if (get_dir(NULL, &dir)) {
-			if (py.flags.confused > 0) {
-			    msg_print("You are confused.");
-			    do {
-				dir = randint(9);
-			    } while (dir == 5);
-			}
+		    get_dir_c(NULL, &dir);
 			fire_ball(GF_FIRE, dir, char_row, char_col, 72, 2);
 			inventory[i].timeout = 400;
 		    }
@@ -2465,13 +2423,7 @@ activate()
 	      case (52):
 		if (inventory[i].name2 == ART_FIRESTAR) {
 		    msg_print("Your morningstar rages in fire...");
-		    if (get_dir(NULL, &dir)) {
-			if (py.flags.confused > 0) {
-			    msg_print("You are confused.");
-			    do {
-				dir = randint(9);
-			    } while (dir == 5);
-			}
+		    get_dir_c(NULL, &dir);
 			fire_ball(GF_FIRE, dir, char_row, char_col, 72, 3);
 			inventory[i].timeout = 100;
 		    }
@@ -2486,13 +2438,7 @@ activate()
 	      case (59):
 		if (inventory[i].name2 == ART_THEODEN) {
 		    msg_print("The blade of your axe glows black...");
-		    if (get_dir(NULL, &dir)) {
-			if (py.flags.confused > 0) {
-			    msg_print("You are confused.");
-			    do {
-				dir = randint(9);
-			    } while (dir == 5);
-			}
+		    get_dir_c(NULL, &dir);
 			drain_life(dir, char_row, char_col, 120);
 			inventory[i].timeout = 400;
 		    }
@@ -2501,13 +2447,7 @@ activate()
 	      case (62):
 		if (inventory[i].name2 == ART_TURMIL) {
 		    msg_print("The head of your hammer glows white...");
-		    if (get_dir(NULL, &dir)) {
-			if (py.flags.confused > 0) {
-			    msg_print("You are confused.");
-			    do {
-				dir = randint(9);
-			    } while (dir == 5);
-			}
+		    get_dir_c(NULL, &dir);
 			drain_life(dir, char_row, char_col, 90);
 			inventory[i].timeout = 70;
 		    }
@@ -2594,13 +2534,7 @@ activate()
 	      case (35):
 		if (inventory[i].name2 == ART_ARUNRUTH) {
 		    msg_print("Your sword glows a pale blue...");
-		    if (get_dir(NULL, &dir)) {
-			if (py.flags.confused > 0) {
-			    msg_print("You are confused.");
-			    do {
-				dir = randint(9);
-			    } while (dir == 5);
-			}
+		    get_dir_c(NULL, &dir);
 			fire_bolt(GF_COLD, dir, char_row, char_col, damroll(12, 8));
 			inventory[i].timeout = 500;
 		    }
@@ -2609,25 +2543,13 @@ activate()
 	      case (64):
 		if (inventory[i].name2 == ART_AEGLOS) {
 		    msg_print("Your spear glows a bright white...");
-		    if (get_dir(NULL, &dir)) {
-			if (py.flags.confused > 0) {
-			    msg_print("You are confused.");
-			    do {
-				dir = randint(9);
-			    } while (dir == 5);
-			}
+		    get_dir_c(NULL, &dir);
 			fire_ball(GF_COLD, dir, char_row, char_col, 100, 2);
 			inventory[i].timeout = 500;
 		    }
 		} else if (inventory[i].name2 == ART_OROME) {
 		    msg_print("Your spear pulsates...");
-		    if (get_dir(NULL, &dir)) {
-			if (py.flags.confused > 0) {
-			    msg_print("You are confused.");
-			    do {
-				dir = randint(9);
-			    } while (dir == 5);
-			}
+		    get_dir_c(NULL, &dir);
 			wall_to_mud(dir, char_row, char_col);
 			inventory[i].timeout = 5;
 		    }
@@ -2662,13 +2584,7 @@ activate()
 	      case (65):
 		if (inventory[i].name2 == ART_ULMO) {
 		    msg_print("Your trident glows deep red...");
-		    if (get_dir(NULL, &dir)) {
-			if (py.flags.confused > 0) {
-			    msg_print("You are confused.");
-			    do {
-				dir = randint(9);
-			    } while (dir == 5);
-			}
+		    get_dir_c(NULL, &dir);
 			teleport_monster(dir, char_row, char_col);
 			inventory[i].timeout = 150;
 		    }
@@ -2701,13 +2617,7 @@ activate()
 	      case (50):	   /* Flail */
 		if (inventory[i].name2 == ART_TOTILA) {
 		    msg_print("Your flail glows in scintillating colours...");
-		    if (get_dir(NULL, &dir)) {
-			if (py.flags.confused > 0) {
-			    msg_print("You are confused.");
-			    do {
-				dir = randint(9);
-			    } while (dir == 5);
-			}
+		    get_dir_c(NULL, &dir);
 			confuse_monster(dir, char_row, char_col, 20);
 			inventory[i].timeout = 15;
 		    }
@@ -2716,13 +2626,7 @@ activate()
 	      case (125):	   /* Gloves */
 		if (inventory[i].name2 == ART_CAMMITHRIM) {
 		    msg_print("Your gloves glow extremely brightly...");
-		    if (get_dir(NULL, &dir)) {
-			if (py.flags.confused > 0) {
-			    msg_print("You are confused.");
-			    do {
-				dir = randint(9);
-			    } while (dir == 5);
-			}
+		    get_dir_c(NULL, &dir);
 			fire_bolt(GF_MISSILE, dir, char_row, char_col,
 				  damroll(2, 6));
 			inventory[i].timeout = 2;
@@ -2732,13 +2636,7 @@ activate()
 	      case (126):	   /* Gauntlets */
 		if (inventory[i].name2 == ART_PAURHACH) {
 		    msg_print("Your gauntlets are covered in fire...");
-		    if (get_dir(NULL, &dir)) {
-			if (py.flags.confused > 0) {
-			    msg_print("You are confused.");
-			    do {
-				dir = randint(9);
-			    } while (dir == 5);
-			}
+		    get_dir_c(NULL, &dir);
 			if (randint(4)==1)
 			    line_spell(GF_FIRE, dir, char_row, char_col, damroll(9,8));
 			else
@@ -2747,37 +2645,19 @@ activate()
 		    }
 		} else if (inventory[i].name2 == ART_PAURNIMMEN) {
 		    msg_print("Your gauntlets are covered in frost...");
-		    if (get_dir(NULL, &dir)) {
-			if (py.flags.confused > 0) {
-			    msg_print("You are confused.");
-			    do {
-				dir = randint(9);
-			    } while (dir == 5);
-			}
+		    get_dir_c(NULL, &dir);
 			fire_bolt(GF_COLD, dir, char_row, char_col, damroll(6, 8));
 			inventory[i].timeout = 4 + randint(8);
 		    }
 		} else if (inventory[i].name2 == ART_PAURAEGEN) {
 		    msg_print("Your gauntlets are covered in sparks...");
-		    if (get_dir(NULL, &dir)) {
-			if (py.flags.confused > 0) {
-			    msg_print("You are confused.");
-			    do {
-				dir = randint(9);
-			    } while (dir == 5);
-			}
+		    get_dir_c(NULL, &dir);
 			fire_bolt(GF_ELEC, dir, char_row, char_col, damroll(4, 8));
 			inventory[i].timeout = 3 + randint(7);
 		    }
 		} else if (inventory[i].name2 == ART_PAURNEN) {
 		    msg_print("Your gauntlets look very acidic...");
-		    if (get_dir(NULL, &dir)) {
-			if (py.flags.confused > 0) {
-			    msg_print("You are confused.");
-			    do {
-				dir = randint(9);
-			    } while (dir == 5);
-			}
+		    get_dir_c(NULL, &dir);
 			fire_bolt(GF_ACID, dir, char_row, char_col, damroll(5, 8));
 			inventory[i].timeout = 4 + randint(7);
 		    }
@@ -2786,13 +2666,7 @@ activate()
 	      case (127):
 		if (inventory[i].name2 == ART_FINGOLFIN) {
 		    msg_print("Magical spikes appear on your cesti...");
-		    if (get_dir(NULL, &dir)) {
-			if (py.flags.confused > 0) {
-			    msg_print("You are confused.");
-			    do {
-				dir = randint(9);
-			    } while (dir == 5);
-			}
+		    get_dir_c(NULL, &dir);
 			fire_bolt(GF_ARROW, dir, char_row, char_col, 150);
 			inventory[i].timeout = 88 + randint(88);
 		    }
@@ -2814,39 +2688,21 @@ activate()
 		break;
 	      case (OBJ_SPECIAL - 1):	/* Narya */
 		msg_print("The ring glows deep red...");
-		if (get_dir(NULL, &dir)) {
-		    if (py.flags.confused > 0) {
-			msg_print("You are confused.");
-			do {
-			    dir = randint(9);
-			} while (dir == 5);
-		    }
+		if (get_dir_c(NULL, &dir)) {
 		    fire_ball(GF_FIRE, dir, char_row, char_col, 120, 3);
 		    inventory[i].timeout = 222 + randint(222);
 		}
 		break;
 	      case (OBJ_SPECIAL): /* Nenya */
 		msg_print("The ring glows bright white...");
-		if (get_dir(NULL, &dir)) {
-		    if (py.flags.confused > 0) {
-			msg_print("You are confused.");
-			do {
-			    dir = randint(9);
-			} while (dir == 5);
-		    }
+		if (get_dir_c(NULL, &dir)) {
 		    fire_ball(GF_COLD, dir, char_row, char_col, 200, 3);
 		    inventory[i].timeout = 222 + randint(333);
 		}
 		break;
 	      case (OBJ_SPECIAL + 1):	/* Vilya */
 		msg_print("The ring glows deep blue...");
-		if (get_dir(NULL, &dir)) {
-		    if (py.flags.confused > 0) {
-			msg_print("You are confused.");
-			do {
-			    dir = randint(9);
-			} while (dir == 5);
-		    }
+		if (get_dir_c(NULL, &dir)) {
 		    fire_ball(GF_ELEC, dir, char_row, char_col, 250, 3);
 		    inventory[i].timeout = 222 + randint(444);
 		}
@@ -2888,24 +2744,12 @@ activate()
 		  case 8:
 		  case 9:
 		  case 10:
-		    if (get_dir(NULL, &dir)) {
-			if (py.flags.confused > 0) {
-			    msg_print("You are confused.");
-			    do {
-				dir = randint(9);
-			    } while (dir == 5);
-			}
+		    get_dir_c(NULL, &dir);
 			fire_ball(GF_MANA, dir, char_row, char_col, 300, 3);
 		    }
 		    break;
 		  default:
-		    if (get_dir(NULL, &dir)) {
-			if (py.flags.confused > 0) {
-			    msg_print("You are confused.");
-			    do {
-				dir = randint(9);
-			    } while (dir == 5);
-			}
+		    get_dir_c(NULL, &dir);
 			fire_bolt(GF_MANA, dir, char_row, char_col, 250);
 		    }
 		}
@@ -2913,65 +2757,35 @@ activate()
 		break;
 	      case (389):	   /* Blue */
 		msg_print("You breathe lightning...");
-		if (get_dir(NULL, &dir)) {
-		    if (py.flags.confused > 0) {
-			msg_print("You are confused.");
-			do {
-			    dir = randint(9);
-			} while (dir == 5);
-		    }
+		if (get_dir_c(NULL, &dir)) {
 		    fire_ball(GF_ELEC, dir, char_row, char_col, 100, 2);
 		    inventory[i].timeout = 444 + randint(444);
 		}
 		break;
 	      case (390):	   /* White */
 		msg_print("You breathe frost...");
-		if (get_dir(NULL, &dir)) {
-		    if (py.flags.confused > 0) {
-			msg_print("You are confused.");
-			do {
-			    dir = randint(9);
-			} while (dir == 5);
-		    }
+		if (get_dir_c(NULL, &dir)) {
 		    fire_ball(GF_COLD, dir, char_row, char_col, 110, 2);
 		    inventory[i].timeout = 444 + randint(444);
 		}
 		break;
 	      case (391):	   /* Black */
 		msg_print("You breathe acid...");
-		if (get_dir(NULL, &dir)) {
-		    if (py.flags.confused > 0) {
-			msg_print("You are confused.");
-			do {
-			    dir = randint(9);
-			} while (dir == 5);
-		    }
+		if (get_dir_c(NULL, &dir)) {
 		    fire_ball(GF_ACID, dir, char_row, char_col, 130, 2);
 		    inventory[i].timeout = 444 + randint(444);
 		}
 		break;
 	      case (392):	   /* Gas */
 		msg_print("You breathe poison gas...");
-		if (get_dir(NULL, &dir)) {
-		    if (py.flags.confused > 0) {
-			msg_print("You are confused.");
-			do {
-			    dir = randint(9);
-			} while (dir == 5);
-		    }
+		if (get_dir_c(NULL, &dir)) {
 		    fire_ball(GF_POIS, dir, char_row, char_col, 150, 2);
 		    inventory[i].timeout = 444 + randint(444);
 		}
 		break;
 	      case (393):	   /* Fire */
 		msg_print("You breathe fire...");
-		if (get_dir(NULL, &dir)) {
-		    if (py.flags.confused > 0) {
-			msg_print("You are confused.");
-			do {
-			    dir = randint(9);
-			} while (dir == 5);
-		    }
+		if (get_dir_c(NULL, &dir)) {
 		    fire_ball(GF_FIRE, dir, char_row, char_col, 200, 2);
 		    inventory[i].timeout = 444 + randint(444);
 		}
@@ -2982,13 +2796,7 @@ activate()
 		    starball(char_row, char_col);
 		    inventory[i].timeout = 1000;
 		} else {
-		    if (get_dir(NULL, &dir)) {
-			if (py.flags.confused > 0) {
-			    msg_print("You are confused.");
-			    do {
-				dir = randint(9);
-			    } while (dir == 5);
-			}
+		    get_dir_c(NULL, &dir);
 			choice = randint(5);
 			sprintf(tmp2, "You breathe %s...",
 				((choice == 1) ? "lightning" :
@@ -3007,38 +2815,20 @@ activate()
 		break;
 	      case (408):	   /* Bronze */
 		msg_print("You breathe confusion...");
-		if (get_dir(NULL, &dir)) {
-		    if (py.flags.confused > 0) {
-			msg_print("You are confused.");
-			do {
-			    dir = randint(9);
-			} while (dir == 5);
-		    }
+		if (get_dir_c(NULL, &dir)) {
 		    fire_ball(GF_CONFUSION, dir, char_row, char_col, 120, 2);
 		    inventory[i].timeout = 444 + randint(444);
 		}
 		break;
 	      case (409):	   /* Gold */
 		msg_print("You breathe sound...");
-		if (get_dir(NULL, &dir)) {
-		    if (py.flags.confused > 0) {
-			msg_print("You are confused.");
-			do {
-			    dir = randint(9);
-			} while (dir == 5);
-		    }
+		if (get_dir_c(NULL, &dir)) {
 		    fire_ball(GF_SOUND, dir, char_row, char_col, 130, 2);
 		    inventory[i].timeout = 444 + randint(444);
 		}
 		break;
 	      case (415):	   /* Chaos */
-		if (get_dir(NULL, &dir)) {
-		    if (py.flags.confused > 0) {
-			msg_print("You are confused.");
-			do {
-			    dir = randint(9);
-			} while (dir == 5);
-		    }
+		if (get_dir_c(NULL, &dir)) {
 		    choice = randint(2);
 		    sprintf(tmp2, "You breathe %s...",
 			    ((choice == 1 ? "chaos" : "disenchantment")));
@@ -3049,13 +2839,7 @@ activate()
 		}
 		break;
 	      case (416):	   /* Law */
-		if (get_dir(NULL, &dir)) {
-		    if (py.flags.confused > 0) {
-			msg_print("You are confused.");
-			do {
-			    dir = randint(9);
-			} while (dir == 5);
-		    }
+		if (get_dir_c(NULL, &dir)) {
 		    choice = randint(2);
 		    sprintf(tmp2, "You breathe %s...",
 			    ((choice == 1 ? "sound" : "shards")));
@@ -3066,13 +2850,7 @@ activate()
 		}
 		break;
 	      case (417):	   /* Balance */
-		if (get_dir(NULL, &dir)) {
-		    if (py.flags.confused > 0) {
-			msg_print("You are confused.");
-			do {
-			    dir = randint(9);
-			} while (dir == 5);
-		    }
+		if (get_dir_c(NULL, &dir)) {
 		    choice = randint(4);
 		    sprintf(tmp2, "You breathe %s...",
 			    ((choice == 1) ? "chaos" :
@@ -3087,13 +2865,7 @@ activate()
 		}
 		break;
 	      case (418):	   /* Shining */
-		if (get_dir(NULL, &dir)) {
-		    if (py.flags.confused > 0) {
-			msg_print("You are confused.");
-			do {
-			    dir = randint(9);
-			} while (dir == 5);
-		    }
+		if (get_dir_c(NULL, &dir)) {
 		    choice = randint(2);
 		    sprintf(tmp2, "You breathe %s...",
 			    ((choice == 1 ? "light" : "darkness")));
@@ -3117,13 +2889,7 @@ activate()
 		    inventory[i].timeout = 400;
 		} else {
 		    msg_print("You breathe the elements...");
-		    if (get_dir(NULL, &dir)) {
-			if (py.flags.confused > 0) {
-			    msg_print("You are confused.");
-			    do {
-				dir = randint(9);
-			    } while (dir == 5);
-			}
+		    get_dir_c(NULL, &dir);
 			fire_ball(GF_MISSILE, dir, char_row, char_col, 300, 2);
 			inventory[i].timeout = 300 + randint(300);
 		    }

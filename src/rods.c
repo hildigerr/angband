@@ -11,23 +11,6 @@
 #include "angband.h"
 
 
-static int direction(int *);
-
-static int 
-direction(dir)
-int *dir;
-{
-    if (get_dir(NULL, dir)) {
-	if (py.flags.confused > 0) {
-	    msg_print("You are confused.");
-	    do {
-		*dir = randint(9);
-	    } while (*dir == 5);
-	}
-	return 1;
-    }
-    return 0;
-}
 
 
 /* Rods for the slaughtering    			 */
@@ -67,7 +50,7 @@ activate_rod()
 	    l = char_col;
 	    switch (i) {
 	      case RD_LT:
-		if (!direction(&dir))
+		if (!get_dir_c(NULL, &dir))
 		    goto no_charge;
 		msg_print("A line of blue shimmering light appears.");
 		lite_line(dir, char_row, char_col);
@@ -80,7 +63,7 @@ activate_rod()
 		i_ptr->timeout = 30;
 		break;
 	      case RD_AC_BLTS:	   /* Acid , New */
-		if (!direction(&dir))
+		if (!get_dir_c(NULL,&dir))
 		    goto no_charge;
 		if (randint(10)==1)
 		    line_spell(GF_ACID,dir,k,l,damroll(6,8));
@@ -90,7 +73,7 @@ activate_rod()
 		i_ptr->timeout = 12;
 		break;
 	      case RD_LT_BLTS:	   /* Lightning */
-		if (!direction(&dir))
+		if (!get_dir_c(NULL, &dir))
 		    goto no_charge;
 		if (randint(12)==1)
 		    line_spell(GF_ELEC, dir, k, l, damroll(3, 8));
@@ -100,7 +83,7 @@ activate_rod()
 		i_ptr->timeout = 11;
 		break;
 	      case RD_FT_BLTS:	   /* Frost */
-		if (!direction(&dir))
+		if (!get_dir_c(NULL, &dir))
 		    goto no_charge;
 		if (randint(10)==1)
 		    line_spell(GF_COLD, dir, k, l, damroll(5, 8));
@@ -110,7 +93,7 @@ activate_rod()
 		i_ptr->timeout = 13;
 		break;
 	      case RD_FR_BLTS:	   /* Fire */
-		if (!direction(&dir))
+		if (!get_dir_c(NULL, &dir))
 		    goto no_charge;
 		if (randint(8)==1)
 		    line_spell(GF_FIRE, dir, k, l, damroll(8, 8));
@@ -120,64 +103,64 @@ activate_rod()
 		i_ptr->timeout = 15;
 		break;
 	      case RD_POLY:
-		if (!direction(&dir))
+		if (!get_dir_c(NULL, &dir))
 		    goto no_charge;
 		ident = poly_monster(dir, k, l);
 		i_ptr->timeout = 25;
 		break;
 	      case RD_SLOW_MN:
-		if (!direction(&dir))
+		if (!get_dir_c(NULL, &dir))
 		    goto no_charge;
 		ident = speed_monster(dir, k, l, -1);
 		i_ptr->timeout = 20;
 		break;
 	      case RD_SLEE_MN:
-		if (!direction(&dir))
+		if (!get_dir_c(NULL, &dir))
 		    goto no_charge;
 		ident = sleep_monster(dir, k, l);
 		i_ptr->timeout = 18;
 		break;
 	      case RD_DRAIN:
-		if (!direction(&dir))
+		if (!get_dir_c(NULL, &dir))
 		    goto no_charge;
 		ident = drain_life(dir, k, l, 75);
 		i_ptr->timeout = 23;
 		break;
 	      case RD_TELE:
-		if (!direction(&dir))
+		if (!get_dir_c(NULL, &dir))
 		    goto no_charge;
 		ident = teleport_monster(dir, k, l);
 		i_ptr->timeout = 25;
 		break;
 	      case RD_DISARM:
-		if (!direction(&dir))
+		if (!get_dir_c(NULL, &dir))
 		    goto no_charge;
 		ident = disarm_all(dir, k, l);
 		i_ptr->timeout = 30;
 		break;
 	      case RD_LT_BALL:
-		if (!direction(&dir))
+		if (!get_dir_c(NULL, &dir))
 		    goto no_charge;
 		fire_ball(GF_ELEC, dir, k, l, 32, 2);
 		ident = TRUE;
 		i_ptr->timeout = 23;
 		break;
 	      case RD_CD_BALL:
-		if (!direction(&dir))
+		if (!get_dir_c(NULL, &dir))
 		    goto no_charge;
 		fire_ball(GF_COLD, dir, k, l, 48, 2);
 		ident = TRUE;
 		i_ptr->timeout = 25;
 		break;
 	      case RD_FR_BALL:
-		if (!direction(&dir))
+		if (!get_dir_c(NULL, &dir))
 		    goto no_charge;
 		fire_ball(GF_FIRE, dir, k, l, 72, 2);
 		ident = TRUE;
 		i_ptr->timeout = 30;
 		break;
 	      case RD_AC_BALL:
-		if (!direction(&dir))
+		if (!get_dir_c(NULL, &dir))
 		    goto no_charge;
 		fire_ball(GF_ACID, dir, k, l, 60, 2);
 		ident = TRUE;
@@ -278,7 +261,7 @@ activate_rod()
 		break;
 #if 0
 	      case RD_MK_WALL:	   /* JLS */
-		if (!direction(&dir))
+		if (!get_dir_c(NULL, &dir))
 		    goto no_charge;
 		ident = build_wall(dir, k, l);
 		i_ptr->timeout = 999;	/* don't want people to abuse this
