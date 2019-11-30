@@ -166,24 +166,30 @@ static int look_see(int x, int y, int *transparent)
     /* Looking under the player */
     if (!x && !y) dstring = "You are on";
 
+    /* Something */
     j = char_col + gl_fxx * x + gl_fxy * y;
     i = char_row + gl_fyx * x + gl_fyy * y;
     x = j;
     y = i;
 
+    /* Off screen, stop looking, nothing to see */
     if (!panel_contains(y, x)) {
 	return FALSE;
     }
 
+    /* Get the cave */
     c_ptr = &cave[y][x];
 
+    /* Floor grids are transparent */
     *transparent = c_ptr->fval <= MAX_OPEN_SPACE;
 
-    /* Don't look at a direct line of sight. A hack. */
+    /* Hack -- Don't look at a direct line of sight. */
     if (gl_noquery) return FALSE;
 
+    /* Start the description */        
     out_val[0] = 0;
 
+    /* Examine visible monsters */
     if (gl_rock == 0 && c_ptr->cptr > 1 && m_list[c_ptr->cptr].ml) {
 
 	j = m_list[c_ptr->cptr].mptr;
@@ -215,13 +221,16 @@ static int look_see(int x, int y, int *transparent)
 	}
     }
 
+    /* Check for illumination */
     if (c_ptr->tl || c_ptr->pl || c_ptr->fm) {
 
+	/* Is there an object there? */
 	if (c_ptr->tptr != 0) {
 
 	    if (i_list[c_ptr->tptr].tval == TV_SECRET_DOOR)
 		goto granite;
 
+	    /* No rock, yes visible object */
 	    if (gl_rock == 0 && i_list[c_ptr->tptr].tval != TV_INVIS_TRAP) {
 		objdes(tmp_str, &i_list[c_ptr->tptr], TRUE);
 		(void)sprintf(out_val, "%s %s.  ---pause---", dstring, tmp_str);
@@ -232,6 +241,7 @@ static int look_see(int x, int y, int *transparent)
 	    }
 	}
 
+	/* Examine rocks. */
 	if ((gl_rock || out_val[0]) && c_ptr->fval >= MIN_CLOSED_SPACE) {
 	    switch (c_ptr->fval) {
 	      case BOUNDARY_WALL:
