@@ -599,37 +599,39 @@ void search(int y, int x, int chance)
 
 		c_ptr = &cave[i][j];
 
-		/* Search for hidden objects */
-		if (c_ptr->tptr != 0) {
+		/* Nothing there */
+		if (c_ptr->tptr == 0) {
+		    /* Nothing */
+		}
 
-		    i_ptr = &i_list[c_ptr->tptr];
+		i_ptr = &i_list[c_ptr->tptr];
 
 		/* Trap on floor? */
-		    if (i_ptr->tval == TV_INVIS_TRAP) {
+		else if (i_ptr->tval == TV_INVIS_TRAP) {
 		    objdes(tmp_str2, i_ptr, TRUE);
 		    (void)sprintf(tmp_str, "You have found %s.", tmp_str2);
 		    msg_print(tmp_str);
 		    change_trap(i, j);
 		    end_find();
-		    }
+		}
 
 		/* Secret door?	*/
-		    else if (i_ptr->tval == TV_SECRET_DOOR) {
+		else if (i_ptr->tval == TV_SECRET_DOOR) {
 		    msg_print("You have found a secret door.");
 
 			change_trap(i, j);
 			end_find();
-		    }
+		}
 
 		/* Chest is trapped? */
-		    else if (i_ptr->tval == TV_CHEST) {
+		else if (i_ptr->tval == TV_CHEST) {
 		    /* mask out the treasure bits */
-		    if ((i_ptr->flags & CH_TRAPPED) > 1)
-			    if (!known2_p(i_ptr)) {
-				known2(i_ptr);
-				msg_print("You have discovered a trap on the chest!");
-			    } else
-				msg_print("The chest is trapped!");
+		    if ((i_ptr->flags & CH_TRAPPED) > 1) {
+			if (!known2_p(i_ptr)) {
+			known2(i_ptr);
+			msg_print("You have discovered a trap on the chest!");
+			} else
+			msg_print("The chest is trapped!");
 		    }
 		}
 	    }
