@@ -307,9 +307,9 @@ static int look_ray(int y, int from, int to)
     int                 transparent;
 
 /*
- * from is the larger angle of the ray, since
- * we scan towards the center line. If from is smaller,
- * then the ray does not exist. 
+ * from is the larger angle of the ray (larger than "to") since
+ * we scan towards the center line.  If "from" is smaller than "to",
+ * the ray does not exist
  */
 
     if (from <= to || y > MAX_SIGHT) return FALSE;
@@ -334,7 +334,7 @@ static int look_ray(int y, int from, int to)
     if (max_x < x) return FALSE;
 
 /*
- * gl_noquery is a HACK to prevent doubling up on direct lines of sight. If
+ * Hack -- gl_noquery prevents doubling up on direct lines of sight. If
  * 'to' is greater than 1, we do not really look at stuff along the
  * direct line of sight, but we do have to see what is opaque for the
  * purposes of obscuring other objects. 
@@ -355,17 +355,21 @@ static int look_ray(int y, int from, int to)
 	gl_noquery = FALSE;
     }
 
+    /* Hack */    
     if (transparent) goto init_transparent;
 
+    /* Go until done */
     for (;;) {
 
-	/* Look down the window we've found. */
+	/* Look down the window we've found, allow abort */
 	if (look_ray(y + 1, from, (int)((2 * y + 1) * (long)GRADF / x))) {
 	    return TRUE;
 	}
 
 	/* Find the start of next window. */
 	do {
+
+	    /* All done (?) */
 	    if (x == max_x) return FALSE;
 
 	    /* See if this seals off the scan. (If y is zero, then it will.) */
