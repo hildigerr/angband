@@ -591,10 +591,11 @@ void search(int y, int x, int chance)
     if (p_ptr->confused > 0) chance = chance / 10;
     if (p_ptr->image > 0) chance = chance / 10;
 
-    /* always in_bounds here */
+    /* Search the nearby grids, which are always in bounds */
     for (i = (y - 1); i <= (y + 1); i++) {
 	for (j = (x - 1); j <= (x + 1); j++) {
 
+	    /* Sometimes, notice things */
 	    if (randint(100) < chance) {
 
 		c_ptr = &cave[i][j];
@@ -606,7 +607,7 @@ void search(int y, int x, int chance)
 
 		i_ptr = &i_list[c_ptr->tptr];
 
-		/* Trap on floor? */
+		/* Invisible trap? */
 		else if (i_ptr->tval == TV_INVIS_TRAP) {
 		    objdes(tmp_str2, i_ptr, TRUE);
 		    (void)sprintf(tmp_str, "You have found %s.", tmp_str2);
@@ -623,9 +624,8 @@ void search(int y, int x, int chance)
 			end_find();
 		}
 
-		/* Chest is trapped? */
+		/* Chest?  Trapped?  Known? */
 		else if (i_ptr->tval == TV_CHEST) {
-		    /* mask out the treasure bits */
 		    if ((i_ptr->flags & CH_TRAPPED) > 1) {
 			if (!known2_p(i_ptr)) {
 			known2(i_ptr);
