@@ -422,14 +422,17 @@ void do_cmd_look()
     register int        i, abort_look;
     int                 dir, dummy;
 
+    /* Blind */
     if (py.flags.blind > 0) {
 	msg_print("You can't see a damn thing!");
     }
 
+    /* Hallucinating */
     else if (py.flags.image > 0) {
 	msg_print("You can't believe what you are seeing! It's like a dream!");
     }
 
+    /* Get a direction (or "5"), ignoring target and confusion */
     else if (get_alldir("Look which direction? ", &dir)) {
 
 	abort_look = FALSE;
@@ -443,6 +446,8 @@ void do_cmd_look()
 	else {
 	    do {
 		abort_look = FALSE;
+
+		/* Look at everything */
 		if (dir == 5) {
 
 		    for (i = 1; i <= 4; i++) {
@@ -480,6 +485,7 @@ void do_cmd_look()
 		    }
 		}
 
+		/* Diagonals */
 		else {
 		    i = map_diag1[dir >> 1];
 		    gl_fxx = set_fxx[i];
