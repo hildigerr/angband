@@ -675,7 +675,7 @@ void carry(int y, int x, int pickup)
     i_ptr = &i_list[c_ptr->tptr];
     i = i_ptr->tval;
 
-    if (i <= TV_MAX_PICK_UP) {
+    if (i == TV_INVIS_TRAP || i == TV_VIS_TRAP || i == TV_STORE_DOOR) { hit_trap(y, x); return; }
 
 	end_find();
 
@@ -691,7 +691,7 @@ void carry(int y, int x, int pickup)
 	msg_print(out_val);
     }
 
-    else {
+    else if (i <= TV_MAX_PICK_UP) {
 
 	if (pickup && inven_check_num(i_ptr)) { /* Too many objects? */
 
@@ -727,8 +727,6 @@ void carry(int y, int x, int pickup)
 	    }
 	}
     }
-    /* OOPS! */
-    else if (i == TV_INVIS_TRAP || i == TV_VIS_TRAP || i == TV_STORE_DOOR) hit_trap(y, x);
 }
 
 
