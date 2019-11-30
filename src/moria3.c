@@ -91,11 +91,12 @@ static const char *look_mon_desc(int mnum)
     monster_type *m_ptr = &m_list[mnum];
     monster_race *r_ptr = &c_list[m_ptr->mptr];
 
-    byte          living;
+    bool          living = TRUE;
     s32b           thp, tmax, perc;
 
-    living = !((r_ptr->cdefense & (UNDEAD|DEMON)) ||
-	    (strchr("EgvX", r_ptr->cchar)));
+    if (r_ptr->cdefense & UNDEAD) living = FALSE;
+    if (r_ptr->cdefense & DEMON) living = FALSE;    
+    if (strchr("EgvX", r_ptr->cchar)) living = FALSE;    
 
     if (m_ptr->maxhp == 0) {	   /* then we're just going to fix it! -CFT */
 	if ((r_ptr->cdefense & MAX_HP) )
