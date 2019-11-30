@@ -86,6 +86,9 @@ static int map_diag2[] = {2, 1, 0, 4, 3};
 
 
 
+/*
+ * Look at a monster
+ */
 static const char *look_mon_desc(int mnum)
 {
     monster_type *m_ptr = &m_list[mnum];
@@ -94,6 +97,8 @@ static const char *look_mon_desc(int mnum)
     bool          living = TRUE;
     int           perc;
 
+
+    /* Determine if the monster is "living" (vs "undead") */
     if (r_ptr->cdefense & UNDEAD) living = FALSE;
     if (r_ptr->cdefense & DEMON) living = FALSE;    
     if (strchr("EgvX", r_ptr->cchar)) living = FALSE;    
@@ -105,11 +110,13 @@ static const char *look_mon_desc(int mnum)
 	    m_ptr->maxhp = pdamroll(r_ptr->hd);
     }
 
-
+    /* Healthy monsters */
     if (m_ptr->hp >= m_ptr->maxhp) {
 
+	/* Paranoia */
 	m_ptr->hp = m_ptr->maxhp;
 
+	/* No damage */
 	return (living ? "unhurt" : "undamaged");
     }
 
