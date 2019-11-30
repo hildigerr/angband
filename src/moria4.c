@@ -559,15 +559,15 @@ void search_off(void)
  *
  * The second arg indicates a light change.
  */
-void disturb(int s, int l)
+void disturb(int stop_search, int light_change)
 {
     command_rep = 0;
 
-    if (s && (py.flags.status & PY_SEARCH)) search_off();
+    if (stop_search && (py.flags.status & PY_SEARCH)) search_off();
 
     if (py.flags.rest != 0) rest_off();
 
-    if (l || find_flag) {
+    if (light_change || find_flag) {
 	find_flag = FALSE;
 	check_view();
     }
