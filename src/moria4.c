@@ -679,7 +679,7 @@ void carry(int y, int x, int pickup)
 
 	end_find();
 
-    /* There's GOLD in them thar hills! */
+    /* Pick up gold */
     if (i_ptr->tval == TV_GOLD) {
 	py.misc.au += i_ptr->cost;
 	objdes(tmp_str, i_ptr, TRUE);
@@ -691,8 +691,10 @@ void carry(int y, int x, int pickup)
 	msg_print(out_val);
     }
 
+    /* Can it be picked up? */
     else if (i <= TV_MAX_PICK_UP) {
 
+	/* Pick up the item */
 	if (pickup) {
 
 	    /* Too many objects? */
@@ -703,7 +705,7 @@ void carry(int y, int x, int pickup)
 		return;
 	    }
 	    
-	    /* Okay,  pick it up  */
+	    /* Hack -- query every item */
 	    else if (carry_query_flag) {	
 		objdes(tmp_str, i_ptr, TRUE);
 		(void)sprintf(out_val, "Pick up %s? ", tmp_str);
