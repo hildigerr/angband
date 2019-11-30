@@ -105,9 +105,11 @@ static const char *look_mon_desc(int mnum)
 	    m_ptr->maxhp = pdamroll(r_ptr->hd);
     }
 
-    if (m_ptr->hp > m_ptr->maxhp) m_ptr->hp = m_ptr->maxhp;
 
-    if ((m_ptr->maxhp == 0) || (m_ptr->hp >= m_ptr->maxhp)) {	/* shouldn't ever need > -CFT */
+    if (m_ptr->hp >= m_ptr->maxhp) {
+
+	m_ptr->hp = m_ptr->maxhp;
+
 	return (living ? "unhurt" : "undamaged");
     }
 
