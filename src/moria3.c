@@ -147,7 +147,7 @@ static int look_see(int x, int y, int *transparent)
     const char         *dstring,*string;
     char               query = 'a';
     register cave_type *c_ptr;
-    register int        j;
+    register int        i, j;
     bigvtype            out_val, tmp_str;
 
     if (x < 0 || y < 0 || y > x) {
@@ -159,8 +159,9 @@ static int look_see(int x, int y, int *transparent)
     else dstring = "You see";
 
     j = char_col + gl_fxx * x + gl_fxy * y;
-    y = char_row + gl_fyx * x + gl_fyy * y;
+    i = char_row + gl_fyx * x + gl_fyy * y;
     x = j;
+    y = i;
 
     if (!panel_contains(y, x)) {
 	*transparent = FALSE;
