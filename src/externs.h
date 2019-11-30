@@ -637,15 +637,10 @@ int get_item(int *, const char *, int, int, int ());
 void move_rec(int, int, int, int);
 void light_room(int, int);
 void move_light(int, int, int, int);
-void disturb(int, int);
-void search_on(void);
-void search_off(void);
 void rest(void);
-void rest_off(void);
 int test_hit(int, int, int, int, int);
 void take_hit(int, const char *);
 void change_trap(int, int);
-void search(int, int, int);
 void find_init(int);
 void find_run(void);
 void end_find(void);
@@ -683,6 +678,11 @@ void confuse_dir(int *, int);
 int get_a_dir(const char *, int *, int);
 int get_dir(const char *, int *);
 int get_dir_c(const char *, int *);
+void disturb(int, int);
+void search_on(void);
+void search_off(void);
+void search(int, int, int);
+void rest_off(void);
 
 #ifdef MSDOS
 /* ms_misc.c */

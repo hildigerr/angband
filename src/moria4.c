@@ -527,3 +527,131 @@ int get_dir_c(const char *prompt, int *dir)
 
 
 
+
+/*
+ * Search Mode enhancement				-RAK-
+ */
+void search_on()
+{
+    py.flags.speed += 1;
+    py.flags.status |= PY_SPEED;
+    py.flags.status |= PY_SEARCH;
+    prt_state();
+    prt_speed();
+    py.flags.food_digested++;
+}
+
+void search_off(void)
+{
+    check_view();
+    py.flags.speed -= 1;
+    py.flags.status |= PY_SPEED;
+    py.flags.status &= ~PY_SEARCH;
+    prt_state();
+    prt_speed();
+    py.flags.food_digested--;
+}
+
+
+/*
+ * Something happens to disturb the player.		-CJS-
+ * The first arg indicates a major disturbance, which affects search.
+ *
+ * The second arg indicates a light change.
+ */
+void disturb(int s, int l)
+{
+    command_rep = 0;
+
+    if (s && (py.flags.status & PY_SEARCH)) search_off();
+
+    if (py.flags.rest != 0) rest_off();
+
+    if (l || find_flag) {
+	find_flag = FALSE;
+	check_view();
+    }
+
+    flush();
+}
+
+
+/*
+ * Searches for hidden things.			-RAK-	
+ */
+void search(int y, int x, int chance)
+{
+    register int           i, j;
+    register cave_type    *c_ptr;
+    register inven_type   *t_ptr;
+    register struct flags *p_ptr = &py.flags;
+    bigvtype               tmp_str, tmp_str2;
+
+    if ((p_ptr->blind > 0) || no_lite()) chance = chance / 10;
+    if (p_ptr->confused > 0) chance = chance / 10;
+    if (p_ptr->image > 0) chance = chance / 10;
+
+    /* always in_bounds here */
+    for (i = (y - 1); i <= (y + 1); i++) {
+	for (j = (x - 1); j <= (x + 1); j++) {
+
+	    if (randint(100) < chance) {
+
+		c_ptr = &cave[i][j];
+
+		/* Search for hidden objects */
+		if (c_ptr->tptr != 0) {
+
+		    t_ptr = &i_list[c_ptr->tptr];
+
+		/* Trap on floor? */
+		    if (t_ptr->tval == TV_INVIS_TRAP) {
+		    objdes(tmp_str2, t_ptr, TRUE);
+		    (void)sprintf(tmp_str, "You have found %s.", tmp_str2);
+		    msg_print(tmp_str);
+		    change_trap(i, j);
+		    end_find();
+		    }
+
+		/* Secret door?	*/
+		    else if (t_ptr->tval == TV_SECRET_DOOR) {
+		    msg_print("You have found a secret door.");
+
+			change_trap(i, j);
+			end_find();
+		    }
+
+		/* Chest is trapped? */
+		    else if (t_ptr->tval == TV_CHEST) {
+		    /* mask out the treasure bits */
+		    if ((t_ptr->flags & CH_TRAPPED) > 1)
+			    if (!known2_p(t_ptr)) {
+				known2(t_ptr);
+				msg_print("You have discovered a trap on the chest!");
+			    } else
+				msg_print("The chest is trapped!");
+		    }
+		}
+	    }
+	}
+    }
+}
+
+
+
+void rest_off()
+{
+    py.flags.rest = 0;
+
+    py.flags.status &= ~PY_REST;
+    prt_state();
+
+    /* flush last message, or delete "press any key" message */
+    msg_print(NULL);
+
+    py.flags.food_digested++;
+}
+
+
+
+
