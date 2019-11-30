@@ -92,7 +92,7 @@ static const char *look_mon_desc(int mnum)
     monster_race *r_ptr = &c_list[m_ptr->mptr];
 
     bool          living = TRUE;
-    s32b           thp, tmax, perc;
+    int           perc;
 
     if (r_ptr->cdefense & UNDEAD) living = FALSE;
     if (r_ptr->cdefense & DEMON) living = FALSE;    
@@ -111,9 +111,9 @@ static const char *look_mon_desc(int mnum)
 	return (living ? "unhurt" : "undamaged");
     }
 
-    thp = (s32b) m_ptr->hp;
-    tmax = (s32b) m_ptr->maxhp;
-    perc = (s32b) (thp * 100L) / tmax;
+
+    /* Notice the "long arithmetic" */
+    perc = (100L * m_ptr->hp) / m_ptr->maxhp;
 
     if (perc > 60) {
 	return (living ? "somewhat wounded" : "somewhat damaged");
