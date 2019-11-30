@@ -150,6 +150,9 @@ static int look_see(int x, int y, int *transparent)
     register int        i, j;
     bigvtype            out_val, tmp_str;
 
+    /* Assume not transparent */
+    *transparent = FALSE;
+
     if (x < 0 || y < 0 || y > x) {
 	(void)sprintf(tmp_str, "Illegal call to look_see(%d, %d)", x, y);
 	msg_print(tmp_str);
@@ -167,7 +170,6 @@ static int look_see(int x, int y, int *transparent)
     y = i;
 
     if (!panel_contains(y, x)) {
-	*transparent = FALSE;
 	return FALSE;
     }
 
