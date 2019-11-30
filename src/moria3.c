@@ -88,29 +88,30 @@ static int map_diag2[] = {2, 1, 0, 4, 3};
 
 static const char *look_mon_desc(int mnum)
 {
-    monster_type *m = &m_list[mnum];
+    monster_type *m_ptr = &m_list[mnum];
+    monster_race *r_ptr = &c_list[m_ptr->mptr];
 
     byte          living;
     s32b           thp, tmax, perc;
 
-    living = !((c_list[m->mptr].cdefense & (UNDEAD|DEMON)) ||
-	    (strchr("EgvX", c_list[m->mptr].cchar)));
+    living = !((r_ptr->cdefense & (UNDEAD|DEMON)) ||
+	    (strchr("EgvX", r_ptr->cchar)));
 
-    if (m->maxhp == 0) {	   /* then we're just going to fix it! -CFT */
-	if ((c_list[m->mptr].cdefense & MAX_HP) )
-	    m->maxhp = max_hp(c_list[m->mptr].hd);
+    if (m_ptr->maxhp == 0) {	   /* then we're just going to fix it! -CFT */
+	if ((r_ptr->cdefense & MAX_HP) )
+	    m_ptr->maxhp = max_hp(r_ptr->hd);
 	else
-	    m->maxhp = pdamroll(c_list[m->mptr].hd);
+	    m_ptr->maxhp = pdamroll(r_ptr->hd);
     }
 
-    if (m->hp > m->maxhp) m->hp = m->maxhp;
+    if (m_ptr->hp > m_ptr->maxhp) m_ptr->hp = m_ptr->maxhp;
 
-    if ((m->maxhp == 0) || (m->hp >= m->maxhp)) {	/* shouldn't ever need > -CFT */
+    if ((m_ptr->maxhp == 0) || (m_ptr->hp >= m_ptr->maxhp)) {	/* shouldn't ever need > -CFT */
 	return (living ? "unhurt" : "undamaged");
     }
 
-    thp = (s32b) m->hp;
-    tmax = (s32b) m->maxhp;
+    thp = (s32b) m_ptr->hp;
+    tmax = (s32b) m_ptr->maxhp;
     perc = (s32b) (thp * 100L) / tmax;
 
     if (perc > 60) {
