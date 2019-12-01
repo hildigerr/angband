@@ -641,10 +641,6 @@ void rest(void);
 int test_hit(int, int, int, int, int);
 void take_hit(int, const char *);
 void change_trap(int, int);
-void find_init(int);
-void find_run(void);
-void end_find(void);
-void area_affect(int, int, int);
 void darken_player(int, int);
 
 /* moria2.c */
@@ -683,6 +679,10 @@ void search_off(void);
 void search(int, int, int);
 void rest_off(void);
 void carry(int, int, int);
+void area_affect(int, int, int);
+void find_run(void);
+void find_init(int);
+void end_find(void);
 
 #ifdef MSDOS
 /* ms_misc.c */
