@@ -1845,8 +1845,7 @@ rest()
 	}
     }
     if (rest_num != 0) {
-	if (py.flags.status & PY_SEARCH)
-	    search_off();
+	search_off();
 	py.flags.rest = rest_num;
 	py.flags.status |= PY_REST;
 	prt_state();

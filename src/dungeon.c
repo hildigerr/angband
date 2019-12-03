@@ -123,7 +123,6 @@ dungeon()
  * check_view(), and so the panel_* variables must be valid before
  * search_off() is called 
  */
-    if (py.flags.status & PY_SEARCH)
 	search_off();
 /* Light,  but do not move critters	    */
     creatures(FALSE);
@@ -1791,7 +1790,6 @@ char com_val;
 	rest();
 	break;
       case '#':			/* (#) search toggle	(S)earch toggle */
-	if (py.flags.status & PY_SEARCH)
 	    search_off();
 	else
 	    search_on();

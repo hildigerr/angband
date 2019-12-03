@@ -533,6 +533,8 @@ int get_dir_c(const char *prompt, int *dir)
  */
 void search_on()
 {
+    if (py.flags.status & PY_SEARCH) return;
+
     py.flags.speed += 1;
     py.flags.status |= PY_SPEED;
     py.flags.status |= PY_SEARCH;
@@ -543,6 +545,8 @@ void search_on()
 
 void search_off(void)
 {
+    if (!(py.flags.status & PY_SEARCH)) return;
+
     check_view();
     py.flags.speed -= 1;
     py.flags.status |= PY_SPEED;
@@ -563,7 +567,7 @@ void disturb(int stop_search, int light_change)
 {
     command_rep = 0;
 
-    if (stop_search && (py.flags.status & PY_SEARCH)) search_off();
+    if (stop_search) search_off();
 
     if (py.flags.rest != 0) rest_off();
 
