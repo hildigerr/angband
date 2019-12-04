@@ -570,11 +570,11 @@ void disturb(int stop_search, int light_change)
     /* Always cancel repeated commands */
     if (command_rep) command_rep = 0;
 
-    /* Hack -- Cancel Search Mode if requested */
-    if (stop_search) search_off();
-
     /* Always cancel Rest */
     if (py.flags.rest) rest_off();
+
+    /* Hack -- Cancel Search Mode if requested */
+    if (stop_search) search_off();
 
     if (light_change || find_flag) {
 	find_flag = FALSE;
