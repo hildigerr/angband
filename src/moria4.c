@@ -562,20 +562,26 @@ void search_off(void)
  * The first arg indicates a major disturbance, which affects search.
  *
  * The second arg indicates a light change.
+ *
+ * All disturbances cancel "repeated" commands.
  */
 void disturb(int stop_search, int light_change)
 {
-    command_rep = 0;
+    /* Always cancel repeated commands */
+    if (command_rep) command_rep = 0;
 
+    /* Hack -- Cancel Search Mode if requested */
     if (stop_search) search_off();
 
-    if (py.flags.rest != 0) rest_off();
+    /* Always cancel Rest */
+    if (py.flags.rest) rest_off();
 
     if (light_change || find_flag) {
 	find_flag = FALSE;
 	check_view();
     }
-
+    
+    /* flush the input */
     flush();
 }
 
