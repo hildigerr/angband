@@ -371,7 +371,11 @@ detect_trap()
 	    if (c_ptr->tptr != 0)
 		if (i_list[c_ptr->tptr].tval == TV_INVIS_TRAP) {
 		    c_ptr->fm = TRUE;
-		    change_trap(i, j);
+
+		    t_ptr = &i_list[c_ptr->tptr];
+		    t_ptr->tval = TV_VIS_TRAP;
+
+		    lite_spot(i, j);
 		    detect = TRUE;
 		} else if (i_list[c_ptr->tptr].tval == TV_CHEST) {
 		    t_ptr = &i_list[c_ptr->tptr];
@@ -462,7 +466,15 @@ detect_sdoor()
 	    /* Secret doors  */
 		if (i_list[c_ptr->tptr].tval == TV_SECRET_DOOR) {
 		    c_ptr->fm = TRUE;
-		    change_trap(i, j);
+
+		    /* change secret door to closed door */
+		    i_list[c_ptr->tptr].index = OBJ_CLOSED_DOOR;
+
+		    i_list[c_ptr->tptr].tval = k_list[OBJ_CLOSED_DOOR].tval;
+		    i_list[c_ptr->tptr].tchar = k_list[OBJ_CLOSED_DOOR].tchar;
+
+		    lite_spot(i, j);
+
 		    detect = TRUE;
 		}
 	/* Staircases	 */
@@ -875,7 +887,13 @@ int dir, y, x;
 		t_ptr->p1 = 0;	   /* Locked or jammed doors become merely closed. */
 	    else if (t_ptr->tval == TV_SECRET_DOOR) {
 		c_ptr->fm = TRUE;
-		change_trap(y, x);
+
+		/* change secret door to closed door */
+		i_list[c_ptr->tptr].index = OBJ_CLOSED_DOOR;
+		i_list[c_ptr->tptr].tval = k_list[OBJ_CLOSED_DOOR].tval;
+		i_list[c_ptr->tptr].tchar = k_list[OBJ_CLOSED_DOOR].tchar;
+		lite_spot(y, x);
+
 		disarm = TRUE;
 	    } else if ((t_ptr->tval == TV_CHEST) && (t_ptr->flags != 0)) {
 		msg_print("Click!");

@@ -621,7 +621,8 @@ void search(int y, int x, int chance)
 		    objdes(tmp_str2, i_ptr, TRUE);
 		    (void)sprintf(tmp_str, "You have found %s.", tmp_str2);
 		    msg_print(tmp_str);
-		    change_trap(i, j);
+		    i_ptr->tval = TV_VIS_TRAP;
+		    lite_spot(i, j);
 		    end_find();
 		}
 
@@ -629,7 +630,13 @@ void search(int y, int x, int chance)
 		else if (i_ptr->tval == TV_SECRET_DOOR) {
 		    msg_print("You have found a secret door.");
 
-		    change_trap(i, j);
+		    i_ptr->index = OBJ_CLOSED_DOOR;
+
+		    i_ptr->tval = k_list[OBJ_CLOSED_DOOR].tval;
+		    i_ptr->tchar = k_list[OBJ_CLOSED_DOOR].tchar;
+
+		    lite_spot(i, j);
+
 		    end_find();
 		}
 

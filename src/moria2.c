@@ -35,10 +35,15 @@ int y, x;
     bigvtype              tmp;
 
     end_find();
-    change_trap(y, x);
+
     c_ptr = &cave[y][x];
     p_ptr = &py.misc;
     t_ptr = &i_list[c_ptr->tptr];
+
+    t_ptr->tval = TV_VIS_TRAP;
+
+    lite_spot(y, x);
+
     dam = pdamroll(t_ptr->damage);
     switch (t_ptr->sval) {
       case 1:			   /* Open pit */

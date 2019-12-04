@@ -1915,29 +1915,5 @@ const char *hit_from;
 }
 
     
-/* Change a trap from invisible to visible		-RAK-	 */
-/* Note: Secret doors are handled here				 */
-void 
-change_trap(y, x)
-register int y, x;
-{
-    register cave_type  *c_ptr;
-    register inven_type *t_ptr;
-
-    c_ptr = &cave[y][x];
-    t_ptr = &i_list[c_ptr->tptr];
-    if (t_ptr->tval == TV_INVIS_TRAP) {
-	t_ptr->tval = TV_VIS_TRAP;
-	lite_spot(y, x);
-    } else if (t_ptr->tval == TV_SECRET_DOOR) {
-    /* change secret door to closed door */
-	t_ptr->index = OBJ_CLOSED_DOOR;
-	t_ptr->tval = k_list[OBJ_CLOSED_DOOR].tval;
-	t_ptr->tchar = k_list[OBJ_CLOSED_DOOR].tchar;
-	lite_spot(y, x);
-    }
-}
-
-
 
 
