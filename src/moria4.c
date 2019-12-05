@@ -833,6 +833,8 @@ static void area_affect(int dir, int y, int x)
 
 	    c_ptr = &cave[row][col];
 
+	    /* Assume the new grid cannot be seen */
+	    inv = TRUE;
 
 	    if (player_light || c_ptr->tl || c_ptr->pl || c_ptr->fm) {
 
@@ -858,7 +860,6 @@ static void area_affect(int dir, int y, int x)
 
 		inv = FALSE;
 	    }
-		else inv = TRUE;		/* Square unseen. Treat as open. */
 
 	    if (inv || c_ptr->fval <= MAX_OPEN_SPACE) {
 
