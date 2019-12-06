@@ -1014,7 +1014,9 @@ void move_player(int dir, int do_pickup)
     register cave_type *c_ptr, *d_ptr;
     register inven_type	*i_ptr;
 
-    int old_row, old_col, old_find_flag;
+    bool was_running = find_flag;
+
+    int old_row, old_col;
 
     if (((py.flags.confused > 0) || (py.flags.stun > 0)) &&	/* Confused/Stunned?  */
     (randint(4) > 1) &&	   /* 75% random movement */
@@ -1127,7 +1129,7 @@ void move_player(int dir, int do_pickup)
 
 	    /* Can't move onto floor space */
 	    else {
-	    if (!find_flag && (c_ptr->tptr != 0)) {
+	    if (!was_running && (c_ptr->tptr != 0)) {
 		    if (i_ptr->tval == TV_RUBBLE)
 			    msg_print("There is rubble blocking your way.");
 		    else if (i_ptr->tval == TV_CLOSED_DOOR)
@@ -1140,10 +1142,9 @@ void move_player(int dir, int do_pickup)
 
     /* Attacking a creature! */
     else {
-	    old_find_flag = find_flag;
 	    end_find();
 	    /* if player can see monster, and was in find mode, then nothing */
-	    if (m_list[c_ptr->cptr].ml && old_find_flag) {
+	    if (was_running && m_list[c_ptr->cptr].ml) {
 		    /* did not do anything this turn */
 		    free_turn_flag = TRUE;
 	    }
