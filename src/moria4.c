@@ -814,6 +814,7 @@ static void area_affect(int dir, int y, int x)
 
     register cave_type *c_ptr;
 
+    /* We must be able to see... */
     if (py.flags.blind < 1) {
 
 	option = 0;
@@ -829,17 +830,19 @@ static void area_affect(int dir, int y, int x)
 	    row = y;
 	    col = x;
 	    if (mmove(newdir, &row, &col)) {
-	    /* Objects player can see (Including doors?) cause a stop. */
 
 	    c_ptr = &cave[row][col];
 
 	    /* Assume the new grid cannot be seen */
 	    inv = TRUE;
 
+	    /* Can we "see" (or "remember") the adjacent grid? */
 	    if (player_light || c_ptr->tl || c_ptr->pl || c_ptr->fm) {
 
+		/* Most (visible) objects stop the running */
 		if (c_ptr->tptr) {
 
+		    /* Examine the object */
 		    t = i_list[c_ptr->tptr].tval;
 		    if ((t != TV_INVIS_TRAP) &&
 			(t != TV_SECRET_DOOR) &&
@@ -850,7 +853,7 @@ static void area_affect(int dir, int y, int x)
 		    }
 		}
 
-	    /* Also Creatures		 */
+	    /* notice visible monsters */
 	    /* the monster should be visible since update_mon() checks
 	     * for the special case of being in find mode */
 	    if (c_ptr->cptr > 1 && m_list[c_ptr->cptr].ml) {
@@ -858,11 +861,14 @@ static void area_affect(int dir, int y, int x)
 		return;
 	    }
 
+		/* The grid is "visible" */
 		inv = FALSE;
 	    }
 
+	    /* If cannot see the grid, assume it is clear */
 	    if (inv || c_ptr->fval <= MAX_OPEN_SPACE) {
 
+		/* Certain somethings */
 		if (find_openarea) {
 		    if (i < 0) {
 			if (find_breakright) {
@@ -883,7 +889,7 @@ static void area_affect(int dir, int y, int x)
 		    option = newdir;
 		}
 
-		/* Three new directions. STOP. */
+		/* Three new directions. Stop running. */
 		else if (option2 != 0) {
 		    end_find();             
 		    return;
@@ -911,7 +917,7 @@ static void area_affect(int dir, int y, int x)
 		}
 	    }
 
-	    /* We see an obstacle. */
+	    /* We see an obstacle.  Break to one side. */
 	    /* In open area, STOP if on a side previously open. */
 	    else if (find_openarea) {
 		if (i < 0) {
