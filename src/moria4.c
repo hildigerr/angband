@@ -1016,7 +1016,8 @@ void move_player(int dir, int do_pickup)
 
     bool was_running = find_flag;
 
-    int old_row, old_col;
+    int old_row = char_row;
+    int old_col = char_col;
 
     if (((py.flags.confused > 0) || (py.flags.stun > 0)) &&	/* Confused/Stunned?  */
     (randint(4) > 1) &&	   /* 75% random movement */
@@ -1040,8 +1041,6 @@ void move_player(int dir, int do_pickup)
 	    if (c_ptr->fval <= MAX_OPEN_SPACE) {	/* Open floor spot */
 
 		    /* Make final assignments of char co-ords */
-		    old_row = char_row;
-		    old_col = char_col;
 		    char_row = y;
 		    char_col = x;
 
