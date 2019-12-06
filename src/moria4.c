@@ -1012,6 +1012,7 @@ void move_player(int dir, int do_pickup)
     int                 y, x;
     register int        i, j;
     register cave_type *c_ptr, *d_ptr;
+    register inven_type	*i_ptr;
 
     int old_row, old_col, old_find_flag;
 
@@ -1030,6 +1031,9 @@ void move_player(int dir, int do_pickup)
 
     if ((c_ptr->cptr < 2)
     || (!m_list[c_ptr->cptr].ml && c_ptr->fval >= MIN_CLOSED_SPACE)) {
+
+	/* Get the "object" if any */
+	i_ptr = &i_list[c_ptr->tptr];
 
 	    if (c_ptr->fval <= MAX_OPEN_SPACE) {	/* Open floor spot */
 
@@ -1085,16 +1089,14 @@ void move_player(int dir, int do_pickup)
 
 		    /* An object is beneath him. */
 		    if (c_ptr->tptr != 0) {
-			    i = i_list[c_ptr->tptr].tval;
+			    i = i_ptr->tval;
 			    if (i == TV_VIS_TRAP || i == TV_INVIS_TRAP
 			    || i == TV_STORE_DOOR || !prompt_carry_flag
 			    || i == TV_GOLD)
 				    carry(char_row, char_col, do_pickup);
 			    else if (prompt_carry_flag && i != TV_OPEN_DOOR
 			    && i != TV_UP_STAIR && i != TV_DOWN_STAIR) {
-				    inven_type         *i_ptr;
 				    bigvtype            tmp_str, tmp2_str;
-				    i_ptr = &i_list[cave[char_row][char_col].tptr];
 				    objdes(tmp_str, i_ptr, TRUE);
 				    sprintf(tmp2_str, "You see %s.", tmp_str);
 				    msg_print(tmp2_str);
@@ -1102,7 +1104,7 @@ void move_player(int dir, int do_pickup)
 
 			    /* if stepped on falling rock trap, and space contains
 			    * rubble, then step back into a clear area */
-			    if (i_list[c_ptr->tptr].tval == TV_RUBBLE) {
+			    if (i_ptr->tval == TV_RUBBLE) {
 
 				    move_rec(char_row, char_col, old_row, old_col);
 
@@ -1114,7 +1116,7 @@ void move_player(int dir, int do_pickup)
 				    /* check to see if we have stepped back onto another trap, if so, set it off */
 				    c_ptr = &cave[char_row][char_col];
 				    if (c_ptr->tptr != 0) {
-					    i = i_list[c_ptr->tptr].tval;
+					    i = i_ptr->tval;
 					    if (i == TV_INVIS_TRAP || i == TV_VIS_TRAP
 					    || i == TV_STORE_DOOR)
 						    hit_trap(char_row, char_col);
@@ -1126,9 +1128,9 @@ void move_player(int dir, int do_pickup)
 	    /* Can't move onto floor space */
 	    else {
 	    if (!find_flag && (c_ptr->tptr != 0)) {
-		    if (i_list[c_ptr->tptr].tval == TV_RUBBLE)
+		    if (i_ptr->tval == TV_RUBBLE)
 			    msg_print("There is rubble blocking your way.");
-		    else if (i_list[c_ptr->tptr].tval == TV_CLOSED_DOOR)
+		    else if (i_ptr->tval == TV_CLOSED_DOOR)
 			    msg_print("There is a closed door blocking your way.");
 	    }
 	    else end_find();
