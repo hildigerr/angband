@@ -1032,8 +1032,6 @@ void move_player(int dir, int do_pickup)
 
     c_ptr = &cave[y][x];
 
-    if ((c_ptr->cptr < 2)
-    || (!m_list[c_ptr->cptr].ml && c_ptr->fval >= MIN_CLOSED_SPACE)) {
 
 	/* Get the "object" if any */
 	i_ptr = &i_list[c_ptr->tptr];
@@ -1054,6 +1052,24 @@ void move_player(int dir, int do_pickup)
 	    else end_find();
 
 	    free_turn_flag = TRUE;
+	    }
+
+	    /* Attacking a creature! */
+	    else if (c_ptr->cptr > 1) {
+
+		    end_find();
+
+		    /* if player can see monster, and was in find mode, then nothing */
+		    if (was_running && m_list[c_ptr->cptr].ml) {
+			    /* did not do anything this turn */
+			    free_turn_flag = TRUE;
+		    }
+		    else {
+			    if (py.flags.afraid < 1)	/* Coward? */
+				    py_attack(y, x);
+			    else	/* Coward! */
+				    msg_print("You are too afraid!");
+		    }
 	    }
 
 	    else {	/* Open floor spot */
@@ -1143,23 +1159,6 @@ void move_player(int dir, int do_pickup)
 		    }
 	    }
 
-    }
-
-    /* Attacking a creature! */
-    else {
-	    end_find();
-	    /* if player can see monster, and was in find mode, then nothing */
-	    if (was_running && m_list[c_ptr->cptr].ml) {
-		    /* did not do anything this turn */
-		    free_turn_flag = TRUE;
-	    }
-	    else {
-		    if (py.flags.afraid < 1)	/* Coward? */
-			    py_attack(y, x);
-		    else	/* Coward! */
-			    msg_print("You are too afraid!");
-	    }
-    }
     }
 }
 
