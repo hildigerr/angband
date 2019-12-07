@@ -1038,7 +1038,25 @@ void move_player(int dir, int do_pickup)
 	/* Get the "object" if any */
 	i_ptr = &i_list[c_ptr->tptr];
 
-	    if (c_ptr->fval <= MAX_OPEN_SPACE) {	/* Open floor spot */
+	    /* Can't move onto floor space */
+	    if (c_ptr->fval > MAX_OPEN_SPACE) {
+
+	    if (!was_running && (c_ptr->tptr)) {
+
+		    if (i_ptr->tval == TV_RUBBLE) {
+		    msg_print("There is rubble blocking your way.");
+		    }
+
+		    else if (i_ptr->tval == TV_CLOSED_DOOR) {
+		    msg_print("There is a closed door blocking your way.");
+		    }
+	    }
+	    else end_find();
+
+	    free_turn_flag = TRUE;
+	    }
+
+	    else {	/* Open floor spot */
 
 		    /* Make final assignments of char co-ords */
 		    char_row = y;
@@ -1125,17 +1143,6 @@ void move_player(int dir, int do_pickup)
 		    }
 	    }
 
-	    /* Can't move onto floor space */
-	    else {
-	    if (!was_running && (c_ptr->tptr != 0)) {
-		    if (i_ptr->tval == TV_RUBBLE)
-			    msg_print("There is rubble blocking your way.");
-		    else if (i_ptr->tval == TV_CLOSED_DOOR)
-			    msg_print("There is a closed door blocking your way.");
-	    }
-	    else end_find();
-	    free_turn_flag = TRUE;
-	    }
     }
 
     /* Attacking a creature! */
