@@ -109,18 +109,18 @@ int los(int fromY, int fromX, int toY, int toX)
     /* Handle Knightlike shapes -CWS */
     if (a_x == 1) {
 	if (d_y == 2) {
-	    if (cave[fromY + 1][fromX].fval <= MAX_OPEN_SPACE) return TRUE;
+	    if (floor_grid_bold(fromY + 1, fromX)) return TRUE;
 	}
 	else if (d_y == (-2)) {
-	    if (cave[fromY - 1][fromX].fval <= MAX_OPEN_SPACE) return TRUE;
+	    if (floor_grid_bold(fromY - 1, fromX)) return TRUE;
 	}
     }
     else if (a_y == 1) {
 	if (d_x == 2) {
-	    if (cave[fromY][fromX + 1].fval <= MAX_OPEN_SPACE) return TRUE;
+	    if (floor_grid_bold(fromY, fromX + 1)) return TRUE;
 	}
 	else if (d_x == (-2)) {
-	    if (cave[fromY][fromX - 1].fval <= MAX_OPEN_SPACE) return TRUE;
+	    if (floor_grid_bold(fromY, fromX - 1)) return TRUE;
 	}
     }
 

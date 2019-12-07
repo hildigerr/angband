@@ -905,7 +905,7 @@ int dir, y, x;
 	}
 	(void)mmove(dir, &y, &x);
     }
-    while ((dist <= OBJ_BOLT_RANGE) && c_ptr->fval <= MAX_OPEN_SPACE);
+    while ((dist <= OBJ_BOLT_RANGE) && floor_grid_bold(y, x));
     return (disarm);
 }
 
@@ -1049,7 +1049,7 @@ int           monptr;
 
 	if (in_bounds(i, j) && los(y, x, i, j)) {
 	    c_ptr = &cave[i][j];
-	    if (c_ptr->fval <= MAX_OPEN_SPACE) {
+	    if (floor_grid_bold(i, j)) {
 		if (panel_contains(i, j) && !(py.flags.status & PY_BLIND)) {
 		    print(bolt_char, i, j);
 		    put_qio();
@@ -1563,7 +1563,7 @@ int typ, dir, y, x, dam_hp, max_dis;
 		    for (j = x - max_dis; j <= x + max_dis; j++)
 			if (in_bounds(i, j) && (distance(y, x, i, j) <= max_dis) &&
 			 los(char_row, char_col, i, j) && los(y, x, i, j) &&
-			    (cave[i][j].fval <= MAX_OPEN_SPACE) &&
+			    floor_grid_bold(i, j) &&
 			    panel_contains(i, j) && (py.flags.blind < 1)) {
 #ifdef TC_COLOR
 			    if (!no_color_flag)
@@ -1592,7 +1592,7 @@ int typ, dir, y, x, dam_hp, max_dis;
 		    for (j = x - max_dis; j <= x + max_dis; j++)
 			if (in_bounds(i, j) && (distance(y, x, i, j) <= max_dis) &&
 			 los(char_row, char_col, i, j) && los(y, x, i, j) &&
-			    (cave[i][j].fval <= MAX_OPEN_SPACE) &&
+			    floor_grid_bold(i, j) &&
 			    panel_contains(i, j) && (py.flags.blind < 1)) {
 			    lite_spot(i, j);	/* draw what is below the '*' */
 			}
@@ -1618,7 +1618,7 @@ int typ, dir, y, x, dam_hp, max_dis;
 			if (in_bounds(i, j) && (distance(y, x, i, j) <= max_dis)
 			    && los(y, x, i, j)) {
 			    c_ptr = &cave[i][j];
-			    if (c_ptr->fval <= MAX_OPEN_SPACE) {
+			    if (floor_grid_bold(i, j)) {
 				if (c_ptr->cptr > 1) {
 				    dam = dam_hp;
 				    m_ptr = &m_list[c_ptr->cptr];
@@ -1735,7 +1735,7 @@ int   monptr;
 	for (i = y - max_dis; i <= y + max_dis; i++)
 	    for (j = x - max_dis; j <= x + max_dis; j++)
 		if (in_bounds(i, j) && (distance(y, x, i, j) <= max_dis) &&
-		    los(y, x, i, j) && (cave[i][j].fval <= MAX_OPEN_SPACE) &&
+		    los(y, x, i, j) && floor_grid_bold(i, j) &&
 		    panel_contains(i, j)) {
 #ifdef TC_COLOR
 		    if (!no_color_flag)
@@ -1760,7 +1760,7 @@ int   monptr;
 	for (i = y - max_dis; i <= y + max_dis; i++)
 	    for (j = x - max_dis; j <= x + max_dis; j++)
 		if (in_bounds(i, j) && (distance(y, x, i, j) <= max_dis) &&
-		    los(y, x, i, j) && (cave[i][j].fval <= MAX_OPEN_SPACE) &&
+		    los(y, x, i, j) && floor_grid_bold(i, j) &&
 		    panel_contains(i, j))
 		    lite_spot(i, j);   /* draw what is below the '*' */
 	put_qio();
@@ -1789,7 +1789,7 @@ int   monptr;
 		c_ptr = &cave[i][j];
 		if ((c_ptr->tptr != 0) && (*destroy) (&i_list[c_ptr->tptr]))
 		    (void)delete_object(i, j);
-		if (c_ptr->fval <= MAX_OPEN_SPACE) {
+		if (floor_grid_bold(i, j)) {
 		    if ((c_ptr->cptr > 1) && (c_ptr->cptr != monptr)) {
 			dam = dam_hp;
 			m_ptr = &m_list[c_ptr->cptr];
@@ -2750,7 +2750,7 @@ int dir, y, x;
 	    }
 	}
     }
-    while ((dist <= OBJ_BOLT_RANGE) || c_ptr->fval <= MAX_OPEN_SPACE);
+    while ((dist <= OBJ_BOLT_RANGE) || floor_grid_bold(y, x));
     return (destroy2);
 }
 

@@ -1282,7 +1282,7 @@ u32b *rcmove;
 	c_ptr = &cave[newy][newx];
 
 	if ((i == 4) && (m_ptr->monfear) &&  /* cornered (or things in the way!) -CWS */
-	    ((c_ptr->fval > MAX_OPEN_SPACE) || (c_ptr->cptr > 1))) {
+	    (!floor_grid_bold(newy, newx) || (c_ptr->cptr > 1))) {
 	    monster_race      *r_ptr = &c_list[m_ptr->mptr];
 	    vtype               m_name, out_val;
 	    
@@ -1297,7 +1297,7 @@ u32b *rcmove;
 
 	if (c_ptr->fval != BOUNDARY_WALL) {
 	/* Floor is open?		   */
-	    if (c_ptr->fval <= MAX_OPEN_SPACE)
+	    if (floor_grid_bold(newy, newx))
 		do_move = TRUE;
 	/* Creature moves through walls? */
 	    else if (movebits & CM_PHASE) {
@@ -2658,7 +2658,7 @@ int y, x, cr_index, monptr;
      */
 	if (in_bounds(j, k) && (j != y || k != x)) {
 	    c_ptr = &cave[j][k];
-	    if ((c_ptr->fval <= MAX_OPEN_SPACE) && (c_ptr->tptr == 0) &&
+	    if (floor_grid_bold(j, k) && (c_ptr->tptr == 0) &&
 		(c_ptr->cptr != 1)) {
 		if (c_ptr->cptr > 1) {	/* Creature there already?	 */
 		/* Some critters are cannibalistic!	    */
@@ -2775,7 +2775,7 @@ u32b             *rcmove;
     /* do not allow attack against the player */
 	for (i = m_ptr->fy + 1; i >= (int)(m_ptr->fy - 1); i--)
 	    for (j = m_ptr->fx - 1; j <= (int)(m_ptr->fx + 1); j++) {
-		if ((dir != 5) && (cave[i][j].fval <= MAX_OPEN_SPACE)
+		if ((dir != 5) && floor_grid_bold(i, j)
 		    && (cave[i][j].cptr != 1))
 		    mm[k++] = dir;
 		dir++;
@@ -3051,7 +3051,7 @@ int mon_y, mon_x;
 			    kill = TRUE;
 			    for (y = i - 1; y <= i + 1; y++) {
 				for (x = j - 1; x <= j + 1; x++) {
-				    if ((cave[y][x].fval <= MAX_OPEN_SPACE) &&
+				    if (floor_grid_bold(y, x) &&
 					!(y == i && x == j)) {
 					kill = FALSE;
 					break;
@@ -3106,7 +3106,7 @@ int mon_y, mon_x;
 		    kill = TRUE;
 		    for (y = i - 1; y <= i + 1; y++) {
 			for (x = j - 1; x <= j + 1; x++) {
-			    if ((cave[y][x].fval <= MAX_OPEN_SPACE) &&
+			    if (floor_grid_bold(y, x) &&
 			    (cave[y][x].cptr == 0) && !(y == i && x == j)) {
 				kill = FALSE;
 				break;
@@ -3210,7 +3210,7 @@ int mon_y, mon_x;
     kill = TRUE;
     for (y = char_row - 1; y <= char_row + 1; y++) {
 	for (x = char_col - 1; x <= char_col + 1; x++) {
-	    if ((cave[y][x].fval <= MAX_OPEN_SPACE) &&
+	    if (floor_grid_bold(y,x) &&
 	      (cave[y][x].cptr == 0) && !(y == char_row && x == char_col)) {
 		kill = FALSE;
 		break;

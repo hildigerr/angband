@@ -42,6 +42,12 @@
 
 
 /*
+ * Determine if a "legal" grid is a "floor" grid
+ */
+#define floor_grid_bold(Y,X) \
+    (cave[Y][X].fval <= MAX_OPEN_SPACE)
+    
+/*
  * Determines if a map location is currently "on screen" -RAK-
  * Note that "panel_contains(y,x)" always implies "in_bounds2(y,x)".
  */

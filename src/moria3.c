@@ -181,7 +181,7 @@ static int look_see(int x, int y, int *transparent)
     c_ptr = &cave[y][x];
 
     /* Floor grids are transparent */
-    *transparent = c_ptr->fval <= MAX_OPEN_SPACE;
+    if (floor_grid_bold(y,x)) *transparent = TRUE;
 
     /* Hack -- Don't look at a direct line of sight. */
     if (gl_noquery) return FALSE;

@@ -866,7 +866,7 @@ static void area_affect(int dir, int y, int x)
 	    }
 
 	    /* If cannot see the grid, assume it is clear */
-	    if (inv || c_ptr->fval <= MAX_OPEN_SPACE) {
+	    if (inv || floor_grid_bold(row, col)) {
 
 		/* Certain somethings */
 		if (find_openarea) {
@@ -1039,7 +1039,7 @@ void move_player(int dir, int do_pickup)
 	i_ptr = &i_list[c_ptr->tptr];
 
 	    /* Can't move onto floor space */
-	    if (c_ptr->fval > MAX_OPEN_SPACE) {
+	    if (!floor_grid_bold(y,x)) {
 
 	    if (!was_running && (c_ptr->tptr)) {
 

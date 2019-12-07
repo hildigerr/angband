@@ -622,7 +622,7 @@ int typ, num, walls;
 		do {
 		    do {
 			cave_ptr = &cave[y1][x1];
-			if (cave_ptr->fval <= MAX_OPEN_SPACE
+			if (floor_grid_bold(y1, x1)
 			    && (cave_ptr->tptr == 0)
 			    && (next_to_walls(y1, x1) >= walls)) {
 			    flag = TRUE;

@@ -1404,7 +1404,7 @@ int  slp;
 	k = *x - 2 + randint(3);
 	if (in_bounds(j, k)) {
 	    cave_ptr = &cave[j][k];
-	    if (cave_ptr->fval <= MAX_OPEN_SPACE && (cave_ptr->cptr == 0)) {
+	    if (foor_grid_bold(j, k) && (cave_ptr->cptr == 0)) {
 		if (c_list[l].cdefense & GROUP)
 		    place_group(j, k, l, slp);
 		else
@@ -1456,7 +1456,7 @@ int *y, *x;
 	k = *x - 2 + randint(3);
 	if (in_bounds(j, k)) {
 	    cave_ptr = &cave[j][k];
-	    if (cave_ptr->fval <= MAX_OPEN_SPACE && (cave_ptr->cptr == 0)) {
+	    if (floor_grid_bold(j, k) && (cave_ptr->cptr == 0)) {
 		place_monster(j, k, m, FALSE);
 		summon = TRUE;
 		i = 9;
@@ -1504,7 +1504,7 @@ int *y, *x;
 	k = *x - 2 + randint(3);
 	if (in_bounds(j, k)) {
 	    cave_ptr = &cave[j][k];
-	    if (cave_ptr->fval <= MAX_OPEN_SPACE && (cave_ptr->cptr == 0)) {
+	    if (floor_grid_bold(j, k) && (cave_ptr->cptr == 0)) {
 		place_monster(j, k, m, FALSE);
 		summon = TRUE;
 		i = 9;
@@ -1552,7 +1552,7 @@ int *y, *x;
 	k = *x - 2 + randint(3);
 	if (in_bounds(j, k)) {
 	    cave_ptr = &cave[j][k];
-	    if (cave_ptr->fval <= MAX_OPEN_SPACE && (cave_ptr->cptr == 0)) {
+	    if (floor_grid_bold(j, k) && (cave_ptr->cptr == 0)) {
 		place_monster(j, k, m, FALSE);
 		summon = TRUE;
 		i = 9;
@@ -1601,7 +1601,7 @@ int *y, *x;
 	k = *x - 2 + randint(3);
 	if (in_bounds(j, k)) {
 	    cave_ptr = &cave[j][k];
-	    if (cave_ptr->fval <= MAX_OPEN_SPACE && (cave_ptr->cptr == 0)) {
+	    if (floor_grid_bold(j, k) && (cave_ptr->cptr == 0)) {
 		place_monster(j, k, m, FALSE);
 		summon = TRUE;
 		i = 9;
@@ -1650,7 +1650,7 @@ int *y, *x;
 	k = *x - 2 + randint(3);
 	if (in_bounds(j, k)) {
 	    cave_ptr = &cave[j][k];
-	    if (cave_ptr->fval <= MAX_OPEN_SPACE && (cave_ptr->cptr == 0)) {
+	    if (floor_grid_bold(j, k) && (cave_ptr->cptr == 0)) {
 		place_monster(j, k, m, FALSE);
 		summon = TRUE;
 		i = 9;
@@ -1700,7 +1700,7 @@ int *y, *x;
 	k = *x - 2 + randint(3);
 	if (in_bounds(j, k)) {
 	    cave_ptr = &cave[j][k];
-	    if (cave_ptr->fval <= MAX_OPEN_SPACE && (cave_ptr->cptr == 0)) {
+	    if (floor_grid_bold(j, k) && (cave_ptr->cptr == 0)) {
 		place_monster(j, k, m, FALSE);
 		summon = TRUE;
 		i = 9;
@@ -1748,7 +1748,7 @@ int *y, *x;
 	k = *x - 2 + randint(3);
 	if (in_bounds(j, k)) {
 	    cave_ptr = &cave[j][k];
-	    if (cave_ptr->fval <= MAX_OPEN_SPACE && (cave_ptr->cptr == 0)) {
+	    if (floor_grid_bold(j, k) && (cave_ptr->cptr == 0)) {
 		place_monster(j, k, m, FALSE);
 		summon = TRUE;
 		i = 9;
@@ -1796,7 +1796,7 @@ int *y, *x;
 	k = *x - 2 + randint(3);
 	if (in_bounds(j, k)) {
 	    cave_ptr = &cave[j][k];
-	    if (cave_ptr->fval <= MAX_OPEN_SPACE && (cave_ptr->cptr == 0)) {
+	    if (floor_grid_bold(j, k) && (cave_ptr->cptr == 0)) {
 		place_monster(j, k, m, FALSE);
 		summon = TRUE;
 		i = 9;
@@ -1845,7 +1845,7 @@ int *y, *x;
 	k = *x - 2 + randint(3);
 	if (in_bounds(j, k)) {
 	    cave_ptr = &cave[j][k];
-	    if (cave_ptr->fval <= MAX_OPEN_SPACE && (cave_ptr->cptr == 0)) {
+	    if (floor_grid_bold(j, k) && (cave_ptr->cptr == 0)) {
 		place_monster(j, k, m, FALSE);
 		summon = TRUE;
 		i = 9;
@@ -1894,7 +1894,7 @@ int *y, *x;
 	k = *x - 2 + randint(3);
 	if (in_bounds(j, k)) {
 	    cave_ptr = &cave[j][k];
-	    if (cave_ptr->fval <= MAX_OPEN_SPACE && (cave_ptr->cptr == 0)) {
+	    if (floor_grid_bold(j, k) && (cave_ptr->cptr == 0)) {
 		place_monster(j, k, m, FALSE);
 		summon = TRUE;
 		i = 9;
@@ -1944,7 +1944,7 @@ int *y, *x;
 	k = *x - 2 + randint(3);
 	if (in_bounds(j, k)) {
 	    cave_ptr = &cave[j][k];
-	    if (cave_ptr->fval <= MAX_OPEN_SPACE && (cave_ptr->cptr == 0)) {
+	    if (floor_grid_bold(j, k) && (cave_ptr->cptr == 0)) {
 		place_monster(j, k, m, FALSE);
 		summon = TRUE;
 		i = 9;
@@ -1993,7 +1993,7 @@ int *y, *x;
 	k = *x - 2 + randint(3);
 	if (in_bounds(j, k)) {
 	    cave_ptr = &cave[j][k];
-	    if (cave_ptr->fval <= MAX_OPEN_SPACE && (cave_ptr->cptr == 0)) {
+	    if (floor_grid_bold(j, k) && (cave_ptr->cptr == 0)) {
 		place_monster(j, k, m, FALSE);
 		summon = TRUE;
 		i = 9;
@@ -2043,7 +2043,7 @@ int *y, *x;
 	k = *x - 2 + randint(3);
 	if (in_bounds(j, k)) {
 	    cave_ptr = &cave[j][k];
-	    if (cave_ptr->fval <= MAX_OPEN_SPACE && (cave_ptr->cptr == 0)) {
+	    if (floor_grid_bold(j, k) && (cave_ptr->cptr == 0)) {
 		place_monster(j, k, m, FALSE);
 		summon = TRUE;
 		i = 9;

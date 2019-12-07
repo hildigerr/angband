@@ -442,7 +442,7 @@ u32b good;
 	    k = x - 3 + randint(5);
 	    if (in_bounds(j, k) && los(y, x, j, k)) {
 		c_ptr = &cave[j][k];
-		if (c_ptr->fval <= MAX_OPEN_SPACE && (c_ptr->tptr == 0)) {
+		if (floor_grid_bold(j, k) && (c_ptr->tptr == 0)) {
 		    if (typ == 3) {/* typ == 3 -> 50% objects, 50% gold */
 			if (randint(100) < 50)
 			    real_typ = 1;
@@ -531,7 +531,7 @@ u32b              win;
 	    k = x - 3 + randint(5);
 	    if (in_bounds(j, k) && los(y, x, j, k)) {
 		c_ptr = &cave[j][k];
-		if (c_ptr->fval <= MAX_OPEN_SPACE && (c_ptr->tptr == 0)) {
+		if (floor_grid_bold(j, k) && (c_ptr->tptr == 0)) {
 		    if (!crown) {
 			int                 cur_pos;
 			inven_type         *t_ptr;
@@ -779,7 +779,7 @@ int monptr, dam, print_fear;
 				ny = ty + (byte) randint(3) - 2;
 				nx = tx + (byte) randint(3) - 2;
 			    } while (!in_bounds(ny, nx) ||
-				     (cave[ny][nx].fval > MAX_OPEN_SPACE));
+				     !floor_grid_bold(ny, nx));
 			    ty = ny;	/* this is a new spot, not in a wall/door/etc */
 			    tx = nx;
 			} /* ok, to exit this, [ty][tx] must not be artifact
@@ -1789,7 +1789,7 @@ inven_type         *t_ptr;
 	do {
 	    if (in_bounds(i, j)) {
 		c_ptr = &cave[i][j];
-		if (c_ptr->fval <= MAX_OPEN_SPACE && c_ptr->tptr == 0)
+		if (floor_grid_bold(i, j) && c_ptr->tptr == 0)
 		    flag = TRUE;
 	    }
 	    if (!flag) {
@@ -1808,7 +1808,7 @@ inven_type         *t_ptr;
 	    do {		/* pick place in bounds and not in wall */
 		i = y + randint(3) -2;
 		j = x + randint(3) -2;
-	    } while (!in_bounds(i,j) || cave[i][j].fval > MAX_OPEN_SPACE);
+	    } while (!in_bounds(i,j) || !floor_grid_bold(i, j));
 	    k++;
 	    if (!(cur_pos = cave[i][j].tptr) || (k>64))
 		flag = TRUE;
@@ -1963,7 +1963,7 @@ do_cmd_fire()
 		    if (cur_dis > tdis)
 			flag = TRUE;
 		    c_ptr = &cave[y][x];
-		    if ((c_ptr->fval <= MAX_OPEN_SPACE) && (!flag)) {
+		    if (floor_grid_bold(y, x) && (!flag)) {
 			if (c_ptr->cptr > 1) {
 			    flag = TRUE;
 			    m_ptr = &m_list[c_ptr->cptr];
