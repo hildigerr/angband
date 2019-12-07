@@ -1011,7 +1011,7 @@ void move_player(int dir, int do_pickup)
 {
     int                 y, x;
     register int        i, j;
-    register cave_type *c_ptr, *d_ptr;
+    register cave_type *c_ptr;
     register inven_type	*i_ptr;
 
     bool was_running = find_flag;
@@ -1073,10 +1073,9 @@ void move_player(int dir, int do_pickup)
 			    for (i = (char_row - 1); !lit && i <= (char_row + 1); i++)
 			    for (j = (char_col - 1); !lit && j <= (char_col + 1); j++) {
 
-				    d_ptr = &cave[i][j];
-				    if (((d_ptr->fval == LIGHT_FLOOR) ||
-				    (d_ptr->fval == NT_LIGHT_FLOOR)) &&
-				    (!d_ptr->pl)) {
+				    if (((cave[i][j].fval == LIGHT_FLOOR) ||
+				    (cave[i][j].fval == NT_LIGHT_FLOOR)) &&
+				    (!cave[i][j].pl)) {
 					    /* move light 1st, or corridor may be perm lit */
 					    move_light(old_row, old_col, char_row, char_col);
 					    light_room(char_row, char_col);
