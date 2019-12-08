@@ -1010,7 +1010,6 @@ static void area_affect(int dir, int y, int x)
 void move_player(int dir, int do_pickup)
 {
     int                 y, x;
-    register int        i, j;
     register cave_type *c_ptr;
     register inven_type	*i_ptr;
 
@@ -1100,6 +1099,7 @@ void move_player(int dir, int do_pickup)
 
 		    /* In doorway of light-room? */
 		    else if (c_ptr->lr && (py.flags.blind < 1)) {
+			    register int        i, j;
 
 			    byte lit = FALSE;	/* only call light_room once... -CFT */
 
@@ -1126,13 +1126,12 @@ void move_player(int dir, int do_pickup)
 			    /* Get the object */            
 			    i_ptr = &i_list[c_ptr->tptr];
 
-			    i = i_ptr->tval;
-			    if (i == TV_VIS_TRAP || i == TV_INVIS_TRAP
-			    || i == TV_STORE_DOOR || !prompt_carry_flag
-			    || i == TV_GOLD)
+			    if (i_ptr->tval == TV_VIS_TRAP || i_ptr->tval == TV_INVIS_TRAP
+			    || i_ptr->tval == TV_STORE_DOOR || !prompt_carry_flag
+			    || i_ptr->tval == TV_GOLD)
 				    carry(char_row, char_col, do_pickup);
-			    else if (prompt_carry_flag && i != TV_OPEN_DOOR
-			    && i != TV_UP_STAIR && i != TV_DOWN_STAIR) {
+			    else if (prompt_carry_flag && i_ptr->tval != TV_OPEN_DOOR
+			    && i_ptr->tval != TV_UP_STAIR && i_ptr->tval != TV_DOWN_STAIR) {
 				    bigvtype            tmp_str, tmp2_str;
 				    objdes(tmp_str, i_ptr, TRUE);
 				    sprintf(tmp2_str, "You see %s.", tmp_str);
@@ -1157,9 +1156,8 @@ void move_player(int dir, int do_pickup)
 				    /* check to see if we have stepped back onto another trap, if so, set it off */
 				    c_ptr = &cave[char_row][char_col];
 				    if (c_ptr->tptr != 0) {
-					    i = i_ptr->tval;
-					    if (i == TV_INVIS_TRAP || i == TV_VIS_TRAP
-					    || i == TV_STORE_DOOR)
+					    if (i_ptr->tval == TV_INVIS_TRAP || i_ptr->tval == TV_VIS_TRAP
+					    || i_ptr->tval == TV_STORE_DOOR)
 						    hit_trap(char_row, char_col);
 			    }
 			    }
