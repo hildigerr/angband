@@ -1029,31 +1029,31 @@ void move_player(int dir, int do_pickup)
 
     c_ptr = &cave[y][x];
 
-	    /* Can't move onto floor space */
-	    if (!floor_grid_bold(y,x)) {
+    /* Can't move onto floor space */
+    if (!floor_grid_bold(y,x)) {
 
-	    /* Get the "object" if any */
-	    i_ptr = &i_list[c_ptr->tptr];
+	/* Get the "object" if any */
+	i_ptr = &i_list[c_ptr->tptr];
 
-	    if (!was_running && (c_ptr->tptr)) {
+	if (!was_running && (c_ptr->tptr)) {
 
-		    if (i_ptr->tval == TV_RUBBLE) {
-		    msg_print("There is rubble blocking your way.");
-		    }
-
-		    else if (i_ptr->tval == TV_CLOSED_DOOR) {
-		    msg_print("There is a closed door blocking your way.");
-		    }
+	    if (i_ptr->tval == TV_RUBBLE) {
+		msg_print("There is rubble blocking your way.");
 	    }
+
+	    else if (i_ptr->tval == TV_CLOSED_DOOR) {
+		msg_print("There is a closed door blocking your way.");
+	    }
+	}
 	    else end_find();
 
-	    free_turn_flag = TRUE;
-	    }
+	free_turn_flag = TRUE;
+    }
 
-	    /* Attacking a creature! */
-	    else if (c_ptr->cptr > 1) {
+    /* Attacking a creature! */
+    else if (c_ptr->cptr > 1) {
 
-		    end_find();
+	end_find();
 
 		    /* if player can see monster, and was in find mode, then nothing */
 		    if (was_running && m_list[c_ptr->cptr].ml) {
@@ -1066,28 +1066,28 @@ void move_player(int dir, int do_pickup)
 			    else	/* Coward! */
 				    msg_print("You are too afraid!");
 		    }
-	    }
+    }
 
-	    else {	/* Open floor spot */
+    else {	/* Open floor spot */
 
 		    /* Make final assignments of char co-ords */
 		    char_row = y;
 		    char_col = x;
 
-		    /* Move character record (-1) */
-		    move_rec(old_row, old_col, char_row, char_col);
+	/* Move character record (-1) */
+	move_rec(old_row, old_col, char_row, char_col);
 
-		    /* Check for new panel */
-		    if (get_panel(char_row, char_col, FALSE)) prt_map();
+	/* Check for new panel */
+	if (get_panel(char_row, char_col, FALSE)) prt_map();
 
-		    /* Check to see if he should stop */
-		    if (find_flag) area_affect(dir, char_row, char_col);
+	/* Check to see if he should stop */
+	if (find_flag) area_affect(dir, char_row, char_col);
 
-		    /* Check to see if he notices something  */
-		    /* fos may be negative if have good rings of searching */
-		    if ((py.misc.fos <= 1) || (randint(py.misc.fos) == 1) ||
-		    (py.flags.status & PY_SEARCH))
-			    search(char_row, char_col, py.misc.srh);
+	/* Check to see if he notices something  */
+	/* fos may be negative if have good rings of searching */
+	if ((py.misc.fos <= 1) || (randint(py.misc.fos) == 1) ||
+	(py.flags.status & PY_SEARCH))
+	    search(char_row, char_col, py.misc.srh);
 
 		    /* A room of light should be lit. */
 		    if ((c_ptr->fval == LIGHT_FLOOR) ||
@@ -1118,52 +1118,52 @@ void move_player(int dir, int do_pickup)
 		    /* Move the light source */
 		    move_light(old_row, old_col, char_row, char_col);
 
-		    /* An object is beneath him. */
-		    if (c_ptr->tptr != 0) {
+	/* An object is beneath him. */
+	if (c_ptr->tptr != 0) {
 
-			    /* Get the object */            
-			    i_ptr = &i_list[c_ptr->tptr];
+	    /* Get the object */            
+	    i_ptr = &i_list[c_ptr->tptr];
 
-			    /* Pre-handle open doors and stairs */
-			    if ((i_ptr->tval == TV_UP_STAIR) ||
-			    (i_ptr->tval == TV_DOWN_STAIR)) {
-			    /* Nothing */
-			    }
+	    /* Pre-handle open doors and stairs */
+	    if ((i_ptr->tval == TV_UP_STAIR) ||
+		(i_ptr->tval == TV_DOWN_STAIR)) {
+		/* Nothing */
+	    }
 
-			    /* Pre-handle open doors */
-			    else if (i_ptr->tval == TV_OPEN_DOOR) {
-			    /* Nothing */
-			    }
+	    /* Pre-handle open doors */
+	    else if (i_ptr->tval == TV_OPEN_DOOR) {
+		/* Nothing */
+	    }
 
-			    else if ((i_ptr->tval == TV_VIS_TRAP) ||
-			    (i_ptr->tval == TV_INVIS_TRAP)) {
-				    hit_trap(char_row, char_col);
-			    }
+	    else if ((i_ptr->tval == TV_VIS_TRAP) ||
+		     (i_ptr->tval == TV_INVIS_TRAP)) {
+		hit_trap(char_row, char_col);
+	    }
 
-			    else if (i_ptr->tval == TV_STORE_DOOR) {
-				    enter_store(i_ptr->sval - 101);
-			    }
+	    else if (i_ptr->tval == TV_STORE_DOOR) {
+		 enter_store(i_ptr->sval - 101);
+	    }
 
-			    else if (i_ptr->tval == TV_GOLD || !prompt_carry_flag) {
-				    carry(char_row, char_col, do_pickup);
-			    }
+	    else if (i_ptr->tval == TV_GOLD || !prompt_carry_flag) {
+		carry(char_row, char_col, do_pickup);
+	    }
 
-			    else if (prompt_carry_flag) {
-				    bigvtype            tmp_str, tmp2_str;
-				    objdes(tmp_str, i_ptr, TRUE);
-				    sprintf(tmp2_str, "You see %s.", tmp_str);
-				    msg_print(tmp2_str);
-			    }
+	    else if (prompt_carry_flag) {
+		bigvtype            tmp_str, tmp2_str;
+		objdes(tmp_str, i_ptr, TRUE);
+		sprintf(tmp2_str, "You see %s.", tmp_str);
+		msg_print(tmp2_str);
+	    }
 
 
-			    /* Get the object */            
-			    i_ptr = &i_list[c_ptr->tptr];
+	    /* Get the object */            
+	    i_ptr = &i_list[c_ptr->tptr];
 
-			    /* if stepped on falling rock trap, and space contains
-			    * rubble, then step back into a clear area */
-			    if (i_ptr->tval == TV_RUBBLE) {
+	    /* if stepped on falling rock trap, and space contains
+	     * rubble, then step back into a clear area */
+	    if (i_ptr->tval == TV_RUBBLE) {
 
-				    move_rec(char_row, char_col, old_row, old_col);
+		move_rec(char_row, char_col, old_row, old_col);
 
 				    move_light(char_row, char_col, old_row, old_col);
 
