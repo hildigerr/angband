@@ -1137,10 +1137,19 @@ void move_player(int dir, int do_pickup)
 			    /* Nothing */
 			    }
 
-			    else if (i_ptr->tval == TV_VIS_TRAP || i_ptr->tval == TV_INVIS_TRAP
-			    || i_ptr->tval == TV_STORE_DOOR || !prompt_carry_flag
-			    || i_ptr->tval == TV_GOLD)
+			    else if ((i_ptr->tval == TV_VIS_TRAP) ||
+			    (i_ptr->tval == TV_INVIS_TRAP)) {
 				    carry(char_row, char_col, do_pickup);
+			    }
+
+			    else if (i_ptr->tval == TV_STORE_DOOR) {
+				    carry(char_row, char_col, do_pickup);
+			    }
+
+			    else if (i_ptr->tval == TV_GOLD || !prompt_carry_flag) {
+				    carry(char_row, char_col, do_pickup);
+			    }
+
 			    else if (prompt_carry_flag) {
 				    bigvtype            tmp_str, tmp2_str;
 				    objdes(tmp_str, i_ptr, TRUE);
