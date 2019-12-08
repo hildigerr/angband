@@ -997,13 +997,12 @@ static void area_affect(int dir, int y, int x)
 
 /*
  * Moves player from one space to another. -RAK-
- * Note: This routine has been pre-declared; see that for argument
  *
- * if there is no creature, or an unlit creature in the walls then...
- * disallow attacks against unlit creatures in walls because moving into
- * a wall is a free turn normally, hence don't give player free turns
- * attacking each wall in an attempt to locate the invisible creature,
- * instead force player to tunnel into walls which always takes a turn
+ * Note that "moving" into a wall is a free move, and will NOT hit any monster
+ * which is "hiding" in the walls.  The player must tunnel into the wall.
+ * Otherwise, moving into a wall would have to always take a turn.
+ * In fact, moving into a wall will not hit ANY monster in the wall.
+ * After all, the monster has the entire wall as protection!
  */
 void move_player(int dir, int do_pickup)
 {
@@ -1011,8 +1010,10 @@ void move_player(int dir, int do_pickup)
     register cave_type *c_ptr;
     register inven_type	*i_ptr;
 
+    /* Remember if the player was running */
     bool was_running = find_flag;
 
+    /* Save info for dealing with traps and such */
     int old_row = char_row;
     int old_col = char_col;
 
@@ -1023,36 +1024,44 @@ void move_player(int dir, int do_pickup)
 	    end_find();
     }
 
+
+    /* Find the result of moving */
     y = char_row;
     x = char_col;
     if (mmove(dir, &y, &x)) {	   /* Legal move? */
 
+    /* Examine the destination */    
     c_ptr = &cave[y][x];
 
-    /* Can't move onto floor space */
+    /* Player can only walk on floors */
     if (!floor_grid_bold(y,x)) {
 
 	/* Get the "object" if any */
 	i_ptr = &i_list[c_ptr->tptr];
 
+	/* Notice non-walls unless starting to "run" */
 	if (!was_running && (c_ptr->tptr)) {
 
+	    /* Rubble */
 	    if (i_ptr->tval == TV_RUBBLE) {
 		msg_print("There is rubble blocking your way.");
 	    }
 
+	    /* Closed doors */
 	    else if (i_ptr->tval == TV_CLOSED_DOOR) {
 		msg_print("There is a closed door blocking your way.");
 	    }
 	}
 	    else end_find();
 
+	/* Free move */
 	free_turn_flag = TRUE;
     }
 
     /* Attacking a creature! */
     else if (c_ptr->cptr > 1) {
 
+	/* Hitting a monster is disturbing */
 	end_find();
 
 		    /* if player can see monster, and was in find mode, then nothing */
@@ -1061,30 +1070,33 @@ void move_player(int dir, int do_pickup)
 			    free_turn_flag = TRUE;
 		    }
 		    else {
-			    if (py.flags.afraid < 1)	/* Coward? */
+			    /* Handle fear */
+			    if (py.flags.afraid < 1)
 				    py_attack(y, x);
-			    else	/* Coward! */
+			    else
 				    msg_print("You are too afraid!");
 		    }
     }
 
-    else {	/* Open floor spot */
+    /* Normal movement */
+    else {
 
 		    /* Make final assignments of char co-ords */
 		    char_row = y;
 		    char_col = x;
 
-	/* Move character record (-1) */
+	/* Move "player" record to the new location */
 	move_rec(old_row, old_col, char_row, char_col);
 
-	/* Check for new panel */
+	/* Check for new panel (redraw map) */
 	if (get_panel(char_row, char_col, FALSE)) prt_map();
 
-	/* Check to see if he should stop */
+	/* Check to see if he should stop running */
 	if (find_flag) area_affect(dir, char_row, char_col);
 
+
 	/* Check to see if he notices something  */
-	/* fos may be negative if have good rings of searching */
+	/* "fos" may be negative if have good rings of searching */
 	if ((py.misc.fos <= 1) || (randint(py.misc.fos) == 1) ||
 	(py.flags.status & PY_SEARCH))
 	    search(char_row, char_col, py.misc.srh);
@@ -1135,19 +1147,23 @@ void move_player(int dir, int do_pickup)
 		/* Nothing */
 	    }
 
+	    /* Set off a trap */
 	    else if ((i_ptr->tval == TV_VIS_TRAP) ||
 		     (i_ptr->tval == TV_INVIS_TRAP)) {
 		hit_trap(char_row, char_col);
 	    }
 
+	    /* Enter a store */
 	    else if (i_ptr->tval == TV_STORE_DOOR) {
 		 enter_store(i_ptr->sval - 101);
 	    }
 
+	    /* Note that we only carry things that can be "carried" */
 	    else if (i_ptr->tval == TV_GOLD || !prompt_carry_flag) {
 		carry(char_row, char_col, do_pickup);
 	    }
 
+	    /* Inform the user he could have carried it */
 	    else if (prompt_carry_flag) {
 		bigvtype            tmp_str, tmp2_str;
 		objdes(tmp_str, i_ptr, TRUE);
@@ -1159,10 +1175,13 @@ void move_player(int dir, int do_pickup)
 	    /* Get the object */            
 	    i_ptr = &i_list[c_ptr->tptr];
 
-	    /* if stepped on falling rock trap, and space contains
-	     * rubble, then step back into a clear area */
+	    /* Hack -- if stepped on falling rock trap, the space will */
+	    /* now contain rubble, so step back into a clear area */
+
+	    /* Back away from rubble. */
 	    if (i_ptr->tval == TV_RUBBLE) {
 
+		/* Move back to the old location */
 		move_rec(char_row, char_col, old_row, old_col);
 
 				    move_light(char_row, char_col, old_row, old_col);
