@@ -1141,7 +1141,7 @@ void move_player(int dir, int do_pickup)
 			    }
 
 			    else if (i_ptr->tval == TV_STORE_DOOR) {
-				    hit_trap(char_row, char_col);
+				    enter_store(i_ptr->sval - 101);
 			    }
 
 			    else if (i_ptr->tval == TV_GOLD || !prompt_carry_flag) {

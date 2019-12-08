@@ -22,7 +22,9 @@ static void py_bash(int, int);
 static int fearless(monster_race *);
 
 
-/* Player hit a trap.	(Chuckle)			-RAK-	 */
+/* Player hit a trap.	(Chuckle)			-RAK-	
+ * No longer includes stores.
+ */
 void 
 hit_trap(y, x)
 int y, x;
@@ -207,18 +209,6 @@ int y, x;
       case 19:			   /* Secret Door */
 	break;
       case 99:			   /* Scare Mon */
-	break;
-
-    /* Town level traps are special,	the stores.	 */
-      case 101:
-      case 102:
-      case 103:
-      case 104:
-      case 105:
-      case 106:
-      case 107:
-      case 108:
-	enter_store(t_ptr->sval - 101);
 	break;
 
       default:
