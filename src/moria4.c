@@ -691,8 +691,6 @@ void carry(int y, int x, int pickup)
     i_ptr = &i_list[c_ptr->tptr];
     i = i_ptr->tval;
 
-    if (i == TV_INVIS_TRAP || i == TV_VIS_TRAP || i == TV_STORE_DOOR) { hit_trap(y, x); return; }
-
 	end_find();
 
     /* Pick up gold */
@@ -1139,11 +1137,11 @@ void move_player(int dir, int do_pickup)
 
 			    else if ((i_ptr->tval == TV_VIS_TRAP) ||
 			    (i_ptr->tval == TV_INVIS_TRAP)) {
-				    carry(char_row, char_col, do_pickup);
+				    hit_trap(char_row, char_col);
 			    }
 
 			    else if (i_ptr->tval == TV_STORE_DOOR) {
-				    carry(char_row, char_col, do_pickup);
+				    hit_trap(char_row, char_col);
 			    }
 
 			    else if (i_ptr->tval == TV_GOLD || !prompt_carry_flag) {

@@ -12,7 +12,6 @@
 #include "monster.h"
 
 
-static void hit_trap(int, int);
 static int summon_object(int, int, int, int, u32b);
 static void py_attack(int, int);
 static void chest_trap(int, int);
@@ -24,7 +23,7 @@ static int fearless(monster_race *);
 
 
 /* Player hit a trap.	(Chuckle)			-RAK-	 */
-static void 
+void 
 hit_trap(y, x)
 int y, x;
 {

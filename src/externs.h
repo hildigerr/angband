@@ -650,6 +650,7 @@ void change_trap(int, int);
 void darken_player(int, int);
 
 /* moria2.c */
+void hit_trap(int, int);
 int cast_spell(const char * ,int, int *, int *);
 void delete_monster(int);
 void fix1_delete_monster(int);
