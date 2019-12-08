@@ -1126,12 +1126,22 @@ void move_player(int dir, int do_pickup)
 			    /* Get the object */            
 			    i_ptr = &i_list[c_ptr->tptr];
 
-			    if (i_ptr->tval == TV_VIS_TRAP || i_ptr->tval == TV_INVIS_TRAP
+			    /* Pre-handle open doors and stairs */
+			    if ((i_ptr->tval == TV_UP_STAIR) ||
+			    (i_ptr->tval == TV_DOWN_STAIR)) {
+			    /* Nothing */
+			    }
+
+			    /* Pre-handle open doors */
+			    else if (i_ptr->tval == TV_OPEN_DOOR) {
+			    /* Nothing */
+			    }
+
+			    else if (i_ptr->tval == TV_VIS_TRAP || i_ptr->tval == TV_INVIS_TRAP
 			    || i_ptr->tval == TV_STORE_DOOR || !prompt_carry_flag
 			    || i_ptr->tval == TV_GOLD)
 				    carry(char_row, char_col, do_pickup);
-			    else if (prompt_carry_flag && i_ptr->tval != TV_OPEN_DOOR
-			    && i_ptr->tval != TV_UP_STAIR && i_ptr->tval != TV_DOWN_STAIR) {
+			    else if (prompt_carry_flag) {
 				    bigvtype            tmp_str, tmp2_str;
 				    objdes(tmp_str, i_ptr, TRUE);
 				    sprintf(tmp2_str, "You see %s.", tmp_str);
