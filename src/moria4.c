@@ -1032,12 +1032,11 @@ void move_player(int dir, int do_pickup)
 
     c_ptr = &cave[y][x];
 
-
-	/* Get the "object" if any */
-	i_ptr = &i_list[c_ptr->tptr];
-
 	    /* Can't move onto floor space */
 	    if (!floor_grid_bold(y,x)) {
+
+	    /* Get the "object" if any */
+	    i_ptr = &i_list[c_ptr->tptr];
 
 	    if (!was_running && (c_ptr->tptr)) {
 
@@ -1123,6 +1122,10 @@ void move_player(int dir, int do_pickup)
 
 		    /* An object is beneath him. */
 		    if (c_ptr->tptr != 0) {
+
+			    /* Get the object */            
+			    i_ptr = &i_list[c_ptr->tptr];
+
 			    i = i_ptr->tval;
 			    if (i == TV_VIS_TRAP || i == TV_INVIS_TRAP
 			    || i == TV_STORE_DOOR || !prompt_carry_flag
@@ -1135,6 +1138,10 @@ void move_player(int dir, int do_pickup)
 				    sprintf(tmp2_str, "You see %s.", tmp_str);
 				    msg_print(tmp2_str);
 			    }
+
+
+			    /* Get the object */            
+			    i_ptr = &i_list[c_ptr->tptr];
 
 			    /* if stepped on falling rock trap, and space contains
 			    * rubble, then step back into a clear area */
