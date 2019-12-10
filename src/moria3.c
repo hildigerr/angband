@@ -534,3 +534,463 @@ void do_cmd_look()
 
 
 
+/*
+ * Chests have traps too. -RAK-
+ * Note: Chest traps are based on the FLAGS value
+ */
+static void chest_trap(int y, int x)
+{
+    register int        i, j, k;
+    register inven_type *t_ptr = &i_list[cave[y][x].tptr];
+
+    if (t_ptr->flags & CH_LOSE_STR) {
+	msg_print("A small needle has pricked you!");
+	if (!py.flags.sustain_str) {
+	    (void)dec_stat(A_STR);
+	    take_hit(damroll(1, 4), "a poison needle");
+	    msg_print("You feel weakened!");
+	}
+	else {
+	    msg_print("You are unaffected.");
+	}
+    }
+
+    if (t_ptr->flags & CH_POISON) {
+	msg_print("A small needle has pricked you!");
+	take_hit(damroll(1, 6), "a poison needle");
+	if (!(py.flags.resist_pois ||
+	      py.flags.oppose_pois ||
+	      py.flags.immune_pois)) {
+	    py.flags.poisoned += 10 + randint(20);
+	}
+    }
+
+    if (t_ptr->flags & CH_PARALYSED) {
+	msg_print("A puff of yellow gas surrounds you!");
+	if (py.flags.free_act) {
+	    msg_print("You are unaffected.");
+	}
+	else {
+	    msg_print("You choke and pass out.");
+	    py.flags.paralysis = 10 + randint(20);
+	}
+    }
+
+    if (t_ptr->flags & CH_SUMMON) {
+	for (i = 0; i < 3; i++) {
+	    j = y;
+	    k = x;
+	    (void)summon_monster(&j, &k, FALSE);
+	}
+    }
+
+    if (t_ptr->flags & CH_EXPLODE) {
+	msg_print("There is a sudden explosion!");
+	(void)delete_object(y, x);
+	take_hit(damroll(5, 8), "an exploding chest");
+    }
+}
+
+
+
+
+
+/*
+ * Opens a closed door or closed chest.		-RAK-
+ */
+void do_cmd_open()
+{
+    int				y, x, i, dir;
+    int				flag, no_object;
+    register cave_type		*c_ptr;
+    register inven_type		*t_ptr;
+    register struct misc  *p_ptr;
+    register monster_type *m_ptr;
+    vtype                  m_name, out_val;
+
+#ifdef TARGET
+    int temp = target_mode; /* targetting will screw up get_dir, so we save
+			       target_mode, then turn it off -CFT */
+#endif
+    y = char_row;
+    x = char_col;
+#ifdef TARGET
+    target_mode = FALSE;
+#endif
+
+    if (get_dir(NULL, &dir)) {
+
+	(void)mmove(dir, &y, &x);
+	c_ptr = &cave[y][x];
+
+	no_object = FALSE;
+
+	if (c_ptr->cptr > 1 && c_ptr->tptr != 0 &&
+	    (i_list[c_ptr->tptr].tval == TV_CLOSED_DOOR
+	     || i_list[c_ptr->tptr].tval == TV_CHEST)) {
+
+	    m_ptr = &m_list[c_ptr->cptr];
+
+	    if (m_ptr->ml) {
+
+		if (c_list[m_ptr->mptr].cdefense & UNIQUE)
+		    (void)sprintf(m_name, "%s", c_list[m_ptr->mptr].name);
+		else
+		    (void)sprintf(m_name, "The %s", c_list[m_ptr->mptr].name);
+	    } else
+		(void)strcpy(m_name, "Something");
+	    (void)sprintf(out_val, "%s is in your way!", m_name);
+	    msg_print(out_val);
+
+	}
+
+	else if (c_ptr->tptr != 0)
+	/* Closed door */
+	    if (i_list[c_ptr->tptr].tval == TV_CLOSED_DOOR) {
+
+		t_ptr = &i_list[c_ptr->tptr];
+
+	    if (t_ptr->p1 > 0) {
+
+		    p_ptr = &py.misc;
+
+		i = p_ptr->disarm + 2 * todis_adj() + stat_adj(A_INT)
+		    + (class_level_adj[p_ptr->pclass][CLA_DISARM]
+		       * p_ptr->lev / 3);
+
+		/* give a 1/50 chance of opening anything, anyway -CWS */
+		if ((i - t_ptr->p1) < 2) i = t_ptr->p1 + 2;
+
+		if (py.flags.confused > 0) {
+		    msg_print("You are too confused to pick the lock.");
+		}
+		else if ((i - t_ptr->p1) > randint(100)) {
+		    msg_print("You have picked the lock.");
+		    py.misc.exp++;
+		    prt_experience();
+		    t_ptr->p1 = 0;
+		}
+		else {
+		    count_msg_print("You failed to pick the lock.");
+		}
+	    }
+
+	    /* It's stuck */
+	    else if (t_ptr->p1 < 0) {
+		msg_print("It appears to be stuck.");
+	    }
+
+	    if (t_ptr->p1 == 0) {
+
+		invcopy(&i_list[c_ptr->tptr], OBJ_OPEN_DOOR);
+
+		c_ptr->fval = CORR_FLOOR;
+
+		lite_spot(y, x);
+
+		check_view();
+
+		command_rep = 0;
+	    }
+	    }
+
+	/* Open a closed chest. */
+	else if (i_list[c_ptr->tptr].tval == TV_CHEST) {
+
+		p_ptr = &py.misc;
+
+	    i = p_ptr->disarm + 2 * todis_adj() + stat_adj(A_INT) +
+		(class_level_adj[p_ptr->pclass][CLA_DISARM] *
+		p_ptr->lev / 3);
+
+	    t_ptr = &i_list[c_ptr->tptr];
+
+	    flag = FALSE;
+
+	    if (t_ptr->flags & CH_LOCKED)
+		if (py.flags.confused > 0) {
+		    msg_print("You are too confused to pick the lock.");
+		}
+
+		else if ((i - (int)t_ptr->level) > randint(100)) {
+		    msg_print("You have picked the lock.");
+		    flag = TRUE;
+		    py.misc.exp += t_ptr->level;
+		    prt_experience();
+		}
+
+		else {
+		    count_msg_print("You failed to pick the lock.");
+		}
+
+	    else flag = TRUE;
+
+	    if (flag) {
+
+		    t_ptr->flags &= ~CH_LOCKED;
+		    t_ptr->name2 = EGO_EMPTY;
+		    known2(t_ptr);
+		    t_ptr->cost = 0;
+		}
+		flag = FALSE;
+
+	    /* Was chest still trapped?	 (Snicker)   */
+		if ((t_ptr->flags & CH_LOCKED) == 0) {
+		    chest_trap(y, x);
+		    if (c_ptr->tptr != 0)
+			flag = TRUE;
+		}
+
+	    /* Chest treasure is allocated as if a creature   */
+	    /* had been killed.				   */
+		if (flag) {
+		/*
+		 * clear the cursed chest/monster win flag, so that people
+		 * can not win by opening a cursed chest 
+		 */
+		    t_ptr->flags &= ~TR_CURSED;
+
+		/* generate based on level chest was found on - dbd */
+		    object_level = t_ptr->p1;
+
+	        /* but let's not get too crazy with storebought chests -CWS */
+		    if (t_ptr->ident & ID_STOREBOUGHT) {
+			if (object_level > 20)
+			    object_level = 20;
+		    }
+
+		    if (object_level < 0) /* perform some sanity checking -CWS */
+			object_level = 0;
+		    if (object_level > MAX_OBJ_LEVEL)
+			object_level = MAX_OBJ_LEVEL;
+
+		    coin_type = 0;
+		    opening_chest = TRUE; /* don't generate another chest -CWS */
+		    (void)monster_death(y, x, i_list[c_ptr->tptr].flags, 0, 0);
+		    i_list[c_ptr->tptr].flags = 0;
+		    opening_chest = FALSE;
+		}
+	    } else
+		no_object = TRUE;
+	else
+	    no_object = TRUE;
+
+	if (no_object) {
+	    msg_print("I do not see anything you can open there.");
+	    free_turn_flag = TRUE;
+	}
+    }
+#ifdef TARGET
+    target_mode = temp;
+#endif
+}
+
+
+/*
+ * Closes an open door. -RAK-
+ */
+void do_cmd_close()
+{
+    int                    y, x, dir, no_object;
+    vtype                  out_val, m_name;
+    register cave_type    *c_ptr;
+    register monster_type *m_ptr;
+
+#ifdef TARGET
+    int temp = target_mode; /* targetting will screw up get_dir, so we save
+			       target_mode, then turn it off -CFT */
+#endif
+    y = char_row;
+    x = char_col;
+#ifdef TARGET
+    target_mode = FALSE;
+#endif
+
+    if (get_dir(NULL, &dir)) {
+
+	(void)mmove(dir, &y, &x);
+
+	c_ptr = &cave[y][x];
+
+	no_object = FALSE;
+
+	if (c_ptr->tptr != 0)
+	    if (i_list[c_ptr->tptr].tval == TV_OPEN_DOOR)
+		if (c_ptr->cptr == 0)
+		    if (i_list[c_ptr->tptr].p1 == 0) {
+			invcopy(&i_list[c_ptr->tptr], OBJ_CLOSED_DOOR);
+			c_ptr->fval = BLOCKED_FLOOR;
+			lite_spot(y, x);
+		    } else
+			msg_print("The door appears to be broken.");
+		else {
+		    m_ptr = &m_list[c_ptr->cptr];
+		    if (m_ptr->ml) {
+			if (c_list[m_ptr->mptr].cdefense & UNIQUE)
+			    (void)sprintf(m_name, "%s", c_list[m_ptr->mptr].name);
+			else
+			    (void)sprintf(m_name, "The %s", c_list[m_ptr->mptr].name);
+		    } else
+			(void)strcpy(m_name, "Something");
+		    (void)sprintf(out_val, "%s is in your way!", m_name);
+		    msg_print(out_val);
+		}
+	    else
+		no_object = TRUE;
+	else
+	    no_object = TRUE;
+
+	if (no_object) {
+	    msg_print("I do not see anything you can close there.");
+	    free_turn_flag = TRUE;
+	}
+    }
+#ifdef TARGET
+    target_mode = temp;
+#endif
+}
+
+
+/*
+ * Disarms a trap -RAK-	
+ */
+void do_cmd_disarm()
+{
+    int                 y, x, level, tmp, dir, no_disarm;
+    register int        tot, i;
+    register cave_type *c_ptr;
+    register inven_type *i_ptr;
+    monster_type       *m_ptr;
+    vtype                m_name, out_val;
+
+#ifdef TARGET
+    int temp = target_mode; /* targetting will screw up get_dir, so we save
+			       target_mode, then turn it off -CFT */
+#endif
+    y = char_row;
+    x = char_col;
+#ifdef TARGET
+    target_mode = FALSE;
+#endif
+
+    if (get_dir(NULL, &dir)) {
+
+	(void)mmove(dir, &y, &x);
+	c_ptr = &cave[y][x];
+
+	no_disarm = FALSE;
+
+	if (c_ptr->cptr > 1 && c_ptr->tptr != 0 &&
+	    (i_list[c_ptr->tptr].tval == TV_VIS_TRAP
+	     || i_list[c_ptr->tptr].tval == TV_CHEST)) {
+
+	    m_ptr = &m_list[c_ptr->cptr];
+	    if (m_ptr->ml)
+		(void)sprintf(m_name, "The %s", c_list[m_ptr->mptr].name);
+	    else
+		(void)strcpy(m_name, "Something");
+	    (void)sprintf(out_val, "%s is in your way!", m_name);
+	    msg_print(out_val);
+	}
+
+	else if (c_ptr->tptr != 0) {
+
+	    tot = py.misc.disarm + 2 * todis_adj() + stat_adj(A_INT) +
+		  (class_level_adj[py.misc.pclass][CLA_DISARM] *
+		  py.misc.lev / 3);
+
+	    if ((py.flags.blind > 0) || (no_lite())) {
+		tot = tot / 10;
+	    }
+	    if (py.flags.confused > 0) {
+		tot = tot / 10;
+	    }
+	    if (py.flags.image > 0) {
+		tot = tot / 10;
+	    }
+
+	    i_ptr = &i_list[c_ptr->tptr];
+	    i = i_ptr->tval;
+	    level = i_ptr->level;
+
+	    /* Floor trap */
+	    if (i == TV_VIS_TRAP) {
+
+		if ((tot + 100 - level) > randint(100)) {
+		    msg_print("You have disarmed the trap.");
+		    py.misc.exp += i_ptr->p1;
+		    delete_object(y, x);
+		    /* make sure we move onto the trap even if confused */
+		    tmp = py.flags.confused;
+		    py.flags.confused = 0;
+		    move_player(dir, FALSE);
+		    py.flags.confused = tmp;
+		    prt_experience();
+		}
+
+		/* avoid randint(0) call */
+		else if ((tot > 5) && (randint(tot) > 5)) {
+		    count_msg_print("You failed to disarm the trap.");
+		}
+
+		else {
+		    msg_print("You set the trap off!");
+		    /* make sure we move onto the trap even if confused */
+		    tmp = py.flags.confused;
+		    py.flags.confused = 0;
+		    move_player(dir, FALSE);
+		    py.flags.confused += tmp;
+		}
+	    }
+
+	    else if (i == TV_CHEST) {
+
+		if (!known2_p(i_ptr)) {
+		    msg_print("I don't see a trap.");
+		    free_turn_flag = TRUE;
+		}
+
+		else if (i_ptr->flags & CH_TRAPPED) {
+		if ((tot - level) > randint(100)) {
+		    i_ptr->flags &= ~CH_TRAPPED;
+		    if (i_ptr->flags & CH_LOCKED)
+			    i_ptr->name2 = EGO_LOCKED;
+		    else
+			    i_ptr->name2 = EGO_DISARMED;
+		    msg_print("You have disarmed the chest.");
+		    known2(i_ptr);
+		    py.misc.exp += level;
+		    prt_experience();
+		}
+
+		else if ((tot > 5) && (randint(tot) > 5)) {
+		    count_msg_print("You failed to disarm the chest.");
+		}
+
+		else {
+		    msg_print("You set a trap off!");
+		    known2(i_ptr);
+		    chest_trap(y, x);
+		}
+		}
+
+		else {
+		    msg_print("The chest was not trapped.");
+		    free_turn_flag = TRUE;
+		}
+	    } else
+		no_disarm = TRUE;
+	} else
+	    no_disarm = TRUE;
+
+	if (no_disarm) {
+	    msg_print("I do not see anything to disarm there.");
+	    free_turn_flag = TRUE;
+	}
+    }
+#ifdef TARGET
+    target_mode = temp;
+#endif
+}
+
+
