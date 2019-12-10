@@ -27,12 +27,10 @@ static int fearless(monster_race *);
  */
 void move_rec(int y1, int x1, int y2, int x2)
 {
-    int tmp;
-
     /* this always works correctly, even if y1==y2 and x1==x2 */
-	tmp = cave[y1][x1].cptr;
+	int m_idx = cave[y1][x1].cptr;
 	cave[y1][x1].cptr = 0;
-	cave[y2][x2].cptr = tmp;
+	cave[y2][x2].cptr = m_idx;
 }
 
 
