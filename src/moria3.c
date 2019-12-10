@@ -541,9 +541,9 @@ void do_cmd_look()
 static void chest_trap(int y, int x)
 {
     register int        i, j, k;
-    register inven_type *t_ptr = &i_list[cave[y][x].tptr];
+    register inven_type *i_ptr = &i_list[cave[y][x].tptr];
 
-    if (t_ptr->flags & CH_LOSE_STR) {
+    if (i_ptr->flags & CH_LOSE_STR) {
 	msg_print("A small needle has pricked you!");
 	if (!py.flags.sustain_str) {
 	    (void)dec_stat(A_STR);
@@ -555,7 +555,7 @@ static void chest_trap(int y, int x)
 	}
     }
 
-    if (t_ptr->flags & CH_POISON) {
+    if (i_ptr->flags & CH_POISON) {
 	msg_print("A small needle has pricked you!");
 	take_hit(damroll(1, 6), "a poison needle");
 	if (!(py.flags.resist_pois ||
@@ -565,7 +565,7 @@ static void chest_trap(int y, int x)
 	}
     }
 
-    if (t_ptr->flags & CH_PARALYSED) {
+    if (i_ptr->flags & CH_PARALYSED) {
 	msg_print("A puff of yellow gas surrounds you!");
 	if (py.flags.free_act) {
 	    msg_print("You are unaffected.");
@@ -576,7 +576,7 @@ static void chest_trap(int y, int x)
 	}
     }
 
-    if (t_ptr->flags & CH_SUMMON) {
+    if (i_ptr->flags & CH_SUMMON) {
 	for (i = 0; i < 3; i++) {
 	    j = y;
 	    k = x;
@@ -584,7 +584,7 @@ static void chest_trap(int y, int x)
 	}
     }
 
-    if (t_ptr->flags & CH_EXPLODE) {
+    if (i_ptr->flags & CH_EXPLODE) {
 	msg_print("There is a sudden explosion!");
 	(void)delete_object(y, x);
 	take_hit(damroll(5, 8), "an exploding chest");
