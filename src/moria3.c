@@ -619,11 +619,13 @@ void do_cmd_open()
 	(void)mmove(dir, &y, &x);
 	c_ptr = &cave[y][x];
 
+	i_ptr = &i_list[c_ptr->tptr];
+
 	no_object = FALSE;
 
 	if (c_ptr->cptr > 1 && c_ptr->tptr != 0 &&
-	    (i_list[c_ptr->tptr].tval == TV_CLOSED_DOOR
-	     || i_list[c_ptr->tptr].tval == TV_CHEST)) {
+	    (i_ptr->tval == TV_CLOSED_DOOR
+	     || i_ptr->tval == TV_CHEST)) {
 
 	    m_ptr = &m_list[c_ptr->cptr];
 
@@ -642,9 +644,7 @@ void do_cmd_open()
 
 	else if (c_ptr->tptr != 0)
 	/* Closed door */
-	    if (i_list[c_ptr->tptr].tval == TV_CLOSED_DOOR) {
-
-		i_ptr = &i_list[c_ptr->tptr];
+	    if (i_ptr->tval == TV_CLOSED_DOOR) {
 
 	    if (i_ptr->p1 > 0) {
 
@@ -676,7 +676,7 @@ void do_cmd_open()
 
 	    if (i_ptr->p1 == 0) {
 
-		invcopy(&i_list[c_ptr->tptr], OBJ_OPEN_DOOR);
+		invcopy(i_ptr, OBJ_OPEN_DOOR);
 
 		c_ptr->fval = CORR_FLOOR;
 
@@ -689,13 +689,11 @@ void do_cmd_open()
 	    }
 
 	/* Open a closed chest. */
-	else if (i_list[c_ptr->tptr].tval == TV_CHEST) {
+	else if (i_ptr->tval == TV_CHEST) {
 
 	    i = p_ptr->disarm + 2 * todis_adj() + stat_adj(A_INT) +
 		(class_level_adj[p_ptr->pclass][CLA_DISARM] *
 		p_ptr->lev / 3);
-
-	    i_ptr = &i_list[c_ptr->tptr];
 
 	    flag = FALSE;
 
