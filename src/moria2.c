@@ -24,12 +24,17 @@ static int fearless(monster_race *);
 
 /*
  * Moves creature record from one space to another	-RAK-	
+ * Hack -- Any "monster" in the destination grid is forgotten.
  */
 void move_rec(int y1, int x1, int y2, int x2)
 {
     /* this always works correctly, even if y1==y2 and x1==x2 */
 	int m_idx = cave[y1][x1].cptr;
+
+	/* No monster is at the old location */
 	cave[y1][x1].cptr = 0;
+
+	/* Copy the monster index */
 	cave[y2][x2].cptr = m_idx;
 }
 
