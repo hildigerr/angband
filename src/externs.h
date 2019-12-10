@@ -429,7 +429,6 @@ void do_cmd_options(void);
 /* dungeon.c */
 void dungeon(void);
 int special_check(inven_type *);
-int is_quest(int);
 void rerate(void);
 int ruin_stat(int);
 
@@ -650,6 +649,7 @@ void change_trap(int, int);
 void darken_player(int, int);
 
 /* moria2.c */
+int is_quest(int);
 void hit_trap(int, int);
 int cast_spell(const char * ,int, int *, int *);
 void delete_monster(int);

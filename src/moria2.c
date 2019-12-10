@@ -39,6 +39,16 @@ void move_rec(int y1, int x1, int y2, int x2)
 }
 
 
+
+int is_quest(int level)
+{
+    if (level == Q_PLANE) return FALSE;
+    if (quests[SAURON_QUEST] && (level == quests[SAURON_QUEST])) return TRUE;
+    return FALSE;
+}
+
+
+
 /* Player hit a trap.	(Chuckle)			-RAK-	
  * No longer includes stores.
  */

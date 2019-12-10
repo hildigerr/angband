@@ -3171,16 +3171,6 @@ refill_lamp()
     }
 }
 
-int 
-is_quest(level)
-int level;
-{
-    if (level == Q_PLANE)
-	return FALSE;
-    if (quests[SAURON_QUEST] && (level == quests[SAURON_QUEST]))
-	return TRUE;
-    return FALSE;
-}
 
 static void 
 regen_monsters()
