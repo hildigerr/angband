@@ -604,7 +604,7 @@ void do_cmd_open()
     int				flag, no_object;
     register cave_type		*c_ptr;
     register inven_type		*i_ptr;
-    register struct misc  *p_ptr;
+    register struct misc  *p_ptr = &py.misc;
     register monster_type *m_ptr;
     vtype                  m_name, out_val;
 
@@ -648,8 +648,6 @@ void do_cmd_open()
 
 	    if (i_ptr->p1 > 0) {
 
-		    p_ptr = &py.misc;
-
 		i = p_ptr->disarm + 2 * todis_adj() + stat_adj(A_INT)
 		    + (class_level_adj[p_ptr->pclass][CLA_DISARM]
 		       * p_ptr->lev / 3);
@@ -692,8 +690,6 @@ void do_cmd_open()
 
 	/* Open a closed chest. */
 	else if (i_list[c_ptr->tptr].tval == TV_CHEST) {
-
-		p_ptr = &py.misc;
 
 	    i = p_ptr->disarm + 2 * todis_adj() + stat_adj(A_INT) +
 		(class_level_adj[p_ptr->pclass][CLA_DISARM] *
