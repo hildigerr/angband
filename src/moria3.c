@@ -608,14 +608,14 @@ void do_cmd_open()
     register monster_type *m_ptr;
     vtype                  m_name, out_val;
 
-    y = char_row;
-    x = char_col;
 
     if (!get_a_dir(NULL, &dir, 0)) {
     }
 
     else {
 
+	y = char_row;
+	x = char_col;
 	(void)mmove(dir, &y, &x);
 	c_ptr = &cave[y][x];
 
@@ -789,14 +789,14 @@ void do_cmd_close()
     register cave_type    *c_ptr;
     register monster_type *m_ptr;
 
-    y = char_row;
-    x = char_col;
 
     if (!get_a_dir(NULL, &dir, 0)) {
     }
 
     else {
 
+	y = char_row;
+	x = char_col;
 	(void)mmove(dir, &y, &x);
 
 	c_ptr = &cave[y][x];
@@ -849,14 +849,14 @@ void do_cmd_disarm()
     monster_type       *m_ptr;
     vtype                m_name, out_val;
 
-    y = char_row;
-    x = char_col;
 
     if (!get_a_dir(NULL, &dir, 0)) {
     }
 
     else {
 
+	y = char_row;
+	x = char_col;
 	(void)mmove(dir, &y, &x);
 	c_ptr = &cave[y][x];
 
