@@ -608,17 +608,13 @@ void do_cmd_open()
     register monster_type *m_ptr;
     vtype                  m_name, out_val;
 
-#ifdef TARGET
-    int temp = target_mode; /* targetting will screw up get_dir, so we save
-			       target_mode, then turn it off -CFT */
-#endif
     y = char_row;
     x = char_col;
-#ifdef TARGET
-    target_mode = FALSE;
-#endif
 
-    if (get_dir(NULL, &dir)) {
+    if (!get_a_dir(NULL, &dir, 0)) {
+    }
+
+    else {
 
 	(void)mmove(dir, &y, &x);
 	c_ptr = &cave[y][x];
@@ -780,9 +776,6 @@ void do_cmd_open()
 	    free_turn_flag = TRUE;
 	}
     }
-#ifdef TARGET
-    target_mode = temp;
-#endif
 }
 
 
@@ -796,17 +789,13 @@ void do_cmd_close()
     register cave_type    *c_ptr;
     register monster_type *m_ptr;
 
-#ifdef TARGET
-    int temp = target_mode; /* targetting will screw up get_dir, so we save
-			       target_mode, then turn it off -CFT */
-#endif
     y = char_row;
     x = char_col;
-#ifdef TARGET
-    target_mode = FALSE;
-#endif
 
-    if (get_dir(NULL, &dir)) {
+    if (!get_a_dir(NULL, &dir, 0)) {
+    }
+
+    else {
 
 	(void)mmove(dir, &y, &x);
 
@@ -845,9 +834,6 @@ void do_cmd_close()
 	    free_turn_flag = TRUE;
 	}
     }
-#ifdef TARGET
-    target_mode = temp;
-#endif
 }
 
 
@@ -863,17 +849,13 @@ void do_cmd_disarm()
     monster_type       *m_ptr;
     vtype                m_name, out_val;
 
-#ifdef TARGET
-    int temp = target_mode; /* targetting will screw up get_dir, so we save
-			       target_mode, then turn it off -CFT */
-#endif
     y = char_row;
     x = char_col;
-#ifdef TARGET
-    target_mode = FALSE;
-#endif
 
-    if (get_dir(NULL, &dir)) {
+    if (!get_a_dir(NULL, &dir, 0)) {
+    }
+
+    else {
 
 	(void)mmove(dir, &y, &x);
 	c_ptr = &cave[y][x];
@@ -988,9 +970,6 @@ void do_cmd_disarm()
 	    free_turn_flag = TRUE;
 	}
     }
-#ifdef TARGET
-    target_mode = temp;
-#endif
 }
 
 
