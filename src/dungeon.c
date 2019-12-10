@@ -948,7 +948,7 @@ dungeon()
 		    old_lite = (-1);
 		}
 		if (find_flag) {
-		    find_run();
+		    find_step();
 		    find_count--;
 		    if (find_count == 0)
 			end_find();

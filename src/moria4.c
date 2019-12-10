@@ -1326,7 +1326,7 @@ void move_player(int dir, int do_pickup)
 
 
 
-void find_run(void)
+void find_step(void)
 {
     /* prevent infinite loops in find mode, will stop after moving 100 times */
     if (find_flag++ > 100) {

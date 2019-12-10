@@ -686,7 +686,7 @@ void search(int, int, int);
 void rest_off(void);
 void carry(int, int, int);
 void move_player(int, int);
-void find_run(void);
+void find_step(void);
 void find_init(int);
 void end_find(void);
 
