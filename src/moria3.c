@@ -603,7 +603,7 @@ void do_cmd_open()
     int				y, x, i, dir;
     int				flag, no_object;
     register cave_type		*c_ptr;
-    register inven_type		*t_ptr;
+    register inven_type		*i_ptr;
     register struct misc  *p_ptr;
     register monster_type *m_ptr;
     vtype                  m_name, out_val;
@@ -648,9 +648,9 @@ void do_cmd_open()
 	/* Closed door */
 	    if (i_list[c_ptr->tptr].tval == TV_CLOSED_DOOR) {
 
-		t_ptr = &i_list[c_ptr->tptr];
+		i_ptr = &i_list[c_ptr->tptr];
 
-	    if (t_ptr->p1 > 0) {
+	    if (i_ptr->p1 > 0) {
 
 		    p_ptr = &py.misc;
 
@@ -659,16 +659,16 @@ void do_cmd_open()
 		       * p_ptr->lev / 3);
 
 		/* give a 1/50 chance of opening anything, anyway -CWS */
-		if ((i - t_ptr->p1) < 2) i = t_ptr->p1 + 2;
+		if ((i - i_ptr->p1) < 2) i = i_ptr->p1 + 2;
 
 		if (py.flags.confused > 0) {
 		    msg_print("You are too confused to pick the lock.");
 		}
-		else if ((i - t_ptr->p1) > randint(100)) {
+		else if ((i - i_ptr->p1) > randint(100)) {
 		    msg_print("You have picked the lock.");
 		    py.misc.exp++;
 		    prt_experience();
-		    t_ptr->p1 = 0;
+		    i_ptr->p1 = 0;
 		}
 		else {
 		    count_msg_print("You failed to pick the lock.");
@@ -676,11 +676,11 @@ void do_cmd_open()
 	    }
 
 	    /* It's stuck */
-	    else if (t_ptr->p1 < 0) {
+	    else if (i_ptr->p1 < 0) {
 		msg_print("It appears to be stuck.");
 	    }
 
-	    if (t_ptr->p1 == 0) {
+	    if (i_ptr->p1 == 0) {
 
 		invcopy(&i_list[c_ptr->tptr], OBJ_OPEN_DOOR);
 
@@ -703,19 +703,19 @@ void do_cmd_open()
 		(class_level_adj[p_ptr->pclass][CLA_DISARM] *
 		p_ptr->lev / 3);
 
-	    t_ptr = &i_list[c_ptr->tptr];
+	    i_ptr = &i_list[c_ptr->tptr];
 
 	    flag = FALSE;
 
-	    if (t_ptr->flags & CH_LOCKED)
+	    if (i_ptr->flags & CH_LOCKED)
 		if (py.flags.confused > 0) {
 		    msg_print("You are too confused to pick the lock.");
 		}
 
-		else if ((i - (int)t_ptr->level) > randint(100)) {
+		else if ((i - (int)i_ptr->level) > randint(100)) {
 		    msg_print("You have picked the lock.");
 		    flag = TRUE;
-		    py.misc.exp += t_ptr->level;
+		    py.misc.exp += i_ptr->level;
 		    prt_experience();
 		}
 
@@ -727,15 +727,15 @@ void do_cmd_open()
 
 	    if (flag) {
 
-		    t_ptr->flags &= ~CH_LOCKED;
-		    t_ptr->name2 = EGO_EMPTY;
-		    known2(t_ptr);
-		    t_ptr->cost = 0;
+		    i_ptr->flags &= ~CH_LOCKED;
+		    i_ptr->name2 = EGO_EMPTY;
+		    known2(i_ptr);
+		    i_ptr->cost = 0;
 		}
 		flag = FALSE;
 
 	    /* Was chest still trapped?	 (Snicker)   */
-		if ((t_ptr->flags & CH_LOCKED) == 0) {
+		if ((i_ptr->flags & CH_LOCKED) == 0) {
 		    chest_trap(y, x);
 		    if (c_ptr->tptr != 0)
 			flag = TRUE;
@@ -748,13 +748,13 @@ void do_cmd_open()
 		 * clear the cursed chest/monster win flag, so that people
 		 * can not win by opening a cursed chest 
 		 */
-		    t_ptr->flags &= ~TR_CURSED;
+		    i_ptr->flags &= ~TR_CURSED;
 
 		/* generate based on level chest was found on - dbd */
-		    object_level = t_ptr->p1;
+		    object_level = i_ptr->p1;
 
 	        /* but let's not get too crazy with storebought chests -CWS */
-		    if (t_ptr->ident & ID_STOREBOUGHT) {
+		    if (i_ptr->ident & ID_STOREBOUGHT) {
 			if (object_level > 20)
 			    object_level = 20;
 		    }
