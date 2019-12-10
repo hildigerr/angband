@@ -631,6 +631,7 @@ void get_coin_type(monster_race *);
 /* monsters.c */
 
 /* moria1.c */
+void move_rec(int, int, int, int);
 void py_bonuses(struct inven_type *, int);
 void calc_bonuses(void);
 int show_inven(int, int, int, int, int ());
@@ -640,7 +641,6 @@ void inven_takeoff(int, int);
 int verify(const char *, int);
 void inven_command(int);
 int get_item(int *, const char *, int, int, int ());
-void move_rec(int, int, int, int);
 void light_room(int, int);
 void move_light(int, int, int, int);
 void rest(void);

@@ -22,6 +22,20 @@ static void py_bash(int, int);
 static int fearless(monster_race *);
 
 
+/*
+ * Moves creature record from one space to another	-RAK-	
+ */
+void move_rec(int y1, int x1, int y2, int x2)
+{
+    int tmp;
+
+    /* this always works correctly, even if y1==y2 and x1==x2 */
+	tmp = cave[y1][x1].cptr;
+	cave[y1][x1].cptr = 0;
+	cave[y2][x2].cptr = tmp;
+}
+
+
 /* Player hit a trap.	(Chuckle)			-RAK-	
  * No longer includes stores.
  */
