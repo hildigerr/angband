@@ -698,25 +698,27 @@ void do_cmd_open()
 		(class_level_adj[p_ptr->pclass][CLA_DISARM] *
 		p_ptr->lev / 3);
 
-	    flag = FALSE;
+	    flag = TRUE;
 
-	    if (i_ptr->flags & CH_LOCKED)
+	    if (i_ptr->flags & CH_LOCKED) {
+
+		flag = FALSE;
+
 		if (py.flags.confused > 0) {
 		    msg_print("You are too confused to pick the lock.");
 		}
 
 		else if ((i - (int)i_ptr->level) > randint(100)) {
 		    msg_print("You have picked the lock.");
-		    flag = TRUE;
 		    py.misc.exp += i_ptr->level;
 		    prt_experience();
+		    flag = TRUE;
 		}
 
 		else {
 		    count_msg_print("You failed to pick the lock.");
 		}
-
-	    else flag = TRUE;
+	    }
 
 	    if (flag) {
 
