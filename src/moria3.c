@@ -649,7 +649,12 @@ void do_cmd_open()
 	/* Closed door */
 	else if (i_ptr->tval == TV_CLOSED_DOOR) {
 
-	    if (i_ptr->p1 > 0) {
+	    /* It's stuck */
+	    if (i_ptr->p1 < 0) {
+		msg_print("It appears to be stuck.");
+	    }
+
+	    else if (i_ptr->p1 > 0) {
 
 		i = p_ptr->disarm + 2 * todis_adj() + stat_adj(A_INT)
 		    + (class_level_adj[p_ptr->pclass][CLA_DISARM]
@@ -670,11 +675,6 @@ void do_cmd_open()
 		else {
 		    count_msg_print("You failed to pick the lock.");
 		}
-	    }
-
-	    /* It's stuck */
-	    else if (i_ptr->p1 < 0) {
-		msg_print("It appears to be stuck.");
 	    }
 
 	    if (i_ptr->p1 == 0) {
