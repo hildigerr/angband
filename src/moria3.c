@@ -601,7 +601,7 @@ static void chest_trap(int y, int x)
 void do_cmd_open()
 {
     int				y, x, i, dir;
-    int				flag, no_object;
+    int				flag;
     register cave_type		*c_ptr;
     register inven_type		*i_ptr;
     register struct misc  *p_ptr = &py.misc;
@@ -621,11 +621,15 @@ void do_cmd_open()
 
 	i_ptr = &i_list[c_ptr->tptr];
 
-	no_object = FALSE;
 
-	if (c_ptr->cptr > 1 && c_ptr->tptr != 0 &&
-	    (i_ptr->tval == TV_CLOSED_DOOR
-	     || i_ptr->tval == TV_CHEST)) {
+	if ((c_ptr->tptr == 0) ||
+	    ((i_ptr->tval != TV_CLOSED_DOOR) &&
+	     (i_ptr->tval != TV_CHEST))) {
+	    msg_print("I do not see anything you can open there.");
+	    free_turn_flag = TRUE;
+	}
+
+	else if (c_ptr->cptr > 1) {
 
 	    m_ptr = &m_list[c_ptr->cptr];
 
@@ -642,9 +646,8 @@ void do_cmd_open()
 
 	}
 
-	else if (c_ptr->tptr != 0)
 	/* Closed door */
-	    if (i_ptr->tval == TV_CLOSED_DOOR) {
+	else if (i_ptr->tval == TV_CLOSED_DOOR) {
 
 	    if (i_ptr->p1 > 0) {
 
@@ -686,7 +689,7 @@ void do_cmd_open()
 
 		command_rep = 0;
 	    }
-	    }
+	}
 
 	/* Open a closed chest. */
 	else if (i_ptr->tval == TV_CHEST) {
@@ -760,15 +763,7 @@ void do_cmd_open()
 		    i_list[c_ptr->tptr].flags = 0;
 		    opening_chest = FALSE;
 		}
-	    } else
-		no_object = TRUE;
-	else
-	    no_object = TRUE;
-
-	if (no_object) {
-	    msg_print("I do not see anything you can open there.");
-	    free_turn_flag = TRUE;
-	}
+	    }
     }
 }
 
@@ -778,7 +773,7 @@ void do_cmd_open()
  */
 void do_cmd_close()
 {
-    int                    y, x, dir, no_object;
+    int                    y, x, dir;
     vtype                  out_val, m_name;
     register cave_type    *c_ptr;
     inven_type		  *i_ptr;
@@ -799,9 +794,14 @@ void do_cmd_close()
 
 	no_object = FALSE;
 
-	if (c_ptr->tptr != 0)
-	    if (i_ptr->tval == TV_OPEN_DOOR)
-		if (c_ptr->cptr == 0)
+	if ((c_ptr->tptr == 0) ||
+	    (i_ptr->tval != TV_OPEN_DOOR)) {
+
+	    msg_print("I do not see anything you can close there.");
+	    free_turn_flag = TRUE;
+	}
+
+		else if (c_ptr->cptr == 0)
 		    if (i_ptr->p1 == 0) {
 			invcopy(&i_list[c_ptr->tptr], OBJ_CLOSED_DOOR);
 			c_ptr->fval = BLOCKED_FLOOR;
@@ -820,15 +820,6 @@ void do_cmd_close()
 		    (void)sprintf(out_val, "%s is in your way!", m_name);
 		    msg_print(out_val);
 		}
-	    else
-		no_object = TRUE;
-	else
-	    no_object = TRUE;
-
-	if (no_object) {
-	    msg_print("I do not see anything you can close there.");
-	    free_turn_flag = TRUE;
-	}
     }
 }
 
