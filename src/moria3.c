@@ -781,6 +781,7 @@ void do_cmd_close()
     int                    y, x, dir, no_object;
     vtype                  out_val, m_name;
     register cave_type    *c_ptr;
+    inven_type		  *i_ptr;
     register monster_type *m_ptr;
 
 
@@ -794,13 +795,14 @@ void do_cmd_close()
 	(void)mmove(dir, &y, &x);
 
 	c_ptr = &cave[y][x];
+	i_ptr = &i_list[c_ptr->tptr];
 
 	no_object = FALSE;
 
 	if (c_ptr->tptr != 0)
-	    if (i_list[c_ptr->tptr].tval == TV_OPEN_DOOR)
+	    if (i_ptr->tval == TV_OPEN_DOOR)
 		if (c_ptr->cptr == 0)
-		    if (i_list[c_ptr->tptr].p1 == 0) {
+		    if (i_ptr->p1 == 0) {
 			invcopy(&i_list[c_ptr->tptr], OBJ_CLOSED_DOOR);
 			c_ptr->fval = BLOCKED_FLOOR;
 			lite_spot(y, x);
