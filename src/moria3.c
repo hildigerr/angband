@@ -803,14 +803,11 @@ void do_cmd_close()
 	    free_turn_flag = TRUE;
 	}
 
-		else if (c_ptr->cptr == 0)
-		    if (i_ptr->p1 == 0) {
-			invcopy(&i_list[c_ptr->tptr], OBJ_CLOSED_DOOR);
-			c_ptr->fval = BLOCKED_FLOOR;
-			lite_spot(y, x);
-		    } else
-			msg_print("The door appears to be broken.");
-		else {
+	else if (i_ptr->p1) {
+	    msg_print("The door appears to be broken.");
+	}
+
+		else if (c_ptr->cptr != 0) {
 		    m_ptr = &m_list[c_ptr->cptr];
 		    if (m_ptr->ml) {
 			if (c_list[m_ptr->mptr].cdefense & UNIQUE)
@@ -822,6 +819,15 @@ void do_cmd_close()
 		    (void)sprintf(out_val, "%s is in your way!", m_name);
 		    msg_print(out_val);
 		}
+
+	else {
+
+	    i_ptr = &i_list[c_ptr->tptr];
+	    invcopy(i_ptr, OBJ_CLOSED_DOOR);
+	    c_ptr->fval = BLOCKED_FLOOR;
+
+	    lite_spot(y, x);
+		    }
     }
 }
 
