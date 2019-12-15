@@ -930,8 +930,12 @@ void do_cmd_disarm()
 		    free_turn_flag = TRUE;
 		}
 
-		else if (i_ptr->flags & CH_TRAPPED) {
-		if ((tot - i_ptr->level) > randint(100)) {
+		else if (!(i_ptr->flags & CH_TRAPPED)) {
+		    msg_print("The chest was not trapped.");
+		    free_turn_flag = TRUE;
+		}
+
+		else if ((tot - i_ptr->level) > randint(100)) {
 		    i_ptr->flags &= ~CH_TRAPPED;
 		    if (i_ptr->flags & CH_LOCKED)
 			    i_ptr->name2 = EGO_LOCKED;
@@ -952,11 +956,6 @@ void do_cmd_disarm()
 		    known2(i_ptr);
 		    chest_trap(y, x);
 		}
-		}
-
-		else {
-		    msg_print("The chest was not trapped.");
-		    free_turn_flag = TRUE;
 		}
 	    }
 	}
