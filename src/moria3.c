@@ -838,8 +838,8 @@ void do_cmd_close()
  */
 void do_cmd_disarm()
 {
-    int                 y, x, level, tmp, dir, no_disarm;
-    register int        tot, i;
+    int                 y, x, tmp, dir, no_disarm;
+    register int        tot;
     register cave_type *c_ptr;
     register inven_type *i_ptr;
     monster_type       *m_ptr;
@@ -856,11 +856,13 @@ void do_cmd_disarm()
 	(void)mmove(dir, &y, &x);
 	c_ptr = &cave[y][x];
 
+	i_ptr = &i_list[c_ptr->tptr];
+
 	no_disarm = FALSE;
 
 	if (c_ptr->cptr > 1 && c_ptr->tptr != 0 &&
-	    (i_list[c_ptr->tptr].tval == TV_VIS_TRAP
-	     || i_list[c_ptr->tptr].tval == TV_CHEST)) {
+	    (i_ptr->tval == TV_VIS_TRAP
+	     || i_ptr->tval == TV_CHEST)) {
 
 	    m_ptr = &m_list[c_ptr->cptr];
 	    if (m_ptr->ml)
@@ -887,14 +889,10 @@ void do_cmd_disarm()
 		tot = tot / 10;
 	    }
 
-	    i_ptr = &i_list[c_ptr->tptr];
-	    i = i_ptr->tval;
-	    level = i_ptr->level;
-
 	    /* Floor trap */
-	    if (i == TV_VIS_TRAP) {
+	    if (i_ptr->tval == TV_VIS_TRAP) {
 
-		if ((tot + 100 - level) > randint(100)) {
+		if ((tot + 100 - i_ptr->level) > randint(100)) {
 		    msg_print("You have disarmed the trap.");
 		    py.misc.exp += i_ptr->p1;
 		    delete_object(y, x);
@@ -921,7 +919,7 @@ void do_cmd_disarm()
 		}
 	    }
 
-	    else if (i == TV_CHEST) {
+	    else if (i_ptr->tval == TV_CHEST) {
 
 		if (!known2_p(i_ptr)) {
 		    msg_print("I don't see a trap.");
@@ -929,7 +927,7 @@ void do_cmd_disarm()
 		}
 
 		else if (i_ptr->flags & CH_TRAPPED) {
-		if ((tot - level) > randint(100)) {
+		if ((tot - i_ptr->level) > randint(100)) {
 		    i_ptr->flags &= ~CH_TRAPPED;
 		    if (i_ptr->flags & CH_LOCKED)
 			    i_ptr->name2 = EGO_LOCKED;
@@ -937,7 +935,7 @@ void do_cmd_disarm()
 			    i_ptr->name2 = EGO_DISARMED;
 		    msg_print("You have disarmed the chest.");
 		    known2(i_ptr);
-		    py.misc.exp += level;
+		    py.misc.exp += i_ptr->level;
 		    prt_experience();
 		}
 
