@@ -829,7 +829,7 @@ void do_cmd_close()
  */
 void do_cmd_disarm()
 {
-    int                 y, x, tmp, dir, no_disarm;
+    int                 y, x, tmp, dir;
     register int        tot;
     register cave_type *c_ptr;
     register inven_type *i_ptr;
@@ -849,11 +849,16 @@ void do_cmd_disarm()
 
 	i_ptr = &i_list[c_ptr->tptr];
 
-	no_disarm = FALSE;
 
-	if (c_ptr->cptr > 1 && c_ptr->tptr != 0 &&
-	    (i_ptr->tval == TV_VIS_TRAP
-	     || i_ptr->tval == TV_CHEST)) {
+	if ((c_ptr->tptr == 0) ||
+	    ((i_ptr->tval != TV_VIS_TRAP) &&
+	     (i_ptr->tval != TV_CHEST))) {
+
+	    msg_print("I do not see anything to disarm there.");
+	    free_turn_flag = TRUE;
+	}
+
+	else if (c_ptr->cptr > 1) {
 
 	    m_ptr = &m_list[c_ptr->cptr];
 	    if (m_ptr->ml)
@@ -864,7 +869,7 @@ void do_cmd_disarm()
 	    msg_print(out_val);
 	}
 
-	else if (c_ptr->tptr != 0) {
+	else {
 
 	    tot = py.misc.disarm + 2 * todis_adj() + stat_adj(A_INT) +
 		  (class_level_adj[py.misc.pclass][CLA_DISARM] *
@@ -945,14 +950,7 @@ void do_cmd_disarm()
 		    msg_print("The chest was not trapped.");
 		    free_turn_flag = TRUE;
 		}
-	    } else
-		no_disarm = TRUE;
-	} else
-	    no_disarm = TRUE;
-
-	if (no_disarm) {
-	    msg_print("I do not see anything to disarm there.");
-	    free_turn_flag = TRUE;
+	    }
 	}
     }
 }
