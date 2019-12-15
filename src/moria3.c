@@ -597,6 +597,9 @@ static void chest_trap(int y, int x)
 
 /*
  * Opens a closed door or closed chest.		-RAK-
+ * Note that failed opens take time, or ghosts could be found
+ * Note unlocking a door is worth one XP, and unlocking a chest
+ * is worth as many XP as the chest had "levels".
  */
 void do_cmd_open()
 {
@@ -609,19 +612,22 @@ void do_cmd_open()
     vtype                  m_name, out_val;
 
 
+    /* Get a direction (or Escape) */
     if (!get_a_dir(NULL, &dir, 0)) {
     }
 
     else {
 
+	/* Get requested grid */
 	y = char_row;
 	x = char_col;
 	(void)mmove(dir, &y, &x);
 	c_ptr = &cave[y][x];
 
+	/* Get the object (if it exists) */
 	i_ptr = &i_list[c_ptr->tptr];
 
-
+	/* Nothing is there */
 	if ((c_ptr->tptr == 0) ||
 	    ((i_ptr->tval != TV_CLOSED_DOOR) &&
 	     (i_ptr->tval != TV_CHEST))) {
@@ -629,6 +635,7 @@ void do_cmd_open()
 	    free_turn_flag = TRUE;
 	}
 
+	/* Monster in the way */
 	else if (c_ptr->cptr > 1) {
 
 	    m_ptr = &m_list[c_ptr->cptr];
@@ -649,11 +656,12 @@ void do_cmd_open()
 	/* Closed door */
 	else if (i_ptr->tval == TV_CLOSED_DOOR) {
 
-	    /* It's stuck */
+	    /* Stuck */
 	    if (i_ptr->p1 < 0) {
 		msg_print("It appears to be stuck.");
 	    }
 
+	    /* Locked */
 	    else if (i_ptr->p1 > 0) {
 
 		i = p_ptr->disarm + 2 * todis_adj() + stat_adj(A_INT)
@@ -677,14 +685,18 @@ void do_cmd_open()
 		}
 	    }
 
+	    /* In any case, if the door is unlocked, open it */
 	    if (i_ptr->p1 == 0) {
 
 		invcopy(i_ptr, OBJ_OPEN_DOOR);
 
+		/* The door is in a "corridor" */
 		c_ptr->fval = CORR_FLOOR;
 
+		/* Draw the door */
 		lite_spot(y, x);
 
+		/* Check the view */
 		check_view();
 
 		command_rep = 0;
@@ -698,16 +710,21 @@ void do_cmd_open()
 		(class_level_adj[p_ptr->pclass][CLA_DISARM] *
 		p_ptr->lev / 3);
 
+	    /* Assume opened successfully */
 	    flag = TRUE;
 
+	    /* Attempt to unlock it */
 	    if (i_ptr->flags & CH_LOCKED) {
 
+		/* Assume locked, and thus not open */
 		flag = FALSE;
 
+		/* Too confused */
 		if (py.flags.confused > 0) {
 		    msg_print("You are too confused to pick the lock.");
 		}
 
+		/* Pick the lock, leave the traps */
 		else if ((i - (int)i_ptr->level) > randint(100)) {
 		    msg_print("You have picked the lock.");
 		    py.misc.exp += i_ptr->level;
@@ -720,6 +737,7 @@ void do_cmd_open()
 		}
 	    }
 
+	    /* Allowed to open */
 	    if (flag) {
 
 		    i_ptr->flags &= ~CH_LOCKED;
@@ -771,7 +789,7 @@ void do_cmd_open()
 
 
 /*
- * Closes an open door. -RAK-
+ * Close an open door.
  */
 void do_cmd_close()
 {
@@ -781,7 +799,7 @@ void do_cmd_close()
     inven_type		  *i_ptr;
     register monster_type *m_ptr;
 
-
+    /* Get a "desired" direction, or Abort */
     if (!get_a_dir(NULL, &dir, 0)) {
     }
 
@@ -803,10 +821,12 @@ void do_cmd_close()
 	    free_turn_flag = TRUE;
 	}
 
+	/* Handle broken doors */
 	else if (i_ptr->p1) {
 	    msg_print("The door appears to be broken.");
 	}
 
+	/* Monster in the way */
 		else if (c_ptr->cptr != 0) {
 		    m_ptr = &m_list[c_ptr->cptr];
 		    if (m_ptr->ml) {
@@ -820,12 +840,15 @@ void do_cmd_close()
 		    msg_print(out_val);
 		}
 
+	/* Close it */
 	else {
 
+	    /* Hack -- kill the old object */
 	    i_ptr = &i_list[c_ptr->tptr];
 	    invcopy(i_ptr, OBJ_CLOSED_DOOR);
 	    c_ptr->fval = BLOCKED_FLOOR;
 
+	    /* Redisplay */
 	    lite_spot(y, x);
 		    }
     }
@@ -833,7 +856,7 @@ void do_cmd_close()
 
 
 /*
- * Disarms a trap -RAK-	
+ * Disarms a trap, or chest	-RAK-	
  */
 void do_cmd_disarm()
 {
@@ -858,6 +881,7 @@ void do_cmd_disarm()
 	i_ptr = &i_list[c_ptr->tptr];
 
 
+	/* Nothing useful there */
 	if ((c_ptr->tptr == 0) ||
 	    ((i_ptr->tval != TV_VIS_TRAP) &&
 	     (i_ptr->tval != TV_CHEST))) {
@@ -866,6 +890,7 @@ void do_cmd_disarm()
 	    free_turn_flag = TRUE;
 	}
 
+	/* Monster in the way */
 	else if (c_ptr->cptr > 1) {
 
 	    m_ptr = &m_list[c_ptr->cptr];
@@ -877,6 +902,7 @@ void do_cmd_disarm()
 	    msg_print(out_val);
 	}
 
+	/* Normal disarm */
 	else {
 
 	    tot = py.misc.disarm + 2 * todis_adj() + stat_adj(A_INT) +
@@ -896,11 +922,12 @@ void do_cmd_disarm()
 	    /* Floor trap */
 	    if (i_ptr->tval == TV_VIS_TRAP) {
 
+		/* Success */
 		if ((tot + 100 - i_ptr->level) > randint(100)) {
 		    msg_print("You have disarmed the trap.");
 		    py.misc.exp += i_ptr->p1;
 		    delete_object(y, x);
-		    /* make sure we move onto the trap even if confused */
+		    /* move the player onto the trap */
 		    tmp = py.flags.confused;
 		    py.flags.confused = 0;
 		    move_player(dir, FALSE);
@@ -913,9 +940,10 @@ void do_cmd_disarm()
 		    count_msg_print("You failed to disarm the trap.");
 		}
 
+		/* Oops */
 		else {
 		    msg_print("You set the trap off!");
-		    /* make sure we move onto the trap even if confused */
+		    /* Move the player onto the trap */
 		    tmp = py.flags.confused;
 		    py.flags.confused = 0;
 		    move_player(dir, FALSE);
@@ -923,18 +951,22 @@ void do_cmd_disarm()
 		}
 	    }
 
+	    /* Disarm chest */
 	    else if (i_ptr->tval == TV_CHEST) {
 
+		/* Must find the trap first. */
 		if (!known2_p(i_ptr)) {
 		    msg_print("I don't see a trap.");
 		    free_turn_flag = TRUE;
 		}
 
+		/* No traps to find. */
 		else if (!(i_ptr->flags & CH_TRAPPED)) {
 		    msg_print("The chest was not trapped.");
 		    free_turn_flag = TRUE;
 		}
 
+		/* Successful Disarm */
 		else if ((tot - i_ptr->level) > randint(100)) {
 		    i_ptr->flags &= ~CH_TRAPPED;
 		    if (i_ptr->flags & CH_LOCKED)
@@ -951,6 +983,7 @@ void do_cmd_disarm()
 		    count_msg_print("You failed to disarm the chest.");
 		}
 
+		/* Oops */
 		else {
 		    msg_print("You set a trap off!");
 		    known2(i_ptr);
