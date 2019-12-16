@@ -856,6 +856,258 @@ void do_cmd_close()
 
 
 /*
+ * Tunneling through real wall: 10, 11, 12		-RAK-
+ * Used by TUNNEL and WALL_TO_MUD
+ */
+int twall(int y, int x, int t1, int t2)
+{
+    int		i, j;
+    int		res, found;
+    cave_type	*c_ptr;
+
+    res = FALSE;
+
+    if (t1 > t2) {
+
+	c_ptr = &cave[y][x];
+
+
+	if (c_ptr->tptr) { /* secret door or rubble or gold -CFT */
+	    if (i_list[c_ptr->tptr].tval == TV_RUBBLE) {
+		delete_object(y,x); /* blow it away... */
+		if (randint(10)==1){
+		    place_object(y,x); /* and drop a goodie! */
+		}
+	    }
+	    else if (i_list[c_ptr->tptr].tval >= TV_MIN_DOORS)
+		delete_object(y,x); /* no more door... */
+	} /* if object there.... */
+
+	c_ptr->fm = FALSE;
+
+	if (panel_contains(y, x))
+	    if ((c_ptr->tl || c_ptr->pl) && c_ptr->tptr != 0) {
+		msg_print("You have found something!");
+		c_ptr->fm = TRUE;
+	    }
+
+	/* should become a room space, check to see whether it should be
+	 * LIGHT_FLOOR or DARK_FLOOR */
+	if (c_ptr->lr) {
+
+	    found = FALSE;
+
+	    for (i = y - 1; i <= y + 1; i++) {
+		for (j = x - 1; j <= x + 1; j++) {
+
+		    if (cave[i][j].fval <= MAX_CAVE_ROOM) {
+
+			c_ptr->fval = cave[i][j].fval;
+
+			c_ptr->pl = cave[i][j].pl;
+
+			found = TRUE;
+			break;
+		    }
+		}
+	    }
+
+
+	if (!found) {
+	    c_ptr->fval = CORR_FLOOR;
+	    c_ptr->pl = FALSE;
+	}
+	}
+
+	else {
+	    /* should become a corridor space */
+	    c_ptr->fval = CORR_FLOOR;
+	    c_ptr->pl = FALSE;
+	}
+
+
+	lite_spot(y, x);
+
+	res = TRUE;
+    }
+
+    return (res);
+}
+
+
+/*
+ * Tunnels through rubble and walls			-RAK-
+ * Must take into account: secret doors,  special tools
+ */
+void tunnel(int dir)
+{
+    register int        i, tabil;
+    register cave_type *c_ptr;
+    register inven_type *i_ptr;
+    int                 y, x;
+    monster_type       *m_ptr;
+    vtype		out_val, m_name;
+
+    if ((py.flags.confused > 0) && /* Confused?	     */
+	(randint(4) > 1))	   /* 75% random movement   */
+	dir = randint(9);
+
+	y = char_row;
+	x = char_col;
+	(void)mmove(dir, &y, &x);
+	c_ptr = &cave[y][x];
+
+/* Compute the digging ability of player; based on	   */
+/* strength, and type of tool used			   */
+    tabil = py.stats.use_stat[A_STR];
+    i_ptr = &inventory[INVEN_WIELD];
+
+/* Don't let the player tunnel somewhere illegal, this is necessary to
+ * prevent the player from getting a free attack by trying to tunnel
+ * somewhere where it has no effect.  
+ */
+    if (c_ptr->fval < MIN_WALL
+	&& (c_ptr->tptr == 0 || (i_list[c_ptr->tptr].tval != TV_RUBBLE
+			  && i_list[c_ptr->tptr].tval != TV_SECRET_DOOR))) {
+
+	if (c_ptr->tptr == 0) {
+	    free_turn_flag = TRUE;
+	    msg_print("Tunnel through what?  Empty air?!?");
+	} else {
+	    msg_print("You can't tunnel through that.");
+	    free_turn_flag = TRUE;
+	}
+	return;
+    }
+
+	if (c_ptr->cptr > 1) {
+
+	    m_ptr = &m_list[c_ptr->cptr];
+	    if (m_ptr->ml) {
+		    if (c_list[m_ptr->mptr].cdefense & UNIQUE)
+				(void)sprintf(m_name, "%s", c_list[m_ptr->mptr].name);
+		    else
+				(void)sprintf(m_name, "The %s", c_list[m_ptr->mptr].name);
+	    } else
+		    (void)strcpy(m_name, "Something");
+	    (void)sprintf(out_val, "%s is in your way!", m_name);
+	    msg_print(out_val);
+
+	    /* let the player attack the creature */
+	    if (py.flags.afraid < 1) py_attack(y, x);
+	    else msg_print("You are too afraid!");
+	}
+
+	else if (i_ptr->tval != TV_NOTHING) {
+
+	    if (i_ptr->flags & TR_TUNNEL) {
+
+		tabil += 25 + i_ptr->p1 * 50;
+	    }
+
+	    else {
+
+		tabil += (i_ptr->damage[0] * i_ptr->damage[1]) + i_ptr->tohit
+		+ i_ptr->todam;
+
+		/* divide by two so that digging without shovel isn't too easy */
+		tabil >>= 1;
+	    }
+
+	    if (weapon_heavy) {
+		tabil += (py.stats.use_stat[A_STR] * 15) - i_ptr->weight;
+		if (tabil < 0) tabil = 0;
+	    }
+
+	    /* Regular walls; Granite, magma intrusion, quartz vein  */
+	    /* Don't forget the boundary walls, made of titanium (255) */
+
+	switch (c_ptr->fval) {
+
+	    case GRANITE_WALL:
+
+		i = randint(1200) + 80;
+		if (twall(y, x, tabil, i)) {
+			msg_print("You have finished the tunnel.");
+			check_view();
+		}
+		else {
+		    count_msg_print("You tunnel into the granite wall.");
+		}
+	    break;
+
+	    case MAGMA_WALL:
+
+		i = randint(600) + 10;
+		if (twall(y, x, tabil, i)) {
+			msg_print("You have finished the tunnel.");
+			check_view();
+		}
+		else {
+		    count_msg_print("You tunnel into the magma intrusion.");
+		}
+	    break;
+
+	    case QUARTZ_WALL:
+
+		i = randint(400) + 10;
+		if (twall(y, x, tabil, i)) {
+			msg_print("You have finished the tunnel.");
+			check_view();
+		}
+		else {
+		    count_msg_print("You tunnel into the quartz vein.");
+		}
+	    break;
+
+	    case BOUNDARY_WALL:
+		msg_print("This seems to be permanent rock.");
+		break;
+
+	    default:
+		/* Is there an object in the way?  (Rubble and secret doors) */
+		if (c_ptr->tptr != 0) {
+
+	    /* Rubble. */
+	    if (i_list[c_ptr->tptr].tval == TV_RUBBLE) {
+		if (tabil > randint(180)) {
+		    delete_object(y, x);
+		    msg_print("You have removed the rubble.");
+		    if (randint(10) == 1) {
+			place_object(y, x);
+			if (test_lite(y, x)) {
+			     msg_print("You have found something!");
+			}
+		    }
+		    lite_spot(y, x);
+		    check_view();
+		} else
+		    count_msg_print("You dig in the rubble.");
+	    }
+
+	    /* Secret doors. */
+	    else if (i_list[c_ptr->tptr].tval == TV_SECRET_DOOR) {
+		count_msg_print("You tunnel into the granite wall.");
+		search(char_row, char_col, py.misc.srh);
+	    }
+
+	    else {
+		msg_print("You can't tunnel through that.");
+		free_turn_flag = TRUE;
+	    }
+		}
+		else {
+		msg_print("Tunnel through what?  Empty air?!?");
+		free_turn_flag = TRUE;
+		}
+	    break;
+	}
+	} else
+	msg_print("You dig with your hands, making no progress.");
+}
+
+
+/*
  * Disarms a trap, or chest	-RAK-	
  */
 void do_cmd_disarm()

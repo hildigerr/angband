@@ -658,17 +658,17 @@ void fix2_delete_monster(int);
 int delete_object(int, int);
 u32b monster_death(int, int, u32b, u32b, u32b);
 int mon_take_hit(int, int, int);
-int twall(int, int, int, int);
-void tunnel(int);
 void do_cmd_fire(void);
 void bash(void);
 void delete_unique(void);
 void check_unique(monster_type *);
 
 /* moria3.c */
+int twall(int, int, int, int);
 void do_cmd_look(void);
 void do_cmd_open(void);
 void do_cmd_close(void);
+void tunnel(int);
 void do_cmd_disarm(void);
 
 /* moria4.c */
