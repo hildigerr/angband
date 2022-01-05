@@ -1248,3 +1248,144 @@ void do_cmd_disarm()
 }
 
 
+/*
+ * Bash open a door or chest				-RAK-
+ *
+ * Note: Affected by strength and weight of character 
+ *
+ * For a closed door, p1 is positive if locked; negative if stuck.
+ * A disarm spell unlocks and unjams doors! 
+ *
+ * For an open door, p1 is positive for a broken door. 
+ *
+ * A closed door can be opened - harder if locked. Any door might be 
+ * bashed open (and thereby broken). Bashing a door is (potentially)
+ * faster! You move into the door way. To open a stuck door, it must 
+ * be bashed. A closed door can be jammed (which makes it stuck if previously locked).
+ *
+ * Creatures can also open doors. A creature with open door ability will
+ * (if not in the line of sight) move though a closed or secret door with
+ * no changes.  If in the line of sight, closed door are openned, & secret
+ * door revealed.  Whether in the line of sight or not, such a creature may
+ * unlock or unstick a door. 
+ *
+ * A creature with no such ability will attempt to bash a non-secret door. 
+ */
+void bash()
+{
+    int                 y, x, tmp, dir;
+    register cave_type  *c_ptr;
+    register inven_type *t_ptr;
+
+#ifdef TARGET
+    int temp = target_mode; /* targetting will screw up get_dir, so we save
+			       target_mode, then turn it off -CFT */
+#endif
+
+	/* Bash location */
+	y = char_row;
+	x = char_col;
+
+#ifdef TARGET
+    target_mode = FALSE;
+#endif
+
+    if (get_dir_c(NULL, &dir)) {
+	(void)mmove(dir, &y, &x);
+	c_ptr = &cave[y][x];
+
+	if (c_ptr->cptr > 1) {
+	    if (py.flags.afraid > 0) {
+		msg_print("You are too afraid!");
+	    }
+	    else {
+		py_bash(y, x);
+	    }
+	}
+
+	/* Request to bash something */
+	else if (c_ptr->tptr != 0) {
+
+	    /* What is there */
+	    t_ptr = &i_list[c_ptr->tptr];
+
+	    /* Bash a closed door */
+	    if (t_ptr->tval == TV_CLOSED_DOOR) {
+
+		count_msg_print("You smash into the door!");
+
+		tmp = py.stats.use_stat[A_STR] + py.misc.wt / 2;
+
+		/* Use (roughly) similar method as for monsters. */
+		if (randint(tmp * (20 + MY_ABS(t_ptr->p1))) <
+			10 * (tmp - MY_ABS(t_ptr->p1))) {
+
+		    msg_print("The door crashes open!");
+
+		    /* Hack -- drop on the old object */
+		    invcopy(&i_list[c_ptr->tptr], OBJ_OPEN_DOOR);
+
+		    /* 50% chance of breaking door */
+		    t_ptr->p1 = 1 - randint(2);
+		    c_ptr->fval = CORR_FLOOR;
+
+		    if (py.flags.confused == 0)
+			move_player(dir, FALSE);
+		    else
+			lite_spot(y, x);
+
+		    /* Check the view */
+		    check_view();
+		}
+
+		else if (randint(150) > py.stats.use_stat[A_DEX]) {
+		    msg_print("You are off-balance.");
+		    py.flags.paralysis = 1 + randint(2);
+		}
+
+		else if (command_rep == 0)
+		    msg_print("The door holds firm.");
+	    }
+
+	    /* Semi-Hack -- Bash a Chest */
+	    else if (t_ptr->tval == TV_CHEST) {
+		if (randint(10) == 1) {
+		    msg_print("You have destroyed the chest and its contents!");
+		    t_ptr->index = OBJ_RUINED_CHEST;
+		    t_ptr->flags = 0;
+		}
+		else if ((CH_LOCKED & t_ptr->flags) && (randint(10) == 1)) {
+		    msg_print("The lock breaks open!");
+		    t_ptr->flags &= ~CH_LOCKED;
+		}
+		else {
+		    count_msg_print("The chest holds firm.");
+		}
+	    }
+
+	    else {
+	    /*
+	     * Can't give free turn, or else player could try directions
+	     * until he found invisible creature 
+	     */
+		msg_print("You bash it, but nothing interesting happens.");
+	    }
+	}
+
+	else {
+	/* Empty Air */
+	    if (c_ptr->fval < MIN_WALL) {
+	    msg_print("You bash at empty space.");
+	}
+
+	/* same message for wall as for secret door */
+	else {
+	    msg_print("You bash it, but nothing interesting happens.");
+	}
+	}
+    }
+#ifdef TARGET
+    target_mode = temp;
+#endif
+}
+
