@@ -23,7 +23,6 @@ static void examine_book();
 static void activate();
 static void go_up();
 static void go_down();
-static void do_cmd_spike();
 static void refill_lamp();
 static void regen_monsters();
 
@@ -3077,65 +3076,6 @@ go_down()
 }
 
 
-/* Jam a closed door					-RAK-	 */
-static void 
-do_cmd_spike()
-{
-    int                  y, x, dir, i, j;
-    register cave_type  *c_ptr;
-    register inven_type *t_ptr, *i_ptr;
-    char                 tmp_str[80];
-#ifdef TARGET
-    int temp = target_mode; /* targetting will screw up get_dir.. -CFT */
-#endif /* TARGET */
-
-    free_turn_flag = TRUE;
-    y = char_row;
-    x = char_col;
-#ifdef TARGET
-    target_mode = FALSE; /* turn off target mode, restore later */
-#endif
-    if (get_dir(NULL, &dir)) {
-	(void)mmove(dir, &y, &x);
-	c_ptr = &cave[y][x];
-	if (c_ptr->tptr != 0) {
-	    t_ptr = &i_list[c_ptr->tptr];
-	    if (t_ptr->tval == TV_CLOSED_DOOR)
-		if (c_ptr->cptr == 0) {
-		    if (find_range(TV_SPIKE, TV_NEVER, &i, &j)) {
-			free_turn_flag = FALSE;
-			count_msg_print("You jam the door with a spike.");
-			if (t_ptr->p1 > 0)
-			    t_ptr->p1 = (-t_ptr->p1);	/* Make locked to stuck. */
-		    /* Successive spikes have a progressively smaller effect.
-		     * Series is: 0 20 30 37 43 48 52 56 60 64 67 70 ... 
-		     */
-			t_ptr->p1 -= 1 + 190 / (10 - t_ptr->p1);
-			i_ptr = &inventory[i];
-			if (i_ptr->number > 1) {
-			    i_ptr->number--;
-			    inven_weight -= i_ptr->weight;
-			} else
-			    inven_destroy(i);
-		    } else
-			msg_print("But you have no spikes.");
-		} else {
-		    free_turn_flag = FALSE;
-		    (void)sprintf(tmp_str, "The %s is in your way!",
-				  c_list[m_list[c_ptr->cptr].mptr].name);
-		    msg_print(tmp_str);
-		}
-	    else if (t_ptr->tval == TV_OPEN_DOOR)
-		msg_print("The door must be closed first.");
-	    else
-		msg_print("That isn't a door!");
-	} else
-	    msg_print("That isn't a door!");
-#ifdef TARGET
-	target_mode = temp;
-#endif
-    }
-}
 
 
 /* Refill the players lamp				-RAK-	 */

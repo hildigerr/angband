@@ -670,6 +670,7 @@ void do_cmd_close(void);
 void tunnel(int);
 void do_cmd_disarm(void);
 void bash(void);
+void do_cmd_spike(void);
 
 /* moria4.c */
 int target_set(void); /* target fns stolen from Morgul -CFT */
