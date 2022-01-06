@@ -17,26 +17,6 @@ char                titles[MAX_TITLES][10];
 
 /* Object descriptor routines					 */
 
-int 
-is_a_vowel(ch)
-int ch;
-{
-    switch (ch & 127) {
-      case 'a':
-      case 'e':
-      case 'i':
-      case 'o':
-      case 'u':
-      case 'A':
-      case 'E':
-      case 'I':
-      case 'O':
-      case 'U':
-	return (TRUE);
-      default:
-	return (FALSE);
-    }
-}
 
 /* Initialize all Potions, wands, staves, scrolls, etc.	 */
 void 

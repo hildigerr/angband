@@ -17,6 +17,27 @@ static void sub1_move_light(int, int, int, int);
 static void sub3_move_light(int, int, int, int);
 
 
+/*
+ * Check a char for "vowel-hood"
+ */
+int is_a_vowel(int ch)
+{
+    switch (ch & 127) {
+      case 'a':
+      case 'e':
+      case 'i':
+      case 'o':
+      case 'u':
+      case 'A':
+      case 'E':
+      case 'I':
+      case 'O':
+      case 'U':
+	return (TRUE);
+      default:
+	return (FALSE);
+    }
+}
 
 
 /* Player bonuses					-RAK-	 */

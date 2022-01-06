@@ -401,7 +401,6 @@ long total_points(void);
 int look_line(int);
 
 /* desc.c */
-int is_a_vowel(int);
 void magic_init(void);
 void known1(inven_type *);
 int known1_p(inven_type *);
@@ -673,6 +672,7 @@ void do_cmd_spike(void);
 void do_cmd_fire(void);
 
 /* moria4.c */
+int is_a_vowel(int);
 int target_set(void); /* target fns stolen from Morgul -CFT */
 int target_at(int, int); /* target fns stolen from Morgul -CFT */
 void mmove2(int *, int *, int, int, int, int);
