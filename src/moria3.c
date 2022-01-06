@@ -1461,3 +1461,228 @@ void do_cmd_spike()
 #endif
     }
 }
+
+
+/*
+ * Throw an object across the dungeon. -RAK-
+ * Note: Flasks of oil do fire damage
+ * Note: Extra damage and chance of hitting when missiles are used
+ * with correct weapon.  I.E.  wield bow and throw arrow.
+ * Note: Some characters will now get multiple shots per turn -EAM
+ */
+void do_cmd_fire()
+{
+    int dir, item_val, tbth, tpth, tdam, tdis;
+    int y, x, oldy, oldx, cur_dis;
+    int flag, visible;
+    int thits, max_shots;
+    int ok_throw = FALSE; /* used to prompt user with, so doesn't throw wrong thing */
+    bigvtype            out_val, tmp_str;
+    inven_type          throw_obj;
+    register cave_type *c_ptr;
+    register monster_type *m_ptr;
+    register int        i;
+    char                tchar;
+
+    if (inven_ctr == 0) {
+	msg_print("But you are not carrying anything.");
+	free_turn_flag = TRUE;
+    }
+
+    else if (get_item(&item_val, "Fire/Throw which one?", 0, inven_ctr - 1, 0)) {
+
+	inven_type *t = &inventory[item_val];
+	
+	if ((t->tval == TV_FLASK) || (t->tval == TV_SHOT) ||
+	    (t->tval == TV_ARROW) || (t->tval == TV_BOLT) ||
+	    (t->tval == TV_SPIKE) || (t->tval == TV_MISC))
+	    ok_throw = TRUE;
+	else if (((t->tval == TV_FOOD) || (t->tval == TV_POTION1) ||
+		  (t->tval == TV_POTION2)) && known1_p(t) &&
+		 /* almost all potions do 1d1 damage when thrown.  I want the code
+		    to ask before throwing away potions of DEX, *Healing*, etc.
+		    This also means it will ask before throwing potions of slow
+		    poison, and other low value items that the player is likely to
+		    not care about.  This code will mean that mushrooms/molds of
+		    unhealth, potions of detonations and death are the only
+		    always-throwable food/potions.  (plus known bad ones, in a
+		    later test...) -CFT */
+		 (t->damage[0] > 1) && (t->damage[1] > 1))
+	    ok_throw = TRUE; /* if it's a mushroom or potion that does
+                                damage when thrown... */
+	else if (!known2_p(t) && (t->ident & ID_DAMD))
+	    ok_throw = TRUE;  /* Not IDed, but user knows it's cursed... */
+	else if ((t->tval >= TV_MIN_WEAR) && (t->tval <= TV_MAX_WEAR) &&
+		 (t->flags & TR_CURSED) && known2_p(t))
+	    ok_throw = TRUE; /* if user wants to throw cursed, let him */
+	else if ((k_list[t->index].cost <= 0) && known1_p(t) &&
+		 !(known2_p(t) && (t->cost > 0)))
+	    ok_throw = TRUE;
+	else if ((t->cost <= 0) && known2_p(t))
+	    ok_throw = TRUE; /* it's junk, let him throw it */
+	else if ((t->tval >= TV_HAFTED) &&
+		 (t->tval <= TV_DIGGING) && !(t->name2))
+	    ok_throw = TRUE; /* non ego/art weapons are okay to just throw, since
+				they are damaging (Moral of story: wield your weapon
+				if you're worried that you might throw it away!) */
+	else { /* otherwise double-check with user before throwing -CFT */
+	    objdes(tmp_str, t, TRUE);
+	    sprintf(out_val, "Really throw %s?", tmp_str);
+	    ok_throw = get_check(out_val);
+	}
+    } /* if selected an item to throw */
+
+    if (ok_throw) { /* can only be true if selected item, and it either looked
+		     * okay, or user said yes... */
+	if (get_dir_c(NULL, &dir)) {
+	    inven_item_describe(item_val);
+	    }
+	    max_shots = inventory[item_val].number;
+	    inven_throw(item_val, &throw_obj);
+	    facts(&throw_obj, &tbth, &tpth, &tdam, &tdis, &thits);
+	    if (thits > max_shots)
+		thits = max_shots;
+	    tchar = throw_obj.tchar;
+	/* EAM Start loop over multiple shots */
+	    while (thits-- > 0) {
+		if (inventory[INVEN_WIELD].sval == 12)
+		    tpth -= 10;
+		flag = FALSE;
+		y = char_row;
+		x = char_col;
+		oldy = char_row;
+		oldx = char_col;
+		cur_dis = 0;
+		do {
+		    (void)mmove(dir, &y, &x);
+		    cur_dis++;
+		    lite_spot(oldy, oldx);
+		    if (cur_dis > tdis)
+			flag = TRUE;
+		    c_ptr = &cave[y][x];
+		    if (floor_grid_bold(y, x) && (!flag)) {
+			if (c_ptr->cptr > 1) {
+			    flag = TRUE;
+			    m_ptr = &m_list[c_ptr->cptr];
+			    tbth = tbth - cur_dis;
+			/* if monster not lit, make it much more difficult to
+			 * hit, subtract off most bonuses, and reduce bthb
+			 * depending on distance 
+			 */
+			    if (!m_ptr->ml)
+				tbth = (tbth / (cur_dis + 2))
+				    - (py.misc.lev *
+				       class_level_adj[py.misc.pclass][CLA_BTHB] / 2)
+				    - (tpth * (BTH_PLUS_ADJ - 1));
+			    if (test_hit(tbth, (int)py.misc.lev, tpth,
+				   (int)c_list[m_ptr->mptr].ac, CLA_BTHB)) {
+				i = m_ptr->mptr;
+				objdes(tmp_str, &throw_obj, FALSE);
+			    /* Does the player know what he's fighting?	   */
+				if (!m_ptr->ml) {
+				    (void)sprintf(out_val,
+					   "The %s finds a mark.", tmp_str);
+				    visible = FALSE;
+				} else {
+				    if (c_list[i].cdefense & UNIQUE)
+					(void)sprintf(out_val, "The %s hits %s.",
+						   tmp_str, c_list[i].name);
+				    else
+					(void)sprintf(out_val, "The %s hits the %s.",
+						   tmp_str, c_list[i].name);
+				    visible = TRUE;
+				}
+				msg_print(out_val);
+				tdam = tot_dam(&throw_obj, tdam, i);
+				tdam = critical_blow((int)throw_obj.weight,
+						     tpth, tdam, CLA_BTHB);
+				if (tdam < 0)
+				    tdam = 0;
+			    /*
+			     * always print fear msgs, so player can stop
+			     * shooting -CWS 
+			     */
+				i = mon_take_hit((int)c_ptr->cptr, tdam, TRUE);
+				if (i < 0) {
+				    char                buf[100];
+				    char                cdesc[100];
+				    if (visible) {
+					if (c_list[i].cdefense & UNIQUE)
+					    sprintf(cdesc, "%s", c_list[m_ptr->mptr].name);
+					else
+					    sprintf(cdesc, "The %s", c_list[m_ptr->mptr].name);
+				    } else
+					strcpy(cdesc, "It");
+				    (void)sprintf(buf,
+						  pain_message((int)c_ptr->cptr,
+							       (int)tdam), cdesc);
+				    msg_print(buf);
+				}
+				if (i >= 0) {
+				    if (!visible)
+					msg_print("You have killed something!");
+				    else {
+					if (c_list[i].cdefense & UNIQUE)
+					    (void)sprintf(out_val, "You have killed %s.",
+							  c_list[i].name);
+					else
+					    (void)sprintf(out_val, "You have killed the %s.",
+							  c_list[i].name);
+					msg_print(out_val);
+				    }
+				    prt_experience();
+				}
+				if (stays_when_throw(&throw_obj))
+/* should it land on floor?  Or else vanish forever? */
+				    drop_throw(oldy, oldx, &throw_obj);
+			    }
+			    else
+				drop_throw(oldy, oldx, &throw_obj);
+			}
+			else
+			{   /* do not test c_ptr->fm here */
+			    if (panel_contains(y, x) && (py.flags.blind < 1)
+				&& (c_ptr->tl || c_ptr->pl)) {
+				print(tchar, y, x);
+				put_qio();	/* show object moving */
+#ifdef MSDOS
+				delay(8 * delay_spd);	/* milliseconds */
+#else
+				usleep(8000 * delay_spd);	/* useconds */
+#endif
+			    }
+			}
+		    } else {
+			flag = TRUE;
+			drop_throw(oldy, oldx, &throw_obj);
+		    }
+		    oldy = y;
+		    oldx = x;
+		}
+		while (!flag);
+		if (thits > 0) {   /* triple crossbow check -- not really needed */
+		    if (inventory[INVEN_WIELD].sval != 12) {
+			(void)sprintf(out_val, "Keep shooting?");
+			if (get_check(out_val)) {
+			    inven_item_describe(item_val);
+			    inven_throw(item_val, &throw_obj);
+			} else
+			    thits = 0;
+		    } else {
+			inven_item_describe(item_val);
+			inven_throw(item_val, &throw_obj);
+		    }
+		}
+
+                /* If we're going to fire again, reroll damage for the
+                   next missile. This makes each missile's damage more
+                   random, AND it doesn't allow damage bonuses to accumulate!
+                */
+		if (thits > 0) {
+                    int dummy; /* ignore everything except tdam */
+                    facts(&throw_obj, &dummy, &dummy, &tdam, &dummy, &dummy);
+                }
+	    }
+	} /* EAM end loop over multiple shots */
+    }
+}

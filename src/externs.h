@@ -658,7 +658,6 @@ void fix2_delete_monster(int);
 int delete_object(int, int);
 u32b monster_death(int, int, u32b, u32b, u32b);
 int mon_take_hit(int, int, int);
-void do_cmd_fire(void);
 void delete_unique(void);
 void check_unique(monster_type *);
 
@@ -671,6 +670,7 @@ void tunnel(int);
 void do_cmd_disarm(void);
 void bash(void);
 void do_cmd_spike(void);
+void do_cmd_fire(void);
 
 /* moria4.c */
 int target_set(void); /* target fns stolen from Morgul -CFT */
