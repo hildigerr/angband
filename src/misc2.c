@@ -12,6 +12,59 @@
 extern int peek;
 extern int rating;
 
+
+/*
+ * Compact monsters	-RAK-
+ *
+ * Return TRUE if any monsters were deleted, FALSE if could not delete any
+ * monsters. 
+ */
+int compact_monsters(void)
+{
+    register int           i;
+    int                    cur_dis, delete_any;
+    register monster_type *mon_ptr;
+
+    msg_print("Compacting monsters...");
+
+    cur_dis = 66;
+    delete_any = FALSE;
+    do {
+	for (i = mfptr - 1; i >= MIN_M_IDX; i--) {
+	    mon_ptr = &m_list[i];
+	    if ((cur_dis < mon_ptr->cdis) && (randint(3) == 1)) {
+	    /* Don't compact Melkor! */
+		if (c_list[mon_ptr->mptr].cmove & CM_WIN)
+		/* do nothing */
+		    ;
+
+	    /* in case this is called from within creatures(), this is a
+	     * horrible hack, the m_list/creatures() code needs to be
+	     * rewritten 
+	     */
+		else if (hack_monptr < i) {
+		    delete_monster(i);
+		    delete_any = TRUE;
+		} else
+
+		/* fix1_delete_monster() does not decrement mfptr, so don't
+		 * set delete_any if this was called 
+		 */
+		    fix1_delete_monster(i);
+	    }
+	}
+	if (!delete_any) {
+	    cur_dis -= 6;
+	/* can't do anything else but abort, if can't delete any monsters */
+	    if (cur_dis < 0)
+		return FALSE;
+	}
+    }
+    while (!delete_any);
+    return TRUE;
+}
+
+
 /* Returns a pointer to next free space			-RAK-	 */
 int 
 m_pop()
