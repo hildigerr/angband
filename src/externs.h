@@ -539,7 +539,7 @@ int compact_monsters(void);
 int get_nmons_num(int);
 int distance(int, int, int, int);
 
-/* misc2.c */
+/* misc3.c */
 void place_trap(int, int, int);
 void place_rubble(int, int);
 void place_gold(int, int);
