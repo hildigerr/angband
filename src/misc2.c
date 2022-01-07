@@ -12,6 +12,29 @@
 extern int peek;
 extern int rating;
 
+/*
+ * Ludwig's Brainstorm
+ */
+static int test_place(int y, int x)
+{
+    /* Require legal grid */
+    if (!in_bounds(y, x)) return (FALSE);
+    
+    /* Require "empty" floor grid */
+    if (cave[y][x].fval >= MIN_CLOSED_SPACE) return (FALSE);
+    if (cave[y][x].cptr != 0) return (FALSE);
+
+    /* And do not use special walls */
+    if (cave[y][x].fval == NULL_WALL) return (FALSE);
+
+    /* Or the player himself */
+    if ((y == char_row) && (x == char_col)) return (FALSE);
+
+    /* Use it */
+    return TRUE;
+}
+
+
 
 /*
  * Compact monsters	-RAK-
@@ -873,19 +896,6 @@ again:
     return i;
 }
 
-/* Ludwig's Brainstorm */
-static int 
-test_place(y, x)
-int y, x;
-{
-    if (!in_bounds(y, x) ||
-	(cave[y][x].fval >= MIN_CLOSED_SPACE) ||
-	(cave[y][x].fval == NULL_WALL) ||
-	(cave[y][x].cptr != 0) ||
-	(y == char_row && x == char_col))
-	return (0);
-    return (1);
-}
 
 void 
 place_group(y, x, mon, slp)
