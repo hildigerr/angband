@@ -88,9 +88,10 @@ int compact_monsters(void)
 }
 
 
-/* Returns a pointer to next free space			-RAK-	 */
-int 
-m_pop()
+/*
+ * Returns a pointer to next free space			-RAK-
+ */
+int m_pop(void)
 {
     if (mfptr == MAX_M_IDX)
 	if (!compact_monsters())
@@ -101,131 +102,135 @@ m_pop()
 
 
 
-/* Places a monster at given location			-RAK-	 */
-int 
-place_monster(y, x, z, slp)
-register int y, x, z;
-int          slp;
+/*
+ * Places a monster at given location			-RAK-
+ */
+int place_monster(int y, int x, int r_idx, int slp)
 {
-    register int           cur_pos, j, ny,nx,count;
-    register monster_type *mon_ptr;
+    register int           cur_pos, j, ny, nx, count;
+    register monster_type *m_ptr;
     char                   buf[100];
 
-    if ((z < 0) || (z >= MAX_R_IDX))
+    if ((r_idx < 0) || (r_idx >= MAX_R_IDX))
 	return FALSE;		/* another paranoia check -CFT */
 
     if (!test_place(y, x))
 	return FALSE;		/* YA paranoia check -CFT */
 
-    if (c_list[z].cdefense & UNIQUE) {
-	if (u_list[z].exist) {
+    if (c_list[r_idx].cdefense & UNIQUE) {
+	if (u_list[r_idx].exist) {
 	    if (wizard) {
-		(void)sprintf(buf, "Tried to create %s but exists.", c_list[z].name);
+		(void)sprintf(buf, "Tried to create %s but exists.", c_list[r_idx].name);
 		msg_print(buf);
 	    }
 	    return FALSE;
 	}
-	if (u_list[z].dead) {
+	if (u_list[r_idx].dead) {
 	    if (wizard) {
-		(void)sprintf(buf, "Tried to create %s but dead.", c_list[z].name);
+		(void)sprintf(buf, "Tried to create %s but dead.", c_list[r_idx].name);
 		msg_print(buf);
 	    }
 	    return FALSE;
 	}
-	u_list[z].exist = 1;
+	u_list[r_idx].exist = 1;
     }
     cur_pos = m_pop();		   /* from um55, paranoia error check... */
     if (cur_pos == -1)
 	return FALSE;
 
-    if ((wizard || peek) && (c_list[z].cdefense & UNIQUE))
-	msg_print(c_list[z].name);
-    if (c_list[z].level > (unsigned)dun_level) {
+    if ((wizard || peek) && (c_list[r_idx].cdefense & UNIQUE))
+	msg_print(c_list[r_idx].name);
+    if (c_list[r_idx].level > (unsigned)dun_level) {
 	int                 c;
 
-	rating += ((c = c_list[z].level - dun_level) > 30) ? 15 : c / 2;
-	if (c_list[z].cdefense & UNIQUE)
-	    rating += (c_list[z].level - dun_level) / 2;
+	rating += ((c = c_list[r_idx].level - dun_level) > 30) ? 15 : c / 2;
+	if (c_list[r_idx].cdefense & UNIQUE)
+	    rating += (c_list[r_idx].level - dun_level) / 2;
     }
-    mon_ptr = &m_list[cur_pos];
-    mon_ptr->fy = y;
-    mon_ptr->fx = x;
-    mon_ptr->mptr = z;
-    if ((c_list[z].cdefense & MAX_HP) )
-	mon_ptr->hp = max_hp(c_list[z].hd);
+    m_ptr = &m_list[cur_pos];
+    m_ptr->fy = y;
+    m_ptr->fx = x;
+    m_ptr->mptr = r_idx;
+    if ((c_list[r_idx].cdefense & MAX_HP) )
+	m_ptr->hp = max_hp(c_list[r_idx].hd);
     else
-	mon_ptr->hp = pdamroll(c_list[z].hd);
-    mon_ptr->maxhp = mon_ptr->hp;
-    mon_ptr->cspeed = c_list[z].speed - 10;
-    mon_ptr->stunned = 0;
-    mon_ptr->confused = 0;
-    mon_ptr->monfear = 0;
-    mon_ptr->cdis = distance(char_row, char_col, y, x);
-    mon_ptr->ml = FALSE;
+	m_ptr->hp = pdamroll(c_list[r_idx].hd);
+    m_ptr->maxhp = m_ptr->hp;
+    m_ptr->cspeed = c_list[r_idx].speed - 10;
+    m_ptr->stunned = 0;
+    m_ptr->confused = 0;
+    m_ptr->monfear = 0;
+    m_ptr->cdis = distance(char_row, char_col, y, x);
+    m_ptr->ml = FALSE;
     cave[y][x].cptr = cur_pos;
 
     if (slp) {
-	if (c_list[z].sleep == 0)
-	    mon_ptr->csleep = 0;
+	if (c_list[r_idx].sleep == 0)
+	    m_ptr->csleep = 0;
 	else
-	    mon_ptr->csleep = ((int)c_list[z].sleep * 2) +
-		randint((int)c_list[z].sleep * 10);
+	    m_ptr->csleep = ((int)c_list[r_idx].sleep * 2) +
+			     randint((int)c_list[r_idx].sleep * 10);
     } else
   /* to give the player a sporting chance, any monster that appears in
          line-of-sight and can cast spells or breathe, should be asleep.
           This is an extension of Um55's sleeping dragon code... */
-    if (((c_list[z].spells & (CAUSE_LIGHT|CAUSE_SERIOUS|HOLD_PERSON|
+    if (((c_list[r_idx].spells & (CAUSE_LIGHT|CAUSE_SERIOUS|HOLD_PERSON|
                                   BLINDNESS|CONFUSION|FEAR|SLOW|BREATH_L|
                                   BREATH_G|BREATH_A|BREATH_FR|BREATH_FI|
                                   FIRE_BOLT|FROST_BOLT|ACID_BOLT|MAG_MISS|
                                   CAUSE_CRIT|FIRE_BALL|FROST_BALL|MANA_BOLT))
-          || (c_list[z].spells2 & (BREATH_CH|BREATH_SH|BREATH_SD|BREATH_CO|
+          || (c_list[r_idx].spells2 & (BREATH_CH|BREATH_SH|BREATH_SD|BREATH_CO|
                                   BREATH_DI|BREATH_LD|LIGHT_BOLT|LIGHT_BALL|
                                   ACID_BALL|TRAP_CREATE|RAZOR|MIND_BLAST|
                                   MISSILE|PLASMA_BOLT|NETHER_BOLT|ICE_BOLT|
                                   FORGET|BRAIN_SMASH|ST_CLOUD|TELE_LEV|
                                   WATER_BOLT|WATER_BALL|NETHER_BALL|BREATH_NE))
-          || (c_list[z].spells3 & (BREATH_WA|BREATH_SL|BREATH_LT|BREATH_TI|
+          || (c_list[r_idx].spells3 & (BREATH_WA|BREATH_SL|BREATH_LT|BREATH_TI|
                                   BREATH_GR|BREATH_DA|BREATH_PL|ARROW|
                                   DARK_STORM|MANA_STORM)))
        && (los(y,x, char_row, char_col)))
-      mon_ptr->csleep = randint(4);   /* if asleep only to prevent
+      m_ptr->csleep = randint(4);   /* if asleep only to prevent
                                        * summon-breathe-breathe-breathe-die,
                                        * then don't sleep long -CFT */
-    else mon_ptr->csleep = 0;
+    else {
+	m_ptr->csleep = 0;
+    }
+
     update_mon(cur_pos);	   /* light up the monster if we can see it... -CFT */
 
 /* Unique kobolds, Liches, orcs, Ogres, Trolls, yeeks, and & demons -DGK
  * But not skeletons, because that would include druj, making Cantoras
  * amazingly tough -CFT
  */
-    if (c_list[z].cdefense & UNIQUE) {
-	j = c_list[z].cchar;
+    if (c_list[r_idx].cdefense & UNIQUE) {
+	j = c_list[r_idx].cchar;
 	if ((j=='k')||(j=='L')||(j=='o')||(j=='O')||(j=='T')||(j=='y')||
 	    (j=='I')||(j=='&')) {
-	    for (cur_pos=MAX_R_IDX-1;cur_pos>=0;cur_pos--)
-		if ((c_list[cur_pos].cchar==j) &&
-		    (c_list[cur_pos].level<=c_list[z].level) &&
-		    !(c_list[cur_pos].cdefense & UNIQUE)) {
+	    for (z = MAX_R_IDX-1; z>=0; z--) {
+		if ((c_list[z].cchar == j) &&
+		    (c_list[z].level <= c_list[r_idx].level) &&
+		    !(c_list[z].cdefense & UNIQUE)) {
 		    count = 0;
 		    do {
 			ny=y+randint(7)-4;
 			nx=x+randint(7)-4;
 			count++;
 		    } while (!test_place(ny,nx) && (count<51));
-		    if ((j=='k')||(j=='y')||(j=='&')||(c_list[cur_pos].cdefense&GROUP))
-			place_group(ny,nx,cur_pos,slp);
+		    if ((j=='k')||(j=='y')||(j=='&')||(c_list[z].cdefense & GROUP))
+			place_group(ny,nx,z,slp);
 		    else
-			place_monster(ny,nx,cur_pos,slp);
+			place_monster(ny,nx,z,slp);
 		}
 	}
     }
     return TRUE;
 }
 
-/* Places a monster at given location			-RAK-	 */
-int 
-place_win_monster()
+
+/*
+ * Places a "winning" monster at given location	    -RAK-
+ */
+int place_win_monster()
 {
     register int           y, x, cur_pos;
     register monster_type *mon_ptr;
@@ -264,9 +269,7 @@ place_win_monster()
 }
 
 
-static char *
-cap(str)
-char *str;
+static char *cap(char *str)
 {
     if ((*str >= 'a') && (*str <= 'z'))
 	*str = *str - 'a' + 'A';
@@ -274,11 +277,7 @@ char *str;
 }
 
 
-void 
-set_ghost(g, name, r, c, l)
-monster_race      *g;
-char               *name;
-int                 r, c, l;
+void set_ghost(monster_race *g, char *name, int gr, int gc, int lev)
 {
     char ghost_race[20];
     char ghost_class[20];
@@ -291,7 +290,7 @@ int                 r, c, l;
 	*((char *) c_list[MAX_R_IDX - 1].name) = 'A';
     }
 
-    switch (r) {
+    switch (gr) {
       case 0:
       case 8:
 	strcpy(ghost_race, "human");
@@ -317,7 +316,7 @@ int                 r, c, l;
 	strcpy(ghost_race, "troll");
 	break;
     }
-    switch (c) {
+    switch (gc) {
       case 0:
 	strcpy(ghost_class, "warrior");
 	break;
@@ -337,26 +336,25 @@ int                 r, c, l;
 	strcpy(ghost_class, "paladin");
 	break;
     }
-    g->level = l;
+    g->level = lev;
     g->sleep = 0;
     g->aaf = 100;
-    g->mexp = l * 5 + 5;
+    g->mexp = lev * 5 + 5;
     g->spells2 = NONE8;
     if (!dun_level) {
 	sprintf((char *)g->name, "%s, the %s %s", cap(name),
 		cap(ghost_race), cap(ghost_class));
 	g->cmove |= (THRO_DR | MV_ATT_NORM | CARRY_OBJ | HAS_90 | HAS_60 | GOOD);
-	if (l > 10)
-	    g->cmove |= (HAS_1D2);
-	if (l > 18)
-	    g->cmove |= (HAS_2D2);
-	if (l > 23)
-	    g->cmove |= (HAS_4D2);
-	if (l > 40) {
+
+	if (lev > 10) g->cmove |= (HAS_1D2);
+	if (lev > 18) g->cmove |= (HAS_2D2);
+	if (lev > 23) g->cmove |= (HAS_4D2);
+	if (lev > 40) {
 	    g->cmove |= (SPECIAL);
 	    g->cmove &= (~HAS_4D2);
 	}
-	for (i = 0; i <= (l / 5); i++)	/* Add some random resists -DGK */
+
+	for (i = 0; i <= (lev / 5); i++) { /* Add some random resists -DGK */
 	    switch ((int) randint(13)) {
 	      case 1:
 	      case 2:
@@ -377,101 +375,74 @@ int                 r, c, l;
 	      case 13:
 		g->cdefense |= (IM_POISON);
 	    }
-	switch (c) {
+	}
+
+	switch (gc) {
 	  case 0:		   /* Warrior */
 	    g->spells = NONE8;
 	    break;
 	  case 1:		   /* Mage */
-	    g->spells |= (0x3L | BLINK | MAG_MISS | SLOW | CONFUSION);
-	    if (l > 5)
-		g->spells2 |= ST_CLOUD;
-	    if (l > 7)
-		g->spells2 |= LIGHT_BOLT;
-	    if (l > 10)
-		g->spells |= FROST_BOLT;
-	    if (l > 12)
-		g->spells |= TELE;
-	    if (l > 15)
-		g->spells |= ACID_BOLT;
-	    if (l > 20)
-		g->spells |= FIRE_BOLT;
-	    if (l > 25)
-		g->spells |= FROST_BALL;
-	    if (l > 25)
-		g->spells2 |= HASTE;
-	    if (l > 30)
-		g->spells |= FIRE_BALL;
-	    if (l > 40)
-		g->spells |= MANA_BOLT;
+	    g->spells |= (0x3L | BLINK | MAG_MISS |
+			   SLOW | CONFUSION);
+	    if (lev > 5) g->spells2 |= ST_CLOUD;
+	    if (lev > 7) g->spells2 |= LIGHT_BOLT;
+	    if (lev > 10) g->spells |= FROST_BOLT;
+	    if (lev > 12) g->spells |= TELE;
+	    if (lev > 15) g->spells |= ACID_BOLT;
+	    if (lev > 20) g->spells |= FIRE_BOLT;
+	    if (lev > 25) g->spells |= FROST_BALL;
+	    if (lev > 25) g->spells2 |= HASTE;
+	    if (lev > 30) g->spells |= FIRE_BALL;
+	    if (lev > 40) g->spells |= MANA_BOLT;
 	    break;
 	  case 3:		   /* Rogue */
 	    g->spells |= (0x5L | BLINK);
-	    if (l > 10)
-		g->spells |= CONFUSION;
-	    if (l > 18)
-		g->spells |= SLOW;
-	    if (l > 25)
-		g->spells |= TELE;
-	    if (l > 30)
-		g->spells |= HOLD_PERSON;
-	    if (l > 35)
-		g->spells |= TELE_TO;
+	    if (lev > 10) g->spells |= CONFUSION;
+	    if (lev > 18) g->spells |= SLOW;
+	    if (lev > 25) g->spells |= TELE;
+	    if (lev > 30) g->spells |= HOLD_PERSON;
+	    if (lev > 35) g->spells |= TELE_TO;
 	    break;
 	  case 4:		   /* Ranger */
 	    g->spells |= (0x8L | MAG_MISS);
-	    if (l > 5)
-		g->spells2 |= ST_CLOUD;
-	    if (l > 7)
-		g->spells2 |= LIGHT_BOLT;
-	    if (l > 10)
-		g->spells |= FROST_BOLT;
-	    if (l > 18)
-		g->spells |= ACID_BOLT;
-	    if (l > 25)
-		g->spells |= FIRE_BOLT;
-	    if (l > 30)
-		g->spells |= FROST_BALL;
-	    if (l > 35)
-		g->spells |= FIRE_BALL;
+	    if (lev > 5) g->spells2 |= ST_CLOUD;
+	    if (lev > 7) g->spells2 |= LIGHT_BOLT;
+	    if (lev > 10) g->spells |= FROST_BOLT;
+	    if (lev > 18) g->spells |= ACID_BOLT;
+	    if (lev > 25) g->spells |= FIRE_BOLT;
+	    if (lev > 30) g->spells |= FROST_BALL;
+	    if (lev > 35) g->spells |= FIRE_BALL;
 	    break;
 	  case 2:		   /* Priest */
 	  case 5:		   /* Paladin */
 	    g->spells |= (0x4L | CAUSE_LIGHT | FEAR);
-	    if (l > 5)
-		g->spells2 |= HEAL;
-	    if (l > 10)
-		g->spells |= (CAUSE_SERIOUS | BLINDNESS);
-	    if (l > 18)
-		g->spells |= HOLD_PERSON;
-	    if (l > 25)
-		g->spells |= CONFUSION;
-	    if (l > 30)
-		g->spells |= CAUSE_CRIT;
-	    if (l > 35)
-		g->spells |= MANA_DRAIN;
+	    if (lev > 5) g->spells2 |= HEAL;
+	    if (lev > 10) g->spells |= (CAUSE_SERIOUS | BLINDNESS);
+	    if (lev > 18) g->spells |= HOLD_PERSON;
+	    if (lev > 25) g->spells |= CONFUSION;
+	    if (lev > 30) g->spells |= CAUSE_CRIT;
+	    if (lev > 35) g->spells |= MANA_DRAIN;
 	    break;
 	}
 
 	g->cdefense |= (CHARM_SLEEP | EVIL);
-	if (r == 6)
-	    g->cdefense |= ORC;
-	else if (r == 7)
-	    g->cdefense |= TROLL;
+
+	if (gr == 6) g->cdefense |= ORC;
+	else if (gr == 7) g->cdefense |= TROLL;
+
 	g->ac = 15 + randint(15);
-	if (c == 0 || c >= 3)
-	    g->ac += randint(60);
-	if ((c == 1 || c == 3) && l > 25)	/* High level mages and
-						 * rogues are fast... */
-	    g->speed = 12;
-	else
-	    g->speed = 11;
+	if (gc == 0 || gc >= 3) g->ac += randint(60);
+	/* High level mages and rogues are fast... */
+	if ((gc == 1 || gc == 3) && lev > 25) g->speed = 12;
+	else g->speed = 11;
 	g->cchar = 'p';
 	g->hd[1] = 1;
-	g->damage[0] = 5 + ((l > 18) ? 18 : l);
+	g->damage[0] = 5 + ((lev > 18) ? 18 : lev);
 	g->damage[1] = g->damage[0];
-	switch (c) {
+
+	switch (gc) {
 	  case 0:
-	    g->damage[2] = ((l < 30) ? (5 + ((l > 18) ? 18 : l)) : 235);
+	    g->damage[2] = ((lev < 30) ? (5 + ((lev > 18) ? 18 : lev)) : 235);
 	    g->damage[3] = g->damage[2];
 	    break;
 	  case 1:
@@ -480,7 +451,7 @@ int                 r, c, l;
 	    g->damage[3] = 0;
 	    break;
 	  case 3:
-	    g->damage[2] = g->damage[3] = ((l < 30) ? 149 : 232);
+	    g->damage[2] = g->damage[3] = ((lev < 30) ? 149 : 232);
 	    break;
 	  case 5:
 	  case 4:
@@ -497,10 +468,8 @@ int                 r, c, l;
 	g->cmove |= (THRO_DR | MV_ATT_NORM | CARRY_OBJ | HAS_90 | GOOD);
 	g->spells |= (NONE8);
 	g->cdefense |= (IM_POISON | CHARM_SLEEP | UNDEAD | EVIL | IM_FROST | NO_INFRA);
-	if (r == 6)
-	    g->cdefense |= ORC;
-	else if (r == 7)
-	    g->cdefense |= TROLL;
+	if (gr == 6) g->cdefense |= ORC;
+	else if (gr == 7) g->cdefense |= TROLL;
 	g->ac = 26;
 	g->speed = 11;
 	g->cchar = 's';
@@ -516,11 +485,8 @@ int                 r, c, l;
 	g->cmove |= (THRO_DR | MV_ATT_NORM | CARRY_OBJ | HAS_60 | HAS_90 | GOOD);
 	g->spells |= (NONE8);
 	g->cdefense |= (IM_POISON | CHARM_SLEEP | UNDEAD | EVIL | NO_INFRA);
-
-	if (r == 6)
-	    g->cdefense |= ORC;
-	else if (r == 7)
-	    g->cdefense |= TROLL;
+	if (gr == 6) g->cdefense |= ORC;
+	else if (gr == 7) g->cdefense |= TROLL;
 	g->ac = 30;
 	g->speed = 11;
 	g->cchar = 'z';
@@ -551,10 +517,8 @@ int                 r, c, l;
 	g->cmove |= (MV_ATT_NORM | CARRY_OBJ | HAS_1D2 | GOOD);
 	g->spells |= (NONE8);
 	g->cdefense |= (CHARM_SLEEP | UNDEAD | EVIL | IM_POISON | NO_INFRA);
-	if (r == 6)
-	    g->cdefense |= ORC;
-	else if (r == 7)
-	    g->cdefense |= TROLL;
+	if (gr == 6) g->cdefense |= ORC;
+	else if (gr == 7) g->cdefense |= TROLL;
 	g->ac = 35;
 	g->speed = 11;
 	g->cchar = 'M';
@@ -708,12 +672,14 @@ int                 r, c, l;
 }
 
 
-/* Places a monster at given location			-RAK-	 */
-int 
-place_ghost()
+
+/*
+ * Places a monster at given location			-RAK-
+ */
+int place_ghost()
 {
     register int           y, x, cur_pos;
-    register monster_type *mon_ptr;
+    register monster_type  *m_ptr;
     monster_race         *ghost = &c_list[MAX_R_IDX - 1];
     char                   tmp[100];
     char                   name[100];
@@ -782,23 +748,24 @@ place_ghost()
     if (wizard || peek)
 	msg_print(ghost->name);
     cur_pos = m_pop();
-    mon_ptr = &m_list[cur_pos];
+    m_ptr = &m_list[cur_pos];
+
     do {
 	y = randint(cur_height - 2);
 	x = randint(cur_width - 2);
     } while ((cave[y][x].fval >= MIN_CLOSED_SPACE) || (cave[y][x].cptr != 0)
 	     || (cave[y][x].tptr != 0) ||
 	     (distance(y, x, char_row, char_col) <= MAX_SIGHT));
-    mon_ptr->fy = y;
-    mon_ptr->fx = x;
-    mon_ptr->mptr = (MAX_R_IDX - 1);
-    mon_ptr->hp = (s16b) ghost->hd[0] * (s16b) ghost->hd[1];
+    m_ptr->fy = y;
+    m_ptr->fx = x;
+    m_ptr->mptr = (MAX_R_IDX - 1);
+    m_ptr->hp = (s16b) ghost->hd[0] * (s16b) ghost->hd[1];
 /* the c_list speed value is 10 greater, so that it can be a byte */
-    mon_ptr->cspeed = c_list[mon_ptr->mptr].speed - 10;
-    mon_ptr->stunned = 0;
-    mon_ptr->cdis = distance(char_row, char_col, y, x);
+    m_ptr->cspeed = c_list[mon_ptr->mptr].speed - 10;
+    m_ptr->stunned = 0;
+    m_ptr->cdis = distance(char_row, char_col, y, x);
     cave[y][x].cptr = cur_pos;
-    mon_ptr->csleep = 0;
+    m_ptr->csleep = 0;
     return 1;
 }
 
@@ -807,12 +774,17 @@ place_ghost()
  * Return a monster suitable to be placed at a given level.  This makes high
  * level monsters (up to the given level) slightly more common than low level
  * monsters at any given level.   -CJS- 
+ *
+ * Code has been added to make it slightly more likely to get the higher level
+ * monsters at higher dungeon levels.  Originally a uniform distribution over
+ * all monsters of level less than or equal to the dungeon level.  The new
+ * distribution makes a level n monster occur approx 2/n% of the time on
+ * level n, and 1/n*n% are 1st level.
  */
-int 
-get_mons_num(level)
-int level;
+int get_mons_num(int level)
 {
     register int i, j, num;
+
     int          old = level;
 
 again:
@@ -830,12 +802,6 @@ again:
 		level = MAX_R_LEV;
 	} else {
 
-	/* This code has been added to make it slightly more likely to get
-	 * the higher level monsters. Originally a uniform distribution over
-	 * all monsters of level less than or equal to the dungeon level.
-	 * This distribution makes a level n monster occur approx 2/n% of the
-	 * time on level n, and 1/n*n% are 1st level. 
-	 */
 
 	    num = m_level[level] - m_level[0];
 	    i = randint(num) - 1;
@@ -857,14 +823,17 @@ again:
     return i;
 }
 
-int 
-get_nmons_num(level)
-int level;
+
+/*
+ * Get a monster race index.  Method 2.
+ */
+int get_nmons_num(int level)
 {
     register int i, j, num;
     int          old;
 
     old = level;
+
 again:
     if (level == 0)
 	i = randint(m_level[0]) - 1;
@@ -897,87 +866,87 @@ again:
 }
 
 
-void 
-place_group(y, x, mon, slp)
-int y, x, mon, slp;
+void place_group(int y, int x, int r_idx, int slp)
 {
 /* prevent level rating from skyrocketing if they are out of depth... */
     int old = rating;
     int extra = 0;
 
-    if (c_list[mon].level > (unsigned) dun_level)
-	extra = (-randint(c_list[mon].level - dun_level));
+    if (c_list[r_idx].level > (unsigned) dun_level)
+	extra = 0 - randint(c_list[r_idx].level - dun_level);
 				/* reduce size of group if out-of-depth */
-    else if (c_list[mon].level < (unsigned) dun_level)
+    else if (c_list[r_idx].level < (unsigned) dun_level)
 /* if monster is deeper than normal, then travel in bigger packs -CFT */
-	extra = randint(dun_level - c_list[mon].level);
+	extra = randint(dun_level - c_list[r_idx].level);
 
     if (extra > 12)
 	extra = 12;		/* put an upper bounds on it... -CFT */
     switch (randint(13) + extra) {
       case 25:
-	place_monster(y, x - 3, mon, 0);
+	place_monster(y, x - 3, r_idx, 0);
       case 24:
-	place_monster(y, x + 3, mon, 0);
+	place_monster(y, x + 3, r_idx, 0);
       case 23:
-	place_monster(y - 3, x, mon, 0);
+	place_monster(y - 3, x, r_idx, 0);
       case 22:
-	place_monster(y + 3, x, mon, 0);
+	place_monster(y + 3, x, r_idx, 0);
       case 21:
-	place_monster(y - 2, x + 1, mon, 0);
+	place_monster(y - 2, x + 1, r_idx, 0);
       case 20:
-	place_monster(y + 2, x - 1, mon, 0);
+	place_monster(y + 2, x - 1, r_idx, 0);
       case 19:
-	place_monster(y + 2, x + 1, mon, 0);
+	place_monster(y + 2, x + 1, r_idx, 0);
       case 18:
-	place_monster(y - 2, x - 1, mon, 0);
+	place_monster(y - 2, x - 1, r_idx, 0);
       case 17:
-	place_monster(y + 1, x + 2, mon, 0);
+	place_monster(y + 1, x + 2, r_idx, 0);
       case 16:
-	place_monster(y - 1, x - 2, mon, 0);
+	place_monster(y - 1, x - 2, r_idx, 0);
       case 15:
-	place_monster(y + 1, x - 2, mon, 0);
+	place_monster(y + 1, x - 2, r_idx, 0);
       case 14:
-	place_monster(y - 1, x + 2, mon, 0);
+	place_monster(y - 1, x + 2, r_idx, 0);
       case 13:
-	place_monster(y, x - 2, mon, 0);
+	place_monster(y, x - 2, r_idx, 0);
       case 12:
-	place_monster(y, x + 2, mon, 0);
+	place_monster(y, x + 2, r_idx, 0);
       case 11:
-	place_monster(y + 2, x, mon, 0);
+	place_monster(y + 2, x, r_idx, 0);
       case 10:
-	place_monster(y - 2, x, mon, 0);
+	place_monster(y - 2, x, r_idx, 0);
       case 9:
-	place_monster(y + 1, x + 1, mon, 0);
+	place_monster(y + 1, x + 1, r_idx, 0);
       case 8:
-	place_monster(y + 1, x - 1, mon, 0);
+	place_monster(y + 1, x - 1, r_idx, 0);
       case 7:
-	place_monster(y - 1, x - 1, mon, 0);
+	place_monster(y - 1, x - 1, r_idx, 0);
       case 6:
-	place_monster(y - 1, x + 1, mon, 0);
+	place_monster(y - 1, x + 1, r_idx, 0);
       case 5:
-	place_monster(y, x + 1, mon, 0);
+	place_monster(y, x + 1, r_idx, 0);
       case 4:
-	place_monster(y, x - 1, mon, 0);
+	place_monster(y, x - 1, r_idx, 0);
       case 3:
-	place_monster(y + 1, x, mon, 0);
+	place_monster(y + 1, x, r_idx, 0);
       case 2:
-	place_monster(y - 1, x, mon, 0);
+	place_monster(y - 1, x, r_idx, 0);
 	rating = old;
       case 1:
       default:			   /* just in case I screwed up -CFT */
-	place_monster(y, x, mon, 0);
+	place_monster(y, x, r_idx, 0);
     }
 }
 
 
-/* Allocates a random monster				-RAK-	 */
-void 
-alloc_monster(num, dis, slp)
-int num, dis, slp;
+/*
+ * Allocates some random monsters   -RAK-	 
+ * Place the monsters at least "dis" distance from the player.
+ * Use "slp" to choose the initial "sleep" status
+ */
+void alloc_monster(int num, int dis, int slp)
 {
     register int y, x, i;
-    int          mon;
+    int          r_idx;
 
     for (i = 0; i < num; i++) {
 	do {
@@ -987,44 +956,46 @@ int num, dis, slp;
 	while (cave[y][x].fval >= MIN_CLOSED_SPACE || (cave[y][x].cptr != 0) ||
 	       (distance(y, x, char_row, char_col) <= dis));
 	do {
-	    mon = get_mons_num(dun_level);
-	} while (randint(c_list[mon].rarity) > 1);
+	r_idx = get_mons_num(dun_level);
+	} while (randint(c_list[r_idx].rarity) > 1);
 
     /*
      * to give the player a sporting chance, any monster that appears in
      * line-of-sight and can cast spells or breathe, should be asleep. This
      * is an extension of Um55's sleeping dragon code... 
      */
-	if (((c_list[mon].spells & (CAUSE_LIGHT | CAUSE_SERIOUS | HOLD_PERSON |
+
+	if (((c_list[r_idx].spells & (CAUSE_LIGHT | CAUSE_SERIOUS | HOLD_PERSON |
 			    BLINDNESS | CONFUSION | FEAR | SLOW | BREATH_L |
 			       BREATH_G | BREATH_A | BREATH_FR | BREATH_FI |
 			     FIRE_BOLT | FROST_BOLT | ACID_BOLT | MAG_MISS |
 			   CAUSE_CRIT | FIRE_BALL | FROST_BALL | MANA_BOLT))
-	     || (c_list[mon].spells2 & (BREATH_CH | BREATH_SH | BREATH_SD | BREATH_CO |
+	     || (c_list[r_idx].spells2 & (BREATH_CH | BREATH_SH | BREATH_SD | BREATH_CO |
 			   BREATH_DI | BREATH_LD | LIGHT_BOLT | LIGHT_BALL |
 			      ACID_BALL | TRAP_CREATE | RAZOR | MIND_BLAST |
 			    MISSILE | PLASMA_BOLT | NETHER_BOLT | ICE_BOLT |
 				FORGET | BRAIN_SMASH | ST_CLOUD | TELE_LEV |
 			 WATER_BOLT | WATER_BALL | NETHER_BALL | BREATH_NE))
-	     || (c_list[mon].spells3 & (BREATH_WA | BREATH_SL | BREATH_LT | BREATH_TI |
+	     || (c_list[r_idx].spells3 & (BREATH_WA | BREATH_SL | BREATH_LT | BREATH_TI |
 				 BREATH_GR | BREATH_DA | BREATH_PL | ARROW |
 					DARK_STORM | MANA_STORM)))
 	    && (los(y, x, char_row, char_col)))
 	    slp = TRUE;
 
-	if (!(c_list[mon].cdefense & GROUP))
-	    place_monster(y, x, mon, slp);
-	else
-	    place_group(y, x, mon, slp);
+	if (!(c_list[r_idx].cdefense & GROUP)) {
+	    place_monster(y, x, r_idx, slp);
+	}
+	else {
+	    place_group(y, x, r_idx, slp);
+	}
     }
 }
 
 
-/* Places creature adjacent to given location		-RAK-	 */
-int 
-summon_monster(y, x, slp)
-int *y, *x;
-int  slp;
+/*
+ * Places creature adjacent to given location -RAK-
+ */
+int summon_monster(int *y, int *x, int slp)
 {
     register int        i, j, k;
     int                 l, summon;
@@ -1057,9 +1028,7 @@ int  slp;
 
 
 /* Places undead adjacent to given location		-RAK-	 */
-int 
-summon_undead(y, x)
-int *y, *x;
+int summon_undead(int *y, int *x)
 {
     register int        i, j, k;
     int                 l, m, ctr, summon;
@@ -1104,10 +1073,7 @@ int *y, *x;
 }
 
 /* As for summon undead */
-int 
-summon_demon(lev, y, x)
-int lev;
-int *y, *x;
+int summon_demon(int lev, int *y, int *x)
 {
     register int        i, j, k;
     int                 l, m, ctr, summon;
@@ -1152,9 +1118,7 @@ int *y, *x;
 }
 
 /* As for summon demon:-) ~Ludwig */
-int 
-summon_dragon(y, x)
-int *y, *x;
+int summon_dragon(int *y, int *x)
 {
     register int        i, j, k;
     int                 l, m, ctr, summon;
@@ -1201,9 +1165,7 @@ int *y, *x;
 }
 
 /* Summon ringwraiths */
-int 
-summon_wraith(y, x)
-int *y, *x;
+int summon_wraith(int *y, int *x)
 {
     register int        i, j, k;
     int                 l, m, ctr, summon;
@@ -1250,9 +1212,7 @@ int *y, *x;
 }
 
 /* Summon reptiles */
-int 
-summon_reptile(y, x)
-int *y, *x;
+int summon_reptile(int *y, int *x)
 {
     register int        i, j, k;
     int                 l, m, ctr, summon;
@@ -1300,9 +1260,7 @@ int *y, *x;
 
 
 /* As for summon dragon, but keys on character ~Decado */
-int 
-summon_spider(y, x)
-int *y, *x;
+int summon_spider(int *y, int *x)
 {
     register int        i, j, k;
     int                 l, m, ctr, summon;
@@ -1349,9 +1307,7 @@ int *y, *x;
 }
 
 /* As for summon dragon, but keys on character ~Decado */
-int 
-summon_angel(y, x)
-int *y, *x;
+int summon_angel(int *y, int *x)
 {
     register int        i, j, k;
     int                 l, m, ctr, summon;
@@ -1396,9 +1352,7 @@ int *y, *x;
 }
 
 /* Summon ants */
-int 
-summon_ant(y, x)
-int *y, *x;
+int summon_ant(int *y, int *x)
 {
     register int        i, j, k;
     int                 l, m, ctr, summon;
@@ -1445,9 +1399,7 @@ int *y, *x;
 }
 
 /* Summon uniques */
-int 
-summon_unique(y, x)
-int *y, *x;
+int summon_unique(int *y, int *x)
 {
     register int        i, j, k;
     int                 l, m, ctr, summon;
@@ -1494,9 +1446,7 @@ int *y, *x;
 }
 
 /* Summon jabberwocks, for extra effect to the summon_unique spell */
-int 
-summon_jabberwock(y, x)
-int *y, *x;
+int summon_jabberwock(int *y, int *x)
 {
     register int        i, j, k;
     int                 l, m, ctr, summon;
@@ -1543,9 +1493,7 @@ int *y, *x;
 }
 
 /* Summon greater undead */
-int 
-summon_gundead(y, x)
-int *y, *x;
+int summon_gundead(int *y, int *x)
 {
     register int        i, j, k;
     int                 l, m, ctr, summon;
@@ -1593,8 +1541,7 @@ int *y, *x;
 }
 
 /* Summon ancient dragons */
-int 
-summon_ancientd(y, x)
+int summon_ancientd(int *y, int *x)
 int *y, *x;
 {
     register int        i, j, k;
@@ -1642,9 +1589,7 @@ int *y, *x;
 }
 
 /* As for summon hound, but keys on character ~Decado */
-int 
-summon_hound(y, x)
-int *y, *x;
+int summon_hound(int *y, int *x)
 {
     register int        i, j, k;
     int                 l, m, ctr, summon;
@@ -1693,8 +1638,7 @@ int *y, *x;
 
 
 /* If too many objects on floor level, delete some of them */
-static void 
-compact_objects()
+static void compact_objects()
 {
     register int        i, j;
     int                 ctr, cur_dis, chance;
@@ -1751,8 +1695,7 @@ compact_objects()
 }
 
 /* Gives pointer to next free space			-RAK-	 */
-int 
-i_pop()
+int i_pop()
 {
     if (tcptr == MAX_TALLOC)
 	compact_objects();
@@ -1765,9 +1708,7 @@ i_pop()
  * Delete_object() should always be called instead, unless the object in
  * question is not in the dungeon, e.g. in store1.c and files.c 
  */
-void 
-pusht(my_x)
-int my_x;
+void pusht(int my_x)
 {
     s16b        x = (s16b) my_x;
     register int i, j;
@@ -1787,9 +1728,7 @@ int my_x;
 
 
 /* Boolean : is object enchanted	  -RAK- */
-int 
-magik(chance)
-int chance;
+int magik(int chance)
 {
     if (randint(100) <= chance)
 	return (TRUE);
@@ -1804,9 +1743,7 @@ int chance;
  * roughly proportional to the level.... -CWS 
  */
 
-int 
-m_bonus(base, limit, level)
-int base, limit, level;
+int m_bonus(int base, int limit, int level)
 {
     register int x, stand_dev, tmp, diff = limit - base;
 
@@ -1824,9 +1761,7 @@ int base, limit, level;
 	return (x);
 }
 
-int 
-unique_weapon(t_ptr)
-inven_type *t_ptr;
+int unique_weapon(inven_type *t_ptr)
 {
     const char *name;
 
@@ -2925,9 +2860,7 @@ inven_type *t_ptr;
     return 0;
 }
 
-int 
-unique_armour(t_ptr)
-inven_type *t_ptr;
+int unique_armour(inven_type *t_ptr)
 {
     const char *name;
 
@@ -3501,9 +3434,7 @@ inven_type *t_ptr;
     return 0;
 }
 
-void 
-give_1_hi_resist(t)		   /* JLS: gives one of the "new" resistances to */
-register inven_type *t;
+void give_1_hi_resist(register inven_type *t)		   /* JLS: gives one of the "new" resistances to */
 {
     switch (randint(10)) {
       case 1:
@@ -3541,9 +3472,7 @@ register inven_type *t;
 
 /* Chance of treasure having magic abilities		-RAK-	 */
 /* Chance increases with each dungeon level			 */
-void 
-magic_treasure(x, level, good, not_unique)
-int x, level, good, not_unique;
+void magic_treasure(int x, int level, int good, int not_unique)
 {
     register inven_type *t_ptr;
     register u32b      chance, special, cursed, i;
@@ -5067,10 +4996,7 @@ int x, level, good, not_unique;
 
 
 
-static void
-magic_ammo(t_ptr, good, chance, special, cursed, level)
-inven_type *t_ptr;
-int         good, chance, special, cursed, level;
+static void magic_ammo(inven_type *t_ptr, int good, int chance, int special, int cursed, int level)
 {
     register inven_type *i_ptr = NULL;
     register int         i;
