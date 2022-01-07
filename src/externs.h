@@ -671,6 +671,7 @@ void bash(void);
 void do_cmd_spike(void);
 void do_cmd_fire(void);
 void do_cmd_feeling(void);
+void do_cmd_check_uniques(void);
 
 /* moria4.c */
 int is_a_vowel(int);
@@ -922,7 +923,6 @@ void change_character(void);
 void wizard_create(void);
 void artifact_check(void);
 void artifact_check_no_file(void);
-void do_cmd_check_uniques(void);
 int is_wizard(int);
 
 #endif      /* __STDC__ */

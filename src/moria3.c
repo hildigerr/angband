@@ -1779,3 +1779,43 @@ void scribe_object(void)
 	msg_print("You are not carrying anything to inscribe.");
 }
 
+
+void do_cmd_check_uniques()
+{
+    int      i, j, k;
+    bigvtype msg;
+
+    save_screen();
+    j = 15;
+
+    for (i = 1; i < 23; i++) erase_line(i, j - 2);
+
+    i = 1;
+    prt("Uniques:", i++, j + 5);
+
+    for (k = 0; k < MAX_R_IDX-1; k++) {
+
+	if ((strlen(c_list[k].name) > 0) && (c_list[k].cdefense & UNIQUE)) {
+
+	    if (wizard) {
+
+		sprintf(msg, "%s is %s.", c_list[k].name,
+			(u_list[k].dead) ? "dead" : "alive");            
+		prt(msg, i++, j);
+
+		unique_screen_full(&i, j);
+	    } else if (u_list[k].dead) {
+		sprintf(msg, "%s is dead.", c_list[k].name);
+		prt(msg, i++, j);
+		unique_screen_full(&i, j);
+	    }
+	}
+    }
+
+    pause_line(i);
+
+    restore_screen();
+}
+
+
+
