@@ -9,7 +9,6 @@
  */
 
 #include "angband.h"
-#include "monster.h"
 
 
 /* Scrolls for the reading				-RAK-	 */

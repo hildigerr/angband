@@ -9,7 +9,6 @@
  */
 
 #include "angband.h"
-#include "monster.h"
 
 
 static int  check_mon_lite(int, int);

@@ -8,7 +8,7 @@
  * included in all such copies. 
  */
 
-#include "monster.h"
+#include "angband.h"
 
 /* include before angband.h because param.h defines NULL incorrectly */
 #ifndef USG

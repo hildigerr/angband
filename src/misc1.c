@@ -15,7 +15,6 @@
 
 
 #include "angband.h"
-#include "monster.h"
 
 typedef struct statstime {
     int                 cp_time[4];

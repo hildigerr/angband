@@ -10,7 +10,6 @@
  */
 
 #include "angband.h"
-#include "monster.h"
 
 
 static char bolt_char(int, int, int, int);

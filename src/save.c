@@ -9,7 +9,7 @@
  */
 
 #include "angband.h"
-#include "monster.h"
+
 
 #ifndef USG
 /* stuff only needed for Berkeley UNIX */

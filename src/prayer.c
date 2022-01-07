@@ -9,7 +9,6 @@
  */
 
 #include "angband.h"
-#include "monster.h"
 
 
 /* Pray like HELL.					-RAK-	 */

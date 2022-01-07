@@ -10,7 +10,6 @@
  */
 
 #include "angband.h"
-#include "monster.h"
 
 
 static void correct_dir(int *, int *, int, int, int, int);

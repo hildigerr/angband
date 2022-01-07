@@ -7,7 +7,6 @@
    included in all such copies. */
 
 #include "angband.h"
-#include "monster.h"
 
 /*
 		Attack types:

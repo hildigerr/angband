@@ -9,7 +9,6 @@
  */
 
 #include "angband.h"
-#include "monster.h"
 
 
 static int summon_object(int, int, int, int, u32b);

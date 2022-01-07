@@ -53,7 +53,6 @@ total 1685
 -rw-r--r--   1 root     staff       16741 Sep 18 12:11 main.c
 -rw-r--r--   1 root     staff      148977 Sep 18 12:22 misc1.c
 -rw-r--r--   1 root     staff       93082 Sep 18 12:29 misc2.c
--rw-r--r--   1 root     staff        4478 Sep 18 10:36 monster.h
 -rw-r--r--   1 root     staff      130856 Sep 18 10:36 monsters.c
 -rw-r--r--   1 root     staff       74546 Sep 18 11:23 moria1.c
 -rw-r--r--   1 root     staff       89350 Sep 18 12:05 moria2.c

@@ -9,7 +9,6 @@
  */
 
 #include "angband.h"
-#include "monster.h"
 
 static void roff(const char *);
 
