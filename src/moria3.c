@@ -1735,3 +1735,47 @@ void do_cmd_feeling()
     }
 }
 
+/*
+ * Append an additional comment to an object description.	-CJS-
+ */
+void add_inscribe(inven_type *i_ptr, int type)
+{
+    i_ptr->ident |= (byte) type;
+}
+
+/* Replace any existing comment in an object description with a new one. CJS */
+void inscribe(inven_type *i_ptr, const char *str)
+{
+    (void)strcpy(i_ptr->inscrip, str);
+}
+
+
+/*
+ * Add a comment to an object description.		-CJS-
+ */
+void scribe_object(void)
+{
+    int   item_val, j;
+    vtype out_val, tmp_str;
+
+    if (inven_ctr > 0 || equip_ctr > 0) {
+	if (get_item(&item_val, "Which one? ", 0, INVEN_ARRAY_SIZE, 0)) {
+	    objdes(tmp_str, &inventory[item_val], TRUE);
+	    (void)sprintf(out_val, "Inscribing %s.", tmp_str);
+	    msg_print(out_val);
+	    if (inventory[item_val].inscrip[0] != '\0')
+		(void)sprintf(out_val, "Replace \"%s\" with the inscription: ",
+			      inventory[item_val].inscrip);
+	    else
+		(void)strcpy(out_val, "Inscription: ");
+	    j = 78 - strlen(tmp_str);
+	    if (j > 12)
+		j = 12;
+	    prt(out_val, 0, 0);
+	    if (get_string(out_val, 0, strlen(out_val), j))
+		inscribe(&inventory[item_val], out_val);
+	}
+    } else
+	msg_print("You are not carrying anything to inscribe.");
+}
+
