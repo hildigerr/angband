@@ -15,7 +15,6 @@
 static void        regenhp(int);
 static void        regenmana(int);
 static const char *value_check(inven_type *);
-static void do_cmd_feeling();
 static char original_commands();
 static void do_command();
 static int  valid_countcommand();
@@ -3136,47 +3135,3 @@ regen_monsters()
 }
 
 
-static void
-do_cmd_feeling()
-{
-    if (dun_level == 0)		/* snicker.... -CWS */
-	msg_print("You feel there is something special about the town level.");
-    else if (unfelt)
-	msg_print("Looks like any other level.");
-    else
-	switch(feeling) {
-	  case 0:
-	    msg_print("Looks like any other level.");
-	    break;
-	  case 1:
-	    msg_print("You feel there is something special about this level.");
-	    break;
-	  case 2:
-	    msg_print("You have a superb feeling about this level.");
-	    break;
-	  case 3:
-	    msg_print("You have an excellent feeling that your luck is turning...");
-	    break;
-	  case 4:
-	    msg_print("You have a very good feeling.");
-	    break;
-	  case 5:
-	    msg_print("You have a good feeling.");
-	    break;
-	  case 6:
-	    msg_print("You feel strangely lucky.");
-	    break;
-	  case 7:
-	    msg_print("You feel your luck is turning...");
-	    break;
-	  case 8:
-	    msg_print("You like the look of this place.");
-	    break;
-	  case 9:
-	    msg_print("This level can't be all bad...");
-	    break;
-	  default:
-	    msg_print("What a boring place...");
-	    break;
-	}
-}

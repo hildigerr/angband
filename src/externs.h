@@ -670,6 +670,7 @@ void do_cmd_disarm(void);
 void bash(void);
 void do_cmd_spike(void);
 void do_cmd_fire(void);
+void do_cmd_feeling(void);
 
 /* moria4.c */
 int is_a_vowel(int);
