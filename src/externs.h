@@ -509,6 +509,8 @@ int pdamroll(byte *);
 unsigned char loc_symbol(int, int);
 void prt_map(void);
 void add_food(int);
+
+/* misc2.c */
 int m_pop(void);
 int max_hp(byte *);
 int place_monster(int, int, int, int);
