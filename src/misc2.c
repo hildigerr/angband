@@ -1824,70 +1824,6 @@ int summon_hound(int *y, int *x)
 }
 
 
-/* If too many objects on floor level, delete some of them */
-static void compact_objects()
-{
-    register int        i, j;
-    int                 ctr, cur_dis, chance;
-    register cave_type *cave_ptr;
-
-    msg_print("Compacting objects...");
-
-    ctr = 0;
-    cur_dis = 66;
-    do {
-	for (i = 0; i < cur_height; i++)
-	    for (j = 0; j < cur_width; j++) {
-		cave_ptr = &cave[i][j];
-		if ((cave_ptr->tptr != 0)
-		    && (distance(i, j, char_row, char_col) > cur_dis)) {
-		    switch (i_list[cave_ptr->tptr].tval) {
-		      case TV_VIS_TRAP:
-			chance = 15;
-			break;
-		      case TV_INVIS_TRAP:
-		      case TV_RUBBLE:
-		      case TV_OPEN_DOOR:
-		      case TV_CLOSED_DOOR:
-			chance = 5;
-			break;
-		      case TV_UP_STAIR:
-		      case TV_DOWN_STAIR:
-		      case TV_STORE_DOOR:
-			chance = 0;
-			break;
-		      case TV_SECRET_DOOR:	/* secret doors */
-			chance = 3;
-			break;
-		      default:
-			if ((i_list[cave_ptr->tptr].tval >= TV_MIN_WEAR) &&
-			    (i_list[cave_ptr->tptr].tval <= TV_MAX_WEAR) &&
-			    (i_list[cave_ptr->tptr].flags2 & TR_ARTIFACT))
-			    chance = 0;	/* don't compact artifacts -CFT */
-			else
-			    chance = 10;
-		    }
-		    if (randint(100) <= chance) {
-			(void)delete_object(i, j);
-			ctr++;
-		    }
-		}
-	    }
-	if (ctr == 0)
-	    cur_dis -= 6;
-    }
-    while (ctr <= 0);
-    if (cur_dis < 66)
-	prt_map();
-}
-
-/* Gives pointer to next free space			-RAK-	 */
-int i_pop()
-{
-    if (tcptr == MAX_TALLOC)
-	compact_objects();
-    return (tcptr++);
-}
 
 
 /* Pushs a record back onto free space list		-RAK-	 */
@@ -1913,40 +1849,6 @@ void pusht(int my_x)
     invcopy(&i_list[tcptr], OBJ_NOTHING);
 }
 
-
-/* Boolean : is object enchanted	  -RAK- */
-int magik(int chance)
-{
-    if (randint(100) <= chance)
-	return (TRUE);
-    else
-	return (FALSE);
-}
-
-
-/* Enchant a bonus based on degree desired -RAK- */
-/*
- * Lets just change this to make sense.  Now it goes from base to limit,
- * roughly proportional to the level.... -CWS 
- */
-
-int m_bonus(int base, int limit, int level)
-{
-    register int x, stand_dev, tmp, diff = limit - base;
-
-/* standard deviation twice as wide at bottom of Angband as top */
-    stand_dev = (OBJ_STD_ADJ * (1 + level / 100)) + OBJ_STD_MIN;
-/* check for level > max_std to check for overflow... */
-    if (stand_dev > 40)
-	stand_dev = 40;
-/* abs may be a macro, don't call it with randnor as a parameter */
-    tmp = randnor(0, stand_dev);
-    x = (tmp * diff / 150) + (level * limit / 200) + base;
-    if (x < base)
-	return (base);
-    else
-	return (x);
-}
 
 int unique_weapon(inven_type *t_ptr)
 {
