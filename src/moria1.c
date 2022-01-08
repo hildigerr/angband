@@ -676,6 +676,49 @@ int         item;
 }
 
 
+
+/*
+ * Drops an item from inventory to given location	-RAK-
+ */
+static void inven_drop(int item_val, int drop_all)
+{
+    int                  i;
+    inven_type		*i_ptr;
+    vtype                prt2;
+    bigvtype             prt1;
+
+    i_ptr = &inventory[item_val];
+
+    if (cave[char_row][char_col].tptr != 0)
+	(void)delete_object(char_row, char_col);
+    i = i_pop();
+    i_list[i] = *i_ptr;
+    cave[char_row][char_col].tptr = i;
+
+    if (item_val >= INVEN_WIELD)
+	inven_takeoff(item_val, -1);
+    else {
+	if (drop_all || i_ptr->number == 1) {
+	    inven_weight -= i_ptr->weight * i_ptr->number;
+	    inven_ctr--;
+	    while (item_val < inven_ctr) {
+		inventory[item_val] = inventory[item_val + 1];
+		item_val++;
+	    }
+	    invcopy(&inventory[inven_ctr], OBJ_NOTHING);
+	} else {
+	    i_list[i].number = 1;
+	    inven_weight -= i_ptr->weight;
+	    i_ptr->number--;
+	}
+	objdes(prt1, &i_list[i], TRUE);
+	(void)sprintf(prt2, "Dropped %s.", prt1);
+	msg_print(prt2);
+    }
+    py.flags.status |= PY_STR_WGT;
+}
+
+
 /*
  * All inventory commands (wear, exchange, take off, drop, inventory and
  * equipment) are handled in an alternative command input mode, which accepts
