@@ -1,14 +1,14 @@
+/* File: misc3.c */ 
+
+/* Purpose: misc code for objects */
+
 /*
- * misc2.c: misc code for maintaining the dungeon, printing player info 
- *
  * Copyright (c) 1989 James E. Wilson, Robert A. Koeneke 
  *
  * This software may be copied and distributed for educational, research, and
  * not for profit purposes provided that this copyright and statement are
  * included in all such copies. 
  */
-
-#include "angband.h"
 
 /* include before angband.h because param.h defines NULL incorrectly */
 #ifndef USG
@@ -31,8 +31,8 @@ extern int rating;
 static void compact_objects()
 {
     register int        i, j;
+    register cave_type *c_ptr;
     int                 ctr, cur_dis, chance;
-    register cave_type *cave_ptr;
 
 
     /* Debugging message */
@@ -45,12 +45,12 @@ static void compact_objects()
 	for (i = 0; i < cur_height; i++) {
 	    for (j = 0; j < cur_width; j++) {
 
-		cave_ptr = &cave[i][j];
+		c_ptr = &cave[i][j];
 
-		if ((cave_ptr->tptr != 0)
+		if ((c_ptr->tptr != 0)
 		    && (distance(i, j, char_row, char_col) > cur_dis)) {
 
-		    switch (i_list[cave_ptr->tptr].tval) {
+		    switch (i_list[c_ptr->tptr].tval) {
 		    case TV_VIS_TRAP:
 			chance = 15;
 			break;
@@ -69,9 +69,9 @@ static void compact_objects()
 			chance = 3;
 			break;
 		    default:
-			if ((i_list[cave_ptr->tptr].tval >= TV_MIN_WEAR) &&
-			    (i_list[cave_ptr->tptr].tval <= TV_MAX_WEAR) &&
-			    (i_list[cave_ptr->tptr].flags2 & TR_ARTIFACT))
+			if ((i_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
+			    (i_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
+			    (i_list[c_ptr->tptr].flags2 & TR_ARTIFACT))
 			    chance = 0;	/* don't compact artifacts -CFT */
 			else
 			chance = 10;
@@ -106,6 +106,8 @@ static void compact_objects()
 int i_pop(void)
 {
     if (tcptr == MAX_TALLOC) compact_objects();
+
+    /* Return the next free space */
     return (tcptr++);
 }
 
@@ -141,27 +143,28 @@ int m_bonus(int base, int limit, int level)
     /* abs may be a macro, don't call it with randnor as a parameter */
     tmp = randnor(0, stand_dev);
 
+    /* Extract a weird value */
     x = (tmp * diff / 150) + (level * limit / 200) + base;
 
+    /* Enforce minimum value */
     if (x < base) return (base);
 
-    else return (x);
+    /* Return the extracted value */
+    return (x);
 }
 
 
 
 
-/* Places a particular trap at location y, x		-RAK-	 */
-void 
-place_trap(y, x, sval)
-int y, x, sval;
+/*
+ * Places a particular trap at location y, x		-RAK-	 
+ */
+void place_trap(int y, int x, int sval)
 {
     register int cur_pos;
 
-    if (!in_bounds(y, x))
-	return;	       /* abort! -CFT */
-    if (cave[y][x].cptr >= MIN_M_IDX)
-	return;	       /* don't put rubble under monsters, it's annoying -CFT */
+    if (!in_bounds(y, x)) return; /* abort! -CFT */
+    if (cave[y][x].cptr >= MIN_M_IDX) return; /* don't put rubble under monsters, it's annoying -CFT */
 
     if (cave[y][x].tptr != 0)
 	if ((i_list[cave[y][x].tptr].tval == TV_STORE_DOOR) ||
@@ -171,24 +174,27 @@ int y, x, sval;
 	     (i_list[cave[y][x].tptr].tval <= TV_MAX_WEAR) &&
 	     (i_list[cave[y][x].tptr].flags2 & TR_ARTIFACT)))
 	    return;		   /* don't replace stairs, stores, artifacts */
-	else
-	    delete_object(y, x);
+
+    /* Delete whatever is there */
+    delete_object(y, x);
+
+    /* Make a new object */
     cur_pos = i_pop();
     cave[y][x].tptr = cur_pos;
     invcopy(&i_list[cur_pos], OBJ_TRAP_LIST + sval);
 }
 
 
-/* Places rubble at location y, x			-RAK-	 */
-void 
-place_rubble(y, x)
-int y, x;
+/*
+ * Places rubble at location y, x			-RAK-	
+ */
+void place_rubble(int y, int x)
 {
     register int        cur_pos;
-    register cave_type *cave_ptr;
+    register cave_type *c_ptr;
 
-    if (!in_bounds(y, x))
-	return;			   /* abort! -CFT */
+    if (!in_bounds(y, x)) return; /* abort! -CFT */
+
     if (cave[y][x].tptr != 0)
 	if ((i_list[cave[y][x].tptr].tval == TV_STORE_DOOR) ||
 	    (i_list[cave[y][x].tptr].tval == TV_UP_STAIR) ||
@@ -197,51 +203,42 @@ int y, x;
 	     (i_list[cave[y][x].tptr].tval <= TV_MAX_WEAR) &&
 	     (i_list[cave[y][x].tptr].flags2 & TR_ARTIFACT)))
 	    return;		   /* don't replace stairs, stores, artifacts */
-	else
-	    delete_object(y, x);
+    
+    /* Delete whatever is there */
+    delete_object(y, x);
+
     cur_pos = i_pop();
-    cave_ptr = &cave[y][x];
-    cave_ptr->tptr = cur_pos;
-    cave_ptr->fval = BLOCKED_FLOOR;
+    c_ptr = &cave[y][x];
+    c_ptr->tptr = cur_pos;
+    c_ptr->fval = BLOCKED_FLOOR;
     invcopy(&i_list[cur_pos], OBJ_RUBBLE);
 }
 
-/* if killed a 'Creeping _xxx_ coins'... -CWS */
-void
-get_coin_type(c_ptr)
-monster_race *c_ptr;
+
+/*
+ * if killed a 'Creeping _xxx_ coins'... -CWS
+ */
+void get_coin_type(monster_race *r_ptr)
 {
-    if (!stricmp(c_ptr->name, "Creeping copper coins")) {
-	coin_type = 2;
-    }
+    char *name;
 
-    if (!stricmp(c_ptr->name, "Creeping silver coins")) {
-	coin_type = 5;
-    }
-
-    if (!stricmp(c_ptr->name, "Creeping gold coins")) {
-	coin_type = 10;
-    }
-
-    if (!stricmp(c_ptr->name, "Creeping mithril coins")) {
-	coin_type = 16;
-    }
-
-    if (!stricmp(c_ptr->name, "Creeping adamantite coins")) {
-	coin_type = 17;
-    }
+    name = r_ptr->name;
+    if (!stricmp(name, "Creeping copper coins")) coin_type = 2;
+    if (!stricmp(name, "Creeping silver coins")) coin_type = 5;
+    if (!stricmp(name, "Creeping gold coins")) coin_type = 10;
+    if (!stricmp(name, "Creeping mithril coins"))coin_type = 16;
+    if (!stricmp(name, "Creeping adamantite coins")) coin_type = 17;
 }
 
-/* Places a treasure (Gold or Gems) at given row, column -RAK-	 */
-void 
-place_gold(y, x)
-int y, x;
+/*
+ * Places a treasure (Gold or Gems) at given row, column -RAK-	
+ */
+void place_gold(int y, int x)
 {
     register int        i, cur_pos;
-    register inven_type *t_ptr;
+    register inven_type *i_ptr;
 
-    if (!in_bounds(y, x))
-	return;			   /* abort! -CFT */
+    if (!in_bounds(y, x)) return; /* abort! -CFT */
     if (cave[y][x].tptr != 0)
 	if ((i_list[cave[y][x].tptr].tval == TV_STORE_DOOR) ||
 	    (i_list[cave[y][x].tptr].tval == TV_UP_STAIR) ||
@@ -250,38 +247,52 @@ int y, x;
 	     (i_list[cave[y][x].tptr].tval <= TV_MAX_WEAR) &&
 	     (i_list[cave[y][x].tptr].flags2 & TR_ARTIFACT)))
 	    return;		   /* don't replace stairs, stores, artifacts */
-	else
-	    delete_object(y, x);
+
+    /* Delete the object under us (acidic gold?) */
+	delete_object(y, x);
+
+    /* Make it */
     cur_pos = i_pop();
+
+    /* Pick a Treasure variety */
     i = ((randint(object_level + 2) + 2) / 2) - 1;
-    if (randint(GREAT_OBJ) == 1)
+
+    /* Apply "extra" magic */
+    if (randint(GREAT_OBJ) == 1) {
 	i += randint(object_level + 1);
-    if (i >= MAX_GOLD)
-	i = MAX_GOLD - 1;
+    }
+
+    /* Do not create "illegal" Treasure Types */
+    if (i >= MAX_GOLD) i = MAX_GOLD - 1;
+
     if (coin_type) {			/* if killed a Creeping _xxx_ coins... */
 	if (coin_type > MAX_GOLD - 1)
 	    coin_type = 0;		/* safety check -CWS */
 	i = coin_type;
     }
+
     cave[y][x].tptr = cur_pos;
     invcopy(&i_list[cur_pos], OBJ_GOLD_LIST + i);
-    t_ptr = &i_list[cur_pos];
-    t_ptr->cost += (8L * (long)randint((int)t_ptr->cost)) + randint(8);
+    i_ptr = &i_list[cur_pos];
+    i_ptr->cost += (8L * (long)randint((int)i_ptr->cost)) + randint(8);
 
-/* average the values to make Creeping _xxx_ coins not give too great treasure drops */
-    if (coin_type)
-	t_ptr->cost = ((8L * (long)randint((int)k_list[OBJ_GOLD_LIST + i].cost))
-		       + (t_ptr->cost)) >> 1;
-					  
-    if (cave[y][x].cptr == 1)
+    /* average the values to make Creeping _xxx_ coins not give too great treasure drops */
+    if (coin_type) {
+	i_ptr->cost = ((8L * (long)randint((int)k_list[OBJ_GOLD_LIST + i].cost))
+		       + (i_ptr->cost)) >> 1;
+    }
+
+    /* Under the player */
+    if (cave[y][x].cptr == 1) {
 	msg_print("You feel something roll beneath your feet.");
+    }
 }
 
 
-/* Returns the array number of a random object		-RAK-	 */
-int 
-get_obj_num(level, good)
-int level, good;
+/*
+ * Returns the array number of a random object -RAK-
+ */
+int get_obj_num(int level, int good)
 {
     register int i, j;
 
@@ -329,16 +340,14 @@ int level, good;
 
 
 
-int 
-special_place_object(y, x)
-int y, x;
+int special_place_object(int y, int x)
 {
-    register int cur_pos, tmp;
+    register int	cur_pos, tmp;
     char         str[100];
     int          done = 0;
 
-    if (!in_bounds(y, x))
-	return 0;		   /* abort! -CFT */
+
+    if (!in_bounds(y, x)) return 0; /* abort! -CFT */
     if (cave[y][x].tptr != 0)
 	if ((i_list[cave[y][x].tptr].tval == TV_STORE_DOOR) ||
 	    (i_list[cave[y][x].tptr].tval == TV_UP_STAIR) ||
@@ -347,8 +356,9 @@ int y, x;
 	     (i_list[cave[y][x].tptr].tval <= TV_MAX_WEAR) &&
 	     (i_list[cave[y][x].tptr].flags2 & TR_ARTIFACT)))
 	    return 0;		   /* don't replace stairs, stores, artifacts */
-	else
-	    delete_object(y, x);
+
+    /* Delete anything that is there */
+    delete_object(y, x);
     str[0] = 0;
 
 again:
@@ -549,7 +559,10 @@ again:
     }
     if (strlen(str) > 0 && (wizard || peek))
 	msg_print(str);
+
+    /* Make the object, using the index from above */
     cur_pos = i_pop();
+
     cave[y][x].tptr = cur_pos;
     invcopy(&i_list[cur_pos], tmp);
     i_list[cur_pos].timeout = 0;
@@ -557,15 +570,20 @@ again:
     if (k_list[tmp].level > object_level) {
 	rating += 2 * (k_list[sorted_objects[tmp]].level - object_level);
     }
-    if (cave[y][x].cptr == 1)
+
+    /* Is it on the player? */
+    if (cave[y][x].cptr == 1) {
 	msg_print("You feel something roll beneath your feet.");
+    }
+
     return (-1);
 }
 
-/* Places an object at given row, column co-ordinate    -RAK-   */
-void
-place_object(y, x)
-int y, x;
+
+/*
+ * Places an object at given row, column co-ordinate -RAK-
+ */
+void place_object(int y, int x)
 {
     register int cur_pos, tmp;
 
@@ -578,12 +596,15 @@ int y, x;
 	     (i_list[cave[y][x].tptr].tval <= TV_MAX_WEAR) &&
 	     (i_list[cave[y][x].tptr].flags2 & TR_ARTIFACT)))
 	    return; /* don't replace stairs, stores, artifacts */
-	else
-	    delete_object(y,x);
+
+    /* Delete anything already there */
+    delete_object(y, x);
     
     if (randint(MAX_OBJECTS)>OBJ_SPECIAL && randint(10)==1)
 	if (special_place_object(y,x)==(-1))
 	    return;
+
+    /* Make it */
     cur_pos = i_pop();
     cave[y][x].tptr = cur_pos;
 
@@ -607,21 +628,23 @@ int y, x;
 	    msg_print(buf);
 	}
     }
-    if (cave[y][x].cptr == 1)
+
+    /* Under the player */
+    if (cave[y][x].cptr == 1) {
 	msg_print ("You feel something roll beneath your feet.");
+    }
 }
 
-/* Places a GOOD-object at given row, column co-ordinate ~Ludwig */
-void 
-place_good(y, x, good)
-int    y, x;
-u32b good;
+
+/*
+ * Places a GOOD-object at given row, column co-ordinate ~Ludwig
+ */
+void place_good(int y, int x, u32b good)
 {
     register int cur_pos, tmp;
     int          tv, is_good = FALSE;
 
-    if (!in_bounds(y, x))
-	return;			   /* abort! -CFT */
+    if (!in_bounds(y, x)) return; /* abort! -CFT */
     if (cave[y][x].tptr != 0)
 	if ((i_list[cave[y][x].tptr].tval == TV_STORE_DOOR) ||
 	    (i_list[cave[y][x].tptr].tval == TV_UP_STAIR) ||
@@ -630,17 +653,25 @@ u32b good;
 	     (i_list[cave[y][x].tptr].tval <= TV_MAX_WEAR) &&
 	     (i_list[cave[y][x].tptr].flags2 & TR_ARTIFACT)))
 	    return;		   /* don't replace stairs, stores, artifacts */
-	else
-	    delete_object(y, x);
 
-    if (randint(10) == 1)
-	if (special_place_object(y, x) == (-1))
-	    return;
+    /* Delete anything already there */
+    delete_object(y, x);
+
+    /* Hack -- much higher chance of doing "Special Objects" */
+    if (randint(10) == 1) {
+	if (special_place_object(y, x) == (-1)) return;
+    }
+
     cur_pos = i_pop();
     cave[y][x].tptr = cur_pos;
     do {
+
+	/* Pick a random object, based on "object_level" */
 	tmp = get_obj_num((object_level + 10), TRUE);
+
+	/* Examine the object */
 	tv = k_list[sorted_objects[tmp]].tval;
+
 	if ((tv == TV_HELM) || (tv == TV_SHIELD) ||
 	    (tv == TV_CLOAK) || (tv == TV_HAFTED) || (tv == TV_POLEARM) ||
 	    (tv == TV_BOW) || (tv == TV_BOLT) || (tv == TV_ARROW) ||
@@ -680,17 +711,19 @@ u32b good;
 	    msg_print(buf);
 	}
     }
-    if (cave[y][x].cptr == 1)
+
+    if (cave[y][x].cptr == 1) {
 	msg_print("You feel something roll beneath your feet.");
+    }
 }
 
 
 
 
-/* Creates objects nearby the coordinates given		-RAK-	 */
-void 
-random_object(y, x, num)
-int y, x, num;
+/*
+ * Creates objects nearby the coordinates given -RAK-
+ */
+void random_object(int y, int x, int num)
 {
     register int        i, j, k;
     register cave_type *cave_ptr;
@@ -699,16 +732,25 @@ int y, x, num;
 	i = 0;
 	do {
 	    do {
+
+	    /* Pick a random location */
 		j = y - 3 + randint(5);
 		k = x - 4 + randint(7);
+
 	    } while (!in_bounds(j, k));
+
 	    cave_ptr = &cave[j][k];
 	    if ((cave_ptr->fval <= MAX_CAVE_FLOOR) && (cave_ptr->tptr == 0)) {
 		object_level = dun_level;
-		if (randint(100) < 75)
-		    place_object(j, k);
-		else
+
+	    /* Place something */
+	    if (randint(100) < 75) {
+		place_object(j, k);
+	    }
+	    else {
 		    place_gold(j, k);
+	    }
+
 		i = 9;
 	    }
 	    i++;
@@ -719,9 +761,8 @@ int y, x, num;
     while (num != 0);
 }
 
-void 
-special_random_object(y, x, num)
-int y, x, num;
+
+void special_random_object(int y, int x, int num)
 {
     register int        i, j, k;
     register cave_type *cave_ptr;
@@ -730,12 +771,16 @@ int y, x, num;
     do {
 	i = 0;
 	do {
+
 	    j = y - 3 + randint(5);
 	    k = x - 4 + randint(7);
+
 	    cave_ptr = &cave[j][k];
 	    if ((cave_ptr->fval <= MAX_CAVE_FLOOR) && (cave_ptr->tptr == 0)) {
-		if (randint(5) == 1) {
-		    if (!special_place_object(j, k))
+
+	    /* Perhaps attempt to place a "Special Object" */
+	    if (randint(5) == 1) {
+		if (!special_place_object(j, k))
 			place_good(j, k, SPECIAL);
 		} else {
 		    place_good(j, k, SPECIAL);
