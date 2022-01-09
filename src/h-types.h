@@ -47,6 +47,11 @@ typedef const char *cptr;
 typedef double real;
 
 
+/* Error codes for function return values */
+/* Success = 0, Failure = -N, Problem = +N */
+typedef int errr;
+
+
 /*
  * Some annoying machines (Windows with Turbo C) reserve "huge".
  * Note that this "redefinition" should work on any machine.

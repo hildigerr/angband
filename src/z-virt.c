@@ -44,7 +44,7 @@ char *memset(char *s, int c, huge n)
 /*
  * Free some memory (that was allocated by ralloc).
  */
-int rnfree (vptr p, huge len)
+errr rnfree (vptr p, huge len)
 {
   /* Easy to free zero bytes */
   if (len == 0) return (0);
@@ -178,7 +178,7 @@ cptr string_make(cptr str)
  * Un-allocate a string allocated above.
  * Depends on no changes being made to the string.
  */
-int string_free(cptr str)
+errr string_free(cptr str)
 {
   register huge len = 0;
 

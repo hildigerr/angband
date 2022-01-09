@@ -20,7 +20,7 @@
 /**** Available Routines ****/
 
 /* De-allocate a given amount of memory */
-int rnfree(vptr p, huge len);
+extern errr rnfree(vptr p, huge len);
 
 /* Panic, attempt to Allocate 'len' bytes */
 extern vptr rpanic(huge len);
@@ -32,7 +32,7 @@ extern vptr ralloc(huge len);
 extern cptr string_make(cptr str);
 
 /* Free a string allocated with "string_make()" */
-int string_free(cptr str);
+extern errr string_free(cptr str);
 
 #ifndef HAS_MEMSET
 extern char *memset(char*, int, huge);

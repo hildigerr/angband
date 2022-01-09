@@ -713,8 +713,7 @@ total_points()
 
 
 /* Enters a players name on a hi-score table...    SM */
-static int 
-top_twenty()
+static errr top_twenty(void)
 {
     register int        i, j, k;
     high_scores         scores[MAX_SAVE_HISCORES], myscore;
