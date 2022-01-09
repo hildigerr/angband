@@ -13,7 +13,7 @@
 
 static void        regenhp(int);
 static void        regenmana(int);
-static const char *value_check(inven_type *);
+static cptr value_check(inven_type *);
 static char original_commands();
 static void do_command();
 static int  valid_countcommand();
@@ -1366,9 +1366,7 @@ register inven_type *t_ptr;
 
 /* Is an item an enchanted weapon or armor and we don't know?  -CJS- */
 /* returns a description */
-static const char *
-value_check(t_ptr)
-register inven_type *t_ptr;
+static cptr value_check(inven_type *t_ptr)
 {
     if (t_ptr->tval == TV_NOTHING)
 	return 0;

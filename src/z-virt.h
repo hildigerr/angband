@@ -29,10 +29,10 @@ extern vptr rpanic(huge len);
 extern vptr ralloc(huge len);
 
 /* Create a "dynamic string" */
-const char *string_make(const char *str);
+extern cptr string_make(cptr str);
 
 /* Free a string allocated with "string_make()" */
-int string_free(const char* str);
+int string_free(cptr str);
 
 #ifndef HAS_MEMSET
 extern char *memset(char*, int, huge);

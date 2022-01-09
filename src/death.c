@@ -172,7 +172,7 @@ void read_times(void)
 /*
  * File perusal.	    -CJS- primitive, but portable 
  */
-void helpfile(const char *filename)
+void helpfile(cptr filename)
 {
     bigvtype tmp_str;
     FILE    *file;
@@ -214,18 +214,20 @@ void helpfile(const char *filename)
 /*
  * Print the character to a file or device		-RAK-
  */
-int file_character(char *filename1)
+int file_character(cptr filename1)
 {
     register int          i;
     int                   j, xbth, xbthb, xfos, xsrh, xstl, xdis, xsave, xdev;
     vtype                 xinfra;
     int                   fd;
+    cptr			p;
+    cptr			colon = ":";
+    cptr			blank = " ";
     register FILE        *file1;
     bigvtype              prt2;
     register struct misc *p_ptr;
     register inven_type  *i_ptr;
     vtype                 out_val, prt1;
-    const char           *p, *colon, *blank;
 
     fd = my_topen(filename1, O_WRONLY | O_CREAT | O_EXCL, 0644);
     if (fd < 0 && errno == EEXIST) {
@@ -445,10 +447,7 @@ int file_character(char *filename1)
 
 
 /* Centers a string within a 31 character string		-JWT-	 */
-static char *
-center_string(centered_str, in_str)
-char       *centered_str;
-const char *in_str;
+static char *center_string(char *centered_str, cptr in_str)
 {
     register int i, j;
 
@@ -564,7 +563,7 @@ print_tomb()
     vtype                str, tmp_str;
     register int         i;
     char                 day[11];
-    register const char *p;
+    cptr		 p;
     FILE                *fp;
 
     time_t ct = time((time_t)0);

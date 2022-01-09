@@ -222,7 +222,7 @@ extern char *(*player_title)[MAX_PLAYER_LEVEL];
 extern player_race *race;
 extern player_background *background;
 #else
-extern char *player_title[MAX_CLASS][MAX_PLAYER_LEVEL];
+extern cptr player_title[MAX_CLASS][MAX_PLAYER_LEVEL];
 extern player_race race[MAX_RACES];
 extern player_background background[MAX_BACKGROUND];
 #endif
@@ -246,7 +246,7 @@ extern spell_type (*magic_spell)[63];
 #else
 extern spell_type magic_spell[MAX_CLASS-1][63];
 #endif
-extern const char *spell_names[127];
+extern cptr spell_names[127];
 extern u32b spell_learned;	/* Bit field for spells learnt -CJS- */
 extern u32b spell_learned2;	/* Bit field for spells learnt -CJS- */
 extern u32b spell_worked;		/* Bit field for spells tried -CJS- */
@@ -285,7 +285,7 @@ extern byte object_ident[OBJECT_IDENT_SIZE];
 extern s16b t_level[MAX_OBJ_LEVEL+1];
 extern inven_type i_list[MAX_TALLOC];
 extern inven_type inventory[INVEN_ARRAY_SIZE];
-extern const char *special_names[SN_ARRAY_SIZE];
+extern cptr special_names[SN_ARRAY_SIZE];
 extern s16b sorted_objects[MAX_DUNGEON_OBJ];
 extern s16b inven_ctr;			/* Total different obj's	*/
 extern s16b inven_weight;		/* Cur carried weight	*/
@@ -355,23 +355,23 @@ extern char	moriatop[], moriasav[];
  */
 
 extern cptr ANGBAND_DIR_FILES;		/* Dir: ascii files  */
-extern char *ANGBAND_DIR_BONES;		/* Dir: ascii bones files */
-extern char *ANGBAND_DIR_SAVE;		/* Dir: binary save files */
+extern cptr ANGBAND_DIR_BONES;		/* Dir: ascii bones files */
+extern cptr ANGBAND_DIR_SAVE;		/* Dir: binary save files */
 
-extern char *ANGBAND_NEWS;		/* News file */
-extern char *ANGBAND_TOP;		/* was LIBDIR(files/newscores) */
-extern char *ANGBAND_WELCOME;		/* Player generation help */
-extern char *ANGBAND_VERSION;		/* Version information */
+extern cptr ANGBAND_NEWS;		/* News file */
+extern cptr ANGBAND_TOP;		/* was LIBDIR(files/newscores) */
+extern cptr ANGBAND_WELCOME;		/* Player generation help */
+extern cptr ANGBAND_VERSION;		/* Version information */
 
-extern char *ANGBAND_WIZ;		/* Acceptable wizard uid's */
-extern char *ANGBAND_HOURS;		/* Hours of operation */
-extern char *ANGBAND_LOAD;		/* Load information */
-extern char *ANGBAND_LOG;		/* Log file of some form */
+extern cptr ANGBAND_WIZ;		/* Acceptable wizard uid's */
+extern cptr ANGBAND_HOURS;		/* Hours of operation */
+extern cptr ANGBAND_LOAD;		/* Load information */
+extern cptr ANGBAND_LOG;		/* Log file of some form */
 
-extern char *ANGBAND_R_HELP;		/* Roguelike command help */
-extern char *ANGBAND_O_HELP;		/* Original command help */
-extern char *ANGBAND_W_HELP;		/* Wizard command help */
-extern char *ANGBAND_OWIZ_HELP;	/* was LIBDIR(files/owizcmds.hlp) */
+extern cptr ANGBAND_R_HELP;		/* Roguelike command help */
+extern cptr ANGBAND_O_HELP;		/* Original command help */
+extern cptr ANGBAND_W_HELP;		/* Wizard command help */
+extern cptr ANGBAND_OWIZ_HELP;	/* was LIBDIR(files/owizcmds.hlp) */
 
 
 
@@ -416,7 +416,7 @@ void unmagic_name(inven_type *);
 void objdes(char *, struct inven_type *, int);
 void scribe_object(void);
 void add_inscribe(inven_type *, int);
-void inscribe(inven_type *, const char *);
+void inscribe(inven_type *, cptr);
 void invcopy(inven_type *, int);
 void desc_charges(int);
 void inven_item_describe(int);
@@ -436,8 +436,8 @@ void eat(void);
 
 /* files.c */
 void read_times(void);
-void helpfile(const char *);
-int file_character(char *);
+void helpfile(cptr);
+int file_character(cptr);
 
 /* generate.c */
 void generate_cave(void);
@@ -463,7 +463,7 @@ int suspend(void);
 #endif
 void init_curses(void);
 void moriaterm(void);
-void put_str(const char *, int, int);
+void put_str(cptr, int, int);
 void put_qio(void);
 void restore_term(void);
 void shell_out(void);
@@ -473,11 +473,11 @@ void erase_line(int, int);
 void clear_screen(void);
 void clear_from(int);
 void count_msg_print(const char *);
-void prt(const char *, int, int);
+void prt(cptr, int, int);
 void move_cursor(int, int);
-void msg_print(const char *);
-int get_check(const char *);
-int get_com(const char *, char *);
+void msg_print(cptr);
+int get_check(cptr);
+int get_com(cptr, char *);
 int get_string(char *, int, int, int);
 void pause_line(int);
 void pause_exit(int, int);
@@ -550,11 +550,11 @@ void place_object(int, int);
 void random_object(int, int, int);
 void cnv_stat(int, char *);
 void prt_stat(int);
-void prt_field(const char *, int, int);
+void prt_field(cptr, int, int);
 int stat_adj(int);
 int chr_adj(void);
 int con_adj(void);
-const char *title_string(void);
+cptr title_string(void);
 void prt_title(void);
 void prt_level(void);
 void prt_cmana(void);
@@ -585,7 +585,7 @@ void prt_stat_block(void);
 void draw_cave(void);
 void put_character(void);
 void put_stats(void);
-const char *likert(int, int);
+cptr likert(int, int);
 void put_misc1(void);
 void put_misc2(void);
 void put_misc3(void);
@@ -601,13 +601,13 @@ void check_strength(void);
 int inven_carry(struct inven_type *);
 int spell_chance(int);
 void print_spells(int *, int, int, int);
-int get_spell(int *, int, int *, int *, const char *, int);
+int get_spell(int *, int, int *, int *, cptr, int);
 void calc_spells(int);
 void gain_spells(void);
 void calc_mana(int);
 void prt_experience(void);
 void calc_hitpoints(void);
-void insert_str(char *, const char *, const char *);
+void insert_str(char *, cptr, cptr);
 int enter_wiz_mode(void);
 int attack_blows(int, int *);
 int tot_dam(struct inven_type *, int, int);
@@ -637,21 +637,21 @@ int show_inven(int, int, int, int, int ());
 const char *describe_use(int);
 int show_equip(int, int);
 void inven_takeoff(int, int);
-int verify(const char *, int);
+int verify(cptr , int);
 void inven_command(int);
-int get_item(int *, const char *, int, int, int ());
+int get_item(int *, cptr, int, int, int ());
 void light_room(int, int);
 void move_light(int, int, int, int);
 void rest(void);
 int test_hit(int, int, int, int, int);
-void take_hit(int, const char *);
+void take_hit(int, cptr);
 void change_trap(int, int);
 void darken_player(int, int);
 
 /* moria2.c */
 int is_quest(int);
 void hit_trap(int, int);
-int cast_spell(const char * ,int, int *, int *);
+int cast_spell(cptr ,int, int *, int *);
 void delete_monster(int);
 void fix1_delete_monster(int);
 void fix2_delete_monster(int);
@@ -680,9 +680,9 @@ int target_set(void); /* target fns stolen from Morgul -CFT */
 int target_at(int, int); /* target fns stolen from Morgul -CFT */
 void mmove2(int *, int *, int, int, int, int);
 void confuse_dir(int *, int);
-int get_a_dir(const char *, int *, int);
-int get_dir(const char *, int *);
-int get_dir_c(const char *, int *);
+int get_a_dir(cptr, int *, int);
+int get_dir(cptr, int *);
+int get_dir_c(cptr, int *);
 void disturb(int, int);
 void search_on(void);
 void search_off(void);
@@ -783,12 +783,12 @@ void default_signals(void);
 void restore_signals(void);
 
 /* spells.c */
-void corrode_gas(const char *);
-void fire_dam(int, const char *);
-void cold_dam(int, const char *);
-void light_dam(int, const char *);
-void acid_dam(int, const char *);
-void poison_gas(int, const char *);
+void corrode_gas(cptr);
+void fire_dam(int, cptr);
+void cold_dam(int, cptr);
+void light_dam(int, cptr);
+void acid_dam(int, cptr);
+void poison_gas(int, cptr);
 void monster_name(char *, struct monster_type *, struct monster_race *);
 void lower_monster_name(char *, struct monster_type *, struct monster_race *);
 int sleep_monsters1(int, int);
@@ -873,7 +873,7 @@ int fear_monster(int, int, int, int);
 int banish_creature(u32b, int);
 int remove_all_curse(void);
 void darken_room(int, int);
-const char *pain_message(int, int);
+cptr pain_message(int, int);
 void line_spell(int, int, int, int, int);
 
 /* staffs.c */
@@ -910,8 +910,8 @@ int system_cmd(char *);
 int usleep(unsigned long);
 #endif
 void user_name(char *buf, int id);
-int my_topen(const char *, int, int);
-FILE *my_tfopen(const char *, const char *);
+int my_topen(cptr, int, int);
+FILE *my_tfopen(cptr, cptr);
 
 /* variable.c */
 

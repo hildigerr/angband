@@ -2,7 +2,7 @@
 
 #include "angband.h"
 
-const char *copyright[5] = {
+cptr copyright[5] = {
 "Copyright (c) 1989 James E. Wilson, Robert A. Keoneke",
 "",
 "This software may be copied and distributed for educational, research, and",

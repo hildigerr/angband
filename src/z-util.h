@@ -8,27 +8,27 @@
 
 /**** Available variables ****/
 
-/* A pointer to the name of the program */
-extern const char *argv0;
+/* A cptr to the name of the program */
+extern cptr argv0;
 
 
 /**** Available Functions ****/
 
 /* Test suffix */
-extern bool suffix(const char *big, const char *small);
+extern bool suffix(cptr big, cptr small);
 
 #ifndef HAS_STRICMP
-extern int stricmp(const char *a, const char *b);
+extern int stricmp(cptr a, cptr b);
 #endif
 
 /* Print an error message */
-extern void plog(const char *str);
+extern void plog(cptr str);
 
 /* Exit, perhaps with a message */
-extern void quit(const char *str);
+extern void quit(cptr str);
 
 /* Dump core, with optional message */
-extern void core(const cahr *str);
+extern void core(cptr str);
 
 
 

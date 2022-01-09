@@ -17,10 +17,10 @@
 /**** Available Functions ****/
 
 /* Vararg interface to plog() */
-extern void plog_fmt(const char *fmt, ...);
+extern void plog_fmt(cptr fmt, ...);
 
 /* Vararg interface to quit() */
-extern void quit_fmt(const char *fmt, ...);
+extern void quit_fmt(cptr fmt, ...);
 
 
 #endif

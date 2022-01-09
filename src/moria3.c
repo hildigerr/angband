@@ -89,7 +89,7 @@ static int map_diag2[] = {2, 1, 0, 4, 3};
 /*
  * Look at a monster
  */
-static const char *look_mon_desc(int mnum)
+static cptr look_mon_desc(int mnum)
 {
     monster_type *m_ptr = &m_list[mnum];
     monster_race *r_ptr = &c_list[m_ptr->mptr];
@@ -1744,7 +1744,7 @@ void add_inscribe(inven_type *i_ptr, int type)
 }
 
 /* Replace any existing comment in an object description with a new one. CJS */
-void inscribe(inven_type *i_ptr, const char *str)
+void inscribe(inven_type *i_ptr, cptr str)
 {
     (void)strcpy(i_ptr->inscrip, str);
 }

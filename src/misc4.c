@@ -37,7 +37,7 @@
 #define ROW_STUN    22
 
 
-static const char *stat_names[] = {
+static cptr stat_names[] = {
     "STR: ", "INT: ", "WIS: ", "DEX: ", "CON: ", "CHR: "
 };
 
@@ -48,7 +48,7 @@ static const char *stat_names[] = {
  * Print character info in given row, column   -RAK-
  * the longest title is 13 characters, so only pad to 13
  */
-void prt_field(const char *info, int row, int col)
+void prt_field(cptr info, int row, int col)
 {
     char tmp[16];
     sprintf(tmp, "%-13.13s", info);
@@ -213,9 +213,9 @@ int con_adj()
 }
 
 
-const char *title_string()
+cptr title_string()
 {
-    const char *p;
+    cptr p;
 
     if (py.misc.lev < 1) {
 	p = "Babe in arms";
@@ -1010,7 +1010,7 @@ int todam_adj(void)
 /*
  * Print long number with header at given row, column
  */
-static void prt_lnum(const char *header, s32b num, int row, int col)
+static void prt_lnum(cptr header, s32b num, int row, int col)
 {
     vtype out_val;
 
@@ -1021,7 +1021,7 @@ static void prt_lnum(const char *header, s32b num, int row, int col)
 /*
  * Print number with header at given row, column -RAK-
  */
-static void prt_num(const char *header, int num, int row, int col)
+static void prt_num(cptr header, int num, int row, int col)
 {
     vtype out_val;
 
@@ -1090,7 +1090,7 @@ void put_stats()
 /*
  * Returns a rating of x depending on y			-JWT-
  */
-const char *likert(int x, int y)
+cptr likert(int x, int y)
 {
     if ((x/y) < 0) {
 	return ("Very Bad");
@@ -1578,7 +1578,7 @@ void print_spells(int *spell, int num, int comment, int nonconsec)
     register int         i, j;
     register spell_type *s_ptr;
     int                  col, offset;
-    const char *		 p;
+    cptr		 p;
     char                 spell_char;
     vtype                out_val;
 
@@ -1638,7 +1638,7 @@ void print_spells(int *spell, int num, int comment, int nonconsec)
 /*
  * Returns spell pointer				-RAK-
  */
-int get_spell(int *spell, int num, int *sn, int *sc, const char *prompt, int first_spell)
+int get_spell(int *spell, int num, int *sn, int *sc, cptr prompt, int first_spell)
 {
     register spell_type *s_ptr;
     int                  flag, redraw, offset, i;
@@ -1826,7 +1826,7 @@ void calc_hitpoints()
 /*
  * Inserts a string into a string
  */
-void insert_str(char *object_str, const char *mtc_str, const char *insert)
+void insert_str(char *object_str, cptr mtc_str, cptr insert)
 {
     int            obj_len;
     char          *bound, *pc;

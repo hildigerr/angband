@@ -23,7 +23,7 @@ void
 magic_init()
 {
     register int         h, i, j, k;
-    register const char *tmp;
+    register cptr		tmp;
     vtype                string;
 
     set_seed(randes_seed);
@@ -320,7 +320,7 @@ register inven_type *i_ptr;
 int                  pref;
 {
 /* base name, modifier string */
-    register const char *basenm, *modstr;
+    register cptr basenm, modstr;
     bigvtype             tmp_val;
     vtype                tmp_str, damstr;
     int                  indexx, p1_use, modify, append_name;

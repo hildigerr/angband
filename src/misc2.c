@@ -351,7 +351,7 @@ static char *cap(char *str)
 }
 
 
-void set_ghost(monster_race *g, char *name, int gr, int gc, int lev)
+void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 {
     char ghost_race[20];
     char ghost_class[20];

@@ -29,24 +29,24 @@
  * the variables below constant "initial values".
  */
 
-char *ANGBAND_DIR_FILES = NULL;		/* Dir: ascii files  */
-char *ANGBAND_DIR_BONES = NULL;		/* Dir: ascii bones files */
-char *ANGBAND_DIR_SAVE = NULL;		/* Dir: binary save files */
+cptr ANGBAND_DIR_FILES = NULL;		/* Dir: ascii files  */
+cptr ANGBAND_DIR_BONES = NULL;		/* Dir: ascii bones files */
+cptr ANGBAND_DIR_SAVE = NULL;		/* Dir: binary save files */
 
-char *ANGBAND_NEWS = NULL;		/* News file */
-char *ANGBAND_TOP = NULL;		/* was LIBDIR(files/newscores) */
-char *ANGBAND_WELCOME = NULL;		/* Player generation help */
-char *ANGBAND_VERSION = NULL;		/* Version information */
+cptr ANGBAND_NEWS = NULL;		/* News file */
+cptr ANGBAND_TOP = NULL;		/* was LIBDIR(files/newscores) */
+cptr ANGBAND_WELCOME = NULL;		/* Player generation help */
+cptr ANGBAND_VERSION = NULL;		/* Version information */
 
-char *ANGBAND_WIZ = NULL;		/* Acceptable wizard uid's */
-char *ANGBAND_HOURS = NULL;		/* Hours of operation */
-char *ANGBAND_LOAD = NULL;		/* Load information */
-char *ANGBAND_LOG = NULL;		/* Log file of some form */
+cptr ANGBAND_WIZ = NULL;		/* Acceptable wizard uid's */
+cptr ANGBAND_HOURS = NULL;		/* Hours of operation */
+cptr ANGBAND_LOAD = NULL;		/* Load information */
+cptr ANGBAND_LOG = NULL;		/* Log file of some form */
 
-char *ANGBAND_R_HELP = NULL;		/* Roguelike command help */
-char *ANGBAND_O_HELP = NULL;		/* Original command help */
-char *ANGBAND_W_HELP = NULL;		/* Wizard command help */
-char *ANGBAND_OWIZ_HELP = NULL;	/* was LIBDIR(files/owizcmds.hlp) */
+cptr ANGBAND_R_HELP = NULL;		/* Roguelike command help */
+cptr ANGBAND_O_HELP = NULL;		/* Original command help */
+cptr ANGBAND_W_HELP = NULL;		/* Wizard command help */
+cptr ANGBAND_OWIZ_HELP = NULL;	/* was LIBDIR(files/owizcmds.hlp) */
 
 
 

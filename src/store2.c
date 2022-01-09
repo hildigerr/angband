@@ -12,7 +12,7 @@
 
 
 
-static const char        *comment1[14] = {
+static cptr comment1[14] = {
     "Done! ", "Accepted! ", "Fine. ", "Agreed! ", "Ok. ", "Taken! ",
     "You drive a hard bargain, but taken. ",
     "You'll force me bankrupt, but it's a deal. ", "Sigh.  I'll take it. ",
@@ -21,13 +21,13 @@ static const char        *comment1[14] = {
     "My spouse will skin me, but accepted. "
 };
 
-static const char        *comment2a[3] = {
+static cptr comment2a[3] = {
     "%A2 is my final offer; take it or leave it.",
     "I'll give you no more than %A2.",
     "My patience grows thin.  %A2 is final."
 };
 
-static const char        *comment2b[16] = {
+static cptr comment2b[16] = {
     "%A1 for such a fine item?  HA!  No less than %A2.",
     "%A1 is an insult!  Try %A2 gold pieces.",
     "%A1?!?  Go try Londis instead!",
@@ -46,13 +46,13 @@ static const char        *comment2b[16] = {
     "Your mother was a Troll/Orc/Elf!  %A2 or I'll tell."
 };
 
-static const char        *comment3a[3] = {
+static cptr comment3a[3] = {
     "I'll pay no more than %A1; take it or leave it.",
     "You'll get no more than %A1 from me.",
     "%A1 and that's final."
 };
 
-static const char        *comment3b[15] = {
+static cptr comment3b[15] = {
     "%A2 for that piece of junk?  No more than %A1.",
     "For %A2 I could own ten of those.  Try %A1.",
     "%A2?  NEVER!  %A1 is more like it.",
@@ -68,7 +68,7 @@ static const char        *comment3b[15] = {
     "%A2 is too much, let us say %A1 gold."
 };
 
-static const char        *comment4a[5] = {
+static cptr comment4a[5] = {
     "ENOUGH!  You have abused me once too often!",
     "THAT DOES IT!  You shall waste my time no more!",
     "This is getting nowhere.  I'm going to Londis!",
@@ -76,12 +76,12 @@ static const char        *comment4a[5] = {
     "Begone!  I have had enough abuse for one day."
 };
 
-static const char        *comment4b[5] = {
+static cptr comment4b[5] = {
     "Out of my place!", "out... Out... OUT!!!", "Come back tomorrow.",
     "Leave my place.  Begone!", "Come back when thou art richer."
 };
 
-static const char        *comment5[10] = {
+static cptr comment5[10] = {
     "You will have to do better than that!", "That's an insult!",
     "Do you wish to do business or not?", "Hah!  Try again.",
     "Ridiculous!", "You've got to be kidding!", "You'd better be kidding!",
@@ -89,7 +89,7 @@ static const char        *comment5[10] = {
     "Hmmm, nice weather we're having."
 };
 
-static const char        *comment6[5] = {
+static cptr comment6[5] = {
     "I must have heard you wrong.", "What was that?",
     "I'm sorry, say that again.", "What did you say?",
     "Sorry, what was that again?"
@@ -102,12 +102,12 @@ static void haggle_commands(int);
 static void display_inventory(int, int);
 static void display_cost(int, int);
 static void display_store(int, int);
-static int get_store_item(int *, const char *, int, int);
+static int get_store_item(int *, cptr, int, int);
 static int increase_insults(int);
 static void decrease_insults(int);
 static int haggle_insults(int);
-static int get_haggle(const char *, s32b *, int, s32b, int);
-static int receive_offer(int, const char *, s32b *, s32b, int, int, s32b, int);
+static int get_haggle(cptr, s32b *, int, s32b, int);
+static int receive_offer(int, cptr, s32b *, s32b, int, int, s32b, int);
 static int purchase_haggle(int, s32b *, inven_type *);
 static int sell_haggle(int, s32b *, inven_type *);
 static int store_purchase(int, int *);
@@ -119,7 +119,7 @@ static void prt_comment6();
 static void display_commands();
 static void store_prt_gold();
 
-static void insert_lnum(char *object_str, const char *mtc_str, s32b number, int show_sign)
+static void insert_lnum(char *object_str, cptr mtc_str, s32b number, int show_sign)
 {
     int            mlen;
     vtype          str1, str2;
@@ -365,11 +365,7 @@ int store_num, cur_top;
 
 
 /* Get the ID of a store item and return it's value	-RAK-	 */
-static int 
-get_store_item(com_val, pmt, i, j)
-int         *com_val;
-const char  *pmt;
-register int i, j;
+static int get_store_item(int *com_val, cptr pmt, int i, int j)
 {
     char         command;
     vtype        out_val;
@@ -446,13 +442,7 @@ int store_num;
 }
 
 
-static int 
-get_haggle(comment, new_offer, num_offer, price, final)
-const char *comment;
-s32b      *new_offer;
-int         num_offer;
-s32b       price;
-int         final;
+static int get_haggle(cptr comment, s32b *new_offer, int num_offer, s32b price, int final)
 {
     register s32b      i;
     vtype               out_val;
@@ -502,15 +492,9 @@ int         final;
 }
 
 
-static int 
-receive_offer(store_num, comment, new_offer, last_offer,
-	      num_offer, factor, price, final)
-int             store_num;
-const char     *comment;
-register s32b *new_offer, last_offer;
-int             num_offer, factor;
-s32b           price;
-int             final;
+static int receive_offer(int store_num, cptr comment, s32b *new_offer,
+			 s32b last_offer, int num_offer, int factor,
+			 s32b price, int final)
 {
     register int flag, receive;
 

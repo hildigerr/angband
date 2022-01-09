@@ -39,6 +39,9 @@
 /* A standard pointer (to "void" because ANSI C says so) */
 typedef void *vptr;
 
+/* A simple pointer (to unmodifiable strings) */
+typedef const char *cptr;
+
 
 /*
  * Some annoying machines (Windows with Turbo C) reserve "huge".

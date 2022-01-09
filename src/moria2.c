@@ -248,11 +248,7 @@ int y, x;
  * returns -1 if no spells in book returns 1 if choose a spell in book to
  * cast returns 0 if don't choose a spell, i.e. exit with an escape 
  */
-int 
-cast_spell(prompt, item_val, sn, sc)
-const char *prompt;
-int         item_val;
-int        *sn, *sc;
+int cast_spell(cptr prompt, int item_val, int *sn, int *sc)
 {
     u32b               j1, j2;
     register int         i, k;

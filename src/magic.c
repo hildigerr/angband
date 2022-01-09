@@ -26,7 +26,7 @@ void calc_spells(int stat)
     int             j, offset;
     int             num_allowed, new_spells, num_known, levels;
     vtype           tmp_str;
-    const char	    *p;
+    cptr	    p;
     register struct misc *p_ptr = &py.misc;
     register spell_type  *msp_ptr;
 

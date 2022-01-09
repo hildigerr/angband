@@ -9,7 +9,7 @@
 /*
  * Vararg interface to plog()
  */
-void plog_fmt(const char *fmt, ...)
+void plog_fmt(cptr fmt, ...)
 {
   char *res;
   va_list vp;
@@ -32,7 +32,7 @@ void plog_fmt(const char *fmt, ...)
 /*
  * Vararg interface to quit()
  */
-void quit_fmt(const char *fmt, ...)
+void quit_fmt(cptr fmt, ...)
 {
   char *res;
   va_list vp;

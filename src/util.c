@@ -87,9 +87,9 @@ void user_name(char *buf, int id)
  * If successful, load the result into "exp" and return "TRUE"
  * When FALSE is returned, the original file may be fine by itself.
  */
-static int parse_path(const char *file, char *exp)
+static int parse_path(cptr file, char *exp)
 {
-    register const char *	u, s;
+    register cptr	u, s;
     struct passwd	*pw;
     char		user[128];
 
@@ -155,7 +155,7 @@ void user_name(char *buf, int id)
 /*
  * There is no expansion on single-user machines
  */
-static int parse_path(const char *file, char *exp)
+static int parse_path(cptr file, char *exp)
 {
     /* Always fails */
     return (0);
@@ -168,7 +168,7 @@ static int parse_path(const char *file, char *exp)
 /*
  * Replacement for "fopen" which parses leading tilde's
  */
-FILE *my_tfopen(const char *file, const char *mode)
+FILE *my_tfopen(cptr file, cptr mode)
 {
     char                buf[1024];
 
@@ -183,7 +183,7 @@ FILE *my_tfopen(const char *file, const char *mode)
 /*
  * Replacement for "open" which parses leading tilde's
  */
-int my_topen(const char *file, int flags, int mode)
+int my_topen(cptr file, int flags, int mode)
 {
     char                buf[1024];
 

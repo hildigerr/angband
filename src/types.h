@@ -36,7 +36,7 @@ typedef u16b attid;
 
 typedef struct monster_race
 {
-  const char *name;		    /* Descrip of creature    */
+  cptr name;		    /* Descrip of creature    */
   u32b cmove;			    /* Bit field	      */
   u32b spells;		    /* Creature spells	      */
   u32b cdefense;		    /* Bit field	      */
@@ -81,8 +81,8 @@ struct unique_mon {
 };
 
 typedef struct describe_mon_type {
-  const char *name;
-  const char *desc;
+  cptr name;
+  cptr desc;
   char gender;			    /* one of 'm','f','n','p' to genderize monsters -CWS */
 } describe_mon_type;
 
@@ -105,7 +105,7 @@ typedef struct monster_type
 
 typedef struct inven_kind
 {
-  const char *name;		    /* Object name		      */
+  cptr name;		    /* Object name		      */
   u32b flags;			    /* Special flags		      */
   byte tval;			    /* Category number		      */
   byte tchar;			    /* Character representation	      */
@@ -295,7 +295,7 @@ typedef struct spell_type
 
 typedef struct player_race
 {
-  const char	*trace;		    /* Type of race	    */
+  cptr trace;			    /* Type of race	    */
   s16b str_adj;		    /* adjustments	    */
   s16b int_adj;		    
   s16b wis_adj;
@@ -327,7 +327,7 @@ typedef struct player_race
 
 typedef struct player_class
 {
-  const char *title;		    /* type of class		       */
+  cptr title;			    /* type of class		       */
   byte adj_hd;			    /* Adjust hit points	       */
   byte mdis;			    /* mod disarming traps	       */
   byte msrh;			    /* modifier to searching	       */
@@ -350,7 +350,7 @@ typedef struct player_class
 
 typedef struct player_background
 {
-  const char *info;		    /* History information	    */
+  cptr info;			    /* History information	    */
   byte roll;			    /* Die roll needed for history  */
   byte chart;			    /* Table number		    */
   byte next;			    /* Pointer to next table	    */
@@ -374,7 +374,7 @@ typedef struct cave_type
 
 typedef struct owner_type
 {
-  const char *owner_name;
+  cptr owner_name;
   s16b max_cost;
   byte max_inflate;
   byte min_inflate;

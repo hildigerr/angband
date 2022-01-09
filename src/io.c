@@ -414,10 +414,7 @@ moriaterm()
 
 
 /* Dump IO to buffer					-RAK-	 */
-void 
-put_str(out_str, row, col)
-const char *out_str;
-int         row, col;
+void put_str(cptr out_str, int row, int col)
 
 #ifdef MAC
 {
@@ -977,10 +974,7 @@ const char *p;
 
 
 /* Outputs a line to a given y, x position		-RAK-	 */
-void 
-prt(str_buff, row, col)
-const char *str_buff;
-int         row, col;
+void prt(cptr str_buff, int row, int col)
 
 #ifdef MAC
 {
@@ -1030,9 +1024,7 @@ int row, col;
 
 /* Outputs message to top line of screen				 */
 /* These messages are kept for later reference.	 */
-void 
-msg_print(str_buff)
-const char *str_buff;
+void msg_print(cptr str_buff)
 {
     char   in_char;
     static len = 0;
@@ -1118,9 +1110,7 @@ const char *str_buff;
 }
 
 /* Used to verify a choice - user gets the chance to abort choice.  -CJS- */
-int 
-get_check(prompt)
-const char *prompt;
+int get_check(cptr prompt)
 {
     int res, y, x;
 
@@ -1160,10 +1150,7 @@ const char *prompt;
 
 /* Prompts (optional) and returns ord value of input char	 */
 /* Function returns false if <ESCAPE> is input	 */
-int 
-get_com(prompt, command)
-const char *prompt;
-char       *command;
+int get_com(cptr prompt, char *command)
 {
     int res;
 

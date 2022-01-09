@@ -115,7 +115,7 @@ static int minus_ac(u32b typ_dam)
 /*
  * Corrode the unsuspecting person's armor		 -RAK-
  */
-void corrode_gas(const char *kb_str)
+void corrode_gas(const cptr kb_str)
 {
     if (!py.flags.immune_acid)
 	if (!minus_ac((u32b) TR2_RES_ACID))
@@ -126,7 +126,7 @@ void corrode_gas(const char *kb_str)
 /*
  * Throw acid on the hapless victim			-RAK-
  */
-void acid_dam(int dam, const char *kb_str)
+void acid_dam(int dam, cptr kb_str)
 {
     register int flag;
 
@@ -144,7 +144,7 @@ void acid_dam(int dam, const char *kb_str)
 /*
  * Lightning bolt the sucker away.			-RAK-
  */
-void light_dam(int dam, const char *kb_str)
+void light_dam(int dam, cptr kb_str)
 {
     if (py.flags.oppose_elec) dam = dam / 3;
     if (py.flags.resist_elec) dam = dam / 3;
@@ -159,7 +159,7 @@ void light_dam(int dam, const char *kb_str)
 /*
  *Burn the fool up.					-RAK-
  */
-void fire_dam(int dam, const char *kb_str)
+void fire_dam(int dam, cptr kb_str)
 {
     if (py.flags.resist_fire) dam = dam / 3;
     if (py.flags.oppose_fire > 0) dam = dam / 3;
@@ -172,7 +172,7 @@ void fire_dam(int dam, const char *kb_str)
 /*
  * Freeze him to death.				-RAK-
  */
-void cold_dam(int dam, const char *kb_str)
+void cold_dam(int dam, cptr kb_str)
 {
     if (py.flags.resist_cold) dam = dam / 3;
     if (py.flags.oppose_cold > 0) dam = dam / 3;
@@ -186,7 +186,7 @@ void cold_dam(int dam, const char *kb_str)
 /*
  * Poison gas the idiot.				-RAK-
  */
-void poison_gas(int dam, const char *kb_str)
+void poison_gas(int dam, cptr kb_str)
 {
     if (py.flags.oppose_pois > 0) dam = 2 * dam / 3;
     if (py.flags.resist_pois) dam = (dam * 3) / 5;

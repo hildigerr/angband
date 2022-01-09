@@ -14,7 +14,7 @@ cptr argv0 = NULL;
 /*
  * Is string 'small' the suffix of string 'big'?
  */
-bool suffix(const char *big, const char *small)
+bool suffix(cptr big, cptr small)
 {
   register int blen = strlen (big);
   register int slen = strlen (small);
@@ -32,10 +32,10 @@ bool suffix(const char *big, const char *small)
 /*
  * For those systems that don't have stricmp
  */
-int stricmp(const char *c1, const char *b)
+int stricmp(cptr a, cptr b)
 {
-  register const char *s1, s2;
-  register const char *c1, c2;
+  register cptr s1, s2;
+  register char c1, c2;
 
   /* Scan the strings */
   for (s1 = a, s2 = b; TRUE; s1++, s2++)
@@ -53,7 +53,7 @@ int stricmp(const char *c1, const char *b)
 /*
  * Print (or log) a "warning" message (ala "perror()")
  */
-void plog(const char *str)
+void plog(cptr str)
 {
   /* Just do a labeled fprintf to stderr */
   (fprintf(stderr, "%s: %s\n", argv0 ? argv0 : "???", str));
@@ -66,7 +66,7 @@ void plog(const char *str)
  * If 'str' begins with "+" or "-", do "exit(atoi(str))".
  * Otherwise, plog() 'str' and exit with an error code of -1.
  */
-void quit(const char *str)
+void quit(cptr str)
 {
 
   /* Success */
@@ -87,7 +87,7 @@ void quit(const char *str)
 /*
  * Dump a core file, after printing a warning message
  */
-void core(const char *str)
+void core(cptr str)
 {
   char *crash = NULL;
 

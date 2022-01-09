@@ -415,7 +415,7 @@ void confuse_dir (int *dir, int mode)
  *   0x40 = ???
  *   0x80 = ???
  */
-int get_a_dir(const char *prompt, int *dir, int mode)
+int get_a_dir(cptr prompt, int *dir, int mode)
 {
     char        command;
     char	pbuf[80];
@@ -503,7 +503,7 @@ int get_a_dir(const char *prompt, int *dir, int mode)
 /*
  * See "get_a_dir" above
  */
-int get_dir(const char *prompt, int *dir)
+int get_dir(cptr prompt, int *dir)
 {
     if (get_a_dir(prompt, dir, 0x0)) return (TRUE);
 
@@ -516,7 +516,7 @@ int get_dir(const char *prompt, int *dir)
  * Like get_dir(), but if "confused", pick randomly
  */
 
-int get_dir_c(const char *prompt, int *dir)
+int get_dir_c(cptr prompt, int *dir)
 {
     if (get_a_dir(prompt, dir, 0x1)) return (TRUE);
 

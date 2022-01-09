@@ -474,11 +474,9 @@ int (*test) ();
 
 
 /* Return a string describing how a given equipment item is carried. -CJS- */
-const char *
-describe_use(i)
-register int i;
+cptr describe_use(int i)
 {
-    register const char *p;
+    register cptr p;
 
     switch (i) {
       case INVEN_WIELD:
@@ -634,9 +632,10 @@ void
 inven_takeoff(item_val, posn)
 int item_val, posn;
 {
-    register const char *p;
     bigvtype             out_val, prt2;
     register inven_type *t_ptr;
+
+    cptr p;
 
     equip_ctr--;
     t_ptr = &inventory[item_val];
@@ -663,10 +662,7 @@ int item_val, posn;
 
 
 /* Used to verify if this really is the item we wish to wear or read. */
-int 
-verify(prompt, item)
-const char *prompt;
-int         item;
+int verify(cptr prompt, int item)
 {
     bigvtype out_str, object;
 
@@ -1373,10 +1369,9 @@ int command;
 
 
 /* Get the ID of an item and return the CTR value of it	-RAK-	 */
-int 
-get_item(com_val, pmt, i, j, test)
+int get_item(com_val, pmt, i, j, test)
 int        *com_val;
-const char *pmt;
+cptr pmt;
 int         i, j;
 int       (*test) ();
 

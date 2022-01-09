@@ -238,7 +238,7 @@ void place_rubble(int y, int x)
  */
 void get_coin_type(monster_race *r_ptr)
 {
-    char *name;
+    cptr name;
 
     name = r_ptr->name;
     if (!stricmp(name, "Creeping copper coins")) coin_type = 2;
