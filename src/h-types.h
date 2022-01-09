@@ -53,6 +53,14 @@ typedef int errr;
 
 
 /*
+ * Some annoying machines define "uint" in some "include" file
+ * Note that this "redefinition" should work on any machine.
+ */
+#if !defined(MACINTOSH) && !defined(__EMX__)
+# define uint uint_hack
+#endif
+
+/*
  * Some annoying machines (Windows with Turbo C) reserve "huge".
  * Note that this "redefinition" should work on any machine.
  */
@@ -70,6 +78,13 @@ typedef unsigned char byte;
 
 /* Simple True/False type */
 typedef char bool;
+
+
+/* A signed, standard integer (at least 2 bytes) */
+typedef int sint;
+
+/* An unsigned, "standard" integer (usually pre-defined) */
+typedef unsigned int uint;
 
 
 /* The largest signed integer there is (pre-defined) */
