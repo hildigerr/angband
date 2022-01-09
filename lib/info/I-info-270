@@ -1,5 +1,6 @@
 
 Rewrite of the "pathname constructor" code.
+Added floating point (yuck!) to "standard deviation" code.
 Redid the targetting code, and the direction code.
 Cleaned up the header files (a lot).
 Separated out some generic "non-angband" files (like random.c).

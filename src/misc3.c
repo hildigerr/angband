@@ -134,8 +134,10 @@ int m_bonus(int base, int limit, int level)
 {
     register int x, stand_dev, tmp, diff = limit - base;
 
+#ifdef USE_FLOATING_POINT
+
     /* standard deviation twice as wide at bottom of Angband as top */
-    stand_dev = (OBJ_STD_ADJ * (1 + level / 100)) + OBJ_STD_MIN;
+    stand_dev = (OBJ_STD_ADJ * (1 + level / 100.0)) + OBJ_STD_MIN;
 
     /* check for level > max_std to check for overflow... */
     if (stand_dev > 40) stand_dev = 40;
@@ -144,7 +146,23 @@ int m_bonus(int base, int limit, int level)
     tmp = randnor(0, stand_dev);
 
     /* Extract a weird value */
+    x = (tmp * diff / 150.0) + (level * limit / 200.0) + base;
+
+#else
+
+    /* XXX XXX Hack -- this may not be what was desired */
+    stand_dev = (OBJ_STD_ADJ * level / 100) + OBJ_STD_MIN;
+
+    /* check for level > max_std to check for overflow... */
+    if (stand_dev > 40) stand_dev = 40;
+
+    /* Call an odd function */
+    tmp = randnor(0, stand_dev);
+
+    /* Extract a weird value */
     x = (tmp * diff / 150) + (level * limit / 200) + base;
+
+#endif
 
     /* Enforce minimum value */
     if (x < base) return (base);
