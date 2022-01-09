@@ -44,7 +44,7 @@ char *memset(char *s, int c, huge n)
 /*
  * Free some memory (that was allocated by ralloc).
  */
-int rnfree(void *p, huge len)
+int rnfree (vptr p, huge len)
 {
   /* Easy to free zero bytes */
   if (len == 0) return (0);
@@ -78,7 +78,7 @@ int rnfree(void *p, huge len)
 /*
  * The system is out of memory, so panic.
  */
-void *rpanic(huge len)
+vptr rpanic(huge len)
 {
   static byte lifeboat[RPANIC_LIFEBOAT];
   static huge lifesize = RPANIC_LIFEBOAT;
@@ -100,9 +100,9 @@ void *rpanic(huge len)
 /*
  * Allocate some memory
  */
-void *ralloc(huge len)
+vptr ralloc(huge len)
 {
-  void *mem;
+  vptr mem;
 
   /* Allow allocation of "zero bytes" */
   if (len == 0) return ((void *)NULL);
@@ -127,7 +127,7 @@ void *ralloc(huge len)
 #endif
 
   /* Use malloc() to allocate some memory */
-  mem = ((void *)(malloc((size_t)(len))));
+  mem = ((vptr)(malloc((size_t)(len))));
 
   /* We were able to acquire memory */
   if (mem) return (mem);

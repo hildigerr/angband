@@ -36,6 +36,10 @@
 /*** Special 4 letter names for some standard types ***/
 
 
+/* A standard pointer (to "void" because ANSI C says so) */
+typedef void *vptr;
+
+
 /*
  * Some annoying machines (Windows with Turbo C) reserve "huge".
  * Note that this "redefinition" should work on any machine.

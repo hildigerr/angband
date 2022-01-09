@@ -20,13 +20,13 @@
 /**** Available Routines ****/
 
 /* De-allocate a given amount of memory */
-int rnfree(void *p, huge len);
+int rnfree(vptr p, huge len);
 
 /* Panic, attempt to Allocate 'len' bytes */
-extern void *rpanic(huge len);
+extern vptr rpanic(huge len);
 
 /* Allocate (and return) 'len', or dump core */
-void *ralloc(huge len);
+extern vptr ralloc(huge len);
 
 /* Create a "dynamic string" */
 const char *string_make(const char *str);
