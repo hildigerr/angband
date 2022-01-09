@@ -444,7 +444,7 @@ int mon_num;
 	     py.misc.lev + 5) / 10;
 
 	(void)sprintf(temp, " is worth %lu.%02lu point%s", i,
-		      (unsigned long)j, (unsigned long)(i == 1 && j == 0 ? "" : "s"));
+		      (huge)j, (huge)(i == 1 && j == 0 ? "" : "s"));
 	roff(temp);
 
 	if ((py.misc.lev / 10) == 1)

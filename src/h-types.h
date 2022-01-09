@@ -36,6 +36,15 @@
 /*** Special 4 letter names for some standard types ***/
 
 
+/*
+ * Some annoying machines (Windows with Turbo C) reserve "huge".
+ * Note that this "redefinition" should work on any machine.
+ */
+#if defined(_Windows)
+# define huge huge_hack
+#endif
+
+
 /* Note that "signed char" is not always "defined" */
 /* A (possibly signed) char (a byte) */
 /* typedef char char; */
@@ -49,6 +58,9 @@ typedef char bool;
 
 /* The largest signed integer there is (pre-defined) */
 /* typedef long long; */
+
+/* The largest unsigned integer there is */
+typedef unsigned long huge;
 
 
 /* Signed/Unsigned 16 bit value */

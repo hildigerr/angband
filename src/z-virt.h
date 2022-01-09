@@ -20,13 +20,13 @@
 /**** Available Routines ****/
 
 /* De-allocate a given amount of memory */
-int rnfree(void *p, unsigned long len);
+int rnfree(void *p, huge len);
 
 /* Panic, attempt to Allocate 'len' bytes */
-extern void *rpanic(unsigned long len);
+extern void *rpanic(huge len);
 
 /* Allocate (and return) 'len', or dump core */
-void *ralloc(unsigned long len);
+void *ralloc(huge len);
 
 /* Create a "dynamic string" */
 const char *string_make(const char *str);
@@ -35,7 +35,7 @@ const char *string_make(const char *str);
 int string_free(const char* str);
 
 #ifndef HAS_MEMSET
-extern char *memset(char*, int, unsigned long);
+extern char *memset(char*, int, huge);
 #endif
 
 

@@ -29,7 +29,7 @@ static long ralloc_block = 0;
  * Set the value of each of 'n' bytes starting at 's' to 'c', return 's'
  * If 'n' is negative, you will erase a whole lot of memory.
  */
-char *memset(char *s, int c, unsigned long n)
+char *memset(char *s, int c, huge n)
 {
   register char *t;
   for (t = s; len--; ) *t++ = c;
@@ -44,7 +44,7 @@ char *memset(char *s, int c, unsigned long n)
 /*
  * Free some memory (that was allocated by ralloc).
  */
-int rnfree(void *p, unsigned long len)
+int rnfree(void *p, huge len)
 {
   /* Easy to free zero bytes */
   if (len == 0) return (0);
@@ -78,10 +78,10 @@ int rnfree(void *p, unsigned long len)
 /*
  * The system is out of memory, so panic.
  */
-void *rpanic(unsigned long len)
+void *rpanic(huge len)
 {
   static byte lifeboat[RPANIC_LIFEBOAT];
-  static unsigned long lifesize = RPANIC_LIFEBOAT;
+  static huge lifesize = RPANIC_LIFEBOAT;
 
   /* We are probably going to crash anyway */
   plog("Running out of memory!!!");
@@ -100,7 +100,7 @@ void *rpanic(unsigned long len)
 /*
  * Allocate some memory
  */
-void *ralloc(unsigned long len)
+void *ralloc(huge len)
 {
   void *mem;
 
@@ -153,7 +153,7 @@ void *ralloc(unsigned long len)
  */
 const char *string_make(const char *str)
 {
-  register unsigned long len = 0;
+  register huge len = 0;
   register const char *t = str;
   register char *s, *res;
 
@@ -180,7 +180,7 @@ const char *string_make(const char *str)
  */
 int string_free(const char* str)
 {
-  register unsigned long len = 0;
+  register huge len = 0;
 
   /* Succeed on non-strings */
   if (!str) return (0);

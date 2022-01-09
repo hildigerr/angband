@@ -19,7 +19,7 @@
  * grabbed from the inl netrek server -cba 
  * I think we include too many files above!
  */
-int usleep(unsigned long microSeconds)
+int usleep(huge microSeconds)
 {
     struct timeval      Timer;
 
