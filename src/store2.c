@@ -958,7 +958,7 @@ int store_num, *cur_top;
 		    choice = sell_haggle(store_num, &price, &sold_obj);
 		    if (choice == 0) {
 			s32b               cost;
-			s32b               real;
+			s32b               dummy;
 
 			prt_comment1();
 			decrease_insults(store_num);
@@ -973,14 +973,14 @@ int store_num, *cur_top;
 		    /* call known2 for store item, so charges/pluses are known */
 			known2(&sold_obj);
 
-			real = item_value(&sold_obj);
+			dummy = item_value(&sold_obj);
 
 			inven_destroy(item_val);
 			objdes(tmp_str, &sold_obj, TRUE);
 			(void)sprintf(out_val, "You've sold %s. ", tmp_str);
 			msg_print(out_val);
 
-			if (real == 0) {
+			if (dummy == 0) {
 			    switch (randint(4)) {
 			      case 1:
 				msg_print("You hear a shriek!");
@@ -995,7 +995,7 @@ int store_num, *cur_top;
 				msg_print("Arrgghh!!!!");
 				break;
 			    }
-			} else if (real < cost) {
+			} else if (dummy < cost) {
 			    switch (randint(3)) {
 			      case 1:
 				msg_print("You hear someone swearing...");
@@ -1007,7 +1007,7 @@ int store_num, *cur_top;
 				msg_print("The shopkeeper glares at you.");
 				break;
 			    }
-			} else if (real > (4 * cost)) {
+			} else if (dummy > (4 * cost)) {
 			    switch (randint(4)) {
 			      case 1:
 				msg_print("You hear someone jumping for joy!");
@@ -1022,7 +1022,7 @@ int store_num, *cur_top;
 				msg_print("The shopkeeper smiles gleefully!");
 				break;
 			    }
-			} else if (real > cost) {
+			} else if (dummy > cost) {
 			    switch (randint(4)) {
 			      case 1:
 				msg_print("You hear someone giggling");

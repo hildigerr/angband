@@ -43,6 +43,10 @@ typedef void *vptr;
 typedef const char *cptr;
 
 
+/* Since float's are silly, hard code real numbers as doubles */
+typedef double real;
+
+
 /*
  * Some annoying machines (Windows with Turbo C) reserve "huge".
  * Note that this "redefinition" should work on any machine.
