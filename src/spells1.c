@@ -84,8 +84,8 @@ static int minus_ac(u32b typ_dam)
 	j = tmp[randint(i) - 1];
 	i_ptr = &inventory[j];
 	switch (typ_dam) {
-	  case TR_RES_ACID:
-	    if ((i_ptr->flags & TR_RES_ACID) || (i_ptr->flags2 & TR_IM_ACID) ||
+	  case TR2_RES_ACID:
+	    if ((i_ptr->flags & TR2_RES_ACID) || (i_ptr->flags2 & TR2_IM_ACID) ||
 		((i_ptr->flags2 & TR_ARTIFACT) && (randint(5)>2)))
 		do_damage = FALSE;
 	    else
@@ -118,7 +118,7 @@ static int minus_ac(u32b typ_dam)
 void corrode_gas(const char *kb_str)
 {
     if (!py.flags.immune_acid)
-	if (!minus_ac((u32b) TR_RES_ACID))
+	if (!minus_ac((u32b) TR2_RES_ACID))
 	    take_hit(randint(8), kb_str);
     inven_damage(set_corrodes, 5);
 }
@@ -135,7 +135,7 @@ void acid_dam(int dam, const char *kb_str)
     if (py.flags.immune_acid) dam = 1;
     flag = 0;
     if (!py.flags.oppose_acid)
-	if (minus_ac((u32b) TR_RES_ACID)) flag = 1;
+	if (minus_ac((u32b) TR2_RES_ACID)) flag = 1;
     if (py.flags.resist_acid) flag += 2;
     inven_damage(set_acid_affect, 3);
 }

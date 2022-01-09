@@ -668,7 +668,7 @@ ident_spell()
 	     * on floor can't stack
 	     */
 
-	    if ((i_ptr->flags & TR_CURSED) && (i_ptr->tval != TV_MAGIC_BOOK) &&
+	    if ((i_ptr->flags & TR3_CURSED) && (i_ptr->tval != TV_MAGIC_BOOK) &&
 		(i_ptr->tval != TV_PRAYER_BOOK))
 		add_inscribe(i_ptr, ID_DAMD);
 	    if (!known1_p(i_ptr))
@@ -3869,9 +3869,9 @@ enchant(inven_type *i_ptr, int n, byte eflag)
 		i_ptr->tohit++;
 		res = TRUE;
 		if ((i_ptr->tohit >= 0) && (randint(4)==1) && /* only when you get */
-		    (i_ptr->flags & TR_CURSED)) { /*  it above -1 -CFT */
+		    (i_ptr->flags & TR3_CURSED)) { /*  it above -1 -CFT */
 		    msg_print("The curse is broken! ");
-		    i_ptr->flags &= ~TR_CURSED;
+		    i_ptr->flags &= ~TR3_CURSED;
 		    i_ptr->ident &= ~ID_DAMD;
 		}
 	    }
@@ -3884,9 +3884,9 @@ enchant(inven_type *i_ptr, int n, byte eflag)
 		i_ptr->todam++;
 		res = TRUE;
 		if ((i_ptr->todam >= 0) && (randint(4)==1) && /* only when you get */
-		    (i_ptr->flags & TR_CURSED)) { /*  it above -1 -CFT */
+		    (i_ptr->flags & TR3_CURSED)) { /*  it above -1 -CFT */
 		    msg_print("The curse is broken! ");
-		    i_ptr->flags &= ~TR_CURSED;
+		    i_ptr->flags &= ~TR3_CURSED;
 		    i_ptr->ident &= ~ID_DAMD;
 		}
 	    }
@@ -3899,9 +3899,9 @@ enchant(inven_type *i_ptr, int n, byte eflag)
 		i_ptr->toac++;
 		res = TRUE;
 		if ((i_ptr->toac >= 0) && (randint(4)==1) && /* only when you get */
-		    (i_ptr->flags & TR_CURSED)) { /*  it above -1 -CFT */
+		    (i_ptr->flags & TR3_CURSED)) { /*  it above -1 -CFT */
 		    msg_print("The curse is broken! ");
-		    i_ptr->flags &= ~TR_CURSED;
+		    i_ptr->flags &= ~TR3_CURSED;
 		    i_ptr->ident &= ~ID_DAMD;
 		}
 	    }
@@ -4014,13 +4014,13 @@ remove_curse()
     result = FALSE;
     for (i = INVEN_WIELD; i <= INVEN_OUTER; i++) {
 	i_ptr = &inventory[i];
-	if ((TR_CURSED & i_ptr->flags) &&
+	if ((TR3_CURSED & i_ptr->flags) &&
 	    (i_ptr->name2 != EGO_MORGUL) &&
 	    (i_ptr->name2 != ART_CALRIS) &&
 	    (i_ptr->name2 != ART_MORMEGIL)) {
 	    if (!(!stricmp(k_list[i_ptr->index].name, "Power") &&
 		  (i_ptr->tval == TV_RING))) {
-		i_ptr->flags &= ~TR_CURSED;
+		i_ptr->flags &= ~TR3_CURSED;
 		i_ptr->ident &= ~ID_DAMD;	/* DGK */
 		i_ptr->inscrip[0] = '\0';
 		calc_bonuses();
@@ -4040,10 +4040,10 @@ remove_all_curse()
     result = FALSE;
     for (i = INVEN_WIELD; i <= INVEN_OUTER; i++) {
 	i_ptr = &inventory[i];
-	if (TR_CURSED & i_ptr->flags) {
+	if (TR3_CURSED & i_ptr->flags) {
 	    if (!(!stricmp(k_list[i_ptr->index].name, "Power") &&
 		  (i_ptr->tval == TV_RING))) {
-		i_ptr->flags &= ~TR_CURSED;
+		i_ptr->flags &= ~TR3_CURSED;
 		i_ptr->ident &= ~ID_DAMD;	/* DGK */
 		calc_bonuses();
 		i_ptr->inscrip[0] = '\0';
@@ -4113,7 +4113,7 @@ self_knowledge()
     for (i = INVEN_WIELD; i <= INVEN_LIGHT; i++) {	/* get flags from items */
 	if (inventory[i].tval != TV_NOTHING) {
 	    if (inventory[i].p1 < 0) /* don't adjust TR_STATS if p1 is negative -CWS */
-		f |= (inventory[i].flags & ~(TR_STATS | TR_SEARCH | TR_STEALTH) );
+		f |= (inventory[i].flags & ~(TR_STATS | TR1_SEARCH | TR1_STEALTH) );
 	    else
 		f |= inventory[i].flags;
 	    f2 |= inventory[i].flags2;
@@ -4170,9 +4170,9 @@ self_knowledge()
     if (py.flags.word_recall > 0)
 	prt("You will soon be recalled.", i++, j);
 
-    if (f & TR_STEALTH)
+    if (f & TR1_STEALTH)
 	prt("You are magically stealthy.", i++, j);
-    if (f & TR_SEARCH) {
+    if (f & TR1_SEARCH) {
 	prt("You are magically perceptive.", i++, j);
 	pause_if_screen_full(&i, j);
     }
@@ -4311,27 +4311,27 @@ self_knowledge()
 /* Are these needed?  The player can see this...  For now, in here for
  * completeness... -CFT 
  */
-    if (f & TR_STR) {
+    if (f & TR1_STR) {
 	prt("You are magically strong.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f & TR_INT) {
+    if (f & TR1_INT) {
 	prt("You are magically intelligent.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f & TR_WIS) {
+    if (f & TR1_WIS) {
 	prt("You are magically wise.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f & TR_DEX) {
+    if (f & TR1_DEX) {
 	prt("You are magically agile.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f & TR_CON) {
+    if (f & TR1_CON) {
 	prt("You are magically tough.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f & TR_CHR) {
+    if (f & TR1_CHR) {
 	prt("You are magically popular.", i++, j);
 	pause_if_screen_full(&i, j);
     }
@@ -4362,8 +4362,8 @@ self_knowledge()
 	prt("You will not become less popular.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (inventory[INVEN_LEFT].flags2 & TR_ATTACK_SPD ||
-	inventory[INVEN_RIGHT].flags2 & TR_ATTACK_SPD) {
+    if (inventory[INVEN_LEFT].flags2 & TR1_ATTACK_SPD ||
+	inventory[INVEN_RIGHT].flags2 & TR1_ATTACK_SPD) {
 	prt("You can strike at your foes with uncommon speed.", i++, j);
 	pause_if_screen_full(&i, j);
     }
@@ -4378,7 +4378,7 @@ self_knowledge()
 	f = 0L;
 	f2 = 0L;
     }
-    if (f & TR_CURSED) {
+    if (f & TR3_CURSED) {
 	if (inventory[INVEN_WIELD].name2 == EGO_MORGUL)
 	    prt("Your weapon is truly foul.", i++, j);
 	else if (inventory[INVEN_WIELD].name2 == ART_CALRIS)
@@ -4389,7 +4389,7 @@ self_knowledge()
 	    prt("Your weapon is accursed.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f & TR_TUNNEL) {
+    if (f & TR1_TUNNEL) {
 	prt("Your weapon is an effective digging tool.", i++, j);
 	pause_if_screen_full(&i, j);
     }
@@ -4397,58 +4397,58 @@ self_knowledge()
 	prt("Your weapon has been blessed by the gods.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f2 & TR_ATTACK_SPD) {
+    if (f2 & TR1_ATTACK_SPD) {
 	prt("Your weapon strikes with uncommon speed.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f2 & TR_SLAY_ORC) {
+    if (f2 & TR1_SLAY_ORC) {
 	prt("Your weapon is especially deadly against orcs.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f2 & TR_SLAY_TROLL) {
+    if (f2 & TR1_SLAY_TROLL) {
 	prt("Your weapon is especially deadly against trolls.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f2 & TR_SLAY_GIANT) {
+    if (f2 & TR1_SLAY_GIANT) {
 	prt("Your weapon is especially deadly against giants.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f & TR_SLAY_ANIMAL) {
+    if (f & TR1_SLAY_ANIMAL) {
 	prt("Your weapon is especially deadly against natural creatures.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f & TR_SLAY_X_DRAGON) {
+    if (f & TR1_SLAY_X_DRAGON) {
 	prt("Your weapon is a great bane of dragons.", i++, j);
 	pause_if_screen_full(&i, j);
-    } else if (f & TR_SLAY_DRAGON) {
+    } else if (f & TR1_SLAY_DRAGON) {
 	prt("Your weapon is especially deadly against dragons.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f2 & TR_SLAY_DEMON) {
+    if (f2 & TR1_SLAY_DEMON) {
 	prt("Your weapon strikes at demons with holy wrath.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f & TR_SLAY_UNDEAD) {
+    if (f & TR1_SLAY_UNDEAD) {
 	prt("Your weapon strikes at undead with holy wrath.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f & TR_SLAY_EVIL) {
+    if (f & TR1_SLAY_EVIL) {
 	prt("Your weapon fights against evil with holy fury.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f & TR_FROST_BRAND) {
+    if (f & TR1_BRAND_COLD) {
 	prt("Your frigid weapon freezes your foes.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f & TR_FLAME_TONGUE) {
+    if (f & TR1_BRAND_FIRE) {
 	prt("Your flaming weapon burns your foes.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f2 & TR_LIGHTNING) {
+    if (f2 & TR3_LITENING) {
 	prt("Your weapon electrocutes your foes.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f2 & TR_IMPACT)
+    if (f2 & TR1_IMPACT)
 	prt("The unbelievable impact of your weapon can cause earthquakes.", i++, j);
 
     pause_line(i);

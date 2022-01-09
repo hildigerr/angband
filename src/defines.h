@@ -362,72 +362,72 @@
 
 /* definitions for objects that can be worn */
 #define TR_STATS        0x0000003FL /* the stats must be the low 6 bits */
-#define TR_STR          0x00000001L
-#define TR_INT          0x00000002L
-#define TR_WIS          0x00000004L
-#define TR_DEX          0x00000008L
-#define TR_CON          0x00000010L
-#define TR_CHR          0x00000020L
-#define TR_SEARCH       0x00000040L
-#define TR_SLOW_DIGEST  0x00000080L
-#define TR_STEALTH      0x00000100L
-#define TR_AGGRAVATE    0x00000200L
-#define TR_TELEPORT     0x00000400L
-#define TR_REGEN        0x00000800L
-#define TR_SPEED        0x00001000L
+#define TR1_STR          0x00000001L
+#define TR1_INT          0x00000002L
+#define TR1_WIS          0x00000004L
+#define TR1_DEX          0x00000008L
+#define TR1_CON          0x00000010L
+#define TR1_CHR          0x00000020L
+#define TR1_SEARCH       0x00000040L
+#define TR3_SLOW_DIGEST  0x00000080L
+#define TR1_STEALTH      0x00000100L
+#define TR3_AGGRAVATE    0x00000200L
+#define TR3_TELEPORT     0x00000400L
+#define TR3_REGEN        0x00000800L
+#define TR1_SPEED        0x00001000L
 
 #define TR_EGO_WEAPON   0x0007E000L
-#define TR_SLAY_DRAGON  0x00002000L
-#define TR_SLAY_ANIMAL  0x00004000L
-#define TR_SLAY_EVIL    0x00008000L
-#define TR_SLAY_UNDEAD  0x00010000L
-#define TR_FROST_BRAND  0x00020000L
-#define TR_FLAME_TONGUE 0x00040000L
+#define TR1_SLAY_DRAGON  0x00002000L
+#define TR1_SLAY_ANIMAL  0x00004000L
+#define TR1_SLAY_EVIL    0x00008000L
+#define TR1_SLAY_UNDEAD  0x00010000L
+#define TR1_BRAND_COLD  0x00020000L
+#define TR1_BRAND_FIRE 0x00040000L
 
-#define TR_RES_FIRE     0x00080000L
-#define TR_RES_ACID     0x00100000L
-#define TR_RES_COLD     0x00200000L
+#define TR2_RES_FIRE     0x00080000L
+#define TR2_RES_ACID     0x00100000L
+#define TR2_RES_COLD     0x00200000L
 #define TR_SUST_STAT    0x00400000L
-#define TR_FREE_ACT     0x00800000L
-#define TR_SEE_INVIS    0x01000000L
-#define TR_RES_ELEC    0x02000000L
-#define TR_FFALL        0x04000000L
-#define TR_SLAY_X_DRAGON        0x08000000L
-#define TR_POISON       0x10000000L
-#define TR_TUNNEL       0x20000000L
-#define TR_INFRA        0x40000000L
-#define TR_CURSED       0x80000000L
+#define TR2_FREE_ACT     0x00800000L
+#define TR3_SEE_INVIS    0x01000000L
+#define TR2_RES_ELEC    0x02000000L
+#define TR3_FEATHER        0x04000000L
+#define TR1_SLAY_X_DRAGON        0x08000000L
+#define TR2_RES_POIS       0x10000000L
+#define TR1_TUNNEL       0x20000000L
+#define TR1_INFRA        0x40000000L
+#define TR3_CURSED       0x80000000L
 
 /* flags for flags2 */
-#define TR_SLAY_DEMON   0x00000001L
-#define TR_SLAY_TROLL   0x00000002L
-#define TR_SLAY_GIANT   0x00000004L
-#define TR_HOLD_LIFE    0x00000008L
-#define TR_SLAY_ORC     0x00000010L
-#define TR_TELEPATHY    0x00000020L
-#define TR_IM_FIRE      0x00000040L
-#define TR_IM_COLD      0x00000080L
-#define TR_IM_ACID      0x00000100L
-#define TR_IM_LIGHT     0x00000200L
-#define TR_LIGHT        0x00000400L
-#define TR_ACTIVATE     0x00000800L
-#define TR_LIGHTNING    0x00001000L
-#define TR_IMPACT       0x00002000L
-#define TR_IM_POISON    0x00004000L
-#define TR_RES_CONF     0x00008000L
-#define TR_RES_SOUND    0x00010000L
-#define TR_RES_LT       0x00020000L
-#define TR_RES_DARK     0x00040000L
-#define TR_RES_CHAOS    0x00080000L
-#define TR_RES_DISENCHANT       0x00100000L
-#define TR_RES_SHARDS   0x00200000L
-#define TR_RES_NEXUS    0x00400000L
-#define TR_RES_BLIND    0x00800000L
-#define TR_RES_NETHER   0x01000000L
+#define TR1_SLAY_DEMON   0x00000001L
+#define TR1_SLAY_TROLL   0x00000002L
+#define TR1_SLAY_GIANT   0x00000004L
+#define TR2_HOLD_LIFE    0x00000008L
+#define TR1_SLAY_ORC     0x00000010L
+#define TR3_TELEPATHY    0x00000020L
+#define TR2_IM_FIRE      0x00000040L
+#define TR2_IM_COLD      0x00000080L
+#define TR2_IM_ACID      0x00000100L
+#define TR2_IM_ELEC     0x00000200L
+#define TR3_LITE        0x00000400L
+#define TR3_ACTIVATE     0x00000800L
+#define TR3_LITENING    0x00001000L
+#define TR1_IMPACT       0x00002000L
+#define TR2_IM_POIS    0x00004000L
+#define TR2_RES_CONF     0x00008000L
+#define TR2_RES_SOUND    0x00010000L
+#define TR2_RES_LITE       0x00020000L
+#define TR2_RES_DARK     0x00040000L
+#define TR2_RES_CHAOS    0x00080000L
+#define TR2_RES_DISEN       0x00100000L
+#define TR2_RES_SHARDS   0x00200000L
+#define TR2_RES_NEXUS    0x00400000L
+#define TR2_RES_BLIND    0x00800000L
+#define TR2_RES_NETHER   0x01000000L
 #define TR_ARTIFACT     0x02000000L /* means "is an artifact" -CFT */
 #define TR_BLESS_BLADE  0x04000000L /* priests use w/o penalty -DGK*/
-#define TR_ATTACK_SPD   0x08000000L /* extra attacks/round -DGK */
-#define TR_RES_FEAR     0x10000000L
+#define TR1_ATTACK_SPD   0x08000000L /* extra attacks/round -DGK */
+#define TR2_RES_FEAR     0x10000000L
 
 /* definitions for chests */
 #define CH_LOCKED       0x00000001L

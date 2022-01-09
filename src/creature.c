@@ -1465,18 +1465,18 @@ u32b *rcmove;
 			*rcmove |= CM_PICKS_UP;
 #endif
 			t = 0L;
-			if ((i_list[c_ptr->tptr].flags & TR_SLAY_DRAGON) ||
-			    (i_list[c_ptr->tptr].flags & TR_SLAY_X_DRAGON))
+			if ((i_list[c_ptr->tptr].flags & TR1_SLAY_DRAGON) ||
+			    (i_list[c_ptr->tptr].flags & TR1_SLAY_X_DRAGON))
 			    t |= DRAGON;
-			if (i_list[c_ptr->tptr].flags & TR_SLAY_UNDEAD)
+			if (i_list[c_ptr->tptr].flags & TR1_SLAY_UNDEAD)
 			    t |= UNDEAD;
-			if (i_list[c_ptr->tptr].flags2 & TR_SLAY_DEMON)
+			if (i_list[c_ptr->tptr].flags2 & TR1_SLAY_DEMON)
 			    t |= DEMON;
-			if (i_list[c_ptr->tptr].flags2 & TR_SLAY_TROLL)
+			if (i_list[c_ptr->tptr].flags2 & TR1_SLAY_TROLL)
 			    t |= TROLL;
-			if (i_list[c_ptr->tptr].flags2 & TR_SLAY_GIANT)
+			if (i_list[c_ptr->tptr].flags2 & TR1_SLAY_GIANT)
 			    t |= GIANT;
-			if (i_list[c_ptr->tptr].flags2 & TR_SLAY_ORC)
+			if (i_list[c_ptr->tptr].flags2 & TR1_SLAY_ORC)
 			    t |= ORC;
 		    /* if artifact, or wearable & hurts this monster -CWS */
 			if ((i_list[c_ptr->tptr].flags2 & TR_ARTIFACT) ||

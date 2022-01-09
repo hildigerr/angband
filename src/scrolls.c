@@ -89,17 +89,17 @@ read_scroll()
 
 		if (k > 0)
 		    l = tmp[randint(k) - 1];
-		if (TR_CURSED & inventory[INVEN_BODY].flags)
+		if (TR3_CURSED & inventory[INVEN_BODY].flags)
 		    l = INVEN_BODY;
-		else if (TR_CURSED & inventory[INVEN_ARM].flags)
+		else if (TR3_CURSED & inventory[INVEN_ARM].flags)
 		    l = INVEN_ARM;
-		else if (TR_CURSED & inventory[INVEN_OUTER].flags)
+		else if (TR3_CURSED & inventory[INVEN_OUTER].flags)
 		    l = INVEN_OUTER;
-		else if (TR_CURSED & inventory[INVEN_HEAD].flags)
+		else if (TR3_CURSED & inventory[INVEN_HEAD].flags)
 		    l = INVEN_HEAD;
-		else if (TR_CURSED & inventory[INVEN_HANDS].flags)
+		else if (TR3_CURSED & inventory[INVEN_HANDS].flags)
 		    l = INVEN_HANDS;
-		else if (TR_CURSED & inventory[INVEN_FEET].flags)
+		else if (TR3_CURSED & inventory[INVEN_FEET].flags)
 		    l = INVEN_FEET;
 
 		if (l > 0) {
@@ -263,7 +263,7 @@ read_scroll()
 			i_ptr->name2 = EGO_SHATTERED;
 			i_ptr->tohit = (-randint(5) - randint(5));
 			i_ptr->todam = (-randint(5) - randint(5));
-			i_ptr->flags = TR_CURSED;
+			i_ptr->flags = TR3_CURSED;
 			i_ptr->flags2 = 0;
 			i_ptr->damage[0] = i_ptr->damage[1] = 1;
 			i_ptr->toac = 0;	/* in case defender... */
@@ -294,17 +294,17 @@ read_scroll()
 
 		if (k > 0)
 		    l = tmp[randint(k) - 1];
-		if (TR_CURSED & inventory[INVEN_BODY].flags)
+		if (TR3_CURSED & inventory[INVEN_BODY].flags)
 		    l = INVEN_BODY;
-		else if (TR_CURSED & inventory[INVEN_ARM].flags)
+		else if (TR3_CURSED & inventory[INVEN_ARM].flags)
 		    l = INVEN_ARM;
-		else if (TR_CURSED & inventory[INVEN_OUTER].flags)
+		else if (TR3_CURSED & inventory[INVEN_OUTER].flags)
 		    l = INVEN_OUTER;
-		else if (TR_CURSED & inventory[INVEN_HEAD].flags)
+		else if (TR3_CURSED & inventory[INVEN_HEAD].flags)
 		    l = INVEN_HEAD;
-		else if (TR_CURSED & inventory[INVEN_HANDS].flags)
+		else if (TR3_CURSED & inventory[INVEN_HANDS].flags)
 		    l = INVEN_HANDS;
-		else if (TR_CURSED & inventory[INVEN_FEET].flags)
+		else if (TR3_CURSED & inventory[INVEN_FEET].flags)
 		    l = INVEN_FEET;
 
 		if (l > 0) {
@@ -363,7 +363,7 @@ read_scroll()
 			msg_print(out_val);
 			py_bonuses(i_ptr, -1);	/* take off current bonuses -CFT */
 			i_ptr->name2 = EGO_BLASTED;
-			i_ptr->flags = TR_CURSED;
+			i_ptr->flags = TR3_CURSED;
 			i_ptr->flags2 = 0;
 			i_ptr->toac = (-randint(5) - randint(5));
 			i_ptr->tohit = i_ptr->todam = 0; /* in case gaunlets of

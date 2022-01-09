@@ -555,9 +555,9 @@ u32b              win;
 			cave[j][k].tptr = cur_pos;
 			invcopy(&i_list[cur_pos], 98);
 			t_ptr = &i_list[cur_pos];
-			t_ptr->flags |= (TR_STR | TR_DEX | TR_CON | TR_INT | TR_WIS | TR_CHR |
-				       TR_SEE_INVIS | TR_CURSED | TR_INFRA);
-			t_ptr->flags2 |= (TR_TELEPATHY | TR_LIGHT | TR_ARTIFACT);
+			t_ptr->flags |= (TR1_STR | TR1_DEX | TR1_CON | TR1_INT | TR1_WIS | TR1_CHR |
+				       TR3_SEE_INVIS | TR3_CURSED | TR1_INFRA);
+			t_ptr->flags2 |= (TR3_TELEPATHY | TR3_LITE | TR_ARTIFACT);
 			t_ptr->ident |= ID_NOSHOW_TYPE;
 			t_ptr->name2 = ART_MORGOTH;
 			t_ptr->p1 = 125;
@@ -579,12 +579,12 @@ u32b              win;
 			t_ptr->damage[0] = 10;
 			t_ptr->damage[1] = 8;
 			t_ptr->weight = 600;
-			t_ptr->flags = (TR_SEE_INVIS | TR_SLAY_EVIL | TR_SLAY_UNDEAD |
-					TR_RES_FIRE | TR_RES_COLD | TR_RES_ELEC |
-					TR_RES_ACID | TR_SLAY_ANIMAL | TR_SPEED |
-					TR_SLAY_X_DRAGON | TR_AGGRAVATE);
-			t_ptr->flags2 = (TR_SLAY_DEMON | TR_SLAY_TROLL | TR_SLAY_ORC |
-				    TR_IMPACT | TR_TELEPATHY | TR_ARTIFACT);
+			t_ptr->flags = (TR3_SEE_INVIS | TR1_SLAY_EVIL | TR1_SLAY_UNDEAD |
+					TR2_RES_FIRE | TR2_RES_COLD | TR2_RES_ELEC |
+					TR2_RES_ACID | TR1_SLAY_ANIMAL | TR1_SPEED |
+					TR1_SLAY_X_DRAGON | TR3_AGGRAVATE);
+			t_ptr->flags2 = (TR1_SLAY_DEMON | TR_SLAY_TROLL | TR_SLAY_ORC |
+				    TR1_IMPACT | TR3_TELEPATHY | TR_ARTIFACT);
 			t_ptr->p1 = (-1);
 			t_ptr->toac = 10;
 			t_ptr->cost = 500000L;

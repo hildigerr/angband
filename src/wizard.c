@@ -1020,203 +1020,203 @@ again:
 	    (i_ptr->tval == TV_DIGGING)) {
 	    if (get_com("Slay Evil? [yn]: ", &ch)) {
 		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags |= TR_SLAY_EVIL;
+		    i_ptr->flags |= TR1_SLAY_EVIL;
 	    } else if (ch == '\033')
 		goto end;
 	    if (get_com("Slay Animal? [yn]: ", &ch)) {
 		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags |= TR_SLAY_ANIMAL;
+		    i_ptr->flags |= TR1_SLAY_ANIMAL;
 	    } else if (ch == '\033')
 		goto end;
 	    if (get_com("Slay Undead? [yn]: ", &ch)) {
 		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags |= TR_SLAY_UNDEAD;
+		    i_ptr->flags |= TR1_SLAY_UNDEAD;
 	    } else if (ch == '\033')
 		goto end;
 	    if (get_com("Slay Giant? [yn]: ", &ch)) {
 		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags2 |= TR_SLAY_GIANT;
+		    i_ptr->flags2 |= TR1_SLAY_GIANT;
 	    } else if (ch == '\033')
 		goto end;
 	    if (get_com("Slay Demon? [yn]: ", &ch)) {
 		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags2 |= TR_SLAY_DEMON;
+		    i_ptr->flags2 |= TR1_SLAY_DEMON;
 	    } else if (ch == '\033')
 		goto end;
 	    if (get_com("Slay Troll? [yn]: ", &ch)) {
 		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags2 |= TR_SLAY_TROLL;
+		    i_ptr->flags2 |= TR1_SLAY_TROLL;
 	    } else if (ch == '\033')
 		goto end;
 	    if (get_com("Slay Orc? [yn]: ", &ch)) {
 		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags2 |= TR_SLAY_ORC;
+		    i_ptr->flags2 |= TR1_SLAY_ORC;
 	    } else if (ch == '\033')
 		goto end;
 	    if (get_com("Slay Dragon? [yn]: ", &ch)) {
 		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags |= TR_SLAY_DRAGON;
+		    i_ptr->flags |= TR1_SLAY_DRAGON;
 	    } else if (ch == '\033')
 		goto end;
 	    if (get_com("Execute Dragon? [yn]: ", &ch)) {
 		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags |= TR_SLAY_X_DRAGON;
+		    i_ptr->flags |= TR1_SLAY_X_DRAGON;
 	    } else if (ch == '\033')
 		goto end;
 	    if (get_com("Frost Brand? [yn]: ", &ch)) {
 		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags |= TR_FROST_BRAND;
+		    i_ptr->flags |= TR1_BRAND_COLD;
 	    } else if (ch == '\033')
 		goto end;
 	    if (get_com("Fire Brand? [yn]: ", &ch)) {
 		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags |= TR_FLAME_TONGUE;
+		    i_ptr->flags |= TR1_BRAND_FIRE;
 	    } else if (ch == '\033')
 		goto end;
 	    if (get_com("Lightning Brand? [yn]: ", &ch)) {
 		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags2 |= TR_LIGHTNING;
+		    i_ptr->flags2 |= TR3_LITENING;
 	    } else if (ch == '\033')
 		goto end;
 	    if (get_com("Earthquake Brand? [yn]: ", &ch)) {
 		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags2 |= TR_IMPACT;
+		    i_ptr->flags2 |= TR1_IMPACT;
 	    } else if (ch == '\033')
 		goto end;
 	}
 	if (get_com("Affect Strength? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags |= TR_STR;
+		i_ptr->flags |= TR1_STR;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Affect Intelligence? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags |= TR_INT;
+		i_ptr->flags |= TR1_INT;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Affect Wisdom? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags |= TR_WIS;
+		i_ptr->flags |= TR1_WIS;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Affect Dexterity? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags |= TR_DEX;
+		i_ptr->flags |= TR1_DEX;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Affect Constitution? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags |= TR_CON;
+		i_ptr->flags |= TR1_CON;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Affect Charisma? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags |= TR_CHR;
+		i_ptr->flags |= TR1_CHR;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Automatic Searching? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags |= TR_SEARCH;
+		i_ptr->flags |= TR1_SEARCH;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Slow Digestion? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags |= TR_SLOW_DIGEST;
+		i_ptr->flags |= TR3_SLOW_DIGEST;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Stealth? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags |= TR_STEALTH;
+		i_ptr->flags |= TR1_STEALTH;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Aggravate Monsters? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags |= TR_AGGRAVATE;
+		i_ptr->flags |= TR3_AGGRAVATE;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Regeneration? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags |= TR_REGEN;
+		i_ptr->flags |= TR3_REGEN;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Speed? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags |= TR_SPEED;
+		i_ptr->flags |= TR1_SPEED;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Resist Fire? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags |= TR_RES_FIRE;
+		i_ptr->flags |= TR2_RES_FIRE;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Resist Cold? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags |= TR_RES_COLD;
+		i_ptr->flags |= TR2_RES_COLD;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Resist Acid? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags |= TR_RES_ACID;
+		i_ptr->flags |= TR2_RES_ACID;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Resist Lightning? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags |= TR_RES_ELEC;
+		i_ptr->flags |= TR2_RES_ELEC;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Resist Poison? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags |= TR_POISON;
+		i_ptr->flags |= TR2_RES_POIS;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Resist Confusion? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR_RES_CONF;
+		i_ptr->flags2 |= TR2_RES_CONF;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Resist Sound? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR_RES_SOUND;
+		i_ptr->flags2 |= TR2_RES_SOUND;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Resist Light? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR_RES_LT;
+		i_ptr->flags2 |= TR2_RES_LITE;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Resist Dark? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR_RES_DARK;
+		i_ptr->flags2 |= TR2_RES_DARK;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Resist Chaos? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR_RES_CHAOS;
+		i_ptr->flags2 |= TR2_RES_CHAOS;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Resist Disenchantment? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR_RES_DISENCHANT;
+		i_ptr->flags2 |= TR2_RES_DISEN;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Resist Shards? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR_RES_SHARDS;
+		i_ptr->flags2 |= TR2_RES_SHARDS;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Resist Nexus? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR_RES_NEXUS;
+		i_ptr->flags2 |= TR2_RES_NEXUS;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Resist Nether? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR_RES_NETHER;
+		i_ptr->flags2 |= TR2_RES_NETHER;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Resist Blindness? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR_RES_BLIND;
+		i_ptr->flags2 |= TR2_RES_BLIND;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Sustain a stat (Magic value 10 for all stats)? [yn]: ", &ch)) {
@@ -1226,72 +1226,72 @@ again:
 	    goto end;
 	if (get_com("See invisible? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags |= TR_SEE_INVIS;
+		i_ptr->flags |= TR3_SEE_INVIS;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Free Action? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags |= TR_FREE_ACT;
+		i_ptr->flags |= TR2_FREE_ACT;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Feather Falling? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags |= TR_FFALL;
+		i_ptr->flags |= TR3_FEATHER;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Tunneling? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags |= TR_TUNNEL;
+		i_ptr->flags |= TR1_TUNNEL;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Infra-vision? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags |= TR_INFRA;
+		i_ptr->flags |= TR1_INFRA;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Resist life level loss? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR_HOLD_LIFE;
+		i_ptr->flags2 |= TR2_HOLD_LIFE;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Telepathy? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR_TELEPATHY;
+		i_ptr->flags2 |= TR3_TELEPATHY;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Immune to Fire? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR_IM_FIRE;
+		i_ptr->flags2 |= TR2_IM_FIRE;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Immune to Cold? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR_IM_COLD;
+		i_ptr->flags2 |= TR2_IM_COLD;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Immune to Acid? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR_IM_ACID;
+		i_ptr->flags2 |= TR2_IM_ACID;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Immune to Lightning? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR_IM_LIGHT;
+		i_ptr->flags2 |= TR2_IM_ELEC;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Immune to Poison? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR_IM_POISON;
+		i_ptr->flags2 |= TR2_IM_POIS;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Give off Light? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR_LIGHT;
+		i_ptr->flags2 |= TR3_LITE;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Activatable Item? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR_ACTIVATE;
+		i_ptr->flags2 |= TR3_ACTIVATE;
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("Is it an Artifact? [yn]: ", &ch)) {
@@ -1301,7 +1301,7 @@ again:
 	    goto end;
 	if (get_com("Cursed? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags |= TR_CURSED;
+		i_ptr->flags |= TR3_CURSED;
 	} else if (ch == '\033')
 	    goto end;
     } /* end if TV_MAX_WEAR >= i_ptr->tval >= TV_MIN_WEAR -CFT */

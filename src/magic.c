@@ -471,8 +471,8 @@ void calc_mana(int stat)
 	if (new_mana > 0) new_mana++;
 
 	if ((inventory[INVEN_HANDS].tval != TV_NOTHING) &&
-	    !((inventory[INVEN_HANDS].flags & TR_FREE_ACT) ||
-	      ((inventory[INVEN_HANDS].flags & TR_DEX) &&
+	    !((inventory[INVEN_HANDS].flags & TR2_FREE_ACT) ||
+	      ((inventory[INVEN_HANDS].flags & TR1_DEX) &&
 	       (inventory[INVEN_HANDS].p1 > 0)))
 
 /* gauntlets of dex (or free action - DGK) can hardly interfere w/ spellcasting!

@@ -331,17 +331,17 @@ pray()
 
 			if (k > 0)
 			    l = tmp[randint(k) - 1];
-			if (TR_CURSED & inventory[INVEN_BODY].flags)
+			if (TR3_CURSED & inventory[INVEN_BODY].flags)
 			    l = INVEN_BODY;
-			else if (TR_CURSED & inventory[INVEN_ARM].flags)
+			else if (TR3_CURSED & inventory[INVEN_ARM].flags)
 			    l = INVEN_ARM;
-			else if (TR_CURSED & inventory[INVEN_OUTER].flags)
+			else if (TR3_CURSED & inventory[INVEN_OUTER].flags)
 			    l = INVEN_OUTER;
-			else if (TR_CURSED & inventory[INVEN_HEAD].flags)
+			else if (TR3_CURSED & inventory[INVEN_HEAD].flags)
 			    l = INVEN_HEAD;
-			else if (TR_CURSED & inventory[INVEN_HANDS].flags)
+			else if (TR3_CURSED & inventory[INVEN_HANDS].flags)
 			    l = INVEN_HANDS;
-			else if (TR_CURSED & inventory[INVEN_FEET].flags)
+			else if (TR3_CURSED & inventory[INVEN_FEET].flags)
 			    l = INVEN_FEET;
 
 			if (l > 0) {
@@ -360,7 +360,7 @@ pray()
 		    i_ptr = &inventory[INVEN_WIELD];
 		    if (i_ptr->tval != TV_NOTHING &&
 			i_ptr->name2 == SN_NULL &&
-			!(i_ptr->flags & TR_CURSED)) {
+			!(i_ptr->flags & TR3_CURSED)) {
 
 /* you can't create an ego weapon from a cursed object...
  * the curse would "taint" the magic -CFT
@@ -375,12 +375,12 @@ pray()
 				    "Your %s is covered in a fiery shield!",
 				    tmp_str);
 			    i_ptr->name2 |= EGO_FT;
-			    i_ptr->flags |= (TR_FLAME_TONGUE | TR_RES_FIRE);
+			    i_ptr->flags |= (TR1_BRAND_FIRE | TR2_RES_FIRE);
 			} else {
 			    sprintf(out_val, "Your %s glows deep, icy blue!",
 				    tmp_str);
 			    i_ptr->name2 |= EGO_FB;
-			    i_ptr->flags |= (TR_FROST_BRAND | TR_RES_COLD);
+			    i_ptr->flags |= (TR1_BRAND_COLD | TR2_RES_COLD);
 			}
 			msg_print(out_val);
 			enchant(i_ptr, 3+randint(3), ENCH_TOHIT|ENCH_TODAM);

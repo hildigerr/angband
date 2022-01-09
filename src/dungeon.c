@@ -174,7 +174,7 @@ dungeon()
 	i_ptr = &inventory[INVEN_LIGHT];
 	if (player_light)
 	    if (i_ptr->p1 > 0) {
-		if (!(i_ptr->flags2 & TR_LIGHT))
+		if (!(i_ptr->flags2 & TR3_LITE))
 		    i_ptr->p1--;   /* don't dec if perm light -CFT */
 		if (i_ptr->p1 == 0) {
 		    player_light = FALSE;
@@ -184,7 +184,7 @@ dungeon()
 		    msg_print("Your light has gone out!");
 		} else if ((i_ptr->p1 < 40) && (randint(5) == 1) &&
 			   (py.flags.blind < 1) &&
-			   !(i_ptr->flags2 & TR_LIGHT)) { /* perm light doesn't dim -CFT */
+			   !(i_ptr->flags2 & TR3_LITE)) { /* perm light doesn't dim -CFT */
 		    disturb(0, 0);
 		    msg_print("Your light is growing faint.");
 		}
@@ -197,7 +197,7 @@ dungeon()
 		}
 	    }
 	else if (i_ptr->p1 > 0 || f_ptr->light) {
-	    if (!(i_ptr->flags2 & TR_LIGHT))
+	    if (!(i_ptr->flags2 & TR3_LITE))
 		i_ptr->p1--;	   /* don't dec if perm light -CFT */
 	    player_light = TRUE;
 	    disturb(0, 1);
@@ -663,7 +663,7 @@ dungeon()
     /* Timeout Artifacts  */
 	for (i = 22; i < (INVEN_ARRAY_SIZE - 1); i++) {
 	    i_ptr = &inventory[i];
-	    if (i_ptr->tval != TV_NOTHING && (i_ptr->flags2 & TR_ACTIVATE)) {
+	    if (i_ptr->tval != TV_NOTHING && (i_ptr->flags2 & TR3_ACTIVATE)) {
 		if (i_ptr->timeout > 0)
 		    i_ptr->timeout--;
 		if ((i_ptr->tval == TV_RING) &&
@@ -676,7 +676,7 @@ dungeon()
     /* Timeout rods  */
 	for (i = 0; i < 22; i++) {
 	    i_ptr = &inventory[i];
-	    if (i_ptr->tval == TV_ROD && (i_ptr->flags2 & TR_ACTIVATE)) {
+	    if (i_ptr->tval == TV_ROD && (i_ptr->flags2 & TR3_ACTIVATE)) {
 		if (i_ptr->timeout > 0)
 		    i_ptr->timeout--;
 	    }
@@ -699,7 +699,7 @@ dungeon()
 		else {
 		    f_ptr->see_inv = FALSE;	/* unless item grants it */
 		    for (i = INVEN_WIELD; i <= INVEN_LIGHT; i++)
-			if (TR_SEE_INVIS & inventory[i].flags)
+			if (TR3_SEE_INVIS & inventory[i].flags)
 			    f_ptr->see_inv = TRUE;
 		}
 	    /* unlight but don't move creatures */
@@ -1342,7 +1342,7 @@ register inven_type *t_ptr;
 	return 0;
     if (t_ptr->ident & ID_DAMD)
 	return 0;
-    if (t_ptr->flags & TR_CURSED)
+    if (t_ptr->flags & TR3_CURSED)
 	return -1;
     if (t_ptr->tval != TV_HARD_ARMOR && t_ptr->tval != TV_SWORD &&
 	t_ptr->tval != TV_SOFT_ARMOR && t_ptr->tval != TV_SHIELD &&
@@ -1357,7 +1357,7 @@ register inven_type *t_ptr;
 	return 1;
     if ((t_ptr->tval == TV_DIGGING) && /* digging tools will pseudo ID, either
 					  as {good} or {average} -CFT */
-	(t_ptr->flags & TR_TUNNEL))
+	(t_ptr->flags & TR1_TUNNEL))
 	return 1;
 
     return 0;
@@ -1382,12 +1382,12 @@ register inven_type *t_ptr;
 	return 0;
     if (t_ptr->inscrip[0] != '\0')
 	return 0;
-    if (t_ptr->flags & TR_CURSED && t_ptr->name2 == SN_NULL)
+    if (t_ptr->flags & TR3_CURSED && t_ptr->name2 == SN_NULL)
 	return "worthless";
-    if (t_ptr->flags & TR_CURSED && t_ptr->name2 != SN_NULL)
+    if (t_ptr->flags & TR3_CURSED && t_ptr->name2 != SN_NULL)
 	return "terrible";
     if ((t_ptr->tval == TV_DIGGING) &&  /* also, good digging tools -CFT */
-	(t_ptr->flags & TR_TUNNEL) &&
+	(t_ptr->flags & TR1_TUNNEL) &&
 	(t_ptr->p1 > k_list[t_ptr->index].p1)) /* better than normal for this
 						       type of shovel/pick? -CFT */
 	return "good";
@@ -2258,7 +2258,7 @@ activate()
     num = 0;
     first = 0;
     for (i = 22; i < (INVEN_ARRAY_SIZE - 1); i++) {
-	if ((inventory[i].flags2 & TR_ACTIVATE) && (known2_p(&(inventory[i])))) {
+	if ((inventory[i].flags2 & TR3_ACTIVATE) && (known2_p(&(inventory[i])))) {
 	    num++;
 	    if (!flag)
 		first = i;
@@ -2283,7 +2283,7 @@ activate()
 	    j=0;
 	    if (!redraw) {
 		for (i = first; i < (INVEN_ARRAY_SIZE - 1); i++) {
-		    if ((inventory[i].flags2 & TR_ACTIVATE) &&
+		    if ((inventory[i].flags2 & TR3_ACTIVATE) &&
 			known2_p(&(inventory[i]))) {
 			objdes(tmp2, &inventory[i], TRUE);
 			sprintf(tmp, "%c) %-61s", 'a' + j, tmp2);
@@ -2329,7 +2329,7 @@ activate()
 	    flag = TRUE;
 	    j = 0;
 	    for (i = first; i < (INVEN_ARRAY_SIZE - 1); i++) {
-		if ((inventory[i].flags2 & TR_ACTIVATE) && known2_p(&(inventory[i]))) {
+		if ((inventory[i].flags2 & TR3_ACTIVATE) && known2_p(&(inventory[i]))) {
 		    if (j == choice)
 			break;
 		    j++;
@@ -2508,14 +2508,14 @@ activate()
 		    for (a = 0; a < INVEN_WIELD; a++)
 /* search for bolts that are not cursed and are not already named -CWS */
 			if ((inventory[a].tval == TV_BOLT) &&
-			    !(inventory[a].flags & TR_CURSED) &&
+			    !(inventory[a].flags & TR3_CURSED) &&
 			    (inventory[a].name2 == SN_NULL))
 			    break;
 		    if (a < INVEN_WIELD) {
 			i_ptr = &inventory[a];
 			msg_print("Your bolts are covered in a fiery aura!");
 			i_ptr->name2 = EGO_FIRE;
-			i_ptr->flags |= (TR_FLAME_TONGUE|TR_RES_FIRE);
+			i_ptr->flags |= (TR1_BRAND_FIRE|TR2_RES_FIRE);
 			i_ptr->cost += 25;
 			enchant(i_ptr, 3+randint(3), ENCH_TOHIT|ENCH_TODAM);
 			calc_bonuses();

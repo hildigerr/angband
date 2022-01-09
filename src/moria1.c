@@ -62,13 +62,13 @@ register int         factor;
 		py.flags.status |= (PY_STR << i);
 	    }
     }
-    if (TR_SEARCH & t_ptr->flags) {
+    if (TR1_SEARCH & t_ptr->flags) {
 	py.misc.srh += amount;
 	py.misc.fos -= amount;
     }
-    if (TR_STEALTH & t_ptr->flags)
+    if (TR1_STEALTH & t_ptr->flags)
 	py.misc.stl += amount;
-    if (TR_SPEED & t_ptr->flags) {
+    if (TR1_SPEED & t_ptr->flags) {
 	if ((t_ptr->tval == TV_RING) &&
 	    !stricmp("Speed",
 		     k_list[t_ptr->index].name) &&
@@ -85,7 +85,7 @@ register int         factor;
 	py.flags.speed -= amount;
 	py.flags.status |= PY_SPEED;
     }
-    if (TR_INFRA & t_ptr->flags)
+    if (TR1_INFRA & t_ptr->flags)
 	py.flags.see_infra += amount;
 }
 
@@ -185,7 +185,7 @@ calc_bonuses()
     for (i = INVEN_WIELD; i <= INVEN_LIGHT; i++) {
 	i_ptr = &inventory[i];
 	if (i_ptr->tval != TV_NOTHING) {
-	    if ((TR_CURSED & i_ptr->flags) == 0) {
+	    if ((TR3_CURSED & i_ptr->flags) == 0) {
 		m_ptr->pac += i_ptr->ac;
 		m_ptr->dis_ac += i_ptr->ac;
 	    }
@@ -281,67 +281,67 @@ calc_bonuses()
 	i_ptr++;
     }
 
-    if (TR_SLOW_DIGEST & item_flags)
+    if (TR3_SLOW_DIGEST & item_flags)
 	p_ptr->slow_digest = TRUE;
-    if (TR_AGGRAVATE & item_flags)
+    if (TR3_AGGRAVATE & item_flags)
 	p_ptr->aggravate = TRUE;
-    if (TR_TELEPORT & item_flags)
+    if (TR3_TELEPORT & item_flags)
 	p_ptr->teleport = TRUE;
-    if (TR_REGEN & item_flags)
+    if (TR3_REGEN & item_flags)
 	p_ptr->regenerate = TRUE;
-    if (TR_RES_FIRE & item_flags)
+    if (TR2_RES_FIRE & item_flags)
 	p_ptr->resist_fire = TRUE;
-    if (TR_RES_ACID & item_flags)
+    if (TR2_RES_ACID & item_flags)
 	p_ptr->resist_acid = TRUE;
-    if (TR_RES_COLD & item_flags)
+    if (TR2_RES_COLD & item_flags)
 	p_ptr->resist_cold = TRUE;
-    if (TR_POISON & item_flags)
+    if (TR2_RES_POIS & item_flags)
 	p_ptr->resist_pois = TRUE;
-    if (TR_HOLD_LIFE & item_flags2)
+    if (TR2_HOLD_LIFE & item_flags2)
 	p_ptr->hold_life = TRUE;
-    if (TR_TELEPATHY & item_flags2)
+    if (TR3_TELEPATHY & item_flags2)
 	p_ptr->telepathy = TRUE;
-    if (TR_IM_FIRE & item_flags2)
+    if (TR2_IM_FIRE & item_flags2)
 	p_ptr->immune_fire = TRUE;
-    if (TR_IM_ACID & item_flags2)
+    if (TR2_IM_ACID & item_flags2)
 	p_ptr->immune_acid = TRUE;
-    if (TR_IM_COLD & item_flags2)
+    if (TR2_IM_COLD & item_flags2)
 	p_ptr->immune_cold = TRUE;
-    if (TR_IM_LIGHT & item_flags2)
+    if (TR2_IM_ELEC & item_flags2)
 	p_ptr->immune_elec = TRUE;
-    if (TR_IM_POISON & item_flags2)
+    if (TR2_IM_POIS & item_flags2)
 	p_ptr->immune_pois = TRUE;
-    if (TR_LIGHT & item_flags2)
+    if (TR3_LITE & item_flags2)
 	p_ptr->light = TRUE;
-    if (TR_FREE_ACT & item_flags)
+    if (TR2_FREE_ACT & item_flags)
 	p_ptr->free_act = TRUE;
-    if (TR_SEE_INVIS & item_flags)
+    if (TR3_SEE_INVIS & item_flags)
 	p_ptr->see_inv = TRUE;
-    if (TR_RES_ELEC & item_flags)
+    if (TR2_RES_ELEC & item_flags)
 	p_ptr->resist_elec = TRUE;
-    if (TR_FFALL & item_flags)
+    if (TR3_FEATHER & item_flags)
 	p_ptr->ffall = TRUE;
-    if (TR_RES_CONF & item_flags2)
+    if (TR2_RES_CONF & item_flags2)
 	p_ptr->resist_conf = TRUE;
-    if (TR_RES_SOUND & item_flags2)
+    if (TR2_RES_SOUND & item_flags2)
 	p_ptr->resist_sound = TRUE;
-    if (TR_RES_LT & item_flags2)
+    if (TR2_RES_LITE & item_flags2)
 	p_ptr->resist_lite = TRUE;
-    if (TR_RES_DARK & item_flags2)
+    if (TR2_RES_DARK & item_flags2)
 	p_ptr->resist_dark = TRUE;
-    if (TR_RES_CHAOS & item_flags2)
+    if (TR2_RES_CHAOS & item_flags2)
 	p_ptr->resist_chaos = TRUE;
-    if (TR_RES_DISENCHANT & item_flags2)
+    if (TR2_RES_DISEN & item_flags2)
 	p_ptr->resist_disen = TRUE;
-    if (TR_RES_SHARDS & item_flags2)
+    if (TR2_RES_SHARDS & item_flags2)
 	p_ptr->resist_shards = TRUE;
-    if (TR_RES_NEXUS & item_flags2)
+    if (TR2_RES_NEXUS & item_flags2)
 	p_ptr->resist_nexus = TRUE;
-    if (TR_RES_BLIND & item_flags2)
+    if (TR2_RES_BLIND & item_flags2)
 	p_ptr->resist_blind = TRUE;
-    if (TR_RES_NETHER & item_flags2)
+    if (TR2_RES_NETHER & item_flags2)
 	p_ptr->resist_nether = TRUE;
-    if (TR_RES_FEAR & item_flags2)
+    if (TR2_RES_FEAR & item_flags2)
 	p_ptr->resist_fear = TRUE;
 
     i_ptr = &inventory[INVEN_WIELD];
@@ -913,7 +913,7 @@ int command;
 	    if (inventory[INVEN_WIELD].tval == TV_NOTHING &&
 		inventory[INVEN_AUX].tval == TV_NOTHING)
 		msg_print("But you are wielding no weapons.");
-	    else if (TR_CURSED & inventory[INVEN_WIELD].flags) {
+	    else if (TR3_CURSED & inventory[INVEN_WIELD].flags) {
 		objdes(prt1, &inventory[INVEN_WIELD], FALSE);
 		(void)sprintf(prt2,
 		     "The %s you are wielding appears to be cursed.", prt1);
@@ -1041,7 +1041,7 @@ int command;
 			while (tmp >= 0);
 			if (isupper((int)which) && !verify(prompt, item))
 			    item = (-1);
-			else if (TR_CURSED & inventory[item].flags) {
+			else if (TR3_CURSED & inventory[item].flags) {
 			    msg_print("Hmmm, it seems to be cursed.");
 			    item = (-1);
 			} else if (command == 't' &&
@@ -1154,7 +1154,7 @@ int command;
 				break;
 			    }
 			if (item >= 0 && inventory[slot].tval != TV_NOTHING) {
-			    if (TR_CURSED & inventory[slot].flags) {
+			    if (TR3_CURSED & inventory[slot].flags) {
 				objdes(prt1, &inventory[slot], FALSE);
 				(void)sprintf(prt2, "The %s you are ", prt1);
 				if (slot == INVEN_WIELD)	/* changed from
@@ -1226,7 +1226,7 @@ int command;
 			    msg_print(prt1);
 			/* check_str will clear the heavy flag if necessary */
 			    check_strength();
-			    if (i_ptr->flags & TR_CURSED) {
+			    if (i_ptr->flags & TR3_CURSED) {
 				msg_print("Oops! It feels deathly cold!");
 				add_inscribe(i_ptr, ID_DAMD);
 			    /* To force a cost of 0, even if unidentified. */
