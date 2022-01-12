@@ -304,7 +304,7 @@ extern store_type *store;
 #else
 extern store_type store[MAX_STORES];
 #endif
-extern u16b store_choice[MAX_STORES][STORE_CHOICES];
+
 #ifndef MAC
 extern int (*store_buy[MAX_STORES])();
 #endif
