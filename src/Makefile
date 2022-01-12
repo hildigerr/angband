@@ -3,7 +3,7 @@
 SRCS = \
   main.c misc1.c misc2.c misc3.c misc4.c store.c arrays.c io.c birth.c desc.c\
   generate.c sets.c dungeon.c  command.ccreature.c death.c eat.c help.c magic.c\
-  potions.c prayer.c save.c staffs.c wands.c scrolls.c spells.c spells1.c cave.c\
+  potions.c prayer.c save.c staffs.c wands.c scrolls.c spells1.c spells2.c cave.c\
   wizard.c signals.c moria1.c moria2.c moria3.c moria4.c  monsters.c\
   treasure.c variable.c recall.c unix.c \
   player.c tables.c describe_mon.c rods.c random.c util.c z-util.c z-virt.c z-form.c
@@ -11,7 +11,7 @@ SRCS = \
 OBJS = \
   main.o misc1.o misc2.o misc3.o misc4.c store.o arrays.o io.o birth.o desc.o\
   generate.o sets.o dungeon.o  command.o creature.o death.o eat.o help.o magic.o\
-  potions.o prayer.o save.o staffs.o wands.o scrolls.o spells.o spells1.o cave.o\
+  potions.o prayer.o save.o staffs.o wands.o scrolls.o spells1.o spells2.o cave.o\
   wizard.o signals.o moria1.o moria2.o moria3.o moria4.o  monsters.o\
   treasure.o variable.o recall.o unix.o \
   player.o tables.o describe_mon.o rods.o util.o random.o z-util.o z-virt.o z-form.o
