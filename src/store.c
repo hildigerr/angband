@@ -345,6 +345,114 @@ static byte rgold_adj[MAX_RACES][MAX_RACES] = {
 
 
 /*
+ * Returns the value for any given object -RAK-
+ */
+s32b item_value(inven_type *i_ptr)
+{
+    s32b value;
+
+    /* Start with the item's known base cost */
+    value = i_ptr->cost;
+
+    /* don't purchase known cursed items */
+    if (i_ptr->ident & ID_DAMD) value = 0;
+
+		/* Weapons and armor	 */
+    else if (((i_ptr->tval >= TV_BOW) && (i_ptr->tval <= TV_SWORD)) ||
+	     ((i_ptr->tval >= TV_BOOTS) && (i_ptr->tval <= TV_SOFT_ARMOR))) {
+	if (!known2_p(i_ptr))
+	    value = k_list[i_ptr->index].cost;
+	else if ((i_ptr->tval >= TV_BOW) && (i_ptr->tval <= TV_SWORD)) {
+	    if (i_ptr->tohit < 0)
+		value = 0;
+	    else if (i_ptr->todam < 0)
+		value = 0;
+	    else if (i_ptr->toac < 0)
+		value = 0;
+	    else
+		value = i_ptr->cost + (i_ptr->tohit + i_ptr->todam + i_ptr->toac) * 100;
+	} else {
+	    if (i_ptr->toac < 0)
+		value = 0;
+	    else
+		value = i_ptr->cost + i_ptr->toac * 100;
+	}
+    } else if (((i_ptr->tval >= TV_SHOT) && (i_ptr->tval <= TV_ARROW))
+	       || (i_ptr->tval == TV_SPIKE)) {	/* Ammo			 */
+	if (!known2_p(i_ptr))
+	    value = k_list[i_ptr->index].cost;
+	else {
+	    if (i_ptr->tohit < 0)
+		value = 0;
+	    else if (i_ptr->todam < 0)
+		value = 0;
+	    else if (i_ptr->toac < 0)
+		value = 0;
+	    else
+
+	    /* use 5, because missiles generally appear in groups of 20, so
+	     * 20 * 5 == 100, which is comparable to weapon bonus above 
+	     */
+		value = i_ptr->cost + (i_ptr->tohit + i_ptr->todam + i_ptr->toac) * 5;
+	}
+				/* Potions, Scrolls, and Food */
+    } else if ((i_ptr->tval == TV_SCROLL1) || (i_ptr->tval == TV_SCROLL2) ||
+	       (i_ptr->tval == TV_POTION1) || (i_ptr->tval == TV_POTION2)) {
+	if (!known1_p(i_ptr))
+	    value = 20;
+    } else if (i_ptr->tval == TV_FOOD) {
+	if ((i_ptr->sval < (ITEM_SINGLE_STACK_MIN + MAX_SHROOM))
+	    && !known1_p(i_ptr))
+	    value = 1;
+				/* Rings and amulets */
+    } else if ((i_ptr->tval == TV_AMULET) || (i_ptr->tval == TV_RING)) {
+	/* player does not know what type of ring/amulet this is */
+	if (!known1_p(i_ptr))
+	    value = 45;
+	else if (!known2_p(i_ptr))
+	/* player knows what type of ring, but does not know whether it is
+	 * cursed or not, if refuse to buy cursed objects here, then player
+	 * can use this to 'identify' cursed objects 
+	 */
+	    value = k_list[i_ptr->index].cost;
+				/* Wands and staffs */
+    } else if ((i_ptr->tval == TV_STAFF) || (i_ptr->tval == TV_WAND)) {
+	if (!known1_p(i_ptr)) {
+
+	    if (i_ptr->tval == TV_WAND)
+		value = 50;
+	    else
+		value = 70;
+	} else if (known2_p(i_ptr))
+	    value = i_ptr->cost + (i_ptr->cost / 20) * i_ptr->p1;
+    }
+				/* picks and shovels */
+    else if (i_ptr->tval == TV_DIGGING) {
+	if (!known2_p(i_ptr))
+	    value = k_list[i_ptr->index].cost;
+	else {
+	    if (i_ptr->p1 < 0)
+		value = 0;
+	    else {
+
+	    /* some digging tools start with non-zero p1 values, so only
+	     * multiply the plusses by 100, make sure result is positive 
+	     * no longer; have adjusted costs in treasure.c -CWS
+	     */
+		value = i_ptr->cost + i_ptr->p1;
+		if (value < 0)
+		    value = 0;
+	    }
+	}
+    }
+/* multiply value by number of items if it is a group stack item */
+    if (i_ptr->sval > ITEM_GROUP_MIN)	/* do not include torches here */
+	value = value * i_ptr->number;
+    return (value);
+}
+
+
+/*
  * Asking price for an item			-RAK-
  */
 static s32b sell_price(int snum, s32b *max_sell, s32b *min_sell, inven_type *item)
