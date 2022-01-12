@@ -1777,7 +1777,7 @@ static void do_command(char com_val)
 	do_cmd_disarm();
 	break;
       case 'E':			/* (E)at food */
-	eat();
+	do_cmd_eat_food();
 	break;
       case 'F':			/* (F)ill lamp */
 	refill_lamp();

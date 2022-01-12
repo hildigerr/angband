@@ -459,8 +459,8 @@ int special_check(inven_type *);
 void rerate(void);
 int ruin_stat(int);
 
-/* eat.c */
-void eat(void);
+/* effects.c */
+void do_cmd_eat_food(void);
 
 /* files.c */
 void read_times(void);
