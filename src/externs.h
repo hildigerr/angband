@@ -908,7 +908,6 @@ void use(void);
 /* store.c */
 s32b item_value(inven_type *i_ptr);
 s32b sell_price(int, s32b *, s32b *, struct inven_type *);
-int store_check_num(inven_type *, int);
 void store_carry(int, int *, struct inven_type *);
 void store_destroy(int, int, int);
 void store_init(void);

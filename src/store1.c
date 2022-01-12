@@ -13,53 +13,10 @@
 
 static void special_offer(inven_type *);
 static void insert_store(int, int, s32b, struct inven_type *);
-static void store_create(int);
 
 
 
 
-
-/* Check to see if he will be carrying too many objects	-RAK-	 */
-int store_check_num(inven_type *t_ptr, int store_num)
-{
-    register int        store_check, i;
-    register store_type *s_ptr;
-    register inven_type *i_ptr;
-
-    store_check = FALSE;
-    s_ptr = &store[store_num];
-    if (s_ptr->store_ctr < STORE_INVEN_MAX)
-	store_check = TRUE;
-    else if (t_ptr->sval >= ITEM_SINGLE_STACK_MIN)
-	for (i = 0; i < s_ptr->store_ctr; i++) {
-	    i_ptr = &s_ptr->store_inven[i].sitem;
-
-	/* note: items with sval of gte ITEM_SINGLE_STACK_MAX only stack if
-	 * their svals match 
-	 */
-	    if (i_ptr->tval == t_ptr->tval && i_ptr->sval == t_ptr->sval
-		&& ((int)i_ptr->number + (int)t_ptr->number < 256)
-		&& (t_ptr->sval < ITEM_GROUP_MIN
-		    || (i_ptr->p1 == t_ptr->p1)))
-		store_check = TRUE;
-	}
-
-/* But, wait.  If at home, don't let player drop 25th item, or he will lose it. -CFT */
-    if (is_home && (t_ptr->sval >= ITEM_SINGLE_STACK_MIN))
-	for (i = 0; i < s_ptr->store_ctr; i++) {
-	    i_ptr = &s_ptr->store_inven[i].sitem;
-	/*
-	 * note: items with sval of gte ITEM_SINGLE_STACK_MAX only stack if
-	 * their svals match 
-	 */
-	    if (i_ptr->tval == t_ptr->tval && i_ptr->sval == t_ptr->sval
-		&& ((int)i_ptr->number + (int)t_ptr->number > 24)
-		&& (t_ptr->sval < ITEM_GROUP_MIN
-		    || (i_ptr->p1 == t_ptr->p1)))
-		store_check = FALSE;
-	}
-    return (store_check);
-}
 
 
 /* Insert INVEN_MAX at given location	 */
@@ -211,59 +168,6 @@ void store_init()
 }
 
 
-/* Creates an item and inserts it into store's inven	-RAK-	 */
-static void store_create(int store_num)
-{
-    register int         i, tries;
-    int                  cur_pos, dummy;
-    register store_type *s_ptr;
-    register inven_type *t_ptr;
-
-    tries = 0;
-    cur_pos = i_pop();
-    s_ptr = &store[store_num];
-    object_level = OBJ_TOWN_LEVEL;
-    do {
-	if (store_num != 6) {
-	    i = store_choice[store_num][randint(STORE_CHOICES) - 1];
-	    invcopy(&i_list[cur_pos], i);
-	    magic_treasure(cur_pos, OBJ_TOWN_LEVEL, FALSE, TRUE);
-	    t_ptr = &i_list[cur_pos];
-	    if (store_check_num(t_ptr, store_num)) {
-		if ((t_ptr->cost > 0) &&	/* Item must be good	 */
-		    (t_ptr->cost < owners[s_ptr->owner].max_cost)) {
-
-/* equivalent to calling ident_spell(), except will not change the object_ident array */
-		    store_bought(t_ptr);
-		    special_offer(t_ptr);
-		    store_carry(store_num, &dummy, t_ptr);
-		    tries = 10;
-		}
-	    }
-	    tries++;
-	} else {
-	    i = get_obj_num(40, FALSE);
-	    invcopy(&i_list[cur_pos], i);
-	    magic_treasure(cur_pos, 40, FALSE, TRUE);
-	    t_ptr = &i_list[cur_pos];
-	    if (store_check_num(t_ptr, store_num)) {
-		if (t_ptr->cost > 0) {	/* Item must be good	 */
-		/*
-		 * equivalent to calling ident_spell(), except will not
-		 * change the object_ident array 
-		 */
-		    store_bought(t_ptr);
-		    special_offer(t_ptr);
-		    store_carry(store_num, &dummy, t_ptr);
-		    tries = 10;
-		}
-	    }
-	    tries++;
-	}
-    }
-    while (tries <= 3);
-    pusht(cur_pos);
-}
 
 static void special_offer(inven_type *i_ptr)
 {
