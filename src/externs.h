@@ -294,11 +294,6 @@ extern s16b total_winner;
 
 /*** Store information ***/
 
-#ifdef MACGAME
-extern owner_type *owners;
-#else
-extern owner_type owners[MAX_OWNERS];
-#endif
 #ifdef MAC
 extern store_type *store;
 #else
