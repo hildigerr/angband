@@ -539,6 +539,84 @@ static int store_check_num(inven_type *t_ptr, int store_num)
 }
 
 
+
+/*
+ * Add the item in INVEN_MAX to stores inventory.	-RAK-	 
+ */
+static void store_carry(int store_num, int *ipos, inven_type *t_ptr)
+{
+    int                 item_num, item_val, flag;
+    register int        typ, subt;
+    s32b               icost, dummy;
+    register inven_type *i_ptr;
+    register store_type *s_ptr;
+    int stacked = FALSE; /* from inven_carry() -CFT */
+
+    *ipos = -1;
+    if (sell_price(store_num, &icost, &dummy, t_ptr) > 0 || is_home)
+    {
+	s_ptr = &store[store_num];
+	item_val = 0;
+	item_num = t_ptr->number;
+	flag = FALSE;
+	typ  = t_ptr->tval;
+	subt = t_ptr->sval;
+	if (subt >= ITEM_SINGLE_STACK_MIN) { /* try to stack in store's inven */
+	    do {
+		i_ptr = &s_ptr->store_inven[item_val].sitem;
+		if (typ == i_ptr->tval)
+		{
+		    if (subt == i_ptr->sval && /* Adds to other item        */
+			subt >= ITEM_SINGLE_STACK_MIN
+			&& (subt < ITEM_GROUP_MIN || i_ptr->p1 == t_ptr->p1))
+		    {
+			stacked = TRUE; /* remember that we did stack it... -CFT */
+			*ipos = item_val;
+			i_ptr->number += item_num;
+			/* must set new scost for group items, do this only for items
+			   strictly greater than group_min, not for torches, this
+			   must be recalculated for entire group */
+			if (subt > ITEM_GROUP_MIN)
+			{
+			    (void) sell_price (store_num, &icost, &dummy, i_ptr);
+			    s_ptr->store_inven[item_val].scost = -icost;
+			}
+			/* must let group objects (except torches) stack over 24
+			   since there may be more than 24 in the group */
+			else if (i_ptr->number > 24)
+			    i_ptr->number = 24;
+			flag = TRUE;
+		    }
+		}
+		item_val ++;
+	    } while (!stacked && (item_val < s_ptr->store_ctr));
+	} /* if might stack... -CFT */
+	if (!stacked) {		/* either never stacks, or didn't find a place to stack */
+	    item_val = 0;
+	    do {
+		i_ptr = &s_ptr->store_inven[item_val].sitem;
+		if ((typ > i_ptr->tval) || /* sort by desc tval, */
+		    ((typ == i_ptr->tval) &&
+		     ((t_ptr->level < i_ptr->level) || /* then by inc level, */
+		      ((t_ptr->level == i_ptr->level) &&
+		       (subt < i_ptr->sval))))) /* and finally by inc sval -CFT */
+		{		/* Insert into list             */
+		    insert_store(store_num, item_val, icost, t_ptr);
+		    flag = TRUE;
+		    *ipos = item_val;
+		}
+		item_val++;
+	    } while ((item_val < s_ptr->store_ctr) && (!flag));
+	} /* if didn't already stack it... */
+	if (!flag)		/* Becomes last item in list    */
+	{
+	    insert_store(store_num, (int)s_ptr->store_ctr, icost, t_ptr);
+	    *ipos = s_ptr->store_ctr - 1;
+	}
+    }
+}
+
+
 /*
  * Creates a random item and gives it to a store
  */
