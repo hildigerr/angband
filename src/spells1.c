@@ -202,3 +202,15 @@ void poison_gas(int dam, cptr kb_str)
 
 
 
+/*
+ * this assumes only 1 move apart -CFT
+ */
+static char bolt_char(int y, int x, int ny, int nx)
+{
+    if (ny == y) return '-';
+    if (nx == x) return '|';
+    if ((ny-y) == (nx-x)) return '\\';
+    return '/';
+}
+
+
