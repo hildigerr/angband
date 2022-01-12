@@ -119,32 +119,6 @@ s32b item_value(inven_type *i_ptr)
 }
 
 
-/* Asking price for an item				-RAK-	 */
-s32b sell_price(int snum, s32b *max_sell, s32b *min_sell, inven_type *item)
-{
-    register s32b      i;
-    register store_type *s_ptr;
-
-    s_ptr = &store[snum];
-    i = item_value(item);
-/* check item->cost in case it is cursed, check i in case it is damaged */
-    if ((item->cost > 0) && (i > 0)) {
-	i = i * rgold_adj[owners[s_ptr->owner].owner_race][py.misc.prace] / 100;
-	if (i < 1)
-	    i = 1;
-	*max_sell = i * owners[s_ptr->owner].max_inflate / 100;
-	*min_sell = i * owners[s_ptr->owner].min_inflate / 100;
-	if (snum == 6) {
-	    (*max_sell) *= 2;
-	    (*min_sell) *= 2;
-	}
-	if (*min_sell > *max_sell)
-	    *min_sell = *max_sell;
-	return (i);
-    } else
-    /* don't let the item get into the store inventory */
-	return (0);
-}
 
 
 /* Check to see if he will be carrying too many objects	-RAK-	 */

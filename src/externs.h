@@ -267,7 +267,6 @@ extern s16b char_col;
 extern char *dsp_race[MAX_RACES]; /* Short strings for races. -CJS- */
 #endif
 
-extern byte rgold_adj[MAX_RACES][MAX_RACES];
 
 extern player_class class[MAX_CLASS];
 extern s16b class_level_adj[MAX_CLASS][MAX_LEV_ADJ];

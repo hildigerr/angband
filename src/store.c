@@ -321,6 +321,70 @@ static owner_type owners[MAX_OWNERS] = {
 
 
 /*
+ * Buying and selling adjustments for character race VS store
+ * owner race							
+ */
+
+static byte rgold_adj[MAX_RACES][MAX_RACES] = {
+
+			/*Hum, HfE, Elf,  Hal, Gno, Dwa, HfO, HfT, Dun, HiE*/
+
+/*Human		 */	 { 100, 105, 105, 110, 113, 115, 120, 125, 100, 105},
+/*Half-Elf	 */	 { 110, 100, 100, 105, 110, 120, 125, 130, 110, 100},
+/*Elf		 */	 { 110, 105, 100, 105, 110, 120, 125, 130, 110, 100},
+/*Halfling	 */	 { 115, 110, 105,  95, 105, 110, 115, 130, 115, 105},
+/*Gnome		 */	 { 115, 115, 110, 105,  95, 110, 115, 130, 115, 110},
+/*Dwarf		 */	 { 115, 120, 120, 110, 110,  95, 125, 135, 115, 120},
+/*Half-Orc	 */	 { 115, 120, 125, 115, 115, 130, 110, 115, 115, 125},
+/*Half-Troll	 */	 { 110, 115, 115, 110, 110, 130, 110, 110, 110, 115},
+/*Dunedain 	 */	 { 100, 105, 105, 110, 113, 115, 120, 125, 100, 105},
+/*High_Elf	 */	 { 110, 105, 100, 105, 110, 120, 125, 130, 110, 100}
+
+};
+
+
+
+/*
+ * Asking price for an item			-RAK-
+ */
+static s32b sell_price(int snum, s32b *max_sell, s32b *min_sell, inven_type *item)
+{
+    register s32b      i;
+    register store_type *s_ptr = &store[snum];
+
+    i = item_value(item);
+
+    /* check item->cost in case it is cursed, check i in case it is damaged */
+    if ((item->cost > 0) && (i > 0)) {
+
+    /* Get the "basic value" */
+    i = i * rgold_adj[owners[s_ptr->owner].owner_race][py.misc.prace] / 100;
+
+    /* Nothing becomes free */
+    if (i < 1) i = 1;
+
+    /* Extract min/max sell values */
+    *max_sell = i * owners[s_ptr->owner].max_inflate / 100;
+    *min_sell = i * owners[s_ptr->owner].min_inflate / 100;
+
+    /* Black market is always over-priced */
+    if (snum == 6) {
+	(*max_sell) *= 2;
+	(*min_sell) *= 2;
+    }
+
+    /* Paranoia */
+    if (*min_sell > *max_sell) *min_sell = *max_sell;
+
+    /* Return the price */
+    return (i);
+    } else
+    /* don't let the item get into the store inventory */
+	return (0);
+}
+
+
+/*
  * Displays the set of commands
  */
 static void display_commands(void)
