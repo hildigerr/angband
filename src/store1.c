@@ -153,35 +153,4 @@ void store_maint()
     }
 }
 
-/* eliminate need to bargain if player has haggled well in the past   -DJB- */
-int noneedtobargain(int store_num, s32b minprice)
-{
-    register int         flagnoneed;
-    register store_type *s_ptr;
-
-    if (no_haggle_flag)
-	return (TRUE);
-
-    s_ptr = &store[store_num];
-    flagnoneed = ((s_ptr->good_buy == MAX_SHORT)
-		  || ((s_ptr->good_buy - 3 * s_ptr->bad_buy) > (5 + (minprice/50))));
-    return (flagnoneed);
-}
-
-
-/* update the bargin info					-DJB- */
-void updatebargain(int store_num, s32b price, s32b minprice)
-{
-    register store_type *s_ptr;
-
-    s_ptr = &store[store_num];
-    if (minprice > 9)
-	if (price == minprice) {
-	    if (s_ptr->good_buy < MAX_SHORT)
-		s_ptr->good_buy++;
-	} else {
-	    if (s_ptr->bad_buy < MAX_SHORT)
-		s_ptr->bad_buy++;
-	}
-}
 

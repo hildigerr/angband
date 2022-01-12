@@ -674,6 +674,51 @@ static void store_create(int store_num)
 }
 
 
+
+/*
+ * eliminate need to bargain if player has haggled well in the past
+ */
+static int noneedtobargain(int store_num, s32b minprice)
+{
+    register int         flagnoneed;
+    register store_type *s_ptr = &store[store_num];
+
+    /* Allow haggling to be turned off */
+    if (no_haggle_flag) return (TRUE);
+
+    flagnoneed = ((s_ptr->good_buy == MAX_SHORT)
+		  || ((s_ptr->good_buy - 3 * s_ptr->bad_buy) > (5 + (minprice/50))));
+    return (flagnoneed);
+}
+
+
+/*
+ * update the bargain info					-DJB- 
+ */
+static void updatebargain(int store_num, s32b price, s32b minprice)
+{
+    register store_type *st_ptr = &store[store_num];
+
+    /* Ignore cheap items */
+    if (minprice < 10) return;
+
+    /* Count the successful haggles */
+    if (price == minprice) {
+	if (st_ptr->good_buy < MAX_SHORT) {
+	    st_ptr->good_buy++;
+	}
+    }
+
+    /* Count the failed haggles */
+    else {
+	if (st_ptr->bad_buy < MAX_SHORT) {
+	    st_ptr->bad_buy++;
+	}
+    }
+}
+
+
+
 /*
  * Displays the set of commands
  */

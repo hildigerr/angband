@@ -911,8 +911,6 @@ s32b sell_price(int, s32b *, s32b *, struct inven_type *);
 void store_destroy(int, int, int);
 void store_init(void);
 void store_maint(void);
-int noneedtobargain(int, s32b);
-void updatebargain(int, s32b, s32b);
 void enter_store(int);
 
 #ifdef unix
