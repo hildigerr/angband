@@ -13,8 +13,7 @@
 
 
 /* Use a staff.					-RAK-	 */
-void 
-use()
+void use()
 {
     u32b                i;
     int                   j, k, item_val, chance, y, x;
@@ -251,3 +250,4 @@ use()
 	}
     }
 }
+

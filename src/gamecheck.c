@@ -29,8 +29,7 @@ void                unlock();
 void                log_game();
 
 /* Get load average - if this (or the user count) fail, we assume zero */
-int 
-load_average()
+int load_average()
 {
     struct statstime    stb;
 
@@ -41,8 +40,7 @@ load_average()
 }
 
 /* Count the number of users */
-int 
-users()
+int users()
 {
     int count = 0;
 
@@ -54,9 +52,7 @@ users()
 
 
 /* Scan the list of directories looking for the game */
-int 
-game_exists(gamename)
-char *gamename;
+int game_exists(char *gamename)
 {
     struct stat buf;
     int         i = 0;
@@ -74,8 +70,7 @@ char *gamename;
 }
 
 
-int 
-restrictions()
+int restrictions()
 {
     FILE *fp;
     char  temphost[10], thishost[10], discard[80];
@@ -97,9 +92,7 @@ restrictions()
 }
 
 
-main(argc, argv)
-int    argc;
-char **argv;
+main(int argc, char **argv)
 {
     char *stroke = 0;
     int   count = 0, load = 0;
@@ -149,9 +142,7 @@ nochecks:
     exit(1);
 }
 
-void 
-log_game(game)
-char *game;
+void log_game(char *game)
 {
     char           user[9];
     struct passwd *userinfo;
@@ -171,3 +162,4 @@ char *game;
 /* Dunno what would be best to do if we get error - so ignore it :-) */
     write(fd, buff, strlen(buff));
 }
+

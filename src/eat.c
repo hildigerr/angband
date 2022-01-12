@@ -12,8 +12,7 @@
 
 
 /* Eat some food.					-RAK-	 */
-void 
-eat()
+void eat()
 {
     u32b                 i;
     int                    j, k, item_val, ident;

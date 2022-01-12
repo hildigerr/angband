@@ -12,8 +12,7 @@
 
 
 /* Potions for the quaffing				-RAK-	 */
-void 
-quaff()
+void quaff()
 {
     u32b i, l;
     int    j, k, item_val;

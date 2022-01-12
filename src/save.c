@@ -1,6 +1,8 @@
+/* File: save.c */
+
+/* Purpose: save and restore games and monster memory info */
+
 /*
- * save.c: save and restore games and monster memory info 
- *
  * Copyright (c) 1989 James E. Wilson, Robert A. Koeneke 
  *
  * This software may be copied and distributed for educational, research, and
@@ -11,10 +13,18 @@
 #include "angband.h"
 
 
+/*
+ * This save package was brought to by		-JWT- and -RAK-
+ * and has been completely rewritten for UNIX by	-JEW-  
+ *
+ * and has been completely rewritten again by	 -CJS-
+ * and completely rewritten again! for portability by -JEW-
+ */
+
+
 #ifndef USG
-/* stuff only needed for Berkeley UNIX */
-#include <sys/file.h>
-#include <sys/param.h>
+# include <sys/file.h>
+# include <sys/param.h>
 #endif
 
 #ifdef __MINT__
@@ -68,23 +78,21 @@ char *malloc();
  * these are used for the save file, to avoid having to pass them to every
  * procedure 
  */
-static FILE        *fileptr;
-static byte        xor_byte;
-static int          from_savefile; /* can overwrite old savefile when save */
+
+static FILE *fileptr;
+
+static byte	xor_byte;	/* Simple encryption */
+
+static byte	version_maj;	/* Major version */
+static byte	version_min;	/* Minor version */
+static byte	patch_level;	/* Patch level */
+
+static int	from_savefile;	/* can overwrite old savefile when save */
+
 static u32b       start_time;	   /* time that play started */
-static byte        version_maj, version_min, patch_level;
-
-/*
- * This save package was brought to by			-JWT- and
- * RAK- and has been completely rewritten for UNIX by	-JEW-  
- */
-/* and has been completely rewritten again by	 -CJS-	 */
-/* and completely rewritten again! for portability by -JEW- */
 
 
-static char *
-basename(a)
-char *a;
+static char *basename(char *a)
 {
     char *b;
     char *strrchr();
@@ -94,25 +102,20 @@ char *a;
     return b;
 }
 
-static void 
-wr_unique(item)
-register struct unique_mon *item;
+static void wr_unique(register struct unique_mon *item)
 {
     wr_long((u32b) item->exist);
     wr_long((u32b) item->dead);
 }
 
-static void 
-rd_unique(item)
-register struct unique_mon *item;
+static void rd_unique(register struct unique_mon *item)
 {
     rd_long((u32b *) & item->exist);
     rd_long((u32b *) & item->dead);
 }
 
 
-static int 
-sv_write()
+static int sv_write()
 {
     u32b              l;
     register int        i, j;
@@ -625,8 +628,7 @@ sv_write()
     return TRUE;
 }
 
-int 
-save_player()
+int save_player()
 {
     vtype temp;
     char *tmp2;
@@ -651,21 +653,24 @@ save_player()
     return TRUE;
 }
 
-int 
-_save_player(fnam)
-char *fnam;
+int _save_player(char *fnam)
 {
     vtype temp;
     int   ok, fd;
     byte char_tmp;
 
+    /* Forbid suspend */
     signals_ignore_tstp();
+
     put_qio();
     disturb(1, 0);		   /* Turn off resting and searching. */
+
     /* Fix the speed */
     py.flags.speed -= pack_heavy;
     py.flags.status |= PY_SPEED;
     pack_heavy = 0;
+
+    /* Assume failure */
     ok = FALSE;
 #ifndef ATARIST_MWC
     fd = (-1);
@@ -675,9 +680,12 @@ char *fnam;
 #else
     fd = my_topen(fnam, O_RDWR | O_CREAT | O_EXCL, 0666);
 #endif
-    if (fd < 0 && access(fnam, 0) >= 0 &&
+
+    /* This might not work... */
+    if ((fd < 0) && (access(fnam, 0) >= 0) &&
 	(from_savefile ||
 	 (wizard && get_check("Can't make new savefile. Overwrite old?")))) {
+
 #ifdef SET_UID
 	(void)chmod(fnam, 0600);
 	fd = my_topen(fnam, O_RDWR | O_TRUNC, 0600);
@@ -685,9 +693,14 @@ char *fnam;
 	(void)chmod(fnam, 0666);
 	fd = my_topen(fnam, O_RDWR | O_TRUNC, 0666);
 #endif
+
     }
+
     if (fd >= 0) {
+
+	/* Close the "fd" */
 	(void)close(fd);
+
 #endif				   /* !ATARIST_MWC */
     /* GCC for atari st defines atarist */
 #if defined(atarist) || defined(ATARIST_MWC) || defined(MSDOS) || defined(__MINT__)
@@ -697,6 +710,7 @@ char *fnam;
 #endif
 #ifndef ATARIST_MWC
     }
+
 #endif
     if (fileptr != NULL) {
 #ifdef MSDOS
@@ -713,37 +727,45 @@ char *fnam;
 	wr_byte(char_tmp);
     /* Note that xor_byte is now equal to char_tmp */
 
+	/* Write the savefile */
 	ok = sv_write();
-	if (fclose(fileptr) == EOF)
-	    ok = FALSE;
+
+	/* Attempt to close it */
+	if (fclose(fileptr) == EOF) ok = FALSE;
     }
+
+
+    /* Error */
     if (!ok) {
-	if (fd >= 0)
-	    (void)unlink(fnam);
+
+	if (fd >= 0) (void)unlink(fnam);
+
+	/* Allow suspend again */
 	signals();
-	if (fd >= 0)
-	    (void)sprintf(temp, "Error writing to savefile");
-	else
-	/* here? */
-	    (void)sprintf(temp, "Can't create new savefile");
+
+	/* Oops */
+	if (fd >= 0) (void)sprintf(temp, "Error writing to savefile");
+	else (void)sprintf(temp, "Can't create new savefile");
 	msg_print(temp);
 	return FALSE;
     } else
-	character_saved = 1;
+
+    /* Successful save */
+    character_saved = 1;
 
     turn = (-1);
 
+    /* Allow suspend again */
     signals();
 
+    /* Successful save */
     return TRUE;
 }
 
 
 /* Certain checks are ommitted for the wizard. -CJS- */
 
-int 
-load_player(generate)
-int *generate;
+int load_player(int *generate)
 {
     int                    i, j, fd, c, ok, total_count;
     u32b                 l, age, time_saved;
@@ -763,36 +785,49 @@ int *generate;
     fd = (-1);
 
     if (access(savefile, 0) < 0) {
+
+	/* Allow suspend again */
 	signals();
+
 	msg_print("Savefile does not exist.");
 	return FALSE;
     }
-    clear_screen();
 
+    /* Notify the player */
+    clear_screen();
     (void)sprintf(temp, "Restoring Character.");
     put_str(temp, 23, 0);
+
+    /* Hack -- let the message get read */
     sleep(1);
 
     if (turn >= 0)
 	msg_print("IMPOSSIBLE! Attempt to restore while still alive!");
 
-/* Allow restoring a file belonging to someone else - if we can delete it. */
-/* Hence first try to read without doing a chmod. */
+    /* Allow restoring a file belonging to someone else, */
+    /* but only if we can delete it. */
+    /* Hence first try to read without doing a chmod. */
 
-    else if ((fd = my_topen(savefile, O_RDONLY, 0)) < 0)
+    else if ((fd = my_topen(savefile, O_RDONLY, 0)) < 0) {
 	msg_print("Can't open file for reading.");
+    }
+
     else {
 #ifndef SET_UID
 	struct stat         statbuf;
 
 #endif
+
 	turn = (-1);
+
 	ok = TRUE;
 
 #ifndef SET_UID
 	(void)fstat(fd, &statbuf);
 #endif
+
 	(void)close(fd);
+
     /* GCC for atari st defines atarist */
 #if defined(__MINT__) || defined(atarist) || defined(ATARIST_MWC) || defined(MSDOS)
 	fileptr = my_tfopen(savefile, "rb");
@@ -1278,22 +1313,26 @@ int *generate;
 		    prt("ERROR in to_be_wizard", 10, 0);
 		    goto error;
 		}
+
+		/* Revive the player */
 		prt("Attempting a resurrection!", 0, 0);
+
+		/* Not quite dead */
 		if (py.misc.chp < 0) {
 		    py.misc.chp = 0;
 		    py.misc.chp_frac = 0;
 		}
-	    /* don't let him starve to death immediately */
-		if (py.flags.food < 5000)
-		    py.flags.food = 5000;
+
+		/* don't let him starve to death immediately */
+		if (py.flags.food < 5000) py.flags.food = 5000;
+
 		cure_poison();
 		cure_blindness();
 		cure_confusion();
 		remove_fear();
-		if (py.flags.image > 0)
-		    py.flags.image = 0;
-		if (py.flags.cut > 0)
-		    py.flags.cut = 0;
+
+		if (py.flags.image > 0) py.flags.image = 0;
+		if (py.flags.cut > 0) py.flags.cut = 0;
 		if (py.flags.stun > 0) {
 		    if (py.flags.stun > 50) {
 			py.misc.ptohit += 20;
@@ -1304,12 +1343,15 @@ int *generate;
 		    }
 		    py.flags.stun = 0;
 		}
-		if (py.flags.word_recall > 0)
-		    py.flags.word_recall = 0;
-		dun_level = 0;	   /* Resurrect on the town level. */
+		if (py.flags.word_recall > 0) py.flags.word_recall = 0;
+
+		/* Resurrect on the town level. */
+		dun_level = 0;
+
+		/* Set character_generated */
 		character_generated = 1;
 
-	    /* set noscore to indicate a resurrection, and don't enter wizard mode */
+		/* set noscore to indicate a resurrection, and don't enter wizard mode */
 		to_be_wizard = FALSE;
 		noscore |= 0x1;
 	    } else {
@@ -1585,17 +1627,13 @@ closefiles:
     return FALSE;		   /* not reached, unless on mac */
 }
 
-static void 
-wr_byte(c)
-byte c;
+static void wr_byte(byte c)
 {
     xor_byte ^= c;
     (void)putc((int)xor_byte, fileptr);
 }
 
-static void 
-wr_short(s)
-u16b s;
+static void wr_short(u16b s)
 {
     xor_byte ^= (s & 0xFF);
     (void)putc((int)xor_byte, fileptr);
@@ -1603,9 +1641,7 @@ u16b s;
     (void)putc((int)xor_byte, fileptr);
 }
 
-static void 
-wr_long(l)
-register u32b l;
+static void wr_long(register u32b l)
 {
     xor_byte ^= (l & 0xFF);
     (void)putc((int)xor_byte, fileptr);
@@ -1617,10 +1653,7 @@ register u32b l;
     (void)putc((int)xor_byte, fileptr);
 }
 
-static void 
-wr_bytes(c, count)
-byte       *c;
-register int count;
+static void wr_bytes(byte *c, register int count)
 {
     register int    i;
     register byte *ptr;
@@ -1632,9 +1665,7 @@ register int count;
     }
 }
 
-static void 
-wr_string(str)
-register char *str;
+static void wr_string(register char *str)
 {
     while (*str != '\0') {
 	xor_byte ^= *str++;
@@ -1644,10 +1675,7 @@ register char *str;
     (void)putc((int)xor_byte, fileptr);
 }
 
-static void 
-wr_shorts(s, count)
-u16b      *s;
-register int count;
+static void wr_shorts(u16b *s, register int count)
 {
     register int        i;
     register u16b    *sptr;
@@ -1661,9 +1689,7 @@ register int count;
     }
 }
 
-static void 
-wr_item(item)
-register inven_type *item;
+static void wr_item(register inven_type *item)
 {
     wr_short(item->index);
     wr_byte(item->name2);
@@ -1687,9 +1713,7 @@ register inven_type *item;
     wr_short((u16b) item->timeout);
 }
 
-static void 
-wr_monster(mon)
-register monster_type *mon;
+static void wr_monster(register monster_type *mon)
 {
     wr_short((u16b) mon->hp);
     wr_short((u16b) mon->maxhp); /* added -CWS */
@@ -1705,9 +1729,7 @@ register monster_type *mon;
     wr_byte(mon->monfear);	/* added -CWS */
 }
 
-static void 
-rd_byte(ptr)
-byte *ptr;
+static void rd_byte(byte *ptr)
 {
     byte c;
 
@@ -1716,9 +1738,7 @@ byte *ptr;
     xor_byte = c;
 }
 
-static void 
-rd_short(ptr)
-u16b *ptr;
+static void rd_short(u16b *ptr)
 {
     byte  c;
     u16b s;
@@ -1730,9 +1750,7 @@ u16b *ptr;
     *ptr = s;
 }
 
-static void 
-rd_long(ptr)
-u32b *ptr;
+static void rd_long(u32b *ptr)
 {
     register u32b l;
     register byte  c;
@@ -1748,10 +1766,7 @@ u32b *ptr;
     *ptr = l;
 }
 
-static void 
-rd_bytes(ptr, count)
-byte *ptr;
-int    count;
+static void rd_bytes(byte *ptr, int count)
 {
     int   i;
     byte c, nc;
@@ -1765,9 +1780,7 @@ int    count;
     }
 }
 
-static void 
-rd_string(str)
-char *str;
+static void rd_string(char *str)
 {
     register byte c;
 
@@ -1779,10 +1792,7 @@ char *str;
     while (*str++ != '\0');
 }
 
-static void 
-rd_shorts(ptr, count)
-u16b      *ptr;
-register int count;
+static void rd_shorts(u16b *ptr, register int count)
 {
     register int        i;
     register u16b    *sptr;
@@ -1799,9 +1809,7 @@ register int count;
     }
 }
 
-static void 
-rd_item(item)
-register inven_type *item;
+static void rd_item(register inven_type *item)
 {
     rd_short(&item->index);
     rd_byte(&item->name2);
@@ -1825,9 +1833,7 @@ register inven_type *item;
     rd_short((u16b *) & item->timeout);
 }
 
-static void 
-rd_monster(mon)
-register monster_type *mon;
+static void rd_monster(register monster_type *mon)
 {
     rd_short((u16b *) & mon->hp);
     if ((version_maj >= 2) && (version_min >= 6))
@@ -1851,3 +1857,4 @@ register monster_type *mon;
     else
 	mon->monfear = 0; /* this is not saved either -CWS */
 }
+

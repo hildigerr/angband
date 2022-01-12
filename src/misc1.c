@@ -41,63 +41,75 @@ typedef struct statstime {
 
 
 
-/* gets a new random seed for the random number generator */
-void
-init_seeds()
+/*
+ * Gets a new random seed for the random number generator 
+ * Hack -- saves seeds for the town layout and object colors
+ */
+void init_seeds(void)
 {
+    /* Allocate some RNG arrays */
     old_state = (char *) malloc(256); /* excellent R.N.G. */
     dummy_state = (char *) malloc(8); /* so-so R.N.G., but who cares? -CFT */
-    
+
     /* if malloc choked on 264 bytes, we're dead anyways */
     if (!old_state || !dummy_state) {
 	puts("\nError initializing; unable to malloc space for RNG arrays...\n");
 	exit(2);
     }
-    
+
     /* is 'unix' a std define for unix system?  I thought UNIX is more common?
        This may need to be changed.  It's fine for PCs, anyways... -CFT */
 #ifdef unix
     /* Grab a random seed from the clock & PID... */
-    (void) initstate(time(NULL), dummy_state, 8);
-    (void) initstate(((getpid() << 1) * (time(NULL) >> 3)), old_state, 256);
+    (void)initstate(time(NULL), dummy_state, 8);
+    (void)initstate(((getpid() << 1) * (time(NULL) >> 3)), old_state, 256);
 #else
     /* ...else just grab a random seed from the clock. -CWS */
-    (void) initstate(time(NULL), dummy_state, 8);
-    (void) initstate(random(), old_state, 256);
+    (void)initstate(time(NULL), dummy_state, 8);
+    (void)initstate(random(), old_state, 256);
 #endif /* unix */
+
+    /* Hack -- Extract seeds for the town layout and object colors */
     town_seed = random();
     randes_seed = random();
 }
 
-/* change to different random number generator state */
-void 
-set_seed(seed)
-u32b seed;
+
+/*
+ * change to different random number generator state
+ * Hack -- used to keep consistent object colors and town layout
+ */
+void set_seed(u32b seed)
 {
     setstate(dummy_state);
-    srandom((seed % 2147483646L) + 1);	/* necessary to keep the town/desc's */
-}                                       /* the same (legacy from rnd.c) -CWS */
+    srandom((seed % 2147483646L) + 1);
+}
 
 
-/* restore the normal random generator state */
-void 
-reset_seed()
+/*
+ * restore the normal random generator state
+ */
+void reset_seed(void)
 {
     (void)setstate(old_state);
 }
 
 
-#if !defined(time_t)
-#define time_t long
-#endif
-
-/* Check the day-time strings to see if open		-RAK-	 */
-int 
-check_time()
+/*
+ * Check the day-time strings to see if open		-RAK-	
+ */
+int check_time(void)
 {
+
 #ifdef CHECK_HOURS
+
+# if !defined(time_t)
+#  define time_t long
+# endif
+
     time_t              c;
     register struct tm *tp;
+
 #ifndef __MINT__
     struct statstime    st;
 #endif
@@ -107,99 +119,116 @@ check_time()
     if (days[tp->tm_wday][tp->tm_hour + 4] != 'X') {
 	return FALSE;
     }
-#if !(defined(__MINT__) || defined(NCR3K) || defined(linux) \
-|| defined(__386BSD__) || defined (__osf__))
- else {
+
+#if !(defined(__MINT__) || defined(NCR3K) || defined(linux) || \
+      defined(__386BSD__) || defined (__osf__))
+
+    else {
 	if (!rstat("localhost", &st)) {
-	    if (((int)((double)st.avenrun[2] / (double)FSCALE)) >= (int)LOAD)
+	    if (((int)((double)st.avenrun[2] / (double)FSCALE)) >= (int)LOAD) {
 		return FALSE;
+	    }
 	}
     }
+
 #endif /* MINT, etc */
+
 #endif /* CHECK_HOURS - [cjh] */
+
     return TRUE;
 }
 
 
 
-/* Generates a random integer number of NORMAL distribution -RAK- */
-int 
-randnor(mean, stand)
-int mean, stand;
+/*
+ * Generates a random integer number of NORMAL distribution -RAK- 
+ */
+int randnor(int mean, int stand)
 {
     register int tmp, offset, low, iindex, high;
 
     tmp = randint(MAX_SHORT);
 
-/* off scale, assign random value between 4 and 5 times SD */
+    /* off scale, assign random value between 4 and 5 times SD */
     if (tmp == MAX_SHORT) {
+
 	offset = 4 * stand + randint(stand);
 
-    /* one half are negative */
-	if (randint(2) == 1)
-	    offset = (-offset);
+	/* one half are negative */
+	if (randint(2)) offset = (-offset);
 
 	return (mean + offset);
     }
-/* binary search normal normal_table to get index that matches tmp */
-/* this takes up to 8 iterations */
+
+
+    /* binary search normal normal_table to get index that matches tmp */
     low = 0;
     iindex = NORMAL_TABLE_SIZE >> 1;
     high = NORMAL_TABLE_SIZE;
+
+    /* this takes up to 8 iterations */
     while (TRUE) {
-	if ((normal_table[iindex] == tmp) || (high == (low + 1)))
+
+	if ((normal_table[iindex] == tmp) || (high == (low + 1))) {
 	    break;
+	}
+
 	if (normal_table[iindex] > tmp) {
 	    high = iindex;
 	    iindex = low + ((iindex - low) >> 1);
-	} else {
+	}
+	else {
 	    low = iindex;
 	    iindex = iindex + ((high - iindex) >> 1);
 	}
     }
 
-/* might end up one below target, check that here */
-    if (normal_table[iindex] < tmp)
-	iindex = iindex + 1;
+    /* might end up one below target, check that here */
+    if (normal_table[iindex] < tmp) iindex = iindex + 1;
 
-/* normal_table is based on SD of 64, so adjust the index value here, round
- * the half way case up 
- */
+    /* normal_table is based on SD of 64, so adjust the index value here, */
+    /* round the half way case up */
     offset = ((stand * iindex) + (NORMAL_TABLE_SD >> 1)) / NORMAL_TABLE_SD;
 
-/* one half should be negative */
-    if (randint(2) == 1)
-	offset = (-offset);
+
+    /* one half should be negative */
+    if (randint(2)) offset = (-offset);
 
     return (mean + offset);
 }
 
 
-/* Returns position of first set bit			-RAK-	 */
-/* and clears that bit */
-int 
-bit_pos(test)
-u32b *test;
+/*
+ * Returns position of first set bit (and clears that bit) 
+ */
+int bit_pos(u32b *test)
 {
     register int    i;
     register u32b mask = 0x1L;
 
+    
+    /* Scan the input */
     for (i = 0; i < sizeof(*test) * 8; i++) {
+
+	/* Test and clear */
 	if (*test & mask) {
 	    *test &= ~mask;
 	    return (i);
 	}
+
+	/* Next! */
 	mask <<= 0x1L;
     }
 
-/* no one bits found */
+    /* no one bits found */
     return (-1);
 }
 
 
-/* Calculates current boundaries				-RAK-	 */
-void 
-panel_bounds()
+/*
+ * Calculates current boundaries
+ */
+void panel_bounds()
 {
     panel_row_min = panel_row * (SCREEN_HEIGHT / 2);
     panel_row_max = panel_row_min + SCREEN_HEIGHT - 1;
@@ -210,90 +239,90 @@ panel_bounds()
 }
 
 
-/* Given an row (y) and col (x), this routine detects  -RAK-	 */
 /*
- * when a move off the screen has occurred and figures new borders. Force
- * forcses the panel bounds to be recalculated, useful for 'W'here. 
+ * Given an row (y) and col (x), this routine detects when a move
+ * off the screen has occurred and figures new borders. -RAK-
+ *
+ * "Update" forces a "full update" to take place.
  */
-int 
-get_panel(y, x, force)
-int y, x, force;
+int get_panel(int y, int x, int update)
 {
-    register int prow, pcol;
-    register int panel;
+    int prow = panel_row;
+    int pcol = panel_col;
+    int panel;
 
-    prow = panel_row;
-    pcol = panel_col;
-    if (force || (y < panel_row_min + 2) || (y > panel_row_max - 2)) {
+    if (update || (y < panel_row_min + 2) || (y > panel_row_max - 2)) {
 	prow = ((y - SCREEN_HEIGHT / 4) / (SCREEN_HEIGHT / 2));
-	if (prow > max_panel_rows)
-	    prow = max_panel_rows;
-	else if (prow < 0)
-	    prow = 0;
+	if (prow > max_panel_rows) prow = max_panel_rows;
+	else if (prow < 0) prow = 0;
     }
-    if (force || (x < panel_col_min + 3) || (x > panel_col_max - 3)) {
+
+    if (update || (x < panel_col_min + 3) || (x > panel_col_max - 3)) {
 	pcol = ((x - SCREEN_WIDTH / 4) / (SCREEN_WIDTH / 2));
-	if (pcol > max_panel_cols)
-	    pcol = max_panel_cols;
-	else if (pcol < 0)
-	    pcol = 0;
+	if (pcol > max_panel_cols) pcol = max_panel_cols;
+	else if (pcol < 0) pcol = 0;
     }
+
     if ((prow != panel_row) || (pcol != panel_col)) {
-	panel_row = prow;
-	panel_col = pcol;
-	panel_bounds();
+
+    /* Save the new panel info */
+    panel_row = prow;
+    panel_col = pcol;
+
+    /* Recalculate the boundaries */
+    panel_bounds();
+
 	panel = TRUE;
+
     /* stop movement if any */
-	if (find_bound)
-	    end_find();
+    if (find_bound) end_find();
+
     } else
 	panel = FALSE;
     return (panel);
 }
 
 
-/* Distance between two points				-RAK-	 */
-int 
-distance(y1, x1, y2, x2)
-int y1, x1, y2, x2;
+/*
+ * Distance between two points
+ */
+int distance(int y1, int x1, int y2, int x2)
 {
-    register int dy, dx;
+    register int dy, dx, d;
 
+    /* Find the absolute y/x distance components */
     dy = y1 - y2;
-    if (dy < 0)
-	dy = (-dy);
+    if (dy < 0) dy = (-dy);
     dx = x1 - x2;
-    if (dx < 0)
-	dx = (-dx);
+    if (dx < 0) dx = (-dx);
 
     return ((((dy + dx) << 1) - (dy > dx ? dx : dy)) >> 1);
 }
 
 
 
-
-/* generates damage for 2d6 style dice rolls */
-int 
-damroll(num, sides)
-int num, sides;
+/*
+ * Generates damage for "2d6" style dice rolls
+ */
+int damroll(int num, int sides)
 {
     register int i, sum = 0;
-
-    for (i = 0; i < num; i++)
-	sum += randint(sides);
+    for (i = 0; i < num; i++) sum += randint(sides);
     return (sum);
 }
 
-int 
-pdamroll(array)
-byte *array;
+
+/* 
+ * Old "array" format
+ */
+int pdamroll(byte *array)
 {
     return damroll((int)array[0], (int)array[1]);
 }
 
 
 /*
- * Gives Max hit points					-RAK-	
+ * Same as above, but always maximal
  */
 int max_hp(byte *array)
 {
@@ -303,9 +332,7 @@ int max_hp(byte *array)
 
 
 /* Returns symbol for given row, column			-RAK-	 */
-unsigned char 
-loc_symbol(y, x)
-int y, x;
+unsigned char loc_symbol(int y, int x)
 {
     register cave_type    *cave_ptr;
     register struct flags *f_ptr;
@@ -345,38 +372,39 @@ int y, x;
 }
 
 
-/* Add to the players food time				-RAK-	 */
-void 
-add_food(num)
-int num;
+/*
+ * Add to the players food time				-RAK-	 
+ */
+void add_food(int num)
 {
-    register struct flags *p_ptr;
+    register struct flags *p_ptr = &py.flags;
     register int           extra, penalty;
 
-    p_ptr = &py.flags;
-    if (p_ptr->food < 0)
-	p_ptr->food = 0;
+    if (p_ptr->food < 0) p_ptr->food = 0;
     p_ptr->food += num;
-    if (num > 0 && p_ptr->food <= 0)
-	p_ptr->food = 32000;	   /* overflow check */
+    /* overflow check */
+    if (num > 0 && p_ptr->food <= 0) p_ptr->food = 32000;
+
     if (p_ptr->food > PLAYER_FOOD_MAX) {
+
 	msg_print("You are bloated from overeating. ");
 
-    /* Calculate how much of num is responsible for the bloating. Give the
+    /*
+     * Calculate how much of num is responsible for the bloating. Give the
      * player food credit for 1/50, and slow him for that many turns also.  
      */
 	extra = p_ptr->food - PLAYER_FOOD_MAX;
-	if (extra > num)
-	    extra = num;
+	if (extra > num) extra = num;
 	penalty = extra / 50;
 
 	p_ptr->slow += penalty;
-	if (extra == num)
-	    p_ptr->food = p_ptr->food - num + penalty;
-	else
-	    p_ptr->food = PLAYER_FOOD_MAX + penalty;
-    } else if (p_ptr->food > PLAYER_FOOD_FULL)
+	if (extra == num) p_ptr->food = p_ptr->food - num + penalty;
+	else p_ptr->food = PLAYER_FOOD_MAX + penalty;
+    }
+
+    else if (p_ptr->food > PLAYER_FOOD_FULL) {
 	msg_print("You are full. ");
+    }
 }
 
 

@@ -11,9 +11,7 @@
 #include "angband.h"
 
 
-int 
-set_corrodes(e)			   /* changed -CFT */
-inven_type *e;
+int set_corrodes(inven_type *e)			   /* changed -CFT */
 {
     int element = e->tval;
 
@@ -34,9 +32,7 @@ inven_type *e;
 }
 
 
-int 
-set_flammable(e)		   /* changed -CFT */
-inven_type *e;
+int set_flammable(inven_type *e)		   /* changed -CFT */
 {
     int element = e->tval;
 
@@ -69,9 +65,7 @@ inven_type *e;
 }
 
 
-int 
-set_frost_destroy(e)		   /* changed -CFT */
-inven_type *e;
+int set_frost_destroy(inven_type *e)		   /* changed -CFT */
 {
     int element = e->tval;
 
@@ -82,9 +76,7 @@ inven_type *e;
 }
 
 
-int 
-set_meteor_destroy(e)		   /* added -DGK */
-inven_type *e;
+int set_meteor_destroy(inven_type *e)		   /* added -DGK */
 {
     byte fi, fo;
 
@@ -94,9 +86,7 @@ inven_type *e;
 }
 
 
-int 
-set_mana_destroy(e)		   /* added -DGK */
-inven_type *e;
+int set_mana_destroy(inven_type *e)		   /* added -DGK */
 {				   /* destroy everything but artifacts */
     int element = e->tval;
 
@@ -107,9 +97,7 @@ inven_type *e;
 }
 
 
-int 
-set_holy_destroy(e)		   /* added -DGK */
-inven_type *e;
+int set_holy_destroy(inven_type *e)		   /* added -DGK */
 {
     int element = e->tval;
 
@@ -120,9 +108,7 @@ inven_type *e;
 }
 
 
-int 
-set_plasma_destroy(e)		   /* added -DGK */
-inven_type *e;
+int set_plasma_destroy(inven_type *e)		   /* added -DGK */
 {
     byte fi, li;
 
@@ -132,9 +118,7 @@ inven_type *e;
 }
 
 
-int 
-set_acid_affect(e)		   /* changed -CFT */
-inven_type *e;
+int set_acid_affect(inven_type *e)		   /* changed -CFT */
 {
     int element = e->tval;
 
@@ -161,9 +145,7 @@ inven_type *e;
 }
 
 
-int 
-set_lightning_destroy(e)	   /* changed -CFT */
-inven_type *e;
+int set_lightning_destroy(inven_type *e)	   /* changed -CFT */
 {
     int element = e->tval;
 
@@ -181,17 +163,13 @@ inven_type *e;
 }
 
 
-int 
-set_null(e)
-inven_type *e;
+int set_null(inven_type *e)
 {
     return (FALSE);
 }
 
 
-int 
-set_acid_destroy(e)		   /* changed -CFT */
-inven_type *e;
+int set_acid_destroy(inven_type *e)		   /* changed -CFT */
 {
     int element = e->tval;
 
@@ -224,9 +202,7 @@ inven_type *e;
 }
 
 
-int 
-set_fire_destroy(e)		   /* changed -CFT */
-inven_type *e;
+int set_fire_destroy(inven_type *e)		   /* changed -CFT */
 {
     int element = e->tval;
 
@@ -264,9 +240,7 @@ inven_type *e;
 }
 
 
-int 
-general_store(element)
-int element;
+int general_store(int element)
 {
     switch (element) {
       case TV_DIGGING:
@@ -282,9 +256,7 @@ int element;
 }
 
 
-int 
-armory(element)
-int element;
+int armory(int element)
 {
     switch (element) {
       case TV_BOOTS:
@@ -299,9 +271,8 @@ int element;
 }
 
 
-int 
-weaponsmith(element)
-int element;
+int weaponsmith(int element)
+
 {
     switch (element) {
       case TV_SHOT:
@@ -317,9 +288,7 @@ int element;
 }
 
 
-int 
-temple(element)
-int element;
+int temple(int element)
 {
     switch (element) {
       case TV_HAFTED:
@@ -334,9 +303,7 @@ int element;
 }
 
 
-int 
-alchemist(element)
-int element;
+int alchemist(int element)
 {
     switch (element) {
       case TV_SCROLL1:
@@ -349,9 +316,7 @@ int element;
 }
 
 
-int 
-magic_shop(element)
-int element;
+int magic_shop(int element)
 {
     switch (element) {
       case TV_AMULET:
@@ -369,16 +334,13 @@ int element;
     return (FALSE);
 }
 
-int 
-blackmarket(element)
-int element;
+int blackmarket(int element)
 {
     return (TRUE);
 }
 
-int 
-home(element)
-int element;
+int home(int element)
 {
     return (TRUE);
 }
+

@@ -26,31 +26,40 @@ char               *index();
 extern int rating;
 
 /* 
- *If too many objects on floor level, delete some of them
+ * When too many objects gather on the floor, delete some of them
+ *
+ * Note that the player could intentionally collect so many artifacts,
+ * and create so many stairs, that we become unable to compact.
+ * This may cause the program to crash.
  */
 static void compact_objects()
 {
     register int        i, j;
     register cave_type *c_ptr;
-    int                 ctr, cur_dis, chance;
+    int                 num;
+    int			cur_dis, chance;
 
 
     /* Debugging message */
     msg_print("Compacting objects...");
 
-    ctr = 0;
-    cur_dis = 66;
-    do {
+    for (num = 0, cur_dis = 66; num <= 0;) {
 
+	/* Examine the dungeon */
 	for (i = 0; i < cur_height; i++) {
 	    for (j = 0; j < cur_width; j++) {
 
+		/* Get the location */
 		c_ptr = &cave[i][j];
 
-		if ((c_ptr->tptr != 0)
-		    && (distance(i, j, char_row, char_col) > cur_dis)) {
+		/* Do not even consider empty grids */
+		if (c_ptr->tptr == 0) continue;
 
-		    switch (i_list[c_ptr->tptr].tval) {
+		/* Nearby objects start out "immune" */
+		if (distance(i, j, char_row, char_col) < cur_dis) continue;
+
+		/* Every object gets a "saving throw" */
+		switch (i_list[c_ptr->tptr].tval) {
 		    case TV_VIS_TRAP:
 			chance = 15;
 			break;
@@ -78,21 +87,18 @@ static void compact_objects()
 		}
 
 		/* Apply the saving throw */
-		if (randint(100) <= chance) {
+		if (randint(100) > chance) continue;
 
 		/* Delete it */
 		delete_object(i, j);
 
 		/* Count it */
-			ctr++;
-		    }
-		}
+		num++;
 	    }
-}
-	if (ctr == 0)
-	    cur_dis -= 6;
+	}
+	if (num == 0) cur_dis -= 6;
     }
-    while (ctr <= 0);
+
     if (cur_dis < 66)
 
     /* Redraw */
@@ -101,10 +107,11 @@ static void compact_objects()
 
 
 /*
- * Gives pointer to next free space			-RAK-
+ * Acquires and returns the index of a "free" item.
  */
 int i_pop(void)
 {
+    /* Compact if needed */
     if (tcptr == MAX_TALLOC) compact_objects();
 
     /* Return the next free space */
@@ -142,7 +149,7 @@ int m_bonus(int base, int limit, int level)
     /* check for level > max_std to check for overflow... */
     if (stand_dev > 40) stand_dev = 40;
 
-    /* abs may be a macro, don't call it with randnor as a parameter */
+    /* Call an odd function */
     tmp = randnor(0, stand_dev);
 
     /* Extract a weird value */
@@ -599,7 +606,7 @@ again:
 
 
 /*
- * Places an object at given row, column co-ordinate -RAK-
+ * Attempts to places a random object at the given location -RAK-
  */
 void place_object(int y, int x)
 {
@@ -655,7 +662,7 @@ void place_object(int y, int x)
 
 
 /*
- * Places a GOOD-object at given row, column co-ordinate ~Ludwig
+ * Places a "GOOD" object at given row, column co-ordinate ~Ludwig 
  */
 void place_good(int y, int x, u32b good)
 {
@@ -739,25 +746,30 @@ void place_good(int y, int x, u32b good)
 
 
 /*
- * Creates objects nearby the coordinates given -RAK-
+ * Create up to "num" objects near the given coordinates
  */
 void random_object(int y, int x, int num)
 {
     register int        i, j, k;
     register cave_type *cave_ptr;
 
-    do {
-	i = 0;
-	do {
+    /* Attempt to place 'num' objects */
+    for (; num > 0; --num) {
+
+	/* Try up to 11 spots looking for empty space */
+	for (i = 0; i < 11; ++i) {
+
 	    do {
 
 	    /* Pick a random location */
-		j = y - 3 + randint(5);
-		k = x - 4 + randint(7);
+	    j = y - 3 + randint(5);
+	    k = x - 4 + randint(7);
 
-	    } while (!in_bounds(j, k));
+	    /* Require legal grid */
+	    } while (!in_bounds(j,k));
 
 	    cave_ptr = &cave[j][k];
+
 	    if ((cave_ptr->fval <= MAX_CAVE_FLOOR) && (cave_ptr->tptr == 0)) {
 		object_level = dun_level;
 
@@ -766,30 +778,35 @@ void random_object(int y, int x, int num)
 		place_object(j, k);
 	    }
 	    else {
-		    place_gold(j, k);
+		place_gold(j, k);
 	    }
 
 		i = 9;
 	    }
-	    i++;
 	}
-	while (i <= 10);
-	num--;
     }
-    while (num != 0);
 }
 
 
+/*
+ * Same as above, but always "special"
+ * Only really called by "scroll of *acquirement*"
+ */
 void special_random_object(int y, int x, int num)
 {
     register int        i, j, k;
     register cave_type *cave_ptr;
 
     object_level = dun_level;
-    do {
-	i = 0;
-	do {
 
+    /* Place them */
+    for (; num > 0; --num) {
+
+	/* Try up to 11 spots looking for empty space */
+	for (i = 0; i < 12; ++i) {
+
+	    
+	    /* Pick a random spot */
 	    j = y - 3 + randint(5);
 	    k = x - 4 + randint(7);
 
@@ -805,21 +822,15 @@ void special_random_object(int y, int x, int num)
 		}
 		i = 9;
 	    }
-	    i++;
 	}
-	while (i <= 10);
-	num--;
     }
-    while (num != 0);
 }
 
 
 
 
 /* Destroy an item in the inventory			-RAK-	 */
-void 
-inven_destroy(item_val)
-int item_val;
+void inven_destroy(int item_val)
 {
     register int         j;
     register inven_type *i_ptr;
@@ -843,9 +854,7 @@ int item_val;
  * Copies the object in the second argument over the first argument. However,
  * the second always gets a number of one except for ammo etc. 
  */
-void 
-take_one_item(s_ptr, i_ptr)
-register inven_type *s_ptr, *i_ptr;
+void take_one_item(inven_type *s_ptr, inven_type *i_ptr)
 {
     *s_ptr = *i_ptr;
     if ((s_ptr->number > 1) && (s_ptr->sval >= ITEM_SINGLE_STACK_MIN)
@@ -855,9 +864,7 @@ register inven_type *s_ptr, *i_ptr;
 
 
 /* return FALSE if picking up an object would change the players speed */
-int 
-inven_check_weight(i_ptr)
-register inven_type *i_ptr;
+int inven_check_weight(inven_type *i_ptr)
 {
     register int i, new_inven_weight;
 
@@ -876,8 +883,7 @@ register inven_type *i_ptr;
 
 
 /* Are we strong enough for the current pack and weapon?  -CJS-	 */
-void 
-check_strength()
+void check_strength()
 {
     register int         i;
     register inven_type *i_ptr;

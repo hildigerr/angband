@@ -75,7 +75,7 @@ int compact_monsters(void)
 	     * horrible hack, the m_list/creatures() code needs to be
 	     * rewritten 
 	     */
-		else if (hack_monptr < i) {
+		else if (hack_m_idx < i) {
 		    delete_monster(i);
 		    delete_any = TRUE;
 		} else
@@ -113,7 +113,7 @@ int m_pop(void)
 
 
 /*
- * Places a monster at given location			-RAK-
+ * Places a monster at given location
  */
 int place_monster(int y, int x, int r_idx, int slp)
 {
@@ -350,7 +350,9 @@ static char *cap(char *str)
     return str;
 }
 
-
+/*
+ * Prepare the "ghost" monster_race info
+ */
 void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 {
     char ghost_race[20];
@@ -782,7 +784,8 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 
 
 /*
- * Places a monster at given location			-RAK-
+ * Places a ghost somewhere.
+ * Probably not the best possible algorithm.
  */
 int place_ghost()
 {
@@ -924,7 +927,8 @@ int get_mons_num(int level)
 
     int          old = level;
 
-again:
+
+    while (1) {
 
 	if (level == 0) {
 	    i = randint(m_level[0]) - 1;
@@ -960,14 +964,16 @@ again:
 	/* Uniques never appear out of "modified" depth */
 	if ((c_list[i].level > old) &&
 	    (c_list[i].cdefense & UNIQUE)) {
-	goto again;
+	    continue;
 	}
 
 	/* Quest Monsters never appear out of depth */
 	if ((c_list[i].level > dun_level) &&
 	    (c_list[i].cdefense & QUESTOR)) {
-	goto again;
+	    continue;
 	}
+
+    }
 
     /* Accept the monster */
     return i;
@@ -984,7 +990,8 @@ int get_nmons_num(int level)
 
     old = level;
 
-again:
+
+    while (1) {
 
 	if (level == 0) {
 	    i = randint(m_level[0]) - 1;
@@ -1014,14 +1021,16 @@ again:
 	}
 
 	if ((c_list[i].level > old) && (c_list[i].cdefense & UNIQUE)) {
-	    goto again;
+	    continue;
 	}
 
 	/* Quest monsters never appear out of depth */
 	if ((c_list[i].level > dun_level) &&
 	    (c_list[i].cdefense & QUESTOR)) {
-	    goto again;
+	    continue;
 	}
+
+    }
 
     /* Accept the monster */
     return i;
@@ -1167,54 +1176,55 @@ void alloc_monster(int num, int dis, int slp)
 
 
 /*
- * Places creature adjacent to given location -RAK-
+ * Places a random creature at or adjacent to the given location
  */
-int summon_monster(int *y, int *x, int slp)
+int summon_monster(int *yp, int *xp, int slp)
 {
-    register int        i, j, k;
-    int                 l, summon;
+    register int        i, y, x, r_idx;
+
     register cave_type *cave_ptr;
 
-    i = 0;
-    summon = FALSE;
-    l = get_mons_num(dun_level + MON_SUMMON_ADJ);
-    do {
+    r_idx = get_mons_num(dun_level + MON_SUMMON_ADJ);
+
+    /* Try nine locations */
+    for (i = 0; i < 9; i++) {
 
 	/* Pick a nearby location */
-	j = *y - 2 + randint(3);
-	k = *x - 2 + randint(3);
+	y = *yp - 2 + randint(3);
+	x = *xp - 2 + randint(3);
 
 	/* Require legal grid */
-	if (in_bounds(j, k)) {
+	if (!in_bounds(y, x)) continue;
 	
-	    cave_ptr = &cave[j][k];
+    cave_ptr = &cave[y][k];
 
 	/* Require "empty" floor grids */
-	    if (foor_grid_bold(j, k) && (cave_ptr->cptr == 0)) {
+	if (!((foor_grid_bold(y, x) && (cave_ptr->cptr == 0)))) continue;
 
-		if (c_list[l].cdefense & GROUP) {
-		    place_group(j, k, l, slp);
+	/* Place the monster */
+	if (c_list[r_idx].cdefense & GROUP) {
+	    place_group(y, x, r_idx, slp);
 	}
 	else {
-		    place_monster(j, k, l, slp);
+	    place_monster(y, x, r_idx, slp);
 	}
-		summon = TRUE;
-		i = 9;
 
 	/* Save the location */
-		*y = j;
-		*x = k;
-
-	    }
-	}
-	i++;
+	*yp = y;
+	*xp = x;
+		
+	/* Success */
+	return (TRUE);
     }
-    while (i <= 9);
-    return (summon);
+
+    /* Nothing summoned */
+    return (FALSE);
 }
 
 
-/* Places undead adjacent to given location		-RAK-	 */
+/*
+ * Places undead adjacent to given location
+ */
 int summon_undead(int *y, int *x)
 {
     register int        i, j, k;
@@ -1259,7 +1269,9 @@ int summon_undead(int *y, int *x)
     return (summon);
 }
 
-/* As for summon undead */
+/*
+ * Summon a demon.
+ */
 int summon_demon(int lev, int *y, int *x)
 {
     register int        i, j, k;
@@ -1304,7 +1316,6 @@ int summon_demon(int lev, int *y, int *x)
     return (summon);
 }
 
-/* As for summon demon:-) ~Ludwig */
 int summon_dragon(int *y, int *x)
 {
     register int        i, j, k;
@@ -1398,7 +1409,6 @@ int summon_wraith(int *y, int *x)
     return (summon);
 }
 
-/* Summon reptiles */
 int summon_reptile(int *y, int *x)
 {
     register int        i, j, k;
@@ -1445,8 +1455,6 @@ int summon_reptile(int *y, int *x)
     return (summon);
 }
 
-
-/* As for summon dragon, but keys on character ~Decado */
 int summon_spider(int *y, int *x)
 {
     register int        i, j, k;
@@ -1493,7 +1501,6 @@ int summon_spider(int *y, int *x)
     return (summon);
 }
 
-/* As for summon dragon, but keys on character ~Decado */
 int summon_angel(int *y, int *x)
 {
     register int        i, j, k;
@@ -1538,7 +1545,6 @@ int summon_angel(int *y, int *x)
     return (summon);
 }
 
-/* Summon ants */
 int summon_ant(int *y, int *x)
 {
     register int        i, j, k;
@@ -1585,7 +1591,6 @@ int summon_ant(int *y, int *x)
     return (summon);
 }
 
-/* Summon uniques */
 int summon_unique(int *y, int *x)
 {
     register int        i, j, k;
@@ -1632,7 +1637,6 @@ int summon_unique(int *y, int *x)
     return (summon);
 }
 
-/* Summon jabberwocks, for extra effect to the summon_unique spell */
 int summon_jabberwock(int *y, int *x)
 {
     register int        i, j, k;
@@ -1679,7 +1683,6 @@ int summon_jabberwock(int *y, int *x)
     return (summon);
 }
 
-/* Summon greater undead */
 int summon_gundead(int *y, int *x)
 {
     register int        i, j, k;
@@ -1727,7 +1730,6 @@ int summon_gundead(int *y, int *x)
     return (summon);
 }
 
-/* Summon ancient dragons */
 int summon_ancientd(int *y, int *x)
 int *y, *x;
 {
@@ -1775,7 +1777,6 @@ int *y, *x;
     return (summon);
 }
 
-/* As for summon hound, but keys on character ~Decado */
 int summon_hound(int *y, int *x)
 {
     register int        i, j, k;
@@ -5196,3 +5197,4 @@ static void magic_ammo(inven_type *t_ptr, int good, int chance, int special, int
 	}
     }
 }
+

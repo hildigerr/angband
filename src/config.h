@@ -1,6 +1,9 @@
-/* config.h: configuration definitions
- *
- * Copyright (c) 1989 James E. Wilson
+/* File: config.h */
+
+/* Purpose: Angband specific configuration stuff */
+
+/*
+ * Copyright (c) 1989 James E. Wilson, Robert A. Koeneke
  *
  * This software may be copied and distributed for educational, research, and
  * not for profit purposes provided that this copyright and statement are
@@ -9,7 +12,6 @@
 
 /* Person to bother if something goes wrong.
  */
-
 #define WIZARD	"root"
 
 
@@ -99,10 +101,15 @@
 #endif
 
 
+
+
+/*
+ * Prepare to use the "Secure" routines
+ */
 #ifdef SECURE
-extern int PlayerUID;
-#define getuid() PlayerUID
-#define geteuid() PlayerUID
+  extern int PlayerUID;
+# define getuid() PlayerUID
+# define geteuid() PlayerUID
 #endif
 
 

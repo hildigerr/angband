@@ -1,3 +1,4 @@
+=== Basic "changes" from Angband 2.6.1 to Angband 2.7.0 ===
 
 Rewrite of the "pathname constructor" code.
 Added floating point (yuck!) to "standard deviation" code.
@@ -5,6 +6,11 @@ Redid the targetting code, and the direction code.
 Cleaned up the header files (a lot).
 Separated out some generic "non-angband" files (like random.c).
 Added files to do "memory management" and "string formatting".
+Renamed a LOT of variables/fields to more "consistent" forms.
+Reorganized the source to make the files more "self-contained".
+
+Put "XXX" and "Hack" in the code to label areas of future work.
+
 
 
 

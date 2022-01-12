@@ -1,6 +1,8 @@
+/* File: signals.c */
+
+/* Purpose: signal handlers */
+
 /*
- * signals.c: signal handlers 
- *
  * Copyright (c) 1989 James E. Wilson 
  *
  * This software may be copied and distributed for educational, research, and
@@ -8,8 +10,10 @@
  * included in all such copies. 
  */
 
-/* This signal package was brought to you by		-JEW-  */
-/* Completely rewritten by				-CJS- */
+/*
+ * This signal package was brought to you by		-JEW- 
+ * Completely rewritten by				-CJS-
+ */
 
 /* Signals have no significance on the Mac */
 
@@ -96,10 +100,7 @@ static int          signal_count = 0;
 
 /* ARGSUSED */
 #ifndef USG
-static void 
-signal_handler(sig, code, scp)
-    int                 sig, code;
-    struct sigcontext  *scp;
+static void signal_handler(int sig, int code, struct sigcontext *scp)
 {
     int                 smask;
 
@@ -154,36 +155,55 @@ signal_handler(sig)
 		if (wait_for_more)
 		    put_str(" -more-", MSG_LINE, 0);
 		put_qio();
-		return;		   /* OK. We don't quit. */
+
+		/* OK. We don't quit. */
+		return;
 	    }
+	    /* Death */
 	    (void)strcpy(died_from, "Interrupting");
-	} else
+	}
+	else {
 	    (void)strcpy(died_from, "Abortion");
+	}
+
+	/* Interrupted */
 	prt("Interrupt!", 0, 0);
+
+	/* Suicide */
 	death = TRUE;
+
+	/* Save and exit */
 	exit_game();
     }
 
-/* Die. */
-    prt(
-	"OH NO!!!!!!  A gruesome software bug LEAPS out at you. There is NO defense!",
-	23, 0);
+    /* Die. */
+    prt("OH NO!!!!!!  A gruesome software bug LEAPS out at you. There is NO defense!", 23, 0);
     if (!death && !character_saved && character_generated) {
+
+	/* Try a panic save */
 	panic_save = 1;
 	prt("Your guardian angel is trying to save you.", 0, 0);
+
+	/* Attempt to save */
 	(void)sprintf(died_from, "(panic save %d)", sig);
 	if (!save_player()) {
-	    (void)strcpy(died_from, "software bug");
-	    death = TRUE;
+
+	/* Oops */
+	(void)strcpy(died_from, "software bug");
+	death = TRUE;
 	    turn = (-1);
 	}
-    } else {
+    }
+    else {
 	death = TRUE;
+
 	(void)_save_player(savefile);/* Quietly save the memory anyway. */
     }
+
     restore_term();
+
 #ifndef MSDOS
-/* always generate a core dump */
+    /* generate a core dump if necessary */
     (void)signal(sig, SIG_DFL);
     (void)kill(getpid(), sig);
     (void)sleep(5);
@@ -205,8 +225,10 @@ static int          mask;
 
 #endif
 
-void 
-signals_ignore_tstp()
+/*
+ * signals_ignore_tstp - Ignore SIGTSTP signals.
+ */
+void signals_ignore_tstp(void)
 {
 #if !defined(ATARIST_MWC)
 #ifdef SIGTSTP
@@ -224,8 +246,7 @@ signals_ignore_tstp()
 #endif
 }
 
-void 
-signals()
+void signals(void)
 {
 #if !defined(ATARIST_MWC)
 #ifdef SIGTSTP
@@ -243,13 +264,15 @@ signals()
 #endif
 }
 
-void
-signals_init()
+/*
+ * Prepare to handle the relevant signals
+ */
+void signals_init()
 {
 #ifndef ATARIST_MWC
 #ifdef linux
-  (void) signal(SIGINT, (void (*)()) signal_handler);
-  (void) signal(SIGFPE, (void (*)()) signal_handler);
+  (void)signal(SIGINT, (void (*)()) signal_handler);
+  (void)signal(SIGFPE, (void (*)()) signal_handler);
 #else
     (void)signal(SIGINT, signal_handler);
     (void)signal(SIGFPE, signal_handler);
@@ -321,8 +344,7 @@ signals_init()
  
 
 
-void 
-ignore_signals()
+void ignore_signals()
 {
 #if !defined(ATARIST_MWC)
     (void)signal(SIGINT, SIG_IGN);
@@ -332,8 +354,7 @@ ignore_signals()
 #endif
 }
 
-void 
-default_signals()
+void default_signals()
 {
 #if !defined(ATARIST_MWC)
     (void)signal(SIGINT, SIG_DFL);
@@ -343,8 +364,7 @@ default_signals()
 #endif
 }
 
-void 
-restore_signals()
+void restore_signals()
 {
 #if !defined(ATARIST_MWC)
 #ifndef linux

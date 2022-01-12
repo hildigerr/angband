@@ -1,10 +1,26 @@
-/* externs.h: declarations for global variables and initialized data
+/* File: externs.h */
 
-   Copyright (c) 1989 James E. Wilson, Robert A. Koeneke
+/* Purpose: macros, and extern's for functions and global variables */
 
-   This software may be copied and distributed for educational, research, and
-   not for profit purposes provided that this copyright and statement are
-   included in all such copies. */
+/*
+ * Copyright (c) 1989 James E. Wilson, Robert A. Koeneke
+ *
+ * This software may be copied and distributed for educational, research, and
+ * not for profit purposes provided that this copyright and statement are
+ * included in all such copies. 
+ */
+
+/*
+ * This file is not realy in very good shape.  What we SHOULD have
+ * is a correct list of available variables and functions.  What we
+ * actually have seems to work, but does not reflect the current state
+ * of the various files.
+ *
+ * We should NOT have both ANSI and non-ANSI versions in the same file.
+ * What we SHOULD have is a quick utility that converts ANSI to non-ANSI,
+ * and we should provide a version of the files on which this has been run.
+ */
+
 
 /*****************************************************************************/
 
@@ -57,9 +73,9 @@
 
 
 /*
- * Generates a random integer X where 1<=X<=MAXVAL	-RAK-
+ * Generates a random integer X where 1<=X<=M	-RAK-
  */
-#define randint(maxval) (((maxval) < 1) ? (1) : ((random() % (maxval)) + 1))
+#define randint(M) (((M) < 1) ? (1) : ((random() % (M)) + 1))
 
 
 
@@ -89,33 +105,39 @@ extern char *copyright[5];
 
 extern int player_uid;
 
-/* horrible hack: needed because compact_monster() can be called from deep
-   within creatures() via place_monster() and summon_monster() */
-extern int hack_monptr;
+/* horrible hack:
+ * Needed because compact_monster() can be called from within
+ * creatures() via place_monster() and summon_monster() 
+ */
+
+extern int hack_m_idx;			/* The "current" monster, if any */
 
 extern vtype died_from;
 extern vtype savefile;			/* The save file. -CJS- */
 
-/* These are options, set with do_cmd_options command -CJS- */
-extern int rogue_like_commands;
-extern int find_cut;			/* Cut corners on a run */
-extern int find_examine;		/* Check corners on a run */
-extern int find_prself;			/* Print yourself on a run (slower) */
-extern int find_bound;			/* Stop run when the map shifts */
-extern int prompt_carry_flag;	/* auto-pickupobjects */
-extern int show_inven_weight;	/* Display weights in inventory */
-extern int show_equip_weight;	/* Display weights in equip list -CWS */
-extern int notice_seams;		/* Highlight magma and quartz */
-extern int find_ignore_doors;	/* Run through open doors */
+/*
+ * These are options, set with via "do_cmd_options()"
+ */
+
+extern int rogue_like_commands;	/* Pick initial keyset */
+extern int find_cut;		/* Cut corners */
+extern int find_examine;	/* Examine corners */
+extern int find_prself;		/* Print self */
+extern int find_bound;		/* Stop on borders */
+extern int prompt_carry_flag;		/* Require "g" key to pick up */
+extern int show_inven_weight;	/* Show weights in inven */
+extern int show_equip_weight;	/* Show weights in equip */
+extern int notice_seams;	/* Highlight mineral seams */
+extern int find_ignore_doors;	/* Run through doors */
 extern int delay_spd;			/* 1-10 for delays */
 extern int hitpoint_warn;		/* Low hitpoint warning */
-extern int peek;				/* should we display additional msgs */
-extern int carry_query_flag;	/* ask whether to pick something up */
+extern int peek;			/* should we display additional msgs */
+extern int carry_query_flag;		/* Prompt for pickup */
 extern int is_home;				/* are we in our home? */
-extern int in_store_flag;		/* Don't redisplay light in stores -DGK */
-extern int plain_descriptions;	/* don't add color to any obj -CWS */
+extern int in_store_flag;		/* Currently in a store */
+extern int plain_descriptions;	/* Plain descriptions */
 extern int no_haggle_flag;		/* does the player have to haggle? -CWS */
-extern int quick_messages;		/* do quick messages -CWS */
+extern int quick_messages;		/* Quick messages -CWS */
 extern int equippy_chars;		/* do equipment characters -CWS */
 extern int coin_type;			/* remember Creeping _xxx_ coin type -CWS */
 extern int opening_chest;		/* do not generate another chest -CWS */
@@ -144,56 +166,65 @@ extern struct unique_mon u_list[MAX_R_IDX];
 
 extern int quests[MAX_QUESTS];
 
-/* global flags */
+/*
+ * global flags
+ */
+
 extern int unfelt;
 extern int in_store_flag;		/* flag so equippy chars work right -DGK */
-extern int good_item_flag;		/* True if an artifact has been created... */
+extern int good_item_flag;		/* Notice artifact created... */
 extern int LOAD;
 extern int new_level_flag;		/* Next level when true  */
 extern int teleport_flag;		/* Handle teleport traps  */
 extern int eof_flag;			/* Used to handle eof/HANGUP */
 extern int player_light;		/* Player carrying light */
-extern int cur_lite,old_lite;           /* Light radius */
-extern int find_flag;        	/* Used in MORIA	      */
-extern int free_turn_flag;		/* Used in MORIA	      */
+extern int cur_lite, old_lite;          /* Light radius */
+extern int find_flag;			/* Are we running */
+extern int free_turn_flag;		/* Is this turn free */
+
 extern int weapon_heavy;		/* Flag if the weapon too heavy -CJS- */
 extern int pack_heavy;			/* Flag if the pack too heavy -CJS- */
 extern char doing_inven;		/* Track inventory commands */
-extern int screen_change;		/* Screen changes (used in inven_commands) */
+extern int screen_change;		/* Notice disturbing of inventory */
+
 extern int monster_is_afraid;	/* redo monster fear messages -CWS */
 
-extern int character_generated;	/* don't save score until char gen finished */
-extern int character_saved;		/* prevents save on kill after save_player() */
+extern int character_generated;		/* Character generation complete */
+extern int character_saved;		/* Character has been saved. */
 extern int feeling;				/* level feeling */
-extern int command_rep;		/* Repetition of commands. -CJS- */
+extern int command_rep;			/* Repetition of current command */
 extern int default_dir;			/* Use last direction in repeated commands */
 extern s16b noscore;			/* Don't score this game. -CJS- */
-extern u32b randes_seed;		/* For encoding colors */
-extern u32b town_seed;		/* Seed for town generation */
+
+extern u32b randes_seed;		/* Hack -- consistent object colors */
+extern u32b town_seed;		/* Hack -- consistent town layout */
+
 extern char *old_state;			/* state array initialized by time -CWS */
 extern char *dummy_state;		/* dummy state array so that town/colors look
                                  * the same -CWS */
 
-extern s16b dun_level;         /* Cur dungeon level   */
+extern s16b dun_level;			/* Cur dungeon level   */
 extern s16b object_level;		/* used to generate objects -CWS */
 extern s16b missile_ctr;		/* Counter for missiles */
 extern int msg_flag;			/* Set with first msg  */
 extern vtype old_msg[MAX_SAVE_MSG];	/* Last messages -CJS- */
 extern s16b last_msg;			/* Where in the array is the last */
-extern int death;				/* True if died	      */
-extern s32b turn;				/* Cur turn of game    */
-extern s32b old_turn;			/* last turn feeling was felt */
-extern int wizard;				/* Wizard flag	      */
-extern int to_be_wizard;
-extern s16b panic_save;		/* this is true if playing from a panic save */
+extern int death;			/* True if died	      */
+extern s32b turn;			/* Current game turn */
+extern s32b old_turn;			/* Last turn feeling was felt */
+extern int wizard;			/* Is the player currently a Wizard? */
+extern int to_be_wizard;		/* Does the player want to be a wizard? */
+extern s16b panic_save;		/* true if playing from a panic save */
 
 extern int wait_for_more;
 
 extern char days[7][29];
 extern int closing_flag;		/* Used for closing   */
 
-extern s16b cur_height, cur_width;	/* Cur dungeon size    */
-/*  Following are calculated from max dungeon sizes		*/
+/*
+ * Dungeon info
+ */
+extern s16b cur_height, cur_width;
 extern s16b max_panel_rows, max_panel_cols;
 extern int panel_row, panel_col;
 extern int panel_row_min, panel_row_max;
@@ -203,9 +234,9 @@ extern int panel_col_prt, panel_row_prt;
 #ifdef TARGET
 /* Targetting code, stolen from Morgul -CFT */
 extern int target_mode;
-extern u16b target_col;
-extern u16b target_row;
 extern u16b target_mon;
+extern u16b target_row;
+extern u16b target_col;
 #endif
 
 /*  Following are all floor definitions				*/
@@ -228,6 +259,7 @@ extern player_background background[MAX_BACKGROUND];
 #endif
 extern u32b player_exp[MAX_PLAYER_LEVEL];
 extern u16b player_hp[MAX_PLAYER_LEVEL];
+
 extern s16b char_row;
 extern s16b char_col;
 
@@ -249,17 +281,19 @@ extern spell_type magic_spell[MAX_CLASS-1][63];
 extern cptr spell_names[127];
 extern u32b spell_learned;	/* Bit field for spells learnt -CJS- */
 extern u32b spell_learned2;	/* Bit field for spells learnt -CJS- */
-extern u32b spell_worked;		/* Bit field for spells tried -CJS- */
+extern u32b spell_worked;	/* Bit field for spells tried -CJS- */
 extern u32b spell_worked2;	/* Bit field for spells tried -CJS- */
 extern u32b spell_forgotten;	/* Bit field for spells forgotten -JEW- */
 extern u32b spell_forgotten2;	/* Bit field for spells forgotten -JEW- */
 extern byte spell_order[64];	/* remember order that spells are learned in */
-extern u32b spellmasks[MAX_CLASS][2];
+extern u32b spellmasks[MAX_CLASS][2];	/* what spells can classes learn */
 /* used to check if player knows all spells knowable to him -CFT */
 extern u16b player_init[MAX_CLASS][5];
 extern s16b total_winner;
 
-/* Following are store definitions				*/
+
+/*** Store information ***/
+
 #ifdef MACGAME
 extern owner_type *owners;
 #else
@@ -351,7 +385,7 @@ extern char	moriatop[], moriasav[];
 
 
 /*
- * The FILEPATHS to various files, see "arrays.c"
+ * The FILEPATH's to various files, see "arrays.c"
  */
 
 extern cptr ANGBAND_DIR_FILES;		/* Dir: ascii files  */
@@ -627,8 +661,6 @@ void stun_player(int);
 void prt_equippy_chars(void);
 void get_coin_type(monster_race *);
 
-/* monsters.c */
-
 /* moria1.c */
 void move_rec(int, int, int, int);
 void py_bonuses(struct inven_type *, int);
@@ -892,10 +924,6 @@ void updatebargain(int, s32b, s32b);
 
 /* store2.c */
 void enter_store(int);
-
-/* treasur1.c */
-
-/* treasur2.c */
 
 #ifdef unix
 /* unix.c */

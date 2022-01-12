@@ -11,8 +11,7 @@
 #include "angband.h"
 
 
-void 
-ident_char()
+void ident_char()
 {
     char         command, query;
     register int i, n;
@@ -332,3 +331,4 @@ ident_char()
 		break;
 	}
 }
+

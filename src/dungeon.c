@@ -1,6 +1,8 @@
+/* File: dungeon.c */ 
+
+/* Purpose: the main command interpreter, updating player status */
+
 /*
- * dungeon.c: the main command interpreter, updating player status 
- *
  * Copyright (c) 1989 James E. Wilson, Robert A. Koeneke 
  *
  * This software may be copied and distributed for educational, research, and
@@ -34,14 +36,16 @@ int good_item_flag = FALSE;
 int create_up_stair = FALSE;
 int create_down_stair = FALSE;
 
-void 
-dungeon()
+void dungeon(void)
 {
     int                    find_count, i;
-    int                    regen_amount; /* Regenerate hp and mana */
+
+    /* Regenerate hp and mana */
+    int                    regen_amount;
+
     char                   command;      /* Last command           */
     register struct misc  *p_ptr;
-    register inven_type   *i_ptr;
+    register inven_type		*i_ptr;
     register struct flags *f_ptr;
 
 /* Main procedure for dungeon.			-RAK-	 */
@@ -69,7 +73,7 @@ dungeon()
     if ((dun_level >= 0) && ((unsigned) dun_level > p_ptr->max_dlv))
 	p_ptr->max_dlv = dun_level;
 
-/* Reset flags and initialize variables  */
+    /* Reset flags and initialize variables  */
     command_rep  = 0;
     eof_flag       = FALSE;
     find_count     = 0;
@@ -82,38 +86,50 @@ dungeon()
     opening_chest  = FALSE;
 
 #ifdef TARGET
-    target_mode = FALSE; /* target code taken from Morgul -CFT */
+    /* target code taken from Morgul -CFT */
+    target_mode = FALSE;
 #endif
+
     cave[char_row][char_col].cptr = 1;
 
     if (create_up_stair && (dun_level == 0))	/* just in case... */
 	create_up_stair = FALSE;
+
+    /* Make a stairway. */
     if (create_up_stair || create_down_stair) {
+
 	register cave_type *c_ptr;
 	register int        cur_pos;
 
 	c_ptr = &cave[char_row][char_col];
+
 	if ((c_ptr->tptr == 0) ||
 	    ((i_list[c_ptr->tptr].tval != TV_STORE_DOOR) && /* if not store */
 	     ((i_list[c_ptr->tptr].tval < TV_MIN_WEAR) ||   /* if no artifact here -CFT */
 	      (i_list[c_ptr->tptr].tval > TV_MIN_WEAR) ||
 	      !(i_list[c_ptr->tptr].flags2 & TR_ARTIFACT)))) {
 	    if (c_ptr->tptr != 0)
-		(void)delete_object(char_row, char_col);
+	    delete_object(char_row, char_col);
 	    cur_pos = i_pop();
 	    c_ptr->tptr = cur_pos;
-	    if (create_up_stair)
+	    if (create_up_stair) {
 		invcopy(&i_list[cur_pos], OBJ_UP_STAIR);
-	    else if (create_down_stair && !is_quest(dun_level))
+	    }
+	    else if (create_down_stair && !is_quest(dun_level)) {
 		invcopy(&i_list[cur_pos], OBJ_DOWN_STAIR);
+	    }
 	} else
 	    msg_print("The object resists your attempt to transform it into a stairway.");
+
+	/* Cancel the stair request */
 	create_down_stair = FALSE;
 	create_up_stair = FALSE;
     }
+
 /* Ensure we display the panel. Used to do this with a global var. -CJS- */
     panel_row = panel_col = (-1);
-/* Light up the area around character	   */
+
+    /* Light up the area around character */
     check_view();
 
 /* must do this after panel_row/col set to -1, because search_off() will call
@@ -123,7 +139,8 @@ dungeon()
 	search_off();
 /* Light,  but do not move critters	    */
     creatures(FALSE);
-/* Print the depth			   */
+
+    /* Print the depth */
     prt_depth();
 
 /* FIXME: figure this out */
@@ -133,56 +150,84 @@ dungeon()
     }
     old_turn = turn;
 
-/* Loop until dead,  or new level		 */
+/* Loop until dead,  or new level */
     do {
-    /* Increment turn counter			 */
+
+    /*Advance the turn counter */
 	turn++;
+
+	/*** Check the Load ***/
+
 #ifdef CHECK_HOURS
 #ifndef MAC
     /* The Mac ignores the game hours file		 */
-    /* Check for game hours			       */
-	if (((turn % 100) == 1) && !check_time())
+	/* Check for game hours			       */
+	if (((turn % 100) == 1) && !check_time()) {
 	    if (closing_flag > 2) {
 		msg_print("The gates to ANGBAND are now closed.");
 		(void)strcpy(died_from, "(closing gate: saved)");
 		if (!save_player()) {
-		    (void)strcpy(died_from, "a slammed gate");
-		    death = TRUE;
+		(void)strcpy(died_from, "a slammed gate");
+		death = TRUE;
 		}
 		exit_game();
-	    } else {
+	    }
+	    else {
 		disturb(0, 0);
 		closing_flag++;
 		msg_print("The gates to ANGBAND are closing due to high load.");
 		msg_print("Please finish up or save your game.");
 	    }
+	}
 #endif
-#endif				   /* CHECK_HOURS */
+#endif
+
+	/*** Update the Stores ***/
 
     /* turn over the store contents every, say, 1000 turns */
 	if ((dun_level != 0) && ((turn % 1000) == 0)) {
+
 	/* if (peek) msg_print("Store update: "); */
+
 	    store_maint();
+
 	/* if (peek) msg_print("Complete "); */
 	}
-    /* Check for creature generation		 */
-	if (randint(MAX_M_ALLOC_CHANCE) == 1)
+
+
+	/*** Make, and Heal, the Monsters ***/
+
+	/* Check for creature generation */
+	if (randint(MAX_M_ALLOC_CHANCE) == 1) {
 	    alloc_monster(1, MAX_SIGHT, FALSE);
-	if (!(turn % 20))
-	    regen_monsters();
-    /* Check light status			       */
+	}
+
+	/* Check for creature regeneration */
+	if (!(turn % 20)) regen_monsters();
+
+
+	/*** Handle the Lights ***/
+
+	/* Check for light being wielded */
 	i_ptr = &inventory[INVEN_LIGHT];
+
 	if (player_light)
 	    if (i_ptr->p1 > 0) {
 		if (!(i_ptr->flags2 & TR3_LITE))
-		    i_ptr->p1--;   /* don't dec if perm light -CFT */
+
+		/* Decrease life-span */
+		i_ptr->p1--;   /* don't dec if perm light -CFT */
+
 		if (i_ptr->p1 == 0) {
 		    player_light = FALSE;
 		    disturb(0, 1);
 		/* unlight creatures */
 		    creatures(FALSE);
 		    msg_print("Your light has gone out!");
-		} else if ((i_ptr->p1 < 40) && (randint(5) == 1) &&
+		}
+
+		/* The light is getting dim */
+		else if ((i_ptr->p1 < 40) && (randint(5) == 1) &&
 			   (py.flags.blind < 1) &&
 			   !(i_ptr->flags2 & TR3_LITE)) { /* perm light doesn't dim -CFT */
 		    disturb(0, 0);
@@ -204,17 +249,25 @@ dungeon()
 	/* light creatures */
 	    creatures(FALSE);
 	}
-    /* Update counters and messages    */
-    /* Check food status	       */
+
+
+	/*** Check the Food, and Regenerate ***/
+
+	/* Default regeneration */
 	regen_amount = PLAYER_REGEN_NORMAL;
+
+	/* Check food status	       */
 	if (f_ptr->food < PLAYER_FOOD_ALERT) {
 	    if (f_ptr->food < PLAYER_FOOD_WEAK) {
-		if (f_ptr->food < 0)
+		if (f_ptr->food < 0) {
 		    regen_amount = 0;
-		else if (f_ptr->food < PLAYER_FOOD_FAINT)
+		}
+		else if (f_ptr->food < PLAYER_FOOD_FAINT) {
 		    regen_amount = PLAYER_REGEN_FAINT;
-		else if (f_ptr->food < PLAYER_FOOD_WEAK)
+		}
+		else if (f_ptr->food < PLAYER_FOOD_WEAK) {
 		    regen_amount = PLAYER_REGEN_WEAK;
+		}
 		if ((PY_WEAK & f_ptr->status) == 0) {
 		    f_ptr->status |= PY_WEAK;
 		    msg_print("You are getting weak from hunger.");
@@ -226,7 +279,8 @@ dungeon()
 		    msg_print("You faint from the lack of food.");
 		    disturb(1, 0);
 		}
-	    } else if ((PY_HUNGRY & f_ptr->status) == 0) {
+	    }
+	    else if ((PY_HUNGRY & f_ptr->status) == 0) {
 		f_ptr->status |= PY_HUNGRY;
 		msg_print("You are getting hungry.");
 		disturb(0, 0);
@@ -234,29 +288,44 @@ dungeon()
 	    }
 	}
 
-    /* Food consumption	 */
-    /* Note: Speeded up characters really burn up the food!  */
-    /* now summation, not square, since spd less powerful -CFT */
+	/* Food consumption */
+	/* Note: Speeded up characters really burn up the food!  */
+	/* now summation, not square, since spd less powerful -CFT */
+
        if (f_ptr->speed < 0)
 	   f_ptr->food -=  (f_ptr->speed*f_ptr->speed - f_ptr->speed) / 2;
+
+	/* Digest some food */
 	f_ptr->food -= f_ptr->food_digested;
+
+	/* Starve to death */
 	if (f_ptr->food < 0) {
 	    take_hit(-f_ptr->food / 16, "starvation");	/* -CJS- */
 	    disturb(1, 0);
 	}
 
-    /* Regenerate	       */
-	if (f_ptr->regenerate)
+	/* Regeneration ability */
+	if (f_ptr->regenerate) {
 	    regen_amount = regen_amount * 3 / 2;
+	}
+
+	/* Searching or Resting */
 	if ((py.flags.status & PY_SEARCH) || f_ptr->rest > 0 ||
-	    f_ptr->rest == -1 || f_ptr->rest == -2)
+	    f_ptr->rest == -1 || f_ptr->rest == -2) {
 	    regen_amount = regen_amount * 2;
+	}
+
 	if ((py.flags.poisoned < 1) && (py.flags.cut < 1) &&
-	    (p_ptr->chp < p_ptr->mhp))
+	    (p_ptr->chp < p_ptr->mhp)) {
 	    regenhp(regen_amount);
-	if (p_ptr->cmana < p_ptr->mana)
+	}
+
+	/* Regenerate the mana (even if poisoned or cut (?)) */
+	if (p_ptr->cmana < p_ptr->mana) {
 	    regenmana(regen_amount);
-    /* Blindness	       */
+	}
+
+	/* Blindness */
 	if (f_ptr->blind > 0) {
 	    if ((PY_BLIND & f_ptr->status) == 0) {
 		f_ptr->status |= PY_BLIND;
@@ -277,7 +346,8 @@ dungeon()
 		msg_print("The veil of darkness lifts.");
 	    }
 	}
-    /* Confusion	       */
+
+	/* Confusion */
 	if (f_ptr->confused > 0) {
 	    if ((PY_CONFUSED & f_ptr->status) == 0) {
 		f_ptr->status |= PY_CONFUSED;
@@ -292,7 +362,8 @@ dungeon()
 		    rest_off();
 	    }
 	}
-    /* Afraid		       */
+
+	/* Afraid */
 	if (f_ptr->afraid > 0) {
 	    if ((PY_FEAR & f_ptr->status) == 0) {
 		if ((f_ptr->shero + f_ptr->hero + py.flags.resist_fear) > 0)
@@ -311,20 +382,24 @@ dungeon()
 		disturb(0, 0);
 	    }
 	}
-    /* Cut */
+
+	/* Cut */
 	if (f_ptr->cut > 0) {
 	    if (f_ptr->cut>1000) {
 		take_hit(3 , "a fatal wound");
 		disturb(1,0);
-	    } else if (f_ptr->cut>200) {
+	    }
+	    else if (f_ptr->cut>200) {
 		take_hit(3, "a fatal wound");
 		f_ptr->cut-=(con_adj()<0?1:con_adj())+1;
 		disturb(1,0);
-	    } else if (f_ptr->cut>100) {
+	    }
+	    else if (f_ptr->cut>100) {
 		take_hit(2, "a fatal wound");
 		f_ptr->cut-=(con_adj()<0?1:con_adj())+1;
 		disturb(1,0);
-	    } else {
+	    }
+	    else {
 		take_hit(1, "a fatal wound");
 		f_ptr->cut-=(con_adj()<0?1:con_adj())+1;
 		disturb(1,0);
@@ -332,13 +407,14 @@ dungeon()
 	    prt_cut();
 	    if (f_ptr->cut <= 0) {
 		f_ptr->cut = 0;
-		if (py.misc.chp >= 0)
-		    msg_print("Your wound heals.");
+		if (py.misc.chp >= 0) msg_print("Your wound heals.");
 	    }
 	}
+
+	/* Always redraw "cuts" */
 	prt_cut();
 
-    /* Stun */
+	/* Stun */
 	if (f_ptr->stun > 0) {
 	    int                 oldstun = f_ptr->stun;
 
@@ -362,7 +438,7 @@ dungeon()
 	}
 	prt_stun();
 
-    /* Poisoned	       */
+	/* Poisoned */
 	if (f_ptr->poisoned > 0) {
 	    if ((PY_POISONED & f_ptr->status) == 0) {
 		f_ptr->status |= PY_POISONED;
@@ -376,45 +452,29 @@ dungeon()
 		prt_poisoned();
 		msg_print("You feel better.");
 		disturb(0, 0);
-	    } else {
+	    }
+	    else {
 		switch (con_adj()) {
-		  case -4:
-		    i = 4;
-		    break;
+		  case -4: i = 4; break;
 		  case -3:
-		  case -2:
-		    i = 3;
-		    break;
-		  case -1:
-		    i = 2;
-		    break;
-		  case 0:
-		    i = 1;
-		    break;
+		  case -2: i = 3; break;
+		  case -1: i = 2; break;
+		  case 0: i = 1; break;
 		  case 1:
 		  case 2:
-		  case 3:
-		    i = ((turn % 2) == 0);
-		    break;
+		  case 3: i = ((turn % 2) == 0); break;
 		  case 4:
-		  case 5:
-		    i = ((turn % 3) == 0);
-		    break;
-		  case 6:
-		    i = ((turn % 4) == 0);
-		    break;
-		  case 7:
-		    i = ((turn % 5) == 0);
-		    break;
-		  default:
-		    i = ((turn % 6) == 0);
-		    break;
+		  case 5: i = ((turn % 3) == 0); break;
+		  case 6: i = ((turn % 4) == 0); break;
+		  case 7: i = ((turn % 5) == 0); break;
+		  default: i = ((turn % 6) == 0); break;
 		}
 		take_hit(i, "poison");
 		disturb(1, 0);
 	    }
 	}
-    /* Fast		       */
+
+	/* Fast */
 	if (f_ptr->fast > 0) {
 	    if ((PY_FAST & f_ptr->status) == 0) {
 		f_ptr->status |= PY_FAST;
@@ -432,7 +492,8 @@ dungeon()
 		disturb(0, 0);
 	    }
 	}
-    /* Slow		       */
+
+	/* Slow */
 	if (f_ptr->slow > 0) {
 	    if ((PY_SLOW & f_ptr->status) == 0) {
 		f_ptr->status |= PY_SLOW;
@@ -450,7 +511,8 @@ dungeon()
 		disturb(0, 0);
 	    }
 	}
-    /* Resting is over?      */
+
+	/* Resting is over? */
 	if (f_ptr->rest > 0 || f_ptr->rest == -1 || f_ptr->rest == -2) {
 	    if (f_ptr->rest > 0) {
 		f_ptr->rest--;
@@ -492,26 +554,30 @@ dungeon()
 #endif
 	    disturb(0, 0);
 	}
-    /* Hallucinating?	 (Random characters appear!) */
+
+	/* Hallucinating?	 (Random characters appear!) */
 	if (f_ptr->image > 0) {
 	    end_find();
 	    f_ptr->image--;
 	    if (f_ptr->image == 0)
 		prt_map();	   /* Used to draw entire screen! -CJS- */
 	}
-    /* Paralysis	       */
+
+	/* Paralysis */
 	if (f_ptr->paralysis > 0) {
 	/* when paralysis true, you can not see any movement that occurs */
 	    f_ptr->paralysis--;
 	    disturb(1, 0);
 	}
-    /* Protection from evil counter */
+
+	/* Protection from evil counter */
 	if (f_ptr->protevil > 0) {
 	    f_ptr->protevil--;
 	    if (f_ptr->protevil == 0)
 		msg_print("You no longer feel safe from evil.");
 	}
-    /* Invulnerability	 */
+
+	/* Invulnerability */
 	if (f_ptr->invuln > 0) {
 	    if ((PY_INVULN & f_ptr->status) == 0) {
 		f_ptr->status |= PY_INVULN;
@@ -531,7 +597,8 @@ dungeon()
 		f_ptr->status |= PY_ARMOR;	/* have to update ac display */
 	    }
 	}
-    /* Heroism       */
+
+	/* Heroism */
 	if (f_ptr->hero > 0) {
 	    if ((PY_HERO & f_ptr->status) == 0) {
 		f_ptr->status |= PY_HERO;
@@ -560,7 +627,8 @@ dungeon()
 		prt_mhp();
 	    }
 	}
-    /* Super Heroism */
+
+	/* Super Heroism */
 	if (f_ptr->shero > 0) {
 	    if ((PY_SHERO & f_ptr->status) == 0) {
 		f_ptr->status |= PY_SHERO;
@@ -595,7 +663,8 @@ dungeon()
 		f_ptr->status |= PY_ARMOR;	/* have to update ac display */
 	    }
 	}
-    /* Blessed       */
+
+	/* Blessed */
 	if (f_ptr->blessed > 0) {
 	    if ((PY_BLESSED & f_ptr->status) == 0) {
 		f_ptr->status |= PY_BLESSED;
@@ -619,7 +688,8 @@ dungeon()
 		f_ptr->status |= PY_ARMOR;	/* have to update ac display */
 	    }
 	}
-    /* Shield       */
+
+	/* Shield */
 	if (f_ptr->shield > 0) {
 	    f_ptr->shield--;
 	    if (f_ptr->shield == 0) {
@@ -630,37 +700,43 @@ dungeon()
 		f_ptr->status |= PY_ARMOR;	/* have to update ac display */
 	    }
 	}
-    /* Resist Heat   */
+
+	/* Resist Heat */
 	if (f_ptr->oppose_fire > 0) {
 	    f_ptr->oppose_fire--;
 	    if (f_ptr->oppose_fire == 0)
 		msg_print("You no longer feel safe from flame.");
 	}
-    /* Resist Cold   */
+
+	/* Resist Cold */
 	if (f_ptr->oppose_cold > 0) {
 	    f_ptr->oppose_cold--;
 	    if (f_ptr->oppose_cold == 0)
 		msg_print("You no longer feel safe from cold.");
 	}
-    /* Resist Acid   */
+
+	/* Resist Acid */
 	if (f_ptr->oppose_acid > 0) {
 	    f_ptr->oppose_acid--;
 	    if (f_ptr->oppose_acid == 0)
 		msg_print("You no longer feel safe from acid.");
 	}
-    /* Resist Lightning   */
+
+	/* Resist Lightning */
 	if (f_ptr->oppose_elec > 0) {
 	    f_ptr->oppose_elec--;
 	    if (f_ptr->oppose_elec == 0)
 		msg_print("You no longer feel safe from lightning.");
 	}
-    /* Resist Poison   */
+
+	/* Resist Poison */
 	if (f_ptr->oppose_pois > 0) {
 	    f_ptr->oppose_pois--;
 	    if (f_ptr->oppose_pois == 0)
 		msg_print("You no longer feel safe from poison.");
 	}
-    /* Timeout Artifacts  */
+
+	/* Timeout Artifacts */
 	for (i = 22; i < (INVEN_ARRAY_SIZE - 1); i++) {
 	    i_ptr = &inventory[i];
 	    if (i_ptr->tval != TV_NOTHING && (i_ptr->flags2 & TR3_ACTIVATE)) {
@@ -673,7 +749,7 @@ dungeon()
 	    }
 	}
 
-    /* Timeout rods  */
+	/* Timeout rods */
 	for (i = 0; i < 22; i++) {
 	    i_ptr = &inventory[i];
 	    if (i_ptr->tval == TV_ROD && (i_ptr->flags2 & TR3_ACTIVATE)) {
@@ -682,7 +758,7 @@ dungeon()
 	    }
 	}
 
-    /* Detect Invisible      */
+	/* Detect Invisible */
 	if (f_ptr->detect_inv > 0) {
 	    if ((PY_DET_INV & f_ptr->status) == 0) {
 		f_ptr->status |= PY_DET_INV;
@@ -706,7 +782,8 @@ dungeon()
 		creatures(FALSE);
 	    }
 	}
-    /* Timed infra-vision    */
+
+	/* Timed infra-vision */
 	if (f_ptr->tim_infra > 0) {
 	    if ((PY_TIM_INFRA & f_ptr->status) == 0) {
 		f_ptr->status |= PY_TIM_INFRA;
@@ -722,6 +799,7 @@ dungeon()
 		creatures(FALSE);
 	    }
 	}
+
     /* Word-of-Recall  Note: Word-of-Recall is a delayed action	 */
 	if (f_ptr->word_recall > 0)
 	    if (f_ptr->word_recall == 1) {
@@ -738,7 +816,7 @@ dungeon()
 	    } else
 		f_ptr->word_recall--;
 
-    /* Random teleportation  */
+    /* Random teleportation */
 	if ((py.flags.teleport) && (randint(100) == 1)) {
 	    disturb(0, 0);
 	    teleport(40);
@@ -840,6 +918,7 @@ dungeon()
 		}
 	    }
 	}
+
     /* Warriors, Rogues and paladins inbuilt ident */
 	if (((py.misc.pclass == 0) && (f_ptr->confused == 0) &&
 	 (randint((int)(9000 / (py.misc.lev * py.misc.lev + 40)) + 1) == 1))
@@ -1083,9 +1162,7 @@ dungeon()
 }
 
 
-static char 
-original_commands(com_val)
-char com_val;
+static char original_commands(char com_val)
 {
     int dir_val;
 
@@ -1328,9 +1405,7 @@ char com_val;
 /* Is an item an enchanted weapon or armor and we don't know?  -CJS- */
 /* returns positive if it is a good enchantment */
 /* returns negative if a bad enchantment... */
-int 
-special_check(t_ptr)
-register inven_type *t_ptr;
+int special_check(inven_type *t_ptr)
 {
     if (t_ptr->tval == TV_NOTHING)
 	return 0;
@@ -1422,9 +1497,7 @@ static cptr value_check(inven_type *t_ptr)
     return "special";
 }
 
-static void 
-do_command(com_val)
-char com_val;
+static void do_command(char com_val)
 {
     int                    dir_val, do_pickup;
     int                    y, x, i, j = 0;
@@ -2050,9 +2123,7 @@ char com_val;
 }
 
 /* Check whether this command will accept a count.     -CJS-  */
-static int 
-valid_countcommand(c)
-char c;
+static int valid_countcommand(char c)
 {
     switch (c) {
       case 'Q':
@@ -2149,9 +2220,7 @@ char c;
 
 
 /* Regenerate hit points				-RAK-	 */
-static void 
-regenhp(percent)
-int percent;
+static void regenhp(int percent)
 {
     register struct misc *p_ptr;
     register s32b        new_chp, new_chp_frac;
@@ -2182,9 +2251,7 @@ int percent;
 
 
 /* Regenerate mana points				-RAK-	 */
-static void 
-regenmana(percent)
-int percent;
+static void regenmana(int percent)
 {
     register struct misc *p_ptr;
     register s32b        new_mana, new_mana_frac;
@@ -2215,9 +2282,7 @@ int percent;
 
 
 
-int 
-ruin_stat(stat)
-register int stat;
+int ruin_stat(int stat)
 {
     register int tmp_stat;
 
@@ -2243,8 +2308,7 @@ register int stat;
 	return FALSE;
 }
 
-static void 
-activate()
+static void activate()
 {
     int          i, a, flag, first, num, j, redraw, dir, test = FALSE;
     char         out_str[200], tmp[200], tmp2[200], choice;
@@ -2940,8 +3004,7 @@ activate()
 }
 
 /* Examine a Book					-RAK-	 */
-static void 
-examine_book()
+static void examine_book()
 {
     u32b               j1;
     u32b               j2;
@@ -3008,8 +3071,7 @@ examine_book()
 }
 
 /* Go up one level					-RAK-	 */
-static void 
-go_up()
+static void go_up()
 {
     register cave_type *c_ptr;
     register int        no_stairs = FALSE;
@@ -3041,8 +3103,7 @@ go_up()
 
 
 /* Go down one level					-RAK-	 */
-static void 
-go_down()
+static void go_down()
 {
     register cave_type *c_ptr;
     register int        no_stairs = FALSE;
@@ -3075,8 +3136,7 @@ go_down()
 
 
 /* Refill the players lamp				-RAK-	 */
-static void 
-refill_lamp()
+static void refill_lamp()
 {
     int                  i, j;
     register int         k;
@@ -3108,8 +3168,7 @@ refill_lamp()
 }
 
 
-static void 
-regen_monsters()
+static void regen_monsters()
 {
     register int i;
     int          frac;

@@ -47,6 +47,7 @@ static cptr stat_names[] = {
 /*
  * Print character info in given row, column   -RAK-
  * the longest title is 13 characters, so only pad to 13
+ * XXX There has got to be a cleaner way
  */
 void prt_field(cptr info, int row, int col)
 {
@@ -59,7 +60,7 @@ void prt_field(cptr info, int row, int col)
 
 
 /*
- * Converts stat num into string			-RAK-
+ * Converts stat num into a string (six chars plus a space)
  */
 void cnv_stat(int my_stat, char *out_val)
 {
@@ -83,7 +84,7 @@ void cnv_stat(int my_stat, char *out_val)
 
 
 /*
- * Print character stat in given row, column		-RAK-
+ * Print character stat in given row, column
  */
 void prt_stat(int stat)
 {
@@ -98,7 +99,7 @@ void prt_stat(int stat)
 
 
 /*
- * Adjustment for wisdom/intelligence -JWT-
+ * Adjustment for wisdom/intelligence
  */
 int stat_adj(int stat)
 {
@@ -128,7 +129,7 @@ int stat_adj(int stat)
 
 
 /*
- * Adjustment for charisma -RAK-
+ * Adjustment for charisma
  * Percent decrease or increase in price of goods		
  */
 int chr_adj()
@@ -186,7 +187,7 @@ int chr_adj()
 
 
 /*
- * Returns a character's adjustment to hit points -JWT-
+ * Returns a character's adjustment to hit points
  */
 int con_adj()
 {
@@ -213,6 +214,9 @@ int con_adj()
 }
 
 
+/*
+ * Determine a "title" for the player
+ */
 cptr title_string()
 {
     cptr p;
@@ -244,7 +248,7 @@ void prt_title()
 
 
 /*
- * Prints level -RAK-
+ * Prints level
  */
 void prt_level()
 {
@@ -266,7 +270,7 @@ static void prt_exp()
 
 
 /*
- * Prints players current mana points. -RAK-
+ * Prints players current mana points.
  */
 void prt_cmana()
 {
@@ -278,7 +282,7 @@ void prt_cmana()
 
 
 /*
- * Prints Max hit points -RAK-
+ * Prints Max hit points
  */
 void prt_mhp()
 {
@@ -289,7 +293,7 @@ void prt_mhp()
 
 
 /*
- * Prints players current hit points -RAK-
+ * Prints players current hit points
  */
 void prt_chp()
 {
@@ -300,7 +304,7 @@ void prt_chp()
 
 
 /*
- * prints current AC -RAK-
+ * prints current AC
  */
 void prt_pac()
 {
@@ -311,7 +315,7 @@ void prt_pac()
 
 
 /*
- * Prints current gold -RAK-
+ * Prints current gold
  */
 void prt_gold()
 {
@@ -416,17 +420,21 @@ void prt_poisoned(void)
 
 /*
  * Prints Searching, Resting, Paralysis, or 'count' status	-RAK-
+ * Display is always exactly 10 characters wide (see below)
  */
 void prt_state(void)
 {
     char tmp[16];
 
+    /* Turn off the flag */
     py.flags.status &= ~PY_REPEAT;
 
+    /* Most important info is paralyzation */
     if (py.flags.paralysis > 1) {
 	put_str("Paralysed ", 23, 38);
     }
 
+    /* Then comes resting */
     else if (PY_REST & py.flags.status) {
 	if (py.flags.rest > 0) {
 	    (void)sprintf(tmp, "Rest %-5d", py.flags.rest);
@@ -440,7 +448,9 @@ void prt_state(void)
 	put_str(tmp, 23, 38);
     }
 
+    /* Then comes repeating */
     else if (command_rep > 0) {
+
 	(void)sprintf(tmp, "Repeat %-3d", command_rep);
 	py.flags.status |= PY_REPEAT;
 	put_str(tmp, 23, 38);
@@ -461,11 +471,10 @@ void prt_state(void)
  */
 void prt_speed()
 {
-    register int i;
+    int i = py.flags.speed;
 
-    i = py.flags.speed;
-    if (PY_SEARCH & py.flags.status)	/* Search mode. */
-	i--;
+    if (PY_SEARCH & py.flags.status) i--;
+
     if (i > 2)
 	put_str("Extremely Slow", 23, 49);
     else if (i == 2)
@@ -546,7 +555,7 @@ void prt_stun(void)
 
 
 /*
- * Prints winner status on display			-RAK-	
+ * Prints winner/wizard status on display			-RAK-	
  */
 void prt_winner(void)
 {
@@ -564,7 +573,7 @@ void prt_winner(void)
 
 
 /*
- * EQUIPMENT CHARACTER HANDLER  - DGK
+ * Display the "equippy chars"
  */
 void prt_equippy_chars(void)
 {                                        
@@ -572,8 +581,12 @@ void prt_equippy_chars(void)
     inven_type *i_ptr;                     
     vtype out_val;
 
-    out_val[1]='\0';                       
+    out_val[1]='\0';     
+
+    /* Analyze the pack */
     for (i = INVEN_WIELD; i < INVEN_ARRAY_SIZE; i++) {
+
+	/* Get the item */
 	i_ptr = &inventory[i];                           
 	j = i - INVEN_WIELD;
 	
@@ -581,7 +594,8 @@ void prt_equippy_chars(void)
 	    out_val[0] = ' ';
 	else
 	    out_val[0] = (int)(i_ptr->tchar);                
-	
+
+	/* Display the item symbol */
 	put_str(out_val, ROW_EQUIPPY, j);
     }
 }
@@ -611,10 +625,12 @@ void prt_stat_block()
 				    * needed. -CFT */
     prt_num("AC ", m_ptr->dis_ac, ROW_AC, COL_STAT);
     prt_lnum("AU ", m_ptr->au, ROW_GOLD, COL_STAT);
+
     prt_winner();
     prt_cut();
     prt_stun();
     prt_study();
+
     status = py.flags.status;
     if ((PY_HUNGRY | PY_WEAK) & status)
 	prt_hunger();
@@ -628,7 +644,8 @@ void prt_stat_block()
 	prt_poisoned();
     if ((PY_SEARCH | PY_REST) & status)
 	prt_state();
-/* if speed non zero, print it, modify speed if Searching */
+
+    /* if speed non zero, print it, modify speed if Searching */
     if (py.flags.speed - ((PY_SEARCH & status) >> 8) != 0)
     prt_speed();
 
@@ -650,6 +667,9 @@ void draw_cave(void)
 
 
 
+/*
+ * Cut the player
+ */
 void cut_player(int c)
 {
     py.flags.cut += c;
@@ -679,11 +699,15 @@ void cut_player(int c)
 }
 
 
+/*
+ * Stun the player
+ */
 void stun_player(int s)
 {
     int t;
 
-    if (!py.flags.resist_sound) {
+    if (py.flags.resist_sound) return;
+
 	t = py.flags.stun;
 	py.flags.stun += s;
 	s = py.flags.stun;
@@ -722,7 +746,6 @@ void stun_player(int s)
                 py.misc.dis_td -= 5;
 	    }
 	}
-    }
 }
 
 
@@ -754,11 +777,14 @@ u16b modify_stat(int stat, int amount)
 
 /*
  * Set the value of the stat which is actually used.	 -CJS-
+ * Also, make sure to recalculate any changed values.
  */
 void set_use_stat(int stat)
 {
+    /* Calculate the "total" stat value */
     py.stats.use_stat[stat] = modify_stat(stat, py.stats.mod_stat[stat]);
 
+    /* Calculate various effects */
     if (stat == A_STR) {
 	py.flags.status |= PY_STR_WGT;
 	calc_bonuses();
@@ -787,13 +813,16 @@ int inc_stat(int stat)
 {
     register int tmp_stat, gain;
 
+    /* Hmmm -- First, restore the stat */
     res_stat(stat);
 
+    /* Then augment the current/max stat */
     tmp_stat = py.stats.cur_stat[stat];
 
+    /* Cannot go above 18/100 */
     if (tmp_stat < 118) {
 	if (tmp_stat < 18) {	   
-	    gain = randint(2);		/* let's be able to monitor the increase -CWS */
+	    gain = randint(2);
 	    tmp_stat += gain;
 	}
 	else if (tmp_stat < 116) {
@@ -825,14 +854,18 @@ int inc_stat(int stat)
  */
 int dec_stat(int stat)
 {
-    register int cur, loss;
+    int cur, loss;
 
+    /* Acquire current value */
     cur = py.stats.cur_stat[stat];
 
+    /* Damage "current" value */
     if (cur > 3) {
 
-	if (cur < 19)
+	if (cur < 19) {
 	    cur--;
+	}
+
 	else if (cur < 117) {
 	    loss = (((118 - cur) >> 1) + 1) >> 1;
 	    cur += -randint(loss) - loss;
@@ -841,6 +874,7 @@ int dec_stat(int stat)
 	} else
 	    cur--;
 
+	/* Update the stat */
 	py.stats.cur_stat[stat] = cur;
 	set_use_stat(stat);
 	prt_stat(stat);
@@ -855,15 +889,15 @@ int dec_stat(int stat)
  */
 int res_stat(int stat)
 {
-    register int i;
-
-    i = py.stats.max_stat[stat] - py.stats.cur_stat[stat];
-    if (i) {
-	py.stats.cur_stat[stat] += i;
+    /* Restore */
+    if (py.stats.max_stat[stat] != py.stats.cur_stat[stat]) {
+	py.stats.cur_stat[stat] = py.stats.max_stat[stat];
 	set_use_stat(stat);
 	prt_stat(stat);
 	return TRUE;
     }
+
+    /* Nothing to restore */
     return FALSE;
 }
 
@@ -977,7 +1011,7 @@ int todis_adj(void)
 
 
 /*
- * Returns a character's adjustment to damage	 -JWT-
+ * Returns a character's adjustment to damage	 
  */
 int todam_adj(void)
 {
@@ -1019,7 +1053,7 @@ static void prt_lnum(cptr header, s32b num, int row, int col)
 }
 
 /*
- * Print number with header at given row, column -RAK-
+ * Print number with header at given row, column
  */
 static void prt_num(cptr header, int num, int row, int col)
 {
@@ -1036,9 +1070,7 @@ static void prt_num(cptr header, int num, int row, int col)
  */
 void put_character()
 {
-    register struct misc *m_ptr;
-
-    m_ptr = &py.misc;
+    register struct misc *m_ptr = &py.misc;
     clear_screen();
 
     put_str("Name        :", 2, 1);
@@ -1057,7 +1089,7 @@ void put_character()
 
 
 /*
- * Prints the following information on the screen.	-JWT-
+ * Prints some information on the screen
  */
 void put_stats()
 {
@@ -1065,6 +1097,7 @@ void put_stats()
     int          i, temp;
     vtype        buf;
 
+    /* Display the stats */
     for (i = 0; i < 6; i++) {
 
 	cnv_stat(py.stats.use_stat[i], buf);
@@ -1088,7 +1121,7 @@ void put_stats()
 
 
 /*
- * Returns a rating of x depending on y			-JWT-
+ * Returns a "rating" of x depending on y
  */
 cptr likert(int x, int y)
 {
@@ -1130,7 +1163,7 @@ cptr likert(int x, int y)
 
 
 /*
- * Prints age, height, weight, and SC			-JWT-
+ * Prints age, height, weight, and Social Class
  */
 void put_misc1()
 {
@@ -1144,7 +1177,7 @@ void put_misc1()
 
 
 /*
- * Prints the following information on the screen.	-JWT-
+ * Prints the following information on the screen.
  */
 void put_misc2()
 {
@@ -1176,7 +1209,7 @@ void put_misc2()
 
 
 /*
- * Prints ratings on certain abilities			-RAK-
+ * Prints ratings on certain abilities
  */
 void put_misc3()
 {
@@ -1191,11 +1224,11 @@ void put_misc3()
 	   (class_level_adj[p_ptr->pclass][CLA_BTH] * p_ptr->lev);
     xbthb = p_ptr->bthb + p_ptr->ptohit * BTH_PLUS_ADJ +
 	    (class_level_adj[p_ptr->pclass][CLA_BTHB] * p_ptr->lev);
-    /* this results in a range from 0 to 29 */
+
+    /* Basic abilities */
     xfos = 40 - p_ptr->fos;
     if (xfos < 0) xfos = 0;
     xsrh = p_ptr->srh;
-    /* this results in a range from 0 to 9 */
     xstl = p_ptr->stl + 1;
     xdis = p_ptr->disarm + 2 * todis_adj() + stat_adj(A_INT) +
 	   (class_level_adj[p_ptr->pclass][CLA_DISARM] * p_ptr->lev / 3);
@@ -1204,6 +1237,7 @@ void put_misc3()
     xdev = p_ptr->save + stat_adj(A_INT) +
 	   (class_level_adj[p_ptr->pclass][CLA_DEVICE] * p_ptr->lev / 3);
 
+    /* Infravision string */
     (void)sprintf(xinfra, "%d feet", py.flags.see_infra * 10);
 
     put_str("(Miscellaneous Abilities)", 15, 25);
@@ -1238,7 +1272,7 @@ void put_misc3()
 
 
 /*
- * Used to display the character on the screen. -RAK-
+ * Used to display the character on the screen.
  */
 void display_player()
 {
@@ -1252,12 +1286,13 @@ void display_player()
 
 
 /*
- * Gets a name for the character			-JWT-
+ * Gets a name for the character
  */
 void get_name()
 {
     char tmp[100];
 
+    /* Prompt and ask */
     strcpy(tmp, py.misc.name);
     prt("Enter your player's name  [press <RETURN> when finished]", 21, 2);
 
@@ -1282,7 +1317,7 @@ void get_name()
 
 
 /*
- * Changes the name of the character			-JWT-
+ * Display character, allow name change or character dump.
  */
 void change_name()
 {
@@ -1309,7 +1344,6 @@ void change_name()
 
 	  case 'f':
 #ifdef MAC
-	/* On mac, file_character() gets filename with std file dialog. */
 	    if (file_character()) flag = TRUE;
 #else
 	    prt("File name:", 0, 0);
@@ -1337,18 +1371,22 @@ void change_name()
 
 
 /*
- * Computes current weight limit			-RAK-
+ * Computes current weight limit.
  */
 int weight_limit(void)
 {
     register s32b weight_cap;
 
+    /* Factor in strength */
     weight_cap = (long)py.stats.use_stat[A_STR] * (long)PLAYER_WEIGHT_CAP;
 
+    /* Hack -- large players can carry more */
     weight_cap += (long)py.misc.wt;
 
+    /* Nobody can carry more than 300 pounds */
     if (weight_cap > 3000L) weight_cap = 3000L;
 
+    /* Return the result */
     return ((int)weight_cap);
 }
 
@@ -1357,37 +1395,39 @@ int weight_limit(void)
 /*
  * this code must be identical to the inven_carry() code below
  */
-int inven_check_num(inven_type *t_ptr)
+int inven_check_num(inven_type *i_ptr)
 {
     register int i;
 
+    /* If there is an empty space, we are fine */
     if (inven_ctr < INVEN_WIELD) return TRUE;
 
-    if (t_ptr->sval >= ITEM_SINGLE_STACK_MIN)
+    if (i_ptr->sval >= ITEM_SINGLE_STACK_MIN)
+
+    /* Scan every possible match */
     for (i = 0; i < inven_ctr; i++) {
-	    if (inventory[i].tval == t_ptr->tval &&
-		inventory[i].sval == t_ptr->sval &&
+
+	    if (inventory[i].tval == i_ptr->tval &&
+		inventory[i].sval == i_ptr->sval &&
 	/* make sure the number field doesn't overflow */
-		((int)inventory[i].number + (int)t_ptr->number < 256) &&
+		((int)inventory[i].number + (int)i_ptr->number < 256) &&
 	/* they always stack (sval < 192), or else they have same p1 */
-		((t_ptr->sval < ITEM_GROUP_MIN) || (inventory[i].p1 == t_ptr->p1))
+		((i_ptr->sval < ITEM_GROUP_MIN) || (inventory[i].p1 == i_ptr->p1))
 	/* only stack if both or neither are identified */
-		&& (known1_p(&inventory[i]) == known1_p(t_ptr))) return TRUE;
+		&& (known1_p(&inventory[i]) == known1_p(i_ptr))) return TRUE;
     }
+
+    /* And there was no room in the inn... */
     return FALSE;
 }
 
 /*
- * Add an item to players inventory.  Return the item position for a
- * description if needed.	       -RAK- this code must be identical to
- * the inven_check_num() code above 
+ * Add an item to the players inventory, and return the slot used.
  *
- * Okay, here's my inven_carry() function (from misc2.c, I think).  Just
- * replace the existing inven_carry() with this one, and items will sort into
- * place, with mage spellbooks coming first for mages, rangers, and rogues.
- * Also, this will make Tenser's book sort after all the mage books except
- * Raals, instead of in the middle of them (which always seemed strange to
- * me). -CFT 
+ * Items will sort into place, with mage spellbooks coming first for mages,
+ * rangers, and rogues.  Also, this will make Tenser's book sort after all
+ * the mage books except Raals, instead of in the middle of them (which
+ * always seemed strange to me). -CFT 
  */
 int inven_carry(inven_type *i_ptr)
 {
@@ -1498,8 +1538,7 @@ int spell_chance(int spell)
     switch (stat_adj(stat)) {
       case 0:
 	minfail = 50;
-	break;			   /* I doubt can cast spells with stat this
-				    * low, anyways... */
+	break;
       case 1:
 	minfail = 12;
 	break;			   /* 8-14 stat */
@@ -1549,9 +1588,10 @@ int spell_chance(int spell)
     }
 
     /* Big prayer penalty for edged weapons  -DGK */
+    /* XXX So, like, switch weapons and then pray? */
     if (py.misc.pclass == 2) {
-	register inven_type *i_ptr = &inventory[INVEN_WIELD];
-
+	register inven_type *i_ptr;
+	i_ptr = &inventory[INVEN_WIELD];
 	if ((i_ptr->tval == TV_SWORD) || (i_ptr->tval == TV_POLEARM)) {
 	    if (!(i_ptr->flags2 & TR_BLESS_BLADE)) {
 		chance += 25;
@@ -1570,8 +1610,11 @@ int spell_chance(int spell)
 /*
  * Print list of spells					-RAK-
  *
- * if nonconsec is -1: spells numbered consecutively from 'a' to 'a'+num >=0:
- * spells numbered by offset from nonconsec 
+ * if (nonconsec < 0) spells numbered consecutively from
+ * 'a' to 'a'+num, for example, when learning spells.
+ *
+ * Otherwise, spells numbered by offset from nonconsec, such as when
+ * asking which spell to cast 
  */
 void print_spells(int *spell, int num, int comment, int nonconsec)
 {
@@ -1617,9 +1660,7 @@ void print_spells(int *spell, int num, int comment, int nonconsec)
 	    p = "";
 	}
 
-        /* determine whether or not to leave holes in character choices,
-         * nonconsec -1 when learning spells, consec offset>=0 when asking which
-         * spell to cast  */
+        /* determine whether or not to leave holes in character choices */
 	if (nonconsec == -1) {
 	    spell_char = 'a' + i;
 	}
@@ -1636,7 +1677,8 @@ void print_spells(int *spell, int num, int comment, int nonconsec)
 
 
 /*
- * Returns spell pointer				-RAK-
+ * Let the player pick a spell from a book.
+ * Attempt to maintain some spell naming consistency
  */
 int get_spell(int *spell, int num, int *sn, int *sc, cptr prompt, int first_spell)
 {
@@ -1653,6 +1695,7 @@ int get_spell(int *spell, int num, int *sn, int *sc, cptr prompt, int first_spel
     redraw = FALSE;
     offset = (class[py.misc.pclass].spell == MAGE ? SPELL_OFFSET : PRAYER_OFFSET);
     
+    /* Get a spell from the user */
     while (!flag && get_com(out_str, &choice)) {
 
 	if (isupper((int)choice)) {
@@ -1723,6 +1766,7 @@ int get_spell(int *spell, int num, int *sn, int *sc, cptr prompt, int first_spel
     erase_line(MSG_LINE, 0);
     if (flag) *sc = spell_chance(*sn);
 
+    /* Return TRUE if choice made */
     return (flag);
 }
 
@@ -1770,10 +1814,12 @@ void prt_experience()
 
 	    gain_level();
 
+	    /* Level was actually gained, not restored */
 	    if (p_ptr->exp > p_ptr->max_exp) {
-		/* level was actually gained, not restored:
-		 * this 300 is arbitrary, but it makes human ages work okay,
-		 * and I chose the other racial age adjs based on this as well -CFT */
+
+		/* Age the player.  The "300" is arbitrary, but chosen to */
+		/* make human ages work.  The other racial age adjustments */
+		/* were based on this "300" as well. -CFT */
 		p_ptr->age += randint((u16b)class[p_ptr->pclass].age_adj *
 				       (u16b)race[p_ptr->prace].m_age)/300L;
 	    }
@@ -1796,18 +1842,20 @@ void calc_hitpoints()
     register struct misc *p_ptr = &py.misc;
     register s32b        value;
 
+    /* Calculate hitpoints */
     hitpoints = player_hp[p_ptr->lev - 1] + (con_adj() * p_ptr->lev);
 
-    /* always give at least one point per level + 1 */
+    /* Hack -- minimum hitpoints */
     if (hitpoints < (p_ptr->lev + 1)) {
 	hitpoints = p_ptr->lev + 1;
     }
 
+    /* Factor in the hero / superhero values */
     if (py.flags.status & PY_HERO) hitpoints += 10;
     if (py.flags.status & PY_SHERO) hitpoints += 30;
 
     /* mhp can equal zero while character is being created */
-    if ((hitpoints != p_ptr->mhp) && (p_ptr->mhp != 0)) {
+    if (p_ptr->mhp && (hitpoints != p_ptr->mhp)) {
 
         /* change current hit points proportionately to change of mhp */
         /* divide first to avoid overflow, little loss of accuracy */
@@ -1815,9 +1863,11 @@ void calc_hitpoints()
 	value = value * hitpoints;
 	p_ptr->chp = value >> 16;
 	p_ptr->chp_frac = value & 0xFFFF;
+
+	/* Save the new max-hitpoints */
 	p_ptr->mhp = hitpoints;
 
-	/* can't print hit points here, may be in store or inventory mode */
+	/* Remember to redisplay the hitpoints */
 	py.flags.status |= PY_HP;
     }
 }
@@ -1861,11 +1911,11 @@ void insert_str(char *object_str, cptr mtc_str, cptr insert)
 
 
 /*
- * lets anyone enter wizard mode after a disclaimer...	-JEW-
+ * Lets certain players enter wizard mode after a disclaimer...	-JEW-
  */
 int enter_wiz_mode(void)
 {
-    register int answer;
+    register int answer = FALSE;
 
     if (!is_wizard(player_uid)) return FALSE;
 
@@ -1890,24 +1940,26 @@ int enter_wiz_mode(void)
  */
 int attack_blows(int weight, int *wtohit)
 {
-    register int adj_weight;
-    register int str_index, dex_index, s, d;
+    int adj_weight, str_index, dex_index, s, d;
 
+    /* Start with the strength/dexterity */
     s = py.stats.use_stat[A_STR];
     d = py.stats.use_stat[A_DEX];
 
+    /* Normal weapons */
     if (s * 15 < weight) {
 	*wtohit = s * 15 - weight;
 	return 1;
     }
 	*wtohit = 0;
 
+	/* Access the dexterity */
 	if (d < 10) dex_index = 0;
 	else if (d < 19) dex_index = 1;
 	else if (d < 68) dex_index = 2;
 	else if (d < 108) dex_index = 3;
 	else if (d < 118) dex_index = 4;
-	else if (d == 118) dex_index = 5;
+	else if (d < 119) dex_index = 5;
 	else if (d < 128) dex_index = 6;
 	else if (d < 138) dex_index = 7;
 	else if (d < 148) dex_index = 8;
@@ -1937,6 +1989,7 @@ int attack_blows(int weight, int *wtohit)
 	    break;
 	}
 
+	/* Access the strength vs weight */
 	if (adj_weight < 2) str_index = 0;
 	else if (adj_weight < 3) str_index = 1;
 	else if (adj_weight < 4) str_index = 2;
@@ -1954,6 +2007,7 @@ int attack_blows(int weight, int *wtohit)
 	    if (inventory[d].flags2 & TR1_ATTACK_SPD)
 		s += inventory[d].p1;
 
+	/* Use the blows table */
 	d = (int)blows_table[str_index][dex_index];
 
 	/* Non-warrior attack penalty */
@@ -1961,6 +2015,7 @@ int attack_blows(int weight, int *wtohit)
 	    if (d > 5) d = 5;
 	}
 	
+	/* Mage attack penalty */
 	if (py.misc.pclass == 1) {
 	    if (d > 4) d = 4;
 	}
@@ -1975,17 +2030,17 @@ int attack_blows(int weight, int *wtohit)
  */
 int tot_dam(inven_type *i_ptr, int tdam, int monster)
 {
-    register monster_race *m_ptr;
-    register monster_lore   *r_ptr;
     int                     reduced = FALSE;
     /* don't resist more than one thing.... -CWS */
 
-    if ((((i_ptr->tval >= TV_SHOT) && (i_ptr->tval <= TV_ARROW)) ||
-	 ((i_ptr->tval >= TV_HAFTED) && (i_ptr->tval <= TV_SWORD)) ||
-	 (i_ptr->tval == TV_FLASK))) {
+    if ((((i_ptr->tval >= TV_SHOT) &&
+	(i_ptr->tval <= TV_ARROW)) ||
+	((i_ptr->tval >= TV_HAFTED) &&
+	(i_ptr->tval <= TV_SWORD)) ||
+	(i_ptr->tval == TV_FLASK))) {
 
-	m_ptr = &c_list[monster];
-	r_ptr = &c_recall[monster];
+	monster_race	*m_ptr = &c_list[monster];
+	monster_lore	*r_ptr = &c_recall[monster];
 
     /* Mjollnir? :-> */
 	if (!(m_ptr->cdefense & IM_LIGHTNING) && (i_ptr->flags2 & TR3_LITENING)) {
@@ -2082,6 +2137,9 @@ int tot_dam(inven_type *i_ptr, int tdam, int monster)
 	if ((i_ptr->flags2 & TR1_IMPACT) && (tdam > 50))
 	    earthquake();
     }
+
+
+    /* Return the total damage */
     return (tdam);
 }
 
@@ -2172,7 +2230,7 @@ int find_range(int item1, int item2, int *j, int *k)
 
 
 /*
- * Teleport the player to a new location		-RAK-
+ * Teleport the player to a new location, up to "dis" units away.
  */
 void teleport(int dis)
 {
@@ -2198,6 +2256,8 @@ void teleport(int dis)
 	dis *= 2;
     } while (count == 1000);
 
+
+    /* Move the player */
     move_rec(char_row, char_col, y, x);
 
     /* unlight area teleported from */
@@ -2206,10 +2266,12 @@ void teleport(int dis)
     char_row = y;
     char_col = x;
 
+    /* Check the view */
     check_view();
 
     creatures(FALSE);
 
+    /* Hack -- The teleport is dealt with */
     teleport_flag = FALSE;
 }
 

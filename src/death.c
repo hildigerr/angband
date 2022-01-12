@@ -1,6 +1,8 @@
+/* File: death.c */ 
+
+/* Purpose: code executed when player dies */
+
 /*
- * death.c: code executed when player dies 
- *
  * Copyright (c) 1989 James E. Wilson, Robert A. Koeneke 
  *
  * This software may be copied and distributed for educational, research, and
@@ -8,35 +10,23 @@
  * included in all such copies. 
  */
 
-/*
- * some incorrectly define NULL as integer constant, so load this before
- * local includes 
- */
-
-#include <signal.h>
 #include "angband.h"
 
-
-
 #ifndef USG
-/* only needed for Berkeley UNIX */
 # include <sys/param.h>
 # include <sys/file.h>
-#else
-#ifdef __MINT__        
-#endif
 #endif
 
-#ifdef MSDOS
-#include <io.h>
-#else
-#if !defined(ATARIST_MWC) && !defined(MAC)
-#ifndef VMS
-#include <pwd.h>
-#else
-# include <file.h>
-#endif
-#endif
+# ifdef MSDOS
+#  include <io.h>
+# else
+#  if !defined(ATARIST_MWC) && !defined(MAC)
+#  ifndef VMS
+#   include <pwd.h>
+#  else
+#   include <file.h>
+#  endif
+# endif
 #endif
 
 #ifdef linux
@@ -45,7 +35,7 @@
 
 #if defined(USG) || defined(VMS)
 #ifndef L_SET
-#define L_SET 0
+# define L_SET 0
 #endif
 #endif
 
@@ -84,7 +74,6 @@ char        *getlogin();
  * Later when the score is being written out, you must be sure
  * to flock the file so we don't have multiple people trying to
  * write to it at the same time.
- *  Craig Norborg (doc)	Mon Aug 10 16:41:59 EST 1987 
  */
 void init_scorefile()
 {
@@ -100,9 +89,9 @@ void init_scorefile()
 }
 
 
-/* 
+/*
  * Attempt to open the intro file			-RAK-
- * This routine also checks the hours file vs. what time it is	-Doc
+ * Hack -- Check the hours file vs. what time it is	-Doc
  */
 void read_times(void)
 {
@@ -212,22 +201,26 @@ void helpfile(cptr filename)
 
 
 /*
- * Print the character to a file or device		-RAK-
+ * Print the character to a file or device.
  */
 int file_character(cptr filename1)
 {
-    register int          i;
-    int                   j, xbth, xbthb, xfos, xsrh, xstl, xdis, xsave, xdev;
+    register int		i;
+    int				j;
+    int                 xbth, xbthb, xfos, xsrh;
+    int			xstl, xdis, xsave, xdev;
     vtype                 xinfra;
-    int                   fd;
+    int				fd = -1;
     cptr			p;
     cptr			colon = ":";
     cptr			blank = " ";
-    register FILE        *file1;
+
+    register FILE		*file1;
+
     bigvtype              prt2;
-    register struct misc *p_ptr;
-    register inven_type  *i_ptr;
-    vtype                 out_val, prt1;
+    struct misc *p_ptr;
+    inven_type			*i_ptr;
+    vtype			out_val, prt1;
 
     fd = my_topen(filename1, O_WRONLY | O_CREAT | O_EXCL, 0644);
     if (fd < 0 && errno == EEXIST) {
@@ -246,6 +239,7 @@ int file_character(cptr filename1)
 	file1 = NULL;
     }
 
+    /* Dump a character sheet */
     if (file1) {
 
 	prt("Writing character sheet...", 0, 0);
@@ -344,13 +338,12 @@ int file_character(cptr filename1)
 	}
 
 	/* Write out the equipment list.	     */
-	j = 0;
 	(void)fprintf(file1, "\n  [Character's Equipment List]\n\n");
 	if (!equip_ctr) {
 	    (void)fprintf(file1, "  Character has no equipment in use.\n");
 	}
 	else {
-	    for (i = INVEN_WIELD; i < INVEN_ARRAY_SIZE; i++) {
+	    for (j = 0, i = INVEN_WIELD; i < INVEN_ARRAY_SIZE; i++) {
 		i_ptr = &inventory[i];
 		if (i_ptr->tval != TV_NOTHING) {
 		    switch (i) {
@@ -446,7 +439,9 @@ int file_character(cptr filename1)
 
 
 
-/* Centers a string within a 31 character string		-JWT-	 */
+/*
+ * Centers a string within a 31 character string		-JWT-	 
+ */
 static char *center_string(char *centered_str, cptr in_str)
 {
     register int i, j;
@@ -459,9 +454,7 @@ static char *center_string(char *centered_str, cptr in_str)
 
 
 /* Not touched for Mac port */
-void 
-display_scores(from, to)
-int from, to;
+void display_scores(int from, int to)
 {
     register int i = 0, j, k, l;
     int          fd;
@@ -540,9 +533,7 @@ int from, to;
 }
 
 /* Pauses for user response before returning		-RAK-	 */
-int 
-look_line(prt_line)
-int prt_line;
+int look_line(int prt_line)
 {
     prt("[Press ESC to quit, any other key to continue.]", prt_line, 17);
     if (inkey() == ESCAPE) {
@@ -555,10 +546,10 @@ int prt_line;
 }
 
 
-
-/* Prints the gravestone of the character		-RAK-	 */
-static void 
-print_tomb()
+/*
+ * Prints the gravestone of the character  -RAK-
+ */
+static void print_tomb()
 {
     vtype                str, tmp_str;
     register int         i;
@@ -587,6 +578,8 @@ print_tomb()
 	    if (fp) fclose(fp);
 	}
     }
+
+    /* Draw a tombstone */
     clear_screen();
     put_str("_______________________", 1, 15);
     put_str("/", 2, 14);
@@ -600,20 +593,21 @@ print_tomb()
 		  center_string(tmp_str, py.misc.name));
     put_str(str, 6, 10);
     put_str("|               the               |   ___", 7, 9);
-    if (!total_winner)
-	p = title_string();
-    else
-	p = "Magnificent";
+    p = total_winner ? "Magnificent" : title_string();
     (void)sprintf(str, "| %s |  /   \\", center_string(tmp_str, p));
     put_str(str, 8, 9);
     put_str("|", 9, 9);
     put_str("|  :   :", 9, 43);
-    if (!total_winner)
+    if (!total_winner) {
 	p = class[py.misc.pclass].title;
-    else if (py.misc.male)
+    }
+    else if (py.misc.male) {
 	p = "*King*";
-    else
+    }
+    else {
 	p = "*Queen*";
+    }
+
     (void)sprintf(str, "| %s | _;,,,;_   ____", center_string(tmp_str, p));
     put_str(str, 10, 9);
     (void)sprintf(str, "Level : %d", (int)py.misc.lev);
@@ -704,28 +698,34 @@ print_tomb()
 
 
 /* Calculates the total number of points earned		-JWT-	 */
-long 
-total_points()
+long total_points()
 {
     return (py.misc.max_exp + (100 * py.misc.max_dlv));
 }
 
 
 
-/* Enters a players name on a hi-score table...    SM */
+/*
+ * Enters a players name on a hi-score table, if "legal".
+ */
 static errr top_twenty(void)
 {
-    register int        i, j, k;
+    int          i, j, k;
+
     high_scores         scores[MAX_SAVE_HISCORES], myscore;
 
+    /* Wipe screen */
     clear_screen();
 
+    /* Wizard-mode pre-empts scoring */
     if (wizard || to_be_wizard) {
 	display_scores(0, 10);
 	(void)save_player();
 	restore_term();
 	exit(0);
     }
+
+    /* Interupted */    
     if (!total_winner && !stricmp(died_from, "Interrupting")) {
 	msg_print("Score not registered due to interruption.");
 	display_scores(0, 10);
@@ -733,6 +733,8 @@ static errr top_twenty(void)
 	restore_term();
 	exit(0);
     }
+
+    /* Quitter */
     if (!total_winner && !stricmp(died_from, "Quitting")) {
 	msg_print("Score not registered due to quitting.");
 	display_scores(0, 10);
@@ -740,6 +742,7 @@ static errr top_twenty(void)
 	restore_term();
 	exit(0);
     }
+
     myscore.points = total_points();
     myscore.dun_level = dun_level;
     myscore.lev = py.misc.lev;
@@ -764,6 +767,7 @@ static errr top_twenty(void)
 #else
     if (0 != flock(highscore_fd, LOCK_EX))
 #endif
+
     {
 	perror("Error gaining lock for score file");
 	exit_game();
@@ -797,10 +801,12 @@ static errr top_twenty(void)
 	    (void)lseek(highscore_fd, (long)(k * sizeof(high_scores)), L_SET);
 	    (void)write(highscore_fd, (char *)&scores[k - 1], sizeof(high_scores));
 	}
+
     /* Write out your score */
 	(void)lseek(highscore_fd, (long)(j * sizeof(high_scores)), L_SET);
 	(void)write(highscore_fd, (char *)&myscore, sizeof(high_scores));
     }
+
 /* added usg lockf call - cba */
 #ifdef USG
     lockf(highscore_fd, F_ULOCK, 0);
@@ -808,19 +814,26 @@ static errr top_twenty(void)
     (void)flock(highscore_fd, LOCK_UN);
 #endif
     (void)close(highscore_fd);
+
     if (j < 10) {
 	display_scores(0, 10);
-    } else if (j > (i - 5)) {
+    }
+
+    else if (j > (i - 5)) {
 	display_scores(i - 9, i + 1);
-    } else
+    }
+    
+    else {
 	display_scores(j - 5, j + 5);
+    }
+    
+
+    /* Success */
     return (0);
 }
 
 /* Enters a players name on the hi-score table     SM	 */
-void 
-delete_entry(which)
-int which;
+void delete_entry(int which)
 {
     register int i;
     high_scores  scores[MAX_SAVE_HISCORES];
@@ -875,24 +888,26 @@ int which;
 	display_scores(which - 5, which + 5);
 }
 
-/* Change the player into a King!			-RAK-	 */
-static void 
-kingly()
+/*
+ * Change the player into a King!			-RAK-	 
+ */
+static void kingly()
 {
-    register struct misc *p_ptr;
-    register const char  *p;
+    register struct misc *p_ptr = &py.misc;
+    register cptr p;
 
-/* Change the character attributes.		 */
+    /* Hack -- retire in town */
     dun_level = 0;
+
+    /* Change the character attributes.		 */
     (void)strcpy(died_from, "Ripe Old Age");
-    p_ptr = &py.misc;
     (void)restore_level();
     p_ptr->lev += MAX_PLAYER_LEVEL;
     p_ptr->au += 250000L;
     p_ptr->max_exp += 5000000L;
     p_ptr->exp = p_ptr->max_exp;
 
-/* Let the player know that he did good.	 */
+    /* Let the player know that he did good.	 */
     clear_screen();
     put_str("#", 1, 34);
     put_str("#####", 2, 32);
@@ -909,18 +924,24 @@ kingly()
     put_str(p, 12, 24);
     put_str("Veni, Vidi, Vici!", 15, 26);
     put_str("I came, I saw, I conquered!", 16, 21);
-    if (p_ptr->male)
+    if (p_ptr->male) {
 	put_str("All Hail the Mighty King!", 17, 22);
-    else
+    }
+    else {
 	put_str("All Hail the Mighty Queen!", 17, 22);
+    }
     flush();
     pause_line(23);
 }
 
 
-/* Handles the gravestone end top-twenty routines	-RAK-	 */
-void 
-exit_game()
+/*
+ * Exit the game
+ *   Save the player to a save file
+ *   Display a gravestone / death info
+ *   Display the top twenty scores
+ */
+void exit_game(void)
 {
 
 #ifdef MAC
@@ -928,21 +949,37 @@ exit_game()
     enablefilemenu(FALSE);
 #endif
 
-/* What happens upon dying.				-RAK-	 */
+    /* Flush the messages */
     msg_print(NULL);
-    flush();			   /* flush all input */
-    signals_ignore_tstp();		   /* Can't interrupt or suspend. */
+
+    /* Flush the input */
+    flush();
+
+    /* No suspending now */
+    signals_ignore_tstp();
+
+
     if (turn >= 0) {
-	if (total_winner)
-	    kingly();
+
+	/* Handle retirement */
+	if (total_winner) kingly();
+
+	/* You are dead */
 	print_tomb();
+
 	if (!wizard && !to_be_wizard)
-	    top_twenty();
+	top_twenty();
 	else
 	    msg_print("Score not registered.");
     }
-    (void)save_player();		   /* Save the memory at least. */
+
+	/* Save the player or his memories */
+	(void)save_player();
+
     erase_line(23, 0);
     restore_term();
+
+    /* Actually stop the process */
     quit(NULL);
 }
+

@@ -1,6 +1,8 @@
+/* File: util.c */
+
+/* Purpose: miscellanous utilities */
+
 /*
- * util.c: miscellanous utilities 
- *
  * Copyright (c) 1989 James E. Wilson 
  *
  * This software may be copied and distributed for educational, research, and
@@ -67,14 +69,13 @@ struct passwd      *getpwnam();
  */
 void user_name(char *buf, int id)
 {
-    struct passwd *pwd;
+    struct passwd *pw;
 
     /* Look up the user name */
-    pwd = getpwuid(id);
-    (void)strcpy(buf, pwd->pw_name);
+    pw = getpwuid(id);
+    (void)strcpy(buf, pw->pw_name);
 
-    if (*buf >= 'a' && *buf <= 'z')
-	*buf = (*buf - 'a') + 'A';
+    if (*buf >= 'a' && *buf <= 'z') *buf = (*buf - 'a') + 'A';
 }
 
 

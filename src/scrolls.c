@@ -12,8 +12,7 @@
 
 
 /* Scrolls for the reading				-RAK-	 */
-void 
-read_scroll()
+void read_scroll()
 {
     u32b                i;
     int                   j, k, item_val, y, x;
@@ -446,3 +445,4 @@ read_scroll()
 	}
     }
 }
+

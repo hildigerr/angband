@@ -1,10 +1,14 @@
-/*    main.c: initialization, main() function and main loop
+/* File: main.c */ 
 
-   Copyright (c) 1989 James E. Wilson, Robert A. Koeneke
+/* Purpose: initialization, main() function and main loop */
 
-   This software may be copied and distributed for educational, research, and
-   not for profit purposes provided that this copyright and statement are
-   included in all such copies. */
+/*
+ * Copyright (c) 1989 James E. Wilson, Robert A. Koeneke
+ *
+ * This software may be copied and distributed for educational, research, and
+ * not for profit purposes provided that this copyright and statement are
+ * included in all such copies.
+ */
 
 #include "angband.h"
 
@@ -53,14 +57,15 @@ NIMLOTH, NAR, BERUTHIEL, GORLIM, ELENDIL, THORIN, CELEGORM, THRAIN,
 GONDOR, THINGOL, THORONGIL, LUTHIEN, TUOR, ROHAN, TULKAS, NECKLACE, BARAHIR,
 CASPANION, RAZORBACK, BLADETURNER;
 
-/* Initialize, restore, and get the ball rolling.	-RAK-	*/
-int
-main(argc, argv)
-int argc;
-char *argv[];
+
+/*
+ * Studly machines can actually parse command line args
+ */
+int main(int argc, char *argv[])
 {
     int generate, i;
     int result=FALSE, FIDDLE=FALSE;
+
 #ifndef __MINT__
     FILE *fp;
 #endif
@@ -95,9 +100,9 @@ char *argv[];
 #ifndef MSDOS
 #ifndef SET_UID
     (void) umask(0);
+# endif
 #endif
-#endif
-    
+
 #ifdef SECURE
     Authenticate();
 #endif
@@ -109,8 +114,7 @@ char *argv[];
     /* Get the file paths */
     get_file_paths();
 
-    /* call this routine to grab a file pointer to the highscore file */
-    /* and prepare things to relinquish setuid privileges */
+    /* Prepare the "hiscore" file (while we have permission) */
     init_scorefile();
 
 #ifndef MSDOS
@@ -128,45 +132,50 @@ char *argv[];
 	quit("setuid(): cannot set permissions correctly!");
     }
 #endif
-    
 
 #if !defined(MSDOS) && !defined(__MINT__)
     (void)gethostname(thishost, (sizeof thishost) - 1);	/* get host */
     fp = my_tfopen(ANGBAND_LOAD, "r");
     if (!fp) quit("cannot get load-check!");
 
-    
-    do {
+    /* Find ourself */
+    while (1) {
 	if (fscanf(fp, "%s%d", temphost, &LOAD) == EOF) {
 	    LOAD=100;
 	    break;
 	}
-	if (temphost[0]=='#')
-	    (void)fgets(discard, (sizeof discard)-1, fp); /* Comment */
-    } while (strcmp(temphost,thishost) && strcmp(temphost,"localhost"));
-    /* Until we've found ourselves */
-    
+
+	/* Hack -- Discard comments */
+	if (temphost[0]=='#') {
+	    (void)fgets(discard, (sizeof discard)-1, fp);
+	    continue;
+	}
+
+	if (!strcmp(temphost,thishost) || !strcmp(temphost,"localhost")) break;
+    }
+
     fclose(fp);
 #endif
-    
+
     /* use curses */
     init_curses();
-    
+
     /* check for user interface option */
-    for (--argc, ++argv; argc > 0 && argv[0][0] == '-'; --argc, ++argv)
+    for (--argc, ++argv; argc > 0 && argv[0][0] == '-'; --argc, ++argv) {
 	switch (argv[0][1]) {
 	  case 'A':
 	  case 'a':
-	    if (is_wizard(player_uid))
-		peek=TRUE;
-	    else goto usage;
+	    if (!is_wizard(player_uid)) goto usage;
+	    peek=TRUE;
 	    break;
 	  case 'N':
-	  case 'n': new_game = TRUE; break;
+	  case 'n':
+	    new_game = TRUE;
+	    break;
 	  case 'O':
 	  case 'o':
-	    /* rogue_like_commands may be set in load_player(), so delay this
-	       until after read savefile if any */
+	    /* rogue_like_commands may be set in load_player() */
+	    /* so delay this until after read savefile if any */
 	    force_rogue_like = TRUE;
 	    force_keys_to = FALSE;
 	    break;
@@ -194,17 +203,13 @@ char *argv[];
 	    exit_game();
 	  case 'F':
 	  case 'f':
-	    if (is_wizard(player_uid) || to_be_wizard)
+	    if (!(is_wizard(player_uid) || to_be_wizard)) goto usage;
 		FIDDLE=TRUE;
-	    else
-		goto usage;
 	    break;
 	  case 'W':
 	  case 'w':
-	    if (is_wizard(player_uid))
+	    if (!is_wizard(player_uid)) goto usage;
 		to_be_wizard = TRUE;
-	    else
-		goto usage;
 #ifndef MSDOS
 	    if (isdigit((int)argv[0][2]))
 		player_uid = atoi(&argv[0][2]);
@@ -212,13 +217,11 @@ char *argv[];
 	    break;
 	  case 'u':
 	  case 'U':
-	    if (argv[0][2]) {
-		strcpy(py.misc.name, &argv[0][2]);
-		d_check(py.misc.name);
-	    } else {
-		goto usage;
-	    }
+	    if (!argv[0][2]) goto usage;
+	    strcpy(py.misc.name, &argv[0][2]);
+	    d_check(py.misc.name);
 	    break;
+
 	  default:
 	  usage:
 	    if (is_wizard(player_uid)) {
@@ -260,8 +263,11 @@ char *argv[];
 #endif
 		puts("Each option must be listed separately (ie '-r -n', not '-rn')");
 	    }
+
+	    /* Actually abort the process */
 	    quit(NULL);
 	}
+    }
 
     /* catch those nasty signals */
     /* must come after init_curses as some of the signal handlers use curses */
@@ -271,8 +277,6 @@ char *argv[];
     /* If not wizard  No_Control_Y	        */
     read_times();
 
-    /* Some necessary initializations		*/
-    /* all made into constants or initialized in variables.c */
 
 
     /* Grab a random seed from the clock          */
@@ -505,9 +509,10 @@ char *argv[];
 }
 
 
-/* Init players with some belongings			-RAK-	*/
-static void
-player_outfit()
+/*
+ * Init players with some belongings
+ */
+static void player_outfit()
 {
     register int i, j;
     inven_type inven_init;
@@ -534,8 +539,7 @@ player_outfit()
 
 
 /* Initializes M_LEVEL array for use with PLACE_MONSTER	-RAK-	*/
-static void
-init_m_level()
+static void init_m_level()
 {
     register int i, k;
 
@@ -552,8 +556,7 @@ init_m_level()
 
 
 /* Initializes T_LEVEL array for use with PLACE_OBJECT	-RAK-	*/
-static void
-init_t_level()
+static void init_t_level()
 {
     register int i, l;
     int tmp[MAX_OBJ_LEVEL+1];
@@ -580,9 +583,7 @@ init_t_level()
 
 
 
-static int
-d_check(a)
-char *a;
+static int d_check(char *a)
 {
     while (*a)
 	if (iscntrl(*a)) {
@@ -591,3 +592,4 @@ char *a;
 	} else a++;
     return (0);
 }
+

@@ -221,6 +221,7 @@ static int look_see(int x, int y, int *transparent)
 	}
     }
 
+
     /* Check for illumination */
     if (c_ptr->tl || c_ptr->pl || c_ptr->fm) {
 
@@ -535,7 +536,7 @@ void do_cmd_look()
 
 
 /*
- * Chests have traps too. -RAK-
+ * Chests have traps too.
  * Note: Chest traps are based on the FLAGS value
  */
 static void chest_trap(int y, int x)
@@ -850,13 +851,13 @@ void do_cmd_close()
 
 	    /* Redisplay */
 	    lite_spot(y, x);
-		    }
+	}
     }
 }
 
 
 /*
- * Tunneling through real wall: 10, 11, 12		-RAK-
+ * Tunneling through wall
  * Used by TUNNEL and WALL_TO_MUD
  */
 int twall(int y, int x, int t1, int t2)
@@ -867,6 +868,7 @@ int twall(int y, int x, int t1, int t2)
 
     res = FALSE;
 
+    /* Allow chaining of "probability" calls */
     if (t1 > t2) {
 
 	c_ptr = &cave[y][x];
@@ -902,6 +904,7 @@ int twall(int y, int x, int t1, int t2)
 
 		    if (cave[i][j].fval <= MAX_CAVE_ROOM) {
 
+			/* Steal the floor type */
 			c_ptr->fval = cave[i][j].fval;
 
 			c_ptr->pl = cave[i][j].pl;
@@ -913,6 +916,7 @@ int twall(int y, int x, int t1, int t2)
 	    }
 
 
+	/* Otherwise, make it a corridor */
 	if (!found) {
 	    c_ptr->fval = CORR_FLOOR;
 	    c_ptr->pl = FALSE;
@@ -925,9 +929,10 @@ int twall(int y, int x, int t1, int t2)
 	    c_ptr->pl = FALSE;
 	}
 
-
+	/* Redisplay the grid */
 	lite_spot(y, x);
 
+	/* Worked */
 	res = TRUE;
     }
 
@@ -1187,7 +1192,7 @@ void do_cmd_disarm()
 		    prt_experience();
 		}
 
-		/* avoid randint(0) call */
+		/* Keep trying */
 		else if ((tot > 5) && (randint(tot) > 5)) {
 		    count_msg_print("You failed to disarm the trap.");
 		}
@@ -1231,6 +1236,7 @@ void do_cmd_disarm()
 		    prt_experience();
 		}
 
+		/* Keep trying */
 		else if ((tot > 5) && (randint(tot) > 5)) {
 		    count_msg_print("You failed to disarm the chest.");
 		}
@@ -1378,7 +1384,7 @@ void bash()
 	    msg_print("You bash at empty space.");
 	}
 
-	/* same message for wall as for secret door */
+	/* Walls and secret doors yield same message */
 	else {
 	    msg_print("You bash it, but nothing interesting happens.");
 	}
@@ -1391,7 +1397,7 @@ void bash()
 
 
 /*
- * Jam a closed door -RAK-
+ * Jam a closed door with a spike -RAK-
  */
 void do_cmd_spike()
 {
@@ -1464,10 +1470,10 @@ void do_cmd_spike()
 
 
 /*
- * Throw an object across the dungeon. -RAK-
- * Note: Flasks of oil do fire damage
- * Note: Extra damage and chance of hitting when missiles are used
- * with correct weapon.  I.E.  wield bow and throw arrow.
+ * Throw an object across the dungeon.
+ * Flasks of oil do "fire damage" (is this still true?)
+ * Extra damage and chance of hitting when missiles are used
+ * with correct weapon (xbow + bolt, bow + arrow, sling + shot).
  * Note: Some characters will now get multiple shots per turn -EAM
  */
 void do_cmd_fire()
@@ -1690,9 +1696,10 @@ void do_cmd_fire()
 
 void do_cmd_feeling()
 {
-    /* snicker.... -CWS */
-    if (dun_level == 0) {
+    /* No useful feeling in town */
+    if (!dun_level) {
 	msg_print("You feel there is something special about the town level.");
+	return;
     }
     else if (unfelt)
 	msg_print("Looks like any other level.");
@@ -1734,6 +1741,9 @@ void do_cmd_feeling()
 	break;
     }
 }
+
+
+
 
 /*
  * Append an additional comment to an object description.	-CJS-
@@ -1780,12 +1790,18 @@ void scribe_object(void)
 }
 
 
+/*
+ * print out the status of uniques - cba 
+ *
+ * XXX This routine may induce a blank final screen.
+ */
 void do_cmd_check_uniques()
 {
     int      i, j, k;
     bigvtype msg;
 
     save_screen();
+
     j = 15;
 
     for (i = 1; i < 23; i++) erase_line(i, j - 2);
@@ -1793,12 +1809,16 @@ void do_cmd_check_uniques()
     i = 1;
     prt("Uniques:", i++, j + 5);
 
+    /* Note -- skip the ghost */
     for (k = 0; k < MAX_R_IDX-1; k++) {
 
+	/* Only print Uniques */
 	if ((strlen(c_list[k].name) > 0) && (c_list[k].cdefense & UNIQUE)) {
 
+	    /* Wizards know everything */
 	    if (wizard) {
 
+		/* Print a message */            
 		sprintf(msg, "%s is %s.", c_list[k].name,
 			(u_list[k].dead) ? "dead" : "alive");            
 		prt(msg, i++, j);
@@ -1812,8 +1832,10 @@ void do_cmd_check_uniques()
 	}
     }
 
+    /* Pause */
     pause_line(i);
 
+    /* Restore the screen */
     restore_screen();
 }
 

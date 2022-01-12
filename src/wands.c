@@ -12,8 +12,7 @@
 
 
 /* Wands for the aiming.				 */
-void 
-aim()
+void aim()
 {
     u32b                i;
     register int          l, ident;
@@ -241,3 +240,4 @@ aim()
 	}
     }
 }
+

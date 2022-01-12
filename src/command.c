@@ -1,5 +1,6 @@
 /* File: command.c */ 
 
+/* Purpose: process player commands */
 
 /*
  * Copyright (c) 1989 James E. Wilson, Robert A. Koeneke 
@@ -12,11 +13,16 @@
 #include "angband.h"
 
 
+/*
+ * A simple structure to hold some options
+ */
+typedef struct _opt_desc {
+    cptr	o_prompt;
+    int         *o_var;
+} opt_desc;
 
-static struct opt_desc {
-    const char         *o_prompt;
-    int                *o_var;
-} options[] = {
+
+static opt_desc options[] = {
 
     { "Running: cut known corners",	 	&find_cut },
     { "Running: examine potential corners",	&find_examine },
@@ -40,7 +46,7 @@ static struct opt_desc {
 
 
 /*
- * Set or unset various boolean options.		-CJS-
+ * Set or unset various boolean options.
  */
 void do_cmd_options()
 {
@@ -64,8 +70,10 @@ void do_cmd_options()
     }
     erase_line(max + 1, 0);
 
+    /* Start at the first option */
     i = 0;
 
+    /* Interact with the player */
     for (;;) {
 	move_cursor(i + 1, 40);
 	ch = inkey();
@@ -76,18 +84,14 @@ void do_cmd_options()
 	    prt_equippy_chars(); /* redraw equippy chars */
 	    return;
 	  case '-':
-	    if (i > 0)
-		i--;
-	    else
-		i = max - 1;
+	    if (i > 0) i--;
+	    else i = max - 1;
 	    break;
 	  case ' ':
 	  case '\n':
 	  case '\r':
-	    if (i + 1 < max)
-		i++;
-	    else
-		i = 0;
+	    if (i + 1 < max) i++;
+	    else i = 0;
 	    break;
 	  case 'y':
 	  case 'Y':
@@ -97,10 +101,8 @@ void do_cmd_options()
 	    else {
 		put_str("yes ", i + 1, 40);
 	    *options[i].o_var = TRUE;
-	    if (i + 1 < max)
-		    i++;
-		else
-		    i = 0;
+	    if (i + 1 < max) i++;
+		else i = 0;
 	    }
 	    break;
 	  case 'n':
@@ -113,10 +115,8 @@ void do_cmd_options()
 	    } else {
 		put_str("no  ", i + 1, 40);
 	    *options[i].o_var = FALSE;
-	    if (i + 1 < max)
-		    i++;
-		else
-		    i = 0;
+	    if (i + 1 < max) i++;
+		else i = 0;
 	    }
 	    break;
 	  case '1':
@@ -140,10 +140,8 @@ void do_cmd_options()
 		else
 		    sprintf(string, "%d   ", ch);
 		put_str(string, i + 1, 40);
-	    if (i + 1 < max)
-		    i++;
-		else
-		    i = 0;
+	    if (i + 1 < max) i++;
+		else i = 0;
 	    }
 	    break;
 	  default:

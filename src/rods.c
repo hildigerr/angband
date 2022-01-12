@@ -14,8 +14,7 @@
 
 
 /* Rods for the slaughtering    			 */
-void 
-activate_rod()
+void activate_rod()
 {
     u32b              i;
     register int        l, ident;
@@ -292,3 +291,4 @@ activate_rod()
 	}
     }
 }
+

@@ -1,6 +1,8 @@
+/* File: moria1.c */
+
+/* Purpose: player inventory (and related commands) */
+
 /*
- * moria1.c: misc code, mainly to handle player movement, inventory, etc. 
- *
  * Copyright (c) 1989 James E. Wilson, Robert A. Koeneke 
  *
  * This software may be copied and distributed for educational, research, and
@@ -46,10 +48,7 @@ int is_a_vowel(int ch)
  * Only calculates properties with cumulative effect.  Properties that depend
  * on everything being worn are recalculated by calc_bonuses() -CJS - 
  */
-void 
-py_bonuses(t_ptr, factor)
-register inven_type *t_ptr;
-register int         factor;
+void py_bonuses(inven_type *t_ptr, int factor)
 {
     register int i, amount;
 
@@ -89,60 +88,48 @@ register int         factor;
 	py.flags.see_infra += amount;
 }
 
-/* Recalculate the effect of all the stuff we use.		  -CJS- */
-/* Also initialise race intrinsics    SM */
-void 
-calc_bonuses()
+/*
+ * Recalculate the effect of all the stuff we use.		  -CJS-
+ * Also initialise race intrinsics    SM
+ */
+void calc_bonuses()
 {
-    register u32b        item_flags;
-    register u32b        item_flags2;
-    int                    old_dis_ac;
-    register struct flags *p_ptr;
-    register struct misc  *m_ptr;
-    register inven_type   *i_ptr;
-    register int           i;
+    u32b		item_flags, item_flags2;
 
-    p_ptr = &py.flags;
-    m_ptr = &py.misc;
-    if (p_ptr->slow_digest)
-	p_ptr->food_digested++;
-    if (p_ptr->regenerate)
-	p_ptr->food_digested -= 3;
-    if (py.misc.prace == 9)
-	p_ptr->see_inv = TRUE;
-    else
-	p_ptr->see_inv = FALSE;
+    int			old_dis_ac;
+
+    struct flags *p_ptr = &py.flags;
+    struct misc  *m_ptr = &py.misc;
+
+    inven_type		*i_ptr;
+
+    int			i;
+
+    if (p_ptr->slow_digest) p_ptr->food_digested++;
+    if (p_ptr->regenerate) p_ptr->food_digested -= 3;
+    if (py.misc.prace == 9) p_ptr->see_inv = TRUE;
+    else p_ptr->see_inv = FALSE;
     p_ptr->teleport = FALSE;
-    if (py.misc.prace == 4)
-	p_ptr->free_act = TRUE;
-    else
-	p_ptr->free_act = FALSE;
+    if (py.misc.prace == 4) p_ptr->free_act = TRUE;
+    else p_ptr->free_act = FALSE;
     p_ptr->slow_digest = FALSE;
     p_ptr->aggravate = FALSE;
-    if (py.misc.prace == 7)
-	p_ptr->sustain_str = TRUE;
-    else
-	p_ptr->sustain_str = FALSE;
+    if (py.misc.prace == 7) p_ptr->sustain_str = TRUE;
+    else p_ptr->sustain_str = FALSE;
     p_ptr->sustain_int = FALSE;
     p_ptr->sustain_wis = FALSE;
-    if (py.misc.prace == 8)
-	p_ptr->sustain_con = TRUE;
-    else
-	p_ptr->sustain_con = FALSE;
-    if (py.misc.prace == 3)
-	p_ptr->sustain_dex = TRUE;
-    else
-	p_ptr->sustain_dex = FALSE;
+    if (py.misc.prace == 8) p_ptr->sustain_con = TRUE;
+    else p_ptr->sustain_con = FALSE;
+    if (py.misc.prace == 3) p_ptr->sustain_dex = TRUE;
+    else p_ptr->sustain_dex = FALSE;
     p_ptr->sustain_chr = FALSE;
     p_ptr->resist_fire = FALSE;
     p_ptr->resist_acid = FALSE;
     p_ptr->resist_cold = FALSE;
     p_ptr->regenerate = FALSE;
     p_ptr->resist_elec = FALSE;
-    if (py.misc.prace == 9)
-	p_ptr->ffall = TRUE;
-    else
-	p_ptr->ffall = FALSE;
+    if (py.misc.prace == 9) p_ptr->ffall = TRUE;
+    else p_ptr->ffall = FALSE;
     p_ptr->resist_pois = FALSE;
     p_ptr->hold_life = FALSE;
     p_ptr->telepathy = FALSE;
@@ -154,22 +141,16 @@ calc_bonuses()
     p_ptr->light = FALSE;
     p_ptr->resist_conf = FALSE;
     p_ptr->resist_sound = FALSE;
-    if (py.misc.prace == 2)
-	p_ptr->resist_lite = TRUE;
-    else
-	p_ptr->resist_lite = FALSE;
-    if (py.misc.prace == 6)
-	p_ptr->resist_dark = TRUE;
-    else
-	p_ptr->resist_dark = FALSE;
+    if (py.misc.prace == 2) p_ptr->resist_lite = TRUE;
+    else p_ptr->resist_lite = FALSE;
+    if (py.misc.prace == 6) p_ptr->resist_dark = TRUE;
+    else p_ptr->resist_dark = FALSE;
     p_ptr->resist_chaos = FALSE;
     p_ptr->resist_disen = FALSE;
     p_ptr->resist_shards = FALSE;
     p_ptr->resist_nexus = FALSE;
-    if (py.misc.prace == 5)
-	p_ptr->resist_blind = TRUE;
-    else
-	p_ptr->resist_blind = FALSE;
+    if (py.misc.prace == 5) p_ptr->resist_blind = TRUE;
+    else p_ptr->resist_blind = FALSE;
     p_ptr->resist_nether = FALSE;
     p_ptr->resist_fear = FALSE;
 
@@ -281,68 +262,37 @@ calc_bonuses()
 	i_ptr++;
     }
 
-    if (TR3_SLOW_DIGEST & item_flags)
-	p_ptr->slow_digest = TRUE;
-    if (TR3_AGGRAVATE & item_flags)
-	p_ptr->aggravate = TRUE;
-    if (TR3_TELEPORT & item_flags)
-	p_ptr->teleport = TRUE;
-    if (TR3_REGEN & item_flags)
-	p_ptr->regenerate = TRUE;
-    if (TR2_RES_FIRE & item_flags)
-	p_ptr->resist_fire = TRUE;
-    if (TR2_RES_ACID & item_flags)
-	p_ptr->resist_acid = TRUE;
-    if (TR2_RES_COLD & item_flags)
-	p_ptr->resist_cold = TRUE;
-    if (TR2_RES_POIS & item_flags)
-	p_ptr->resist_pois = TRUE;
-    if (TR2_HOLD_LIFE & item_flags2)
-	p_ptr->hold_life = TRUE;
-    if (TR3_TELEPATHY & item_flags2)
-	p_ptr->telepathy = TRUE;
-    if (TR2_IM_FIRE & item_flags2)
-	p_ptr->immune_fire = TRUE;
-    if (TR2_IM_ACID & item_flags2)
-	p_ptr->immune_acid = TRUE;
-    if (TR2_IM_COLD & item_flags2)
-	p_ptr->immune_cold = TRUE;
-    if (TR2_IM_ELEC & item_flags2)
-	p_ptr->immune_elec = TRUE;
-    if (TR2_IM_POIS & item_flags2)
-	p_ptr->immune_pois = TRUE;
-    if (TR3_LITE & item_flags2)
-	p_ptr->light = TRUE;
-    if (TR2_FREE_ACT & item_flags)
-	p_ptr->free_act = TRUE;
-    if (TR3_SEE_INVIS & item_flags)
-	p_ptr->see_inv = TRUE;
-    if (TR2_RES_ELEC & item_flags)
-	p_ptr->resist_elec = TRUE;
-    if (TR3_FEATHER & item_flags)
-	p_ptr->ffall = TRUE;
-    if (TR2_RES_CONF & item_flags2)
-	p_ptr->resist_conf = TRUE;
-    if (TR2_RES_SOUND & item_flags2)
-	p_ptr->resist_sound = TRUE;
-    if (TR2_RES_LITE & item_flags2)
-	p_ptr->resist_lite = TRUE;
-    if (TR2_RES_DARK & item_flags2)
-	p_ptr->resist_dark = TRUE;
-    if (TR2_RES_CHAOS & item_flags2)
-	p_ptr->resist_chaos = TRUE;
-    if (TR2_RES_DISEN & item_flags2)
-	p_ptr->resist_disen = TRUE;
-    if (TR2_RES_SHARDS & item_flags2)
-	p_ptr->resist_shards = TRUE;
-    if (TR2_RES_NEXUS & item_flags2)
-	p_ptr->resist_nexus = TRUE;
-    if (TR2_RES_BLIND & item_flags2)
-	p_ptr->resist_blind = TRUE;
-    if (TR2_RES_NETHER & item_flags2)
-	p_ptr->resist_nether = TRUE;
-    if (TR2_RES_FEAR & item_flags2)
-	p_ptr->resist_fear = TRUE;
+    if (TR3_SLOW_DIGEST & item_flags) p_ptr->slow_digest = TRUE;
+    if (TR3_AGGRAVATE & item_flags) p_ptr->aggravate = TRUE;
+    if (TR3_TELEPORT & item_flags) p_ptr->teleport = TRUE;
+    if (TR3_REGEN & item_flags) p_ptr->regenerate = TRUE;
+    if (TR2_RES_FIRE & item_flags) p_ptr->resist_fire = TRUE;
+    if (TR2_RES_ACID & item_flags) p_ptr->resist_acid = TRUE;
+    if (TR2_RES_COLD & item_flags) p_ptr->resist_cold = TRUE;
+    if (TR2_RES_POIS & item_flags) p_ptr->resist_pois = TRUE;
+    if (TR2_HOLD_LIFE & item_flags2) p_ptr->hold_life = TRUE;
+    if (TR3_TELEPATHY & item_flags2) p_ptr->telepathy = TRUE;
+    if (TR2_IM_FIRE & item_flags2) p_ptr->immune_fire = TRUE;
+    if (TR2_IM_ACID & item_flags2) p_ptr->immune_acid = TRUE;
+    if (TR2_IM_COLD & item_flags2) p_ptr->immune_cold = TRUE;
+    if (TR2_IM_ELEC & item_flags2) p_ptr->immune_elec = TRUE;
+    if (TR2_IM_POIS & item_flags2) p_ptr->immune_pois = TRUE;
+    if (TR3_LITE & item_flags2) p_ptr->light = TRUE;
+    if (TR2_FREE_ACT & item_flags) p_ptr->free_act = TRUE;
+    if (TR3_SEE_INVIS & item_flags) p_ptr->see_inv = TRUE;
+    if (TR2_RES_ELEC & item_flags) p_ptr->resist_elec = TRUE;
+    if (TR3_FEATHER & item_flags) p_ptr->ffall = TRUE;
+    if (TR2_RES_CONF & item_flags2) p_ptr->resist_conf = TRUE;
+    if (TR2_RES_SOUND & item_flags2) p_ptr->resist_sound = TRUE;
+    if (TR2_RES_LITE & item_flags2) p_ptr->resist_lite = TRUE;
+    if (TR2_RES_DARK & item_flags2) p_ptr->resist_dark = TRUE;
+    if (TR2_RES_CHAOS & item_flags2) p_ptr->resist_chaos = TRUE;
+    if (TR2_RES_DISEN & item_flags2) p_ptr->resist_disen = TRUE;
+    if (TR2_RES_SHARDS & item_flags2) p_ptr->resist_shards = TRUE;
+    if (TR2_RES_NEXUS & item_flags2) p_ptr->resist_nexus = TRUE;
+    if (TR2_RES_BLIND & item_flags2) p_ptr->resist_blind = TRUE;
+    if (TR2_RES_NETHER & item_flags2) p_ptr->resist_nether = TRUE;
+    if (TR2_RES_FEAR & item_flags2) p_ptr->resist_fear = TRUE;
 
     i_ptr = &inventory[INVEN_WIELD];
     for (i = INVEN_WIELD; i < INVEN_LIGHT; i++) {
@@ -399,11 +349,7 @@ calc_bonuses()
  * parameter col gives a column at which to start, but if the display does
  * not fit, it may be moved left.  The return value is the left edge used. 
  */
-int 
-show_inven(r1, r2, weight, col, test)
-register int r1, r2;
-int weight, col;
-int (*test) ();
+int show_inven(int r1, int r2, int weight, int col, int (*test) ())
 {
     register int i, j, k;
     int          total_weight, len, l, lim;
@@ -525,9 +471,7 @@ cptr describe_use(int i)
 
 /* Displays equipment items from r1 to end	-RAK-	 */
 /* Keep display as far right as possible. -CJS- */
-int 
-show_equip(weight, col)
-int weight, col;
+int show_equip(int weight, int col)
 {
     register int         i, line;
     int                  total_weight, l, len, lim;
@@ -627,10 +571,10 @@ int weight, col;
     return col;
 }
 
-/* Remove item from equipment list		-RAK-	 */
-void 
-inven_takeoff(item_val, posn)
-int item_val, posn;
+/*
+ * Remove item from equipment list		-RAK-	
+ */
+void inven_takeoff(int item_val, int posn)
 {
     bigvtype             out_val, prt2;
     register inven_type *t_ptr;
@@ -661,7 +605,9 @@ int item_val, posn;
 }
 
 
-/* Used to verify if this really is the item we wish to wear or read. */
+/*
+ * Used to verify if this really is the item we wish to wear or read.
+ */
 int verify(cptr prompt, int item)
 {
     bigvtype out_str, object;
@@ -674,7 +620,7 @@ int verify(cptr prompt, int item)
 
 
 /*
- * Drops an item from inventory to given location	-RAK-
+ * Drops (some of) an item from inventory to "near" the current location
  */
 static void inven_drop(int item_val, int drop_all)
 {
@@ -756,9 +702,7 @@ static int scr_state, scr_left, scr_base;
 static int wear_low, wear_high;
 
 /* Draw the inventory screen. */
-static void 
-inven_screen(new_scr)
-int new_scr;
+static void inven_screen(int new_scr)
 {
     register int line = 0;
 
@@ -804,9 +748,7 @@ int new_scr;
 }
 
 /* This does all the work. */
-void 
-inven_command(command)
-int command;
+void inven_command(int command)
 {
     register int         slot = 0, item;
     int                  tmp, tmp2, selecting, from, to, light_chg = FALSE;
@@ -1369,12 +1311,7 @@ int command;
 
 
 /* Get the ID of an item and return the CTR value of it	-RAK-	 */
-int get_item(com_val, pmt, i, j, test)
-int        *com_val;
-cptr pmt;
-int         i, j;
-int       (*test) ();
-
+int get_item(int *com_val, cptr pmt, int i, int j, int (*test) ())
 {
     vtype        out_val;
     char         which;
@@ -1537,9 +1474,7 @@ int       (*test) ();
 
 
 
-static void
-flood_light(y,x)
-int y,x;
+static void flood_light(int y, int x)
 {
     register cave_type *c_ptr;
     register int temp;
@@ -1560,8 +1495,7 @@ int y,x;
     }
 }
 
-static void flood_permanent(y,x)
-int y,x;
+static void flood_permanent(int y, int x)
 {
     register cave_type *c_ptr;
     c_ptr = &cave[y][x];
@@ -1592,9 +1526,7 @@ int y,x;
     }
 }
 
-static void
-flood_permanent_dark(y,x)
-int y,x;
+static void flood_permanent_dark(int y, int x)
 {
     register cave_type *c_ptr;
     c_ptr = &cave[y][x];
@@ -1638,9 +1570,7 @@ int y,x;
     }
 }
 
-void 
-light_room(y, x)
-    int                 y, x;
+void light_room(int y, int x)
 {
     register cave_type *c_ptr;
     register monster_type  *m_ptr;
@@ -1706,9 +1636,7 @@ light_room(y, x)
     }     
 }
 
-void 
-darken_room(y, x)
-    int                 y, x;
+void darken_room(int y, int x)
 {
     register cave_type *c_ptr;
 
@@ -1744,10 +1672,7 @@ darken_room(y, x)
 
 /* Normal movement					 */
 /* When FIND_FLAG,  light only permanent features	 */
-static void 
-sub1_move_light(y1, x1, y2, x2)
-register int x1, x2;
-int y1, y2;
+static void sub1_move_light(int y1, int x1, int y2, int x2)
 {
     register int        i, j;
     register cave_type *c_ptr;
@@ -1805,10 +1730,7 @@ int y1, y2;
 
 /* When blinded,  move only the player symbol.		 */
 /* With no light,  movement becomes involved.		 */
-static void 
-sub3_move_light(y1, x1, y2, x2)
-register int y1, x1;
-int y2, x2;
+static void sub3_move_light(int y1, int x1, int y2, int x2)
 {
     if (light_flag) {
 	darken_player(y1, x1);
@@ -1825,9 +1747,7 @@ int y2, x2;
 	print('@', y2, x2);
 }
 
-void
-darken_player(y1, x1)
-int y1, x1;
+void darken_player(int y1, int x1)
 {
     int min_i, max_i, min_j, max_j, rad, i, j;
 
@@ -1848,9 +1768,7 @@ int y1, x1;
 
 /* Package for moving the character's light about the screen	 */
 /* Four cases : Normal, Finding, Blind, and Nolight	 -RAK-	 */
-void 
-move_light(y1, x1, y2, x2)
-int y1, x1, y2, x2;
+void move_light(int y1, int x1, int y2, int x2)
 {
     if (py.flags.blind > 0 || !player_light)
 	sub3_move_light(y1, x1, y2, x2);
@@ -1861,8 +1779,7 @@ int y1, x1, y2, x2;
 
 
 /* Resting allows a player to safely restore his hp	-RAK-	 */
-void 
-rest()
+void rest()
 {
     int   rest_num;
     vtype rest_str;
@@ -1907,9 +1824,7 @@ rest()
 
 
 /* Attacker's level and plusses,  defender's AC		-RAK-	 */
-int 
-test_hit(bth, level, pth, ac, attack_type)
-int bth, level, pth, ac, attack_type;
+int test_hit(int bth, int level, int pth, int ac, int attack_type)
 {
     register int i, die;
 
@@ -1929,10 +1844,7 @@ int bth, level, pth, ac, attack_type;
 
 /* Decreases players hit points and sets death flag if necessary */
 /* -RAK-	 */
-void 
-take_hit(damage, hit_from)
-int damage;
-const char *hit_from;
+void take_hit(int damage, const char *hit_from)
 {
     if (py.flags.invuln > 0 && damage < 9000)
 	damage = 0;
@@ -1959,6 +1871,6 @@ const char *hit_from;
     }
 }
 
-    
+
 
 

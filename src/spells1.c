@@ -1,5 +1,6 @@
 /* File: project.c */
 
+/* Purpose: generic bolt/ball/beam code	(-BEN-) */
 
 #include "angband.h"
 
@@ -39,6 +40,7 @@ static int inven_damage(inven_func typ, int perc)
     }
     return (j);
 }
+
 
 
 
@@ -123,8 +125,9 @@ void corrode_gas(const cptr kb_str)
     inven_damage(set_corrodes, 5);
 }
 
+
 /*
- * Throw acid on the hapless victim			-RAK-
+ * Hurt the player with Acid
  */
 void acid_dam(int dam, cptr kb_str)
 {
@@ -142,7 +145,7 @@ void acid_dam(int dam, cptr kb_str)
 
 
 /*
- * Lightning bolt the sucker away.			-RAK-
+ * Hurt the player with electricity
  */
 void light_dam(int dam, cptr kb_str)
 {
@@ -157,7 +160,7 @@ void light_dam(int dam, cptr kb_str)
 
 
 /*
- *Burn the fool up.					-RAK-
+ * Hurt the player with Fire
  */
 void fire_dam(int dam, cptr kb_str)
 {
@@ -170,7 +173,7 @@ void fire_dam(int dam, cptr kb_str)
 
 
 /*
- * Freeze him to death.				-RAK-
+ * Hurt the player with Cold
  */
 void cold_dam(int dam, cptr kb_str)
 {
@@ -184,7 +187,7 @@ void cold_dam(int dam, cptr kb_str)
 
 
 /*
- * Poison gas the idiot.				-RAK-
+ * Hurt the player with Poison Gas
  */
 void poison_gas(int dam, cptr kb_str)
 {

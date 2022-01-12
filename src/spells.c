@@ -1,7 +1,8 @@
+/* File: spells.c */
+
+/* Purpose: player and creature spells, breaths, wands, scrolls, etc. */
+
 /*
- * spells.c: code for player and creature spells, breaths, wands, scrolls,
- * etc. 
- *
  * Copyright (c) 1989 James E. Wilson, Robert A. Koeneke 
  *
  * This software may be copied and distributed for educational, research, and
@@ -24,9 +25,7 @@ static void replace_spot(int, int, int);
 /* Now included are creature spells also.		       -RAK    */
 
 /* this assumes only 1 move apart -CFT */
-static char
-bolt_char(y, x, ny, nx)
-int y, x, ny, nx;
+static char bolt_char(int y, int x, int ny, int nx)
 {
     if (ny == y) return '-';
     if (nx == x) return '|';
@@ -43,11 +42,7 @@ int y, x, ny, nx;
  * GF_SHARDS and GF_ICE maybe break things (potions?), and GF_METEOR breaks
  * potions and burns scrolls?  not yet, but it's an idea... -CFT 
  */
-static void 
-ball_destroy(typ, destroy)
-int typ;
-int (**destroy) ();
-
+static void ball_destroy(int typ, int (**destroy) ())
 {
     switch (typ) {
       case GF_FIRE:
@@ -101,11 +96,7 @@ int (**destroy) ();
     }
 }
 
-void 
-monster_name(m_name, m_ptr, r_ptr)
-char               *m_name;
-monster_type       *m_ptr;
-monster_race      *r_ptr;
+void monster_name(char *m_name, monster_type *m_ptr, monster_race      *r_ptr)
 {
     if (!m_ptr->ml)
 	(void)strcpy(m_name, "It");
@@ -117,11 +108,7 @@ monster_race      *r_ptr;
     }
 }
 
-void 
-lower_monster_name(m_name, m_ptr, r_ptr)
-char               *m_name;
-monster_type       *m_ptr;
-monster_race      *r_ptr;
+void lower_monster_name(char *m_name, monster_type *m_ptr, monster_race *r_ptr)
 {
     if (!m_ptr->ml)
 	(void)strcpy(m_name, "it");
@@ -134,8 +121,7 @@ monster_race      *r_ptr;
 }
 
 /* teleport you a level (or three:-) */
-void 
-tele_level()
+void tele_level()
 {
     if (dun_level == Q_PLANE)
 	dun_level = 0;
@@ -149,9 +135,7 @@ tele_level()
 }
 
 /* Sleep creatures adjacent to player			-RAK-	 */
-int 
-sleep_monsters1(y, x)
-int y, x;
+int sleep_monsters1(int y, int x)
 {
     register int            i, j;
     register cave_type     *c_ptr;
@@ -187,8 +171,7 @@ int y, x;
     return (sleep);
 }
 
-int 
-lose_all_info()
+int lose_all_info()
 {
     int                 i;
 
@@ -200,8 +183,7 @@ lose_all_info()
     return (0);
 }
 
-void 
-identify_pack()
+void identify_pack()
 {
     int                 i;
     inven_type         *i_ptr;
@@ -215,8 +197,7 @@ identify_pack()
 }
 
 /* Detect any treasure on the current panel		-RAK-	 */
-int 
-detect_treasure()
+int detect_treasure()
 {
     register int        i, j, detect;
     register cave_type *c_ptr;
@@ -240,8 +221,7 @@ detect_treasure()
  * excludes all foods and spell books. -- JND  
  */
 
-int 
-detect_magic()
+int detect_magic()
 {
     register int         i, j, detect;
     register cave_type  *c_ptr;
@@ -274,8 +254,7 @@ detect_magic()
 
 
 
-int 
-detect_enchantment()
+int detect_enchantment()
 {
     register int i, j, detect, tv;
     register cave_type *c_ptr;
@@ -301,8 +280,7 @@ detect_enchantment()
     return(detect);
 }
 
-int 
-detection()
+int detection()
 {
     register int           i, detect;
     register monster_type *m_ptr;
@@ -333,8 +311,7 @@ detection()
 }
 
 /* Detect all objects on the current panel		-RAK-	 */
-int 
-detect_object()
+int detect_object()
 {
     register int        i, j, detect;
     register cave_type *c_ptr;
@@ -355,8 +332,7 @@ detect_object()
 
 
 /* Locates and displays traps on current panel		-RAK-	 */
-int 
-detect_trap()
+int detect_trap()
 {
     register int         i, j;
     int                  detect;
@@ -384,8 +360,7 @@ detect_trap()
     return (detect);
 }
 
-void 
-stair_creation()
+void stair_creation()
 {
     register cave_type *c_ptr;
     register int        cur_pos;
@@ -413,8 +388,7 @@ stair_creation()
 }
 
 /* Surround the player with doors.			-RAK-	 */
-int 
-door_creation()
+int door_creation()
 {
     register int        i, j, door;
     int                 k;
@@ -451,8 +425,7 @@ door_creation()
 }
 
 /* Locates and displays all secret doors on current panel -RAK-	 */
-int 
-detect_sdoor()
+int detect_sdoor()
 {
     register int        i, j, detect;
     register cave_type *c_ptr;
@@ -490,8 +463,7 @@ detect_sdoor()
 
 
 /* Locates and displays all invisible creatures on current panel -RAK- */
-int 
-detect_invisible()
+int detect_invisible()
 {
     register int           i, flag;
     register monster_type *m_ptr;
@@ -519,9 +491,7 @@ detect_invisible()
 
 
 /* Split out of lite_line.       -DGK */
-void 
-mon_light_dam(y, x, dam)
-int y, x, dam;
+void mon_light_dam(int y, int x, int dam)
 {
     register cave_type     *c_ptr;
     register monster_type  *m_ptr;
@@ -552,9 +522,7 @@ int y, x, dam;
 }
 
 
-int 
-lite_area(y, x, dam, rad)	   /* Expanded -DGK */
-register int y, x, dam, rad;
+int lite_area(int y, int x, int dam, int rad)	   /* Expanded -DGK */
 {
     register int i, j;
     int          min_i, max_i, min_j, max_j;
@@ -590,9 +558,7 @@ register int y, x, dam, rad;
 
 
 /* Darken an area, opposite of light area		-RAK-	 */
-int 
-unlite_area(y, x)
-int y, x;
+int unlite_area(int y, int x)
 {
     register int        i, j, unlight;
     register cave_type *c_ptr;
@@ -633,8 +599,7 @@ int y, x;
 
 
 /* Identify an object					-RAK-	 */
-int 
-ident_spell()
+int ident_spell()
 {
     int                 item_val;
     bigvtype            out_val, tmp_str;
@@ -687,9 +652,7 @@ ident_spell()
 
 
 /* Get all the monsters on the level pissed off.	-RAK-	 */
-int 
-aggravate_monster(dis_affect)
-int dis_affect;
+int aggravate_monster(int dis_affect)
 {
     register int           i, aggravate;
     register monster_type *m_ptr;
@@ -710,8 +673,7 @@ int dis_affect;
 
 
 /* Surround the fool with traps (chuckle)		-RAK-	 */
-int 
-trap_creation()
+int trap_creation()
 {
     register int        i, j, trap;
     register cave_type *c_ptr;
@@ -749,8 +711,7 @@ trap_creation()
 
 
 /* Destroys any adjacent door(s)/trap(s)		-RAK-	 */
-int 
-td_destroy()
+int td_destroy()
 {
     register int        i, j, destroy;
     register cave_type *c_ptr;
@@ -781,8 +742,7 @@ td_destroy()
 
 
 /* Display all creatures on the current panel		-RAK-	 */
-int 
-detect_monsters()
+int detect_monsters()
 {
     register int        i, detect;
     register monster_type *m_ptr;
@@ -811,9 +771,7 @@ detect_monsters()
 
 /* Leave a line of light in given dir, blue light can sometimes	 */
 /* hurt creatures.				       -RAK-   */
-void 
-lite_line(dir, y, x)
-int dir, y, x;
+void lite_line(int dir, int y, int x)
 {
     register cave_type *c_ptr;
     int                 dist, flag;
@@ -845,9 +803,7 @@ int dir, y, x;
 
 
 /* Light line in all directions				-RAK-	 */
-void 
-starlite(y, x)
-register int y, x;
+void starlite(int y, int x)
 {
     register int i;
 
@@ -859,9 +815,7 @@ register int y, x;
 }
 
 /* Disarms all traps/chests in a given direction	-RAK-	 */
-int 
-disarm_all(dir, y, x)
-int dir, y, x;
+int disarm_all(int dir, int y, int x)
 {
     register cave_type  *c_ptr;
     register inven_type *t_ptr;
@@ -910,9 +864,7 @@ int dir, y, x;
 
 
 /* Shoot a bolt in a given direction			-RAK-	 */
-void 
-fire_bolt(typ, dir, y, x, dam_hp)
-int typ, dir, y, x, dam_hp;
+void fire_bolt(int typ, int dir, int y, int x, int dam_hp)
 {
     int                 i, oldy, oldx, dist, flag;
 /*    u32b              harm_type = 0; */
@@ -1008,12 +960,7 @@ int typ, dir, y, x, dam_hp;
 
 /* Shoot a bolt in a given direction                    -RAK-   */
 /* heavily modified to include exotic bolts -CFT */
-void 
-bolt(typ, y, x, dam_hp, ddesc, ptr, monptr)
-int           typ, y, x, dam_hp;
-char         *ddesc;
-monster_type *ptr;
-int           monptr;
+void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int monptr)
 {
     int                 i = ptr->fy, j = ptr->fx;
     int                 dam;
@@ -1476,9 +1423,7 @@ int           monptr;
 
 /* Shoot a ball in a given direction.  Note that balls have an  */
 /* area affect.                                       -RAK-   */
-void 
-fire_ball(typ, dir, y, x, dam_hp, max_dis)
-int typ, dir, y, x, dam_hp, max_dis;
+void fire_ball(int typ, int dir, int y, int x, int dam_hp, int max_dis)
 {
     register int        i, j;
     int                 dam, thit, tkill, k, tmp, monptr;
@@ -1689,9 +1634,7 @@ int typ, dir, y, x, dam_hp, max_dis;
 }
 
 /* Lightning ball in all directions                        SM   */
-void 
-starball(y, x)
-    register int        y, x;
+void starball(int y, int x)
 {
     register int        i;
 
@@ -1702,11 +1645,7 @@ starball(y, x)
 
 /* Breath weapon works like a fire_ball, but affects the player. */
 /* Note the area affect.                              -RAK-   */
-void 
-breath(typ, y, x, dam_hp, ddesc, monptr)
-int   typ, y, x, dam_hp;
-char *ddesc;
-int   monptr;
+void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 {
     register int        i, j;
     int                 dam, max_dis;
@@ -2286,9 +2225,7 @@ int   monptr;
 }
 
 
-int 
-recharge(num)
-register int num;
+int recharge(int num)
 {
     int                 i, j, k, l, item_val;
     register int        res;
@@ -2345,9 +2282,7 @@ register int num;
 }
 
 /* Increase or decrease a creatures hit points		-RAK-	 */
-int 
-hp_monster(dir, y, x, dam)
-int dir, y, x, dam;
+int hp_monster(int dir, int y, int x, int dam)
 {
     register int        i;
     int                 flag, dist, monster;
@@ -2389,9 +2324,7 @@ int dir, y, x, dam;
 
 
 /* Drains life; note it must be living.		-RAK-	 */
-int 
-drain_life(dir, y, x, dam)
-int dir, y, x, dam;
+int drain_life(int dir, int y, int x, int dam)
 {
     register int            i;
     int                     flag, dist, drain;
@@ -2443,9 +2376,7 @@ int dir, y, x, dam;
 
 /* Increase or decrease a creatures speed		-RAK-	 */
 /* NOTE: cannot slow a winning creature (BALROG)		 */
-int 
-speed_monster(dir, y, x, spd)
-int dir, y, x, spd;
+int speed_monster(int dir, int y, int x, int spd)
 {
     int                    flag, dist, speed;
     register cave_type     *c_ptr;
@@ -2494,9 +2425,7 @@ int dir, y, x, spd;
 
 
 /* Confuse a creature					-RAK-	 */
-int 
-confuse_monster(dir, y, x, lvl)
-int dir, y, x, lvl;
+int confuse_monster(int dir, int y, int x, int lvl)
 {
     int                     flag, dist, confuse;
     register cave_type     *c_ptr;
@@ -2543,9 +2472,7 @@ int dir, y, x, lvl;
 
 
 /* Scare a creature -DGK */
-int 
-fear_monster(dir, y, x, lvl)
-int dir, y, x, lvl;
+int fear_monster(int dir, int y, int x, int lvl)
 {
     int                     flag, dist, fear;
     register cave_type     *c_ptr;
@@ -2590,9 +2517,7 @@ int dir, y, x, lvl;
 }
 
 /* Sleep a creature.					-RAK-	 */
-int 
-sleep_monster(dir, y, x)
-int dir, y, x;
+int sleep_monster(int dir, int y, int x)
 {
     int                     flag, dist, sleep;
     register cave_type     *c_ptr;
@@ -2636,9 +2561,7 @@ int dir, y, x;
 
 
 /* Turn stone to mud, delete wall.			-RAK-	 */
-int 
-wall_to_mud(dir, y, x)
-int dir, y, x;
+int wall_to_mud(int dir, int y, int x)
 {
     int                     i, wall, dist;
     bigvtype                out_val, tmp_str;
@@ -2720,9 +2643,7 @@ int dir, y, x;
 
 
 /* Destroy all traps and doors in a given direction	-RAK-	 */
-int 
-td_destroy2(dir, y, x)
-int dir, y, x;
+int td_destroy2(int dir, int y, int x)
 {
     register int         destroy2, dist;
     register cave_type  *c_ptr;
@@ -2757,8 +2678,7 @@ int dir, y, x;
 /* polymorph is now uniform for poly/mass poly/choas poly, and only
    as deadly as chaos poly is.  This still makes polymorphing a bad
    idea, but it won't be automatically fatal. -CFT */
-static int
-poly(int mnum)
+static int poly(int mnum)
 {
     register monster_race *c_ptr = &c_list[m_list[mnum].mptr];
     int y, x;
@@ -2782,9 +2702,7 @@ poly(int mnum)
 /* polymorph now safer.  not safe, just safer -CFT */
 /* Polymorph a monster                                  -RAK-   */
 /* NOTE: cannot polymorph a winning creature (BALROG)            */
-int
-poly_monster(dir, y, x)
-int dir, y, x;
+int poly_monster(int dir, int y, int x)
 {
     int                     dist, flag, flag2, p;
     register cave_type     *c_ptr;
@@ -2823,9 +2741,7 @@ int dir, y, x;
 
 
 /* Create a wall.					-RAK-	 */
-int 
-build_wall(dir, y, x)
-int dir, y, x;
+int build_wall(int dir, int y, int x)
 {
     register int            i;
     int                     build, damage, dist, flag;
@@ -2898,9 +2814,7 @@ int dir, y, x;
 
 
 /* Replicate a creature					-RAK-	 */
-int 
-clone_monster(dir, y, x)
-int dir, y, x;
+int clone_monster(int dir, int y, int x)
 {
     register cave_type *c_ptr;
     register int        dist, flag;
@@ -2925,9 +2839,7 @@ int dir, y, x;
 
 
 /* Move the creature record to a new location		-RAK-	 */
-void 
-teleport_away(monptr, dis)
-int monptr, dis;
+void teleport_away(int monptr, int dis)
 {
     register int           yn, xn, ctr;
     register monster_type *m_ptr;
@@ -2962,9 +2874,7 @@ int monptr, dis;
 
 
 /* Teleport player to spell casting creature		-RAK-	 */
-void 
-teleport_to(ny, nx)
-int ny, nx;
+void teleport_to(int ny, int nx)
 {
     int dis, ctr, y, x;
 
@@ -2994,9 +2904,7 @@ int ny, nx;
 
 
 /* Teleport all creatures in a given direction away	-RAK-	 */
-int 
-teleport_monster(dir, y, x)
-int dir, y, x;
+int teleport_monster(int dir, int y, int x)
 {
     register int        flag, result, dist;
     register cave_type *c_ptr;
@@ -3023,9 +2931,7 @@ int dir, y, x;
 
 /* Delete all creatures within max_sight distance	-RAK-	 */
 /* NOTE : Winning creatures cannot be genocided			 */
-int 
-mass_genocide(spell)
-int spell;
+int mass_genocide(int spell)
 {
     register int        i, result;
     register monster_type *m_ptr;
@@ -3058,9 +2964,7 @@ int spell;
 /* Delete all creatures of a given type from level.	-RAK-	 */
 /* This does not keep creatures of type from appearing later.	 */
 /* NOTE : Winning creatures can not be genocided. */
-int 
-genocide(spell)
-int spell;
+int genocide(int spell)
 {
     register int            i, killed;
     char                    typ;
@@ -3106,9 +3010,7 @@ int spell;
 
 /* Change speed of any creature .			-RAK-	 */
 /* NOTE: cannot slow a winning creature (BALROG)		 */
-int 
-speed_monsters(spd)
-int spd;
+int speed_monsters(int spd)
 {
     register int        i, speed;
     register monster_type *m_ptr;
@@ -3152,8 +3054,7 @@ int spd;
 
 
 /* Sleep any creature .		-RAK-	 */
-int 
-sleep_monsters2()
+int sleep_monsters2()
 {
     register int        i, sleep;
     register monster_type *m_ptr;
@@ -3193,8 +3094,7 @@ sleep_monsters2()
 
 /* Polymorph any creature that player can see.  -RAK-   */
 /* NOTE: cannot polymorph a winning creature (BALROG)            */
-int
-mass_poly()
+int mass_poly()
 {
     register int i;
     int mass;
@@ -3216,8 +3116,7 @@ mass_poly()
 
 
 /* Display evil creatures on current panel		-RAK-	 */
-int 
-detect_evil()
+int detect_evil()
 {
     register int        i, flag;
     register monster_type *m_ptr;
@@ -3245,9 +3144,7 @@ detect_evil()
 
 
 /* Change players hit points in some manner		-RAK-	 */
-int 
-hp_player(num)
-int num;
+int hp_player(int num)
 {
     register int          res;
     register struct misc *m_ptr;
@@ -3281,8 +3178,7 @@ int num;
 
 
 /* Cure players confusion				-RAK-	 */
-int 
-cure_confusion()
+int cure_confusion()
 {
     register int           cure;
     register struct flags *f_ptr;
@@ -3298,8 +3194,7 @@ cure_confusion()
 
 
 /* Cure players blindness				-RAK-	 */
-int 
-cure_blindness()
+int cure_blindness()
 {
     register int           cure;
     register struct flags *f_ptr;
@@ -3315,8 +3210,7 @@ cure_blindness()
 
 
 /* Cure poisoning					-RAK-	 */
-int 
-cure_poison()
+int cure_poison()
 {
     register int           cure;
     register struct flags *f_ptr;
@@ -3332,8 +3226,7 @@ cure_poison()
 
 
 /* Cure the players fear				-RAK-	 */
-int 
-remove_fear()
+int remove_fear()
 {
     register int           result;
     register struct flags *f_ptr;
@@ -3351,8 +3244,7 @@ remove_fear()
 /* This is a fun one.  In a given block, pick some walls and	 */
 /* turn them into open spots.  Pick some open spots and turn	 */
 /* them into walls.  An "Earthquake" effect.	       -RAK-   */
-void 
-earthquake()
+void earthquake()
 {
     register int        i, j;
     register cave_type *c_ptr;
@@ -3432,8 +3324,7 @@ earthquake()
 
 
 /* Evil creatures don't like this.		       -RAK-   */
-int 
-protect_evil()
+int protect_evil()
 {
     register int           res;
     register struct flags *f_ptr;
@@ -3465,10 +3356,7 @@ create_food()
      prt_hunger();
 }
 
-int 
-banish_creature(cflag, dist)
-u32b cflag;
-int    dist;
+int banish_creature(u32b cflag, int dist)
 {
     register int           i;
     int                    dispel;
@@ -3488,8 +3376,7 @@ int    dist;
     return (dispel);
 }
 
-int 
-probing()
+int probing()
 {
     register int            i;
     int                     probe;
@@ -3531,10 +3418,7 @@ probing()
 
 /* Attempts to destroy a type of creature.  Success depends on	 */
 /* the creatures level VS. the player's level		 -RAK-	 */
-int 
-dispel_creature(cflag, damage)
-int cflag;
-int damage;
+int dispel_creature(int cflag, int damage)
 {
     register int            i;
     int                     k, dispel;
@@ -3567,8 +3451,7 @@ int damage;
 
 
 /* Attempt to turn (confuse) undead creatures.	-RAK-	 */
-int 
-turn_undead()
+int turn_undead()
 {
     register int            i, turn_und;
     register monster_type  *m_ptr;
@@ -3603,8 +3486,7 @@ turn_undead()
 
 
 /* Leave a glyph of warding. Creatures will not pass over! -RAK- */
-void 
-warding_glyph()
+void warding_glyph()
 {
     register int        i;
     register cave_type *c_ptr;
@@ -3619,8 +3501,7 @@ warding_glyph()
 
 
 /* Lose a strength point.				-RAK-	 */
-void 
-lose_str()
+void lose_str()
 {
     if (!py.flags.sustain_str) {
 	(void)dec_stat(A_STR);
@@ -3631,8 +3512,7 @@ lose_str()
 
 
 /* Lose an intelligence point.				-RAK-	 */
-void 
-lose_int()
+void lose_int()
 {
     if (!py.flags.sustain_int) {
 	(void)dec_stat(A_INT);
@@ -3643,8 +3523,7 @@ lose_int()
 
 
 /* Lose a wisdom point.					-RAK-	 */
-void 
-lose_wis()
+void lose_wis()
 {
     if (!py.flags.sustain_wis) {
 	(void)dec_stat(A_WIS);
@@ -3655,8 +3534,7 @@ lose_wis()
 
 
 /* Lose a dexterity point.				-RAK-	 */
-void 
-lose_dex()
+void lose_dex()
 {
     if (!py.flags.sustain_dex) {
 	(void)dec_stat(A_DEX);
@@ -3667,8 +3545,7 @@ lose_dex()
 
 
 /* Lose a constitution point.				-RAK-	 */
-void 
-lose_con()
+void lose_con()
 {
     if (!py.flags.sustain_con) {
 	(void)dec_stat(A_CON);
@@ -3679,8 +3556,7 @@ lose_con()
 
 
 /* Lose a charisma point.				-RAK-	 */
-void 
-lose_chr()
+void lose_chr()
 {
     if (!py.flags.sustain_chr) {
 	(void)dec_stat(A_CHR);
@@ -3691,9 +3567,7 @@ lose_chr()
 
 
 /* Lose experience					-RAK-	 */
-void 
-lose_exp(amount)
-s32b amount;
+void lose_exp(s32b amount)
 {
     register int          i;
     register struct misc *m_ptr;
@@ -3733,8 +3607,7 @@ s32b amount;
 
 
 /* Slow Poison						-RAK-	 */
-int 
-slow_poison()
+int slow_poison()
 {
     register int           slow;
     register struct flags *f_ptr;
@@ -3753,26 +3626,20 @@ slow_poison()
 
 
 /* Bless						-RAK-	 */
-void 
-bless(amount)
-int amount;
+void bless(int amount)
 {
     py.flags.blessed += amount;
 }
 
 
 /* Detect Invisible for period of time			-RAK-	 */
-void 
-detect_inv2(amount)
-int amount;
+void detect_inv2(int amount)
 {
     py.flags.detect_inv += amount;
 }
 
 
-static void 
-replace_spot(y, x, typ)
-int y, x, typ;
+static void replace_spot(int y, int x, int typ)
 {
     register cave_type *c_ptr;
 
@@ -3813,9 +3680,7 @@ int y, x, typ;
 /* NOTE : Winning creatures that are deleted will be considered	 */
 /* as teleporting to another level.  This will NOT win the */
 /* game.						       */
-void 
-destroy_area(y, x)
-register int y, x;
+void destroy_area(int y, int x)
 {
     register int i, j, k;
 
@@ -3853,8 +3718,7 @@ register int y, x;
  * some of the time, and successful enchantment to at least +0 might
  * break a curse on the item.  -CFT */
 /* Enchants a plus onto an item.                        -RAK-   */
-int
-enchant(inven_type *i_ptr, int n, byte eflag)
+int enchant(inven_type *i_ptr, int n, byte eflag)
 {
     register int chance, res = FALSE, i, a = i_ptr->flags2 & TR_ARTIFACT;
     int table[13] = {  10,  50, 100, 200, 300, 400,
@@ -3912,9 +3776,7 @@ enchant(inven_type *i_ptr, int n, byte eflag)
 }
 
 
-const char *
-pain_message(monptr, dam)
-int monptr, dam;
+const char *pain_message(int monptr, int dam)
 {
     register monster_type *m_ptr;
     monster_race      *c_ptr;
@@ -4005,8 +3867,7 @@ int monptr, dam;
 }
 
 /* Removes curses from items in inventory		-RAK-	 */
-int 
-remove_curse()
+int remove_curse()
 {
     register int         i, result;
     register inven_type *i_ptr;
@@ -4031,8 +3892,7 @@ remove_curse()
     return (result);
 }
 
-int 
-remove_all_curse()
+int remove_all_curse()
 {
     register int         i, result;
     register inven_type *i_ptr;
@@ -4058,8 +3918,7 @@ remove_all_curse()
 
 
 /* Restores any drained experience			-RAK-	 */
-int 
-restore_level()
+int restore_level()
 {
     register int          restore;
     register struct misc *m_ptr;
@@ -4080,10 +3939,7 @@ restore_level()
 
 
 /* this fn only exists to avoid duplicating this code in the selfknowledge fn. -CFT */
-static void 
-pause_if_screen_full(i, j)
-int *i;
-int  j;
+static void pause_if_screen_full(int *i, int j)
 {
     int t;
 
@@ -4104,8 +3960,7 @@ int  j;
  * using several artifacts...) -CFT 
  */
 
-void 
-self_knowledge()
+void self_knowledge()
 {
     int    i, j;
     u32b f = 0L, f2 = 0L;
@@ -4476,11 +4331,7 @@ self_knowledge()
  * to reflect resistances and range. -CFT
  */
 
-static void
-spell_hit_monster(m_ptr, typ, dam, rad, y, x, by_player)
-monster_type *m_ptr;
-int           typ, *dam, rad, *y, *x;
-byte         by_player;
+static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, int *y, int *x, byte by_player)
 {
     register monster_race *r_ptr;
     int blind = (py.flags.status & PY_BLIND) ? 1 : 0;
@@ -4875,9 +4726,7 @@ byte         by_player;
 
 /* This fn provides the ability to have a spell blast a line of creatures
    for damage.  It should look pretty neat, too... -CFT */
-void
-line_spell(typ, dir, y, x, dam)
-int typ, dir, y, x, dam;
+void line_spell(int typ, int dir, int y, int x, int dam)
 {
     int ny,nx, dis = 0, flag = FALSE;
     int t, tdam;
@@ -4969,4 +4818,5 @@ int typ, dir, y, x, dam;
 #endif      
 	} /* for each piece */
     } /* if !blind */
-}  
+}
+

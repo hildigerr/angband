@@ -1,5 +1,6 @@
 /* File: cave.c */
 
+/* Purpose: mid-level graphics -- colors and symbols and such */
 
 /*
  * Copyright (c) 1989 James E. Wilson, Robert A. Koeneke 
@@ -56,7 +57,7 @@ int los(int fromY, int fromX, int toY, int toX)
     if ((a_x < 2) && (a_y < 2)) return (TRUE);
 
 
-    /* XXX XXX Paranoia -- require "safe" origin */
+    /* XXX XXX XXX Paranoia -- require "safe" origin */
     if (!in_bounds(fromY, fromX)) return (FALSE);
 
 
@@ -79,6 +80,7 @@ int los(int fromY, int fromX, int toY, int toX)
 	    }
 	}
 	
+	/* Assume los */
 	return TRUE;
     }
 
@@ -331,7 +333,7 @@ void move_cursor_relative(int row, int col)
 
 
 /*
- * Prints the map of the dungeon			-RAK-
+ * Prints the map of the dungeon
  */
 void prt_map(void)
 {
@@ -391,7 +393,7 @@ void check_view(void)
 
 
 /*
- * Map the current area plus some			-RAK-
+ * Map the current panel (plus some)
  */
 void map_area(void)
 {
@@ -399,11 +401,13 @@ void map_area(void)
     register int        i7, i8, x, y;
     int                 y1, y2, x1, x2;
 
+    /* Pick an area to map */
     y1 = panel_row_min - randint(10);
     y2 = panel_row_max + randint(10);
     x1 = panel_col_min - randint(20);
     x2 = panel_col_max + randint(20);
 
+    /* Scan that area */
     for (y = y1; y <= y2; y++) {
 	for (x = x1; x <= x2; x++) {
 
@@ -425,6 +429,8 @@ void map_area(void)
 		}
 	}
     }
+
+    /* Redraw the map */
     prt_map();
 }
 
@@ -468,7 +474,9 @@ void screen_map(void)
 
     byte map[MAP_WID + 1];
     byte tmp;
+
     int   priority[256];
+
     int   row, orow, col, myrow = 0, mycol = 0;
 
 #ifndef MAC
@@ -476,8 +484,8 @@ void screen_map(void)
 
 #endif
 
-    for (i = 0; i < 256; i++)
-	priority[i] = 0;
+    for (i = 0; i < 256; i++) priority[i] = 0;
+
     priority['<'] = 5;
     priority['>'] = 5;
     priority['@'] = 10;

@@ -16,9 +16,7 @@ static void insert_store(int, int, s32b, struct inven_type *);
 static void store_create(int);
 
 /* Returns the value for any given object		-RAK-	 */
-s32b 
-item_value(i_ptr)
-register inven_type *i_ptr;
+s32b item_value(inven_type *i_ptr)
 {
     register s32b      value;
 
@@ -122,11 +120,7 @@ register inven_type *i_ptr;
 
 
 /* Asking price for an item				-RAK-	 */
-s32b 
-sell_price(snum, max_sell, min_sell, item)
-    int                 snum;
-    s32b              *max_sell, *min_sell;
-    inven_type         *item;
+s32b sell_price(int snum, s32b *max_sell, s32b *min_sell, inven_type *item)
 {
     register s32b      i;
     register store_type *s_ptr;
@@ -154,10 +148,7 @@ sell_price(snum, max_sell, min_sell, item)
 
 
 /* Check to see if he will be carrying too many objects	-RAK-	 */
-int 
-store_check_num(t_ptr, store_num)
-    inven_type         *t_ptr;
-    int                 store_num;
+int store_check_num(inven_type *t_ptr, int store_num)
 {
     register int        store_check, i;
     register store_type *s_ptr;
@@ -200,12 +191,7 @@ store_check_num(t_ptr, store_num)
 
 
 /* Insert INVEN_MAX at given location	 */
-static void 
-insert_store(store_num, pos, icost, i_ptr)
-    register int        pos;
-    int                 store_num;
-    s32b               icost;
-    inven_type         *i_ptr;
+static void insert_store(int store_num, int pos, s32b icost, inven_type *i_ptr)
 {
     register int        i;
     register store_type *s_ptr;
@@ -220,11 +206,7 @@ insert_store(store_num, pos, icost, i_ptr)
 
 
 /* Add the item in INVEN_MAX to stores inventory.	-RAK-	 */
-void 
-store_carry(store_num, ipos, t_ptr)
-    int                 store_num;
-    int                *ipos;
-    inven_type         *t_ptr;
+void store_carry(int store_num, int *ipos, inven_type *t_ptr)
 {
     int                 item_num, item_val, flag;
     register int        typ, subt;
@@ -300,10 +282,7 @@ store_carry(store_num, ipos, t_ptr)
 
 /* Destroy an item in the stores inventory.  Note that if	 */
 /* "one_of" is false, an entire slot is destroyed	-RAK-	 */
-void 
-store_destroy(store_num, item_val, one_of)
-int store_num, item_val;
-int one_of;
+void store_destroy(int store_num, int item_val, int one_of)
 {
     register int         j, number;
     register store_type *s_ptr;
@@ -338,8 +317,7 @@ int one_of;
 
 
 /* Initializes the stores with owners			-RAK-	 */
-void 
-store_init()
+void store_init()
 {
     register int         i, j, k;
     register store_type *s_ptr;
@@ -362,9 +340,7 @@ store_init()
 
 
 /* Creates an item and inserts it into store's inven	-RAK-	 */
-static void 
-store_create(store_num)
-int store_num;
+static void store_create(int store_num)
 {
     register int         i, tries;
     int                  cur_pos, dummy;
@@ -417,9 +393,7 @@ int store_num;
     pusht(cur_pos);
 }
 
-static void 
-special_offer(i_ptr)
-inven_type *i_ptr;
+static void special_offer(inven_type *i_ptr)
 {
     s32b orig_cost = i_ptr->cost;
 
@@ -451,8 +425,7 @@ inven_type *i_ptr;
 }
 
 /* Initialize and up-keep the store's inventory.		-RAK-	 */
-void 
-store_maint()
+void store_maint()
 {
     register int         i, j;
     register store_type *s_ptr;
@@ -478,10 +451,7 @@ store_maint()
 }
 
 /* eliminate need to bargain if player has haggled well in the past   -DJB- */
-int 
-noneedtobargain(store_num, minprice)
-int store_num;
-s32b minprice;
+int noneedtobargain(int store_num, s32b minprice)
 {
     register int         flagnoneed;
     register store_type *s_ptr;
@@ -497,10 +467,7 @@ s32b minprice;
 
 
 /* update the bargin info					-DJB- */
-void 
-updatebargain(store_num, price, minprice)
-int   store_num;
-s32b price, minprice;
+void updatebargain(int store_num, s32b price, s32b minprice)
 {
     register store_type *s_ptr;
 
@@ -514,3 +481,4 @@ s32b price, minprice;
 		s_ptr->bad_buy++;
 	}
 }
+

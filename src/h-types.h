@@ -9,6 +9,13 @@
  * Note the attempt to make all basic types have 4 letters.
  * This improves readibility and standardizes the code.
  *
+ * Likewise, all complex types are at least 4 letters.
+ * Thus, almost every three letter word is a legal variable.
+ * But beware of certain reserved words ('for' and 'if' and 'do').
+ *
+ * Note that the type used in structures for bit flags should be uint.
+ * As long as these bit flags are sequential, they will be space smart.
+ *
  * Note that on some machines, apparently "signed char" is illegal.
  *
  * It must be true that char/byte takes exactly 1 byte

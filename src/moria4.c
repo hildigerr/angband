@@ -765,7 +765,7 @@ static int find_direction;/* Keep a record of which way we are going. */
 
 
 /*
- * Do we see a wall?  Used in running.		-CJS- 
+ * Hack -- Do we see a wall?  Used in running.		-CJS- 
  */
 static int see_wall(int dir, int y, int x)
 {
@@ -788,7 +788,7 @@ static int see_wall(int dir, int y, int x)
 }
 
 /*
- * Do we see anything? Used in running.		-CJS- 
+ * Hack -- Do we see anything? Used in running.		-CJS- 
  */
 static int see_nothing(int dir, int y, int x)
 {
@@ -862,6 +862,7 @@ static void area_affect(int dir, int y, int x)
 		/* The grid is "visible" */
 		inv = FALSE;
 	    }
+
 
 	    /* If cannot see the grid, assume it is clear */
 	    if (inv || floor_grid_bold(row, col)) {
@@ -1328,7 +1329,7 @@ void move_player(int dir, int do_pickup)
 
 void find_step(void)
 {
-    /* prevent infinite loops in find mode, will stop after moving 100 times */
+    /* Hack -- prevent infinite running */
     if (find_flag++ > 100) {
 	msg_print("You stop running to catch your breath.");
 	end_find();
@@ -1426,10 +1427,11 @@ void find_init(int dir)
 
 
 /*
- * Switch off the run flag - and get the light correct. -CJS-
+ * Stop running.  Hack -- fix the lights.
  */
 void end_find()
 {
+    /* Were we running? */
     if (find_flag) {
 
 	find_flag = FALSE;

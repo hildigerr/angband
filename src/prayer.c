@@ -12,8 +12,7 @@
 
 
 /* Pray like HELL.					-RAK-	 */
-void 
-pray()
+void pray()
 {
     int i, j, item_val, dir;
     int choice, chance, result;

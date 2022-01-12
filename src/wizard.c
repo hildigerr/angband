@@ -1,6 +1,8 @@
+/* File: wizard.c */ 
+
+/* Purpose: Version history and info, and wizard mode debugging aids. */
+
 /*
- * wizard.c: Version history and info, and wizard mode debugging aids. 
- *
  * Copyright (c) 1989 James E. Wilson, Robert A. Koeneke 
  *
  * This software may be copied and distributed for educational, research, and
@@ -12,9 +14,7 @@
 
 
 
-int
-is_wizard(uid)
-int uid;
+int is_wizard(int uid)
 {
     FILE *fp;
     char  buf[100];
@@ -38,8 +38,7 @@ int uid;
 }
 
 /* Check to see which artifacts have been seen		 */
-void
-artifact_check()
+void artifact_check()
 {
     FILE *file1;
     vtype filename;
@@ -285,9 +284,7 @@ artifact_check()
 }
 
 /* Light up the dungeon					-RAK-	 */
-void
-wiz_lite(light)
-int light;
+void wiz_lite(int light)
 {
     register cave_type *c_ptr;
     register int        k, l, i, j;
@@ -315,195 +312,178 @@ int light;
 }
 
 
-/* Wizard routine for gaining on stats			-RAK-	 */
-void
-change_character()
+
+/*
+ * Wizard routine for gaining on stats                  -RAK-    
+ */
+static void change_character()
 {
     register int          tmp_val;
     register s32b        tmp_lval;
-    u16b               *a_ptr;
-    vtype                 tmp_str;
-    register struct misc *m_ptr;
+    u16b               *a_ptr = py.stats.max_stat;
 
-    a_ptr = py.stats.max_stat;
+    vtype                 tmp_str;
+    register struct misc *m_ptr = &py.misc;
+
     prt("(3 - 118) Strength     = ", 0, 0);
-    if (get_string(tmp_str, 0, 25, 3)) {
-	tmp_val = atoi(tmp_str);
-	if ((tmp_val > 2) && (tmp_val < 119)) {
-	    a_ptr[A_STR] = tmp_val;
-	    (void)res_stat(A_STR);
-	}
-    } else
-	return;
+    if (!get_string(tmp_str, 0, 25, 3)) return;
+
+    tmp_val = atoi(tmp_str);
+    if ((tmp_val > 2) && (tmp_val < 119)) {
+	a_ptr[A_STR] = tmp_val;
+	(void)res_stat(A_STR);
+    }
 
     prt("(3 - 118) Intelligence = ", 0, 0);
-    if (get_string(tmp_str, 0, 25, 3)) {
-	tmp_val = atoi(tmp_str);
-	if ((tmp_val > 2) && (tmp_val < 119)) {
-	    a_ptr[A_INT] = tmp_val;
-	    (void)res_stat(A_INT);
-	}
-    } else
-	return;
+    if (!get_string(tmp_str, 0, 25, 3)) return;
+
+    tmp_val = atoi(tmp_str);
+    if ((tmp_val > 2) && (tmp_val < 119)) {
+	a_ptr[A_INT] = tmp_val;
+	(void)res_stat(A_INT);
+    }
 
     prt("(3 - 118) Wisdom       = ", 0, 0);
-    if (get_string(tmp_str, 0, 25, 3)) {
-	tmp_val = atoi(tmp_str);
-	if ((tmp_val > 2) && (tmp_val < 119)) {
-	    a_ptr[A_WIS] = tmp_val;
-	    (void)res_stat(A_WIS);
-	}
-    } else
-	return;
+    if (!get_string(tmp_str, 0, 25, 3)) return;
+    tmp_val = atoi(tmp_str);
+    if ((tmp_val > 2) && (tmp_val < 119)) {
+	a_ptr[A_WIS] = tmp_val;
+	(void)res_stat(A_WIS);
+    }
 
     prt("(3 - 118) Dexterity    = ", 0, 0);
-    if (get_string(tmp_str, 0, 25, 3)) {
-	tmp_val = atoi(tmp_str);
-	if ((tmp_val > 2) && (tmp_val < 119)) {
-	    a_ptr[A_DEX] = tmp_val;
-	    (void)res_stat(A_DEX);
-	}
-    } else
-	return;
+    if (!get_string(tmp_str, 0, 25, 3)) return;
+    tmp_val = atoi(tmp_str);
+    if ((tmp_val > 2) && (tmp_val < 119)) {
+	a_ptr[A_DEX] = tmp_val;
+	(void)res_stat(A_DEX);
+    }
 
     prt("(3 - 118) Constitution = ", 0, 0);
-    if (get_string(tmp_str, 0, 25, 3)) {
-	tmp_val = atoi(tmp_str);
-	if ((tmp_val > 2) && (tmp_val < 119)) {
-	    a_ptr[A_CON] = tmp_val;
-	    (void)res_stat(A_CON);
-	}
-    } else
-	return;
+    if (!get_string(tmp_str, 0, 25, 3)) return;
+    tmp_val = atoi(tmp_str);
+    if ((tmp_val > 2) && (tmp_val < 119)) {
+	a_ptr[A_CON] = tmp_val;
+	(void)res_stat(A_CON);
+    }
 
     prt("(3 - 118) Charisma     = ", 0, 0);
-    if (get_string(tmp_str, 0, 25, 3)) {
-	tmp_val = atoi(tmp_str);
-	if ((tmp_val > 2) && (tmp_val < 119)) {
-	    a_ptr[A_CHR] = tmp_val;
-	    (void)res_stat(A_CHR);
-	}
-    } else
-	return;
+    if (!get_string(tmp_str, 0, 25, 3)) return;
 
-    m_ptr = &py.misc;
+    tmp_val = atoi(tmp_str);
+    if ((tmp_val > 2) && (tmp_val < 119)) {
+	a_ptr[A_CHR] = tmp_val;
+	(void)res_stat(A_CHR);
+    }
+
     prt("(1 - 32767) Hit points = ", 0, 0);
-    if (get_string(tmp_str, 0, 25, 5)) {
-	tmp_val = atoi(tmp_str);
-	if ((tmp_val > 0) && (tmp_val <= MAX_SHORT)) {
-	    m_ptr->mhp = tmp_val;
-	    m_ptr->chp = tmp_val;
-	    m_ptr->chp_frac = 0;
-	    prt_mhp();
-	    prt_chp();
-	}
-    } else
-	return;
+    if (!get_string(tmp_str, 0, 25, 5)) return;
+
+    tmp_val = atoi(tmp_str);
+    if ((tmp_val > 0) && (tmp_val <= MAX_SHORT)) {
+	m_ptr->mhp = tmp_val;
+	m_ptr->chp = tmp_val;
+	m_ptr->chp_frac = 0;
+	prt_mhp();
+	prt_chp();
+    }
 
     prt("(0 - 32767) Mana       = ", 0, 0);
-    if (get_string(tmp_str, 0, 25, 5)) {
-	tmp_val = atoi(tmp_str);
-	if ((tmp_val > -1) && (tmp_val <= MAX_SHORT) && (*tmp_str != '\0')) {
-	    m_ptr->mana = tmp_val;
-	    m_ptr->cmana = tmp_val;
-	    m_ptr->cmana_frac = 0;
-	    prt_cmana();
-	}
-    } else
-	return;
+    if (!get_string(tmp_str, 0, 25, 5)) return;
+
+    tmp_val = atoi(tmp_str);
+    if ((tmp_val > -1) && (tmp_val <= MAX_SHORT) && (*tmp_str != '\0')) {
+	m_ptr->mana = tmp_val;
+	m_ptr->cmana = tmp_val;
+	m_ptr->cmana_frac = 0;
+	prt_cmana();
+    }
 
     (void)sprintf(tmp_str, "Current=%ld  Gold = ", (long)m_ptr->au);
     tmp_val = strlen(tmp_str);
     prt(tmp_str, 0, 0);
-    if (get_string(tmp_str, 0, tmp_val, 7)) {
-	tmp_lval = atol(tmp_str);
-	if (tmp_lval > -1 && (*tmp_str != '\0')) {
-	    m_ptr->au = tmp_lval;
-	    prt_gold();
-	}
-    } else
-	return;
+    if (!get_string(tmp_str, 0, tmp_val, 7)) return;
+
+    tmp_lval = atol(tmp_str);
+    if (tmp_lval > -1 && (*tmp_str != '\0')) {
+	m_ptr->au = tmp_lval;
+	prt_gold();
+    }
+
     (void)sprintf(tmp_str, "Current=%ld  Max Exp = ", (long)m_ptr->max_exp);
     tmp_val = strlen(tmp_str);
     prt(tmp_str, 0, 0);
-    if (get_string(tmp_str, 0, tmp_val, 7)) {
-	tmp_lval = atol(tmp_str);
-	if (tmp_lval > -1 && (*tmp_str != '\0')) {
-	    m_ptr->max_exp = tmp_lval;
-	    prt_experience();
-	}
-    } else
-	return;
+    if (!get_string(tmp_str, 0, tmp_val, 7)) return;
+
+    tmp_lval = atol(tmp_str);
+    if (tmp_lval > -1 && (*tmp_str != '\0')) {
+	m_ptr->max_exp = tmp_lval;
+	prt_experience();
+    }
 
     (void)sprintf(tmp_str, "Current=%d  (0-200) Searching = ", m_ptr->srh);
     tmp_val = strlen(tmp_str);
     prt(tmp_str, 0, 0);
-    if (get_string(tmp_str, 0, tmp_val, 3)) {
+    if (!get_string(tmp_str, 0, tmp_val, 3)) return;
+
 	tmp_val = atoi(tmp_str);
-	if ((tmp_val > -1) && (tmp_val < 201) && (*tmp_str != '\0'))
+	if ((tmp_val > -1) && (tmp_val < 201) && (*tmp_str != '\0')) {
 	    m_ptr->srh = tmp_val;
-    } else
-	return;
+    }
 
     (void)sprintf(tmp_str, "Current=%d  (-1-18) Stealth = ", m_ptr->stl);
     tmp_val = strlen(tmp_str);
     prt(tmp_str, 0, 0);
-    if (get_string(tmp_str, 0, tmp_val, 3)) {
+    if (!get_string(tmp_str, 0, tmp_val, 3)) return;
 	tmp_val = atoi(tmp_str);
-	if ((tmp_val > -2) && (tmp_val < 19) && (*tmp_str != '\0'))
+	if ((tmp_val > -2) && (tmp_val < 19) && (*tmp_str != '\0')) {
 	    m_ptr->stl = tmp_val;
-    } else
-	return;
+    }
 
     (void)sprintf(tmp_str, "Current=%d  (0-200) Disarming = ", m_ptr->disarm);
     tmp_val = strlen(tmp_str);
     prt(tmp_str, 0, 0);
-    if (get_string(tmp_str, 0, tmp_val, 3)) {
+    if (!get_string(tmp_str, 0, tmp_val, 3)) return;
 	tmp_val = atoi(tmp_str);
-	if ((tmp_val > -1) && (tmp_val < 201) && (*tmp_str != '\0'))
+	if ((tmp_val > -1) && (tmp_val < 201) && (*tmp_str != '\0')) {
 	    m_ptr->disarm = tmp_val;
-    } else
-	return;
+    }
 
     (void)sprintf(tmp_str, "Current=%d  (0-100) Save = ", m_ptr->save);
     tmp_val = strlen(tmp_str);
     prt(tmp_str, 0, 0);
-    if (get_string(tmp_str, 0, tmp_val, 3)) {
+    if (!get_string(tmp_str, 0, tmp_val, 3)) return;
 	tmp_val = atoi(tmp_str);
-	if ((tmp_val > -1) && (tmp_val < 201) && (*tmp_str != '\0'))
+	if ((tmp_val > -1) && (tmp_val < 201) && (*tmp_str != '\0')) {
 	    m_ptr->save = tmp_val;
-    } else
-	return;
+    }
 
     (void)sprintf(tmp_str, "Current=%d  (0-200) Base to hit = ", m_ptr->bth);
     tmp_val = strlen(tmp_str);
     prt(tmp_str, 0, 0);
-    if (get_string(tmp_str, 0, tmp_val, 3)) {
+    if (!get_string(tmp_str, 0, tmp_val, 3)) return;
 	tmp_val = atoi(tmp_str);
-	if ((tmp_val > -1) && (tmp_val < 201) && (*tmp_str != '\0'))
+	if ((tmp_val > -1) && (tmp_val < 201) && (*tmp_str != '\0')) {
 	    m_ptr->bth = tmp_val;
-    } else
-	return;
+    }
 
     (void)sprintf(tmp_str, "Current=%d  (0-200) Bows/Throwing = ", m_ptr->bthb);
     tmp_val = strlen(tmp_str);
     prt(tmp_str, 0, 0);
-    if (get_string(tmp_str, 0, tmp_val, 3)) {
+    if (!get_string(tmp_str, 0, tmp_val, 3)) return;
 	tmp_val = atoi(tmp_str);
-	if ((tmp_val > -1) && (tmp_val < 201) && (*tmp_str != '\0'))
+	if ((tmp_val > -1) && (tmp_val < 201) && (*tmp_str != '\0')) {
 	    m_ptr->bthb = tmp_val;
-    } else
-	return;
+    }
 
     (void)sprintf(tmp_str, "Current=%d  Weight = ", m_ptr->wt);
     tmp_val = strlen(tmp_str);
     prt(tmp_str, 0, 0);
-    if (get_string(tmp_str, 0, tmp_val, 3)) {
+    if (!get_string(tmp_str, 0, tmp_val, 3)) return;
 	tmp_val = atoi(tmp_str);
-	if (tmp_val > -1 && (*tmp_str != '\0'))
+	if (tmp_val > -1 && (*tmp_str != '\0')) {
 	    m_ptr->wt = tmp_val;
-    } else
-	return;
+    }
 
     while (get_com("Alter speed? (+/-)", tmp_str)) {
 	if (*tmp_str == '+') {
@@ -521,9 +501,10 @@ change_character()
 }
 
 
-/* Wizard routine for creating objects			-RAK-	 */
-void
-wizard_create()
+/*
+ * Wizard routine for creating objects		-RAK-	 
+ */
+void wizard_create()
 {
     register int         tmp_val;
     int                  i, j, k;
@@ -548,146 +529,146 @@ wizard_create()
 	restore_screen();
 	return;
     }
+
     switch (ch) {
-      case 'W':
-      case 'w':
+
+      case 'W': case 'w':
 	prt("What type of Weapon?    : ", 0, 0);
 	prt("[S]word, [H]afted, [P]olearm, [B]ow, [A]mmo.", 1, 0);
 	if (!get_com((char *)0, &ch)) {
 	    restore_screen();
 	    return;
 	}
+
 	switch (ch) {
-	  case 'S':
-	  case 's':
+	  case 'S': case 's':
 	    i_ptr->tval = TV_SWORD;
 	    break;
-	  case 'H':
-	  case 'h':
+
+	  case 'H': case 'h':
 	    i_ptr->tval = TV_HAFTED;
 	    break;
-	  case 'P':
-	  case 'p':
+
+	  case 'P': case 'p':
 	    i_ptr->tval = TV_POLEARM;
+
 	    break;
-	  case 'B':
-	  case 'b':
+	  case 'B': case 'b':
 	    i_ptr->tval = TV_BOW;
 	    break;
-	  case 'A':
-	  case 'a':
+
+	  case 'A': case 'a':
 	    prt("What type of Ammo?    : ", 0, 0);
 	    prt("[A]rrow, [B]olt, [P]ebble.", 1, 0);
 	    if (!get_com((char *)0, &ch)) {
 		restore_screen();
 		return;
 	    }
+
 	    switch (ch) {
-	      case 'A':
-	      case 'a':
+	      case 'A': case 'a':
 		i_ptr->tval = TV_ARROW;
 		break;
-	      case 'B':
-	      case 'b':
+	      case 'B': case 'b':
 		i_ptr->tval = TV_BOLT;
 		break;
-	      case 'P':
-	      case 'p':
+	      case 'P': case 'p':
 		i_ptr->tval = TV_SHOT;
 		break;
 	      default:
 		break;
 	    }
 	    break;
+
 	  default:
 	    restore_screen();
 	    return;
 	}
 	break;
-      case 'A':
-      case 'a':
+
+      case 'A': case 'a':
 	prt("What type of Armour?    : ", 0, 0);
 	prt("[A]rmour, [G]loves, [B]oots, [S]hields, [H]elms, [C]loaks.", 1, 0);
 	if (!get_com((char *)0, &ch)) {
 	    restore_screen();
 	    return;
 	}
+
 	switch (ch) {
-	  case 'S':
-	  case 's':
+
+	  case 'S': case 's':
 	    i_ptr->tval = TV_SHIELD;
 	    break;
-	  case 'H':
-	  case 'h':
+
+	  case 'H': case 'h':
 	    i_ptr->tval = TV_HELM;
 	    break;
-	  case 'G':
-	  case 'g':
+
+	  case 'G': case 'g':
 	    i_ptr->tval = TV_GLOVES;
 	    break;
-	  case 'B':
-	  case 'b':
+
+	  case 'B': case 'b':
 	    i_ptr->tval = TV_BOOTS;
 	    break;
-	  case 'C':
-	  case 'c':
+
+	  case 'C': case 'c':
 	    i_ptr->tval = TV_CLOAK;
 	    break;
-	  case 'A':
-	  case 'a':
+
+	  case 'A': case 'a':
 	    prt("What type of Armour?    : ", 0, 0);
 	    prt("[H]ard armour, [S]oft armour.", 1, 0);
 	    if (!get_com((char *)0, &ch)) {
 		restore_screen();
 		return;
 	    }
+
 	    switch (ch) {
-	      case 'H':
-	      case 'h':
+	      case 'H': case 'h':
 		i_ptr->tval = TV_HARD_ARMOR;
 		break;
-	      case 'S':
-	      case 's':
+	      case 'S': case 's':
 		i_ptr->tval = TV_SOFT_ARMOR;
 		break;
 	      default:
 		break;
 	    }
 	    break;
+
 	  default:
 	    restore_screen();
 	    return;
 	}
 	break;
-      case 'O':
-      case 'o':
+
+      case 'O': case 'o':
 	prt("What type of Object?    : ", 0, 0);
-	prt(
-	    "[R]ing, [P]otion, [W]and/staff, [S]croll, [M]agicbook, [A]mulet, [T]ool.",
-	    1, 0);
+	prt("[R]ing, [P]otion, [W]and/staff, [S]croll, [M]agicbook, [A]mulet, [T]ool.", 1, 0);
 	if (!get_com((char *)0, &ch)) {
 	    restore_screen();
 	    return;
 	}
+
 	switch (ch) {
-	  case 'R':
-	  case 'r':
+
+	  case 'R': case 'r':
 	    i_ptr->tval = TV_RING;
 	    break;
-	  case 'P':
-	  case 'p':
+
+	  case 'P': case 'p':
 	    i_ptr->tval = TV_POTION1;
 	    break;
-	  case 'S':
-	  case 's':
+
+	  case 'S': case 's':
 	    i_ptr->tval = TV_SCROLL1;
 	    break;
-	  case 'A':
-	  case 'a':
+
+	  case 'A': case 'a':
 	    i_ptr->tval = TV_AMULET;
 	    break;
-	  case 'W':
-	  case 'w':
+
+	  case 'W': case 'w':
 	    prt("Wand, Staff or Rod?    : ", 0, 0);
 	    prt("[W]and, [S]taff, [R]od.", 1, 0);
 	    if (!get_com((char *)0, &ch)) {
@@ -695,16 +676,13 @@ wizard_create()
 		return;
 	    }
 	    switch (ch) {
-	      case 'W':
-	      case 'w':
+	      case 'W': case 'w':
 		i_ptr->tval = TV_WAND;
 		break;
-	      case 'S':
-	      case 's':
+	      case 'S': case 's':
 		i_ptr->tval = TV_STAFF;
 		break;
-	      case 'R':
-	      case 'r':
+	      case 'R': case 'r':
 		i_ptr->tval = TV_ROD;
 		break;
 	      default:
@@ -712,21 +690,20 @@ wizard_create()
 		return;
 	    }
 	    break;
-	  case 'M':
-	  case 'm':
+
+	  case 'M': case 'm':
 	    prt("Spellbook or Prayerbook?    : ", 0, 0);
 	    prt("[S]pellbook, [P]rayerbook.", 1, 0);
 	    if (!get_com((char *)0, &ch)) {
 		restore_screen();
 		return;
 	    }
+
 	    switch (ch) {
-	      case 'P':
-	      case 'p':
+	      case 'P': case 'p':
 		i_ptr->tval = TV_PRAYER_BOOK;
 		break;
-	      case 'S':
-	      case 's':
+	      case 'S': case 's':
 		i_ptr->tval = TV_MAGIC_BOOK;
 		break;
 	      default:
@@ -734,37 +711,32 @@ wizard_create()
 		return;
 	    }
 	    break;
-	  case 'T':
-	  case 't':
+
+	  case 'T': case 't':
 	    prt("Which Tool etc...?  : ", 0, 0);
 	    prt("[S]pike, [D]igger, [C]hest, [L]ight, [F]ood, [O]il.", 1, 0);
 	    if (!get_com((char *)0, &ch)) {
 		restore_screen();
 		return;
 	    }
+
 	    switch (ch) {
-	      case 'S':
-	      case 's':
+	      case 'S': case 's':
 		i_ptr->tval = TV_SPIKE;
 		break;
-	      case 'd':
-	      case 'D':
+	      case 'd': case 'D':
 		i_ptr->tval = TV_DIGGING;
 		break;
-	      case 'C':
-	      case 'c':
+	      case 'C': case 'c':
 		i_ptr->tval = TV_CHEST;
 		break;
-	      case 'L':
-	      case 'l':
+	      case 'L': case 'l':
 		i_ptr->tval = TV_LITE;
 		break;
-	      case 'F':
-	      case 'f':
+	      case 'F': case 'f':
 		i_ptr->tval = TV_FOOD;
 		break;
-	      case 'O':
-	      case 'o':
+	      case 'O': case 'o':
 		i_ptr->tval = TV_FLASK;
 		break;
 	      default:
@@ -930,18 +902,14 @@ again:
     save_screen();
 
     prt("Number of items? [return=1]: ", 0, 0);
-    if (!get_string(tmp_str, 0, 33, 5))
-	goto end;
+    if (!get_string(tmp_str, 0, 33, 5)) goto end;
     tmp_val = atoi(tmp_str);
-    if (tmp_val != 0)
-	i_ptr->number = tmp_val;
+    if (tmp_val) i_ptr->number = tmp_val;
 
     prt("Weight of item? [return=default]: ", 0, 0);
-    if (!get_string(tmp_str, 0, 35, 5))
-	goto end;
+    if (!get_string(tmp_str, 0, 35, 5)) goto end;
     tmp_val = atoi(tmp_str);
-    if (tmp_val != 0)
-	i_ptr->weight = tmp_val;
+    if (tmp_val) i_ptr->weight = tmp_val;
 
     if ((i_ptr->tval == TV_SWORD) ||
 	(i_ptr->tval == TV_HAFTED) ||
@@ -952,32 +920,26 @@ again:
 	(i_ptr->tval == TV_DIGGING)) {
 	i_ptr->ident |= ID_SHOW_HITDAM;
 	prt("Damage (dice): ", 0, 0);
-	if (!get_string(tmp_str, 0, 15, 3))
-	    goto end;
+	if (!get_string(tmp_str, 0, 15, 3)) goto end;
 	tmp_val = atoi(tmp_str);
-	if (tmp_val != 0)
-	    i_ptr->damage[0] = tmp_val;
+	if (tmp_val) i_ptr->damage[0] = tmp_val;
 	prt("Damage (sides): ", 0, 0);
-	if (!get_string(tmp_str, 0, 16, 3))
-	    goto end;
+	if (!get_string(tmp_str, 0, 16, 3)) goto end;
 	tmp_val = atoi(tmp_str);
-	if (tmp_val != 0)
-	    i_ptr->damage[1] = tmp_val;
+	if (tmp_val) i_ptr->damage[1] = tmp_val;
     }
+
     prt("+To hit: ", 0, 0);
-    if (!get_string(tmp_str, 0, 9, 3))
-	goto end;
+    if (!get_string(tmp_str, 0, 9, 3)) goto end;
     tmp_val = atoi(tmp_str);
-    if (tmp_val != 0)
-	i_ptr->tohit = tmp_val;
+    if (tmp_val) i_ptr->tohit = tmp_val;
 
     prt("+To dam: ", 0, 0);
-    if (!get_string(tmp_str, 0, 9, 3))
-	goto end;
+    if (!get_string(tmp_str, 0, 9, 3)) goto end;
     tmp_val = atoi(tmp_str);
-    if (tmp_val != 0)
-	i_ptr->todam = tmp_val;
+    if (tmp_val) i_ptr->todam = tmp_val;
 
+    /* Extra Armor Info */
     if ((i_ptr->tval == TV_SOFT_ARMOR) ||
 	(i_ptr->tval == TV_HARD_ARMOR) ||
 	(i_ptr->tval == TV_HELM) ||
@@ -985,32 +947,29 @@ again:
 	(i_ptr->tval == TV_BOOTS) ||
 	(i_ptr->tval == TV_GLOVES) ||
 	(i_ptr->tval == TV_SHIELD)) {
+
 	prt("Base AC : ", 0, 0);
-	if (!get_string(tmp_str, 0, 10, 3))
-	    goto end;
+	if (!get_string(tmp_str, 0, 10, 3)) goto end;
 	tmp_val = atoi(tmp_str);
-	if (tmp_val != 0)
-	    i_ptr->ac = tmp_val;
+	if (tmp_val) i_ptr->ac = tmp_val;
     }
+
     prt("+To AC : ", 0, 0);
-    if (!get_string(tmp_str, 0, 9, 3))
-	goto end;
+    if (!get_string(tmp_str, 0, 9, 3)) goto end;
     tmp_val = atoi(tmp_str);
-    if (tmp_val != 0)
-	i_ptr->toac = tmp_val;
+    if (tmp_val) i_ptr->toac = tmp_val;
 
     prt("Magic Plus Flag  : ", 0, 0);
-    if (!get_string(tmp_str, 0, 20, 5))
-	goto end;
+    if (!get_string(tmp_str, 0, 20, 5)) goto end;
     tmp_val = atoi(tmp_str);
-    if (tmp_val != 0)
-	i_ptr->p1 = tmp_val;
+    if (tmp_val) i_ptr->p1 = tmp_val;
 
 
     save_screen();
+
+    /* Only do TRN_* flags for wearable objects */
     if ((i_ptr->tval <= TV_MAX_WEAR) && (i_ptr->tval >= TV_MIN_WEAR)) {
 
-    /* only then bother with TR_* flags, since otherwise they are meaningless... -CFT */
 	if ((i_ptr->tval == TV_SWORD) ||
 	    (i_ptr->tval == TV_HAFTED) ||
 	    (i_ptr->tval == TV_POLEARM) ||
@@ -1018,6 +977,7 @@ again:
 	    (i_ptr->tval == TV_BOLT) ||
 	    (i_ptr->tval == TV_SHOT) ||
 	    (i_ptr->tval == TV_DIGGING)) {
+
 	    if (get_com("Slay Evil? [yn]: ", &ch)) {
 		if (ch == 'y' || ch == 'Y')
 		    i_ptr->flags |= TR1_SLAY_EVIL;
@@ -1305,14 +1265,14 @@ again:
 	} else if (ch == '\033')
 	    goto end;
     } /* end if TV_MAX_WEAR >= i_ptr->tval >= TV_MIN_WEAR -CFT */
+
     prt("Cost : ", 0, 0);
     if (!get_string(tmp_str, 0, 9, 8)) {
 	restore_screen();
 	return;
     }
     tmp_lval = atol(tmp_str);
-    if (tmp_val != 0)
-	i_ptr->cost = tmp_lval;
+    if (tmp_val) i_ptr->cost = tmp_lval;
 
     prt("Dungeon Level on which it is found : ", 0, 0);
     if (!get_string(tmp_str, 0, 39, 3)) {
@@ -1380,8 +1340,7 @@ end:
 
 /* pause if screen fills up while printint up artifacts - cba */
 
-void
-artifact_screen_full(i, j)
+void artifact_screen_full(i, j)
 int *i;
 int  j;
 {
@@ -1400,8 +1359,7 @@ int  j;
 
 /* Print out the artifacts seen without using a file - cba */
 
-void
-artifact_check_no_file()
+void artifact_check_no_file()
 {
     int i, j;
 
@@ -1891,10 +1849,7 @@ artifact_check_no_file()
 
 /* print out the status of uniques - cba */
 
-void
-unique_screen_full(i, j)
-int *i;
-int  j;
+void unique_screen_full(int *i, int j)
 {
     int t;
 

@@ -1,23 +1,34 @@
-/* tables.c: store/attack/RNG/etc tables and variables
+/* File: tables.c */
 
-   Copyright (c) 1989 James E. Wilson, Robert A. Koeneke
+/* Purpose: store/attack/RNG/etc tables and variables */
 
-   This software may be copied and distributed for educational, research, and
-   not for profit purposes provided that this copyright and statement are
-   included in all such copies. */
+/*
+ * Copyright (c) 1989 James E. Wilson, Robert A. Koeneke
+ *
+ * This software may be copied and distributed for educational, research, and
+ * not for profit purposes provided that this copyright and statement are
+ * included in all such copies.
+ */
 
 #include "angband.h"
 
-#if defined(CHECK_HOURS)
-/* Operating hours for ANGBAND				-RAK-	*/
-/*	 X = Open; . = Closed					*/
-char days[7][29] = { "SUN:XXXXXXXXXXXXXXXXXXXXXXXX",
-		    "MON:XXXXXXXX.........XXXXXXX",
-		    "TUE:XXXXXXXX.........XXXXXXX",
-		    "WED:XXXXXXXX.........XXXXXXX",
-		    "THU:XXXXXXXX.........XXXXXXX",
-		    "FRI:XXXXXXXX.........XXXXXXX",
-		    "SAT:XXXXXXXXXXXXXXXXXXXXXXXX" };
+
+#ifdef CHECK_HOURS
+
+/*
+ * Operating hours for ANGBAND	-RAK-
+ *	 X = Open; . = Closed
+ */
+char days[7][29] = {
+	"SUN:XXXXXXXXXXXXXXXXXXXXXXXX",
+	"MON:XXXXXXXX.........XXXXXXX",
+	"TUE:XXXXXXXX.........XXXXXXX",
+	"WED:XXXXXXXX.........XXXXXXX",
+	"THU:XXXXXXXX.........XXXXXXX",
+	"FRI:XXXXXXXX.........XXXXXXX",
+	"SAT:XXXXXXXXXXXXXXXXXXXXXXXX"
+};
+
 #endif
 
 store_type store[MAX_STORES];
@@ -226,7 +237,9 @@ const char *syllables[MAX_SYLLABLES] = {
 };
 #endif
 
-/* used to calculate the number of blows the player gets in combat */
+/*
+ * used to calculate the number of blows the player gets in combat
+ */
 byte blows_table[11][12] = {
 /* STR/W:	   9  18  67  107  117  118  128  138  148  158  168 more : DEX */
 /* <2 */	{  1,  1,  1,   1,   1,   1,   2,   2,   2,   2,   2,   3},
@@ -244,9 +257,11 @@ byte blows_table[11][12] = {
 };
 
 
-/* this table is used to generate a psuedo-normal distribution.	 See the
-   function randnor() in misc1.c, this is much faster than calling
-   transcendental function to calculate a true normal distribution */
+/*
+ * This table is used to generate a psuedo-normal distribution.
+ * See the function randnor() in misc1.c, this is much faster than calling
+ * transcendental function to calculate a true normal distribution
+ */
 u16b normal_table[NORMAL_TABLE_SIZE] = {
      206,     613,    1022,    1430,	1838,	 2245,	  2652,	   3058,
     3463,    3867,    4271,    4673,	5075,	 5475,	  5874,	   6271,
@@ -281,3 +296,4 @@ u16b normal_table[NORMAL_TABLE_SIZE] = {
    32763,   32763,   32763,   32764,   32764,	32764,	 32764,	  32765,
    32765,   32765,   32765,   32766,   32766,	32766,	 32766,	  32766,
 };
+
