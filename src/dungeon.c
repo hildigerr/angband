@@ -1889,7 +1889,7 @@ static void do_command(char com_val)
 	tunnel(9);
 	break;
       case 'z':			/* (z)ap a wand		(a)im a wand */
-	aim();
+	do_cmd_aim_wand();
 	break;
       case 'a':			/* (a)ctivate a rod	(z)ap a rod */
 	activate_rod();

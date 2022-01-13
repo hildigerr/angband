@@ -463,6 +463,7 @@ int ruin_stat(int);
 void do_cmd_eat_food(void);
 void do_cmd_quaff_potion(void);
 void do_cmd_read_scroll(void);
+void do_cmd_aim_wand(void);
 
 /* files.c */
 void read_times(void);
@@ -918,9 +919,6 @@ int my_topen(cptr, int, int);
 FILE *my_tfopen(cptr, cptr);
 
 /* variable.c */
-
-/* wands.c */
-void aim(void);
 
 /* wizard.c */
 void wiz_lite(int);
