@@ -1477,23 +1477,172 @@ void do_cmd_aim_wand(void)
 		while (!done_effect) {
 		    k = char_row;
 		    l = char_col;
+
 		    switch (i) {
+
 		      case WD_LT:
 			msg_print("A line of blue shimmering light appears.");
 			lite_line(dir, char_row, char_col);
 			ident = TRUE;
 			done_effect = 1;
 			break;
-		      case WD_DRG_FIRE:
-			fire_ball(GF_FIRE, dir, k, l, 100, 3);
+
+		      case WD_AC_BLTS:	/* Acid , New */
+			if (randint(5)==1)
+			    line_spell(GF_ACID,dir,k,l,damroll(5,8));
+			else
+			    fire_bolt(GF_ACID,dir,k,l,damroll(5,8));
 			ident = TRUE;
 			done_effect = 1;
 			break;
+
+		      case WD_LT_BLTS:	/* Lightning */
+			if (randint(6)==1)
+			    line_spell(GF_ELEC,dir,k,l,damroll(3,8));
+			else
+			    fire_bolt(GF_ELEC, dir, k, l, damroll(3, 8));
+			ident = TRUE;
+			done_effect = 1;
+			break;
+
+		      case WD_FT_BLTS:	/* Frost */
+			if (randint(6)==1)
+			    line_spell(GF_ELEC,dir,k,l,damroll(3,8));
+			else
+			    fire_bolt(GF_ELEC, dir, k, l, damroll(3, 8));
+			ident = TRUE;
+			done_effect = 1;
+			break;
+
 		      case WD_DRG_FRST:
 			fire_ball(GF_COLD, dir, k, l, 80, 3);
 			ident = TRUE;
 			done_effect = 1;
 			break;
+
+		      case WD_FR_BLTS:	/* Fire */
+			if (randint(4)==1)
+			    line_spell(GF_FIRE,dir,k,l,damroll(6,8));
+			else
+			    fire_bolt(GF_FIRE, dir, k, l, damroll(6, 8));
+			ident = TRUE;
+			done_effect = 1;
+			break;
+
+		      case WD_DRG_FIRE:
+			fire_ball(GF_FIRE, dir, k, l, 100, 3);
+			ident = TRUE;
+			done_effect = 1;
+			break;
+
+		      case WD_ST_MUD:
+			ident = wall_to_mud(dir, k, l);
+			done_effect = 1;
+			break;
+
+		      case WD_POLY:
+			ident = poly_monster(dir, k, l);
+			done_effect = 1;
+			break;
+
+		      case WD_HEAL_MN:
+			ident = hp_monster(dir, k, l, -damroll(4, 6));
+			done_effect = 1;
+			break;
+
+		      case WD_HAST_MN:
+			ident = speed_monster(dir, k, l, 1);
+			done_effect = 1;
+			break;
+
+		      case WD_SLOW_MN:
+			ident = speed_monster(dir, k, l, -1);
+			done_effect = 1;
+			break;
+
+		      case WD_CONF_MN:
+			ident = confuse_monster(dir, k, l, 10);
+			done_effect = 1;
+			break;
+
+		      case WD_SLEE_MN:
+			ident = sleep_monster(dir, k, l);
+			done_effect = 1;
+			break;
+
+		      case WD_DRAIN:
+			ident = drain_life(dir, k, l, 75);
+			done_effect = 1;
+			break;
+
+		      case WD_TR_DEST:
+			ident = td_destroy2(dir, k, l);
+			done_effect = 1;
+			break;
+
+		      case WD_MAG_MIS:
+			if (randint(6)==1)
+			    line_spell(GF_MISSILE,dir,k,l,damroll(2,6));
+			else
+			    fire_bolt(GF_MISSILE, dir, k, l, damroll(2, 6));
+			ident = TRUE;
+			done_effect = 1;
+			break;
+
+		      case WD_FEAR_MN:	/* Fear Monster */
+			ident = fear_monster(dir, k, l, 10);
+			done_effect = 1;
+			break;
+
+		      case WD_CLONE:
+			ident = clone_monster(dir, k, l);
+			done_effect = 1;
+			break;
+
+		      case WD_TELE:
+			ident = teleport_monster(dir, k, l);
+			done_effect = 1;
+			break;
+
+		      case WD_DISARM:
+			ident = disarm_all(dir, k, l);
+			done_effect = 1;
+			break;
+
+		      case WD_LT_BALL:
+			fire_ball(GF_ELEC, dir, k, l, 32, 2);
+			ident = TRUE;
+			done_effect = 1;
+			break;
+
+		      case WD_CD_BALL:
+			fire_ball(GF_COLD, dir, k, l, 48, 2);
+			ident = TRUE;
+			done_effect = 1;
+			break;
+
+		      case WD_FR_BALL:
+			fire_ball(GF_FIRE, dir, k, l, 72, 2);
+			ident = TRUE;
+			done_effect = 1;
+			break;
+
+		      case WD_ST_CLD:
+			fire_ball(GF_POIS, dir, k, l, 12, 2);
+			ident = TRUE;
+			done_effect = 1;
+			break;
+
+		      case WD_AC_BALL:
+			fire_ball(GF_ACID, dir, k, l, 60, 2);
+			ident = TRUE;
+			done_effect = 1;
+			break;
+
+		      case WD_WONDER:
+			i = randint(23);
+			break;
+
 		      case WD_DRG_BREA:
 			switch (randint(5)) {
 			  case 1:
@@ -1515,136 +1664,18 @@ void do_cmd_aim_wand(void)
 			ident = TRUE;
 			done_effect = 1;
 			break;
-		      case WD_AC_BLTS:	/* Acid , New */
-			if (randint(5)==1)
-			    line_spell(GF_ACID,dir,k,l,damroll(5,8));
-			else
-			    fire_bolt(GF_ACID,dir,k,l,damroll(5,8));
-			ident = TRUE;
-			done_effect = 1;
-			break;
-		      case WD_LT_BLTS:	/* Lightning */
-			if (randint(6)==1)
-			    line_spell(GF_ELEC,dir,k,l,damroll(3,8));
-			else
-			    fire_bolt(GF_ELEC, dir, k, l, damroll(3, 8));
-			ident = TRUE;
-			done_effect = 1;
-			break;
-		      case WD_FT_BLTS:	/* Frost */
-			if (randint(6)==1)
-			    line_spell(GF_ELEC,dir,k,l,damroll(3,8));
-			else
-			    fire_bolt(GF_ELEC, dir, k, l, damroll(3, 8));
-			ident = TRUE;
-			done_effect = 1;
-			break;
-		      case WD_FR_BLTS:	/* Fire */
-			if (randint(4)==1)
-			    line_spell(GF_FIRE,dir,k,l,damroll(6,8));
-			else
-			    fire_bolt(GF_FIRE, dir, k, l, damroll(6, 8));
-			ident = TRUE;
-			done_effect = 1;
-			break;
-		      case WD_ST_MUD:
-			ident = wall_to_mud(dir, k, l);
-			done_effect = 1;
-			break;
-		      case WD_POLY:
-			ident = poly_monster(dir, k, l);
-			done_effect = 1;
-			break;
-		      case WD_HEAL_MN:
-			ident = hp_monster(dir, k, l, -damroll(4, 6));
-			done_effect = 1;
-			break;
-		      case WD_HAST_MN:
-			ident = speed_monster(dir, k, l, 1);
-			done_effect = 1;
-			break;
-		      case WD_SLOW_MN:
-			ident = speed_monster(dir, k, l, -1);
-			done_effect = 1;
-			break;
-		      case WD_CONF_MN:
-			ident = confuse_monster(dir, k, l, 10);
-			done_effect = 1;
-			break;
-		      case WD_SLEE_MN:
-			ident = sleep_monster(dir, k, l);
-			done_effect = 1;
-			break;
-		      case WD_DRAIN:
-			ident = drain_life(dir, k, l, 75);
-			done_effect = 1;
-			break;
+
 		      case WD_ANHIL:
 			ident = drain_life(dir, k, l, 125);
 			done_effect = 1;
 			break;
-		      case WD_TR_DEST:
-			ident = td_destroy2(dir, k, l);
-			done_effect = 1;
-			break;
-		      case WD_MAG_MIS:
-			if (randint(6)==1)
-			    line_spell(GF_MISSILE,dir,k,l,damroll(2,6));
-			else
-			    fire_bolt(GF_MISSILE, dir, k, l, damroll(2, 6));
-			ident = TRUE;
-			done_effect = 1;
-			break;
-		      case WD_FEAR_MN:	/* Fear Monster */
-			ident = fear_monster(dir, k, l, 10);
-			done_effect = 1;
-			break;
-		      case WD_CLONE:
-			ident = clone_monster(dir, k, l);
-			done_effect = 1;
-			break;
-		      case WD_TELE:
-			ident = teleport_monster(dir, k, l);
-			done_effect = 1;
-			break;
-		      case WD_DISARM:
-			ident = disarm_all(dir, k, l);
-			done_effect = 1;
-			break;
-		      case WD_LT_BALL:
-			fire_ball(GF_ELEC, dir, k, l, 32, 2);
-			ident = TRUE;
-			done_effect = 1;
-			break;
-		      case WD_CD_BALL:
-			fire_ball(GF_COLD, dir, k, l, 48, 2);
-			ident = TRUE;
-			done_effect = 1;
-			break;
-		      case WD_FR_BALL:
-			fire_ball(GF_FIRE, dir, k, l, 72, 2);
-			ident = TRUE;
-			done_effect = 1;
-			break;
-		      case WD_ST_CLD:
-			fire_ball(GF_POIS, dir, k, l, 12, 2);
-			ident = TRUE;
-			done_effect = 1;
-			break;
-		      case WD_AC_BALL:
-			fire_ball(GF_ACID, dir, k, l, 60, 2);
-			ident = TRUE;
-			done_effect = 1;
-			break;
-		      case WD_WONDER:
-			i = randint(23);
-			break;
+
 		      default:
 			msg_print("Internal error in wands() ");
 			done_effect = 1;
 			break;
 		    }
-		/* End of Wands.		    */
+
 		}
 		if (ident) {
 		    if (!known1_p(i_ptr)) {
