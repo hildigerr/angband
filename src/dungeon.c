@@ -1946,7 +1946,7 @@ static void do_command(char com_val)
 	inven_command('t');
 	break;
       case 'Z':			/* (Z)ap a staff	(u)se a staff */
-	use();
+	do_cmd_use_staff();
 	break;
       case 'V':			/* (V)ersion of game */
 	helpfile(ANGBAND_VERSION);

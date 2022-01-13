@@ -464,6 +464,7 @@ void do_cmd_eat_food(void);
 void do_cmd_quaff_potion(void);
 void do_cmd_read_scroll(void);
 void do_cmd_aim_wand(void);
+void do_cmd_use_staff(void);
 
 /* files.c */
 void read_times(void);
@@ -892,9 +893,6 @@ int remove_all_curse(void);
 void darken_room(int, int);
 cptr pain_message(int, int);
 void line_spell(int, int, int, int, int);
-
-/* staffs.c */
-void use(void);
 
 /* store.c */
 s32b item_value(inven_type *i_ptr);
