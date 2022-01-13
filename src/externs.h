@@ -462,6 +462,7 @@ int ruin_stat(int);
 /* effects.c */
 void do_cmd_eat_food(void);
 void do_cmd_quaff_potion(void);
+void do_cmd_read_scroll(void);
 
 /* files.c */
 void read_times(void);
@@ -770,9 +771,6 @@ int save_player(void);
 #endif
 int _save_player(char *);
 int load_player(int *);
-
-/* scrolls.c */
-void read_scroll(void);
 
 /* sets.c */
 int set_corrodes(inven_type *);

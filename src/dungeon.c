@@ -1937,7 +1937,7 @@ static void do_command(char com_val)
 	do_cmd_quaff_potion();
 	break;
       case 'r':			/* (r)ead */
-	read_scroll();
+	do_cmd_read_scroll();
 	break;
       case 's':			/* (s)earch for a turn */
 	search(char_row, char_col, py.misc.srh);
