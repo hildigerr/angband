@@ -1934,7 +1934,7 @@ static void do_command(char com_val)
 	pray();
 	break;
       case 'q':			/* (q)uaff */
-	quaff();
+	do_cmd_quaff_potion();
 	break;
       case 'r':			/* (r)ead */
 	read_scroll();

@@ -461,6 +461,7 @@ int ruin_stat(int);
 
 /* effects.c */
 void do_cmd_eat_food(void);
+void do_cmd_quaff_potion(void);
 
 /* files.c */
 void read_times(void);
@@ -739,9 +740,6 @@ void bios_clear(void);
 void msdos_intro(void);
 void bios_clear(void);
 #endif
-
-/* potions.c */
-void quaff(void);
 
 /* prayer.c */
 void pray(void);
