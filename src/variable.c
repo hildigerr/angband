@@ -56,6 +56,7 @@ s32b old_turn = (-1);		/* Last feeling message */
 
 int wizard = FALSE;		/* Is the player currently in Wizard mode? */
 int to_be_wizard = FALSE;	/* Is the player about to be a wizard? */
+int can_be_wizard = FALSE;	/* Does the player have wizard permissions? */
 
 s16b panic_save = FALSE;	/* this is true if playing from a panic save */
 s16b noscore = FALSE;		/* Don't log the game. -CJS- */

@@ -234,6 +234,7 @@ extern s32b turn;			/* Current game turn */
 extern s32b old_turn;			/* Last turn feeling was felt */
 extern int wizard;			/* Is the player currently a Wizard? */
 extern int to_be_wizard;		/* Does the player want to be a wizard? */
+extern int can_be_wizard;		/* Can the player ever be a wizard? */
 extern s16b panic_save;		/* true if playing from a panic save */
 
 extern int wait_for_more;
@@ -941,7 +942,6 @@ void change_character(void);
 void wizard_create(void);
 void artifact_check(void);
 void artifact_check_no_file(void);
-int is_wizard(int);
 
 #endif      /* __STDC__ */
 

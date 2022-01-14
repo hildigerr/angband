@@ -65,33 +65,33 @@ CASPANION, RAZORBACK, BLADETURNER;
 /*
  * Unix machines need to "check wizard permissions"
  */
-int is_wizard(int uid)
+static bool is_wizard(int uid)
 {
     int		test;
     FILE	*fp;
     char	buf[100];
 
+    bool allow = FALSE;
+
+
     /* Open the wizard file */
     fp = my_tfopen(ANGBAND_WIZ, "r");
 
-    if (!fp) {
-	fprintf(stderr, "Can't get wizard check...");
-	exit_game();
-    }
+    /* No wizard file, so no wizards */
+    if (!fp) return (FALSE);
 
-    do {
-	(void)fgets(buf, sizeof buf, fp);
-	if (sscanf(buf, "%d", &test)) {
-	    if (test == uid && buf[0] != '#') {
-		fclose(fp);
-		return TRUE;
-	    }
-	}
-    } while (!feof(fp));
+    /* Scan the wizard file */
+    while (!allow && fgets(buf, sizeof(buf), fp)) {
+	if (buf[0] == '#') continue;
+	if (sscanf(buf, "%d", &test) != 1) continue;
+	if (test == uid) allow = TRUE;
+    }
 
     /* Close the file */
     fclose(fp);
-    return FALSE;
+
+    /* Result */
+    return (allow);
 }
 
 
@@ -171,6 +171,9 @@ int main(int argc, char *argv[])
     }
 #endif
 
+    /* Check for "Wizard" permission */
+    can_be_wizard = is_wizard(player_uid);
+
 #if !defined(MSDOS) && !defined(__MINT__)
     (void)gethostname(thishost, (sizeof thishost) - 1);	/* get host */
     fp = my_tfopen(ANGBAND_LOAD, "r");
@@ -203,7 +206,7 @@ int main(int argc, char *argv[])
 	switch (argv[0][1]) {
 	  case 'A':
 	  case 'a':
-	    if (!is_wizard(player_uid)) goto usage;
+	    if (!can_be_wizard) goto usage;
 	    peek=TRUE;
 	    break;
 	  case 'N':
@@ -232,8 +235,7 @@ int main(int argc, char *argv[])
 	    exit_game();
 	  case 'D':
 	  case 'd':
-	    if (!is_wizard(player_uid))
-		goto usage;
+	    if (!can_be_wizard) goto usage;
 	    if (isdigit((int)argv[0][2]))
 		delete_entry(atoi(&argv[0][2]));
 	    else
@@ -241,16 +243,17 @@ int main(int argc, char *argv[])
 	    exit_game();
 	  case 'F':
 	  case 'f':
-	    if (!(is_wizard(player_uid) || to_be_wizard)) goto usage;
-	    fiddle = TRUE;
+	    if (!can_be_wizard) goto usage;
+	    fiddle = to_be_wizard = TRUE;
 	    break;
 	  case 'W':
 	  case 'w':
-	    if (!is_wizard(player_uid)) goto usage;
+	    if (!can_be_wizard) goto usage;
 		to_be_wizard = TRUE;
 #ifndef MSDOS
-	    if (isdigit((int)argv[0][2]))
+	    if (isdigit((int)argv[0][2])) {
 		player_uid = atoi(&argv[0][2]);
+	    }
 #endif
 	    break;
 	  case 'u':
@@ -262,7 +265,7 @@ int main(int argc, char *argv[])
 
 	  default:
 	  usage:
-	    if (is_wizard(player_uid)) {
+	    if (can_be_wizard) {
 #ifdef MSDOS
 		puts("Usage: angband [-afnorw] [-s<num>] [-d<num>] <file>");
 #else

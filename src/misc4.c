@@ -1917,7 +1917,7 @@ int enter_wiz_mode(void)
 {
     register int answer = FALSE;
 
-    if (!is_wizard(player_uid)) return FALSE;
+    if (!can_be_wizard) return FALSE;
 
     if (!noscore) {
 	msg_print("Wizard mode is for debugging and experimenting.");
