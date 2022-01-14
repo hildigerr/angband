@@ -891,35 +891,39 @@
 #define TV_STORE_DOOR   110	/* Entrance to store */
 #define TV_MAX_VISIBLE  110
 
-/*
- * Spell types used by get_flags(), breathe(), fire_bolt() and fire_ball()
- */
-#define GF_MISSILE		0
-#define GF_ELEC         1
-#define GF_POIS         2
-#define GF_ACID         3
-#define GF_COLD         4
-#define GF_FIRE         5
-#define GF_HOLY_ORB     6
-#define GF_ARROW        7
-#define GF_PLASMA       8
-#define GF_NETHER       9
-#define GF_WATER        10
-#define GF_CHAOS        11
-#define GF_SHARDS       12
-#define GF_SOUND        13
-#define GF_CONFUSION    14
-#define GF_DISENCHANT   15
-#define GF_NEXUS        16
-#define GF_FORCE        17
-#define GF_INERTIA      18
-#define GF_LITE        19
-#define GF_DARK         20
-#define GF_TIME         21
-#define GF_GRAVITY      22
-#define GF_MANA         23
-#define GF_METEOR       24
-#define GF_ICE          25
+
+
+
+#define SV_STAFF_LITE        1L
+#define SV_STAFF_DOOR_STAIR_LOC        2L
+#define SV_STAFF_TRAP_LOC       3L
+#define SV_STAFF_TREASURE_LOC       4L
+#define SV_STAFF_OBJECT_LOC       5L
+#define SV_STAFF_TELEPORTATION         6L
+#define SV_STAFF_EARTHQUAKES        7L
+#define SV_STAFF_SUMMONING       8L
+#define SV_STAFF_DESTRUCTION         9L
+#define SV_STAFF_STARLITE         10L
+#define SV_STAFF_HASTE_MONSTERS      11L
+#define SV_STAFF_SLOW_MONSTERS      12L
+#define SV_STAFF_SLEEP_MONSTERS      13L
+#define SV_STAFF_CURE_LIGHT      14L
+#define SV_STAFF_DETECT_INVIS      15L
+#define SV_STAFF_SPEED        16L
+#define SV_STAFF_SLOWNESS         17L
+#define SV_STAFF_REMOVE_CURSE       18L
+#define SV_STAFF_DETECT_EVIL      19L
+#define SV_STAFF_CURING       20L
+#define SV_STAFF_DISPEL_EVIL      21L
+#define SV_STAFF_DARKNESS         22L
+#define SV_STAFF_GENOCIDE     23L
+#define SV_STAFF_POWER        24L
+#define SV_STAFF_THE_MAGI         25L
+#define SV_STAFF_IDENTIFY     27L
+#define SV_STAFF_HOLINESS     26L
+#define SV_STAFF_MAPPING     28L
+#define SV_STAFF_HEALING      29L
+#define SV_STAFF_PROBING        30L
 
 #define SV_WAND_LITE           1L
 #define SV_WAND_ELEC      2L
@@ -948,8 +952,8 @@
 #define SV_WAND_DRAGON_FIRE     25L
 #define SV_WAND_DRAGON_COLD     26L
 #define SV_WAND_DRAGON_BREATH     27L
-#define SV_WAND_ACID      28L
 #define SV_WAND_ANNIHILATION        29L
+#define SV_WAND_ACID      28L
 
 #define SV_ROD_LIGHT           1L
 #define SV_ROD_ELEC      2L
@@ -985,36 +989,40 @@
 #define SV_ROD_TRAP_LOC     32L
 #define SV_ROD_MK_WALL      33L
 
-#define SV_STAFF_LITE        1L
-#define SV_STAFF_DOOR_STAIR_LOC        2L
-#define SV_STAFF_TRAP_LOC       3L
-#define SV_STAFF_TREASURE_LOC       4L
-#define SV_STAFF_OBJECT_LOC       5L
-#define SV_STAFF_TELEPORTATION         6L
-#define SV_STAFF_EARTHQUAKES        7L
-#define SV_STAFF_SUMMONING       8L
-#define SV_STAFF_DESTRUCTION         9L
-#define SV_STAFF_STARLITE         10L
-#define SV_STAFF_HASTE_MONSTERS      11L
-#define SV_STAFF_SLOW_MONSTERS      12L
-#define SV_STAFF_SLEEP_MONSTERS      13L
-#define SV_STAFF_CURE_LIGHT      14L
-#define SV_STAFF_DETECT_INVIS      15L
-#define SV_STAFF_SPEED        16L
-#define SV_STAFF_SLOWNESS         17L
-#define SV_STAFF_REMOVE_CURSE       18L
-#define SV_STAFF_DETECT_EVIL      19L
-#define SV_STAFF_CURING       20L
-#define SV_STAFF_DISPEL_EVIL      21L
-#define SV_STAFF_DARKNESS         22L
-#define SV_STAFF_GENOCIDE     23L
-#define SV_STAFF_POWER        24L
-#define SV_STAFF_THE_MAGI         25L
-#define SV_STAFF_HOLINESS     26L
-#define SV_STAFF_IDENTIFY     27L
-#define SV_STAFF_MAPPING     28L
-#define SV_STAFF_HEALING      29L
-#define SV_STAFF_PROBING        30L
+
+
+/*
+ * Spell types used by get_flags(), breathe(), fire_bolt() and fire_ball()
+ */
+#define GF_MISSILE		0
+#define GF_ELEC         1
+#define GF_POIS         2
+#define GF_ACID         3
+#define GF_COLD         4
+#define GF_FIRE         5
+#define GF_HOLY_ORB     6
+#define GF_ARROW        7
+#define GF_PLASMA       8
+#define GF_NETHER       9
+#define GF_WATER        10
+#define GF_CHAOS        11
+#define GF_SHARDS       12
+#define GF_SOUND        13
+#define GF_CONFUSION    14
+#define GF_DISENCHANT   15
+#define GF_NEXUS        16
+#define GF_FORCE        17
+#define GF_INERTIA      18
+#define GF_LITE        19
+#define GF_DARK         20
+#define GF_TIME         21
+#define GF_GRAVITY      22
+#define GF_MANA         23
+#define GF_METEOR       24
+#define GF_ICE          25
+
+
+
 
 /* bit flags used in my revamped enchant() code -CFT */
 #define ENCH_TOHIT   0x01
