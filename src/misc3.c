@@ -751,7 +751,6 @@ void place_good(int y, int x, u32b good)
 void random_object(int y, int x, int num)
 {
     register int        i, j, k;
-    register cave_type *cave_ptr;
 
     /* Attempt to place 'num' objects */
     for (; num > 0; --num) {
@@ -767,10 +766,9 @@ void random_object(int y, int x, int num)
 
 	    /* Require legal grid */
 	    } while (!in_bounds(j,k));
-
-	    cave_ptr = &cave[j][k];
-
-	    if ((cave_ptr->fval <= MAX_CAVE_FLOOR) && (cave_ptr->tptr == 0)) {
+	    
+	    /* Require "clean" floor space */
+	    if (!clean_grid_bold(j,k)) continue;
 		object_level = dun_level;
 
 	    /* Place something */
@@ -782,7 +780,6 @@ void random_object(int y, int x, int num)
 	    }
 
 		i = 9;
-	    }
 	}
     }
 }
@@ -795,7 +792,6 @@ void random_object(int y, int x, int num)
 void special_random_object(int y, int x, int num)
 {
     register int        i, j, k;
-    register cave_type *cave_ptr;
 
     object_level = dun_level;
 
@@ -809,9 +805,9 @@ void special_random_object(int y, int x, int num)
 	    /* Pick a random spot */
 	    j = y - 3 + randint(5);
 	    k = x - 4 + randint(7);
-
-	    cave_ptr = &cave[j][k];
-	    if ((cave_ptr->fval <= MAX_CAVE_FLOOR) && (cave_ptr->tptr == 0)) {
+	    
+	    /* Must have a clean grid */
+	    if (!clean_grid_bold(j, k)) continue;
 
 	    /* Perhaps attempt to place a "Special Object" */
 	    if (randint(5) == 1) {
@@ -821,7 +817,6 @@ void special_random_object(int y, int x, int num)
 		    place_good(j, k, SPECIAL);
 		}
 		i = 9;
-	    }
 	}
     }
 }
