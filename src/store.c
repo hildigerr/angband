@@ -14,6 +14,7 @@
 
 
 
+int is_home = FALSE;		/* Are we in our home? */
 
 
 static cptr comment1[14] = {

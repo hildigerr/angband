@@ -40,6 +40,17 @@ typedef struct statstime {
 
 
 
+/*
+ * The standard R.N.G. state array (used below)
+ */
+static char *old_state = NULL;
+
+/*
+ * Hack -- The dummy R.N.G. state array
+ * Used to keep consistent object colors and town layout
+ */
+static char *dummy_state = NULL;
+
 
 /*
  * Gets a new random seed for the random number generator 

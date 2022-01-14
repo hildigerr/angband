@@ -746,6 +746,15 @@ u32b monster_death(int y, int x, u32b flags, u32b good, u32b win)
 }
 
 
+
+
+/*
+ * Hack -- pass a fear code around
+ * Used to redo monster fear messages -CWS
+ */
+static int monster_is_afraid = 0;
+
+
 /*
  * return whether a monster is "fearless" and will never run away. -CWS
  */

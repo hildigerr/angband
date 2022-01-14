@@ -910,6 +910,17 @@ int place_ghost()
 }
 
 
+
+
+/*
+ * Mega-Hack -- allocation helper
+ *
+ * Number of monsters with level 0-N 
+ */
+s16b m_level[MAX_R_LEV+1];
+
+
+
 /*
  * Return a monster suitable to be placed at a given level.  This makes high
  * level monsters (up to the given level) slightly more common than low level

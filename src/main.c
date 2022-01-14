@@ -19,6 +19,13 @@
 #include <sys/resource.h>
 #endif
 
+/*
+ * Hack -- Local "game mode" vars
+ */
+static int new_game = FALSE;
+static int fiddle = FALSE;
+static int force_rogue_like = FALSE;
+static int force_keys_to = FALSE;
 
 
 
@@ -31,9 +38,6 @@ static void init_t_level();
 static void player_outfit();
 
 int unfelt    = TRUE;
-int rating    = 0;
-int peek      = FALSE;
-int player_uid;
 int quests[MAX_QUESTS];
 monster_race ghost;
 
@@ -64,17 +68,15 @@ CASPANION, RAZORBACK, BLADETURNER;
 int main(int argc, char *argv[])
 {
     int generate, i;
-    int result=FALSE, FIDDLE=FALSE;
+    int result=FALSE;
 
 #ifndef __MINT__
     FILE *fp;
+    char temphost[MAXHOSTNAMELEN+1];
+    char thishost[MAXHOSTNAMELEN+1];
+    char discard[120];
 #endif
-    int new_game = FALSE;
-    int force_rogue_like = FALSE;
-    int force_keys_to = FALSE;
-#ifndef __MINT__
-    char temphost[MAXHOSTNAMELEN+1], thishost[MAXHOSTNAMELEN+1], discard[120];
-#endif
+
     char string[80];
     struct rlimit rlp;
     
@@ -97,8 +99,8 @@ int main(int argc, char *argv[])
     argv0 = argv[0];
 
 
-#ifndef MSDOS
 #ifndef SET_UID
+# if !defined(MSDOS)
     (void) umask(0);
 # endif
 #endif
@@ -118,7 +120,10 @@ int main(int argc, char *argv[])
     init_scorefile();
 
 #ifndef MSDOS
-    if ((player_uid = getuid()) < 0) {
+    /* Get the user id (?) */
+    player_uid = getuid();
+
+    if (player_uid < 0) {
 	quit("Can't set permissions correctly!  Getuid call failed.\n");
     }
     user_name(py.misc.name, player_uid);
@@ -204,7 +209,7 @@ int main(int argc, char *argv[])
 	  case 'F':
 	  case 'f':
 	    if (!(is_wizard(player_uid) || to_be_wizard)) goto usage;
-		FIDDLE=TRUE;
+	    fiddle = TRUE;
 	    break;
 	  case 'W':
 	  case 'w':
@@ -302,7 +307,7 @@ int main(int argc, char *argv[])
     (if you are the wizard). In this case, it returns true, but also sets the
     parameter "generate" to true, as it does not recover any cave details. */
 
-    if (FIDDLE) {
+    if (fiddle) {
 	if (load_player(&generate))
 	    save_player();
 	exit_game();

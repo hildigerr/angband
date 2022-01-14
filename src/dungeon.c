@@ -12,6 +12,7 @@
 
 #include "angband.h"
 
+int player_light;		/* Player carrying light */
 
 static void        regenhp(int);
 static void        regenmana(int);

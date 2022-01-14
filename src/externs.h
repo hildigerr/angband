@@ -112,35 +112,52 @@ extern int player_uid;
 
 extern int hack_m_idx;			/* The "current" monster, if any */
 
-extern vtype died_from;
-extern vtype savefile;			/* The save file. -CJS- */
+extern int player_uid;			/* The player's uid, or zero */
+
+extern vtype savefile;		/* The save file. -CJS- */
+
+extern vtype died_from;		/* Cause of death */
 
 /*
  * These are options, set with via "do_cmd_options()"
  */
 
 extern int rogue_like_commands;	/* Pick initial keyset */
+extern int quick_messages;		/* Quick messages -CWS */
+extern int prompt_carry_flag;		/* Require "g" key to pick up */
+extern int carry_query_flag;		/* Prompt for pickup */
+
+extern int equippy_chars;	/* do equipment characters -CWS */
+extern int notice_seams;	/* Highlight mineral seams */
+
 extern int find_cut;		/* Cut corners */
 extern int find_examine;	/* Examine corners */
 extern int find_prself;		/* Print self */
 extern int find_bound;		/* Stop on borders */
-extern int prompt_carry_flag;		/* Require "g" key to pick up */
+extern int find_ignore_doors;	/* Run through doors */
+
+extern int no_haggle_flag;	/* Cancel haggling */
+
 extern int show_inven_weight;	/* Show weights in inven */
 extern int show_equip_weight;	/* Show weights in equip */
-extern int notice_seams;	/* Highlight mineral seams */
-extern int find_ignore_doors;	/* Run through doors */
-extern int delay_spd;			/* 1-10 for delays */
-extern int hitpoint_warn;		/* Low hitpoint warning */
-extern int peek;			/* should we display additional msgs */
-extern int carry_query_flag;		/* Prompt for pickup */
-extern int is_home;				/* are we in our home? */
-extern int in_store_flag;		/* Currently in a store */
 extern int plain_descriptions;	/* Plain descriptions */
-extern int no_haggle_flag;		/* does the player have to haggle? -CWS */
-extern int quick_messages;		/* Quick messages -CWS */
-extern int equippy_chars;		/* do equipment characters -CWS */
-extern int coin_type;			/* remember Creeping _xxx_ coin type -CWS */
-extern int opening_chest;		/* do not generate another chest -CWS */
+
+
+
+/*
+ * More options
+ */
+extern int delay_spd;		/* 1-10 for delays */
+extern int hitpoint_warn;	/* Low hitpoint warning */
+
+
+/*
+ * More flags
+ */
+extern int in_store_flag;		/* Currently in a store */
+extern int peek;			/* should we display additional msgs */
+extern int coin_type;			/* Hack -- creeping coin treasure */
+extern int opening_chest;		/* Hack -- chest treasure */
 
 /* Unique artifact weapon flags */
 extern s32b GROND, RINGIL, AEGLOS, ARUNRUTH, MORMEGIL, ANGRIST, GURTHANG,
@@ -171,9 +188,13 @@ extern int quests[MAX_QUESTS];
  */
 
 extern int unfelt;
-extern int in_store_flag;		/* flag so equippy chars work right -DGK */
-extern int good_item_flag;		/* Notice artifact created... */
 extern int LOAD;
+extern int closing_flag;		/* Used for closing   */
+
+extern int in_store_flag;		/* Notice when in stores */
+extern int good_item_flag;		/* Notice artifact created... */
+extern int feeling;			/* level feeling */
+extern int rating;			/* level rating */
 extern int new_level_flag;		/* Next level when true  */
 extern int teleport_flag;		/* Handle teleport traps  */
 extern int eof_flag;			/* Used to handle eof/HANGUP */
@@ -191,17 +212,16 @@ extern int monster_is_afraid;	/* redo monster fear messages -CWS */
 
 extern int character_generated;		/* Character generation complete */
 extern int character_saved;		/* Character has been saved. */
-extern int feeling;				/* level feeling */
+extern int peek;			/* Peek like a wizard */
+
 extern int command_rep;			/* Repetition of current command */
 extern int default_dir;			/* Use last direction in repeated commands */
+
 extern s16b noscore;			/* Don't score this game. -CJS- */
 
 extern u32b randes_seed;		/* Hack -- consistent object colors */
 extern u32b town_seed;		/* Hack -- consistent town layout */
 
-extern char *old_state;			/* state array initialized by time -CWS */
-extern char *dummy_state;		/* dummy state array so that town/colors look
-                                 * the same -CWS */
 
 extern s16b dun_level;			/* Cur dungeon level   */
 extern s16b object_level;		/* used to generate objects -CWS */
@@ -219,7 +239,6 @@ extern s16b panic_save;		/* true if playing from a panic save */
 extern int wait_for_more;
 
 extern char days[7][29];
-extern int closing_flag;		/* Used for closing   */
 
 /*
  * Dungeon info
@@ -248,6 +267,7 @@ extern cave_type cave[MAX_HEIGHT][MAX_WIDTH];
 
 /* Following are player variables				*/
 extern player_type py;
+
 #ifdef MACGAME
 extern char *(*player_title)[MAX_PLAYER_LEVEL];
 extern player_race *race;
@@ -914,7 +934,6 @@ void user_name(char *buf, int id);
 int my_topen(cptr, int, int);
 FILE *my_tfopen(cptr, cptr);
 
-/* variable.c */
 
 /* wizard.c */
 void wiz_lite(int);
