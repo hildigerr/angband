@@ -461,7 +461,7 @@ inven_kind k_list[MAX_OBJECTS] = {
     0,	  35,	80,   1,   5,	0,   0,	 0,   0, {0,0}	,  5, 0, 0x0L},
 {"Trap Detection"		,0x00010000L,	TV_SCROLL1, '?',/*195*/
     0,	  35,	80,   1,   5,	0,   0,	 0,   0, {0,0}	,  8, 0, 0x0L},
-{"Trap Location"                ,RD_TRAP_LOC,  TV_ROD, '-',     /*196*/
+{"Trap Location"                ,SV_ROD_TRAP_LOC,  TV_ROD, '-',     /*196*/
     0,   100,   25,   1,  15,   0,   0,  0,   0, {1,1}  ,  5, 0, 0x800L },
 {"Door/Stair Location"		,0x00020000L,	TV_SCROLL1, '?',/*197*/
     0,	  35,	81,   1,   5,	0,   0,	 0,   0, {0,0}	,  5, 0, 0x0L},
@@ -611,127 +611,127 @@ inven_kind k_list[MAX_OBJECTS] = {
     0,	  20, 108,   1,   4,	0,   0,	 0,   0, {1,1}	,  3, 0, 0x0L},
 {"& Flask~ of oil"		,0x00040000L,	TV_FLASK, '!',	/*268*/
  7500,	   3,	64,   1,  10,	0,   0,	 0,   0, {2,6}	,  1, 0, 0x0L},
-{"Light"			,WD_LT,	        TV_WAND, '-',	/*269*/
+{"Light"			,SV_WAND_LITE,	        TV_WAND, '-',	/*269*/
     0,	 200,	0,   1,  10,	0,   0,	 0,   0, {1,1}	,  2, 0, 0x0L},
-{"Lightning Bolts"		,WD_LT_BLTS,	TV_WAND, '-',	/*270*/
+{"Lightning Bolts"		,SV_WAND_ELEC,	TV_WAND, '-',	/*270*/
     0,	 600,	1,   1,  10,	0,   0,	 0,   0, {1,1}	, 15, 0, 0x0L},
-{"Frost Bolts"			,WD_FT_BLTS,	TV_WAND, '-',	/*271*/
+{"Frost Bolts"			,SV_WAND_COLD,	TV_WAND, '-',	/*271*/
     0,	 800,	2,   1,  10,	0,   0,	 0,   0, {1,1}	, 20, 0, 0x0L},
-{"Fire Bolts"			,WD_FR_BLTS,	TV_WAND, '-',	/*272*/
+{"Fire Bolts"			,SV_WAND_FIRE,	TV_WAND, '-',	/*272*/
     0,	1000,	3,   1,  10,	0,   0,	 0,   0, {1,1}	, 30, 0, 0x0L},
-{"Stone to Mud"			,WD_ST_MUD,	TV_WAND, '-',	/*273*/
+{"Stone to Mud"			,SV_WAND_STONE_TO_MUD,	TV_WAND, '-',	/*273*/
     0,	 300,	4,   1,  10,	0,   0,	 0,   0, {1,1}	, 12, 0, 0x0L},
-{"Polymorph"			,WD_POLY,	TV_WAND, '-',	/*274*/
+{"Polymorph"			,SV_WAND_POLYMORPH,	TV_WAND, '-',	/*274*/
     0,	 400,	5,   1,  10,	0,   0,	 0,   0, {1,1}	, 20, 0, 0x0L},
-{"Heal Monster"			,WD_HEAL_MN,	TV_WAND, '-',	/*275*/
+{"Heal Monster"			,SV_WAND_HEAL_MONSTER,	TV_WAND, '-',	/*275*/
     0,	   0,	6,   1,  10,	0,   0,	 0,   0, {1,1}	,  2, 0, 0x0L},
-{"Haste Monster"		,WD_HAST_MN,	TV_WAND, '-',	/*276*/
+{"Haste Monster"		,SV_WAND_HASTE_MONSTER,	TV_WAND, '-',	/*276*/
     0,	   0,	7,   1,  10,	0,   0,	 0,   0, {1,1}	,  2, 0, 0x0L},
-{"Slow Monster"			,WD_SLOW_MN,	TV_WAND, '-',	/*277*/
+{"Slow Monster"			,SV_WAND_SLOW_MONSTER,	TV_WAND, '-',	/*277*/
     0,	 500,	8,   1,  10,	0,   0,	 0,   0, {1,1}	,  2, 0, 0x0L},
-{"Confuse Monster"		,WD_CONF_MN,	TV_WAND, '-',	/*278*/
+{"Confuse Monster"		,SV_WAND_CONFUSE_MONSTER,	TV_WAND, '-',	/*278*/
     0,	 400,	9,   1,  10,	0,   0,	 0,   0, {1,1}	,  2, 0, 0x0L},
-{"Sleep Monster"		,WD_SLEE_MN,	TV_WAND, '-',	/*279*/
+{"Sleep Monster"		,SV_WAND_SLEEP_MONSTER,	TV_WAND, '-',	/*279*/
     0,	 500,	10,   1,  10,	0,   0,	 0,   0, {1,1}	,  7, 0, 0x0L},
-{"Drain Life"			,WD_DRAIN,	TV_WAND, '-',	/*280*/
+{"Drain Life"			,SV_WAND_DRAIN_LIFE,	TV_WAND, '-',	/*280*/
     0,	1200,	11,   1,  10,	0,   0,	 0,   0, {1,1}	, 50, 0, 0x0L},
-{"Trap/Door Destruction"	,WD_TR_DEST,	TV_WAND, '-',	/*281*/
+{"Trap/Door Destruction"	,SV_WAND_TRAP_DOOR_DEST,	TV_WAND, '-',	/*281*/
     0,	 100,	12,   1,  10,	0,   0,	 0,   0, {1,1}	, 12, 0, 0x0L},
-{"Magic Missile"		,WD_MAG_MIS,	TV_WAND, '-', 	/*282*/
+{"Magic Missile"		,SV_WAND_MAGIC_MISSILE,	TV_WAND, '-', 	/*282*/
     0,	 200,	13,   1,  10,	0,   0,	 0,   0, {1,1}	,  2, 0, 0x0L},
-{"Clone Monster"		,WD_CLONE,	TV_WAND, '-',	/*283*/
+{"Clone Monster"		,SV_WAND_CLONE_MONSTER,	TV_WAND, '-',	/*283*/
     0,	   0,	15,   1,  10,	0,   0,	 0,   0, {1,1}	, 15, 0, 0x0L},
-{"Clone Monster"		,WD_CLONE,	TV_WAND, '-',	/*284*/
+{"Clone Monster"		,SV_WAND_CLONE_MONSTER,	TV_WAND, '-',	/*284*/
     0,	   0,	15,   1,  10,	0,   0,	 0,   0, {1,1}	, 50, 0, 0x0L},
-{"Teleport Away"		,WD_TELE,	TV_WAND, '-',	/*285*/
+{"Teleport Away"		,SV_WAND_TELEPORT_AWAY,	TV_WAND, '-',	/*285*/
     0,	 350,	16,   1,  10,	0,   0,	 0,   0, {1,1}	, 20, 0, 0x0L},
-{"Disarming"			,WD_DISARM,	TV_WAND, '-',	/*286*/
+{"Disarming"			,SV_WAND_DISARMING,	TV_WAND, '-',	/*286*/
     0,	 700,	17,   1,  10,	0,   0,	 0,   0, {1,1}	, 20, 0, 0x0L},
-{"Lightning Balls"		,WD_LT_BALL,	TV_WAND, '-',	/*287*/
+{"Lightning Balls"		,SV_WAND_ELEC_BALL,	TV_WAND, '-',	/*287*/
     0,	1200,	18,   1,  10,	0,   0,	 0,   0, {1,1}	, 35, 0, 0x0L},
-{"Cold Balls"			,WD_CD_BALL,	TV_WAND, '-',	/*288*/
+{"Cold Balls"			,SV_WAND_COLD_BALL,	TV_WAND, '-',	/*288*/
     0,	1500,	19,   1,  10,	0,   0,	 0,   0, {1,1}	, 40, 0, 0x0L},
-{"Fire Balls"			,WD_FR_BALL,	TV_WAND, '-',	/*289*/
+{"Fire Balls"			,SV_WAND_FIRE_BALL,	TV_WAND, '-',	/*289*/
     0,	1800,	20,   1,  10,	0,   0,	 0,   0, {1,1}	, 50, 0, 0x0L},
-{"Stinking Cloud"		,WD_ST_CLD,	TV_WAND, '-',	/*290*/
+{"Stinking Cloud"		,SV_WAND_STINKING_CLOUD,	TV_WAND, '-',	/*290*/
     0,	 400,	21,   1,  10,	0,   0,	 0,   0, {1,1}	,  5, 0, 0x0L},
-{"Acid Balls"			,WD_AC_BALL,	TV_WAND, '-',	/*291*/
+{"Acid Balls"			,SV_WAND_ACID_BALL,	TV_WAND, '-',	/*291*/
     0,	1650,	22,   1,  10,	0,   0,	 0,   0, {1,1}	, 48, 0, 0x0L},
-{"Wonder"			,WD_WONDER,	TV_WAND, '-',	/*292*/
+{"Wonder"			,SV_WAND_WONDER,	TV_WAND, '-',	/*292*/
     0,	 250,	23,   1,  10,	0,   0,	 0,   0, {1,1}	,  2, 0, 0x0L},
-{"Light"			,ST_LIGHT,	TV_STAFF, '_',	/*293*/
+{"Light"			,SV_STAFF_LITE,	TV_STAFF, '_',	/*293*/
     0,	 250,	0,    1,  50,	0,   0,	 0,   0, {1,2}	,  5, 0, 0x0L},
-{"Acid Bolts"			,WD_AC_BLTS,	TV_WAND, '-',   /*294*/
+{"Acid Bolts"			,SV_WAND_ACID,	TV_WAND, '-',   /*294*/
     0,	950,	28,   1,  10,   0,   0,  0,   0, {1,1}	, 30, 0, 0x0L},
-{"Dragon's Flame"	     	,WD_DRG_FIRE,	TV_WAND, '-',   /*295*/
+{"Dragon's Flame"	     	,SV_WAND_DRAGON_FIRE,	TV_WAND, '-',   /*295*/
     0,	2400,	24,   1,  10,	0,   0,	 0,   0, {1,1}	, 50, 3, 0x0L},
-{"Dragon's Frost"       	,WD_DRG_FRST,	TV_WAND, '-',    /*296*/
+{"Dragon's Frost"       	,SV_WAND_DRAGON_COLD,	TV_WAND, '-',    /*296*/
     0,	2400,	25,   1,  10,	0,   0,	 0,   0, {1,1}	, 50, 3, 0x0L},
-{"Dragon's Breath"		,WD_DRG_BREA,	TV_WAND, '-',    /*297*/
+{"Dragon's Breath"		,SV_WAND_DRAGON_BREATH,	TV_WAND, '-',    /*297*/
     0,  2400,   26,   1,  10,   0,   0,  0,   0, {1,1}  , 50, 2, 0x0L},
-{"Annihilation"			,WD_ANHIL,	TV_WAND, '-',    /*298*/
+{"Annihilation"			,SV_WAND_ANNIHILATION,	TV_WAND, '-',    /*298*/
     0,  3000,   27,   1,  10,   0,   0,  0,   0, {1,1}  , 50, 4, 0x0L},
-{"Door/Stair Location"		,ST_DR_LC,	TV_STAFF, '_',	/*299*/
+{"Door/Stair Location"		,SV_STAFF_DOOR_STAIR_LOC,	TV_STAFF, '_',	/*299*/
     0,	 350,	1,   1,  50,	0,   0,	 0,   0, {1,2}	, 10, 0, 0x0L},
-{"Trap Location"		,ST_TRP_LC,	TV_STAFF, '_',	/*300*/
+{"Trap Location"		,SV_STAFF_TRAP_LOC,	TV_STAFF, '_',	/*300*/
     0,	 350,	2,   1,  50,	0,   0,	 0,   0, {1,2}	, 10, 0, 0x0L},
-{"Treasure Location"		,ST_TRE_LC,	TV_STAFF, '_',	/*301*/
+{"Treasure Location"		,SV_STAFF_TREASURE_LOC,	TV_STAFF, '_',	/*301*/
     0,	 200,	3,   1,  50,	0,   0,	 0,   0, {1,2}	,  5, 0, 0x0L},
-{"Object Location"		,ST_OBJ_LC,	TV_STAFF, '_',	/*302*/
+{"Object Location"		,SV_STAFF_OBJECT_LOC,	TV_STAFF, '_',	/*302*/
     0,	 200,	4,   1,  50,	0,   0,	 0,   0, {1,2}	,  5, 0, 0x0L},
-{"Teleportation"		,ST_TELE,	TV_STAFF, '_',	/*303*/
+{"Teleportation"		,SV_STAFF_TELEPORTATION,	TV_STAFF, '_',	/*303*/
     0,	2000,	5,   1,  50,	0,   0,	 0,   0, {1,2}	, 20, 0, 0x0L},
-{"Earthquakes"			,ST_EARTH,	TV_STAFF, '_',	/*304*/
+{"Earthquakes"			,SV_STAFF_EARTHQUAKES,	TV_STAFF, '_',	/*304*/
     0,	 350,	6,   1,  50,	0,   0,	 0,   0, {1,2}	, 40, 0, 0x0L},
-{"Summoning"			,ST_SUMMON,	TV_STAFF, '_',	/*305*/
+{"Summoning"			,SV_STAFF_SUMMONING,	TV_STAFF, '_',	/*305*/
     0,	   0,	7,   1,  50,	0,   0,	 0,   0, {1,2}	, 10, 0, 0x0L},
-{"Summoning"			,ST_SUMMON,	TV_STAFF, '_',	/*306*/
+{"Summoning"			,SV_STAFF_SUMMONING,	TV_STAFF, '_',	/*306*/
     0,	   0,	7,   1,  50,	0,   0,	 0,   0, {1,2}	, 50, 0, 0x0L},
-{"*Destruction*"		,ST_DEST,	TV_STAFF, '_',	/*307*/
+{"*Destruction*"		,SV_STAFF_DESTRUCTION,	TV_STAFF, '_',	/*307*/
     0,	2500,	8,   1,  50,	0,   0,	 0,   0, {1,2}	, 50, 0, 0x0L},
-{"Starlight"			,ST_STAR,	TV_STAFF, '_',	/*308*/
+{"Starlight"			,SV_STAFF_STARLITE,	TV_STAFF, '_',	/*308*/
     0,	 800,	9,   1,  50,	0,   0,	 0,   0, {1,2}	, 20, 0, 0x0L},
-{"Haste Monsters"		,ST_HAST_MN,	TV_STAFF, '_',	/*309*/
+{"Haste Monsters"		,SV_STAFF_HASTE_MONSTERS,	TV_STAFF, '_',	/*309*/
     0,	   0,	10,   1,  50,	0,   0,	 0,   0, {1,2}	, 10, 0, 0x0L},
-{"Slow Monsters"		,ST_SLOW_MN,	TV_STAFF, '_',	/*310*/
+{"Slow Monsters"		,SV_STAFF_SLOW_MONSTERS,	TV_STAFF, '_',	/*310*/
     0,	 800,	11,   1,  50,	0,   0,	 0,   0, {1,2}	, 10, 0, 0x0L},
-{"Sleep Monsters"		,ST_SLEE_MN,	TV_STAFF, '_',	/*311*/
+{"Sleep Monsters"		,SV_STAFF_SLEEP_MONSTERS,	TV_STAFF, '_',	/*311*/
     0,	 700,	12,   1,  50,	0,   0,	 0,   0, {1,2}	, 10, 0, 0x0L},
-{"Cure Light Wounds"		,ST_CURE_LT,	TV_STAFF, '_',	/*312*/
+{"Cure Light Wounds"		,SV_STAFF_CURE_LIGHT,	TV_STAFF, '_',	/*312*/
     0,	 350,	13,   1,  50,	0,   0,	 0,   0, {1,2}	,  5, 0, 0x0L},
-{"Detect Invisible"		,ST_DET_INV,	TV_STAFF, '_',	/*313*/
+{"Detect Invisible"		,SV_STAFF_DETECT_INVIS,	TV_STAFF, '_',	/*313*/
     0,	 200,	14,   1,  50,	0,   0,	 0,   0, {1,2}	,  5, 0, 0x0L},
-{"Speed"			,ST_SPEED,	TV_STAFF, '_',	/*314*/
+{"Speed"			,SV_STAFF_SPEED,	TV_STAFF, '_',	/*314*/
     0,	1000,	15,   1,  50,	0,   0,	 0,   0, {1,2}	, 40, 0, 0x0L},
-{"Slowness"			,ST_SLOW,	TV_STAFF, '_',	/*315*/
+{"Slowness"			,SV_STAFF_SLOWNESS,	TV_STAFF, '_',	/*315*/
     0,	   0,	16,   1,  50,	0,   0,	 0,   0, {1,2}	, 40, 0, 0x0L},
-{"*Destruction*"		,ST_DEST,	TV_STAFF, '_',	/*316*/
+{"*Destruction*"		,SV_STAFF_DESTRUCTION,	TV_STAFF, '_',	/*316*/
     0,	2500,	8,   1,  50,	0,   0,	 0,   0, {1,2}	, 70, 0, 0x0L},
-{"Remove Curse"			,ST_REMOVE,	TV_STAFF, '_',	/*317*/
+{"Remove Curse"			,SV_STAFF_REMOVE_CURSE,	TV_STAFF, '_',	/*317*/
     0,	 500,	18,   1,  50,	0,   0,	 0,   0, {1,2}	, 47, 0, 0x0L},
-{"Detect Evil"			,ST_DET_EVI,	TV_STAFF, '_',	/*318*/
+{"Detect Evil"			,SV_STAFF_DETECT_EVIL,	TV_STAFF, '_',	/*318*/
     0,	 350,	19,   1,  50,	0,   0,	 0,   0, {1,2}	, 20, 0, 0x0L},
-{"Curing"			,ST_CURING,	TV_STAFF, '_',	/*319*/
+{"Curing"			,SV_STAFF_CURING,	TV_STAFF, '_',	/*319*/
     0,	1000,	20,   1,  50,	0,   0,	 0,   0, {1,2}	, 25, 0, 0x0L},
-{"Dispel Evil"			,ST_DSP_EVI,	TV_STAFF, '_',	/*320*/
+{"Dispel Evil"			,SV_STAFF_DISPEL_EVIL,	TV_STAFF, '_',	/*320*/
     0,	1200,	21,   1,  50,	0,   0,	 0,   0, {1,2}	, 49, 0, 0x0L},
-{"Darkness"			,ST_DARK,	TV_STAFF, '_',	/*321*/
+{"Darkness"			,SV_STAFF_DARKNESS,	TV_STAFF, '_',	/*321*/
     0,	   0,	22,   1,  50,	0,   0,	 0,   0, {1,2}	, 50, 0, 0x0L},
-{"Darkness"			,ST_DARK,	TV_STAFF, '_',	/*322*/
+{"Darkness"			,SV_STAFF_DARKNESS,	TV_STAFF, '_',	/*322*/
     0,	   0,	22,   1,  50,	0,   0,	 0,   0, {1,2}	,  5, 0, 0x0L},
-{"Genocide"			,ST_GENOCIDE,	TV_STAFF, '_',	/*323*/
+{"Genocide"			,SV_STAFF_GENOCIDE,	TV_STAFF, '_',	/*323*/
     0,	3500,	23,   1,  50,	0,   0,	 0,   0, {1,2}	, 70, 4, 0x0L},
-{"Power"			,ST_POWER,	TV_STAFF, '_',	/*324*/
+{"Power"			,SV_STAFF_POWER,	TV_STAFF, '_',	/*324*/
     0,  4000,   24,   1,  50,   0,   0,  0,   0, {1,2}  , 70, 2, 0x0L},
-{"the Magi"			,ST_MAGI,	TV_STAFF, '_',	/*325*/
+{"the Magi"			,SV_STAFF_THE_MAGI,	TV_STAFF, '_',	/*325*/
     0,  4500,   25,   1,  50,   0,   0,  0,   0, {1,2}  , 70, 2, 0x0L},
-{"Perceptions"			,ST_IDENTIFY,	TV_STAFF, '_',	/*326*/
+{"Perceptions"			,SV_STAFF_IDENTIFY,	TV_STAFF, '_',	/*326*/
     0,  400,    26,   1,  50,   0,   0,  0,   0, {1,2}  , 10, 0, 0x0L},
-{"Holiness"			,ST_HOLYNESS, 	TV_STAFF, '_',	/*327*/
+{"Holiness"			,SV_STAFF_HOLINESS, 	TV_STAFF, '_',	/*327*/
     0,  4500,   27,   1,  50,   0,   0,  0,   0, {1,2}  , 70, 2, 0x0L},
-{"Enlightenment"		,ST_SURROUND,	TV_STAFF, '_',/*328*/
+{"Enlightenment"		,SV_STAFF_MAPPING,	TV_STAFF, '_',/*328*/
     0,  750,	28,   1,  50,   0,   0,  0,   0, {1,2}  , 22, 0, 0x0L},
-{"Healing"			,ST_HEALING,	TV_STAFF, '_',	/*329*/
+{"Healing"			,SV_STAFF_HEALING,	TV_STAFF, '_',	/*329*/
     0,  5000,   29,   1,  50,   0,   0,  0,   0, {1,2}  , 70, 2, 0x0L},
 {"[Magic for Beginners]"	,0x000001FFL,	TV_MAGIC_BOOK, '?',/*330*/
     0,	  25,	64,   1,  30,   0,   0,	 0,   0, {1,1}	, 5, 0, 0x0L},
@@ -785,49 +785,49 @@ inven_kind k_list[MAX_OBJECTS] = {
     0,	   0,	12,   1,   2,	0,   0,	 0,   0, {1,1}	,  0, 0, 0x0L},
 {"& broken stick"		,0x00000000L,	 TV_MISC, '~',	/*355*/
     0,	   0,	13,   1,   3,	0,   0,	 0,   0, {1,1}	,  0, 0, 0x0L},
-{"Light"			,RD_LT,	        TV_ROD, '-',	/*356*/
+{"Light"			,SV_ROD_LIGHT,	        TV_ROD, '-',	/*356*/
     0,	 600,	0,   1,  15,	0,   0,	 0,   0, {1,1}	, 12, 0, 0x800L},
-{"Lightning Bolts"		,RD_LT_BLTS,	TV_ROD , '-',	/*357*/
+{"Lightning Bolts"		,SV_ROD_ELEC,	TV_ROD , '-',	/*357*/
     0,	1800,	1,   1,  15,	0,   0,	 0,   0, {1,1}	, 20, 0, 0x800L},
-{"Frost Bolts"			,RD_FT_BLTS,	TV_ROD , '-',	/*358*/
+{"Frost Bolts"			,SV_ROD_COLD,	TV_ROD , '-',	/*358*/
     0,	2400,	2,   1,  15,	0,   0,	 0,   0, {1,1}	, 23, 0, 0x800L},
-{"Fire Bolts"			,RD_FR_BLTS,	TV_ROD , '-',	/*359*/
+{"Fire Bolts"			,SV_ROD_FIRE,	TV_ROD , '-',	/*359*/
     0,	3000,	3,   1,  15,	0,   0,	 0,   0, {1,1}	, 29, 0, 0x800L},
-{"Polymorph"			,RD_POLY,	TV_ROD , '-',	/*360*/
+{"Polymorph"			,SV_ROD_POLYMORPH,	TV_ROD , '-',	/*360*/
     0,	1200,	4,   1,  15,	0,   0,	 0,   0, {1,1}	, 35, 0, 0x800L},
-{"Slow Monster"			,RD_SLOW_MN,	TV_ROD , '-',	/*361*/
+{"Slow Monster"			,SV_ROD_SLOW_MONSTER,	TV_ROD , '-',	/*361*/
     0,	1500,	5,   1,  15,	0,   0,	 0,   0, {1,1}	, 32, 0, 0x800L},
-{"Sleep Monster"		,RD_SLEE_MN,	TV_ROD , '-',	/*362*/
+{"Sleep Monster"		,SV_ROD_SLEEP_MONSTER,	TV_ROD , '-',	/*362*/
     0,	1500,	6,   1,  15,	0,   0,	 0,   0, {1,1}	, 33, 0, 0x800L},
-{"Drain Life"			,RD_DRAIN,	TV_ROD , '-',	/*363*/
+{"Drain Life"			,SV_ROD_DRAIN_LIFE,	TV_ROD , '-',	/*363*/
     0,	3600,	7,   1,  15,	0,   0,	 0,   0, {1,1}	, 75, 3, 0x800L},
-{"Teleport Away"		,RD_TELE,	TV_ROD , '-',	/*364*/
+{"Teleport Away"		,SV_ROD_TELEPORT_AWAY,	TV_ROD , '-',	/*364*/
     0,	1400,	8,   1,  15,	0,   0,	 0,   0, {1,1}	, 45, 2, 0x800L},
-{"Disarming"			,RD_DISARM,	TV_ROD , '-',	/*365*/
+{"Disarming"			,SV_ROD_DISARMING,	TV_ROD , '-',	/*365*/
     0,	2100,	9,   1,  15,	0,   0,	 0,   0, {1,1}	, 35, 0, 0x800L},
-{"Lightning Balls"		,RD_LT_BALL,	TV_ROD , '-',	/*366*/
+{"Lightning Balls"		,SV_ROD_ELEC_BALL,	TV_ROD , '-',	/*366*/
     0,	3600,	10,   1,  15,	0,   0,	 0,   0, {1,1}	, 55, 0, 0x800L},
-{"Cold Balls"			,RD_CD_BALL,	TV_ROD , '-',	/*367*/
+{"Cold Balls"			,SV_ROD_COLD_BALL,	TV_ROD , '-',	/*367*/
     0,	4500,	11,   1,  15,	0,   0,	 0,   0, {1,1}	, 60, 0, 0x800L},
-{"Fire Balls"			,RD_FR_BALL,	TV_ROD , '-',	/*368*/
+{"Fire Balls"			,SV_ROD_FIRE_BALL,	TV_ROD , '-',	/*368*/
     0,	4800,	12,   1,  15,	0,   0,	 0,   0, {1,1}	, 75, 0, 0x800L},
-{"Acid Balls"			,RD_AC_BALL,	TV_ROD , '-',	/*369*/
+{"Acid Balls"			,SV_ROD_ACID_BALL,	TV_ROD , '-',	/*369*/
     0,	4600,	13,   1,  15,	0,   0,	 0,   0, {1,1}	, 70, 0, 0x800L},
-{"Acid Bolts"			,RD_AC_BLTS,	TV_ROD , '-',   /*370*/
+{"Acid Bolts"			,SV_ROD_ACID,	TV_ROD , '-',   /*370*/
     0,	3000,   14,   1,  15,   0,   0,  0,   0, {1,1}	, 38, 0, 0x800L},
-{"Enlightenment"        	,RD_MAPPING,	TV_ROD , '-',   /*371*/
+{"Enlightenment"        	,SV_ROD_MAPPING,	TV_ROD , '-',   /*371*/
     0,	10000,   15,   1,  15,   0,   0,  0,   0, {1,1}	, 63, 4, 0x800L},
-{"Perceptions"			,RD_IDENT,	TV_ROD , '-',   /*372*/
+{"Perceptions"			,SV_ROD_IDENTIFY,	TV_ROD , '-',   /*372*/
     0,	13000,   16,   1,  15,   0,   0,  0,   0, {1,1}	, 49, 8, 0x800L},
-{"Curing"			,RD_CURE,	TV_ROD , '-',   /*373*/
+{"Curing"			,SV_ROD_CURING,	TV_ROD , '-',   /*373*/
     0,	15000,   17,   1,  15,   0,   0,  0,   0, {1,1}	, 65, 8, 0x800L},
-{"Healing"			,RD_HEAL,	TV_ROD , '-',   /*374*/
+{"Healing"			,SV_ROD_HEALING,	TV_ROD , '-',   /*374*/
     0,	20000,   18,   1,  15,   0,   0,  0,   0, {1,1}	, 77,13, 0x800L},
-{"Detection"			,RD_DETECT,	TV_ROD , '-',   /*375*/
+{"Detection"			,SV_ROD_DETECTION,	TV_ROD , '-',   /*375*/
     0,	3500,   19,   1,  15,   0,   0,  0,   0, {1,1}	, 30,11, 0x800L},
-{"Restoration"			,RD_RESTORE,	TV_ROD , '-',   /*376*/
+{"Restoration"			,SV_ROD_RESTORATION,	TV_ROD , '-',   /*376*/
     0,	25000,   20,   1,  15,   0,   0,  0,   0, {1,1}	, 80,15, 0x800L},
-{"Speed"			,RD_SPEED,	TV_ROD , '-',   /*377*/
+{"Speed"			,SV_ROD_SPEED,	TV_ROD , '-',   /*377*/
     0,	30000,   21,   1,  15,   0,   0,  0,   0, {1,1}	, 99, 9, 0x800L},
 {"*Remove Curse*",               0x40000000L,	TV_SCROLL1, '?',/*378*/
     0,	 8000,	76,   1,  30,   0,   0,	 0,   0, {1,1}	, 50, 2, 0x0L},
@@ -886,17 +886,17 @@ inven_kind k_list[MAX_OBJECTS] = {
     0,  60000,  111,   1,   4,	0,   0,	 0,   0, {1,1}	, 40,12, 0x0L},
 {"Ruination"    		,0x00100000L,	TV_POTION2, '!',/*404*/
     0,	    0,  112,   1,   4,	0,   0,	 0,   0, {1,1}	, 40,12, 0x0L},
-{"Illumination" 		,RD_ILLUME,     TV_ROD, '-',	/*405*/
+{"Illumination" 		,SV_ROD_ILLUMINATION,     TV_ROD, '-',	/*405*/
     0,	1000,  22,   1,  15,	0,   0,	 0,   0, {1,1}	, 20, 5, 0x800L},
-{"Probing"			,RD_PROBE,	TV_ROD,	'-',	/*406*/
+{"Probing"			,SV_ROD_PROBING,	TV_ROD,	'-',	/*406*/
     0,	4000,  23,   1,  15,    0,   0,  0,   0, {1,1}  , 40, 4, 0x800L},
-{"Probing"			,ST_PROBE,	TV_STAFF,  '_', /*407*/
+{"Probing"			,SV_STAFF_PROBING,	TV_STAFF,  '_', /*407*/
     0,  2000,  30,   1,  50,    0,   0,  0,   0, {1,2}  , 30, 1, 0x0L},
 {"Bronze Dragon Scale Mail"	,0x00100000L,  TV_HARD_ARMOR, '[',/*408*/
     0, 30000,  23,   1, 200,   -2,   0, 30,  10, {2,4} , 55,8, 0x00008800L},
 {"Gold Dragon Scale Mail"	,0x00100000L,  TV_HARD_ARMOR, '[',/*409*/
     0, 40000,  24,   1, 200,   -2,   0, 30,  10, {2,4} , 65,8, 0x00010800L},
-{"Recall"			,RD_RECALL,	TV_ROD, '-',	/*410*/
+{"Recall"			,SV_ROD_RECALL,	TV_ROD, '-',	/*410*/
     0,  4000,  24,   1,  15,    0,   0,  0,   0, {1,1} , 30,  4, 0x800L},
 {"& Cloak"		        ,0x00000000L,  TV_CLOAK,   '(', /*411*/
     0,     3,   1,   1,  10,    0,   0,  1,   0, {0,0},  20,  0, 0x0L},

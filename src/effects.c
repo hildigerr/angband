@@ -1524,158 +1524,158 @@ void do_cmd_aim_wand(void)
     /* Various effects */
     switch (i) {
 
-	case WD_LT:
+	case SV_WAND_LITE:
 	    msg_print("A line of blue shimmering light appears.");
 	    lite_line(dir, char_row, char_col);
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
 
-	case WD_AC_BLTS:	/* Acid , New */
+	case SV_WAND_ACID:	/* Acid , New */
 	    if (randint(5)==1) line_spell(GF_ACID,dir,y,x,damroll(5,8));
 	    else fire_bolt(GF_ACID,dir,y,x,damroll(5,8));
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
 
-	case WD_LT_BLTS:	/* Lightning */
+	case SV_WAND_ELEC:	/* Lightning */
 	    if (randint(6)==1) line_spell(GF_ELEC,dir,y,x,damroll(3,8));
 	    else fire_bolt(GF_ELEC, dir, y, x, damroll(3, 8));
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
 
-	case WD_FT_BLTS:	/* Frost */
+	case SV_WAND_COLD:	/* Frost */
 	    if (randint(6)==1) line_spell(GF_ELEC,dir,y,x,damroll(3,8));
 	else fire_bolt(GF_ELEC, dir, y, x, damroll(3, 8));
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
-	case WD_DRG_FRST:
+	case SV_WAND_DRAGON_COLD:
 	    fire_ball(GF_COLD, dir, y, x, 80, 3);
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
 
-	case WD_FR_BLTS:	/* Fire */
+	case SV_WAND_FIRE:	/* Fire */
 	    if (randint(4)==1) line_spell(GF_FIRE,dir,y,x,damroll(6,8));
 	else fire_bolt(GF_FIRE, dir, y, x, damroll(6, 8));
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
-	case WD_DRG_FIRE:
+	case SV_WAND_DRAGON_FIRE:
 	    fire_ball(GF_FIRE, dir, y, x, 100, 3);
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
 
-	case WD_ST_MUD:
+	case SV_WAND_STONE_TO_MUD:
 	    ident = wall_to_mud(dir,y,x);
 	    done_effect = 1;
 	    break;
 
-	case WD_POLY:
+	case SV_WAND_POLYMORPH:
 	    ident = poly_monster(dir,y,x);
 	    done_effect = 1;
 	    break;
 
-	case WD_HEAL_MN:
+	case SV_WAND_HEAL_MONSTER:
 	    ident = hp_monster(dir,y,x, -damroll(4, 6));
 	    done_effect = 1;
 	    break;
 
-	case WD_HAST_MN:
+	case SV_WAND_HASTE_MONSTER:
 	    ident = speed_monster(dir,y,x,1);
 	    done_effect = 1;
 	    break;
 
-	case WD_SLOW_MN:
+	case SV_WAND_SLOW_MONSTER:
 	    ident = speed_monster(dir,y,x,-1);
 	    done_effect = 1;
 	    break;
 
-	case WD_CONF_MN:
+	case SV_WAND_CONFUSE_MONSTER:
 	    ident = confuse_monster(dir,y,x,10);
 	    done_effect = 1;
 	    break;
 
-	case WD_SLEE_MN:
+	case SV_WAND_SLEEP_MONSTER:
 	    ident = sleep_monster(dir,y,x);
 	    done_effect = 1;
 	    break;
 
-	case WD_DRAIN:
+	case SV_WAND_DRAIN_LIFE:
 	    ident = drain_life(dir,y,x,75);
 	    done_effect = 1;
 	    break;
 
-	case WD_TR_DEST:
+	case SV_WAND_TRAP_DOOR_DEST:
 	    ident = td_destroy2(dir,y,x);
 	    done_effect = 1;
 	    break;
 
-	case WD_MAG_MIS:
+	case SV_WAND_MAGIC_MISSILE:
 	    if (randint(6)==1) line_spell(GF_MISSILE,dir,y,x,damroll(2,6));
 	    else fire_bolt(GF_MISSILE, dir,y,x, damroll(2,6));
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
 
-	case WD_FEAR_MN:	/* Fear Monster */
+	case SV_WAND_FEAR_MONSTER:
 	    ident = fear_monster(dir,y,x,10);
 	    done_effect = 1;
 	    break;
 
-	case WD_CLONE:
+	case SV_WAND_CLONE_MONSTER:
 	    ident = clone_monster(dir,y,x);
 	    done_effect = 1;
 	    break;
 
-	case WD_TELE:
+	case SV_WAND_TELEPORT_AWAY:
 	    ident = teleport_monster(dir,y,x);
 	    done_effect = 1;
 	    break;
 
-	case WD_DISARM:
+	case SV_WAND_DISARMING:
 	    ident = disarm_all(dir,y,x);
 	    done_effect = 1;
 	    break;
 
-	case WD_LT_BALL:
+	case SV_WAND_ELEC_BALL:
 	    fire_ball(GF_ELEC, dir,y,x,32,2);
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
 
-	case WD_CD_BALL:
+	case SV_WAND_COLD_BALL:
 	    fire_ball(GF_COLD,dir,y,x,48,2);
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
 
-	case WD_FR_BALL:
+	case SV_WAND_FIRE_BALL:
 	    fire_ball(GF_FIRE,dir,y,x,72,2);
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
 
-	case WD_ST_CLD:
+	case SV_WAND_STINKING_CLOUD:
 	    fire_ball(GF_POIS,dir,y,x,12,2);
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
 
-	case WD_AC_BALL:
+	case SV_WAND_ACID_BALL:
 	    fire_ball(GF_ACID,dir,y,x,60,2);
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
 
-	case WD_WONDER:
+	case SV_WAND_WONDER:
 	    i = randint(23);
 	    break;
 
-	case WD_DRG_BREA:
+	case SV_WAND_DRAGON_BREATH:
 	    switch (randint(5)) {
 	      case 1:
 		fire_ball(GF_FIRE, dir, y, x, 100, 3);
@@ -1697,7 +1697,7 @@ void do_cmd_aim_wand(void)
 	    done_effect = 1;
 	    break;
 
-	case WD_ANHIL:
+	case SV_WAND_ANNIHILATION:
 	    ident = drain_life(dir,y,x,125);
 	    done_effect = 1;
 	    break;
@@ -1790,7 +1790,7 @@ void do_cmd_use_staff(void)
 
     switch (i_ptr->flags) {
 
-      case ST_HEALING:
+      case SV_STAFF_HEALING:
 	ident = hp_player(300);
 	if (py.flags.stun > 0) {
 	    py.flags.stun = 0;
@@ -1811,22 +1811,22 @@ void do_cmd_use_staff(void)
 	}
 	break;
 
-      case ST_GENOCIDE:
+      case SV_STAFF_GENOCIDE:
 	genocide(FALSE);
 	ident = TRUE;
 	break;
 
-      case ST_PROBE:
+      case SV_STAFF_PROBING:
 	probing();
 	ident = TRUE;
 	break;
 
-      case ST_IDENTIFY:
+      case SV_STAFF_IDENTIFY:
 	ident_spell();
 	ident = TRUE;
 	break;
 
-      case ST_HOLYNESS:
+      case SV_STAFF_HOLINESS:
 	dispel_creature(EVIL, 120);
 	protect_evil();
 	cure_poison();
@@ -1850,7 +1850,7 @@ void do_cmd_use_staff(void)
 	ident = TRUE;
 	break;
 
-      case ST_MAGI:
+      case SV_STAFF_THE_MAGI:
 	if (res_stat(A_INT)) {
 	    msg_print("You have a warm feeling.");
 	    ident = TRUE;
@@ -1863,46 +1863,46 @@ void do_cmd_use_staff(void)
 	}
 	break;
 
-      case ST_POWER:
+      case SV_STAFF_POWER:
 	dispel_creature(0xFFFFFFFFL, 120);
 	break;
 
-      case ST_SURROUND:
+      case SV_STAFF_MAPPING:
 	map_area();
 	ident = TRUE;
 	break;
 
-      case ST_LIGHT:
+      case SV_STAFF_LITE:
 	ident = lite_area(char_row, char_col, damroll(2, 10), 2);
 	break;
 
-      case ST_DR_LC:
+      case SV_STAFF_DOOR_STAIR_LOC:
 	ident = detect_sdoor();
 	break;
 
-      case ST_TRP_LC:
+      case SV_STAFF_TRAP_LOC:
 	ident = detect_trap();
 	break;
 
-      case ST_TRE_LC:
+      case SV_STAFF_TREASURE_LOC:
 	ident = detect_treasure();
 	break;
 
-      case ST_OBJ_LC:
+      case SV_STAFF_OBJECT_LOC:
 	ident = detect_object();
 	break;
 
-      case ST_TELE:
+      case SV_STAFF_TELEPORTATION:
 	teleport(100);
 	ident = TRUE;
 	break;
 
-      case ST_EARTH:
+      case SV_STAFF_EARTHQUAKES:
 	earthquake();
 	ident = TRUE;
 	break;
 
-      case ST_SUMMON:
+      case SV_STAFF_SUMMONING:
 	ident = FALSE;
 	for (k = 0; k < randint(4); k++) {
 	    y = char_row;
@@ -1911,48 +1911,48 @@ void do_cmd_use_staff(void)
 	}
 	break;
 
-      case ST_DEST:
+      case SV_STAFF_DESTRUCTION:
 	destroy_area(char_row, char_col);
 	ident = TRUE;
 	break;
 
-      case ST_STAR:
+      case SV_STAFF_STARLITE:
 	starlite(char_row, char_col);
 	ident = TRUE;
 	break;
 
-      case ST_HAST_MN:
+      case SV_STAFF_HASTE_MONSTERS:
 	ident = speed_monsters(1);
 	break;
 
-      case ST_SLOW_MN:
+      case SV_STAFF_SLOW_MONSTERS:
 	ident = speed_monsters(-1);
 	break;
 
-      case ST_SLEE_MN:
+      case SV_STAFF_SLEEP_MONSTERS:
 	ident = sleep_monsters2();
 	break;
 
-      case ST_CURE_LT:
+      case SV_STAFF_CURE_LIGHT:
 	ident = hp_player(randint(8));
 	break;
 
-      case ST_DET_INV:
+      case SV_STAFF_DETECT_INVIS:
 	ident = detect_invisible();
 	break;
 
-      case ST_SPEED:
+      case SV_STAFF_SPEED:
 	if (py.flags.fast == 0) ident = TRUE;
 	if (py.flags.fast <= 0) py.flags.fast += randint(30) + 15;
 	else py.flags.fast += randint(5);
 	break;
 
-      case ST_SLOW:
+      case SV_STAFF_SLOWNESS:
 	if (py.flags.slow == 0) ident = TRUE;
 	py.flags.slow += randint(30) + 15;
 	break;
 
-      case ST_REMOVE:
+      case SV_STAFF_REMOVE_CURSE:
 	if (remove_curse()) {
 	    if (py.flags.blind < 1) {
 		msg_print("The staff glows blue for a moment..");
@@ -1961,11 +1961,11 @@ void do_cmd_use_staff(void)
 	}
 	break;
 
-      case ST_DET_EVI:
+      case SV_STAFF_DETECT_EVIL:
 	ident = detect_evil();
 	break;
 
-      case ST_CURING:
+      case SV_STAFF_CURING:
 	if (cure_blindness()) ident = TRUE;
 	if (cure_poison()) ident = TRUE;
 	if (cure_confusion()) ident = TRUE;
@@ -1988,11 +1988,11 @@ void do_cmd_use_staff(void)
 	}
 	break;
 
-      case ST_DSP_EVI:
+      case SV_STAFF_DISPEL_EVIL:
 	ident = dispel_creature(EVIL, 60);
 	break;
 
-      case ST_DARK:
+      case SV_STAFF_DARKNESS:
 	ident = unlite_area(char_row, char_col);
 	break;
 
@@ -2084,7 +2084,7 @@ void do_cmd_zap_rod(void)
     /* Activate it */
     switch (i_ptr->flags) {
 
-      case RD_LT:
+      case SV_ROD_LIGHT:
 	if (!get_dir_c(NULL, &dir)) return;
 	msg_print("A line of blue shimmering light appears.");
 	lite_line(dir, char_row, char_col);
@@ -2092,13 +2092,13 @@ void do_cmd_zap_rod(void)
 	i_ptr->timeout = 9;
 	break;
 
-      case RD_ILLUME:
+      case SV_ROD_ILLUMINATION:
 	lite_area(y, x, damroll(2, 8), 2);
 	ident = TRUE;
 	i_ptr->timeout = 30;
 	break;
 
-      case RD_AC_BLTS:	   /* Acid , New */
+      case SV_ROD_ACID:
 	if (!get_dir_c(NULL, &dir)) return;
 	if (randint(10)==1) line_spell(GF_ACID, dir, y, x, damroll(6,8));
 	else fire_bolt(GF_ACID, dir, y, x, damroll(6,8));
@@ -2106,7 +2106,7 @@ void do_cmd_zap_rod(void)
 	i_ptr->timeout = 12;
 	break;
 
-      case RD_LT_BLTS:	   /* Lightning */
+      case SV_ROD_ELEC:
 	if (!get_dir_c(NULL, &dir)) return;
 	if (randint(12)==1) line_spell(GF_ELEC, dir, y, x, damroll(3,8));
 	else fire_bolt(GF_ELEC, dir, y, x, damroll(3,8));
@@ -2114,7 +2114,7 @@ void do_cmd_zap_rod(void)
 	i_ptr->timeout = 11;
 	break;
 
-      case RD_FT_BLTS:	   /* Frost */
+      case SV_ROD_COLD:
 	if (!get_dir_c(NULL, &dir)) return;
 	if (randint(10)==1) line_spell(GF_COLD, dir, y, x, damroll(5,8));
 	else fire_bolt(GF_COLD, dir, y, x, damroll(5,8));
@@ -2122,7 +2122,7 @@ void do_cmd_zap_rod(void)
 	i_ptr->timeout = 13;
 	break;
 
-      case RD_FR_BLTS:	   /* Fire */
+      case SV_ROD_FIRE:
 	if (!get_dir_c(NULL, &dir)) return;
 	if (randint(8)==1) line_spell(GF_FIRE, dir, y, x, damroll(8,8));
 	else fire_bolt(GF_FIRE, dir, y, x, damroll(8,8));
@@ -2130,84 +2130,84 @@ void do_cmd_zap_rod(void)
 	i_ptr->timeout = 15;
 	break;
 
-      case RD_POLY:
+      case SV_ROD_POLYMORPH:
 	if (!get_dir_c(NULL, &dir)) return;
 	ident = poly_monster(dir, y, x);
 	i_ptr->timeout = 25;
 	break;
 
-      case RD_SLOW_MN:
+      case SV_ROD_SLOW_MONSTER:
 	if (!get_dir_c(NULL, &dir)) return;
 	ident = speed_monster(dir, y, x, -1);
 	i_ptr->timeout = 20;
 	break;
 
-      case RD_SLEE_MN:
+      case SV_ROD_SLEEP_MONSTER:
 	if (!get_dir_c(NULL, &dir)) return;
 	ident = sleep_monster(dir, y, x);
 	i_ptr->timeout = 18;
 	break;
 
-      case RD_DRAIN:
+      case SV_ROD_DRAIN_LIFE:
 	if (!get_dir_c(NULL, &dir)) return;
 	ident = drain_life(dir, y, x, 75);
 	i_ptr->timeout = 23;
 	break;
 
-      case RD_TELE:
+      case SV_ROD_TELEPORT_AWAY:
 	if (!get_dir_c(NULL, &dir)) return;
 	ident = teleport_monster(dir, y, x);
 	i_ptr->timeout = 25;
 	break;
 
-      case RD_DISARM:
+      case SV_ROD_DISARMING:
 	if (!get_dir_c(NULL, &dir)) return;
 	ident = disarm_all(dir, y, x);
 	i_ptr->timeout = 30;
 	break;
 
-      case RD_LT_BALL:
+      case SV_ROD_ELEC_BALL:
 	if (!get_dir_c(NULL, &dir)) return;
 	fire_ball(GF_ELEC, dir, y, x, 32, 2);
 	ident = TRUE;
 	i_ptr->timeout = 23;
 	break;
 
-      case RD_CD_BALL:
+      case SV_ROD_COLD_BALL:
 	if (!get_dir_c(NULL, &dir)) return;
 	fire_ball(GF_COLD, dir, y, x, 48, 2);
 	ident = TRUE;
 	i_ptr->timeout = 25;
 	break;
 
-      case RD_FR_BALL:
+      case SV_ROD_FIRE_BALL:
 	if (!get_dir_c(NULL, &dir)) return;
 	fire_ball(GF_FIRE, dir, y, x, 72, 2);
 	ident = TRUE;
 	i_ptr->timeout = 30;
 	break;
 
-      case RD_AC_BALL:
+      case SV_ROD_ACID_BALL:
 	if (!get_dir_c(NULL, &dir)) return;
 	fire_ball(GF_ACID, dir, y, x, 60, 2);
 	ident = TRUE;
 	i_ptr->timeout = 27;
 	break;
 
-      case RD_MAPPING:
+      case SV_ROD_MAPPING:
 	map_area();
 	ident = TRUE;
 	i_ptr->timeout = 99;
 	break;
 
-      case RD_IDENT:
+      case SV_ROD_IDENTIFY:
 	ident_spell();
 	/* We know what it is now */
 	ident = TRUE;
 	i_ptr->timeout = 10;
 	break;
 
-      case RD_CURE:
+      case SV_ROD_CURING:
 	if (cure_blindness()) ident = TRUE;
 	if (cure_poison()) ident = TRUE;
 	if (cure_confusion()) ident = TRUE;
@@ -2231,7 +2231,7 @@ void do_cmd_zap_rod(void)
 	i_ptr->timeout = 888;
 	break;
 
-      case RD_HEAL:
+      case SV_ROD_HEALING:
 	ident = hp_player(500);
 	if (py.flags.stun > 0) {
 	    msg_print("Your head stops stinging.");
@@ -2253,7 +2253,7 @@ void do_cmd_zap_rod(void)
 	i_ptr->timeout = 888;
 	break;
 
-      case RD_RECALL:
+      case SV_ROD_RECALL:
 	if (py.flags.word_recall == 0) {
 	    msg_print("The air about you becomes charged...");
 	    py.flags.word_recall = 15 + randint(20);
@@ -2266,19 +2266,19 @@ void do_cmd_zap_rod(void)
 	i_ptr->timeout = 60;
 	break;
 
-      case RD_PROBE:
+      case SV_ROD_PROBING:
 	probing();
 	ident = TRUE;
 	i_ptr->timeout = 50;
 	break;
 
-      case RD_DETECT:
+      case SV_ROD_DETECTION:
 	detection();
 	ident = TRUE;
 	i_ptr->timeout = 99;
 	break;
 
-      case RD_RESTORE:
+      case SV_ROD_RESTORATION:
 	if (restore_level()) ident = TRUE;
 	if (res_stat(A_STR)) ident = TRUE;
 	if (res_stat(A_INT)) ident = TRUE;
@@ -2289,19 +2289,19 @@ void do_cmd_zap_rod(void)
 	i_ptr->timeout = 999;
 	break;
 
-      case RD_SPEED:
+      case SV_ROD_SPEED:
 	if (py.flags.fast == 0) ident = TRUE;
 	py.flags.fast += randint(30) + 15;
 	i_ptr->timeout = 99;
 	break;
 
-      case RD_TRAP_LOC:
+      case SV_ROD_TRAP_LOC:
 	if (detect_trap()) ident = TRUE;
 	i_ptr->timeout = 99;
 	break;
 
 #if 0
-      case RD_MK_WALL:	   /* JLS */
+      case SV_ROD_MK_WALL:	   /* JLS */
 	if (!get_dir_c(NULL, &dir)) return;
 	ident = build_wall(dir, y, x);
 	/* don't want people to abuse this -JLS */
