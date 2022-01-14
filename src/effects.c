@@ -15,6 +15,10 @@
 
 
 /*
+ * This file includes code for eating food, drinking potions,
+ * reading scrolls, aiming wands, using staffs, zapping rods,
+ * and activating artifacts.
+ *
  * XXX XXX XXX XXX Someone needs to verify all of these effects.
  */
 
@@ -113,11 +117,14 @@ static void lose_chr()
 
 /*
  * Eat some food. -RAK-
+ * A single food object disappears.
+ * Food uses "p1" for "calories".
  */
 void do_cmd_eat_food(void)
 {
     u32b                 flg;
-    int			   j, k, item_val, ident;
+    int			   j, ident, lev;
+    int                    item_val, i1, i2;
     register struct flags *f_ptr = &py.flags;
     register struct misc  *m_ptr = &py.misc;;
     register inven_type   *i_ptr;
@@ -130,16 +137,19 @@ void do_cmd_eat_food(void)
 	return;
     }
 
-    if (!find_range(TV_FOOD, TV_NEVER, &j, &k)) {
+    if (!find_range(TV_FOOD, TV_NEVER, &i1, &i2)) {
 	msg_print("You are not carrying any food.");
 	return;
     }
 
     /* Get a food */
-    if (!get_item(&item_val, "Eat what?", j, k, 0)) return;
+    if (!get_item(&item_val, "Eat what?", i1, i2, 0)) return;
 
     /* Get the item */
     i_ptr = &inventory[item_val];
+
+    /* Get the item level */
+    lev = i_ptr->level;
 
 	free_turn_flag = FALSE;
 
@@ -150,20 +160,20 @@ void do_cmd_eat_food(void)
     for (flg = i_ptr->flags; flg; ) {
 
 	/* Extract the next "effect" bit */
-	j = bit_pos(&flg) + 1;
+	j = bit_pos(&flg);
 
 	/* Analyze the effect */
-	switch (j) {
+	switch (j + 1) {
 
 	  case 1:
 	    if (!f_ptr->resist_pois)
-		f_ptr->poisoned += randint(10) + i_ptr->level;
+		f_ptr->poisoned += randint(10) + lev;
 		ident = TRUE;
 	    break;
 
 	  case 2:
 	    if (!py.flags.resist_blind) {
-		f_ptr->blind += randint(250) + 10 * i_ptr->level + 100;
+		f_ptr->blind += randint(250) + 10 * lev + 100;
 		draw_cave();
 		msg_print("A veil of darkness surrounds you.");
 		ident = TRUE;
@@ -172,7 +182,7 @@ void do_cmd_eat_food(void)
 
 	  case 3:
 	    if (!py.flags.resist_fear) {
-		f_ptr->afraid += randint(10) + i_ptr->level;
+		f_ptr->afraid += randint(10) + lev;
 		msg_print("You feel terrified!");
 		ident = TRUE;
 	    }
@@ -180,14 +190,14 @@ void do_cmd_eat_food(void)
 
 	  case 4:
 	    if ((!py.flags.resist_conf) && (!py.flags.resist_chaos)) {
-		f_ptr->confused += randint(10) + i_ptr->level;
+		f_ptr->confused += randint(10) + lev;
 		msg_print("You feel drugged.");
 	    }
 		ident = TRUE;
 	    break;
 
 	  case 5:
-	    f_ptr->image += randint(200) + 25 * i_ptr->level + 200;
+	    f_ptr->image += randint(200) + 25 * lev + 200;
 	    msg_print("You feel drugged.");
 	    ident = TRUE;
 	    break;
@@ -335,25 +345,24 @@ void do_cmd_eat_food(void)
 	}
     }
 
-    if (ident) {
-	    if (!known1_p(i_ptr)) {
-	    /* use identified it, gain experience */
-
-	    /* round half-way case up */
-		m_ptr->exp += (i_ptr->level + (m_ptr->lev >> 1)) / m_ptr->lev;
-		prt_experience();
-		identify(&item_val);
-		i_ptr = &inventory[item_val];
-	    }
+    /* The player is now aware of the object */
+    if (ident) { if (!known1_p(i_ptr)) {
+	m_ptr->exp += (i_ptr->level + (m_ptr->lev >> 1)) / m_ptr->lev;
+	prt_experience();
+	identify(&item_val);
 	}
+    } else if (!known1_p(i_ptr)) sample(i_ptr);
 
-    else if (!known1_p(i_ptr))
-	    sample(i_ptr);
-	add_food(i_ptr->p1);
-	py.flags.status &= ~(PY_WEAK | PY_HUNGRY);
-	prt_hunger();
-	inven_item_describe(item_val);
-	inven_destroy(item_val);
+    /* Consume the food */
+    add_food(i_ptr->p1);
+
+    /* Hack -- note loss of hunger */
+    py.flags.status &= ~(PY_WEAK | PY_HUNGRY);
+    prt_hunger();
+
+    /* Destroy the food */
+    inven_item_describe(item_val);
+    inven_destroy(item_val);
 }
 
 
@@ -362,12 +371,14 @@ void do_cmd_eat_food(void)
 
 /*
  * Quaff a potion
+ * A single potion object disappears.
+ * Potions use "p1" for "calories"
  */
 void do_cmd_quaff_potion(void)
 {
-    u32b i, l;
-    int    j, k, item_val;
-    int    ident;
+    u32b flg, l;
+    int    j, ident;
+    int    item_val, i1, i2;
     register inven_type   *i_ptr;
     register struct misc  *m_ptr = &py.misc;
     register struct flags *f_ptr = &py.flags;
@@ -380,18 +391,17 @@ void do_cmd_quaff_potion(void)
 	return;
     }
 
-    if (!find_range(TV_POTION1, TV_POTION2, &j, &k)) {
+    if (!find_range(TV_POTION1, TV_POTION2, &i1, &i2)) {
 	msg_print("You are not carrying any potions.");
 	return;
     }
 
     /* Get a potion */
-    if (!get_item(&item_val, "Quaff which potion?", j, k, 0)) return; {
+    if (!get_item(&item_val, "Quaff which potion?", i1, i2, 0)) return;
 
     /* Get the item */
     i_ptr = &inventory[item_val];
 
-	i = i_ptr->flags;
 	free_turn_flag = FALSE;
 
     /* Not identified yet */
@@ -403,10 +413,12 @@ void do_cmd_quaff_potion(void)
 	ident = TRUE;
     }
 
-    else while (i != 0) {
+    /* Analyze the first set of effects */    
+    for (flg = i_ptr->flags; flg; ) {
 
-		j = bit_pos(&i);
-		if (i_ptr->tval == TV_POTION2) j += 32;
+	/* Extract the next effect bit */
+	j = bit_pos(&flg);
+	if (i_ptr->tval == TV_POTION2) j += 32;
 
 	/* Analyze the effect */
 	switch (j + 1) {
@@ -567,7 +579,7 @@ void do_cmd_quaff_potion(void)
 	    }
 	    break;
 
-	  case 19:;
+	  case 19:
 	    if (!f_ptr->free_act) {
 		/* paralysis must be zero, we are drinking */
 		/* but what about multiple potion effects? */
@@ -678,8 +690,9 @@ void do_cmd_quaff_potion(void)
 		}
 		lose_exp(m);
 	    }
-	    else
+	    else {
 		msg_print("You feel you memories fade for a moment, but quickly return.");
+	    }
 	    ident = TRUE;
 	    break;
 
@@ -885,24 +898,21 @@ void do_cmd_quaff_potion(void)
     }
 
     /* An identification was made */
-    if (ident) {
-    if (!known1_p(i_ptr)) {
+    if (ident) { if (!known1_p(i_ptr)) {
 	int lev = i_ptr->level;
 	m_ptr->exp += (lev + (m_ptr->lev >> 1)) / m_ptr->lev;
 	prt_experience();
 	identify(&item_val);
 	i_ptr = &inventory[item_val];
 	}
-	}
-	else if (!known1_p(i_ptr)) sample(i_ptr);
+    } else if (!known1_p(i_ptr)) sample(i_ptr);
 
     /* Potions can feed the player */
-	add_food(i_ptr->p1);
+    add_food(i_ptr->p1);
 
     /* Destroy the potion */
-	inven_item_describe(item_val);
-	inven_destroy(item_val);
-    }
+    inven_item_describe(item_val);
+    inven_destroy(item_val);
 }
 
 
@@ -913,13 +923,14 @@ void do_cmd_quaff_potion(void)
  */
 void do_cmd_read_scroll(void)
 {
-    u32b                i;
-    int                   j, k, item_val, y, x;
-    int                   tmp[6], used_up;
-    bigvtype              out_val, tmp_str;
-    register int          ident, l;
+    u32b                flg;
+    int                   item_val, i1, i2, x, y;
+    int			  j, k;
+    int                   used_up, ident, l;
+    int                   tmp[6];
     register inven_type  *i_ptr;
-    register struct misc *m_ptr;
+    bigvtype              out_val, tmp_str;
+    register struct misc *m_ptr	= &py.misc;;
 
     free_turn_flag = TRUE;
 
@@ -943,13 +954,13 @@ void do_cmd_read_scroll(void)
 	return;
     }
 
-    if (!find_range(TV_SCROLL1, TV_SCROLL2, &j, &k)) {
+    if (!find_range(TV_SCROLL1, TV_SCROLL2, &i1, &i2)) {
 	msg_print("You are not carrying any scrolls!");
 	return;
     }
 
     /* Get a scroll */
-    if (!get_item(&item_val, "Read which scroll?", j, k, 0)) return; {
+    if (!get_item(&item_val, "Read which scroll?", i1, i2, 0)) return; {
 
     /* Get the item */
     i_ptr = &inventory[item_val];
@@ -959,12 +970,11 @@ void do_cmd_read_scroll(void)
     /* Assume the scroll will get used up */
     used_up = TRUE;
 
-	i = i_ptr->flags;
-
     /* Not identified yet */
     ident = FALSE;
 
-	while (i != 0) {
+    /* Apply the first set of scroll effects */
+    for (flg = i_ptr->flags; flg; ) {
 
 	/* Extract the next effect bit-flag */
 	j = bit_pos(&i);
@@ -1228,7 +1238,7 @@ void do_cmd_read_scroll(void)
 		objdes(tmp_str, i_ptr, FALSE);
 		if ((i_ptr->flags2 & TR_ARTIFACT) && (randint(7) < 4)) {
 		    msg_print("A terrible black aura tries to surround your weapon,");
-		    (void)sprintf(out_val, "but your %s resists the effects!", tmp_str);
+		    sprintf(out_val, "but your %s resists the effects!", tmp_str);
 		    msg_print(out_val);
 		}
 
@@ -1317,11 +1327,12 @@ void do_cmd_read_scroll(void)
 	    /* Describe */
 	    objdes(tmp_str, i_ptr, FALSE);
 
+	    /* Attempt a saving throw for artifacts */
 	    if ((i_ptr->flags2 & TR_ARTIFACT) && (randint(7) < 4)) {
 		msg_print("A terrible black aura tries to surround your");
 		sprintf(out_val, "%s, but it resists the effects!", tmp_str);
 		msg_print(out_val);
-		}
+	    }
 
 	    /* not artifact or failed save... */
 	    else {
@@ -1413,17 +1424,15 @@ void do_cmd_read_scroll(void)
 	i_ptr = &inventory[item_val];
 
     /* An identification was made */
-    if (ident) {
-    if (!known1_p(i_ptr)) {
-	m_ptr = &py.misc;
+    if (ident) { if (!known1_p(i_ptr)) {
+	int lev = i_ptr->level;
 	/* round half-way case up */
-	m_ptr->exp += (i_ptr->level + (m_ptr->lev >> 1)) / m_ptr->lev;
+	m_ptr->exp += (lev + (m_ptr->lev >> 1)) / m_ptr->lev;
 	prt_experience();
 	identify(&item_val);
-	i_ptr = &inventory[item_val];
     }
-    }
-    else if (!known1_p(i_ptr)) sample(i_ptr);
+    } else if (!known1_p(i_ptr)) sample(i_ptr);
+
 
     /* Hack -- allow certain scrolls to be "preserved" */
     if (!used_up) return;
@@ -1444,7 +1453,7 @@ void do_cmd_aim_wand(void)
 {
     u32b                i;
     int			ident, chance, dir;
-    int			item_val, done_effect, j, k, l;
+    int			item_val, i1, i2, x, y, lev, done_effect;
     inven_type		*i_ptr;
     register struct misc *m_ptr = &py.misc;
 
@@ -1455,16 +1464,19 @@ void do_cmd_aim_wand(void)
 	return;
     }
 
-    if (!find_range(TV_WAND, TV_NEVER, &j, &k)) {
+    if (!find_range(TV_WAND, TV_NEVER, &i1, &i2)) {
 	msg_print("You are not carrying any wands.");
 	return;
     }
     
     /* Get a wand */
-    if (!get_item(&item_val, "Aim which wand?", j, k, 0)) return;
+    if (!get_item(&item_val, "Aim which wand?", i1, i2, 0)) return;
     
     /* Get the item */
     i_ptr = &inventory[item_val];
+
+    /* Get the level */
+    lev =i_ptr->level;
 
     /* The turn is not free */
     free_turn_flag = FALSE;
@@ -1474,8 +1486,8 @@ void do_cmd_aim_wand(void)
     ident = FALSE;
 
     /* Chance of success */
-    chance = m_ptr->save + stat_adj(A_INT) - (int)(i_ptr->level>42?42:i_ptr->level) +
-	      (class_level_adj[m_ptr->pclass][CLA_DEVICE] * m_ptr->lev / 3);
+    chance = (m_ptr->save + stat_adj(A_INT) - (int)(lev > 42 ? 42 : lev) +
+	      (class_level_adj[m_ptr->pclass][CLA_DEVICE] * m_ptr->lev / 3));
 
     if (py.flags.confused > 0) chance = chance / 2;
 
@@ -1491,7 +1503,14 @@ void do_cmd_aim_wand(void)
 	return;
     }
 
-    else if (i_ptr->p1 > 0) {
+    /* The wand is already empty! */
+    if (i_ptr->p1 <= 0) {
+	msg_print("The wand has no charges left.");
+	if (!known2_p(i_ptr)) {
+	    add_inscribe(i_ptr, ID_EMPTY);
+	}
+	return;
+    }
 
 	i = i_ptr->flags;
 	done_effect = 0;
@@ -1499,8 +1518,8 @@ void do_cmd_aim_wand(void)
 	while (!done_effect) {
 
     /* Start at the player */
-    k = char_row;
-    l = char_col;
+    y = char_row;
+    x = char_col;
 
     /* Various effects */
     switch (i) {
@@ -1513,141 +1532,141 @@ void do_cmd_aim_wand(void)
 	    break;
 
 	case WD_AC_BLTS:	/* Acid , New */
-	    if (randint(5)==1) line_spell(GF_ACID,dir,k,l,damroll(5,8));
-	    else fire_bolt(GF_ACID,dir,k,l,damroll(5,8));
+	    if (randint(5)==1) line_spell(GF_ACID,dir,y,x,damroll(5,8));
+	    else fire_bolt(GF_ACID,dir,y,x,damroll(5,8));
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
 
 	case WD_LT_BLTS:	/* Lightning */
-	    if (randint(6)==1) line_spell(GF_ELEC,dir,k,l,damroll(3,8));
-	    else fire_bolt(GF_ELEC, dir, k, l, damroll(3, 8));
+	    if (randint(6)==1) line_spell(GF_ELEC,dir,y,x,damroll(3,8));
+	    else fire_bolt(GF_ELEC, dir, y, x, damroll(3, 8));
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
 
 	case WD_FT_BLTS:	/* Frost */
-	    if (randint(6)==1) line_spell(GF_ELEC,dir,k,l,damroll(3,8));
-	else fire_bolt(GF_ELEC, dir, k, l, damroll(3, 8));
+	    if (randint(6)==1) line_spell(GF_ELEC,dir,y,x,damroll(3,8));
+	else fire_bolt(GF_ELEC, dir, y, x, damroll(3, 8));
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
 	case WD_DRG_FRST:
-	    fire_ball(GF_COLD, dir, k, l, 80, 3);
+	    fire_ball(GF_COLD, dir, y, x, 80, 3);
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
 
 	case WD_FR_BLTS:	/* Fire */
-	    if (randint(4)==1) line_spell(GF_FIRE,dir,k,l,damroll(6,8));
-	else fire_bolt(GF_FIRE, dir, k, l, damroll(6, 8));
+	    if (randint(4)==1) line_spell(GF_FIRE,dir,y,x,damroll(6,8));
+	else fire_bolt(GF_FIRE, dir, y, x, damroll(6, 8));
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
 	case WD_DRG_FIRE:
-	    fire_ball(GF_FIRE, dir, k, l, 100, 3);
+	    fire_ball(GF_FIRE, dir, y, x, 100, 3);
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
 
 	case WD_ST_MUD:
-	    ident = wall_to_mud(dir, k, l);
+	    ident = wall_to_mud(dir,y,x);
 	    done_effect = 1;
 	    break;
 
 	case WD_POLY:
-	    ident = poly_monster(dir, k, l);
+	    ident = poly_monster(dir,y,x);
 	    done_effect = 1;
 	    break;
 
 	case WD_HEAL_MN:
-	    ident = hp_monster(dir, k, l, -damroll(4, 6));
+	    ident = hp_monster(dir,y,x, -damroll(4, 6));
 	    done_effect = 1;
 	    break;
 
 	case WD_HAST_MN:
-	    ident = speed_monster(dir, k, l, 1);
+	    ident = speed_monster(dir,y,x,1);
 	    done_effect = 1;
 	    break;
 
 	case WD_SLOW_MN:
-	    ident = speed_monster(dir, k, l, -1);
+	    ident = speed_monster(dir,y,x,-1);
 	    done_effect = 1;
 	    break;
 
 	case WD_CONF_MN:
-	    ident = confuse_monster(dir, k, l, 10);
+	    ident = confuse_monster(dir,y,x,10);
 	    done_effect = 1;
 	    break;
 
 	case WD_SLEE_MN:
-	    ident = sleep_monster(dir, k, l);
+	    ident = sleep_monster(dir,y,x);
 	    done_effect = 1;
 	    break;
 
 	case WD_DRAIN:
-	    ident = drain_life(dir, k, l, 75);
+	    ident = drain_life(dir,y,x,75);
 	    done_effect = 1;
 	    break;
 
 	case WD_TR_DEST:
-	    ident = td_destroy2(dir, k, l);
+	    ident = td_destroy2(dir,y,x);
 	    done_effect = 1;
 	    break;
 
 	case WD_MAG_MIS:
-	    if (randint(6)==1) line_spell(GF_MISSILE,dir,k,l,damroll(2,6));
-	    else fire_bolt(GF_MISSILE, dir, k, l, damroll(2, 6));
+	    if (randint(6)==1) line_spell(GF_MISSILE,dir,y,x,damroll(2,6));
+	    else fire_bolt(GF_MISSILE, dir,y,x, damroll(2,6));
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
 
 	case WD_FEAR_MN:	/* Fear Monster */
-	    ident = fear_monster(dir, k, l, 10);
+	    ident = fear_monster(dir,y,x,10);
 	    done_effect = 1;
 	    break;
 
 	case WD_CLONE:
-	    ident = clone_monster(dir, k, l);
+	    ident = clone_monster(dir,y,x);
 	    done_effect = 1;
 	    break;
 
 	case WD_TELE:
-	    ident = teleport_monster(dir, k, l);
+	    ident = teleport_monster(dir,y,x);
 	    done_effect = 1;
 	    break;
 
 	case WD_DISARM:
-	    ident = disarm_all(dir, k, l);
+	    ident = disarm_all(dir,y,x);
 	    done_effect = 1;
 	    break;
 
 	case WD_LT_BALL:
-	    fire_ball(GF_ELEC, dir, k, l, 32, 2);
+	    fire_ball(GF_ELEC, dir,y,x,32,2);
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
 
 	case WD_CD_BALL:
-	    fire_ball(GF_COLD, dir, k, l, 48, 2);
+	    fire_ball(GF_COLD,dir,y,x,48,2);
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
 
 	case WD_FR_BALL:
-	    fire_ball(GF_FIRE, dir, k, l, 72, 2);
+	    fire_ball(GF_FIRE,dir,y,x,72,2);
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
 
 	case WD_ST_CLD:
-	    fire_ball(GF_POIS, dir, k, l, 12, 2);
+	    fire_ball(GF_POIS,dir,y,x,12,2);
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
 
 	case WD_AC_BALL:
-	    fire_ball(GF_ACID, dir, k, l, 60, 2);
+	    fire_ball(GF_ACID,dir,y,x,60,2);
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
@@ -1659,19 +1678,19 @@ void do_cmd_aim_wand(void)
 	case WD_DRG_BREA:
 	    switch (randint(5)) {
 	      case 1:
-		fire_ball(GF_FIRE, dir, k, l, 100, 3);
+		fire_ball(GF_FIRE, dir, y, x, 100, 3);
 		break;
 	      case 2:
-		fire_ball(GF_COLD, dir, k, l, 80, 3);
+		fire_ball(GF_COLD, dir, y, x, 80, 3);
 		break;
 	      case 3:
-		fire_ball(GF_ACID, dir, k, l, 90, 3);
+		fire_ball(GF_ACID, dir, y, x, 90, 3);
 		break;
 	      case 4:
-		fire_ball(GF_ELEC, dir, k, l, 70, 3);
+		fire_ball(GF_ELEC, dir, y, x, 70, 3);
 		break;
 	      default:
-		fire_ball(GF_POIS, dir, k, l, 70, 3);
+		fire_ball(GF_POIS, dir, y, x, 70, 3);
 		break;
 	    }
 	    ident = TRUE;
@@ -1679,7 +1698,7 @@ void do_cmd_aim_wand(void)
 	    break;
 
 	case WD_ANHIL:
-	    ident = drain_life(dir, k, l, 125);
+	    ident = drain_life(dir,y,x,125);
 	    done_effect = 1;
 	    break;
 
@@ -1691,21 +1710,15 @@ void do_cmd_aim_wand(void)
 	}
 
     /* Apply identification */
-    if (ident) {
-    if (!known1_p(i_ptr)) {
+    if (ident) { if (!known1_p(i_ptr)) {
 	/* round half-way case up */
-	m_ptr->exp += (i_ptr->level + (m_ptr->lev >> 1)) / m_ptr->lev;
+	m_ptr->exp += (lev + (m_ptr->lev >> 1)) / m_ptr->lev;
 	prt_experience();
 	identify(&item_val);
-	i_ptr = &inventory[item_val];
     }
 	} else if (!known1_p(i_ptr)) sample(i_ptr);
 
 	desc_charges(item_val);
-    } else {
-	msg_print("The wand has no charges left.");
-	if (!known2_p(i_ptr))
-	    add_inscribe(i_ptr, ID_EMPTY);
     }
 }
 
@@ -1714,12 +1727,14 @@ void do_cmd_aim_wand(void)
 
 /*
  * Use a staff.			-RAK-	
+ *
+ * One charge of one staff disappears.
  */
 void do_cmd_use_staff(void)
 {
     u32b                i;
-    int			  ident, chance, k;
-    int                   j, item_val, y, x;
+    int			  ident, chance, k, lev;
+    int                   item_val, i1, i2, x, y;
     register struct misc *m_ptr = &py.misc;
     register inven_type  *i_ptr;
 
@@ -1730,22 +1745,25 @@ void do_cmd_use_staff(void)
 	return;
     }
 
-    if (!find_range(TV_STAFF, TV_NEVER, &j, &k)) {
+    if (!find_range(TV_STAFF, TV_NEVER, &i1, &i2)) {
 	msg_print("You are not carrying any staffs.");
 	return;
     }
     
     /* Get a staff */
-    if (!get_item(&item_val, "Use which staff?", j, k, 0)) return;
+    if (!get_item(&item_val, "Use which staff?", i1, i2, 0)) return;
     
     /* Get the item */
     i_ptr = &inventory[item_val];
 
+    /* Extract the item level */
+    lev = i_ptr->level;
+
 	free_turn_flag = FALSE;
 
     /* Chance of success */
-    chance = m_ptr->save + stat_adj(A_INT) - (int)(i_ptr->level>50?50:i_ptr->level) +
-	      (class_level_adj[m_ptr->pclass][CLA_DEVICE] * m_ptr->lev / 3);
+    chance = (m_ptr->save + stat_adj(A_INT) - (int)(lev > 50 ? 50 : lev) +
+	      (class_level_adj[m_ptr->pclass][CLA_DEVICE] * m_ptr->lev / 3));
 
     if (py.flags.confused > 0) chance = chance / 2;
 
@@ -1757,17 +1775,20 @@ void do_cmd_use_staff(void)
 
     if (randint(chance) < USE_DEVICE) {
 	msg_print("You failed to use the staff properly.");
+	return;
     }
 
-	else if (i_ptr->p1 > 0) {
-
-	    i = i_ptr->flags;
+    if (i_ptr->p1 <= 0) {
+	msg_print("The staff has no charges left.");
+	if (!known2_p(i_ptr)) add_inscribe(i_ptr, ID_EMPTY);
+	return;
+    }
 
     ident = FALSE;
 
-	    (i_ptr->p1)--;
+    (i_ptr->p1)--;
 
-    switch (i) {
+    switch (i_ptr->flags) {
 
       case ST_HEALING:
 	ident = hp_player(300);
@@ -1981,21 +2002,14 @@ void do_cmd_use_staff(void)
     }
 
     /* An identification was made */
-    if (ident) {
-	if (!known1_p(i_ptr)) {
-	m_ptr->exp += (i_ptr->level + (m_ptr->lev >> 1)) / m_ptr->lev;
+    if (ident) { if (!known1_p(i_ptr)) {
+	m_ptr->exp += (lev + (m_ptr->lev >> 1)) / m_ptr->lev;
 	prt_experience();
 	identify(&item_val);
-	i_ptr = &inventory[item_val];
 	}
     } else if (!known1_p(i_ptr)) sample(i_ptr);
 
     desc_charges(item_val);
-} else {
-    msg_print("The staff has no charges left.");
-    if (!known2_p(i_ptr))
-	add_inscribe(i_ptr, ID_EMPTY);
-	}
 }
 
 
@@ -2007,9 +2021,8 @@ void do_cmd_use_staff(void)
  */
 void do_cmd_zap_rod(void)
 {
-    u32b              i;
-    int                 l, ident;
-    int                 item_val, j, k, chance, dir;
+    int                 ident, chance, dir, lev;
+    int                 item_val, i1, i2, x, y;
     inven_type		*i_ptr;
     register struct misc *m_ptr = &py.misc;
 
@@ -2021,23 +2034,26 @@ void do_cmd_zap_rod(void)
 	return;
     }
 
-    if (!find_range(TV_ROD, TV_NEVER, &j, &k)) {
+    if (!find_range(TV_ROD, TV_NEVER, &i1, &i2)) {
 	msg_print("You are not carrying any rods.");
 	return;
     }
 
     /* Get a rod */
-    if (!get_item(&item_val, "Activate which rod?", j, k, 0)) return;
+    if (!get_item(&item_val, "Activate which rod?", i1, i2, 0)) return;
     
     /* Get the item */
     i_ptr = &inventory[item_val];
+
+    /* Extract the item level */
+    lev = i_ptr->level;
 
 	free_turn_flag = FALSE;
 	ident = FALSE;
 
     /* Calculate the chance */
-    chance = m_ptr->save + (stat_adj(A_INT) * 2) - (int)((i_ptr->level > 70) ? 70 : i_ptr->level) +
-	      (class_level_adj[m_ptr->pclass][CLA_DEVICE] * m_ptr->lev / 3);
+    chance = (m_ptr->save + (stat_adj(A_INT) * 2) - (int)((lev > 70) ? 70 : lev) +
+	      (class_level_adj[m_ptr->pclass][CLA_DEVICE] * m_ptr->lev / 3));
 
     if (py.flags.confused > 0) chance = chance / 2;
 
@@ -2052,21 +2068,24 @@ void do_cmd_zap_rod(void)
     /* Fail to use */
     if (randint(chance) < USE_DEVICE) {
 	msg_print("You failed to use the rod properly.");
+	return;
     }
 
-    else if (i_ptr->timeout <= 0) {
-
-    i = i_ptr->flags;
+    /* Still charging */
+    if (i_ptr->timeout) {
+	msg_print("The rod is currently exhausted.");
+	return;
+    }
 
     /* Starting location */
-    k = char_row;
-    l = char_col;
+    y = char_row;
+    x = char_col;
 
     /* Activate it */
-    switch (i) {
+    switch (i_ptr->flags) {
 
       case RD_LT:
-	if (!get_dir_c(NULL, &dir)) goto no_charge;
+	if (!get_dir_c(NULL, &dir)) return;
 	msg_print("A line of blue shimmering light appears.");
 	lite_line(dir, char_row, char_col);
 	ident = TRUE;
@@ -2074,103 +2093,103 @@ void do_cmd_zap_rod(void)
 	break;
 
       case RD_ILLUME:
-	lite_area(k, l, damroll(2, 8), 2);
+	lite_area(y, x, damroll(2, 8), 2);
 	ident = TRUE;
 	i_ptr->timeout = 30;
 	break;
 
       case RD_AC_BLTS:	   /* Acid , New */
-	if (!get_dir_c(NULL, &dir)) goto no_charge;
-	if (randint(10)==1) line_spell(GF_ACID, dir, k, l, damroll(6,8));
-	else fire_bolt(GF_ACID, dir, k, l, damroll(6,8));
+	if (!get_dir_c(NULL, &dir)) return;
+	if (randint(10)==1) line_spell(GF_ACID, dir, y, x, damroll(6,8));
+	else fire_bolt(GF_ACID, dir, y, x, damroll(6,8));
 	ident = TRUE;
 	i_ptr->timeout = 12;
 	break;
 
       case RD_LT_BLTS:	   /* Lightning */
-	if (!get_dir_c(NULL, &dir)) goto no_charge;
-	if (randint(12)==1) line_spell(GF_ELEC, dir, k, l, damroll(3,8));
-	else fire_bolt(GF_ELEC, dir, k, l, damroll(3, 8));
+	if (!get_dir_c(NULL, &dir)) return;
+	if (randint(12)==1) line_spell(GF_ELEC, dir, y, x, damroll(3,8));
+	else fire_bolt(GF_ELEC, dir, y, x, damroll(3,8));
 	ident = TRUE;
 	i_ptr->timeout = 11;
 	break;
 
       case RD_FT_BLTS:	   /* Frost */
-	if (!get_dir_c(NULL, &dir)) goto no_charge;
-	if (randint(10)==1) line_spell(GF_COLD, dir, k, l, damroll(5,8));
-	else fire_bolt(GF_COLD, dir, k, l, damroll(5,8));
+	if (!get_dir_c(NULL, &dir)) return;
+	if (randint(10)==1) line_spell(GF_COLD, dir, y, x, damroll(5,8));
+	else fire_bolt(GF_COLD, dir, y, x, damroll(5,8));
 	ident = TRUE;
 	i_ptr->timeout = 13;
 	break;
 
       case RD_FR_BLTS:	   /* Fire */
-	if (!get_dir_c(NULL, &dir)) goto no_charge;
-	if (randint(8)==1) line_spell(GF_FIRE, dir, k, l, damroll(8,8));
-	else fire_bolt(GF_FIRE, dir, k, l, damroll(8,8));
+	if (!get_dir_c(NULL, &dir)) return;
+	if (randint(8)==1) line_spell(GF_FIRE, dir, y, x, damroll(8,8));
+	else fire_bolt(GF_FIRE, dir, y, x, damroll(8,8));
 	ident = TRUE;
 	i_ptr->timeout = 15;
 	break;
 
       case RD_POLY:
-	if (!get_dir_c(NULL, &dir)) goto no_charge;
-	ident = poly_monster(dir, k, l);
+	if (!get_dir_c(NULL, &dir)) return;
+	ident = poly_monster(dir, y, x);
 	i_ptr->timeout = 25;
 	break;
 
       case RD_SLOW_MN:
-	if (!get_dir_c(NULL, &dir)) goto no_charge;
-	ident = speed_monster(dir, k, l, -1);
+	if (!get_dir_c(NULL, &dir)) return;
+	ident = speed_monster(dir, y, x, -1);
 	i_ptr->timeout = 20;
 	break;
 
       case RD_SLEE_MN:
-	if (!get_dir_c(NULL, &dir)) goto no_charge;
-	ident = sleep_monster(dir, k, l);
+	if (!get_dir_c(NULL, &dir)) return;
+	ident = sleep_monster(dir, y, x);
 	i_ptr->timeout = 18;
 	break;
 
       case RD_DRAIN:
-	if (!get_dir_c(NULL, &dir)) goto no_charge;
-	ident = drain_life(dir, k, l, 75);
+	if (!get_dir_c(NULL, &dir)) return;
+	ident = drain_life(dir, y, x, 75);
 	i_ptr->timeout = 23;
 	break;
 
       case RD_TELE:
-	if (!get_dir_c(NULL, &dir)) goto no_charge;
-	ident = teleport_monster(dir, k, l);
+	if (!get_dir_c(NULL, &dir)) return;
+	ident = teleport_monster(dir, y, x);
 	i_ptr->timeout = 25;
 	break;
 
       case RD_DISARM:
-	if (!get_dir_c(NULL, &dir)) goto no_charge;
-	ident = disarm_all(dir, k, l);
+	if (!get_dir_c(NULL, &dir)) return;
+	ident = disarm_all(dir, y, x);
 	i_ptr->timeout = 30;
 	break;
 
       case RD_LT_BALL:
-	if (!get_dir_c(NULL, &dir)) goto no_charge;
-	fire_ball(GF_ELEC, dir, k, l, 32, 2);
+	if (!get_dir_c(NULL, &dir)) return;
+	fire_ball(GF_ELEC, dir, y, x, 32, 2);
 	ident = TRUE;
 	i_ptr->timeout = 23;
 	break;
 
       case RD_CD_BALL:
-	if (!get_dir_c(NULL, &dir)) goto no_charge;
-	fire_ball(GF_COLD, dir, k, l, 48, 2);
+	if (!get_dir_c(NULL, &dir)) return;
+	fire_ball(GF_COLD, dir, y, x, 48, 2);
 	ident = TRUE;
 	i_ptr->timeout = 25;
 	break;
 
       case RD_FR_BALL:
-	if (!get_dir_c(NULL, &dir)) goto no_charge;
-	fire_ball(GF_FIRE, dir, k, l, 72, 2);
+	if (!get_dir_c(NULL, &dir)) return;
+	fire_ball(GF_FIRE, dir, y, x, 72, 2);
 	ident = TRUE;
 	i_ptr->timeout = 30;
 	break;
 
       case RD_AC_BALL:
-	if (!get_dir_c(NULL, &dir)) goto no_charge;
-	fire_ball(GF_ACID, dir, k, l, 60, 2);
+	if (!get_dir_c(NULL, &dir)) return;
+	fire_ball(GF_ACID, dir, y, x, 60, 2);
 	ident = TRUE;
 	i_ptr->timeout = 27;
 	break;
@@ -2283,8 +2302,8 @@ void do_cmd_zap_rod(void)
 
 #if 0
       case RD_MK_WALL:	   /* JLS */
-	if (!get_dir_c(NULL, &dir)) goto no_charge;
-	ident = build_wall(dir, k, l);
+	if (!get_dir_c(NULL, &dir)) return;
+	ident = build_wall(dir, y, x);
 	/* don't want people to abuse this -JLS */
 	i_ptr->timeout = 999;
 	break;
@@ -2297,19 +2316,13 @@ void do_cmd_zap_rod(void)
 
 
     /* Successfully determined the object function */
-    if (ident) {
-    if (!known1_p(i_ptr)) {
-	m_ptr->exp += (i_ptr->level + (m_ptr->lev >> 1)) / m_ptr->lev;
+    if (ident) { if (!known1_p(i_ptr)) {
+	m_ptr->exp += (lev + (m_ptr->lev >> 1)) / m_ptr->lev;
 	prt_experience();
 	identify(&item_val);
-	i_ptr = &inventory[item_val];
 	}
     } else if (!known1_p(i_ptr)) sample(i_ptr);
 
-no_charge:;
-} else {
-    msg_print("The rod is currently exhausted.");
-}
 }
 
 
