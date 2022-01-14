@@ -14,29 +14,6 @@
 
 
 
-int is_wizard(int uid)
-{
-    FILE *fp;
-    char  buf[100];
-    int   test;
-
-    if ((fp = my_tfopen(ANGBAND_WIZ, "r")) == NULL) {
-	fprintf(stderr, "Can't get wizard check...");
-	exit_game();
-    }
-    do {
-	(void)fgets(buf, sizeof buf, fp);
-	if (sscanf(buf, "%d", &test)) {
-	    if (test == uid && buf[0] != '#') {
-		fclose(fp);
-		return TRUE;
-	    }
-	}
-    } while (!feof(fp));
-    fclose(fp);
-    return FALSE;
-}
-
 /* Check to see which artifacts have been seen		 */
 void artifact_check()
 {

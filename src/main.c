@@ -63,6 +63,39 @@ CASPANION, RAZORBACK, BLADETURNER;
 
 
 /*
+ * Unix machines need to "check wizard permissions"
+ */
+int is_wizard(int uid)
+{
+    int		test;
+    FILE	*fp;
+    char	buf[100];
+
+    /* Open the wizard file */
+    fp = my_tfopen(ANGBAND_WIZ, "r");
+
+    if (!fp) {
+	fprintf(stderr, "Can't get wizard check...");
+	exit_game();
+    }
+
+    do {
+	(void)fgets(buf, sizeof buf, fp);
+	if (sscanf(buf, "%d", &test)) {
+	    if (test == uid && buf[0] != '#') {
+		fclose(fp);
+		return TRUE;
+	    }
+	}
+    } while (!feof(fp));
+
+    /* Close the file */
+    fclose(fp);
+    return FALSE;
+}
+
+
+/*
  * Studly machines can actually parse command line args
  */
 int main(int argc, char *argv[])
