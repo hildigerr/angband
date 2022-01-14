@@ -71,7 +71,16 @@
 #define clean_grid_bold(Y,X) \
     ((cave[Y][X].fval <= MAX_CAVE_FLOOR) && \
      (cave[Y][X].tptr == 0))
-        
+    
+/*
+ * Determine if a "legal" grid is an "empty floor" grid
+ * First test -- catch normal granite/quartz/magma walls
+ * Second test -- catch all normal monsters (and players)
+ */
+#define empty_grid_bold(Y,X) \
+    ((cave[Y][X].fval < MIN_CLOSED_SPACE) && \
+     (cave[Y][X].cptr == 0))
+    
 /*
  * Determines if a map location is currently "on screen" -RAK-
  * Note that "panel_contains(y,x)" always implies "in_bounds2(y,x)".

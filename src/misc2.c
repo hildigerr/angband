@@ -24,8 +24,7 @@ static int test_place(int y, int x)
     if (!in_bounds(y, x)) return (FALSE);
     
     /* Require "empty" floor grid */
-    if (cave[y][x].fval >= MIN_CLOSED_SPACE) return (FALSE);
-    if (cave[y][x].cptr != 0) return (FALSE);
+    if (!empty_grid_bold(y, x)) return (FALSE);
 
     /* And do not use special walls */
     if (cave[y][x].fval == NULL_WALL) return (FALSE);
@@ -1193,10 +1192,6 @@ int summon_monster(int *yp, int *xp, int slp)
 {
     register int        i, y, x, r_idx;
 
-    register cave_type *cave_ptr;
-
-    r_idx = get_mons_num(dun_level + MON_SUMMON_ADJ);
-
     /* Try nine locations */
     for (i = 0; i < 9; i++) {
 
@@ -1207,10 +1202,11 @@ int summon_monster(int *yp, int *xp, int slp)
 	/* Require legal grid */
 	if (!in_bounds(y, x)) continue;
 	
-    cave_ptr = &cave[y][k];
-
 	/* Require "empty" floor grids */
-	if (!((foor_grid_bold(y, x) && (cave_ptr->cptr == 0)))) continue;
+	if (!empty_grid_bold(y, x)) continue;
+	
+	/* Pick a monster race */
+	r_idx = get_mons_num(dun_level + MON_SUMMON_ADJ);
 
 	/* Place the monster */
 	if (c_list[r_idx].cdefense & GROUP) {

@@ -2849,7 +2849,7 @@ void teleport_away(int monptr, int dis)
 	    dis += 5;
 	}
     }
-    while ((cave[yn][xn].fval >= MIN_CLOSED_SPACE) || (cave[yn][xn].cptr != 0));
+    while (!empty_grid_bold(yn,xn));
     move_rec((int)m_ptr->fy, (int)m_ptr->fx, yn, xn);
     lite_spot((int)m_ptr->fy, (int)m_ptr->fx);
     m_ptr->fy = yn;
