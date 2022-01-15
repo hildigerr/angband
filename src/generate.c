@@ -54,7 +54,6 @@ static void place_boundary();
 static void place_destroyed();
 static void blank_cave();
 static void cave_gen();
-static void tlink();
 static void town_gen();
 
 typedef struct coords {
@@ -2963,17 +2962,6 @@ static void build_store(int store_num, int y, int x)
     cur_pos = i_pop();
     c_ptr->tptr = cur_pos;
     invcopy(&i_list[cur_pos], OBJ_STORE_DOOR + store_num);
-}
-
-
-/* Link all free space in treasure list together		 */
-static void tlink()
-{
-    register int i;
-
-    for (i = 0; i < MAX_TALLOC; i++)
-	invcopy(&i_list[i], OBJ_NOTHING);
-    tcptr = MIN_TRIX;
 }
 
 

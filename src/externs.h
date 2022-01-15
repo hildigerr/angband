@@ -620,6 +620,7 @@ int distance(int, int, int, int);
 /* misc3.c */
 int i_pop(void);
 int delete_object(int, int);
+void tlink(void);
 int magik(int);
 int m_bonus(int, int, int);
 void place_trap(int, int, int);

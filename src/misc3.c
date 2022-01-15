@@ -49,7 +49,29 @@ int delete_object(int y, int x)
 }
 
 
-/* 
+
+/*
+ * Link all free space in treasure list together
+ * (called only from "generate.c")
+ */
+void tlink()
+{
+    register int i;
+
+    /* Wipe the object list */
+    for (i = 0; i < MAX_TALLOC; i++) {
+
+	/* Blank the object */
+	invcopy(&i_list[i], OBJ_NOTHING);
+    }
+
+    /* No "real" items */
+    tcptr = MIN_TRIX;
+}
+
+
+
+/*
  * When too many objects gather on the floor, delete some of them
  *
  * Note that the player could intentionally collect so many artifacts,
