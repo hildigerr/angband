@@ -949,10 +949,10 @@ int roff_recall(int mon_num)
 	if (!mp->r_attacks[i]) continue;
 
 	/* Extract the attack info */
-	att_type = monster_attacks[*pu].attack_type;
-	att_how = monster_attacks[*pu].attack_desc;
-	d1 = monster_attacks[*pu].attack_dice;
-	d2 = monster_attacks[*pu].attack_sides;
+	att_type = a_list[*pu].attack_type;
+	att_how = a_list[*pu].attack_desc;
+	d1 = a_list[*pu].attack_dice;
+	d2 = a_list[*pu].attack_sides;
 
 	/* Count the attacks as printed */
 	j++;

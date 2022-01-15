@@ -477,10 +477,10 @@ static void make_attack(int m_idx)
     /* if has no attacks (*attstr starts off 0), still loop once */
     /* to accumulate notices that it has no attacks - dbd */
     while ((*attstr != 0 || attstr == attstr_orig) && !death && !blinked) {
-	attype = monster_attacks[*attstr].attack_type;
-	adesc = monster_attacks[*attstr].attack_desc;
-	adice = monster_attacks[*attstr].attack_dice;
-	asides = monster_attacks[*attstr].attack_sides;
+	attype = a_list[*attstr].attack_type;
+	adesc = a_list[*attstr].attack_desc;
+	adice = a_list[*attstr].attack_dice;
+	asides = a_list[*attstr].attack_sides;
 	attstr++;
 	flag = FALSE;
 
