@@ -3176,7 +3176,7 @@ void creatures(int attack)
 	/* Hack -- Remove dead monsters. */
 	if (m_ptr->hp < 0) {
 
-	    check_unique(m_ptr);
+	    if (c_list[m_ptr->mptr].cdefense & UNIQUE) u_list[m_ptr->mptr].exist = 0;
 	    fix2_delete_monster(i);
 
 	    /* Continue */
@@ -3283,7 +3283,7 @@ void creatures(int attack)
      * may have been killed during mon_move(). 
      */
 	if (m_ptr->hp < 0) {
-	    check_unique(m_ptr);
+	    if (c_list[m_ptr->mptr].cdefense & UNIQUE) u_list[m_ptr->mptr].exist = 0;
 	    fix2_delete_monster(i);
 	    continue;
 	}

@@ -732,7 +732,6 @@ int cast_spell(cptr ,int, int *, int *);
 int delete_object(int, int);
 u32b monster_death(int, int, u32b, u32b, u32b);
 int mon_take_hit(int, int, int);
-void check_unique(monster_type *);
 
 /* moria3.c */
 int twall(int, int, int, int);

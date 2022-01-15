@@ -367,14 +367,6 @@ int cast_spell(cptr prompt, int item_val, int *sn, int *sc)
 
 
 
-void check_unique(monster_type *m_ptr)
-{
-    if (c_list[m_ptr->mptr].cdefense & UNIQUE)
-	u_list[m_ptr->mptr].exist = 0;
-}
-
-
-
 /* Creates objects nearby the coordinates given		-RAK-	  */
 static int summon_object(int y, int x, int num, int typ, u32b good)
 {

@@ -48,8 +48,7 @@ void delete_monster(int j)
     if (j < 2)
 	return;			   /* trouble? abort! -CFT */
     m_ptr = &m_list[j];
-    if (c_list[m_ptr->mptr].cdefense & UNIQUE)
-	check_unique(m_ptr);
+    if (c_list[m_ptr->mptr].cdefense & UNIQUE) u_list[m_ptr->mptr].exist = 0;
     cave[m_ptr->fy][m_ptr->fx].cptr = 0;
     if (m_ptr->ml)
 	lite_spot((int)m_ptr->fy, (int)m_ptr->fx);
@@ -104,7 +103,7 @@ void fix1_delete_monster(int j)
 #endif
     m_ptr = &m_list[j];
     if (c_list[m_ptr->mptr].cdefense & UNIQUE)
-	check_unique(m_ptr);
+	if (c_list[m_ptr->mptr].cdefense & UNIQUE) u_list[m_ptr->mptr].exist = 0;
 /* force the hp negative to ensure that the monster is dead, for example, if
  * the monster was just eaten by another, it will still have positive hit
  * points 
@@ -138,8 +137,7 @@ void fix2_delete_monster(int j)
 #endif
 
     m_ptr = &m_list[j];		   /* Fixed from a c_list ptr to a m_list ptr. -CFT */
-    if (c_list[m_ptr->mptr].cdefense & UNIQUE)
-	check_unique(m_ptr);
+    if (c_list[m_ptr->mptr].cdefense & UNIQUE) u_list[m_ptr->mptr].exist = 0;
     if (j != mfptr - 1) {
 	m_ptr = &m_list[mfptr - 1];
 	cave[m_ptr->fy][m_ptr->fx].cptr = j;
