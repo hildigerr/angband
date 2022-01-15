@@ -404,25 +404,6 @@ extern monster_type blank_monster; /* Blank monster values	*/
 extern s16b mfptr;				   /* Cur free monster ptr	*/
 extern s16b mon_tot_mult;		   /* # of repro's of creature	*/
 
-/* Following are arrays for descriptive pieces			*/
-#ifdef MACGAME
-extern const char **colors;
-extern const char **mushrooms;
-extern const char **woods;
-extern const char **metals;
-extern const char **rocks;
-extern const char **amulets;
-extern const char **syllables;
-#else
-extern const char *colors[MAX_COLORS];
-extern const char *mushrooms[MAX_SHROOM];
-extern const char *woods[MAX_WOODS];
-extern const char *metals[MAX_METALS];
-extern const char *rocks[MAX_ROCKS];
-extern const char *amulets[MAX_AMULETS];
-extern const char *syllables[MAX_SYLLABLES];
-#endif
-
 extern byte blows_table[11][12];
 
 extern u16b normal_table[NORMAL_TABLE_SIZE];

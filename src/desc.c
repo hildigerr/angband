@@ -15,7 +15,134 @@
 
 static void unsample(inven_type *);
 
-char                titles[MAX_TITLES][10];
+
+/*
+ * Color adjectives and colors, for potions.
+ * Hack -- The first three are hard-coded for slime mold juice,
+ * apple juice, and water, so do not scramble them.
+ */
+
+static cptr potion_adj[MAX_COLORS] = {
+    "Icky Green", "Light Brown", "Clear","Azure","Blue",
+    "Blue Speckled","Black","Brown","Brown Speckled","Bubbling",
+    "Chartreuse","Cloudy","Copper Speckled","Crimson","Cyan",
+    "Dark Blue","Dark Green","Dark Red","Gold Speckled","Green",
+    "Green Speckled","Grey","Grey Speckled","Hazy","Indigo",
+    "Light Blue","Light Green","Magenta","Metallic Blue","Metallic Red",
+    "Metallic Green","Metallic Purple","Misty","Orange","Orange Speckled",
+    "Pink","Pink Speckled","Puce","Purple","Purple Speckled",
+    "Red","Red Speckled","Silver Speckled","Smoky","Tangerine",
+    "Violet","Vermilion","White","Yellow", "Purple Speckled",
+    "Pungent","Clotted Red","Viscous Pink","Oily Yellow","Gloopy Green",
+    "Shimmering","Coagulated Crimson"
+};
+
+
+/*
+ * Color adjectives and colors, for mushrooms and molds
+ */
+
+static cptr food_adj[MAX_SHROOM] = {
+    "Blue","Black","Black Spotted","Brown","Dark Blue",
+    "Dark Green","Dark Red","Ecru","Furry","Green",
+    "Grey","Light Blue","Light Green","Plaid","Red",
+    "Slimy","Tan","White","White Spotted","Wooden",
+    "Wrinkled",/*"Yellow","Shaggy","Red Spotted","Pale Blue","Dark Orange"*/
+};
+
+
+/*
+ * Wood adjectives and colors, for staffs
+ */
+
+static cptr staff_adj[MAX_WOODS] = {
+    "Aspen","Balsa","Banyan","Birch","Cedar",
+    "Cottonwood","Cypress","Dogwood","Elm","Eucalyptus",
+    "Hemlock","Hickory","Ironwood","Locust","Mahogany",
+    "Maple","Mulberry","Oak","Pine","Redwood",
+    "Rosewood","Spruce","Sycamore","Teak","Walnut",
+    "Mistletoe","Hawthorn","Bamboo","Silver","Runed",
+    "Golden","Ashen"/*,"Gnarled","Ivory","Decorative","Willow"*/
+};
+
+
+/*
+ * Metal adjectives and colors, for wands
+ */
+
+static cptr wand_adj[MAX_METALS] = {
+    "Aluminum","Cast Iron","Chromium","Copper","Gold",
+    "Iron","Magnesium","Molybdenum","Nickel","Rusty",
+    "Silver","Steel","Tin","Titanium","Tungsten",
+    "Zirconium","Zinc","Aluminum-Plated","Copper-Plated","Gold-Plated",
+    "Nickel-Plated","Silver-Plated","Steel-Plated","Tin-Plated","Zinc-Plated",
+    "Mithril-Plated","Mithril","Runed","Bronze","Brass",
+    "Platinum","Lead"/*,"Lead-Plated","Ivory","Pewter"*/
+};
+
+
+/*
+ * Rock adjectives and colors, for rings
+ */
+
+static cptr ring_adj[MAX_ROCKS] = {
+    "Alexandrite","Amethyst","Aquamarine","Azurite","Beryl",
+    "Bloodstone","Calcite","Carnelian","Corundum","Diamond",
+    "Emerald","Fluorite","Garnet","Granite","Jade",
+    "Jasper","Lapis Lazuli","Malachite","Marble","Moonstone",
+    "Onyx","Opal","Pearl","Quartz","Quartzite",
+    "Rhodonite","Ruby","Sapphire","Tiger Eye","Topaz",
+    "Turquoise","Zircon","Platinum","Bronze","Gold",
+    "Obsidian","Silver","Tortoise Shell","Mithril","Jet",
+    "Engagement","Adamantite"
+};
+
+
+/*
+ * Amulet adjectives and colors, for amulets
+ */
+
+static cptr amulet_adj[MAX_AMULETS] = {
+    "Amber","Driftwood","Coral","Agate","Ivory",
+    "Obsidian","Bone","Brass","Bronze","Pewter",
+    "Tortoise Shell","Golden","Azure","Crystal","Silver",
+    "Copper"
+};
+
+
+/*
+ * Syllables for scrolls
+ */
+
+static cptr syllables[MAX_SYLLABLES] = {
+  "a","ab","ag","aks","ala","an","ankh","app",
+  "arg","arze","ash","aus","ban","bar","bat","bek",
+  "bie","bin","bit","bjor","blu","bot","bu",
+  "byt","comp","con","cos","cre","dalf","dan",
+  "den","der","doe","dok","eep","el","eng","er","ere","erk",
+  "esh","evs","fa","fid","flit","for","fri","fu","gan",
+  "gar","glen","gop","gre","ha","he","hyd","i",
+  "ing","ion","ip","ish","it","ite","iv","jo",
+  "kho","kli","klis","la","lech","man","mar",
+  "me","mi","mic","mik","mon","mung","mur","nag","nej",
+  "nelg","nep","ner","nes","nis","nih","nin","o",
+  "od","ood","org","orn","ox","oxy","pay","pet",
+  "ple","plu","po","pot","prok","re","rea","rhov",
+  "ri","ro","rog","rok","rol","sa","san","sat",
+  "see","sef","seh","shu","ski","sna","sne","snik",
+  "sno","so","sol","sri","sta","sun","ta","tab",
+  "tem","ther","ti","tox","trol","tue","turs","u",
+  "ulk","um","un","uni","ur","val","viv","vly",
+  "vom","wah","wed","werg","wex","whon","wun","x",
+  "yerg","yp","zun","tri","blaa"
+};
+
+
+/*
+ * Hold the titles of scrolls, ten characters each
+ */
+
+static char scroll_adj[MAX_TITLES][10];
 
 
 
@@ -36,49 +163,49 @@ void magic_init(void)
     /* That is, slime mold juice, apple juice, water */
     for (i = 3; i < MAX_COLORS; i++) {
 	j = rand_int(MAX_COLORS - 3) + 3;
-	tmp = colors[i];
-	colors[i] = colors[j];
-	colors[j] = tmp;
+	tmp = potion_adj[i];
+	potion_adj[i] = potion_adj[j];
+	potion_adj[j] = tmp;
     }
 
     /* Woods are used for staffs */
     for (i = 0; i < MAX_WOODS; i++) {
 	j = rand_int(MAX_WOODS);
-	tmp = woods[i];
-	woods[i] = woods[j];
-	woods[j] = tmp;
+	tmp = staff_adj[i];
+	staff_adj[i] = staff_adj[j];
+	staff_adj[j] = tmp;
     }
 
     /* Wands are made of metal */
     for (i = 0; i < MAX_METALS; i++) {
 	j = rand_int(MAX_METALS);
-	tmp = metals[i];
-	metals[i] = metals[j];
-	metals[j] = tmp;
+	tmp = wand_adj[i];
+	wand_adj[i] = wand_adj[j];
+	wand_adj[j] = tmp;
     }
 
     /* Rocks are used for rings */
     for (i = 0; i < MAX_ROCKS; i++) {
 	j = rand_int(MAX_ROCKS);
-	tmp = rocks[i];
-	rocks[i] = rocks[j];
-	rocks[j] = tmp;
+	tmp = ring_adj[i];
+	ring_adj[i] = ring_adj[j];
+	ring_adj[j] = tmp;
     }
 
     /* Rocks are used for amulets */
     for (i = 0; i < MAX_AMULETS; i++) {
 	j = rand_int(MAX_AMULETS);
-	tmp = amulets[i];
-	amulets[i] = amulets[j];
-	amulets[j] = tmp;
+	tmp = amulet_adj[i];
+	amulet_adj[i] = amulet_adj[j];
+	amulet_adj[j] = tmp;
     }
 
     /* Hack -- Molds and Mushrooms (not normal foods) have colors */
     for (i = 0; i < MAX_SHROOM; i++) {
 	j = rand_int(MAX_SHROOM);
-	tmp = mushrooms[i];
-	mushrooms[i] = mushrooms[j];
-	mushrooms[j] = tmp;
+	tmp = food_adj[i];
+	food_adj[i] = food_adj[j];
+	food_adj[j] = tmp;
     }
 
     /* Hack -- Scrolls have titles, and are always white */
@@ -109,7 +236,7 @@ void magic_init(void)
 	}
 
 	/* Save the title */
-	(void)strcpy(titles[h], string);
+	(void)strcpy(scroll_adj[h], string);
 
     }
 
@@ -430,7 +557,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
 	if (modify || !(plain_descriptions || store_bought_p(i_ptr))) {
 	    basenm = "& %s Amulet";
-	    modstr = amulets[indexx];
+	    modstr = amulet_adj[indexx];
 	    if (!modify) append_name = TRUE;
 	}
 	else {
@@ -451,7 +578,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 		basenm = "The One Ring";
 	} else if (modify || !(plain_descriptions || store_bought_p(i_ptr))) {
 	    basenm = "& %s Ring";
-	    modstr = rocks[indexx];
+	    modstr = ring_adj[indexx];
 	    if (!modify)
 		append_name = TRUE;
 	} else {
@@ -464,7 +591,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
       case TV_STAFF:
 	if (modify || !(plain_descriptions || store_bought_p(i_ptr))) {
 	    basenm = "& %s Staff";
-	    modstr = woods[indexx];
+	    modstr = staff_adj[indexx];
 	    if (!modify) append_name = TRUE;
 	} else {
 	    basenm = "& Staff";
@@ -476,7 +603,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
       case TV_WAND:
 	if (modify || !(plain_descriptions || store_bought_p(i_ptr))) {
 	    basenm = "& %s Wand";
-	    modstr = metals[indexx];
+	    modstr = wand_adj[indexx];
 	    if (!modify) append_name = TRUE;
 	}
 	else {
@@ -489,7 +616,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
       case TV_ROD:
 	if (modify || !(plain_descriptions || store_bought_p(i_ptr))) {
 	    basenm = "& %s Rod";
-	    modstr = metals[indexx];
+	    modstr = wand_adj[indexx];
 	    if (!modify) append_name = TRUE;
 	}
 	else {
@@ -502,7 +629,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
       case TV_SCROLL2:
 	if (modify || !(plain_descriptions || store_bought_p(i_ptr))) {
 	    basenm = "& Scroll~ titled \"%s\"";
-	    modstr = titles[indexx];
+	    modstr = scroll_adj[indexx];
 	    if (!modify) append_name = TRUE;
 	}
 	else {
@@ -515,7 +642,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
       case TV_POTION2:
 	if (modify || !(plain_descriptions || store_bought_p(i_ptr))) {
 	    basenm = "& %s Potion~";
-	    modstr = colors[indexx];
+	    modstr = potion_adj[indexx];
 	    if (!modify) append_name = TRUE;
 	}
 	else {
@@ -539,7 +666,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	    else
 		append_name = FALSE;	/* Ordinary food has no name appended. */
 	    if (indexx <= 20)
-		modstr = mushrooms[indexx];
+		modstr = food_adj[indexx];
 	}
 	    else {
 	    append_name = TRUE;
