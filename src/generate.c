@@ -47,7 +47,6 @@ static void special_pit(int, int, int);
 static void build_tunnel(int, int, int, int);
 static int next_to(int, int);
 static void try_door(int, int);
-static void new_spot(s16b *, s16b *);
 static void build_pit(int, int);
 static void build_store(int, int, int);
 static void place_boundary();
@@ -111,6 +110,28 @@ static void rand_dir(int *rdir, int *cdir)
 	*cdir = (-7) + (tmp << 1);   /* tmp=3 -> *cdir=-1; tmp=4 -> *cdir=1 */
     }
 }
+
+
+/*
+ * Returns random co-ordinates for player/monster/object
+ */
+static void new_spot(s16b *y, s16b *x)
+{
+    register int        i, j;
+    register cave_type *c_ptr;
+
+    do {
+	i = randint(cur_height - 2);
+	j = randint(cur_width - 2);
+	c_ptr = &cave[i][j];
+    }
+    while (c_ptr->fval >= MIN_CLOSED_SPACE || (c_ptr->cptr != 0)
+	   || (c_ptr->tptr != 0) || (c_ptr->fval == NT_LIGHT_FLOOR)
+	   || (c_ptr->fval == NT_DARK_FLOOR));
+    *y = i;
+    *x = j;
+}
+
 
 
 /*
@@ -796,6 +817,25 @@ static void vault_jelly(int y, int x)
     }
 }
 
+/*
+ * Place an undead creature at the given location
+ */
+static void vault_undead(int y, int x)
+{
+    int l, m, summon;
+    
+    summon = FALSE;
+    l = m_level[MAX_R_LEV];
+    do {
+	m = randint(l) - 1;
+	if ((c_list[m].cdefense & UNDEAD) && !(c_list[m].cdefense & UNIQUE)) {
+	    summon = TRUE;
+	place_monster(y, x, m, TRUE);
+	}
+    } while (!summon);
+}
+
+
 static void vault_orc(int y, int x, int rank)
 {
     register int i;
@@ -888,21 +928,6 @@ static void vault_troll(int y, int x, int rank)
     }
     if (i != MAX_R_IDX)
 	place_monster(y, x, i, FALSE);
-}
-
-static void vault_undead(int y, int x)
-{
-    int l, m, summon;
-    
-    summon = FALSE;
-    l = m_level[MAX_R_LEV];
-    do {
-	m = randint(l) - 1;
-	if ((c_list[m].cdefense & UNDEAD) && !(c_list[m].cdefense & UNIQUE)) {
-	    summon = TRUE;
-	    place_monster(y, x, m, TRUE);
-	}
-    } while (!summon);
 }
 
 
@@ -2679,26 +2704,6 @@ static void try_door(int y, int x)
     }
 }
 
-
-/*
- * Returns random co-ordinates				-RAK-	
- */
-static void new_spot(s16b *y, s16b *x)
-{
-    register int        i, j;
-    register cave_type *c_ptr;
-
-    do {
-	i = randint(cur_height - 2);
-	j = randint(cur_width - 2);
-	c_ptr = &cave[i][j];
-    }
-    while (c_ptr->fval >= MIN_CLOSED_SPACE || (c_ptr->cptr != 0)
-	   || (c_ptr->tptr != 0) || (c_ptr->fval == NT_LIGHT_FLOOR)
-	   || (c_ptr->fval == NT_DARK_FLOOR));
-    *y = i;
-    *x = j;
-}
 
 static void build_pit(int yval, int xval)
 {
