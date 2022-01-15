@@ -587,6 +587,9 @@ void prt_map(void);
 void add_food(int);
 
 /* misc2.c */
+void delete_monster(int);
+void fix1_delete_monster(int);
+void fix2_delete_monster(int);
 int m_pop(void);
 int max_hp(byte *);
 int place_monster(int, int, int, int);
@@ -726,9 +729,6 @@ void darken_player(int, int);
 int is_quest(int);
 void hit_trap(int, int);
 int cast_spell(cptr ,int, int *, int *);
-void delete_monster(int);
-void fix1_delete_monster(int);
-void fix2_delete_monster(int);
 int delete_object(int, int);
 u32b monster_death(int, int, u32b, u32b, u32b);
 int mon_take_hit(int, int, int);
