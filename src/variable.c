@@ -126,6 +126,10 @@ int panel_row_min, panel_row_max;
 int panel_col_min, panel_col_max;
 int panel_col_prt, panel_row_prt;
 
+/* Player location in dungeon */
+s16b char_row;
+s16b char_col;
+
 #ifdef TARGET
 /* Targetting information, this code stolen from Morgul -CFT */
 int target_mode = FALSE;
@@ -162,4 +166,23 @@ monster_lore c_recall[MAX_R_IDX];	/* Monster memories */
 #endif
 
 struct unique_mon u_list[MAX_R_IDX]; /* Unique check list... -LVB- */ 
+
+
+
+static player_type py;	/* Static player info record */
+
+u32b spell_learned = 0;       /* bit mask of spells learned */
+u32b spell_learned2 = 0;      /* bit mask of spells learned */
+u32b spell_worked = 0;        /* bit mask of spells tried and worked */
+u32b spell_worked2 = 0;       /* bit mask of spells tried and worked */
+u32b spell_forgotten = 0;     /* bit mask of spells learned but forgotten */
+u32b spell_forgotten2 = 0;    /* bit mask of spells learned but forgotten */
+byte spell_order[64];          /* order spells learned/remembered/forgotten */
+
+/*
+ * Calculated base hp values for player at each level,
+ * store them so that drain life + restore life does not
+ * affect hit points.
+ */
+u16b player_hp[MAX_PLAYER_LEVEL];
 

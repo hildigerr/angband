@@ -328,9 +328,6 @@ extern u16b player_hp[MAX_PLAYER_LEVEL];
 extern s16b char_row;
 extern s16b char_col;
 
-#if 0 /* not used? */
-extern char *dsp_race[MAX_RACES]; /* Short strings for races. -CJS- */
-#endif
 
 
 extern player_class class[MAX_CLASS];
