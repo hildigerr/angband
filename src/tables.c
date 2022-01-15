@@ -34,21 +34,6 @@ char days[7][29] = {
 
 
 
-#ifndef MAC
-/* MPW doesn't seem to handle this very well, so replace store_buy array
-   with a function call on mac */
-/* functions defined in sets.c */
-extern int general_store(), armory(), weaponsmith(), temple(),
-  alchemist(), magic_shop();
-
-int blackmarket();
-int home();
-
-/* Each store will buy only certain items, based on TVAL */
-int (*store_buy[MAX_STORES])() = {
-       general_store, armory, weaponsmith, temple, alchemist, magic_shop,
-       blackmarket, home};
-#endif
 
 /*
  * used to calculate the number of blows the player gets in combat
