@@ -55,7 +55,6 @@ static void place_destroyed();
 static void blank_cave();
 static void cave_gen();
 static void tlink();
-static void mlink();
 static void town_gen();
 
 typedef struct coords {
@@ -2976,23 +2975,6 @@ static void tlink()
 	invcopy(&i_list[i], OBJ_NOTHING);
     tcptr = MIN_TRIX;
 }
-
-
-/* Link all free space in monster list together			 */
-static void mlink()
-{
-    register int i;
-
-    for (i = 0; i < MAX_M_IDX; i++)
-	if (m_list[i].mptr)
-	    delete_monster(i);
-    for (i = 0; i < MAX_M_IDX; i++)
-	m_list[i] = blank_monster;
-    delete_unique();		   /* Kludgey Fix ~Ludwig */
-    mfptr = MIN_M_IDX;
-}
-
-
 
 
 /*

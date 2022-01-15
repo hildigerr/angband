@@ -150,6 +150,24 @@ void fix2_delete_monster(int j)
 }
 
 
+
+
+/*
+ * Link all free space in monster list together
+ */
+void mlink()
+{
+    register int i;
+
+    for (i = 0; i < MAX_M_IDX; i++)
+	if (m_list[i].mptr) delete_monster(i);
+    for (i = 0; i < MAX_M_IDX; i++) m_list[i] = blank_monster;
+    delete_unique();		   /* Kludgey Fix ~Ludwig */
+
+    mfptr = MIN_M_IDX;
+}
+
+
 /*
  * Compact monsters	-RAK-
  *
