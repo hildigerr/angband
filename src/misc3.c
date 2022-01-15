@@ -25,6 +25,30 @@ char               *index();
 
 extern int rating;
 
+
+/*
+ * Deletes object from given location			-RAK-	
+ */
+int delete_object(int y, int x)
+{
+    register int        delete;
+    register cave_type *c_ptr;
+
+    c_ptr = &cave[y][x];
+    if (c_ptr->fval == BLOCKED_FLOOR)
+	c_ptr->fval = CORR_FLOOR;
+    pusht(c_ptr->tptr);		   /* then eliminate it */
+    c_ptr->tptr = 0;
+    c_ptr->fm = FALSE;
+    lite_spot(y, x);
+    if (test_lite(y, x))
+	delete = TRUE;
+    else
+	delete = FALSE;
+    return (delete);
+}
+
+
 /* 
  * When too many objects gather on the floor, delete some of them
  *

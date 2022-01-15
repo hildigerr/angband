@@ -619,6 +619,7 @@ int distance(int, int, int, int);
 
 /* misc3.c */
 int i_pop(void);
+int delete_object(int, int);
 int magik(int);
 int m_bonus(int, int, int);
 void place_trap(int, int, int);
@@ -729,7 +730,6 @@ void darken_player(int, int);
 int is_quest(int);
 void hit_trap(int, int);
 int cast_spell(cptr ,int, int *, int *);
-int delete_object(int, int);
 u32b monster_death(int, int, u32b, u32b, u32b);
 int mon_take_hit(int, int, int);
 
