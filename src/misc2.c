@@ -162,7 +162,11 @@ void mlink()
     for (i = 0; i < MAX_M_IDX; i++)
 	if (m_list[i].mptr) delete_monster(i);
     for (i = 0; i < MAX_M_IDX; i++) m_list[i] = blank_monster;
-    delete_unique();		   /* Kludgey Fix ~Ludwig */
+
+    /* delete_unique() Kludgey Fix ~Ludwig */
+    for (i = 0; i < MAX_R_IDX; i++)
+	if (c_list[i].cdefense & UNIQUE)
+	    u_list[i].exist = 0;
 
     mfptr = MIN_M_IDX;
 }

@@ -374,16 +374,6 @@ void check_unique(monster_type *m_ptr)
 }
 
 
-void delete_unique()
-{
-    int i;
-
-    for (i = 0; i < MAX_R_IDX; i++)
-	if (c_list[i].cdefense & UNIQUE)
-	    u_list[i].exist = 0;
-}
-
-
 
 /* Creates objects nearby the coordinates given		-RAK-	  */
 static int summon_object(int y, int x, int num, int typ, u32b good)
