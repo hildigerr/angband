@@ -166,7 +166,7 @@ int randnor(int mean, int stand)
 	offset = 4 * stand + randint(stand);
 
 	/* one half are negative */
-	if (randint(2)) offset = (-offset);
+	if (rand_int(2)) offset = (-offset);
 
 	return (mean + offset);
     }
@@ -203,7 +203,7 @@ int randnor(int mean, int stand)
 
 
     /* one half should be negative */
-    if (randint(2)) offset = (-offset);
+    if (rand_int(2)) offset = (-offset);
 
     return (mean + offset);
 }

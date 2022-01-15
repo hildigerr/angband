@@ -393,7 +393,7 @@ void gain_spells(void)
 
 	/* Learn a prayer at random */
 	while (new_spells) {
-	    j = randint(i) - 1;
+	    j = rand_int(i);
 	    if (spells[j] < 32) {
 		spell_learned |= 1L << spells[j];
 	    }

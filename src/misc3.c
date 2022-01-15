@@ -761,8 +761,8 @@ void random_object(int y, int x, int num)
 	    do {
 
 	    /* Pick a random location */
-	    j = y - 3 + randint(5);
-	    k = x - 4 + randint(7);
+	    j = rand_spread(y, 2);
+	    k = rand_spread(x, 3);
 
 	    /* Require legal grid */
 	    } while (!in_bounds(j,k));
@@ -803,8 +803,8 @@ void special_random_object(int y, int x, int num)
 
 	    
 	    /* Pick a random spot */
-	    j = y - 3 + randint(5);
-	    k = x - 4 + randint(7);
+	    j = rand_spread(y, d);
+	    k = rand_spread(x, d);
 	    
 	    /* Must have a clean grid */
 	    if (!clean_grid_bold(j, k)) continue;

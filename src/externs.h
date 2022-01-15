@@ -90,10 +90,36 @@
     ((x) >= panel_col_min) && ((x) <= panel_col_max)) ? (TRUE) : (FALSE))
 
 
+
+/**** Available macros ****/
+
 /*
- * Generates a random integer X where 1<=X<=M	-RAK-
+ * Generates a random long integer X where O<=X<M.
+ * The integer X falls along a uniform distribution.
+ * For example, if M is 100, you get "percentile dice"
  */
-#define randint(M) (((M) < 1) ? (1) : ((random() % (M)) + 1))
+#define rand_int(M) (random() % (M))
+
+/*
+ * Generates a random long integer X where A<=X<=B
+ * The integer X falls along a uniform distribution.
+ * Note: rand_range(0,N-1) == rand_int(N)
+ */
+#define rand_range(A,B) ((A) + (rand_int(1+(B)-(A))))
+
+/*
+ * Generate a random long integer X where A-D<=X<=A+D
+ * The integer X falls along a uniform distribution.
+ * Note: rand_spread(A,D) == rand_range(A-D,A+D)
+ */
+#define rand_spread(A,D) ((A) + (rand_int(1+(D)+(D))) - (D))
+
+
+/*
+ * Generate a random long integer X where 1<=X<=M
+ * Also, "correctly" handle the case of M<=1
+ */
+#define randint(M) (((M) <= 1) ? (1) : (rand_int(M) + 1))
 
 
 

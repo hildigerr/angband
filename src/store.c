@@ -173,10 +173,10 @@ static void prt_comment3(s32b offer, s32b asking, int final)
     vtype comment;
 
     if (final > 0) {
-	(void)strcpy(comment, comment3a[randint(3) - 1]);
+	(void)strcpy(comment, comment3a[rand_int(3)]);
     }
     else {
-	(void)strcpy(comment, comment3b[randint(15) - 1]);
+	(void)strcpy(comment, comment3b[rand_int(15)]);
     }
 
     insert_lnum(comment, "%A1", offer, FALSE);
@@ -191,11 +191,8 @@ static void prt_comment3(s32b offer, s32b asking, int final)
  */
 static void prt_comment4(void)
 {
-    register int tmp;
-
-    tmp = randint(5) - 1;
-    msg_print(comment4a[tmp]);
-    msg_print(comment4b[tmp]);
+    msg_print(comment4a[rand_int(5)]);
+    msg_print(comment4b[rand_int(5)]);
 }
 
 
@@ -204,7 +201,7 @@ static void prt_comment4(void)
  */
 static void prt_comment5(void)
 {
-    msg_print(comment5[randint(10) - 1]);
+    msg_print(comment5[rand_int(10)]);
 }
 
 
@@ -213,7 +210,7 @@ static void prt_comment5(void)
  */
 static void prt_comment6(void)
 {
-    msg_print(comment6[randint(5) - 1]);
+    msg_print(comment6[rand_int(5)]);
 }
 
 

@@ -799,7 +799,7 @@ static void make_attack(int m_idx)
 	      /* No physical attacks */
 	      case 0:
 		/* notice eventually */
-		if (!randint(10)) notice = TRUE;
+		if (!rand_int(10)) notice = TRUE;
 		break;
 
 	      /* Normal attack	 */
@@ -821,7 +821,7 @@ static void make_attack(int m_idx)
 		if (f_ptr->sustain_str) {
 		    msg_print("You feel weaker for a moment, but it passes.");
 		}
-		else if (randint(2) == 1) {
+		else if (rand_int(2)) {
 		    msg_print("You feel weaker.");
 		    (void)dec_stat(A_STR);
 		}
@@ -956,7 +956,7 @@ static void make_attack(int m_idx)
 		    msg_print(t1);
 		    prt_gold();
 		}
-		if (randint(2) == 1) {
+		if (rand_int(2)) {
 		    msg_print("There is a puff of smoke!");
 		    blinked = 1;   /* added -CFT */
 		    teleport_away(m_idx, MAX_SIGHT);
@@ -973,7 +973,8 @@ static void make_attack(int m_idx)
 		else {
 		    vtype               t1, t2;
 
-		    i = randint(inven_ctr) - 1;
+		    /* Steal a single item from the pack */
+		    i = rand_int(inven_ctr);
 
 		    /* Don't steal artifacts  -CFT */
 		    if ((inventory[i].tval >= TV_MIN_WEAR) &&
@@ -1079,7 +1080,7 @@ static void make_attack(int m_idx)
 	      /* Lose experience  */
 	      case 19:
 		f_ptr = &py.flags;
-		if (f_ptr->hold_life && randint(5) > 1) {
+		if (f_ptr->hold_life && rand_int(5)) {
 		    msg_print("You keep hold of your life force!");
 		}
 		else {
@@ -1208,7 +1209,7 @@ static void make_attack(int m_idx)
 
 	      /* Eat charges */
 	      case 24:
-		i = randint(inven_ctr) - 1;
+		i = rand_int(inven_ctr);
 		j = r_ptr->level;
 		i_ptr = &inventory[i];
 		if (((i_ptr->tval == TV_STAFF) || (i_ptr->tval == TV_WAND)) &&
@@ -1336,7 +1337,7 @@ static void make_attack(int m_idx)
 		    }
 		    msg_print(tmp_str);
 
-		    if (visible && !death && randint(4) == 1) {
+		    if (visible && !death && !rand_int(4)) {
 			c_recall[m_ptr->mptr].r_cdefense |=
 			    r_ptr->cdefense & CHARM_SLEEP;
 		    }
@@ -1473,7 +1474,7 @@ static void make_move(int m_idx, int *mm, u32b *rcmove)
 		    do_turn = TRUE;
 
 		    /* XXX Hack -- scared monsters can open locked/stuck doors */
-		    if ((m_ptr->monfear) && randint(2) == 1) {
+		    if ((m_ptr->monfear) && rand_int(2)) {
 			t_ptr->p1 = 0;
 		    }
 
@@ -1515,7 +1516,7 @@ static void make_move(int m_idx, int *mm, u32b *rcmove)
 		    invcopy(t_ptr, OBJ_OPEN_DOOR);
 
 		    /* 50% chance of breaking door */
-		    if (stuck_door) t_ptr->p1 = 1 - randint(2);
+		    if (stuck_door) t_ptr->p1 = 0 - rand_int(2);
 
 			c_ptr->fval = CORR_FLOOR;
 
@@ -1541,7 +1542,7 @@ static void make_move(int m_idx, int *mm, u32b *rcmove)
 			invcopy(t_ptr, OBJ_OPEN_DOOR);
 
 			/* 50% chance of breaking door */
-			t_ptr->p1 = 1 - randint(2);
+			t_ptr->p1 = 0 - rand_int(2);
 			    c_ptr->fval = CORR_FLOOR;
 
 			/* Redraw */
@@ -1773,7 +1774,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
     }
 
     /* Failed to cast */
-    else if (randint(chance) != 1) *took_turn = FALSE;
+    else if (rand_int(chance)) *took_turn = FALSE;
 
     /* Must be within certain range */
     else if (m_ptr->cdis > MAX_SPELL_DIS) *took_turn = FALSE;
@@ -1806,7 +1807,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
     if ((r_ptr->cdefense & INTELLIGENT) &&
 	(m_ptr->hp < ((r_ptr->hd[0] * r_ptr->hd[1]) / 10)) &&
 	(r_ptr->spells & CS_INT1 || r_ptr->spells2 & CS_INT2 ||
-	 r_ptr->spells3 & CS_INT3) && randint(2) == 1) {
+	 r_ptr->spells3 & CS_INT3) && rand_int(2)) {
 
 	desperate = TRUE;
 	c_recall[m_ptr->mptr].r_cdefense |= INTELLIGENT;
@@ -1830,7 +1831,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 
     /* Choose a spell to cast */
     if (!k) thrown_spell = 200;
-    else thrown_spell = spell_choice[randint(k) - 1];
+    else thrown_spell = spell_choice[rand_int(k)];
     thrown_spell++;
 
     /* all except teleport_away() and drain mana spells always disturb */
@@ -2433,7 +2434,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	  case 54:
 	    strcat(cdesc, "tries to blank your mind.");
 	    msg_print(cdesc);
-	    if (player_saves() || randint(2) == 1) {
+	    if (player_saves() || rand_int(2)) {
 		msg_print("You resist the spell.");
 	    }
 	    else if (lose_all_info()) {
@@ -2505,7 +2506,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    else strcat(cdesc, "mumbles strangely.");
 	    msg_print(cdesc);
 	    if ((player_saves()) ||
-	        (randint(3) != 1) ||
+	        (rand_int(3)) ||
 	        (py.flags.resist_nexus)) {
 		msg_print("You keep your feet firmly on the ground.");
 	    }
@@ -2618,7 +2619,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    msg_print(cdesc);
 
 	    /* Breath "walls", at PLAYER location */
-	    if (randint(10) == 1) {
+	    if (!rand_int(10)) {
 		br_wall(m_ptr->fy, m_ptr->fx);
 	    }
 
@@ -2859,8 +2860,8 @@ int multiply_monster(int y, int x, int cr_index, int m_idx)
     i = 0; do {
 
 	/* Pick a location near the given one */
-	j = y - 2 + randint(3);
-	k = x - 2 + randint(3);
+	j = rand_spread(y, 1);
+	k = rand_spread(x, 1);
 
     /*
      * don't create a new creature on top of the old one, that causes
@@ -3011,7 +3012,7 @@ static void mon_move(int m_idx, u32b *rcmove)
 	if (k) {
 
 	    /* Pick a random direction to prefer */
-	    dir = randint(k) - 1;
+	    dir = rand_int(k);
 
 	    /* Prefer that direction */
 	    i = mm[0];
@@ -3215,9 +3216,9 @@ void creatures(int attack)
 				m_ptr->csleep = 0;
 
 			    else if ((py.flags.rest == 0 && py.flags.paralysis < 1) ||
-		    (randint(50) == 1)) {
+		    !(rand_int(50))) {
 
-				notice = randint(1024);
+				notice = rand_int(1024);
 			
 		    /* XXX See if monster "notices" player */
 		    if ((notice * notice * notice) <=

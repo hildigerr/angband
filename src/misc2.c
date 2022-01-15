@@ -270,8 +270,8 @@ int place_monster(int y, int x, int r_idx, int slp)
 		    /* Try up to 50 nearby places */
 		    count = 0;
 		    do {
-			ny = y+randint(7)-4;
-			nx = x+randint(7)-4;
+			ny = rand_spread(y, 3);
+			nx = rand_spread(x, 3);
 			count++;
 		    } while (!test_place(ny,nx) && (count<51));
 
@@ -941,7 +941,7 @@ int get_mons_num(int level)
     while (1) {
 
 	if (level == 0) {
-	    i = randint(m_level[0]) - 1;
+	    i = rand_int(m_level[0]);
 	}
 
 	else {
@@ -1004,7 +1004,7 @@ int get_nmons_num(int level)
     while (1) {
 
 	if (level == 0) {
-	    i = randint(m_level[0]) - 1;
+	    i = rand_int(m_level[0]);
 	}
 
 	else {
@@ -1013,14 +1013,14 @@ int get_nmons_num(int level)
 
 	    num = m_level[level] - m_level[0];
 
-	    i = randint(num) - 1;
+	    i = rand_int(num);
 	    i += 15;
 	    if (i >= num) i = num - 1;
 
-	    j = randint(num) - 1;
+	    j = rand_int(num);
 	    if (j > i) i = j;
 
-	    j = randint(num) - 1;
+	    j = rand_int(num);
 	    if (j > i) i = j;
 
 	    level = c_list[i + m_level[0]].level;
@@ -1196,8 +1196,8 @@ int summon_monster(int *yp, int *xp, int slp)
     for (i = 0; i < 9; i++) {
 
 	/* Pick a nearby location */
-	y = *yp - 2 + randint(3);
-	x = *xp - 2 + randint(3);
+	y = rand_spread(*yp, 1);
+	x = rand_spread(*xp, 1);
 
 	/* Require legal grid */
 	if (!in_bounds(y, x)) continue;

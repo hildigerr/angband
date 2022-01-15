@@ -207,8 +207,8 @@ static void alloc_object(int set, int typ, int num)
 	while (1) {
 
 	    /* Location */
-	    y = randint(cur_height) - 1;
-	    x = randint(cur_width) - 1;
+	    y = rand_int(cur_height);
+	    x = rand_int(cur_width);
 
 	    if ((set == ALLOC_SET_CORR) && (cave[y][x].fval == CORR_FLOOR || cave[y][x].fval == BLOCKED_FLOOR)) continue;
 
@@ -333,9 +333,8 @@ static void place_streamer(int fval, int treas_chance)
     x = (cur_width / 2) + 16 - randint(33);
 
     /* Choose a direction (not including "5") */
-    dir = randint(8);		   /* Number 1-4, 6-9	 */
-    if (dir > 4)
-	dir = dir + 1;
+    dir = randint(8);
+    if (dir > 4) dir++;
 
     /* Place streamer into dungeon */
     t1 = 2 * DUN_STR_RNG + 1;	   /* Constants	 */
@@ -742,8 +741,8 @@ static void vault_trap(int y, int x, int yd, int xd, int num)
 	    do {		   /* add another bounds check -CFT */
 
 	/* Get a location */
-		y1 = y - yd - 1 + randint(2 * yd + 1);
-		x1 = x - xd - 1 + randint(2 * xd + 1);
+	y1 = rand_spread(y, yd);
+	x1 = rand_spread(x, xd);
 
 	    } while (!in_bounds(y1, x1));
 
@@ -2817,8 +2816,8 @@ static void cave_gen(void)
     }
 
     for (i = 0; i < k; i++) {
-	pick1 = randint(k) - 1;
-	pick2 = randint(k) - 1;
+	pick1 = rand_int(k);
+	pick2 = rand_int(k);
 	y1 = yloc[pick1];
 	x1 = xloc[pick1];
 	yloc[pick1] = yloc[pick2];
@@ -2867,8 +2866,8 @@ static void cave_gen(void)
     else if (alloc_level > 10) alloc_level = 10;
 
     /* Always place some stairs */    
-    place_stairs(2, randint(2) + 2, 3);
-    place_stairs(1, randint(2), 3);
+    place_stairs(2, rand_range(3,4), 3);
+    place_stairs(1, rand_range(1,2), 3);
 
 /* Set up the character co-ords, used by alloc_monster, place_win_monster */
     new_spot(&char_row, &char_col);

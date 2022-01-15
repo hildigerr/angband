@@ -35,7 +35,7 @@ void magic_init(void)
     /* The first 3 entries for potions are fixed */
     /* That is, slime mold juice, apple juice, water */
     for (i = 3; i < MAX_COLORS; i++) {
-	j = randint(MAX_COLORS - 3) + 2;
+	j = rand_int(MAX_COLORS - 3) + 3;
 	tmp = colors[i];
 	colors[i] = colors[j];
 	colors[j] = tmp;
@@ -43,7 +43,7 @@ void magic_init(void)
 
     /* Woods are used for staffs */
     for (i = 0; i < MAX_WOODS; i++) {
-	j = randint(MAX_WOODS) - 1;
+	j = rand_int(MAX_WOODS);
 	tmp = woods[i];
 	woods[i] = woods[j];
 	woods[j] = tmp;
@@ -51,7 +51,7 @@ void magic_init(void)
 
     /* Wands are made of metal */
     for (i = 0; i < MAX_METALS; i++) {
-	j = randint(MAX_METALS) - 1;
+	j = rand_int(MAX_METALS);
 	tmp = metals[i];
 	metals[i] = metals[j];
 	metals[j] = tmp;
@@ -59,7 +59,7 @@ void magic_init(void)
 
     /* Rocks are used for rings */
     for (i = 0; i < MAX_ROCKS; i++) {
-	j = randint(MAX_ROCKS) - 1;
+	j = rand_int(MAX_ROCKS);
 	tmp = rocks[i];
 	rocks[i] = rocks[j];
 	rocks[j] = tmp;
@@ -67,7 +67,7 @@ void magic_init(void)
 
     /* Rocks are used for amulets */
     for (i = 0; i < MAX_AMULETS; i++) {
-	j = randint(MAX_AMULETS) - 1;
+	j = rand_int(MAX_AMULETS);
 	tmp = amulets[i];
 	amulets[i] = amulets[j];
 	amulets[j] = tmp;
@@ -75,7 +75,7 @@ void magic_init(void)
 
     /* Hack -- Molds and Mushrooms (not normal foods) have colors */
     for (i = 0; i < MAX_SHROOM; i++) {
-	j = randint(MAX_SHROOM) - 1;
+	j = rand_int(MAX_SHROOM);
 	tmp = mushrooms[i];
 	mushrooms[i] = mushrooms[j];
 	mushrooms[j] = tmp;
@@ -85,12 +85,13 @@ void magic_init(void)
     for (h = 0; h < MAX_TITLES; h++) {
 	string[0] = '\0';
 
-	k = randint(2) + 1;
+	/* Construct a two or three word title */
+	k = rand_range(2,3);
 	for (i = 0; i < k; i++) {
 
 	    /* Add a one or two syllable word */
-	    for (j = randint(2); j > 0; j--) {
-		(void)strcat(string, syllables[randint(MAX_SYLLABLES) - 1]);
+	    for (j = rand_range(1,2); j > 0; j--) {
+		(void)strcat(string, syllables[rand_int(MAX_SYLLABLES)]);
 	    }
 
 	    /* Add a space */
