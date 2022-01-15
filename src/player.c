@@ -42,19 +42,4 @@ u32b spell_forgotten = 0;	/* bit mask of spells learned but forgotten */
 u32b spell_forgotten2 = 0;	/* bit mask of spells learned but forgotten */
 byte spell_order[64];		/* order spells learned/remembered/forgotten */
 
-#define MDO MAX_DUNGEON_OBJ
-/* Each type of character starts out with a few provisions.	*/
-/* Note that the entries refer to elements of the k_list[] array*/
-/* 356 = Food Ration, 365 = Wooden Torch, 123 = Cloak, 30 = Stiletto,
-   103 = Soft Leather Armor, 318 = Beginners-Magic, 322 = Beginners Handbook */
-
-u16b player_init[MAX_CLASS][5] = {
-		{ MDO, MDO+21,  34, 109, 258},	/* Warrior	 */
-		{ MDO, MDO+21,  29, 330, 220},	/* Mage		 */
-		{ MDO, MDO+21,  53, 334, 242},	/* Priest	 */
-		{ MDO, MDO+21,  46, 103, 330},	/* Rogue	 */
-		{ MDO, MDO+21,  34, 330,  74},	/* Ranger	 */
-		{ MDO, MDO+21,  34, 334, 209}	/* Paladin	 */
-        /* Last array object added for one extra useful object per class */
-};
 

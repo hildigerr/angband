@@ -32,6 +32,35 @@ char days[7][29] = {
 #endif
 
 
+#define MDO MAX_DUNGEON_OBJ
+/*
+ * Each player starts out with a few provisions.
+ * Note that the entries refer to elements of the k_list[] array
+ * 356 = Food Ration, 365 = Wooden Torch, 123 = Cloak, 30 = Stiletto,
+ * 103 = Soft Leather Armor, 318 = Beginners-Magic, 322 = Beginners Handbook
+ */
+
+u16b player_init[MAX_CLASS][5] = {
+
+	/* Warrior */
+    { MDO, MDO+21,  34, 109, 258},
+
+	/* Mage */
+    { MDO, MDO+21,  29, 330, 220},
+
+	/* Priest */
+    { MDO, MDO+21,  53, 334, 242},
+
+	/* Rogue */
+    { MDO, MDO+21,  46, 103, 330},
+
+	/* Ranger */
+    { MDO, MDO+21,  34, 330,  74},
+
+	/* Paladin */
+    { MDO, MDO+21,  34, 334, 209}
+};
+
 
 
 
