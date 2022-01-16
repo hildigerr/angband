@@ -211,22 +211,29 @@ static int          roffpline;	   /* Place to print line now being loaded. */
 
 
 /*
- * Do we know anything about this monster?
+ * Do we know anything special about this monster? 
  */
-int bool_roff_recall(int mon_num)
+int bool_roff_recall(int r_idx)
 {
-    register monster_lore *mp;
+    register monster_lore *l_ptr;
     register int          i;
 
-    if (wizard)
+    if (wizard) return TRUE;
+
+    l_ptr = &l_list[r_idx];
+
+    if (l_ptr->r_cmove || l_ptr->r_cdefense ||
+	l_ptr->r_spells || l_ptr->r_spells2 || l_ptr->r_spells3 ||
+	l_ptr->r_kills || l_ptr->r_deaths) {
 	return TRUE;
-    mp = &c_recall[mon_num];
-    if (mp->r_cmove || mp->r_cdefense || mp->r_kills || mp->r_spells ||
-	mp->r_spells2 || mp->r_spells3 || mp->r_deaths)
-	return TRUE;
-    for (i = 0; i < 4; i++)
-	if (mp->r_attacks[i])
+    }
+
+    for (i = 0; i < 4; i++) {
+	if (l_ptr->r_attacks[i]) {
 	    return TRUE;
+	}
+    }
+
     return FALSE;
 }
 
@@ -234,37 +241,37 @@ int bool_roff_recall(int mon_num)
 /*
  * Print out what we have discovered about this monster.
  */
-int roff_recall(int mon_num)
+int roff_recall(int r_idx)
 {
     const char             *p, *q;
     attid                  *pu;
     vtype                   temp;
 
-    register monster_lore  *mp;
+    register monster_lore  *l_ptr;
     register monster_race  *cp;
 
     register u32b         i, j, k;
 
     int                 mspeed;
     u32b              rcmove, rspells, rspells2, rspells3;
-    u32b              rcdefense; /* this was u16b, but c_recall[] uses u32b -CFT */
+    u32b              rcdefense; /* this was u16b, but l_list[] uses u32b -CFT */
     monster_lore         save_mem;
     int                 breath = FALSE, magic = FALSE;
     char			sex;
 
-    cp = &c_list[mon_num];
+    cp = &c_list[r_idx];
     sex = cp->gender;
-    mp = &c_recall[mon_num];
+    l_ptr = &l_list[r_idx];
 
     /* Hack -- Wizards know everything */
     if (wizard) {
 
 	/* Save the "old" memory */
-	save_mem = *mp;
+	save_mem = *l_ptr;
 
 	/* Make assumptions about kills, etc */
-	mp->r_kills = MAX_SHORT;
-	mp->r_wake = mp->r_ignore = MAX_UCHAR;
+	l_ptr->r_kills = MAX_SHORT;
+	l_ptr->r_wake = l_ptr->r_ignore = MAX_UCHAR;
 
 	j = (((cp->cmove & CM_4D2_OBJ) != 0) * 8) +
 	    (((cp->cmove & CM_2D2_OBJ) != 0) * 4) +
@@ -272,28 +279,28 @@ int roff_recall(int mon_num)
 	    ((cp->cmove & CM_90_RANDOM) != 0) +
 	    ((cp->cmove & CM_60_RANDOM) != 0);
 
-	mp->r_cmove = (cp->cmove & ~CM_TREASURE) | (j << CM_TR_SHIFT);
-	mp->r_cdefense = cp->cdefense;
-	mp->r_spells = cp->spells | CS_FREQ;
-	mp->r_spells2 = cp->spells2;
-	mp->r_spells3 = cp->spells3;
+	l_ptr->r_cmove = (cp->cmove & ~CM_TREASURE) | (j << CM_TR_SHIFT);
+	l_ptr->r_cdefense = cp->cdefense;
+	l_ptr->r_spells = cp->spells | CS_FREQ;
+	l_ptr->r_spells2 = cp->spells2;
+	l_ptr->r_spells3 = cp->spells3;
 	j = 0;
 	pu = cp->damage;
 	while (*pu != 0 && j < 4) {
-	    mp->r_attacks[j] = MAX_UCHAR;
+	    l_ptr->r_attacks[j] = MAX_UCHAR;
 	    j++;
 	    pu++;
 	}
     }
     roffpline = 0;
     roffp = roffbuf;
-    rspells = mp->r_spells & cp->spells & ~CS_FREQ;
-    rspells2 = mp->r_spells2 & cp->spells2;
-    rspells3 = mp->r_spells3 & cp->spells3;
+    rspells = l_ptr->r_spells & cp->spells & ~CS_FREQ;
+    rspells2 = l_ptr->r_spells2 & cp->spells2;
+    rspells3 = l_ptr->r_spells3 & cp->spells3;
 
 /* the CM_WIN property is always known, set it if a win monster */
-    rcmove = mp->r_cmove | (CM_WIN & cp->cmove);
-    rcdefense = mp->r_cdefense & cp->cdefense;
+    rcmove = l_ptr->r_cmove | (CM_WIN & cp->cmove);
+    rcdefense = l_ptr->r_cdefense & cp->cdefense;
     if ((cp->cdefense & UNIQUE) || (sex == 'p'))
 	(void)sprintf(temp, "%s:\n", cp->name);
     else
@@ -302,42 +309,43 @@ int roff_recall(int mon_num)
 /* Conflict history. */
 /* changed to act better for unique monsters -CFT */
     if (cp->cdefense & UNIQUE) {   /* treat unique differently... -CFT */
-	if (mp->r_deaths) {	   /* We've been killed... */
+	if (l_ptr->r_deaths) {	   /* We've been killed... */
 	    (void)sprintf(temp, "%s slain %d of your ancestors",
 			  (sex == 'm' ? "He has" : sex == 'f' ? "She has" :
 			   sex == 'p' ? "They have" : "It has"),
-			  mp->r_deaths);
+			  l_ptr->r_deaths);
 	    roff(temp);
 
 	    /* but we've also killed it */
-	    if (u_list[mon_num].dead) {
+	    if (u_list[r_idx].dead) {
 		sprintf(temp, ", but you have avenged %s!  ",
-			plural(mp->r_deaths, "him", "them"));
+			plural(l_ptr->r_deaths, "him", "them"));
 		roff(temp);
 	    }
 	    else {
 		sprintf(temp, ", who %s unavenged.  ",
-			plural(mp->r_deaths, "remains", "remain"));
+			plural(l_ptr->r_deaths, "remains", "remain"));
 		roff(temp);
 	    }
 	}
 
 	/* Dead unique who never hurt us */
-	else if (u_list[mon_num].dead) {
+	else if (u_list[r_idx].dead) {
 	    roff("You have slain this foe.  ");
 	}
     }
 
     /* Not unique, but killed us */
-    else if (mp->r_deaths) {
+    else if (l_ptr->r_deaths) {
+
 	(void)sprintf(temp,
 		      "%d of your ancestors %s",
-		      mp->r_deaths, plural(mp->r_deaths, "has", "have"));
+		      l_ptr->r_deaths, plural(l_ptr->r_deaths, "has", "have"));
 	roff(temp);
 	roff((sex == 'p' ? " been killed by these creatures, and " :
 	      " been killed by this creature, and "));
 
-	if (mp->r_kills == 0) {
+	if (l_ptr->r_kills == 0) {
 	    sprintf(temp, "%s not ever known to have been defeated.  ",
 		    (sex == 'm' ? "he is" : sex == 'f' ? "she is"
 		     : sex == 'p' ? "they are" : "it is"));
@@ -346,15 +354,15 @@ int roff_recall(int mon_num)
 	else {
 	    (void)sprintf(temp,
 			"at least %d of the beasts %s been exterminated.  ",
-			  mp->r_kills, plural(mp->r_kills, "has", "have"));
+			  l_ptr->r_kills, plural(l_ptr->r_kills, "has", "have"));
 	    roff(temp);
 	}
     }
 
     /* Not unique, and never killed us */
-    else if (mp->r_kills) {
+    else if (l_ptr->r_kills) {
 	(void)sprintf(temp, "At least %d of these creatures %s",
-		      mp->r_kills, plural(mp->r_kills, "has", "have"));
+		      l_ptr->r_kills, plural(l_ptr->r_kills, "has", "have"));
 	roff(temp);
 	roff(" been killed by you and your ancestors.  ");
     }
@@ -373,7 +381,7 @@ int roff_recall(int mon_num)
 	}
     }
 #endif
-    k = mon_num;
+    k = r_idx;
     if (k == MAX_R_IDX - 1)
 	roff("You feel you know it, and it knows you.  This can only mean trouble.  ");
     else {
@@ -391,7 +399,7 @@ int roff_recall(int mon_num)
 	roff(temp);
 	k = TRUE;
     }
-    else if (mp->r_kills) {
+    else if (l_ptr->r_kills) {
 	(void)sprintf(temp, "%s normally found at depths of %d feet",
 		      (sex == 'm' ? "He is" : sex == 'f' ? "She is" :
 		       sex == 'p' ? "They are" : "It is"),
@@ -458,7 +466,7 @@ int roff_recall(int mon_num)
 
     /* Kill it once to know experience, and quality */
     /* (natural, evil, undead) and variety (race) */
-    if (mp->r_kills) {
+    if (l_ptr->r_kills) {
 
 	if (cp->cdefense & UNIQUE) {
 	    roff("Killing this");
@@ -613,7 +621,7 @@ int roff_recall(int mon_num)
 		else {
 		    roff((sex == 'm' ? "He is" : sex == 'f' ? "She is" : sex == 'p' ? "They are" : "It is"));
 		}
-		if (mp->r_cdefense & INTELLIGENT) {
+		if (l_ptr->r_cdefense & INTELLIGENT) {
 		    roff(" magical, casting spells intelligently which ");
 		}
 		else {
@@ -686,7 +694,7 @@ int roff_recall(int mon_num)
 	/* XXX Could offset by level (?) */
 
 	/* Describe the spell frequency */
-	if ((mp->r_spells & CS_FREQ) > 5) {
+	if ((l_ptr->r_spells & CS_FREQ) > 5) {
 	    (void)sprintf(temp, "; 1 time in %lu", cp->spells & CS_FREQ);
 	    roff(temp);
 	}
@@ -698,9 +706,9 @@ int roff_recall(int mon_num)
 
     /* Do we know how hard they are to kill? Armor class, hit die. */
     /* hasten learning of uniques -CFT */
-    if (knowarmor(cp->level, mp->r_kills) ||
+    if (knowarmor(cp->level, l_ptr->r_kills) ||
 	((cp->cdefense & UNIQUE) &&
-	 knowuniqarmor(cp->level, mp->r_kills))) {
+	 knowuniqarmor(cp->level, l_ptr->r_kills))) {
 
 	(void)sprintf(temp, "%s an armor rating of %d",
 		      (sex == 'm' ? "He has" : sex == 'f' ? "She has" : sex == 'p' ? "They have" : "It has"), cp->ac);
@@ -822,9 +830,9 @@ int roff_recall(int mon_num)
     }
 
     /* Do we know how aware it is? */
-    if (((mp->r_wake * mp->r_wake) > cp->sleep) ||
-	(mp->r_ignore == MAX_UCHAR) ||
-	(cp->sleep == 0 && mp->r_kills >= 10)) {
+    if (((l_ptr->r_wake * l_ptr->r_wake) > cp->sleep) ||
+	(l_ptr->r_ignore == MAX_UCHAR) ||
+	(cp->sleep == 0 && l_ptr->r_kills >= 10)) {
 
 	roff((sex == 'm' ? "He " : sex == 'f' ? "She " : sex == 'p' ? "They " : "It "));
 	if (cp->sleep > 200) {
@@ -932,7 +940,7 @@ int roff_recall(int mon_num)
 
     /* Count the number of "known" attacks */
     for (k = j = 0; j < 4; j++) {
-	if (mp->r_attacks[j]) k++;
+	if (l_ptr->r_attacks[j]) k++;
     }
 
     pu = cp->damage;
@@ -946,7 +954,7 @@ int roff_recall(int mon_num)
 	int att_type, att_how, d1, d2;
 
 	/* Skip "unknown" attacks */
-	if (!mp->r_attacks[i]) continue;
+	if (!l_ptr->r_attacks[i]) continue;
 
 	/* Extract the attack info */
 	att_type = a_list[*pu].attack_type;
@@ -984,9 +992,9 @@ int roff_recall(int mon_num)
 	    if (d1 && d2) {
 
 		/* Hack -- do we KNOW the damage? */
-		if (knowdamage(cp->level, mp->r_attacks[i], (int)d1 * (int)d2) ||
+		if (knowdamage(cp->level, l_ptr->r_attacks[i], (int)d1 * (int)d2) ||
 		    ((cp->cdefense & UNIQUE) &&
-		     knowuniqdamage(cp->level, mp->r_attacks[i], (int)d1 * (int)d2))) {
+		     knowuniqdamage(cp->level, l_ptr->r_attacks[i], (int)d1 * (int)d2))) {
 
 		    /* Hack -- Loss of experience */
 		    if (att_type == 19) {
@@ -1011,7 +1019,7 @@ int roff_recall(int mon_num)
 	roff(".");
     }
 
-    else if (k > 0 && mp->r_attacks[0] >= 10) {
+    else if (k > 0 && l_ptr->r_attacks[0] >= 10) {
 	sprintf(temp, " %s no physical attacks.",
 		(sex == 'm' ? "He has" : sex == 'f' ? "She has" : sex == 'p' ? "They have" : "It has"));
 	roff(temp);
@@ -1037,7 +1045,7 @@ int roff_recall(int mon_num)
     prt("   --pause--", roffpline, 0);
 
     /* Hack -- Undo the "wizard memory" */
-    if (wizard) *mp = save_mem;
+    if (wizard) *l_ptr = save_mem;
 
     return inkey();
 }

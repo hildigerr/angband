@@ -97,7 +97,7 @@ void update_mon(int m_idx)
 	    if ((py.flags.see_infra > 0) &&
 		(m_ptr->cdis <= py.flags.see_infra)) {
 		if (NO_INFRA & r_ptr->cdefense)	/* changed to act sensibly -CFT */
-		    c_recall[m_ptr->r_idx].r_cdefense |= NO_INFRA;
+		    l_list[m_ptr->r_idx].r_cdefense |= NO_INFRA;
 		else
 		    flag = TRUE;   /* only can see if not NO_INFRA... */
 	    }
@@ -114,9 +114,9 @@ void update_mon(int m_idx)
 		else if (py.flags.see_inv) {
 		    flag = TRUE;
 #ifdef ATARIST_MWC
-		    c_recall[m_ptr->r_idx].r_cmove |= holder;
+		    l_list[m_ptr->r_idx].r_cmove |= holder;
 #else
-		    c_recall[m_ptr->r_idx].r_cmove |= CM_INVISIBLE;
+		    l_list[m_ptr->r_idx].r_cmove |= CM_INVISIBLE;
 #endif
 		}
 	    }
@@ -489,7 +489,7 @@ static void make_attack(int m_idx)
 	     ((py.misc.lev + 1) > r_ptr->level)) &&
 	    (randint(100) + (py.misc.lev) > 50)) {
 
-	    if (m_ptr->ml) c_recall[m_ptr->r_idx].r_cdefense |= EVIL;
+	    if (m_ptr->ml) l_list[m_ptr->r_idx].r_cdefense |= EVIL;
 	    attype = 99;
 	    adesc = 99;
 	}
@@ -1338,7 +1338,7 @@ static void make_attack(int m_idx)
 		    msg_print(tmp_str);
 
 		    if (visible && !death && !rand_int(4)) {
-			c_recall[m_ptr->r_idx].r_cdefense |=
+			l_list[m_ptr->r_idx].r_cdefense |=
 			    r_ptr->cdefense & CHARM_SLEEP;
 		    }
 		}
@@ -1351,13 +1351,13 @@ static void make_attack(int m_idx)
 	 * attacks if creature repelled (no damage done) 
 	 */
 	    if ((notice ||
-		 (c_recall[m_ptr->r_idx].r_attacks[attackn] != 0 &&
+		 (l_list[m_ptr->r_idx].r_attacks[attackn] != 0 &&
 		  attype != 99))
-		&& c_recall[m_ptr->r_idx].r_attacks[attackn] < MAX_UCHAR) {
-		c_recall[m_ptr->r_idx].r_attacks[attackn]++;
+		&& l_list[m_ptr->r_idx].r_attacks[attackn] < MAX_UCHAR) {
+		l_list[m_ptr->r_idx].r_attacks[attackn]++;
 	    }
-	    if (visible && death && c_recall[m_ptr->r_idx].r_deaths < MAX_SHORT) {
-		c_recall[m_ptr->r_idx].r_deaths++;
+	    if (visible && death && l_list[m_ptr->r_idx].r_deaths < MAX_SHORT) {
+		l_list[m_ptr->r_idx].r_deaths++;
 	    }
 	}
 	else {
@@ -1445,7 +1445,7 @@ static void make_move(int m_idx, int *mm, u32b *rcmove)
 	    /* Crunch up those Walls Morgoth and Umber Hulks!!!! */
 
 		do_move = TRUE;
-		c_recall[m_ptr->r_idx].r_cdefense |= BREAK_WALL;
+		l_list[m_ptr->r_idx].r_cdefense |= BREAK_WALL;
 		if ((i_ptr->tval == TV_CLOSED_DOOR) ||
 		    (i_ptr->tval == TV_SECRET_DOOR)) {	/* break the door -CFT  */
 		    invcopy(i_ptr, OBJ_OPEN_DOOR);
@@ -1813,7 +1813,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	 r_ptr->spells3 & CS_INT3) && rand_int(2)) {
 
 	desperate = TRUE;
-	c_recall[m_ptr->r_idx].r_cdefense |= INTELLIGENT;
+	l_list[m_ptr->r_idx].r_cdefense |= INTELLIGENT;
     }
 
     /* Extract the first set of spells */
@@ -2824,21 +2824,21 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	if ((m_ptr->ml)	|| (thrown_spell == 45) || (thrown_spell == 57)) {
 
 	    if (thrown_spell < 33) {
-		c_recall[m_ptr->r_idx].r_spells |= 1L << (thrown_spell - 1);
+		l_list[m_ptr->r_idx].r_spells |= 1L << (thrown_spell - 1);
 	    }
 	    else if (thrown_spell < 65) {
-		c_recall[m_ptr->r_idx].r_spells2 |= 1L << (thrown_spell - 33);
+		l_list[m_ptr->r_idx].r_spells2 |= 1L << (thrown_spell - 33);
 	    }
 	    else if (thrown_spell < 97) {
-		c_recall[m_ptr->r_idx].r_spells3 |= 1L << (thrown_spell - 65);
+		l_list[m_ptr->r_idx].r_spells3 |= 1L << (thrown_spell - 65);
 	    }
 
-	    if ((c_recall[m_ptr->r_idx].r_spells & CS_FREQ) != CS_FREQ)
-		c_recall[m_ptr->r_idx].r_spells++;
+	    if ((l_list[m_ptr->r_idx].r_spells & CS_FREQ) != CS_FREQ)
+		l_list[m_ptr->r_idx].r_spells++;
 
 	/* Take note of monsters that kill you */
-	    if (death && c_recall[m_ptr->r_idx].r_deaths < MAX_SHORT)
-		c_recall[m_ptr->r_idx].r_deaths++;
+	    if (death && l_list[m_ptr->r_idx].r_deaths < MAX_SHORT)
+		l_list[m_ptr->r_idx].r_deaths++;
 	}
     }
 }
@@ -3142,8 +3142,8 @@ static void mon_move(int m_idx, u32b *rcmove)
 
 	    /* little hack for Quylthulgs, so that will eventually notice
 	     * that they have no physical attacks */
-	    if (c_recall[m_ptr->r_idx].r_attacks[0] < MAX_UCHAR)
-		c_recall[m_ptr->r_idx].r_attacks[0]++;
+	    if (l_list[m_ptr->r_idx].r_attacks[0] < MAX_UCHAR)
+		l_list[m_ptr->r_idx].r_attacks[0]++;
 	}
     }
 }
@@ -3267,7 +3267,7 @@ void creatures(int attack)
 		    }
 		    update_mon(i);
 		    if (m_ptr->ml) {
-			r_ptr = &c_recall[m_ptr->r_idx];
+			r_ptr = &l_list[m_ptr->r_idx];
 			if (wake) {
 			    if (r_ptr->r_wake < MAX_UCHAR)
 				r_ptr->r_wake++;
@@ -3370,12 +3370,12 @@ static void shatter_quake(int mon_y, int mon_x)
 			    treas = monster_death((int)m_ptr->fy, (int)m_ptr->fx,
 						  r_ptr->cmove, 0, 0);
 			    if (m_ptr->ml) {
-				temp = (c_recall[m_ptr->r_idx].r_cmove & CM_TREASURE)
+				temp = (l_list[m_ptr->r_idx].r_cmove & CM_TREASURE)
 				    >> CM_TR_SHIFT;
 				if (temp > ((treas & CM_TREASURE) >> CM_TR_SHIFT))
 				    treas = (treas & ~CM_TREASURE) | (temp << CM_TR_SHIFT);
-				c_recall[m_ptr->r_idx].r_cmove = treas |
-				    (c_recall[m_ptr->r_idx].r_cmove & ~CM_TREASURE);
+				l_list[m_ptr->r_idx].r_cmove = treas |
+				    (l_list[m_ptr->r_idx].r_cmove & ~CM_TREASURE);
 			    }
 			    if (m_idx < c_ptr->m_idx)
 				delete_monster((int)c_ptr->m_idx);

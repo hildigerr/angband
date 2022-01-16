@@ -307,7 +307,7 @@ static int sv_write()
 	wr_unique(&u_list[i]);
 
     for (i = 0; i < MAX_R_IDX; i++) {
-	r_ptr = &c_recall[i];
+	r_ptr = &l_list[i];
 	if (r_ptr->r_cmove || r_ptr->r_cdefense || r_ptr->r_kills ||
 	    r_ptr->r_spells2 || r_ptr->r_spells3 || r_ptr->r_spells ||
 	    r_ptr->r_deaths || r_ptr->r_attacks[0] || r_ptr->r_attacks[1] ||
@@ -1003,7 +1003,7 @@ int load_player(int *generate)
 	while (u16b_tmp != 0xFFFF) {
 	    if (u16b_tmp >= MAX_R_IDX)
 		goto error;
-	    r_ptr = &c_recall[u16b_tmp];
+	    r_ptr = &l_list[u16b_tmp];
 	    rd_long(&r_ptr->r_cmove);
 	    rd_long(&r_ptr->r_spells);
 	    rd_long(&r_ptr->r_spells2);

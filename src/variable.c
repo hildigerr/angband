@@ -163,10 +163,11 @@ cave_type cave[MAX_HEIGHT][MAX_WIDTH];
 /* The array of dungeon monsters [MAX_M_IDX] */
 monster_type m_list[MAX_M_IDX];
 
+/* The array of monster "memory" [MAX_R_IDX] */
 #ifdef MAC
-monster_lore *c_recall;
+monster_lore *l_list;
 #else
-monster_lore c_recall[MAX_R_IDX];	/* Monster memories */
+monster_lore l_list[MAX_R_IDX];	/* Monster memories */
 #endif
 
 struct unique_mon u_list[MAX_R_IDX]; /* Unique check list... -LVB- */ 

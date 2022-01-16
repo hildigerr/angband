@@ -753,13 +753,13 @@ int mon_take_hit(int m_idx, int dam, int print_fear)
 	    (c_list[m_ptr->r_idx].cdefense & UNIQUE)) {
 	    /* recall even invisible uniques */
 
-	    tmp = (c_recall[m_ptr->r_idx].r_cmove & CM_TREASURE) >> CM_TR_SHIFT;
+	    tmp = (l_list[m_ptr->r_idx].r_cmove & CM_TREASURE) >> CM_TR_SHIFT;
 	    if (tmp > ((i & CM_TREASURE) >> CM_TR_SHIFT))
 		i = (i & ~CM_TREASURE) | (tmp << CM_TR_SHIFT);
-	    c_recall[m_ptr->r_idx].r_cmove =
-		(c_recall[m_ptr->r_idx].r_cmove & ~CM_TREASURE) | i;
-	    if (c_recall[m_ptr->r_idx].r_kills < MAX_SHORT)
-		c_recall[m_ptr->r_idx].r_kills++;
+	    l_list[m_ptr->r_idx].r_cmove =
+		(l_list[m_ptr->r_idx].r_cmove & ~CM_TREASURE) | i;
+	    if (l_list[m_ptr->r_idx].r_kills < MAX_SHORT)
+		l_list[m_ptr->r_idx].r_kills++;
 	}
 
 
@@ -984,7 +984,7 @@ void py_attack(int y, int x)
 		msg_print(out_val);
 
 		if (m_list[crptr].ml && randint(4) == 1) {
-		    c_recall[r_idx].r_cdefense |=
+		    l_list[r_idx].r_cdefense |=
 			c_list[r_idx].cdefense & CHARM_SLEEP;
 		}
 	    }
