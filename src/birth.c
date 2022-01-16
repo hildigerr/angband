@@ -697,6 +697,9 @@ void player_birth()
 {
     char		c;
 
+    player_class	*cp_ptr;
+    player_race		*rp_ptr;
+
 #ifdef AUTOROLLER
 
     u32b		auto_round = 0;
@@ -704,8 +707,6 @@ void player_birth()
     int			stat[6];
     int			autoroll = 0;
     int			msstat = 0;/* Max autoroll w/ look for -SAC */
-    player_class   *cptr;
-    player_race    *rptr;
     char		inp[60];
 
 #endif
@@ -724,6 +725,11 @@ void player_birth()
 
     /* Choose a class */
     choose_class();
+
+    /* Access the race/class */
+    cp_ptr = &class[py.misc.pclass];
+    rp_ptr = &race[py.misc.prace];
+
 
 #ifdef AUTOROLLER
 
@@ -751,8 +757,6 @@ void player_birth()
 	autoroll = TRUE;
 
 	clear_from(15);
-	cptr = &class[py.misc.pclass];
-	rptr = &race[py.misc.prace];
 	put_str("Enter minimum attribute for: ", 15, 2);
 
 	/* Check the stats */
@@ -763,42 +767,42 @@ void player_birth()
 	      case 0:
 		stat_idx = A_STR;
 		clear_from(16 + i);
-		msstat = adjust_stat(17, cptr->madj_str+rptr->str_adj, TRUE);
+		msstat = adjust_stat(17, cp_ptr->madj_str + rp_ptr->str_adj, TRUE);
 		sprintf(inp, "    Strength (Max of %2d): ", msstat);
 		put_str(inp, 16 + i, 5);
 		break;
 	      case 1:
 		stat_idx = A_INT;
 		clear_from(16 + i);
-		msstat = adjust_stat(17, cptr->madj_int+rptr->int_adj, TRUE);
+		msstat = adjust_stat(17, cp_ptr->madj_int + rp_ptr->int_adj, TRUE);
 		sprintf(inp, "Intelligence (Max of %2d): ", msstat);
 		put_str(inp, 16 + i, 5);
 		break;
 	      case 2:
 		stat_idx = A_WIS;
 		clear_from(16 + i);
-		msstat = adjust_stat(17, cptr->madj_wis+rptr->wis_adj, TRUE);
+		msstat = adjust_stat(17, cp_ptr->madj_wis + rp_ptr->wis_adj, TRUE);
 		sprintf(inp, "      Wisdom (Max of %2d): ", msstat);
 		put_str(inp, 16 + i, 5);
 		break;
 	      case 3:
 		stat_idx = A_DEX;
 		clear_from(16 + i);
-		msstat = adjust_stat(17, cptr->madj_dex+rptr->dex_adj, TRUE);
+		msstat = adjust_stat(17, cp_ptr->madj_dex + rp_ptr->dex_adj, TRUE);
 		sprintf(inp, "   Dexterity (Max of %2d): ", msstat);
 		put_str(inp, 16 + i, 5);
 		break;
 	      case 4:
 		stat_idx = A_CON;
 		clear_from(16 + i);
-		msstat = adjust_stat(17, cptr->madj_con+rptr->con_adj, TRUE);
+		msstat = adjust_stat(17, cp_ptr->madj_con + rp_ptr->con_adj, TRUE);
 		sprintf(inp, "Constitution (Max of %2d): ", msstat);
 		put_str(inp, 16 + i, 5);
 		break;
 	      case 5:
 		stat_idx = A_CHR;
 		clear_from(16 + i);
-		msstat = adjust_stat(17, cptr->madj_chr+rptr->chr_adj, TRUE);
+		msstat = adjust_stat(17, cp_ptr->madj_chr + rp_ptr->chr_adj, TRUE);
 		sprintf(inp, "    Charisma (Max of %2d): ", msstat);
 		put_str(inp, 16 + i, 5);
 		break;

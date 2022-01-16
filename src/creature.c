@@ -207,7 +207,7 @@ static int check_mon_lite(int y, int x)
 {
     register int m_idx;
 
-    m_idx = cave[y][x].cptr;
+    m_idx = cave[y][x].m_idx;
     if (m_idx <= 1)
 	return FALSE;
     else {
@@ -1420,7 +1420,7 @@ static void make_move(int m_idx, int *mm, u32b *rcmove)
 
 
 	if ((i == 4) && (m_ptr->monfear) &&  /* cornered (or things in the way!) -CWS */
-	    (!floor_grid_bold(newy, newx) || (c_ptr->cptr > 1))) {
+	    (!floor_grid_bold(newy, newx) || (c_ptr->m_idx > 1))) {
 	    monster_race      *r_ptr = &c_list[m_ptr->r_idx];
 	    vtype               m_name, out_val;
 	    
@@ -1579,7 +1579,7 @@ static void make_move(int m_idx, int *mm, u32b *rcmove)
 
 	/* Process player or OTHER monster in the way */
 	if (do_move)
-		if (c_ptr->cptr == 1) {
+		if (c_ptr->m_idx == 1) {
 		/*
 		 * if the monster is not lit, must call update_mon, it may be
 		 * faster than character, and hence could have just moved
@@ -1597,7 +1597,7 @@ static void make_move(int m_idx, int *mm, u32b *rcmove)
 	    }
 
 	    /* Creature is attempting to move on other creature?	   */
-	    else if ((c_ptr->cptr > 1) &&
+	    else if ((c_ptr->m_idx > 1) &&
 			 ((newy != m_ptr->fy) ||
 			  (newx != m_ptr->fx))) {
 
@@ -1608,23 +1608,23 @@ static void make_move(int m_idx, int *mm, u32b *rcmove)
 		    if ((movebits & CM_EATS_OTHER) &&
 #endif
 			(c_list[m_ptr->r_idx].mexp >
-			 c_list[m_list[c_ptr->cptr].r_idx].mexp)) {
-			if (m_list[c_ptr->cptr].ml)
+			 c_list[m_list[c_ptr->m_idx].r_idx].mexp)) {
+			if (m_list[c_ptr->m_idx].ml)
 #ifdef ATARIST_MWC
 			    *rcmove |= holder;
 #else
     			    *rcmove |= CM_EATS_OTHER;
 #endif
 			/* It ate an already processed monster. Handle normally. */
-			if (m_idx < c_ptr->cptr)
-			    delete_monster((int)c_ptr->cptr);
+			if (m_idx < c_ptr->m_idx)
+			    delete_monster((int)c_ptr->m_idx);
 		    /*
 		     * If it eats this monster, an already processed monster
 		     * will take its place, causing all kinds of havoc. 
 		     * Delay the kill a bit. 
 		     */
 			else
-			    fix1_delete_monster((int)c_ptr->cptr);
+			    fix1_delete_monster((int)c_ptr->m_idx);
 		    } else
 			do_move = FALSE;
 		    }
@@ -1954,7 +1954,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    hack_m_idx = m_idx;
 	    summon_monster(&y, &x, FALSE);
 	    hack_m_idx = (-1);
-	    update_mon((int)cave[y][x].cptr);
+	    update_mon((int)cave[y][x].m_idx);
 	    break;
 
 	  case 15:		   /* Summon Undead */
@@ -1967,7 +1967,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    hack_m_idx = m_idx;
 	    summon_undead(&y, &x);
 	    hack_m_idx = (-1);
-	    update_mon((int)cave[y][x].cptr);
+	    update_mon((int)cave[y][x].m_idx);
 	    break;
 
 	  case 16:		   /* Slow Person	 */
@@ -2020,7 +2020,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    hack_m_idx = m_idx;
 	    summon_demon(c_list[m_ptr->r_idx].level, &y, &x);
 	    hack_m_idx = (-1);
-	    update_mon((int)cave[y][x].cptr);
+	    update_mon((int)cave[y][x].m_idx);
 	    break;
 
 	  case 19:		   /* Summon Dragon */
@@ -2033,7 +2033,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    hack_m_idx = m_idx;
 	    summon_dragon(&y, &x);
 	    hack_m_idx = (-1);
-	    update_mon((int)cave[y][x].cptr);
+	    update_mon((int)cave[y][x].m_idx);
 	    break;
 
 	  case 20:		   /* Breath Lightning */
@@ -2405,7 +2405,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 		hack_m_idx = m_idx;
 		summon_monster(&y, &x, FALSE);
 		hack_m_idx = (-1);
-		update_mon((int)cave[y][x].cptr);
+		update_mon((int)cave[y][x].m_idx);
 	    }
 	    break;
 
@@ -2575,7 +2575,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    hack_m_idx = m_idx;
 	    summon_angel(&y, &x);
 	    hack_m_idx = (-1);
-	    update_mon((int)cave[y][x].cptr);
+	    update_mon((int)cave[y][x].m_idx);
 	    break;
 
 	  case 62:
@@ -2589,7 +2589,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 		hack_m_idx = m_idx;
 		summon_spider(&y, &x);
 		hack_m_idx = (-1);
-		update_mon((int)cave[y][x].cptr);
+		update_mon((int)cave[y][x].m_idx);
 	    }
 	    break;
 
@@ -2604,7 +2604,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 		hack_m_idx = m_idx;
 		summon_hound(&y, &x);
 		hack_m_idx = (-1);
-		update_mon((int)cave[y][x].cptr);
+		update_mon((int)cave[y][x].m_idx);
 	    }
 	    break;
 
@@ -2704,13 +2704,13 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 		hack_m_idx = m_idx;
 		summon_wraith(&y, &x);
 		hack_m_idx = (-1);
-		update_mon((int)cave[y][x].cptr);
+		update_mon((int)cave[y][x].m_idx);
 	    }
 	    for (k = 0; k < 7; k++) {
 		hack_m_idx = m_idx;
 		summon_gundead(&y, &x);
 		hack_m_idx = (-1);
-		update_mon((int)cave[y][x].cptr);
+		update_mon((int)cave[y][x].m_idx);
 	    }
 	    break;
 
@@ -2742,7 +2742,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 		hack_m_idx = m_idx;
 		summon_reptile(&y, &x);
 		hack_m_idx = (-1);
-		update_mon((int)cave[y][x].cptr);
+		update_mon((int)cave[y][x].m_idx);
 	    }
 	    break;
 
@@ -2757,7 +2757,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 		hack_m_idx = m_idx;
 		summon_ant(&y, &x);
 		hack_m_idx = (-1);
-		update_mon((int)cave[y][x].cptr);
+		update_mon((int)cave[y][x].m_idx);
 	    }
 	    break;
 
@@ -2772,13 +2772,13 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 		hack_m_idx = m_idx;
 		summon_unique(&y, &x);
 		hack_m_idx = (-1);
-		update_mon((int)cave[y][x].cptr);
+		update_mon((int)cave[y][x].m_idx);
 	    }
 	    for (k = 0; k < 4; k++) {
 		hack_m_idx = m_idx;
 		summon_jabberwock(&y, &x);
 		hack_m_idx = (-1);
-		update_mon((int)cave[y][x].cptr);
+		update_mon((int)cave[y][x].m_idx);
 	    }
 	    break;
 
@@ -2793,7 +2793,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 		hack_m_idx = m_idx;
 		summon_gundead(&y, &x);
 		hack_m_idx = (-1);
-		update_mon((int)cave[y][x].cptr);
+		update_mon((int)cave[y][x].m_idx);
 	    }
 	    break;
 
@@ -2808,7 +2808,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 		hack_m_idx = m_idx;
 		summon_ancientd(&y, &x);
 		hack_m_idx = (-1);
-		update_mon((int)cave[y][x].cptr);
+		update_mon((int)cave[y][x].m_idx);
 	    }
 	    break;
 
@@ -2873,23 +2873,23 @@ int multiply_monster(int y, int x, int cr_index, int m_idx)
 	if (in_bounds(j, k) && (j != y || k != x)) {
 	    c_ptr = &cave[j][k];
 	    if (floor_grid_bold(j, k) && (c_ptr->i_idx == 0) &&
-		(c_ptr->cptr != 1)) {
-		if (c_ptr->cptr > 1) {	/* Creature there already?	 */
+		(c_ptr->m_idx != 1)) {
+		if (c_ptr->m_idx > 1) {	/* Creature there already?	 */
 		/* Some critters are cannibalistic!	    */
 		    if ((c_list[cr_index].cmove & CM_EATS_OTHER)
 		/* Check the experience level -CJS- */
 			&& c_list[cr_index].mexp >=
-			c_list[m_list[c_ptr->cptr].r_idx].mexp) {
+			c_list[m_list[c_ptr->m_idx].r_idx].mexp) {
 		    /* It ate an already processed monster.Handle normally. */
-			if (m_idx < c_ptr->cptr)
-			    delete_monster((int)c_ptr->cptr);
+			if (m_idx < c_ptr->m_idx)
+			    delete_monster((int)c_ptr->m_idx);
 		    /*
 		     * If it eats this monster, an already processed mosnter
 		     * will take its place, causing all kinds of havoc. Delay
 		     * the kill a bit. 
 		     */
 			else
-			    fix1_delete_monster((int)c_ptr->cptr);
+			    fix1_delete_monster((int)c_ptr->m_idx);
 
 		    /* in case compact_monster() is called,it needs m_idx */
 			hack_m_idx = m_idx;
@@ -2964,7 +2964,7 @@ static void mon_move(int m_idx, u32b *rcmove)
 	/* Count the adjacent monsters */
 	for (k = 0, i = (int)m_ptr->fy - 1; i <= (int)m_ptr->fy + 1; i++) {
 	    for (j = (int)m_ptr->fx - 1; j <= (int)m_ptr->fx + 1; j++) {
-		if (in_bounds(i, j) && (cave[i][j].cptr > 1)) k++;
+		if (in_bounds(i, j) && (cave[i][j].m_idx > 1)) k++;
 	    }
 	}
 
@@ -3007,7 +3007,7 @@ static void mon_move(int m_idx, u32b *rcmove)
 		floor_grid_bold(i, j) &&
 
 		/* Do not allow attack against the player */
-		(cave[i][j].cptr != 1)) mm[k++] = dir;
+		(cave[i][j].m_idx != 1)) mm[k++] = dir;
 		dir++;
 	    }
 
@@ -3308,7 +3308,7 @@ static void shatter_quake(int mon_y, int mon_x)
     register monster_race *r_ptr;
     int                    kill, damage = 0, tmp, y, x = 0;
     vtype                  out_val, m_name;
-    int                    m_idx = cave[mon_y][mon_x].cptr;
+    int                    m_idx = cave[mon_y][mon_x].m_idx;
     /* needed when we kill another monster */
 
     for (i = mon_y - 8; i <= mon_y + 8; i++)
@@ -3317,13 +3317,13 @@ static void shatter_quake(int mon_y, int mon_x)
 		if ((i == mon_y) && (j == mon_x))
 		    continue;
 		c_ptr = &cave[i][j];
-		if (c_ptr->cptr > 1) {
-		    m_ptr = &m_list[c_ptr->cptr];
+		if (c_ptr->m_idx > 1) {
+		    m_ptr = &m_list[c_ptr->m_idx];
 		    r_ptr = &c_list[m_ptr->r_idx];
 
 		    if (!(r_ptr->cmove & CM_PHASE) &&
 			!(r_ptr->cdefense & BREAK_WALL)) {
-			if ((movement_rate(c_ptr->cptr) == 0) ||
+			if ((movement_rate(c_ptr->m_idx) == 0) ||
 			    (r_ptr->cmove & CM_ATTACK_ONLY))
 			/* monster can not move to escape the wall */
 			    kill = TRUE;
@@ -3377,18 +3377,18 @@ static void shatter_quake(int mon_y, int mon_x)
 				c_recall[m_ptr->r_idx].r_cmove = treas |
 				    (c_recall[m_ptr->r_idx].r_cmove & ~CM_TREASURE);
 			    }
-			    if (m_idx < c_ptr->cptr)
-				delete_monster((int)c_ptr->cptr);
+			    if (m_idx < c_ptr->m_idx)
+				delete_monster((int)c_ptr->m_idx);
 			    else
-				fix1_delete_monster((int)c_ptr->cptr);
+				fix1_delete_monster((int)c_ptr->m_idx);
 			} /* if monster's hp < 0 */
 		    }
-		} else if (c_ptr->cptr == 1) {	/* Kill the dumb player! */
+		} else if (c_ptr->m_idx == 1) {	/* Kill the dumb player! */
 		    kill = TRUE;
 		    for (y = i - 1; y <= i + 1; y++) {
 			for (x = j - 1; x <= j + 1; x++) {
 			    if (floor_grid_bold(y, x) &&
-			    (cave[y][x].cptr == 0) && !(y == i && x == j)) {
+			    (cave[y][x].m_idx == 0) && !(y == i && x == j)) {
 				kill = FALSE;
 				break;
 			    }
@@ -3461,7 +3461,7 @@ static void shatter_quake(int mon_y, int mon_x)
 		    c_ptr->pl = FALSE;
 		    c_ptr->fm = FALSE;
 		} else if ((c_ptr->fval <= MAX_CAVE_FLOOR) && (c_ptr->i_idx == 0)
-			   && (c_ptr->cptr != 1)) {
+			   && (c_ptr->m_idx != 1)) {
 		    /* don't bury player, it made him unattackable -CFT */
 		    tmp = randint(10);
 		    if (tmp < 6)
@@ -3492,7 +3492,7 @@ static void br_wall(int mon_y, int mon_x)
     for (y = char_row - 1; y <= char_row + 1; y++) {
 	for (x = char_col - 1; x <= char_col + 1; x++) {
 	    if (floor_grid_bold(y,x) &&
-	      (cave[y][x].cptr == 0) && !(y == char_row && x == char_col)) {
+	      (cave[y][x].m_idx == 0) && !(y == char_row && x == char_col)) {
 		kill = FALSE;
 		break;
 	    }

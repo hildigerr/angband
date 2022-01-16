@@ -528,13 +528,13 @@ static int sv_write()
     for (i = 0; i < MAX_HEIGHT; i++)
 	for (j = 0; j < MAX_WIDTH; j++) {
 	    c_ptr = &cave[i][j];
-	    if (c_ptr->cptr != 0) {
+	    if (c_ptr->m_idx != 0) {
 		wr_byte((byte) i);
 		wr_byte((byte) j);
-		wr_short((u16b) c_ptr->cptr); /* was wr_byte -CWS */
+		wr_short((u16b) c_ptr->m_idx); /* was wr_byte -CWS */
 	    }
 	}
-    wr_byte((byte) 0xFF);	   /* marks end of cptr info */
+    wr_byte((byte) 0xFF);	   /* marks end of m_idx info */
     for (i = 0; i < MAX_HEIGHT; i++)
 	for (j = 0; j < MAX_WIDTH; j++) {
 	    c_ptr = &cave[i][j];
@@ -1389,10 +1389,10 @@ int load_player(int *generate)
     /* let's correctly fix the invisible monster bug  -CWS */
 	    if ((version_maj >= 2) && (version_min >= 6)) {
 		rd_short((u16b *) & u16b_tmp);
-		cave[ychar][xchar].cptr = u16b_tmp;
+		cave[ychar][xchar].m_idx = u16b_tmp;
 	    } else {
 		rd_byte((byte *) & char_tmp);
-		cave[ychar][xchar].cptr = char_tmp;
+		cave[ychar][xchar].m_idx = char_tmp;
 	    }
 	    if (xchar > MAX_WIDTH || ychar > MAX_HEIGHT) {
 		vtype               t1;

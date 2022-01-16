@@ -125,7 +125,7 @@ static void new_spot(s16b *y, s16b *x)
 	j = randint(cur_width - 2);
 	c_ptr = &cave[i][j];
     }
-    while (c_ptr->fval >= MIN_CLOSED_SPACE || (c_ptr->cptr != 0)
+    while (c_ptr->fval >= MIN_CLOSED_SPACE || (c_ptr->m_idx != 0)
 	   || (c_ptr->i_idx != 0) || (c_ptr->fval == NT_LIGHT_FLOOR)
 	   || (c_ptr->fval == NT_DARK_FLOOR));
     *y = i;
@@ -423,7 +423,7 @@ static void repl_spot(int y, int x, int typ)
     if (c_ptr->i_idx != 0) delete_object(y, x);
 
     /* Delete any monster at that location */
-    if (c_ptr->cptr > 1) delete_monster((int)c_ptr->cptr);
+    if (c_ptr->m_idx > 1) delete_monster((int)c_ptr->m_idx);
 }
 
 

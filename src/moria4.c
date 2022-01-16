@@ -854,7 +854,7 @@ static void area_affect(int dir, int y, int x)
 	    /* notice visible monsters */
 	    /* the monster should be visible since update_mon() checks
 	     * for the special case of being in find mode */
-	    if (c_ptr->cptr > 1 && m_list[c_ptr->cptr].ml) {
+	    if (c_ptr->m_idx > 1 && m_list[c_ptr->m_idx].ml) {
 		end_find();
 		return;
 	    }
@@ -1060,13 +1060,13 @@ void move_player(int dir, int do_pickup)
     }
 
     /* Attacking a creature! */
-    else if (c_ptr->cptr > 1) {
+    else if (c_ptr->m_idx > 1) {
 
 	/* Hitting a monster is disturbing */
 	end_find();
 
 		    /* if player can see monster, and was in find mode, then nothing */
-		    if (was_running && m_list[c_ptr->cptr].ml) {
+		    if (was_running && m_list[c_ptr->m_idx].ml) {
 			    /* did not do anything this turn */
 			    free_turn_flag = TRUE;
 		    }

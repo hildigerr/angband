@@ -461,7 +461,7 @@ typedef struct _cave_type cave_type;
 
 struct _cave_type {
 
-  u16b cptr;
+  u16b m_idx;		/* Monster index (in m_list) */
   u16b i_idx;		/* Item index (in i_list) */
 
   byte fval;

@@ -79,7 +79,7 @@
  */
 #define empty_grid_bold(Y,X) \
     ((cave[Y][X].fval < MIN_CLOSED_SPACE) && \
-     (cave[Y][X].cptr == 0))
+     (cave[Y][X].m_idx == 0))
     
 /*
  * Determines if a map location is currently "on screen" -RAK-

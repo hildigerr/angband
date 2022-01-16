@@ -239,7 +239,7 @@ void place_trap(int y, int x, int sval)
     register int cur_pos;
 
     if (!in_bounds(y, x)) return; /* abort! -CFT */
-    if (cave[y][x].cptr >= MIN_M_IDX) return; /* don't put rubble under monsters, it's annoying -CFT */
+    if (cave[y][x].m_idx >= MIN_M_IDX) return; /* don't put rubble under monsters, it's annoying -CFT */
 
     if (cave[y][x].i_idx != 0)
 	if ((i_list[cave[y][x].i_idx].tval == TV_STORE_DOOR) ||
@@ -358,7 +358,7 @@ void place_gold(int y, int x)
     }
 
     /* Under the player */
-    if (cave[y][x].cptr == 1) {
+    if (cave[y][x].m_idx == 1) {
 	msg_print("You feel something roll beneath your feet.");
     }
 }
@@ -647,7 +647,7 @@ again:
     }
 
     /* Is it on the player? */
-    if (cave[y][x].cptr == 1) {
+    if (cave[y][x].m_idx == 1) {
 	msg_print("You feel something roll beneath your feet.");
     }
 
@@ -705,7 +705,7 @@ void place_object(int y, int x)
     }
 
     /* Under the player */
-    if (cave[y][x].cptr == 1) {
+    if (cave[y][x].m_idx == 1) {
 	msg_print ("You feel something roll beneath your feet.");
     }
 }
@@ -787,7 +787,7 @@ void place_good(int y, int x, u32b good)
 	}
     }
 
-    if (cave[y][x].cptr == 1) {
+    if (cave[y][x].m_idx == 1) {
 	msg_print("You feel something roll beneath your feet.");
     }
 }

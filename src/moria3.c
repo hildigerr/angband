@@ -191,22 +191,22 @@ static int look_see(int x, int y, int *transparent)
     out_val[0] = 0;
 
     /* Examine visible monsters */
-    if (gl_rock == 0 && c_ptr->cptr > 1 && m_list[c_ptr->cptr].ml) {
+    if (gl_rock == 0 && c_ptr->m_idx > 1 && m_list[c_ptr->m_idx].ml) {
 
-	j = m_list[c_ptr->cptr].r_idx;
+	j = m_list[c_ptr->m_idx].r_idx;
 
 	if (c_list[j].cdefense & UNIQUE) {
 	    (void)sprintf(out_val, "%s %s (%s).  [(r)ecall]",
 			  dstring,
 			  c_list[j].name,
-			  look_mon_desc((int)c_ptr->cptr));
+			  look_mon_desc((int)c_ptr->m_idx));
 	}
 	else {
 	    (void)sprintf(out_val, "%s %s %s (%s).  [(r)ecall]",
 			  dstring,
 			  (is_a_vowel(c_list[j].name[0]) ? "an" : "a"),
 			  c_list[j].name,
-			  look_mon_desc((int)c_ptr->cptr));
+			  look_mon_desc((int)c_ptr->m_idx));
 	}
 
 	dstring = "It is on";
@@ -640,9 +640,9 @@ void do_cmd_open()
 	}
 
 	/* Monster in the way */
-	else if (c_ptr->cptr > 1) {
+	else if (c_ptr->m_idx > 1) {
 
-	    m_ptr = &m_list[c_ptr->cptr];
+	    m_ptr = &m_list[c_ptr->m_idx];
 
 	    if (m_ptr->ml) {
 
@@ -831,8 +831,8 @@ void do_cmd_close()
 	}
 
 	/* Monster in the way */
-		else if (c_ptr->cptr != 0) {
-		    m_ptr = &m_list[c_ptr->cptr];
+		else if (c_ptr->m_idx != 0) {
+		    m_ptr = &m_list[c_ptr->m_idx];
 		    if (m_ptr->ml) {
 			if (c_list[m_ptr->r_idx].cdefense & UNIQUE)
 			    (void)sprintf(m_name, "%s", c_list[m_ptr->r_idx].name);
@@ -988,9 +988,9 @@ void tunnel(int dir)
 	return;
     }
 
-	if (c_ptr->cptr > 1) {
+	if (c_ptr->m_idx > 1) {
 
-	    m_ptr = &m_list[c_ptr->cptr];
+	    m_ptr = &m_list[c_ptr->m_idx];
 	    if (m_ptr->ml) {
 		    if (c_list[m_ptr->r_idx].cdefense & UNIQUE)
 				(void)sprintf(m_name, "%s", c_list[m_ptr->r_idx].name);
@@ -1151,9 +1151,9 @@ void do_cmd_disarm()
 	}
 
 	/* Monster in the way */
-	else if (c_ptr->cptr > 1) {
+	else if (c_ptr->m_idx > 1) {
 
-	    m_ptr = &m_list[c_ptr->cptr];
+	    m_ptr = &m_list[c_ptr->m_idx];
 	    if (m_ptr->ml)
 		(void)sprintf(m_name, "The %s", c_list[m_ptr->r_idx].name);
 	    else
@@ -1303,7 +1303,7 @@ void bash()
 	(void)mmove(dir, &y, &x);
 	c_ptr = &cave[y][x];
 
-	if (c_ptr->cptr > 1) {
+	if (c_ptr->m_idx > 1) {
 	    if (py.flags.afraid > 0) {
 		msg_print("You are too afraid!");
 	    }
@@ -1429,7 +1429,7 @@ void do_cmd_spike()
 	    t_ptr = &i_list[c_ptr->i_idx];
 
 	    if (t_ptr->tval == TV_CLOSED_DOOR)
-		if (c_ptr->cptr == 0) {
+		if (c_ptr->m_idx == 0) {
 
 		    if (find_range(TV_SPIKE, TV_NEVER, &i, &j)) {
 
@@ -1456,7 +1456,7 @@ void do_cmd_spike()
 		} else {
 		    free_turn_flag = FALSE;
 		    (void)sprintf(tmp_str, "The %s is in your way!",
-				  c_list[m_list[c_ptr->cptr].r_idx].name);
+				  c_list[m_list[c_ptr->m_idx].r_idx].name);
 		    msg_print(tmp_str);
 		}
 	    else if (t_ptr->tval == TV_OPEN_DOOR)
@@ -1570,9 +1570,9 @@ void do_cmd_fire()
 			flag = TRUE;
 		    c_ptr = &cave[y][x];
 		    if (floor_grid_bold(y, x) && (!flag)) {
-			if (c_ptr->cptr > 1) {
+			if (c_ptr->m_idx > 1) {
 			    flag = TRUE;
-			    m_ptr = &m_list[c_ptr->cptr];
+			    m_ptr = &m_list[c_ptr->m_idx];
 			    tbth = tbth - cur_dis;
 			/* if monster not lit, make it much more difficult to
 			 * hit, subtract off most bonuses, and reduce bthb
@@ -1611,7 +1611,7 @@ void do_cmd_fire()
 			     * always print fear msgs, so player can stop
 			     * shooting -CWS 
 			     */
-				i = mon_take_hit((int)c_ptr->cptr, tdam, TRUE);
+				i = mon_take_hit((int)c_ptr->m_idx, tdam, TRUE);
 				if (i < 0) {
 				    char                buf[100];
 				    char                cdesc[100];
@@ -1623,7 +1623,7 @@ void do_cmd_fire()
 				    } else
 					strcpy(cdesc, "It");
 				    (void)sprintf(buf,
-						  pain_message((int)c_ptr->cptr,
+						  pain_message((int)c_ptr->m_idx,
 							       (int)tdam), cdesc);
 				    msg_print(buf);
 				}

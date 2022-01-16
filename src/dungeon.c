@@ -91,7 +91,7 @@ void dungeon(void)
     target_mode = FALSE;
 #endif
 
-    cave[char_row][char_col].cptr = 1;
+    cave[char_row][char_col].m_idx = 1;
 
     if (create_up_stair && (dun_level == 0))	/* just in case... */
 	create_up_stair = FALSE;

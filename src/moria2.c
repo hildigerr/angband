@@ -29,13 +29,13 @@ static int fearless(monster_race *);
 void move_rec(int y1, int x1, int y2, int x2)
 {
     /* this always works correctly, even if y1==y2 and x1==x2 */
-	int m_idx = cave[y1][x1].cptr;
+	int m_idx = cave[y1][x1].m_idx;
 
 	/* No monster is at the old location */
-	cave[y1][x1].cptr = 0;
+	cave[y1][x1].m_idx = 0;
 
 	/* Copy the monster index */
-	cave[y2][x2].cptr = m_idx;
+	cave[y2][x2].m_idx = m_idx;
 }
 
 
@@ -464,7 +464,7 @@ u32b monster_death(int y, int x, u32b flags, u32b good, u32b win)
 			t_ptr->name2 = ART_MORGOTH;
 			t_ptr->p1 = 125;
 			t_ptr->cost = 10000000L;
-			if (cave[j][k].cptr == 1)
+			if (cave[j][k].m_idx == 1)
 			    msg_print("You feel something roll beneath your feet.");
 		    } else {
 			int                 cur_pos;
@@ -492,7 +492,7 @@ u32b monster_death(int y, int x, u32b flags, u32b good, u32b win)
 			t_ptr->cost = 500000L;
 			t_ptr->ident |= ID_SHOW_HITDAM;
 			GROND = 1;
-			if (cave[j][k].cptr == 1)
+			if (cave[j][k].m_idx == 1)
 			    msg_print("You feel something roll beneath your feet.");
 		    }
 		    lite_spot(j, k);
@@ -657,8 +657,8 @@ int mon_take_hit(int m_idx, int dam, int print_fear)
     s32b                   new_exp, new_exp_frac;
 
     register monster_type  *m_ptr;
-    register struct misc   *p_ptr;
-    register monster_race *c_ptr;
+    register struct misc   *p_ptr = &py.misc;
+    register monster_race *r_ptr;
 
     int                     m_take_hit = (-1);
     u32b                  tmp;
@@ -669,17 +669,17 @@ int mon_take_hit(int m_idx, int dam, int print_fear)
     /* Get the creature */
     m_ptr = &m_list[m_idx];
 
+    r_ptr = &c_list[m_ptr->r_idx];
+
     /* Hurt it, and wake it up */
     m_ptr->hp -= dam;
     m_ptr->csleep = 0;
-
-    c_ptr = &c_list[m_ptr->r_idx];
 
     /* It is dead now */
     if (m_ptr->hp < 0) {
 
 	/* Delete ghost file */
-	if (m_ptr->r_idx == (MAX_R_IDX - 1)) {
+	if (m_ptr->r_idx == (MAX_R_IDX-1)) {
 
 	    char                temp[100];
 
@@ -740,9 +740,9 @@ int mon_take_hit(int m_idx, int dam, int print_fear)
 	    } /* if found */
 	} /* if quest monster */
 
-	object_level = (dun_level + c_ptr->level) >> 1;
+	object_level = (dun_level + r_ptr->level) >> 1;
 	coin_type = 0;
-	get_coin_type(c_ptr);
+	get_coin_type(r_ptr);
 	i = monster_death((int)m_ptr->fy, (int)m_ptr->fx,
 			  c_list[m_ptr->r_idx].cmove,
 			  (c_list[m_ptr->r_idx].cdefense & (SPECIAL | GOOD)),
@@ -761,17 +761,16 @@ int mon_take_hit(int m_idx, int dam, int print_fear)
 	    if (c_recall[m_ptr->r_idx].r_kills < MAX_SHORT)
 		c_recall[m_ptr->r_idx].r_kills++;
 	}
-	c_ptr = &c_list[m_ptr->r_idx];
-	p_ptr = &py.misc;
 
-	if (c_ptr->cdefense & UNIQUE) {
+
+	if (r_ptr->cdefense & UNIQUE) {
 	    u_list[m_ptr->r_idx].exist = 0;
 	    u_list[m_ptr->r_idx].dead = 1;
 	}
 
 	/* Give some experience */
-	new_exp = ((long)c_ptr->mexp * c_ptr->level) / p_ptr->lev;
-	new_exp_frac = ((((long)c_ptr->mexp * c_ptr->level) % p_ptr->lev)
+	new_exp = ((long)r_ptr->mexp * r_ptr->level) / p_ptr->lev;
+	new_exp_frac = ((((long)r_ptr->mexp * r_ptr->level) % p_ptr->lev)
 			* 0x10000L / p_ptr->lev) + p_ptr->exp_frac;
 
 	if (new_exp_frac >= 0x10000L) {
@@ -806,7 +805,7 @@ int mon_take_hit(int m_idx, int dam, int print_fear)
 	    m_ptr->maxhp = 1;
 	percentage = (m_ptr->hp * 100L) / (m_ptr->maxhp);
 
-	if (fearless(c_ptr)) {
+	if (fearless(r_ptr)) {
 	/* No monster, so no fear */
 	monster_is_afraid = 0;
 
@@ -827,7 +826,7 @@ int mon_take_hit(int m_idx, int dam, int print_fear)
 
 	    /* Take note */
 	    if (print_fear && m_ptr->ml && los(char_row, char_col, m_ptr->fy, m_ptr->fx)) {
-		monster_name(m_name, m_ptr, c_ptr);
+		monster_name(m_name, m_ptr, r_ptr);
 		sprintf(out_val, "%s flees in terror!", m_name);
 		msg_print(out_val);
 	    }
@@ -849,7 +848,7 @@ int mon_take_hit(int m_idx, int dam, int print_fear)
 		if (monster_is_afraid == 1) monster_is_afraid = (-1);
 		m_ptr->monfear = 0;
 		if (m_ptr->ml && print_fear) {
-		    char                sex = c_ptr->gender;
+		    char                sex = r_ptr->gender;
 
 		    monster_name(m_name, m_ptr, c_ptr);
 		    sprintf(out_val, "%s recovers %s courage.", m_name,
@@ -876,7 +875,7 @@ void py_attack(int y, int x)
     register inven_type    *i_ptr;
     register struct misc   *p_ptr;
 
-    crptr = cave[y][x].cptr;
+    crptr = cave[y][x].m_idx;
     r_idx = m_list[crptr].r_idx;
 
     m_list[crptr].csleep = 0;
@@ -1311,14 +1310,14 @@ static int stays_when_throw(inven_type *i_ptr)
 void py_bash(int y, int x)
 {
     int                     monster, k, avg_max_hp, base_tohit, r_idx;
-    register monster_race *c_ptr;
     register monster_type  *m_ptr;
+    register monster_race *r_ptr;
     vtype                   m_name, out_val;
 
-    monster = cave[y][x].cptr;
+    monster = cave[y][x].m_idx;
     m_ptr = &m_list[monster];
     r_idx = m_ptr->r_idx;
-    c_ptr = &c_list[r_idx];
+    r_ptr = &c_list[r_idx];
     m_ptr->csleep = 0;
 
 /* Does the player know what he's fighting?	   */
@@ -1345,7 +1344,7 @@ void py_bash(int y, int x)
 
     /* Hack -- test for contact */
     if (test_hit(base_tohit, (int)py.misc.lev,
-		 (int)py.stats.use_stat[A_DEX], (int)c_ptr->ac, CLA_BTH)) {
+		 (int)py.stats.use_stat[A_DEX], (int)r_ptr->ac, CLA_BTH)) {
 
 	(void)sprintf(out_val, "You hit %s.", m_name);
 	msg_print(out_val);
@@ -1377,9 +1376,9 @@ void py_bash(int y, int x)
 	    m_name[0] = toupper((int)m_name[0]);	/* Capitalize */
 
 	    /* Powerful monsters cannot be stunned */
-	    avg_max_hp = ((c_ptr->cdefense & MAX_HP) ?
-			   (c_ptr->hd[0] * c_ptr->hd[1]) :
-			   ((c_ptr->hd[0] * (c_ptr->hd[1] + 1)) >> 1));
+	    avg_max_hp = ((r_ptr->cdefense & MAX_HP) ?
+			   (r_ptr->hd[0] * r_ptr->hd[1]) :
+			   ((r_ptr->hd[0] * (r_ptr->hd[1] + 1)) >> 1));
 
 	    /* Apply saving throw */
 	    if ((100 + randint(400) + randint(400)) >
