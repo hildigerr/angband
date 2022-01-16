@@ -589,7 +589,7 @@ static void init_m_level()
 
     k = MAX_R_IDX - WIN_MON_TOT;
     for (i = 0; i < k; i++)
-	m_level[c_list[i].level]++;
+	m_level[r_list[i].level]++;
 
     for (i = 1; i <= MAX_R_LEV; i++)
 	m_level[i] += m_level[i-1];

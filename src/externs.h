@@ -388,11 +388,14 @@ extern s16b inven_weight;		/* Cur carried weight	*/
 extern s16b equip_ctr;			/* Cur equipment ctr	*/
 
 /* Following are creature arrays and variables			*/
+
+/* The array of monster races */
 #ifdef MACGAME
-extern monster_race *c_list;
+extern monster_race *r_list;
 #else
-extern monster_race c_list[MAX_R_IDX];
+extern monster_race r_list[MAX_R_IDX];
 #endif
+
 extern describe_mon_type desc_list[MAX_R_IDX];
 extern monster_type m_list[MAX_M_IDX];
 extern s16b m_level[MAX_R_LEV+1];

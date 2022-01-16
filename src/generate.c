@@ -811,9 +811,9 @@ static void vault_jelly(int y, int x)
     /* Hack -- allocate a simple sleeping jelly */
     while (1) {
 	int m = randint(l) - 1;
-	if (((c_list[m].cchar == 'j') || (c_list[m].cchar == ',')
-	     || (c_list[m].cchar == 'i') || (c_list[m].cchar == 'm'))
-	    && !(c_list[m].cdefense & EVIL)) {
+	if (((r_list[m].cchar == 'j') || (r_list[m].cchar == ',')
+	     || (r_list[m].cchar == 'i') || (r_list[m].cchar == 'm'))
+	    && !(r_list[m].cdefense & EVIL)) {
 	place_monster(y, x, m, TRUE);
 	break;
 	}
@@ -831,7 +831,7 @@ static void vault_undead(int y, int x)
     l = m_level[MAX_R_LEV];
     do {
 	m = randint(l) - 1;
-	if ((c_list[m].cdefense & UNDEAD) && !(c_list[m].cdefense & UNIQUE)) {
+	if ((r_list[m].cdefense & UNDEAD) && !(r_list[m].cdefense & UNIQUE)) {
 	    summon = TRUE;
 	place_monster(y, x, m, TRUE);
 	}
@@ -847,7 +847,7 @@ static void vault_orc(int y, int x, int rank)
     switch (rank) {
       case 1:
 	while (i < MAX_R_IDX) {
-	    if (!stricmp(c_list[i].name, "Snaga"))
+	    if (!stricmp(r_list[i].name, "Snaga"))
 		break;
 	    i++;
 	}
@@ -855,7 +855,7 @@ static void vault_orc(int y, int x, int rank)
       case 2:
       case 3:
 	while (i < MAX_R_IDX) {
-	    if (!stricmp(c_list[i].name, "Black orc"))
+	    if (!stricmp(r_list[i].name, "Black orc"))
 		break;
 	    i++;
 	}
@@ -863,14 +863,14 @@ static void vault_orc(int y, int x, int rank)
       case 4:
       case 5:
 	while (i < MAX_R_IDX) {
-	    if (!stricmp(c_list[i].name, "Uruk-Hai"))
+	    if (!stricmp(r_list[i].name, "Uruk-Hai"))
 		break;
 	    i++;
 	}
 	break;
       case 6:
 	while (i < MAX_R_IDX) {
-	    if (!stricmp(c_list[i].name, "Orc captain"))
+	    if (!stricmp(r_list[i].name, "Orc captain"))
 		break;
 	    i++;
 	}
@@ -888,42 +888,42 @@ static void vault_troll(int y, int x, int rank)
     switch (rank) {
       case 1:
 	while (i < MAX_R_IDX) {
-	    if (!stricmp(c_list[i].name, "Forest troll"))
+	    if (!stricmp(r_list[i].name, "Forest troll"))
 		break;
 	    i++;
 	}
 	break;
       case 2:
 	while (i < MAX_R_IDX) {
-	    if (!stricmp(c_list[i].name, "Stone troll"))
+	    if (!stricmp(r_list[i].name, "Stone troll"))
 		break;
 	    i++;
 	}
 	break;
       case 3:
 	while (i < MAX_R_IDX) {
-	    if (!stricmp(c_list[i].name, "Ice troll"))
+	    if (!stricmp(r_list[i].name, "Ice troll"))
 		break;
 	    i++;
 	}
 	break;
       case 4:
 	while (i < MAX_R_IDX) {
-	    if (!stricmp(c_list[i].name, "Cave troll"))
+	    if (!stricmp(r_list[i].name, "Cave troll"))
 		break;
 	    i++;
 	}
 	break;
       case 5:
 	while (i < MAX_R_IDX) {
-	    if (!stricmp(c_list[i].name, "Water troll"))
+	    if (!stricmp(r_list[i].name, "Water troll"))
 		break;
 	    i++;
 	}
 	break;
       case 6:
 	while (i < MAX_R_IDX) {
-	    if (!stricmp(c_list[i].name, "Olog-Hai"))
+	    if (!stricmp(r_list[i].name, "Olog-Hai"))
 		break;
 	    i++;
 	}
@@ -945,42 +945,42 @@ static void vault_dragon(int y, int x, int rank, int type)
 	switch (type) {
 	  case 1:
 	    while (i < MAX_R_IDX) {
-		if (!stricmp(c_list[i].name, "Young blue dragon"))
+		if (!stricmp(r_list[i].name, "Young blue dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 2:
 	    while (i < MAX_R_IDX) {
-		if (!stricmp(c_list[i].name, "Young white dragon"))
+		if (!stricmp(r_list[i].name, "Young white dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 3:
 	    while (i < MAX_R_IDX) {
-		if (!stricmp(c_list[i].name, "Young green dragon"))
+		if (!stricmp(r_list[i].name, "Young green dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 4:
 	    while (i < MAX_R_IDX) {
-		if (!stricmp(c_list[i].name, "Young black dragon"))
+		if (!stricmp(r_list[i].name, "Young black dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 5:
 	    while (i < MAX_R_IDX) {
-		if (!stricmp(c_list[i].name, "Young red dragon"))
+		if (!stricmp(r_list[i].name, "Young red dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 6:
 	    while (i < MAX_R_IDX) {
-		if (!stricmp(c_list[i].name, "Young Multi-Hued Dragon"))
+		if (!stricmp(r_list[i].name, "Young Multi-Hued Dragon"))
 		    break;
 		i++;
 	    }
@@ -992,42 +992,42 @@ static void vault_dragon(int y, int x, int rank, int type)
 	switch (type) {
 	  case 1:
 	    while (i < MAX_R_IDX) {
-		if (!stricmp(c_list[i].name, "Mature blue Dragon"))
+		if (!stricmp(r_list[i].name, "Mature blue Dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 2:
 	    while (i < MAX_R_IDX) {
-		if (!stricmp(c_list[i].name, "Mature white Dragon"))
+		if (!stricmp(r_list[i].name, "Mature white Dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 3:
 	    while (i < MAX_R_IDX) {
-		if (!stricmp(c_list[i].name, "Mature green Dragon"))
+		if (!stricmp(r_list[i].name, "Mature green Dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 4:
 	    while (i < MAX_R_IDX) {
-		if (!stricmp(c_list[i].name, "Mature black Dragon"))
+		if (!stricmp(r_list[i].name, "Mature black Dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 5:
 	    while (i < MAX_R_IDX) {
-		if (!stricmp(c_list[i].name, "Mature red Dragon"))
+		if (!stricmp(r_list[i].name, "Mature red Dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 6:
 	    while (i < MAX_R_IDX) {
-		if (!stricmp(c_list[i].name, "Mature Multi-Hued Dragon"))
+		if (!stricmp(r_list[i].name, "Mature Multi-Hued Dragon"))
 		    break;
 		i++;
 	    }
@@ -1038,42 +1038,42 @@ static void vault_dragon(int y, int x, int rank, int type)
 	switch (type) {
 	  case 1:
 	    while (i < MAX_R_IDX) {
-		if (!stricmp(c_list[i].name, "Ancient blue Dragon"))
+		if (!stricmp(r_list[i].name, "Ancient blue Dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 2:
 	    while (i < MAX_R_IDX) {
-		if (!stricmp(c_list[i].name, "Ancient white Dragon"))
+		if (!stricmp(r_list[i].name, "Ancient white Dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 3:
 	    while (i < MAX_R_IDX) {
-		if (!stricmp(c_list[i].name, "Ancient green Dragon"))
+		if (!stricmp(r_list[i].name, "Ancient green Dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 4:
 	    while (i < MAX_R_IDX) {
-		if (!stricmp(c_list[i].name, "Ancient black Dragon"))
+		if (!stricmp(r_list[i].name, "Ancient black Dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 5:
 	    while (i < MAX_R_IDX) {
-		if (!stricmp(c_list[i].name, "Ancient red Dragon"))
+		if (!stricmp(r_list[i].name, "Ancient red Dragon"))
 		    break;
 		i++;
 	    }
 	    break;
 	  case 6:
 	    while (i < MAX_R_IDX) {
-		if (!stricmp(c_list[i].name, "Ancient Multi-Hued Dragon"))
+		if (!stricmp(r_list[i].name, "Ancient Multi-Hued Dragon"))
 		    break;
 		i++;
 	    }
@@ -1092,42 +1092,42 @@ static void vault_demon(int y, int x, int rank)
     switch (rank) {
       case 1:
 	while (i < MAX_R_IDX) {
-	    if (!stricmp(c_list[i].name, "Vrock"))
+	    if (!stricmp(r_list[i].name, "Vrock"))
 		break;
 	    i++;
 	}
 	break;
       case 2:
 	while (i < MAX_R_IDX) {
-	    if (!stricmp(c_list[i].name, "Hezrou"))
+	    if (!stricmp(r_list[i].name, "Hezrou"))
 		break;
 	    i++;
 	}
 	break;
       case 3:
 	while (i < MAX_R_IDX) {
-	    if (!stricmp(c_list[i].name, "Glabrezu"))
+	    if (!stricmp(r_list[i].name, "Glabrezu"))
 		break;
 	    i++;
 	}
 	break;
       case 4:
 	while (i < MAX_R_IDX) {
-	    if (!stricmp(c_list[i].name, "Nalfeshnee"))
+	    if (!stricmp(r_list[i].name, "Nalfeshnee"))
 		break;
 	    i++;
 	}
 	break;
       case 5:
 	while (i < MAX_R_IDX) {
-	    if (!stricmp(c_list[i].name, "Marilith"))
+	    if (!stricmp(r_list[i].name, "Marilith"))
 		break;
 	    i++;
 	}
 	break;
       case 6:
 	while (i < MAX_R_IDX) {
-	    if (!stricmp(c_list[i].name, "Lesser balrog"))
+	    if (!stricmp(r_list[i].name, "Lesser balrog"))
 		break;
 	    i++;
 	}
@@ -1145,42 +1145,42 @@ static void vault_giant(int y, int x, int rank)
     switch (rank) {
       case 1:
 	while (i < MAX_R_IDX) {
-	    if (!stricmp(c_list[i].name, "Hill giant"))
+	    if (!stricmp(r_list[i].name, "Hill giant"))
 		break;
 	    i++;
 	}
 	break;
       case 2:
 	while (i < MAX_R_IDX) {
-	    if (!stricmp(c_list[i].name, "Frost giant"))
+	    if (!stricmp(r_list[i].name, "Frost giant"))
 		break;
 	    i++;
 	}
 	break;
       case 3:
 	while (i < MAX_R_IDX) {
-	    if (!stricmp(c_list[i].name, "Fire giant"))
+	    if (!stricmp(r_list[i].name, "Fire giant"))
 		break;
 	    i++;
 	}
 	break;
       case 4:
 	while (i < MAX_R_IDX) {
-	    if (!stricmp(c_list[i].name, "Stone giant"))
+	    if (!stricmp(r_list[i].name, "Stone giant"))
 		break;
 	    i++;
 	}
 	break;
       case 5:
 	while (i < MAX_R_IDX) {
-	    if (!stricmp(c_list[i].name, "Cloud giant"))
+	    if (!stricmp(r_list[i].name, "Cloud giant"))
 		break;
 	    i++;
 	}
 	break;
       case 6:
 	while (i < MAX_R_IDX) {
-	    if (!stricmp(c_list[i].name, "Storm giant"))
+	    if (!stricmp(r_list[i].name, "Storm giant"))
 		break;
 	    i++;
 	}

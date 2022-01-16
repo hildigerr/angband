@@ -48,7 +48,7 @@ void delete_monster(int j)
     if (j < 2)
 	return;			   /* trouble? abort! -CFT */
     m_ptr = &m_list[j];
-    if (c_list[m_ptr->r_idx].cdefense & UNIQUE) u_list[m_ptr->mptr].exist = 0;
+    if (r_list[m_ptr->r_idx].cdefense & UNIQUE) u_list[m_ptr->mptr].exist = 0;
     cave[m_ptr->fy][m_ptr->fx].m_idx = 0;
     if (m_ptr->ml)
 	lite_spot((int)m_ptr->fy, (int)m_ptr->fx);
@@ -102,8 +102,8 @@ void fix1_delete_monster(int j)
 	target_mon = j;
 #endif
     m_ptr = &m_list[j];
-    if (c_list[m_ptr->r_idx].cdefense & UNIQUE)
-	if (c_list[m_ptr->r_idx].cdefense & UNIQUE) u_list[m_ptr->mptr].exist = 0;
+    if (r_list[m_ptr->r_idx].cdefense & UNIQUE)
+	if (r_list[m_ptr->r_idx].cdefense & UNIQUE) u_list[m_ptr->mptr].exist = 0;
 /* force the hp negative to ensure that the monster is dead, for example, if
  * the monster was just eaten by another, it will still have positive hit
  * points 
@@ -136,8 +136,8 @@ void fix2_delete_monster(int j)
 	target_mon = j; 
 #endif
 
-    m_ptr = &m_list[j];		   /* Fixed from a c_list ptr to a m_list ptr. -CFT */
-    if (c_list[m_ptr->r_idx].cdefense & UNIQUE) u_list[m_ptr->mptr].exist = 0;
+    m_ptr = &m_list[j];		   /* Fixed from a r_list ptr to a m_list ptr. -CFT */
+    if (r_list[m_ptr->r_idx].cdefense & UNIQUE) u_list[m_ptr->mptr].exist = 0;
     if (j != m_max - 1) {
 	m_ptr = &m_list[m_max - 1];
 	cave[m_ptr->fy][m_ptr->fx].m_idx = j;
@@ -163,7 +163,7 @@ void wipe_m_list()
 
     /* delete_unique() Kludgey Fix ~Ludwig */
     for (i = 0; i < MAX_R_IDX; i++)
-	if (c_list[i].cdefense & UNIQUE)
+	if (r_list[i].cdefense & UNIQUE)
 	    u_list[i].exist = 0;
 
     /* XXX Should already be done */
@@ -181,7 +181,8 @@ int compact_monsters(void)
 {
     register int           i;
     int                    cur_dis, delete_any;
-    register monster_type *m_ptr;
+    monster_type	*m_ptr;
+    monster_race	*r_ptr;
 
     msg_print("Compacting monsters...");
 
@@ -196,12 +197,12 @@ int compact_monsters(void)
 	for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 
 	    m_ptr = &m_list[i];
+	    r_ptr = &r_list[m_ptr->r_idx];
 
 	    if ((cur_dis < m_ptr->cdis) && (randint(3) == 1)) {
+
 	    /* Don't compact Melkor! */
-		if (c_list[m_ptr->r_idx].cmove & CM_WIN)
-		/* do nothing */
-		    continue;
+		if (r_ptr->cmove & CM_WIN) continue;
 
 	    /* in case this is called from within creatures(), this is a
 	     * horrible hack, the m_list/creatures() code needs to be
@@ -251,6 +252,7 @@ int place_monster(int y, int x, int r_idx, int slp)
 {
     register int           cur_pos, j, ny, nx, count;
     register monster_type *m_ptr;
+    register monster_race *r_ptr;
     char                   buf[100];
 
     /* Verify monster race */
@@ -259,17 +261,20 @@ int place_monster(int y, int x, int r_idx, int slp)
     /* Verify location */
     if (!test_place(y, x)) return FALSE;
 
-    if (c_list[r_idx].cdefense & UNIQUE) {
+    /* Get the race */
+    r_ptr = &r_list[r_idx];
+
+    if (r_ptr->cdefense & UNIQUE) {
 	if (u_list[r_idx].exist) {
 	    if (wizard) {
-		(void)sprintf(buf, "Tried to create %s but exists.", c_list[r_idx].name);
+		(void)sprintf(buf, "Tried to create %s but exists.", r_ptr->name);
 		msg_print(buf);
 	    }
 	    return FALSE;
 	}
 	if (u_list[r_idx].dead) {
 	    if (wizard) {
-		(void)sprintf(buf, "Tried to create %s but dead.", c_list[r_idx].name);
+		(void)sprintf(buf, "Tried to create %s but dead.", r_ptr->name);
 		msg_print(buf);
 	    }
 	    return FALSE;
@@ -284,20 +289,20 @@ int place_monster(int y, int x, int r_idx, int slp)
     if (cur_pos == -1) return FALSE;
 
     /* Note the monster */
-    if ((wizard || peek) && (c_list[r_idx].cdefense & UNIQUE)) {
-	msg_print(c_list[r_idx].name);
+    if ((wizard || peek) && (r_ptr->cdefense & UNIQUE)) {
+	msg_print(r_ptr->name);
     }
     
     /* Powerful monster */
-    if (c_list[r_idx].level > (unsigned)dun_level) {
+    if (r_ptr->level > (unsigned)dun_level) {
 	int                 c;
 
 	/* Uniques get rating based on "out of depth" amount */
-	rating += ((c = c_list[r_idx].level - dun_level) > 30) ? 15 : c / 2;
+	rating += ((c = r_ptr->level - dun_level) > 30) ? 15 : c / 2;
 	
 	/* Normal monsters are worth "half" as much */
-	if (c_list[r_idx].cdefense & UNIQUE) {
-	    rating += (c_list[r_idx].level - dun_level) / 2;
+	if (r_ptr->cdefense & UNIQUE) {
+	    rating += (r_ptr->level - dun_level) / 2;
 	}
     }
 
@@ -312,18 +317,18 @@ int place_monster(int y, int x, int r_idx, int slp)
     m_ptr->r_idx = r_idx;
 
     /* Assign maximal hitpoints */
-    if ((c_list[r_idx].cdefense & MAX_HP) ) {
-	m_ptr->hp = max_hp(c_list[r_idx].hd);
+    if ((r_ptr->cdefense & MAX_HP) ) {
+	m_ptr->hp = max_hp(r_ptr->hd);
     }
     else {
-	m_ptr->hp = pdamroll(c_list[r_idx].hd);
+	m_ptr->hp = pdamroll(r_ptr->hd);
     }
 
     /* And start out fully healthy */
     m_ptr->maxhp = m_ptr->hp;
 
     /* Extract the monster base speed */
-    m_ptr->cspeed = c_list[r_idx].speed - 10;
+    m_ptr->cspeed = r_ptr->speed - 10;
     
     /* No "damage" yet */
     m_ptr->stunned = 0;
@@ -340,12 +345,12 @@ int place_monster(int y, int x, int r_idx, int slp)
 
     /* Update the monster sleep info */
     if (slp) {
-	if (c_list[r_idx].sleep == 0) {
+	if (r_ptr->sleep == 0) {
 	    m_ptr->csleep = 0;
 	}
 	else {
-	    m_ptr->csleep = ((int)c_list[r_idx].sleep * 2) +
-			     randint((int)c_list[r_idx].sleep * 10);
+	    m_ptr->csleep = ((int)r_ptr->sleep * 2) +
+			     randint((int)r_ptr->sleep * 10);
 	}
     }
 
@@ -353,18 +358,18 @@ int place_monster(int y, int x, int r_idx, int slp)
     /* line-of-sight and can cast spells or breathe, should be asleep.   */
     /* This is an extension of Um55's sleeping dragon code...            */
  else
-    if (((c_list[r_idx].spells & (CAUSE_LIGHT|CAUSE_SERIOUS|HOLD_PERSON|
+    if (((r_ptr->spells & (CAUSE_LIGHT|CAUSE_SERIOUS|HOLD_PERSON|
                                   BLINDNESS|CONFUSION|FEAR|SLOW|BREATH_L|
                                   BREATH_G|BREATH_A|BREATH_FR|BREATH_FI|
                                   FIRE_BOLT|FROST_BOLT|ACID_BOLT|MAG_MISS|
                                   CAUSE_CRIT|FIRE_BALL|FROST_BALL|MANA_BOLT))
-          || (c_list[r_idx].spells2 & (BREATH_CH|BREATH_SH|BREATH_SD|BREATH_CO|
+          || (r_ptr->spells2 & (BREATH_CH|BREATH_SH|BREATH_SD|BREATH_CO|
                                   BREATH_DI|BREATH_LD|LIGHT_BOLT|LIGHT_BALL|
                                   ACID_BALL|TRAP_CREATE|RAZOR|MIND_BLAST|
                                   MISSILE|PLASMA_BOLT|NETHER_BOLT|ICE_BOLT|
                                   FORGET|BRAIN_SMASH|ST_CLOUD|TELE_LEV|
                                   WATER_BOLT|WATER_BALL|NETHER_BALL|BREATH_NE))
-          || (c_list[r_idx].spells3 & (BREATH_WA|BREATH_SL|BREATH_LT|BREATH_TI|
+          || (r_ptr->spells3 & (BREATH_WA|BREATH_SL|BREATH_LT|BREATH_TI|
                                   BREATH_GR|BREATH_DA|BREATH_PL|ARROW|
                                   DARK_STORM|MANA_STORM)))
        && los(y, x, char_row, char_col)) {
@@ -385,9 +390,9 @@ int place_monster(int y, int x, int r_idx, int slp)
     /* get a "following" of escorts.  -DGK-    But not skeletons, */
     /* which include druj, which would make Cantoras amazingly tough -CFT */
 
-    if (c_list[r_idx].cdefense & UNIQUE) {
+    if (r_ptr->cdefense & UNIQUE) {
 
-	j = c_list[r_idx].cchar;
+	j = r_ptr->cchar;
 
 	if ((j=='k')||(j=='L')||(j=='o')||(j=='O')||(j=='T')||(j=='y')||
 	    (j=='I')||(j=='&')) {
@@ -396,9 +401,9 @@ int place_monster(int y, int x, int r_idx, int slp)
 	    for (z = MAX_R_IDX-1; z>=0; z--) {
 
 		/* Find a similar, lower level, non-unique, monster */
-		if ((c_list[z].cchar == j) &&
-		    (c_list[z].level <= c_list[r_idx].level) &&
-		    !(c_list[z].cdefense & UNIQUE)) {
+		if ((r_list[z].cchar == j) &&
+		    (r_list[z].level <= r_list[r_idx].level) &&
+		    !(r_list[z].cdefense & UNIQUE)) {
 
 		    /* Try up to 50 nearby places */
 		    count = 0;
@@ -410,7 +415,7 @@ int place_monster(int y, int x, int r_idx, int slp)
 
 		    /* Certain monsters come in groups */
 		    if ((j=='k') || (j=='y') || (j=='&') ||
-			(c_list[z].cdefense & GROUP)) {
+			(r_list[z].cdefense & GROUP)) {
 			place_group(ny,nx,z,slp);
 		    }
 
@@ -461,11 +466,11 @@ int place_win_monster()
 	mon_ptr->fy = y;
 	mon_ptr->fx = x;
 	mon_ptr->r_idx = MAX_R_IDX - 2;
-	if (c_list[mon_ptr->r_idx].cdefense & MAX_HP)
-	    mon_ptr->hp = max_hp(c_list[mon_ptr->r_idx].hd);
+	if (r_list[mon_ptr->r_idx].cdefense & MAX_HP)
+	    mon_ptr->hp = max_hp(r_list[mon_ptr->r_idx].hd);
 	else
-	    mon_ptr->hp = pdamroll(c_list[mon_ptr->r_idx].hd);
-	mon_ptr->cspeed = c_list[mon_ptr->r_idx].speed - 10;
+	    mon_ptr->hp = pdamroll(r_list[mon_ptr->r_idx].hd);
+	mon_ptr->cspeed = r_list[mon_ptr->r_idx].speed - 10;
 	mon_ptr->stunned = 0;
 	mon_ptr->cdis = distance(char_row, char_col, y, x);
 	cave[y][x].m_idx = cur_pos;
@@ -492,10 +497,10 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
     int  i;
 
     /* Allocate storage for name -TL -- braindamaged ghost name spoo -CWS */
-    if (c_list[MAX_R_IDX - 1].name == NULL) {
-	c_list[MAX_R_IDX - 1].name = (char*)malloc(101);
-	C_WIPE(c_list[MAX_R_IDX - 1].name, 101, char);
-	*((char *) c_list[MAX_R_IDX - 1].name) = 'A';
+    if (r_list[MAX_R_IDX - 1].name == NULL) {
+	r_list[MAX_R_IDX - 1].name = (char*)malloc(101);
+	C_WIPE(r_list[MAX_R_IDX - 1].name, 101, char);
+	*((char *) r_list[MAX_R_IDX - 1].name) = 'A';
     }
 
     switch (gr) {
@@ -923,7 +928,7 @@ int place_ghost()
 {
     register int           y, x, cur_pos;
     register monster_type  *m_ptr;
-    monster_race           *ghost = &c_list[MAX_R_IDX - 1];
+    monster_race           *ghost = &r_list[MAX_R_IDX - 1];
     char                   tmp[100];
     char                   name[100];
     int                    i, j, level;
@@ -1030,8 +1035,8 @@ int place_ghost()
     /* Assign the hitpoints */
     m_ptr->hp = (s16b) ghost->hd[0] * (s16b) ghost->hd[1];
 
-    /* the c_list speed value is 10 greater, so that it can be a byte */
-    m_ptr->cspeed = c_list[mon_ptr->r_idx].speed - 10;
+    /* the r_list speed value is 10 greater, so that it can be a byte */
+    m_ptr->cspeed = r_list[mon_ptr->r_idx].speed - 10;
     
     m_ptr->stunned = 0;
     m_ptr->cdis = distance(char_row, char_col, y, x);
@@ -1095,7 +1100,7 @@ int get_mons_num(int level)
 		i = randint(num) - 1;
 		j = randint(num) - 1;
 		if (j > i) i = j;
-		level = c_list[i + m_level[0]].level;
+		level = r_list[i + m_level[0]].level;
 	    }
 
 	    /* Bizarre function */            
@@ -1105,14 +1110,14 @@ int get_mons_num(int level)
 	}
 
 	/* Uniques never appear out of "modified" depth */
-	if ((c_list[i].level > old) &&
-	    (c_list[i].cdefense & UNIQUE)) {
+	if ((r_list[i].level > old) &&
+	    (r_list[i].cdefense & UNIQUE)) {
 	    continue;
 	}
 
 	/* Quest Monsters never appear out of depth */
-	if ((c_list[i].level > dun_level) &&
-	    (c_list[i].cdefense & QUESTOR)) {
+	if ((r_list[i].level > dun_level) &&
+	    (r_list[i].cdefense & QUESTOR)) {
 	    continue;
 	}
 
@@ -1156,20 +1161,20 @@ int get_nmons_num(int level)
 	    j = rand_int(num);
 	    if (j > i) i = j;
 
-	    level = c_list[i + m_level[0]].level;
+	    level = r_list[i + m_level[0]].level;
 	    i = m_level[level] - m_level[level - 1];
 	    if (i == 0) i = 1;
 
 	    i = randint(i) - 1 + m_level[level - 1];
 	}
 
-	if ((c_list[i].level > old) && (c_list[i].cdefense & UNIQUE)) {
+	if ((r_list[i].level > old) && (r_list[i].cdefense & UNIQUE)) {
 	    continue;
 	}
 
 	/* Quest monsters never appear out of depth */
-	if ((c_list[i].level > dun_level) &&
-	    (c_list[i].cdefense & QUESTOR)) {
+	if ((r_list[i].level > dun_level) &&
+	    (r_list[i].cdefense & QUESTOR)) {
 	    continue;
 	}
 
@@ -1187,13 +1192,13 @@ void place_group(int y, int x, int r_idx, int slp)
     int extra = 0;
 
     /* reduce size of group if out-of-depth */
-    if (c_list[r_idx].level > (unsigned) dun_level) {
-	extra = 0 - randint(c_list[r_idx].level - dun_level);
+    if (r_list[r_idx].level > (unsigned) dun_level) {
+	extra = 0 - randint(r_list[r_idx].level - dun_level);
     }
 
     /* if monster is deeper than normal, then travel in bigger packs -CFT */
-    else if (c_list[r_idx].level < (unsigned) dun_level) {
-	extra = randint(dun_level - c_list[r_idx].level);
+    else if (r_list[r_idx].level < (unsigned) dun_level) {
+	extra = randint(dun_level - r_list[r_idx].level);
     }
 
     /* put an upper bounds on it... -CFT */
@@ -1282,7 +1287,7 @@ void alloc_monster(int num, int dis, int slp)
 	do {
 	/* Get a monster of the given level */
 	r_idx = get_mons_num(dun_level);
-	} while (randint(c_list[r_idx].rarity) > 1);
+	} while (randint(r_list[r_idx].rarity) > 1);
 
     /*
      * to give the player a sporting chance, any monster that appears in
@@ -1290,25 +1295,25 @@ void alloc_monster(int num, int dis, int slp)
      * is an extension of Um55's sleeping dragon code... 
      */
 
-	if (((c_list[r_idx].spells & (CAUSE_LIGHT | CAUSE_SERIOUS | HOLD_PERSON |
+	if (((r_list[r_idx].spells & (CAUSE_LIGHT | CAUSE_SERIOUS | HOLD_PERSON |
 			    BLINDNESS | CONFUSION | FEAR | SLOW | BREATH_L |
 			       BREATH_G | BREATH_A | BREATH_FR | BREATH_FI |
 			     FIRE_BOLT | FROST_BOLT | ACID_BOLT | MAG_MISS |
 			   CAUSE_CRIT | FIRE_BALL | FROST_BALL | MANA_BOLT))
-	     || (c_list[r_idx].spells2 & (BREATH_CH | BREATH_SH | BREATH_SD | BREATH_CO |
+	     || (r_list[r_idx].spells2 & (BREATH_CH | BREATH_SH | BREATH_SD | BREATH_CO |
 			   BREATH_DI | BREATH_LD | LIGHT_BOLT | LIGHT_BALL |
 			      ACID_BALL | TRAP_CREATE | RAZOR | MIND_BLAST |
 			    MISSILE | PLASMA_BOLT | NETHER_BOLT | ICE_BOLT |
 				FORGET | BRAIN_SMASH | ST_CLOUD | TELE_LEV |
 			 WATER_BOLT | WATER_BALL | NETHER_BALL | BREATH_NE))
-	     || (c_list[r_idx].spells3 & (BREATH_WA | BREATH_SL | BREATH_LT | BREATH_TI |
+	     || (r_list[r_idx].spells3 & (BREATH_WA | BREATH_SL | BREATH_LT | BREATH_TI |
 				 BREATH_GR | BREATH_DA | BREATH_PL | ARROW |
 					DARK_STORM | MANA_STORM)))
 	    && (los(y, x, char_row, char_col))) {
 	    slp = TRUE;
 	}
 
-	if (!(c_list[r_idx].cdefense & GROUP)) {
+	if (!(r_list[r_idx].cdefense & GROUP)) {
 	    place_monster(y, x, r_idx, slp);
 	}
 	else {
@@ -1342,7 +1347,7 @@ int summon_monster(int *yp, int *xp, int slp)
 	r_idx = get_mons_num(dun_level + MON_SUMMON_ADJ);
 
 	/* Place the monster */
-	if (c_list[r_idx].cdefense & GROUP) {
+	if (r_list[r_idx].cdefense & GROUP) {
 	    place_group(y, x, r_idx, slp);
 	}
 	else {
@@ -1378,8 +1383,8 @@ int summon_undead(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if ((c_list[m].cdefense & UNDEAD) && !(c_list[m].cdefense & UNIQUE) &&
-		(c_list[m].level < dun_level + 5)) {
+	    if ((r_list[m].cdefense & UNDEAD) && !(r_list[m].cdefense & UNIQUE) &&
+		(r_list[m].level < dun_level + 5)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1425,8 +1430,8 @@ int summon_demon(int lev, int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (c_list[m].cdefense & DEMON && !(c_list[m].cdefense & UNIQUE) &&
-		(c_list[m].level <= lev)) {
+	    if (r_list[m].cdefense & DEMON && !(r_list[m].cdefense & UNIQUE) &&
+		(r_list[m].level <= lev)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1469,7 +1474,7 @@ int summon_dragon(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (c_list[m].cdefense & DRAGON && !(c_list[m].cdefense & UNIQUE)) {
+	    if (r_list[m].cdefense & DRAGON && !(r_list[m].cdefense & UNIQUE)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1516,7 +1521,7 @@ int summon_wraith(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (c_list[m].cchar == 'W' && (c_list[m].cdefense & UNIQUE)) {
+	    if (r_list[m].cchar == 'W' && (r_list[m].cdefense & UNIQUE)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1562,7 +1567,7 @@ int summon_reptile(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (c_list[m].cchar == 'R' && !(c_list[m].cdefense & UNIQUE)) {
+	    if (r_list[m].cchar == 'R' && !(r_list[m].cdefense & UNIQUE)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1608,7 +1613,7 @@ int summon_spider(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (c_list[m].cchar == 'S' && !(c_list[m].cdefense & UNIQUE)) {
+	    if (r_list[m].cchar == 'S' && !(r_list[m].cdefense & UNIQUE)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1654,7 +1659,7 @@ int summon_angel(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (c_list[m].cchar == 'A' && !(c_list[m].cdefense & UNIQUE)) {
+	    if (r_list[m].cchar == 'A' && !(r_list[m].cdefense & UNIQUE)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1698,7 +1703,7 @@ int summon_ant(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (c_list[m].cchar == 'a' && !(c_list[m].cdefense & UNIQUE)) {
+	    if (r_list[m].cchar == 'a' && !(r_list[m].cdefense & UNIQUE)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1744,7 +1749,7 @@ int summon_unique(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (!(c_list[m].cchar == 'P') && (c_list[m].cdefense & UNIQUE)) {
+	    if (!(r_list[m].cchar == 'P') && (r_list[m].cdefense & UNIQUE)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1790,7 +1795,7 @@ int summon_jabberwock(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (c_list[m].cchar == 'J' && !(c_list[m].cdefense & UNIQUE)) {
+	    if (r_list[m].cchar == 'J' && !(r_list[m].cdefense & UNIQUE)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1836,8 +1841,8 @@ int summon_gundead(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if ((c_list[m].cchar == 'L') || (c_list[m].cchar == 'V')
-		|| (c_list[m].cchar == 'W')) {
+	    if ((r_list[m].cchar == 'L') || (r_list[m].cchar == 'V')
+		|| (r_list[m].cchar == 'W')) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1884,7 +1889,7 @@ int *y, *x;
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (c_list[m].cchar == 'D') {
+	    if (r_list[m].cchar == 'D') {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1930,8 +1935,8 @@ int summon_hound(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if ((c_list[m].cchar == 'C' || c_list[m].cchar == 'Z')
-		&& !(c_list[m].cdefense & UNIQUE)) {
+	    if ((r_list[m].cchar == 'C' || r_list[m].cchar == 'Z')
+		&& !(r_list[m].cdefense & UNIQUE)) {
 		ctr = 20;
 		l = 0;
 	    } else {

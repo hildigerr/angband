@@ -98,7 +98,7 @@ int target_set()
 
 	    /* Describe, prompt for recall */
 	    sprintf(desc, "%s [(t)arget] [(p)osition] [(r)ecall] [ESC quits]",
-		    c_list[m_list[m_idx].r_idx].name);
+		    r_list[m_list[m_idx].r_idx].name);
 	    prt(desc,0,0);
 	    move_cursor_relative(row,col);
 

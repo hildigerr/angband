@@ -92,7 +92,7 @@ static int map_diag2[] = {2, 1, 0, 4, 3};
 static cptr look_mon_desc(int mnum)
 {
     monster_type *m_ptr = &m_list[mnum];
-    monster_race *r_ptr = &c_list[m_ptr->r_idx];
+    monster_race *r_ptr = &r_list[m_ptr->r_idx];
 
     bool          living = TRUE;
     int           perc;
@@ -195,17 +195,17 @@ static int look_see(int x, int y, int *transparent)
 
 	j = m_list[c_ptr->m_idx].r_idx;
 
-	if (c_list[j].cdefense & UNIQUE) {
+	if (r_list[j].cdefense & UNIQUE) {
 	    (void)sprintf(out_val, "%s %s (%s).  [(r)ecall]",
 			  dstring,
-			  c_list[j].name,
+			  r_list[j].name,
 			  look_mon_desc((int)c_ptr->m_idx));
 	}
 	else {
 	    (void)sprintf(out_val, "%s %s %s (%s).  [(r)ecall]",
 			  dstring,
-			  (is_a_vowel(c_list[j].name[0]) ? "an" : "a"),
-			  c_list[j].name,
+			  (is_a_vowel(r_list[j].name[0]) ? "an" : "a"),
+			  r_list[j].name,
 			  look_mon_desc((int)c_ptr->m_idx));
 	}
 
@@ -646,10 +646,10 @@ void do_cmd_open()
 
 	    if (m_ptr->ml) {
 
-		if (c_list[m_ptr->r_idx].cdefense & UNIQUE)
-		    (void)sprintf(m_name, "%s", c_list[m_ptr->r_idx].name);
+		if (r_list[m_ptr->r_idx].cdefense & UNIQUE)
+		    (void)sprintf(m_name, "%s", r_list[m_ptr->r_idx].name);
 		else
-		    (void)sprintf(m_name, "The %s", c_list[m_ptr->r_idx].name);
+		    (void)sprintf(m_name, "The %s", r_list[m_ptr->r_idx].name);
 	    } else
 		(void)strcpy(m_name, "Something");
 	    (void)sprintf(out_val, "%s is in your way!", m_name);
@@ -834,10 +834,10 @@ void do_cmd_close()
 		else if (c_ptr->m_idx != 0) {
 		    m_ptr = &m_list[c_ptr->m_idx];
 		    if (m_ptr->ml) {
-			if (c_list[m_ptr->r_idx].cdefense & UNIQUE)
-			    (void)sprintf(m_name, "%s", c_list[m_ptr->r_idx].name);
+			if (r_list[m_ptr->r_idx].cdefense & UNIQUE)
+			    (void)sprintf(m_name, "%s", r_list[m_ptr->r_idx].name);
 			else
-			    (void)sprintf(m_name, "The %s", c_list[m_ptr->r_idx].name);
+			    (void)sprintf(m_name, "The %s", r_list[m_ptr->r_idx].name);
 		    } else
 			(void)strcpy(m_name, "Something");
 		    (void)sprintf(out_val, "%s is in your way!", m_name);
@@ -992,10 +992,10 @@ void tunnel(int dir)
 
 	    m_ptr = &m_list[c_ptr->m_idx];
 	    if (m_ptr->ml) {
-		    if (c_list[m_ptr->r_idx].cdefense & UNIQUE)
-				(void)sprintf(m_name, "%s", c_list[m_ptr->r_idx].name);
+		    if (r_list[m_ptr->r_idx].cdefense & UNIQUE)
+				(void)sprintf(m_name, "%s", r_list[m_ptr->r_idx].name);
 		    else
-				(void)sprintf(m_name, "The %s", c_list[m_ptr->r_idx].name);
+				(void)sprintf(m_name, "The %s", r_list[m_ptr->r_idx].name);
 	    } else
 		    (void)strcpy(m_name, "Something");
 	    (void)sprintf(out_val, "%s is in your way!", m_name);
@@ -1155,7 +1155,7 @@ void do_cmd_disarm()
 
 	    m_ptr = &m_list[c_ptr->m_idx];
 	    if (m_ptr->ml)
-		(void)sprintf(m_name, "The %s", c_list[m_ptr->r_idx].name);
+		(void)sprintf(m_name, "The %s", r_list[m_ptr->r_idx].name);
 	    else
 		(void)strcpy(m_name, "Something");
 	    (void)sprintf(out_val, "%s is in your way!", m_name);
@@ -1456,7 +1456,7 @@ void do_cmd_spike()
 		} else {
 		    free_turn_flag = FALSE;
 		    (void)sprintf(tmp_str, "The %s is in your way!",
-				  c_list[m_list[c_ptr->m_idx].r_idx].name);
+				  r_list[m_list[c_ptr->m_idx].r_idx].name);
 		    msg_print(tmp_str);
 		}
 	    else if (t_ptr->tval == TV_OPEN_DOOR)
@@ -1584,7 +1584,7 @@ void do_cmd_fire()
 				       class_level_adj[py.misc.pclass][CLA_BTHB] / 2)
 				    - (tpth * (BTH_PLUS_ADJ - 1));
 			    if (test_hit(tbth, (int)py.misc.lev, tpth,
-				   (int)c_list[m_ptr->r_idx].ac, CLA_BTHB)) {
+				   (int)r_list[m_ptr->r_idx].ac, CLA_BTHB)) {
 				i = m_ptr->r_idx;
 				objdes(tmp_str, &throw_obj, FALSE);
 			    /* Does the player know what he's fighting?	   */
@@ -1593,12 +1593,12 @@ void do_cmd_fire()
 					   "The %s finds a mark.", tmp_str);
 				    visible = FALSE;
 				} else {
-				    if (c_list[i].cdefense & UNIQUE)
+				    if (r_list[i].cdefense & UNIQUE)
 					(void)sprintf(out_val, "The %s hits %s.",
-						   tmp_str, c_list[i].name);
+						   tmp_str, r_list[i].name);
 				    else
 					(void)sprintf(out_val, "The %s hits the %s.",
-						   tmp_str, c_list[i].name);
+						   tmp_str, r_list[i].name);
 				    visible = TRUE;
 				}
 				msg_print(out_val);
@@ -1616,10 +1616,10 @@ void do_cmd_fire()
 				    char                buf[100];
 				    char                cdesc[100];
 				    if (visible) {
-					if (c_list[i].cdefense & UNIQUE)
-					    sprintf(cdesc, "%s", c_list[m_ptr->r_idx].name);
+					if (r_list[i].cdefense & UNIQUE)
+					    sprintf(cdesc, "%s", r_list[m_ptr->r_idx].name);
 					else
-					    sprintf(cdesc, "The %s", c_list[m_ptr->r_idx].name);
+					    sprintf(cdesc, "The %s", r_list[m_ptr->r_idx].name);
 				    } else
 					strcpy(cdesc, "It");
 				    (void)sprintf(buf,
@@ -1631,12 +1631,12 @@ void do_cmd_fire()
 				    if (!visible)
 					msg_print("You have killed something!");
 				    else {
-					if (c_list[i].cdefense & UNIQUE)
+					if (r_list[i].cdefense & UNIQUE)
 					    (void)sprintf(out_val, "You have killed %s.",
-							  c_list[i].name);
+							  r_list[i].name);
 					else
 					    (void)sprintf(out_val, "You have killed the %s.",
-							  c_list[i].name);
+							  r_list[i].name);
 					msg_print(out_val);
 				    }
 				    prt_experience();
@@ -1816,19 +1816,19 @@ void do_cmd_check_uniques()
     for (k = 0; k < MAX_R_IDX-1; k++) {
 
 	/* Only print Uniques */
-	if ((strlen(c_list[k].name) > 0) && (c_list[k].cdefense & UNIQUE)) {
+	if ((strlen(r_list[k].name) > 0) && (r_list[k].cdefense & UNIQUE)) {
 
 	    /* Wizards know everything */
 	    if (wizard) {
 
 		/* Print a message */            
-		sprintf(msg, "%s is %s.", c_list[k].name,
+		sprintf(msg, "%s is %s.", r_list[k].name,
 			(u_list[k].dead) ? "dead" : "alive");            
 		prt(msg, i++, j);
 
 		unique_screen_full(&i, j);
 	    } else if (u_list[k].dead) {
-		sprintf(msg, "%s is dead.", c_list[k].name);
+		sprintf(msg, "%s is dead.", r_list[k].name);
 		prt(msg, i++, j);
 		unique_screen_full(&i, j);
 	    }
