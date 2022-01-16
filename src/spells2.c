@@ -282,7 +282,7 @@ int detection()
     detect_sdoor();
 
     detect = FALSE;
-    for (i = mfptr - 1; i >= MIN_M_IDX; i--) {
+    for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
 	if (panel_contains((int)m_ptr->fy, (int)m_ptr->fx)) {
 	    m_ptr->ml = TRUE;
@@ -460,7 +460,7 @@ int detect_invisible()
     register monster_type *m_ptr;
 
     flag = FALSE;
-    for (i = mfptr - 1; i >= MIN_M_IDX; i--) {
+    for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
 	if (panel_contains((int)m_ptr->fy, (int)m_ptr->fx) &&
 	    (CM_INVISIBLE & c_list[m_ptr->mptr].cmove)) {
@@ -649,7 +649,7 @@ int aggravate_monster(int dis_affect)
     register monster_type *m_ptr;
 
     aggravate = FALSE;
-    for (i = mfptr - 1; i >= MIN_M_IDX; i--) {
+    for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
 	m_ptr->csleep = 0;
 	if ((m_ptr->cdis <= dis_affect) && (m_ptr->cspeed < 2)) {
@@ -739,7 +739,7 @@ int detect_monsters()
     register monster_type *m_ptr;
 
     detect = FALSE;
-    for (i = mfptr - 1; i >= MIN_M_IDX; i--) {
+    for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
 	if (panel_contains((int)m_ptr->fy, (int)m_ptr->fx) &&
 	    ((CM_INVISIBLE & c_list[m_ptr->mptr].cmove) == 0)) {
@@ -2929,7 +2929,7 @@ int mass_genocide(int spell)
     register monster_race *r_ptr;
 
     result = FALSE;
-    for (i = mfptr - 1; i >= MIN_M_IDX; i--) {
+    for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
 	r_ptr = &c_list[m_ptr->mptr];
 	if (((m_ptr->cdis <= MAX_SIGHT) && ((r_ptr->cmove & CM_WIN) == 0) &&
@@ -2965,7 +2965,7 @@ int genocide(int spell)
 
     killed = FALSE;
     if (get_com("Which type of creature do you wish exterminated?", &typ))
-	for (i = mfptr - 1; i >= MIN_M_IDX; i--) {
+	for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	    m_ptr = &m_list[i];
 	    r_ptr = &c_list[m_ptr->mptr];
 	    if ((unsigned) typ == c_list[m_ptr->mptr].cchar)
@@ -3009,7 +3009,7 @@ int speed_monsters(int spd)
     vtype               out_val, m_name;
 
     speed = FALSE;
-    for (i = mfptr - 1; i >= MIN_M_IDX; i--) {
+    for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
 	r_ptr = &c_list[m_ptr->mptr];
 	monster_name(m_name, m_ptr, r_ptr);
@@ -3053,7 +3053,7 @@ int sleep_monsters2()
     vtype               out_val, m_name;
 
     sleep = FALSE;
-    for (i = mfptr - 1; i >= MIN_M_IDX; i--) {
+    for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
 	r_ptr = &c_list[m_ptr->mptr];
 	monster_name(m_name, m_ptr, r_ptr);
@@ -3093,7 +3093,7 @@ int mass_poly()
     register monster_race *r_ptr;
     
     mass = FALSE;
-    for (i = mfptr - 1; i >= MIN_M_IDX; i--) {
+    for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
 	if (m_ptr->cdis <= MAX_SIGHT) {
 	    r_ptr = &c_list[m_ptr->mptr];
@@ -3113,7 +3113,7 @@ int detect_evil()
     register monster_type *m_ptr;
 
     flag = FALSE;
-    for (i = mfptr - 1; i >= MIN_M_IDX; i--) {
+    for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
 	if (panel_contains((int)m_ptr->fy, (int)m_ptr->fx) &&
 	    (EVIL & c_list[m_ptr->mptr].cdefense)) {
@@ -3354,7 +3354,7 @@ int banish_creature(u32b cflag, int dist)
     register monster_type *m_ptr;
 
     dispel = FALSE;
-    for (i = mfptr - 1; i >= MIN_M_IDX; i--) {
+    for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
 	if ((cflag & c_list[m_ptr->mptr].cdefense) &&
 	    (m_ptr->cdis <= MAX_SIGHT) &&
@@ -3378,7 +3378,7 @@ int probing()
 
     msg_print("Probing...");
     probe = FALSE;
-    for (i = mfptr - 1; i >= MIN_M_IDX; i--) {
+    for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
 	r_ptr = &c_list[m_ptr->mptr];
 	mp = &c_recall[m_ptr->mptr];
@@ -3418,7 +3418,7 @@ int dispel_creature(int cflag, int damage)
     vtype                   out_val, m_name;
 
     dispel = FALSE;
-    for (i = mfptr - 1; i >= MIN_M_IDX; i--) {
+    for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
 	if ((cflag & c_list[m_ptr->mptr].cdefense) &&
 	    (m_ptr->cdis <= MAX_SIGHT) &&
@@ -3450,7 +3450,7 @@ int turn_undead()
     vtype                   out_val, m_name;
 
     turn_und = FALSE;
-    for (i = mfptr - 1; i >= MIN_M_IDX; i--) {
+    for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
 	r_ptr = &c_list[m_ptr->mptr];
 	if ((UNDEAD & r_ptr->cdefense)

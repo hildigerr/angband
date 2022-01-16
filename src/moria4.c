@@ -82,7 +82,7 @@ int target_set()
     target_mode = FALSE;
 
     /* Check monsters first */
-    for (m_idx = 0; (m_idx < mfptr) && (!exit_1); m_idx++) {
+    for (m_idx = 0; (m_idx < m_max) && (!exit_1); m_idx++) {
 
 	monster_type *m_ptr = &m_list[m_idx];
 

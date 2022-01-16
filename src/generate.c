@@ -3044,7 +3044,8 @@ void generate_cave()
     /* Totally wipe the object list */
     wipe_i_list();
 
-    mlink();
+    /* Totally wipe the monster list */
+    wipe_m_list();
 
     /* Start with a blank cave */
     blank_cave();

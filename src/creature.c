@@ -3166,7 +3166,7 @@ void creatures(int attack)
     vtype                 cdesc;
 
     /* Process the monsters (backwards) */
-    for (i = mfptr - 1; i >= MIN_M_IDX && !death; i--) {
+    for (i = m_max - 1; i >= MIN_M_IDX && !death; i--) {
 
 	/* Get the i'th monster */
 	m_ptr = &m_list[i];

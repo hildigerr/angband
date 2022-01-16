@@ -1006,7 +1006,7 @@ void dungeon(void)
      * more likely to succeed if called from here, than if called from within
      * creatures().  
      */
-	if (MAX_M_IDX - mfptr < 10)
+	if (MAX_M_IDX - m_max < 10)
 	    (void)compact_monsters();
 
 	if ((py.flags.paralysis < 1) &&	/* Accept a command?     */
@@ -1045,7 +1045,7 @@ void dungeon(void)
 /* This bit of targetting code taken from Morgul -CFT */
 /* If we are in targetting mode, with a creature target, make the targetted */
 /* row and column match the creature's.  This optimizes a lot of code.  CDW */
-			if ((target_mode)&&(target_mon<(unsigned) mfptr)) {
+			if ((target_mode)&&(target_mon<(unsigned) m_max)) {
 			    target_row = m_list[target_mon].fy;
 			    target_col = m_list[target_mon].fx;
 			}

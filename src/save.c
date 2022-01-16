@@ -584,8 +584,8 @@ static int sv_write()
     wr_short((u16b) i_max);
     for (i = MIN_I_IDX; i < i_max; i++)
 	wr_item(&i_list[i]);
-    wr_short((u16b) mfptr);
-    for (i = MIN_M_IDX; i < mfptr; i++)
+    wr_short((u16b) m_max);
+    for (i = MIN_M_IDX; i < m_max; i++)
 	wr_monster(&m_list[i]);
 
 /* Save ghost names & stats etc... */
@@ -1447,12 +1447,12 @@ int load_player(int *generate)
 	}
 	for (i = MIN_I_IDX; i < i_max; i++)
 	    rd_item(&i_list[i]);
-	rd_short((u16b *) & mfptr);
-	if (mfptr > MAX_M_IDX) {
+	rd_short((u16b *) & m_max);
+	if (m_max > MAX_M_IDX) {
 	    prt("ERROR in MAX_M_IDX", 15, 0);
 	    goto error;
 	}
-	for (i = MIN_M_IDX; i < mfptr; i++) {
+	for (i = MIN_M_IDX; i < m_max; i++) {
 	    rd_monster(&m_list[i]);
 	}
 #ifdef MSDOS

@@ -52,7 +52,7 @@ void delete_monster(int j)
     cave[m_ptr->fy][m_ptr->fx].cptr = 0;
     if (m_ptr->ml)
 	lite_spot((int)m_ptr->fy, (int)m_ptr->fx);
-    if (j != mfptr - 1) {
+    if (j != m_max - 1) {
 #ifdef TARGET
 	/* This targetting code stolen from Morgul -CFT */
 	/* Targetted monster dead or compacted.      CDW */
@@ -60,15 +60,15 @@ void delete_monster(int j)
 	    target_mode = FALSE;
 
 	/* Targetted monster moved to replace dead or compacted monster   CDW */
-	if (target_mon==mfptr-1)
+	if (target_mon==m_max-1)
 	    target_mon = j;
 #endif
-	m_ptr = &m_list[mfptr - 1];
+	m_ptr = &m_list[m_max - 1];
 	cave[m_ptr->fy][m_ptr->fx].cptr = j;
-	m_list[j] = m_list[mfptr - 1];
+	m_list[j] = m_list[m_max - 1];
     }
-    mfptr--;
-    m_list[mfptr] = blank_monster;
+    m_max--;
+    m_list[m_max] = blank_monster;
     if (mon_tot_mult > 0)
 	mon_tot_mult--;
 }
@@ -83,7 +83,7 @@ void delete_monster(int j)
  */
 /*
  * fix1_delete_monster does everything delete_monster does except delete the
- * monster record and reduce mfptr, this is called in breathe, and a couple
+ * monster record and reduce m_max, this is called in breathe, and a couple
  * of places in creatures.c 
  */
 void fix1_delete_monster(int j)
@@ -98,7 +98,7 @@ void fix1_delete_monster(int j)
 	target_mode = FALSE;
 
     /* Targetted monster moved to replace dead or compacted monster   CDW */
-    if (target_mon==mfptr-1)
+    if (target_mon==m_max-1)
 	target_mon = j;
 #endif
     m_ptr = &m_list[j];
@@ -132,19 +132,19 @@ void fix2_delete_monster(int j)
 	target_mode = FALSE;
 
     /* Targetted monster moved to replace dead or compacted monster   CDW */
-    if (target_mon==mfptr-1)
+    if (target_mon==m_max-1)
 	target_mon = j; 
 #endif
 
     m_ptr = &m_list[j];		   /* Fixed from a c_list ptr to a m_list ptr. -CFT */
     if (c_list[m_ptr->mptr].cdefense & UNIQUE) u_list[m_ptr->mptr].exist = 0;
-    if (j != mfptr - 1) {
-	m_ptr = &m_list[mfptr - 1];
+    if (j != m_max - 1) {
+	m_ptr = &m_list[m_max - 1];
 	cave[m_ptr->fy][m_ptr->fx].cptr = j;
-	m_list[j] = m_list[mfptr - 1];
+	m_list[j] = m_list[m_max - 1];
     }
-    m_list[mfptr - 1] = blank_monster;
-    mfptr--;
+    m_list[m_max - 1] = blank_monster;
+    m_max--;
 }
 
 
@@ -153,7 +153,7 @@ void fix2_delete_monster(int j)
 /*
  * Link all free space in monster list together
  */
-void mlink()
+void wipe_m_list()
 {
     register int i;
 
@@ -166,7 +166,8 @@ void mlink()
 	if (c_list[i].cdefense & UNIQUE)
 	    u_list[i].exist = 0;
 
-    mfptr = MIN_M_IDX;
+    /* XXX Should already be done */
+    m_max = MIN_M_IDX;
 }
 
 
@@ -192,7 +193,7 @@ int compact_monsters(void)
     while (!delete_any) {
 
 	/* Check all the monsters */
-	for (i = mfptr - 1; i >= MIN_M_IDX; i--) {
+	for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 
 	    m_ptr = &m_list[i];
 
@@ -211,7 +212,7 @@ int compact_monsters(void)
 		    delete_any = TRUE;
 		} else
 
-		/* fix1_delete_monster() does not decrement mfptr, so don't
+		/* fix1_delete_monster() does not decrement m_max, so don't
 		 * set delete_any if this was called 
 		 */
 		    fix1_delete_monster(i);
@@ -234,10 +235,10 @@ int compact_monsters(void)
  */
 int m_pop(void)
 {
-    if (mfptr == MAX_M_IDX)
+    if (m_max == MAX_M_IDX)
 	if (!compact_monsters())
 	    return (-1);
-    return (mfptr++);
+    return (m_max++);
 }
 
 

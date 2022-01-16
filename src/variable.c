@@ -73,6 +73,7 @@ int pack_heavy = FALSE;
 
 
 s16b i_max;			/* Treasure heap size */
+s16b m_max;			/* Monster heap size */
 
 
 int rogue_like_commands;	/* set in config.h/main.c */

@@ -403,7 +403,10 @@ extern monster_lore *c_recall;
 extern monster_lore c_recall[MAX_R_IDX];	/* Monster memories. -CJS- */
 #endif
 extern monster_type blank_monster; /* Blank monster values	*/
-extern s16b mfptr;				   /* Cur free monster ptr	*/
+
+/* Monster heap pointer (used with m_list) */
+extern s16b m_max;
+
 extern s16b mon_tot_mult;		   /* # of repro's of creature	*/
 
 extern byte blows_table[11][12];
