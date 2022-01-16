@@ -1213,11 +1213,9 @@ s16b sorted_objects[MAX_DUNGEON_OBJ];
 /* Identified objects flags					*/
 byte object_ident[OBJECT_IDENT_SIZE];
 s16b t_level[MAX_OBJ_LEVEL+1];
-inven_type i_list[MAX_TALLOC];
 inven_type inventory[INVEN_ARRAY_SIZE];
 
 /* Treasure related values					*/
 s16b inven_ctr = 0;		/* Total different obj's	*/
 s16b inven_weight = 0;		/* Cur carried weight	*/
 s16b equip_ctr = 0;		/* Cur equipment ctr	*/
-s16b tcptr;			/* Cur treasure heap ptr	*/

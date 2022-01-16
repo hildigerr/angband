@@ -72,6 +72,9 @@ int weapon_heavy = FALSE;
 int pack_heavy = FALSE;
 
 
+s16b i_max;			/* Treasure heap size */
+
+
 int rogue_like_commands;	/* set in config.h/main.c */
 
 /* OPTION: options set via the '=' command */
@@ -168,6 +171,8 @@ monster_lore c_recall[MAX_R_IDX];	/* Monster memories */
 struct unique_mon u_list[MAX_R_IDX]; /* Unique check list... -LVB- */ 
 
 
+/* The array of dungeon items [MAX_I_IDX] */
+inven_type i_list[MAX_I_IDX];
 
 static player_type py;	/* Static player info record */
 

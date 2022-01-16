@@ -70,7 +70,7 @@
  */
 #define clean_grid_bold(Y,X) \
     ((cave[Y][X].fval <= MAX_CAVE_FLOOR) && \
-     (cave[Y][X].tptr == 0))
+     (cave[Y][X].i_idx == 0))
     
 /*
  * Determine if a "legal" grid is an "empty floor" grid
@@ -373,14 +373,19 @@ extern inven_kind k_list[MAX_OBJECTS];
 #endif
 extern byte object_ident[OBJECT_IDENT_SIZE];
 extern s16b t_level[MAX_OBJ_LEVEL+1];
-extern inven_type i_list[MAX_TALLOC];
+
+/* Treasure heap pointer (used with i_list) */
+extern s16b i_max;
+
+/* Actual array of all physical objects (on the ground) */
+extern inven_type i_list[MAX_I_IDX];
+
 extern inven_type inventory[INVEN_ARRAY_SIZE];
 extern cptr special_names[SN_ARRAY_SIZE];
 extern s16b sorted_objects[MAX_DUNGEON_OBJ];
 extern s16b inven_ctr;			/* Total different obj's	*/
 extern s16b inven_weight;		/* Cur carried weight	*/
 extern s16b equip_ctr;			/* Cur equipment ctr	*/
-extern s16b tcptr;				/* Cur treasure heap ptr	*/
 
 /* Following are creature arrays and variables			*/
 #ifdef MACGAME
@@ -620,7 +625,7 @@ int distance(int, int, int, int);
 /* misc3.c */
 int i_pop(void);
 int delete_object(int, int);
-void tlink(void);
+void wipe_i_list(void);
 int magik(int);
 int m_bonus(int, int, int);
 void place_trap(int, int, int);

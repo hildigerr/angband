@@ -103,16 +103,17 @@ void dungeon(void)
 	register int        cur_pos;
 
 	c_ptr = &cave[char_row][char_col];
+	i_ptr = &i_list[c_ptr->i_idx];
 
-	if ((c_ptr->tptr == 0) ||
-	    ((i_list[c_ptr->tptr].tval != TV_STORE_DOOR) && /* if not store */
-	     ((i_list[c_ptr->tptr].tval < TV_MIN_WEAR) ||   /* if no artifact here -CFT */
-	      (i_list[c_ptr->tptr].tval > TV_MIN_WEAR) ||
-	      !(i_list[c_ptr->tptr].flags2 & TR_ARTIFACT)))) {
-	    if (c_ptr->tptr != 0)
+	if ((c_ptr->i_idx == 0) ||
+	    ((i_ptr->tval != TV_STORE_DOOR) && /* if not store */
+	     ((i_ptr->tval < TV_MIN_WEAR) ||   /* if no artifact here -CFT */
+	      (i_ptr->tval > TV_MIN_WEAR) ||
+	      !(i_ptr->flags2 & TR_ARTIFACT)))) {
+	    if (c_ptr->i_idx != 0)
 	    delete_object(char_row, char_col);
 	    cur_pos = i_pop();
-	    c_ptr->tptr = cur_pos;
+	    c_ptr->i_idx = cur_pos;
 	    if (create_up_stair) {
 		invcopy(&i_list[cur_pos], OBJ_UP_STAIR);
 	    }
@@ -1788,7 +1789,7 @@ static void do_command(char com_val)
 	break;
       case 'g':			/* (g)et an object... */
 	if (prompt_carry_flag) {
-	    if (cave[char_row][char_col].tptr != 0)	/* minor change -CFT */
+	    if (cave[char_row][char_col].i_idx != 0)	/* minor change -CFT */
 		carry(char_row, char_col, TRUE);
 	} else
 	    free_turn_flag = TRUE;
@@ -3078,8 +3079,8 @@ static void go_up()
     register int        no_stairs = FALSE;
 
     c_ptr = &cave[char_row][char_col];
-    if (c_ptr->tptr != 0)
-	if (i_list[c_ptr->tptr].tval == TV_UP_STAIR) {
+    if (c_ptr->i_idx != 0)
+	if (i_list[c_ptr->i_idx].tval == TV_UP_STAIR) {
 	    if (dun_level == Q_PLANE) {
 		dun_level = 0;
 		new_level_flag = TRUE;
@@ -3110,8 +3111,8 @@ static void go_down()
     register int        no_stairs = FALSE;
 
     c_ptr = &cave[char_row][char_col];
-    if (c_ptr->tptr != 0)
-	if (i_list[c_ptr->tptr].tval == TV_DOWN_STAIR) {
+    if (c_ptr->i_idx != 0)
+	if (i_list[c_ptr->i_idx].tval == TV_DOWN_STAIR) {
 	    if (dun_level == Q_PLANE) {
 		dun_level = 0;
 		new_level_flag = TRUE;

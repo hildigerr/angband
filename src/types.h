@@ -462,7 +462,8 @@ typedef struct _cave_type cave_type;
 struct _cave_type {
 
   u16b cptr;
-  u16b tptr;
+  u16b i_idx;		/* Item index (in i_list) */
+
   byte fval;
   unsigned int lr : 1;		    /* room should be lit with perm light, walls with
 				       this set should be perm lit after tunneled out	 */

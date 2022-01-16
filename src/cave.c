@@ -421,9 +421,9 @@ void map_area(void)
 			if (c_ptr->fval >= MIN_WALL)
 			    c_ptr->pl = TRUE;
 
-			else if ((c_ptr->tptr != 0) &&
-			     (i_list[c_ptr->tptr].tval >= TV_MIN_VISIBLE) &&
-			       (i_list[c_ptr->tptr].tval <= TV_MAX_VISIBLE))
+			else if ((c_ptr->i_idx != 0) &&
+			     (i_list[c_ptr->i_idx].tval >= TV_MIN_VISIBLE) &&
+			       (i_list[c_ptr->i_idx].tval <= TV_MAX_VISIBLE))
 			    c_ptr->fm = TRUE;
 		    }
 		}

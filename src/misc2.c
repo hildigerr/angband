@@ -454,7 +454,7 @@ int place_win_monster()
 	    x = randint(cur_width - 2);
 	}
 	while ((cave[y][x].fval >= MIN_CLOSED_SPACE) || (cave[y][x].cptr != 0)
-	       || (cave[y][x].tptr != 0) ||
+	       || (cave[y][x].i_idx != 0) ||
 	       (distance(y, x, char_row, char_col) <= MAX_SIGHT));
 
 	mon_ptr->fy = y;
@@ -1016,7 +1016,7 @@ int place_ghost()
 	y = randint(cur_height - 2);
 	x = randint(cur_width - 2);
     } while ((cave[y][x].fval >= MIN_CLOSED_SPACE) || (cave[y][x].cptr != 0)
-	     || (cave[y][x].tptr != 0) ||
+	     || (cave[y][x].i_idx != 0) ||
 	     (distance(y, x, char_row, char_col) <= MAX_SIGHT));
 
     /*** Place the Ghost by Hand (so no-one else does it accidentally) ***/
@@ -1976,17 +1976,17 @@ void pusht(int my_x)
     s16b        x = (s16b) my_x;
     register int i, j;
 
-    if (x != tcptr - 1) {
-	i_list[x] = i_list[tcptr - 1];
+    if (x != i_max - 1) {
+	i_list[x] = i_list[i_max - 1];
 
-    /* must change the tptr in the cave of the object just moved */
+    /* must change the i_idx in the cave of the object just moved */
 	for (i = 0; i < cur_height; i++)
 	    for (j = 0; j < cur_width; j++)
-		if (cave[i][j].tptr == tcptr - 1)
-		    cave[i][j].tptr = x;
+		if (cave[i][j].i_idx == i_max - 1)
+		    cave[i][j].i_idx = x;
     }
-    tcptr--;
-    invcopy(&i_list[tcptr], OBJ_NOTHING);
+    i_max--;
+    invcopy(&i_list[i_max], OBJ_NOTHING);
 }
 
 

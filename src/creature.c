@@ -1387,8 +1387,8 @@ static void make_move(int m_idx, int *mm, u32b *rcmove)
     int do_turn, do_move, stuck_door;
     u32b                movebits;
     register cave_type    *c_ptr;
+    register inven_type   *i_ptr;
     register monster_type *m_ptr;
-    register inven_type   *t_ptr;
 
     int                   i, newy, newx;
 
@@ -1415,6 +1415,10 @@ static void make_move(int m_idx, int *mm, u32b *rcmove)
 	/* Access that cave grid */
 	c_ptr = &cave[newy][newx];
 
+	/* Access that cave grid's contents */
+	i_ptr = &i_list[c_ptr->i_idx];
+
+
 	if ((i == 4) && (m_ptr->monfear) &&  /* cornered (or things in the way!) -CWS */
 	    (!floor_grid_bold(newy, newx) || (c_ptr->cptr > 1))) {
 	    monster_race      *r_ptr = &c_list[m_ptr->mptr];
@@ -1439,13 +1443,13 @@ static void make_move(int m_idx, int *mm, u32b *rcmove)
 		*rcmove |= CM_PHASE;
 	    } else if (c_list[m_ptr->mptr].cdefense & BREAK_WALL) {
 	    /* Crunch up those Walls Morgoth and Umber Hulks!!!! */
-		t_ptr = &i_list[c_ptr->tptr];
+
 		do_move = TRUE;
 		c_recall[m_ptr->mptr].r_cdefense |= BREAK_WALL;
-		if ((t_ptr->tval == TV_CLOSED_DOOR) ||
-		    (t_ptr->tval == TV_SECRET_DOOR)) {	/* break the door -CFT  */
-		    invcopy(t_ptr, OBJ_OPEN_DOOR);
-		    t_ptr->p1 = (-1);          /* make it broken, not just open */
+		if ((i_ptr->tval == TV_CLOSED_DOOR) ||
+		    (i_ptr->tval == TV_SECRET_DOOR)) {	/* break the door -CFT  */
+		    invcopy(i_ptr, OBJ_OPEN_DOOR);
+		    i_ptr->p1 = (-1);          /* make it broken, not just open */
 		    c_ptr->fval = CORR_FLOOR;	        /* change floor setting */
 		    lite_spot(newy, newx);	        /* show broken door     */
 
@@ -1460,40 +1464,38 @@ static void make_move(int m_idx, int *mm, u32b *rcmove)
 	    }
 
 	/* Creature can open doors? */
-	else if (c_ptr->tptr != 0) {
-
-		t_ptr = &i_list[c_ptr->tptr];
+	else if (c_ptr->i_idx) {
 
 	    /* Creature can open doors. */
 	    if (movebits & CM_OPEN_DOOR) {
 
 		stuck_door = FALSE;
 
-		if (t_ptr->tval == TV_CLOSED_DOOR) {
+		if (i_ptr->tval == TV_CLOSED_DOOR) {
 
 		    do_turn = TRUE;
 
 		    /* XXX Hack -- scared monsters can open locked/stuck doors */
 		    if ((m_ptr->monfear) && rand_int(2)) {
-			t_ptr->p1 = 0;
+			i_ptr->p1 = 0;
 		    }
 
 		    /* Open doors */
-		    if (t_ptr->p1 == 0) {
+		    if (i_ptr->p1 == 0) {
 			do_move = TRUE;
 		    }
 
 		    /* Locked doors -- take a turn to unlock it */
-		    else if (t_ptr->p1 > 0) {
-			if (randint((m_ptr->hp + 1) * (50 + t_ptr->p1)) <
-			    40 * (m_ptr->hp - 10 - t_ptr->p1))
-				t_ptr->p1 = 0;
+		    else if (i_ptr->p1 > 0) {
+			if (randint((m_ptr->hp + 1) * (50 + i_ptr->p1)) <
+			    40 * (m_ptr->hp - 10 - i_ptr->p1))
+				i_ptr->p1 = 0;
 			}
 
 		    /* Stuck doors */
-		    else if (t_ptr->p1 < 0) {
-			if (randint((m_ptr->hp + 1) * (50 - t_ptr->p1)) <
-				40 * (m_ptr->hp - 10 + t_ptr->p1)) {
+		    else if (i_ptr->p1 < 0) {
+			if (randint((m_ptr->hp + 1) * (50 - i_ptr->p1)) <
+				40 * (m_ptr->hp - 10 + i_ptr->p1)) {
 			    msg_print("You hear a door burst open!");
 			    disturb(1, 0);
 			    stuck_door = TRUE;
@@ -1503,7 +1505,7 @@ static void make_move(int m_idx, int *mm, u32b *rcmove)
 		}
 
 		/* Hack -- monsters open secret doors */
-		else if (t_ptr->tval == TV_SECRET_DOOR) {
+		else if (i_ptr->tval == TV_SECRET_DOOR) {
 		    do_turn = TRUE;
 		    do_move = TRUE;
 		}
@@ -1513,10 +1515,10 @@ static void make_move(int m_idx, int *mm, u32b *rcmove)
 		if (do_move) {
 
 		    /* XXX Should create a new object XXX */
-		    invcopy(t_ptr, OBJ_OPEN_DOOR);
+		    invcopy(i_ptr, OBJ_OPEN_DOOR);
 
 		    /* 50% chance of breaking door */
-		    if (stuck_door) t_ptr->p1 = 0 - rand_int(2);
+		    if (stuck_door) i_ptr->p1 = 0 - rand_int(2);
 
 			c_ptr->fval = CORR_FLOOR;
 
@@ -1533,16 +1535,16 @@ static void make_move(int m_idx, int *mm, u32b *rcmove)
 	    /* Creature can not open doors, must bash them   */
 	    else {
 
-		if (t_ptr->tval == TV_CLOSED_DOOR) {
+		if (i_ptr->tval == TV_CLOSED_DOOR) {
 		    do_turn = TRUE;
-		    if (randint((m_ptr->hp + 1) * (80 + MY_ABS(t_ptr->p1))) <
-			40 * (m_ptr->hp - 20 - MY_ABS(t_ptr->p1))) {
+		    if (randint((m_ptr->hp + 1) * (80 + MY_ABS(i_ptr->p1))) <
+			40 * (m_ptr->hp - 20 - MY_ABS(i_ptr->p1))) {
 
 			/* XXX Should create a new object XXX */
-			invcopy(t_ptr, OBJ_OPEN_DOOR);
+			invcopy(i_ptr, OBJ_OPEN_DOOR);
 
 			/* 50% chance of breaking door */
-			t_ptr->p1 = 0 - rand_int(2);
+			i_ptr->p1 = 0 - rand_int(2);
 			    c_ptr->fval = CORR_FLOOR;
 
 			/* Redraw */
@@ -1556,8 +1558,8 @@ static void make_move(int m_idx, int *mm, u32b *rcmove)
 
 
 	/* Hack -- check for Glyph of Warding */
-	if (do_move && (c_ptr->tptr != 0) &&
-	    (i_list[c_ptr->tptr].tval == TV_VIS_TRAP) && (i_list[c_ptr->tptr].sval == 99)) {
+	if (do_move && (c_ptr->i_idx != 0) &&
+	    (i_ptr->tval == TV_VIS_TRAP) && (i_ptr->sval == 99)) {
 
 	    /* Break the ward */
 	    if (randint(OBJ_BREAK_GLYPH) < c_list[m_ptr->mptr].level) {
@@ -1657,9 +1659,10 @@ static void make_move(int m_idx, int *mm, u32b *rcmove)
 
 		/* Check the grid */
 		c_ptr = &cave[newy][newx];
+		i_ptr = &i_list[c_ptr->i_idx];
 
-		    if ((c_ptr->tptr != 0)
-			&& (i_list[c_ptr->tptr].tval <= TV_MAX_OBJECT)) {
+		    if ((c_ptr->i_idx != 0)
+			&& (i_ptr->tval <= TV_MAX_OBJECT)) {
 #ifdef ATARIST_MWC
 			*rcmove |= holder;
 #else
@@ -1668,18 +1671,18 @@ static void make_move(int m_idx, int *mm, u32b *rcmove)
 			t = 0L;
 
 			/* React to objects that hurt the monster */
-			if (i_list[c_ptr->tptr].flags & TR1_SLAY_DRAGON) t |= DRAGON;
-			if (i_list[c_ptr->tptr].flags & TR1_SLAY_X_DRAGON) t |= DRAGON;                            
-			if (i_list[c_ptr->tptr].flags & TR1_SLAY_UNDEAD) t |= UNDEAD;
-			if (i_list[c_ptr->tptr].flags2 & TR1_SLAY_DEMON) t |= DEMON;
-			if (i_list[c_ptr->tptr].flags2 & TR1_SLAY_TROLL) t |= TROLL;
-			if (i_list[c_ptr->tptr].flags2 & TR1_SLAY_GIANT) t |= GIANT;
-			if (i_list[c_ptr->tptr].flags2 & TR1_SLAY_ORC) t |= ORC;
+			if (i_ptr->flags & TR1_SLAY_DRAGON) t |= DRAGON;
+			if (i_ptr->flags & TR1_SLAY_X_DRAGON) t |= DRAGON;                            
+			if (i_ptr->flags & TR1_SLAY_UNDEAD) t |= UNDEAD;
+			if (i_ptr->flags2 & TR1_SLAY_DEMON) t |= DEMON;
+			if (i_ptr->flags2 & TR1_SLAY_TROLL) t |= TROLL;
+			if (i_ptr->flags2 & TR1_SLAY_GIANT) t |= GIANT;
+			if (i_ptr->flags2 & TR1_SLAY_ORC) t |= ORC;
 
 		    /* if artifact, or wearable & hurts this monster -CWS */
-			if ((i_list[c_ptr->tptr].flags2 & TR_ARTIFACT) ||
-			    ( (i_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
-			      (i_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
+			if ((i_ptr->flags2 & TR_ARTIFACT) ||
+			    ( (i_ptr->tval >= TV_MIN_WEAR) &&
+			      (i_ptr->tval <= TV_MAX_WEAR) &&
 			      (c_list[m_ptr->mptr].cdefense & t) )) {
 
 /* FIXME: should use new line-splitting code */
@@ -1694,7 +1697,7 @@ static void make_move(int m_idx, int *mm, u32b *rcmove)
 				monster_name(m_name, m_ptr, &(c_list[m_ptr->mptr]));
 
 			    /* Acquire the object name */
-			    objdes(i_name, &(i_list[c_ptr->tptr]), TRUE);
+			    objdes(i_name, &(i_list[c_ptr->i_idx]), TRUE);
 
 				sprintf(out_val,
 					"%s tries to pick up %s, but stops suddenly!",
@@ -2869,7 +2872,7 @@ int multiply_monster(int y, int x, int cr_index, int m_idx)
      */
 	if (in_bounds(j, k) && (j != y || k != x)) {
 	    c_ptr = &cave[j][k];
-	    if (floor_grid_bold(j, k) && (c_ptr->tptr == 0) &&
+	    if (floor_grid_bold(j, k) && (c_ptr->i_idx == 0) &&
 		(c_ptr->cptr != 1)) {
 		if (c_ptr->cptr > 1) {	/* Creature there already?	 */
 		/* Some critters are cannibalistic!	    */
@@ -3442,13 +3445,13 @@ static void shatter_quake(int mon_y, int mon_x)
 		    }
 		    take_hit(damage, "an Earthquake");
 		}
-		if (c_ptr->tptr != 0)
-		    if (((i_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
-			 (i_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
-			 (i_list[c_ptr->tptr].flags2 & TR_ARTIFACT)) ||
-			(i_list[c_ptr->tptr].tval == TV_UP_STAIR) ||
-			(i_list[c_ptr->tptr].tval == TV_DOWN_STAIR) ||
-			(i_list[c_ptr->tptr].tval == TV_STORE_DOOR))
+		if (c_ptr->i_idx != 0)
+		    if (((i_list[c_ptr->i_idx].tval >= TV_MIN_WEAR) &&
+			 (i_list[c_ptr->i_idx].tval <= TV_MAX_WEAR) &&
+			 (i_list[c_ptr->i_idx].flags2 & TR_ARTIFACT)) ||
+			(i_list[c_ptr->i_idx].tval == TV_UP_STAIR) ||
+			(i_list[c_ptr->i_idx].tval == TV_DOWN_STAIR) ||
+			(i_list[c_ptr->i_idx].tval == TV_STORE_DOOR))
 			continue;  /* don't kill artifacts... */
 		    else
 			(void)delete_object(i, j);
@@ -3457,7 +3460,7 @@ static void shatter_quake(int mon_y, int mon_x)
 		    c_ptr->fval = CORR_FLOOR;
 		    c_ptr->pl = FALSE;
 		    c_ptr->fm = FALSE;
-		} else if ((c_ptr->fval <= MAX_CAVE_FLOOR) && (c_ptr->tptr == 0)
+		} else if ((c_ptr->fval <= MAX_CAVE_FLOOR) && (c_ptr->i_idx == 0)
 			   && (c_ptr->cptr != 1)) {
 		    /* don't bury player, it made him unattackable -CFT */
 		    tmp = randint(10);
@@ -3533,13 +3536,13 @@ static void br_wall(int mon_y, int mon_x)
 	move_rec(char_row, char_col, y, x);
     /* don't destroy floor if stairs, shop, or artifact... */
 	if ((c_ptr->fval <= MAX_CAVE_FLOOR) &&
-	((c_ptr->tptr == 0) || ((i_list[c_ptr->tptr].tval != TV_UP_STAIR) &&
-			      (i_list[c_ptr->tptr].tval != TV_DOWN_STAIR) &&
-			      (i_list[c_ptr->tptr].tval != TV_STORE_DOOR) &&
-			      !((i_list[c_ptr->tptr].tval >= TV_MIN_WEAR) &&
-				(i_list[c_ptr->tptr].tval <= TV_MAX_WEAR) &&
-			    (i_list[c_ptr->tptr].flags2 & TR_ARTIFACT))))) {
-	    if (c_ptr->tptr)
+	((c_ptr->i_idx == 0) || ((i_list[c_ptr->tptr].tval != TV_UP_STAIR) &&
+			      (i_list[c_ptr->i_idx].tval != TV_DOWN_STAIR) &&
+			      (i_list[c_ptr->i_idx].tval != TV_STORE_DOOR) &&
+			      !((i_list[c_ptr->i_idx].tval >= TV_MIN_WEAR) &&
+				(i_list[c_ptr->i_idx].tval <= TV_MAX_WEAR) &&
+			    (i_list[c_ptr->i_idx].flags2 & TR_ARTIFACT))))) {
+	    if (c_ptr->i_idx)
 		delete_object(char_row, char_col);
 	    tmp = randint(10);
 	    if (tmp < 6)

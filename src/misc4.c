@@ -2249,7 +2249,7 @@ void teleport(int dis)
 	}
 	while (((cave[y][x].fval >= MIN_CLOSED_SPACE) ||
 		(cave[y][x].cptr >= 2) ||
-		(i_list[cave[y][x].tptr].index == OBJ_OPEN_DOOR) ||
+		(i_list[cave[y][x].i_idx].index == OBJ_OPEN_DOOR) ||
 		(cave[y][x].fval == NT_DARK_FLOOR) ||
 		(cave[y][x].fval == NT_LIGHT_FLOOR)) && count < 1000);
 

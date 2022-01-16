@@ -185,9 +185,6 @@
 #define MAX_GOLD       18       /* Number of different types of gold     */
 
 
-
-#define MAX_TALLOC      400     /* Max objects per level               */
-#define MIN_TRIX          1     /* Minimum i_list index used           */
 #define TREAS_ROOM_ALLOC  9     /* Amount of objects for rooms         */
 #define TREAS_ANY_ALLOC   3     /* Amount of objects for corridors     */
 #define TREAS_GOLD_ALLOC  3     /* Amount of gold (and gems)           */
@@ -222,9 +219,12 @@
  * with MAX_M_IDX 101, it is possible to get compacting monsters messages
  * while breeding/cloning monsters
  *
- * with MAX_TALLOC 150, it is possible to get compacting objects during
+ * with MAX_I_IDX 150, it is possible to get compacting objects during
  * level generation, although it is extremely rare
  */
+
+#define MIN_I_IDX           1   /* Minimum i_list index used                */
+#define MAX_I_IDX         400   /* Max objects per level                    */
 
 #define MAX_M_IDX         600   /* Max monsters per level                   */
 #define MAX_M_ALLOC_CHANCE 160   /* 1/x chance of new monster each round     */

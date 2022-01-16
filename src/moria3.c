@@ -149,6 +149,7 @@ static int look_see(int x, int y, int *transparent)
     register cave_type *c_ptr;
     register int        i, j;
     bigvtype            out_val, tmp_str;
+    inven_type		*i_ptr;
 
     /* Assume not transparent */
     *transparent = FALSE;
@@ -226,14 +227,16 @@ static int look_see(int x, int y, int *transparent)
     if (c_ptr->tl || c_ptr->pl || c_ptr->fm) {
 
 	/* Is there an object there? */
-	if (c_ptr->tptr != 0) {
+	if (c_ptr->i_idx) {
 
-	    if (i_list[c_ptr->tptr].tval == TV_SECRET_DOOR)
+	    i_ptr = &i_list[c_ptr->i_idx];
+
+	    if (i_ptr->tval == TV_SECRET_DOOR)
 		goto granite;
 
 	    /* No rock, yes visible object */
-	    if (gl_rock == 0 && i_list[c_ptr->tptr].tval != TV_INVIS_TRAP) {
-		objdes(tmp_str, &i_list[c_ptr->tptr], TRUE);
+	    if (gl_rock == 0 && i_ptr->tval != TV_INVIS_TRAP) {
+		objdes(tmp_str, &i_list[c_ptr->i_idx], TRUE);
 		(void)sprintf(out_val, "%s %s.  ---pause---", dstring, tmp_str);
 		dstring = "It is in";
 		prt(out_val, 0, 0);
@@ -542,7 +545,7 @@ void do_cmd_look()
 static void chest_trap(int y, int x)
 {
     register int        i, j, k;
-    register inven_type *i_ptr = &i_list[cave[y][x].tptr];
+    register inven_type *i_ptr = &i_list[cave[y][x].i_idx];
 
     if (i_ptr->flags & CH_LOSE_STR) {
 	msg_print("A small needle has pricked you!");
@@ -626,10 +629,10 @@ void do_cmd_open()
 	c_ptr = &cave[y][x];
 
 	/* Get the object (if it exists) */
-	i_ptr = &i_list[c_ptr->tptr];
+	i_ptr = &i_list[c_ptr->i_idx];
 
 	/* Nothing is there */
-	if ((c_ptr->tptr == 0) ||
+	if ((c_ptr->i_idx == 0) ||
 	    ((i_ptr->tval != TV_CLOSED_DOOR) &&
 	     (i_ptr->tval != TV_CHEST))) {
 	    msg_print("I do not see anything you can open there.");
@@ -751,7 +754,7 @@ void do_cmd_open()
 	    /* Was chest still trapped?	 (Snicker)   */
 		if ((i_ptr->flags & CH_LOCKED) == 0) {
 		    chest_trap(y, x);
-		    if (c_ptr->tptr != 0)
+		    if (c_ptr->i_idx != 0)
 			flag = TRUE;
 		}
 
@@ -780,8 +783,8 @@ void do_cmd_open()
 
 		    coin_type = 0;
 		    opening_chest = TRUE; /* don't generate another chest -CWS */
-		    (void)monster_death(y, x, i_list[c_ptr->tptr].flags, 0, 0);
-		    i_list[c_ptr->tptr].flags = 0;
+		    (void)monster_death(y, x, i_list[c_ptr->i_idx].flags, 0, 0);
+		    i_list[c_ptr->i_idx].flags = 0;
 		    opening_chest = FALSE;
 		}
 	    }
@@ -811,11 +814,11 @@ void do_cmd_close()
 	(void)mmove(dir, &y, &x);
 
 	c_ptr = &cave[y][x];
-	i_ptr = &i_list[c_ptr->tptr];
+	i_ptr = &i_list[c_ptr->i_idx];
 
 	no_object = FALSE;
 
-	if ((c_ptr->tptr == 0) ||
+	if ((c_ptr->i_idx == 0) ||
 	    (i_ptr->tval != TV_OPEN_DOOR)) {
 
 	    msg_print("I do not see anything you can close there.");
@@ -845,7 +848,7 @@ void do_cmd_close()
 	else {
 
 	    /* Hack -- kill the old object */
-	    i_ptr = &i_list[c_ptr->tptr];
+	    i_ptr = &i_list[c_ptr->i_idx];
 	    invcopy(i_ptr, OBJ_CLOSED_DOOR);
 	    c_ptr->fval = BLOCKED_FLOOR;
 
@@ -874,21 +877,21 @@ int twall(int y, int x, int t1, int t2)
 	c_ptr = &cave[y][x];
 
 
-	if (c_ptr->tptr) { /* secret door or rubble or gold -CFT */
-	    if (i_list[c_ptr->tptr].tval == TV_RUBBLE) {
+	if (c_ptr->i_idx) { /* secret door or rubble or gold -CFT */
+	    if (i_list[c_ptr->i_idx].tval == TV_RUBBLE) {
 		delete_object(y,x); /* blow it away... */
 		if (randint(10)==1){
 		    place_object(y,x); /* and drop a goodie! */
 		}
 	    }
-	    else if (i_list[c_ptr->tptr].tval >= TV_MIN_DOORS)
+	    else if (i_list[c_ptr->i_idx].tval >= TV_MIN_DOORS)
 		delete_object(y,x); /* no more door... */
 	} /* if object there.... */
 
 	c_ptr->fm = FALSE;
 
 	if (panel_contains(y, x))
-	    if ((c_ptr->tl || c_ptr->pl) && c_ptr->tptr != 0) {
+	    if ((c_ptr->tl || c_ptr->pl) && c_ptr->i_idx != 0) {
 		msg_print("You have found something!");
 		c_ptr->fm = TRUE;
 	    }
@@ -972,10 +975,10 @@ void tunnel(int dir)
  * somewhere where it has no effect.  
  */
     if (c_ptr->fval < MIN_WALL
-	&& (c_ptr->tptr == 0 || (i_list[c_ptr->tptr].tval != TV_RUBBLE
-			  && i_list[c_ptr->tptr].tval != TV_SECRET_DOOR))) {
+	&& (c_ptr->i_idx == 0 || (i_list[c_ptr->tptr].tval != TV_RUBBLE
+			  && i_list[c_ptr->i_idx].tval != TV_SECRET_DOOR))) {
 
-	if (c_ptr->tptr == 0) {
+	if (c_ptr->i_idx == 0) {
 	    free_turn_flag = TRUE;
 	    msg_print("Tunnel through what?  Empty air?!?");
 	} else {
@@ -1071,10 +1074,10 @@ void tunnel(int dir)
 
 	    default:
 		/* Is there an object in the way?  (Rubble and secret doors) */
-		if (c_ptr->tptr != 0) {
+		if (c_ptr->i_idx != 0) {
 
 	    /* Rubble. */
-	    if (i_list[c_ptr->tptr].tval == TV_RUBBLE) {
+	    if (i_list[c_ptr->i_idx].tval == TV_RUBBLE) {
 		if (tabil > randint(180)) {
 		    delete_object(y, x);
 		    msg_print("You have removed the rubble.");
@@ -1091,7 +1094,7 @@ void tunnel(int dir)
 	    }
 
 	    /* Secret doors. */
-	    else if (i_list[c_ptr->tptr].tval == TV_SECRET_DOOR) {
+	    else if (i_list[c_ptr->i_idx].tval == TV_SECRET_DOOR) {
 		count_msg_print("You tunnel into the granite wall.");
 		search(char_row, char_col, py.misc.srh);
 	    }
@@ -1135,11 +1138,11 @@ void do_cmd_disarm()
 	(void)mmove(dir, &y, &x);
 	c_ptr = &cave[y][x];
 
-	i_ptr = &i_list[c_ptr->tptr];
+	i_ptr = &i_list[c_ptr->i_idx];
 
 
 	/* Nothing useful there */
-	if ((c_ptr->tptr == 0) ||
+	if ((c_ptr->i_idx == 0) ||
 	    ((i_ptr->tval != TV_VIS_TRAP) &&
 	     (i_ptr->tval != TV_CHEST))) {
 
@@ -1281,7 +1284,7 @@ void bash()
 {
     int                 y, x, tmp, dir;
     register cave_type  *c_ptr;
-    register inven_type *t_ptr;
+    register inven_type *i_ptr;
 
 #ifdef TARGET
     int temp = target_mode; /* targetting will screw up get_dir, so we save
@@ -1310,29 +1313,29 @@ void bash()
 	}
 
 	/* Request to bash something */
-	else if (c_ptr->tptr != 0) {
+	else if (c_ptr->i_idx != 0) {
 
 	    /* What is there */
-	    t_ptr = &i_list[c_ptr->tptr];
+	    i_ptr = &i_list[c_ptr->i_idx];
 
 	    /* Bash a closed door */
-	    if (t_ptr->tval == TV_CLOSED_DOOR) {
+	    if (i_ptr->tval == TV_CLOSED_DOOR) {
 
 		count_msg_print("You smash into the door!");
 
 		tmp = py.stats.use_stat[A_STR] + py.misc.wt / 2;
 
 		/* Use (roughly) similar method as for monsters. */
-		if (randint(tmp * (20 + MY_ABS(t_ptr->p1))) <
-			10 * (tmp - MY_ABS(t_ptr->p1))) {
+		if (randint(tmp * (20 + MY_ABS(i_ptr->p1))) <
+			10 * (tmp - MY_ABS(i_ptr->p1))) {
 
 		    msg_print("The door crashes open!");
 
 		    /* Hack -- drop on the old object */
-		    invcopy(&i_list[c_ptr->tptr], OBJ_OPEN_DOOR);
+		    invcopy(&i_list[c_ptr->i_idx], OBJ_OPEN_DOOR);
 
 		    /* 50% chance of breaking door */
-		    t_ptr->p1 = 1 - randint(2);
+		    i_ptr->p1 = 1 - randint(2);
 		    c_ptr->fval = CORR_FLOOR;
 
 		    if (py.flags.confused == 0)
@@ -1354,15 +1357,15 @@ void bash()
 	    }
 
 	    /* Semi-Hack -- Bash a Chest */
-	    else if (t_ptr->tval == TV_CHEST) {
+	    else if (i_ptr->tval == TV_CHEST) {
 		if (randint(10) == 1) {
 		    msg_print("You have destroyed the chest and its contents!");
-		    t_ptr->index = OBJ_RUINED_CHEST;
-		    t_ptr->flags = 0;
+		    i_ptr->index = OBJ_RUINED_CHEST;
+		    i_ptr->flags = 0;
 		}
-		else if ((CH_LOCKED & t_ptr->flags) && (randint(10) == 1)) {
+		else if ((CH_LOCKED & i_ptr->flags) && (randint(10) == 1)) {
 		    msg_print("The lock breaks open!");
-		    t_ptr->flags &= ~CH_LOCKED;
+		    i_ptr->flags &= ~CH_LOCKED;
 		}
 		else {
 		    count_msg_print("The chest holds firm.");
@@ -1421,9 +1424,9 @@ void do_cmd_spike()
 	(void)mmove(dir, &y, &x);
 	c_ptr = &cave[y][x];
 
-	if (c_ptr->tptr != 0) {
+	if (c_ptr->i_idx != 0) {
 
-	    t_ptr = &i_list[c_ptr->tptr];
+	    t_ptr = &i_list[c_ptr->i_idx];
 
 	    if (t_ptr->tval == TV_CLOSED_DOOR)
 		if (c_ptr->cptr == 0) {

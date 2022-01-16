@@ -126,7 +126,7 @@ static void new_spot(s16b *y, s16b *x)
 	c_ptr = &cave[i][j];
     }
     while (c_ptr->fval >= MIN_CLOSED_SPACE || (c_ptr->cptr != 0)
-	   || (c_ptr->tptr != 0) || (c_ptr->fval == NT_LIGHT_FLOOR)
+	   || (c_ptr->i_idx != 0) || (c_ptr->fval == NT_LIGHT_FLOOR)
 	   || (c_ptr->fval == NT_DARK_FLOOR));
     *y = i;
     *x = j;
@@ -180,10 +180,10 @@ static int next_to_corr(int y, int x)
 	    if (c_ptr->fval != CORR_FLOOR) continue;
 
 	    /* Access the item */
-	    i_ptr = &i_list[c_ptr->tptr];
+	    i_ptr = &i_list[c_ptr->i_idx];
 	    
 	    /* Skip doors */
-	    if (c_ptr->tptr == 0 || i_ptr->tval < TV_MIN_DOORS)
+	    if (c_ptr->i_idx == 0 || i_ptr->tval < TV_MIN_DOORS)
 	    
 	    /* Count these grids */
 	    i++;
@@ -236,7 +236,7 @@ static void alloc_object(int set, int typ, int num)
 
 	    if ((set == ALLOC_SET_BOTH) && (cave[y][x].fval <= MAX_CAVE_FLOOR)) continue;
 
-	    if ((cave[y][x].tptr != 0) || (y == char_row && x == char_col)) continue;
+	    if ((cave[y][x].i_idx != 0) || (y == char_row && x == char_col)) continue;
 
 	    /* Accept it */
 	    break;
@@ -420,7 +420,7 @@ static void repl_spot(int y, int x, int typ)
     c_ptr->lr = FALSE;
 
     /* Delete any object at that location */
-    if (c_ptr->tptr != 0) delete_object(y, x);
+    if (c_ptr->i_idx != 0) delete_object(y, x);
 
     /* Delete any monster at that location */
     if (c_ptr->cptr > 1) delete_monster((int)c_ptr->cptr);
@@ -449,10 +449,10 @@ static void place_destroyed()
 
 		/* Do not destroy important (or illegal) stuff */
 		if (in_bounds(y, x) && (cave[y][x].fval != BOUNDARY_WALL) &&
-		    ((cave[y][x].tptr == 0) ||	/* DGK */
-		     ((i_list[cave[y][x].tptr].tval != TV_UP_STAIR) &&
-		      (i_list[cave[y][x].tptr].tval != TV_DOWN_STAIR) &&
-		      (!(i_list[cave[y][x].tptr].flags2 & TR_ARTIFACT))))) {
+		    ((cave[y][x].i_idx == 0) ||	/* DGK */
+		     ((i_list[cave[y][x].i_idx].tval != TV_UP_STAIR) &&
+		      (i_list[cave[y][x].i_idx].tval != TV_DOWN_STAIR) &&
+		      (!(i_list[cave[y][x].i_idx].flags2 & TR_ARTIFACT))))) {
 		    k = distance(y, x, y1, x1);
 		    if (y == char_row && x == char_col) repl_spot(y, x, 1);
 		    else if (k < 13) repl_spot(y, x, (int)randint(6));
@@ -477,11 +477,11 @@ static cave_type *test_place_obj(int y, int x)
     
     if (!in_bounds(y,x)) return NULL;
     t = &cave[y][x];
-    tv = i_list[t->tptr].tval;
+    tv = i_list[t->i_idx].tval;
     
-    if (t->tptr != 0)
+    if (t->i_idx != 0)
 	if (((tv <= TV_MAX_WEAR) && (tv >= TV_MIN_WEAR) &&
-	     (i_list[t->tptr].flags2 & TR_ARTIFACT)) ||
+	     (i_list[t->i_idx].flags2 & TR_ARTIFACT)) ||
 	    (tv == TV_UP_STAIR) || (tv == TV_DOWN_STAIR) ||
 	    (tv == TV_STORE_DOOR))
 	    return NULL;
@@ -504,7 +504,7 @@ static void place_open_door(int y, int x)
     if (!c_ptr) return;
 
     cur_pos = i_pop();
-    c_ptr->tptr = cur_pos;
+    c_ptr->i_idx = cur_pos;
     i_ptr = &i_list[cur_pos];
     invcopy(i_ptr, OBJ_OPEN_DOOR);
     c_ptr->fval = CORR_FLOOR;
@@ -521,7 +521,7 @@ static void place_broken_door(int y, int x)
     if (!c_ptr) return;
 
     cur_pos = i_pop();
-    c_ptr->tptr = cur_pos;
+    c_ptr->i_idx = cur_pos;
     i_ptr = &i_list[cur_pos];
     invcopy(i_ptr, OBJ_OPEN_DOOR);
     c_ptr->fval = CORR_FLOOR;
@@ -539,7 +539,7 @@ static void place_closed_door(int y, int x)
     if (!c_ptr) return;
 
     cur_pos = i_pop();
-    c_ptr->tptr = cur_pos;
+    c_ptr->i_idx = cur_pos;
     i_ptr = &i_list[cur_pos];
     invcopy(i_ptr, OBJ_CLOSED_DOOR);
     c_ptr->fval = BLOCKED_FLOOR;
@@ -556,7 +556,7 @@ static void place_locked_door(int y, int x)
     if (!c_ptr) return;
 
     cur_pos = i_pop();
-    c_ptr->tptr = cur_pos;
+    c_ptr->i_idx = cur_pos;
     i_ptr = &i_list[cur_pos];
     invcopy(i_ptr, OBJ_CLOSED_DOOR);
     c_ptr->fval = BLOCKED_FLOOR;
@@ -576,7 +576,7 @@ static void place_stuck_door(int y, int x)
     if (!c_ptr) return;
 
     cur_pos = i_pop();
-    c_ptr->tptr = cur_pos;
+    c_ptr->i_idx = cur_pos;
     i_ptr = &i_list[cur_pos];
     invcopy(i_ptr, OBJ_CLOSED_DOOR);
     c_ptr->fval = BLOCKED_FLOOR;
@@ -596,9 +596,12 @@ static void place_secret_door(int y, int x)
     if (!c_ptr) return;
 
     cur_pos = i_pop();
-    c_ptr->tptr = cur_pos;
     i_ptr = &i_list[cur_pos];
     invcopy(i_ptr, OBJ_SECRET_DOOR);
+
+    /* Put the object in the cave */
+    c_ptr->i_idx = cur_pos;
+
     c_ptr->fval = BLOCKED_FLOOR;
 }
 
@@ -642,7 +645,7 @@ static void place_up_stairs(int y, int x)
     if (!c_ptr) return;
 
     cur_pos = i_pop();
-    c_ptr->tptr = cur_pos;
+    c_ptr->i_idx = cur_pos;
     i_ptr = &i_list[cur_pos];
     invcopy(i_ptr, OBJ_UP_STAIR);
 
@@ -668,7 +671,7 @@ static void place_down_stairs(int y, int x)
     if (!c_ptr) return;
 
     cur_pos = i_pop();
-    c_ptr->tptr = cur_pos;
+    c_ptr->i_idx = cur_pos;
     i_ptr = &i_list[cur_pos];
     invcopy(i_ptr, OBJ_DOWN_STAIR);
     if (dun_level == 0)			/* on town level -CWS */
@@ -710,7 +713,7 @@ static void place_stairs(int typ, int num, int walls)
 		    do {
 			cave_ptr = &cave[y1][x1];
 			if (floor_grid_bold(y1, x1)
-			    && (cave_ptr->tptr == 0)
+			    && (cave_ptr->i_idx == 0)
 			    && (next_to_walls(y1, x1) >= walls)) {
 			    flag = TRUE;
 
@@ -767,7 +770,7 @@ static void vault_trap(int y, int x, int yd, int xd, int num)
 
 	    c_ptr = &cave[y1][x1];
 	    if ((c_ptr->fval != NULL_WALL) && (c_ptr->fval <= MAX_CAVE_FLOOR)
-		&& (c_ptr->tptr == 0)) {
+		&& (c_ptr->i_idx == 0)) {
 
 	/* Place the trap */
 		place_trap(y1, x1, randint(MAX_TRAP) - 1);
@@ -2965,7 +2968,7 @@ static void build_store(int store_num, int y, int x)
     c_ptr = &cave[i][j];
     c_ptr->fval = CORR_FLOOR;
     cur_pos = i_pop();
-    c_ptr->tptr = cur_pos;
+    c_ptr->i_idx = cur_pos;
     invcopy(&i_list[cur_pos], OBJ_STORE_DOOR + store_num);
 }
 
@@ -3038,7 +3041,9 @@ void generate_cave()
     char_row = (-1);
     char_col = (-1);
 
-    tlink();
+    /* Totally wipe the object list */
+    wipe_i_list();
+
     mlink();
 
     /* Start with a blank cave */

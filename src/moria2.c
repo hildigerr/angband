@@ -70,7 +70,7 @@ void hit_trap(int y, int x)
     c_ptr = &cave[y][x];
 
     /* Get the trap */
-    i_ptr = &i_list[c_ptr->tptr];
+    i_ptr = &i_list[c_ptr->i_idx];
 
     /* Make the trap "visible" */
     i_ptr->tval = TV_VIS_TRAP;
@@ -386,7 +386,7 @@ static int summon_object(int y, int x, int num, int typ, u32b good)
 	    k = x - 3 + randint(5);
 	    if (in_bounds(j, k) && los(y, x, j, k)) {
 		c_ptr = &cave[j][k];
-		if (floor_grid_bold(j, k) && (c_ptr->tptr == 0)) {
+		if (floor_grid_bold(j, k) && (c_ptr->i_idx == 0)) {
 		    if (typ == 3) {/* typ == 3 -> 50% objects, 50% gold */
 			if (randint(100) < 50)
 			    real_typ = 1;
@@ -447,14 +447,14 @@ u32b monster_death(int y, int x, u32b flags, u32b good, u32b win)
 	    k = x - 3 + randint(5);
 	    if (in_bounds(j, k) && los(y, x, j, k)) {
 		c_ptr = &cave[j][k];
-		if (floor_grid_bold(j, k) && (c_ptr->tptr == 0)) {
+		if (floor_grid_bold(j, k) && (c_ptr->i_idx == 0)) {
 		    if (!crown) {
 			int                 cur_pos;
 			inven_type         *t_ptr;
 
 			crown = TRUE;
 			cur_pos = i_pop();
-			cave[j][k].tptr = cur_pos;
+			cave[j][k].i_idx = cur_pos;
 			invcopy(&i_list[cur_pos], 98);
 			t_ptr = &i_list[cur_pos];
 			t_ptr->flags |= (TR1_STR | TR1_DEX | TR1_CON | TR1_INT | TR1_WIS | TR1_CHR |
@@ -472,7 +472,7 @@ u32b monster_death(int y, int x, u32b flags, u32b good, u32b win)
 
 			grond = TRUE;
 			cur_pos = i_pop();
-			cave[j][k].tptr = cur_pos;
+			cave[j][k].i_idx = cur_pos;
 			invcopy(&i_list[cur_pos], 56);
 			t_ptr = &i_list[cur_pos];
 			t_ptr->name2 = ART_GROND;
@@ -711,13 +711,13 @@ int mon_take_hit(int monptr, int dam, int print_fear)
 		    int                 cur_pos;
 
 		    ca_ptr = &cave[m_ptr->fy][m_ptr->fx];
-		    if (ca_ptr->tptr != 0) {	/* don't overwrite artifact -CFT */
+		    if (ca_ptr->i_idx != 0) {	/* don't overwrite artifact -CFT */
 			int                 ty = m_ptr->fy, tx = m_ptr->fx, ny, nx;
 
-			while ((cave[ty][tx].tptr != 0) &&
-			  (i_list[cave[ty][tx].tptr].tval >= TV_MIN_WEAR) &&
-			  (i_list[cave[ty][tx].tptr].tval <= TV_MAX_WEAR) &&
-			 (i_list[cave[ty][tx].tptr].flags2 & TR_ARTIFACT)) {
+			while ((cave[ty][tx].i_idx != 0) &&
+			  (i_list[cave[ty][tx].i_idx].tval >= TV_MIN_WEAR) &&
+			  (i_list[cave[ty][tx].i_idx].tval <= TV_MAX_WEAR) &&
+			 (i_list[cave[ty][tx].i_idx].flags2 & TR_ARTIFACT)) {
 			    do { /* pick new possible spot */
 				ny = ty + (byte) randint(3) - 2;
 				nx = tx + (byte) randint(3) - 2;
@@ -727,12 +727,12 @@ int mon_take_hit(int monptr, int dam, int print_fear)
 			    tx = nx;
 			} /* ok, to exit this, [ty][tx] must not be artifact
 			   * -CFT */
-			if (cave[ty][tx].tptr != 0)	/* so we can delete it -CFT */
+			if (cave[ty][tx].i_idx != 0)	/* so we can delete it -CFT */
 			    (void)delete_object(ty, tx);
 			ca_ptr = &cave[ty][tx];	/* put stairway here... */
 		    }
 		    cur_pos = i_pop();
-		    ca_ptr->tptr = cur_pos;
+		    ca_ptr->i_idx = cur_pos;
 		    invcopy(&i_list[cur_pos], OBJ_DOWN_STAIR);
 		    msg_print("Well done!! Go for it!");
 		    msg_print("A magical stairway appears...");
@@ -1226,7 +1226,7 @@ static void drop_throw(int y, int x, inven_type *t_ptr)
 	do {
 	    if (in_bounds(i, j)) {
 		c_ptr = &cave[i][j];
-		if (floor_grid_bold(i, j) && c_ptr->tptr == 0)
+		if (floor_grid_bold(i, j) && c_ptr->i_idx == 0)
 		    flag = TRUE;
 	    }
 	    if (!flag) {
@@ -1247,7 +1247,7 @@ static void drop_throw(int y, int x, inven_type *t_ptr)
 		j = x + randint(3) -2;
 	    } while (!in_bounds(i,j) || !floor_grid_bold(i, j));
 	    k++;
-	    if (!(cur_pos = cave[i][j].tptr) || (k>64))
+	    if (!(cur_pos = cave[i][j].i_idx) || (k>64))
 		flag = TRUE;
 	    if (flag && (((i_list[cur_pos].flags2 & TR_ARTIFACT) &&
 			  ((cur_pos = i_list[cur_pos].tval) >= TV_MIN_WEAR) &&
@@ -1266,10 +1266,10 @@ static void drop_throw(int y, int x, inven_type *t_ptr)
     } /* if not flag and is artifact */
     if (flag)
     {
-	if (cave[i][j].tptr)	/* we must have crushed something; waste it -CFT */
+	if (cave[i][j].i_idx)	/* we must have crushed something; waste it -CFT */
 	    delete_object(i,j);
 	cur_pos = i_pop();
-	cave[i][j].tptr = cur_pos;
+	cave[i][j].i_idx = cur_pos;
 	i_list[cur_pos] = *t_ptr;
 	lite_spot(i, j);
     }

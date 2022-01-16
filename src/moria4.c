@@ -609,10 +609,10 @@ void search(int y, int x, int chance)
 	    if (randint(100) < chance) {
 
 		c_ptr = &cave[i][j];
-		i_ptr = &i_list[c_ptr->tptr];
+		i_ptr = &i_list[c_ptr->i_idx];
 
 		/* Nothing there */
-		if (c_ptr->tptr == 0) {
+		if (c_ptr->i_idx == 0) {
 		    /* Nothing */
 		}
 
@@ -688,7 +688,7 @@ void carry(int y, int x, int pickup)
     register inven_type *i_ptr;
 
     c_ptr = &cave[y][x];
-    i_ptr = &i_list[c_ptr->tptr];
+    i_ptr = &i_list[c_ptr->i_idx];
     i = i_ptr->tval;
 
 	end_find();
@@ -838,10 +838,10 @@ static void area_affect(int dir, int y, int x)
 	    if (player_light || c_ptr->tl || c_ptr->pl || c_ptr->fm) {
 
 		/* Most (visible) objects stop the running */
-		if (c_ptr->tptr) {
+		if (c_ptr->i_idx) {
 
 		    /* Examine the object */
-		    t = i_list[c_ptr->tptr].tval;
+		    t = i_list[c_ptr->i_idx].tval;
 		    if ((t != TV_INVIS_TRAP) &&
 			(t != TV_SECRET_DOOR) &&
 			(t != TV_OPEN_DOOR || !find_ignore_doors)) {
@@ -1038,10 +1038,10 @@ void move_player(int dir, int do_pickup)
     if (!floor_grid_bold(y,x)) {
 
 	/* Get the "object" if any */
-	i_ptr = &i_list[c_ptr->tptr];
+	i_ptr = &i_list[c_ptr->i_idx];
 
 	/* Notice non-walls unless starting to "run" */
-	if (!was_running && (c_ptr->tptr)) {
+	if (!was_running && (c_ptr->i_idx)) {
 
 	    /* Rubble */
 	    if (i_ptr->tval == TV_RUBBLE) {
@@ -1132,10 +1132,10 @@ void move_player(int dir, int do_pickup)
 		    move_light(old_row, old_col, char_row, char_col);
 
 	/* An object is beneath him. */
-	if (c_ptr->tptr != 0) {
+	if (c_ptr->i_idx != 0) {
 
 	    /* Get the object */            
-	    i_ptr = &i_list[c_ptr->tptr];
+	    i_ptr = &i_list[c_ptr->i_idx];
 
 	    /* Pre-handle open doors and stairs */
 	    if ((i_ptr->tval == TV_UP_STAIR) ||
@@ -1174,7 +1174,7 @@ void move_player(int dir, int do_pickup)
 
 
 	    /* Get the object */            
-	    i_ptr = &i_list[c_ptr->tptr];
+	    i_ptr = &i_list[c_ptr->i_idx];
 
 	    /* Hack -- if stepped on falling rock trap, the space will */
 	    /* now contain rubble, so step back into a clear area */
@@ -1192,7 +1192,7 @@ void move_player(int dir, int do_pickup)
 
 				    /* check to see if we have stepped back onto another trap, if so, set it off */
 				    c_ptr = &cave[char_row][char_col];
-				    if (c_ptr->tptr != 0) {
+				    if (c_ptr->i_idx != 0) {
 					    if (i_ptr->tval == TV_INVIS_TRAP || i_ptr->tval == TV_VIS_TRAP
 					    || i_ptr->tval == TV_STORE_DOOR)
 						    hit_trap(char_row, char_col);

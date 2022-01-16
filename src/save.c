@@ -538,13 +538,13 @@ static int sv_write()
     for (i = 0; i < MAX_HEIGHT; i++)
 	for (j = 0; j < MAX_WIDTH; j++) {
 	    c_ptr = &cave[i][j];
-	    if (c_ptr->tptr != 0) {
+	    if (c_ptr->i_idx != 0) {
 		wr_byte((byte) i);
 		wr_byte((byte) j);
-		wr_short((u16b) c_ptr->tptr);
+		wr_short((u16b) c_ptr->i_idx);
 	    }
 	}
-    wr_byte(0xFF);		   /* marks end of tptr info */
+    wr_byte(0xFF);		   /* marks end of i_idx info */
 
 /* must set counter to zero, note that code may write out two bytes
  * unnecessarily 
@@ -574,15 +574,15 @@ static int sv_write()
  * this is necessary so that if the user changes the graphics line, the
  * program will be able change all existing walls/floors to the new symbol 
  */
-    t_ptr = &i_list[tcptr - 1];
-    for (i = tcptr - 1; i >= MIN_TRIX; i--) {
+    t_ptr = &i_list[i_max - 1];
+    for (i = i_max - 1; i >= MIN_I_IDX; i--) {
 	if (t_ptr->tchar == wallsym)
 	    t_ptr->tchar = '#';
 	t_ptr--;
     }
 #endif
-    wr_short((u16b) tcptr);
-    for (i = MIN_TRIX; i < tcptr; i++)
+    wr_short((u16b) i_max);
+    for (i = MIN_I_IDX; i < i_max; i++)
 	wr_item(&i_list[i]);
     wr_short((u16b) mfptr);
     for (i = MIN_M_IDX; i < mfptr; i++)
@@ -1414,7 +1414,7 @@ int load_player(int *generate)
 		prt("Error in treasure pointer info", 12, 0);
 		goto error;
 	    }
-	    cave[ychar][xchar].tptr = u16b_tmp;
+	    cave[ychar][xchar].i_idx = u16b_tmp;
 	    rd_byte(&char_tmp);
 	}
     /* read in the rest of the cave info */
@@ -1440,12 +1440,12 @@ int load_player(int *generate)
 	    total_count += count;
 	}
 
-	rd_short((u16b *) & tcptr);
-	if (tcptr > MAX_TALLOC) {
-	    prt("ERROR in MAX_TALLOC", 14, 0);
+	rd_short((u16b *) & i_max);
+	if (i_max > MAX_I_IDX) {
+	    prt("ERROR in MAX_I_IDX", 14, 0);
 	    goto error;
 	}
-	for (i = MIN_TRIX; i < tcptr; i++)
+	for (i = MIN_I_IDX; i < i_max; i++)
 	    rd_item(&i_list[i]);
 	rd_short((u16b *) & mfptr);
 	if (mfptr > MAX_M_IDX) {
@@ -1457,8 +1457,8 @@ int load_player(int *generate)
 	}
 #ifdef MSDOS
     /* change walls and floors to graphic symbols */
-	t_ptr = &i_list[tcptr - 1];
-	for (i = tcptr - 1; i >= MIN_TRIX; i--) {
+	t_ptr = &i_list[i_max - 1];
+	for (i = i_max - 1; i >= MIN_I_IDX; i--) {
 	    if (t_ptr->tchar == '#')
 		t_ptr->tchar = wallsym;
 	    t_ptr--;

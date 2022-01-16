@@ -631,11 +631,11 @@ static void inven_drop(int item_val, int drop_all)
 
     i_ptr = &inventory[item_val];
 
-    if (cave[char_row][char_col].tptr != 0)
+    if (cave[char_row][char_col].i_idx != 0)
 	(void)delete_object(char_row, char_col);
     i = i_pop();
     i_list[i] = *i_ptr;
-    cave[char_row][char_col].tptr = i;
+    cave[char_row][char_col].i_idx = i;
 
     if (item_val >= INVEN_WIELD)
 	inven_takeoff(item_val, -1);
@@ -819,7 +819,7 @@ void inven_command(int command)
 	  case 'd':		   /* Drop */
 	    if (inven_ctr == 0 && equip_ctr == 0)
 		msg_print("But you're not carrying anything.");
-	    else if (cave[char_row][char_col].tptr != 0)
+	    else if (cave[char_row][char_col].i_idx != 0)
 		msg_print("There's no room to drop anything here.");
 	    else {
 		selecting = TRUE;
@@ -984,7 +984,7 @@ void inven_command(int command)
 			    item = (-1);
 			} else if (command == 't' &&
 				   !inven_check_num(&inventory[item])) {
-			    if (cave[char_row][char_col].tptr != 0) {
+			    if (cave[char_row][char_col].i_idx != 0) {
 				msg_print("You can't carry it.");
 				item = (-1);
 			    } else if (get_check("You can't carry it.  Drop it?"))
@@ -1326,9 +1326,9 @@ int get_item(int *com_val, cptr pmt, int i, int j, int (*test) ())
      */
 
     c_ptr = &cave[char_row][char_col];
-    ih = i_list[c_ptr->tptr].tval;
+    ih = i_list[c_ptr->i_idx].tval;
     on_floor = ( (strcmp("Item you wish identified?",pmt) == 0) &&
-		 !( (c_ptr->tptr == 0) || ih == TV_NOTHING
+		 !( (c_ptr->i_idx == 0) || ih == TV_NOTHING
 		    || ih > TV_MAX_PICK_UP) );
 
     item = FALSE;
@@ -1700,8 +1700,8 @@ static void sub1_move_light(int y1, int x1, int y2, int x2)
 		    c_ptr->tl = TRUE;
 		if (c_ptr->fval >= MIN_WALL)
 		    c_ptr->pl = TRUE;
-		else if (!c_ptr->fm && c_ptr->tptr != 0) {
-		    tval = i_list[c_ptr->tptr].tval;
+		else if (!c_ptr->fm && c_ptr->i_idx != 0) {
+		    tval = i_list[c_ptr->i_idx].tval;
 		    if ((tval >= TV_MIN_VISIBLE) && (tval <= TV_MAX_VISIBLE))
 			c_ptr->fm = TRUE;
 		}
