@@ -143,7 +143,7 @@ struct _monster_type {
 
   s16b cspeed;			/* Monster "speed"		*/
 
-  u16b mptr;			    /* Pointer into creature was u16b	   */
+  u16b r_idx;			/* Monster race index		*/
 
   byte fy;			/* Y location on map		*/
   byte fx;			/* X location on map		*/

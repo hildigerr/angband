@@ -650,7 +650,7 @@ static int fearless(monster_race *r_ptr)
  * Decreases monsters hit points and deletes monster if needed.
  * added fear (DGK) and check whether to print fear messages -CWS
  */
-int mon_take_hit(int monptr, int dam, int print_fear)
+int mon_take_hit(int m_idx, int dam, int print_fear)
 {
     register u32b         i;
     int                     found = FALSE;
@@ -667,24 +667,24 @@ int mon_take_hit(int monptr, int dam, int print_fear)
     vtype                   out_val;
 
     /* Get the creature */
-    m_ptr = &m_list[monptr];
+    m_ptr = &m_list[m_idx];
 
     /* Hurt it, and wake it up */
     m_ptr->hp -= dam;
     m_ptr->csleep = 0;
 
-    c_ptr = &c_list[m_ptr->mptr];
+    c_ptr = &c_list[m_ptr->r_idx];
 
     /* It is dead now */
     if (m_ptr->hp < 0) {
 
 	/* Delete ghost file */
-	if (m_ptr->mptr == (MAX_R_IDX - 1)) {
+	if (m_ptr->r_idx == (MAX_R_IDX - 1)) {
 
 	    char                temp[100];
 
 	    if (!dun_level) {
-		sprintf(temp, "%s/%d", ANGBAND_DIR_BONES, c_list[m_ptr->mptr].level);
+		sprintf(temp, "%s/%d", ANGBAND_DIR_BONES, c_list[m_ptr->r_idx].level);
 	    }
 	    else {
 		sprintf(temp, "%s/%d", ANGBAND_DIR_BONES, dun_level);
@@ -693,17 +693,17 @@ int mon_take_hit(int monptr, int dam, int print_fear)
 	    unlink(temp);
 	}
 
-	if (c_list[m_ptr->mptr].cdefense & QUESTOR) {
+	if (c_list[m_ptr->r_idx].cdefense & QUESTOR) {
 	    for (i = 0; i < DEFINED_QUESTS; i++) {	/* search for monster's
 							 * lv, not... */
-		if (quests[i] == c_list[m_ptr->mptr].level) {	/* ...cur lv. -CFT */
+		if (quests[i] == c_list[m_ptr->r_idx].level) {	/* ...cur lv. -CFT */
 		    quests[i] = 0;
 		    found = TRUE;
 		    break;
 		}
 	    }
 	    if (found) {
-		if ((unsigned) dun_level != c_list[m_ptr->mptr].level) {
+		if ((unsigned) dun_level != c_list[m_ptr->r_idx].level) {
 		    /* just mesg */
 		    msg_print("Well done!!  Now continue onward towards Morgoth.");
 		} else {	   /* stairs and mesg */
@@ -744,29 +744,29 @@ int mon_take_hit(int monptr, int dam, int print_fear)
 	coin_type = 0;
 	get_coin_type(c_ptr);
 	i = monster_death((int)m_ptr->fy, (int)m_ptr->fx,
-			  c_list[m_ptr->mptr].cmove,
-			  (c_list[m_ptr->mptr].cdefense & (SPECIAL | GOOD)),
-			  (c_list[m_ptr->mptr].cmove & WINNER));
+			  c_list[m_ptr->r_idx].cmove,
+			  (c_list[m_ptr->r_idx].cdefense & (SPECIAL | GOOD)),
+			  (c_list[m_ptr->r_idx].cmove & WINNER));
 	coin_type = 0;
 	if ((py.flags.blind < 1 && m_ptr->ml) ||
-	    (c_list[m_ptr->mptr].cmove & CM_WIN) ||
-	    (c_list[m_ptr->mptr].cdefense & UNIQUE)) {
+	    (c_list[m_ptr->r_idx].cmove & CM_WIN) ||
+	    (c_list[m_ptr->r_idx].cdefense & UNIQUE)) {
 	    /* recall even invisible uniques */
 
-	    tmp = (c_recall[m_ptr->mptr].r_cmove & CM_TREASURE) >> CM_TR_SHIFT;
+	    tmp = (c_recall[m_ptr->r_idx].r_cmove & CM_TREASURE) >> CM_TR_SHIFT;
 	    if (tmp > ((i & CM_TREASURE) >> CM_TR_SHIFT))
 		i = (i & ~CM_TREASURE) | (tmp << CM_TR_SHIFT);
-	    c_recall[m_ptr->mptr].r_cmove =
-		(c_recall[m_ptr->mptr].r_cmove & ~CM_TREASURE) | i;
-	    if (c_recall[m_ptr->mptr].r_kills < MAX_SHORT)
-		c_recall[m_ptr->mptr].r_kills++;
+	    c_recall[m_ptr->r_idx].r_cmove =
+		(c_recall[m_ptr->r_idx].r_cmove & ~CM_TREASURE) | i;
+	    if (c_recall[m_ptr->r_idx].r_kills < MAX_SHORT)
+		c_recall[m_ptr->r_idx].r_kills++;
 	}
-	c_ptr = &c_list[m_ptr->mptr];
+	c_ptr = &c_list[m_ptr->r_idx];
 	p_ptr = &py.misc;
 
 	if (c_ptr->cdefense & UNIQUE) {
-	    u_list[m_ptr->mptr].exist = 0;
-	    u_list[m_ptr->mptr].dead = 1;
+	    u_list[m_ptr->r_idx].exist = 0;
+	    u_list[m_ptr->r_idx].dead = 1;
 	}
 
 	/* Give some experience */
@@ -792,14 +792,14 @@ int mon_take_hit(int monptr, int dam, int print_fear)
 	/* can't call prt_experience() here, as that would result in "new level"
 	 * message appearing before "monster dies" message 
 	 */
-	m_take_hit = m_ptr->mptr;
+	m_take_hit = m_ptr->r_idx;
 	/* in case this is called from within creatures(), this is a horrible
 	 * hack, the m_list/creatures() code needs to be rewritten 
 	 */
-	if (hack_m_idx < monptr)
-	    delete_monster(monptr);
+	if (hack_m_idx < m_idx)
+	    delete_monster(m_idx);
 	else
-	    fix1_delete_monster(monptr);
+	    fix1_delete_monster(m_idx);
 	monster_is_afraid = 0;
     } else {
 	if (m_ptr->maxhp <= 0)	   /* Then fix it! -DGK */
@@ -871,13 +871,13 @@ int mon_take_hit(int monptr, int dam, int print_fear)
 void py_attack(int y, int x)
 {
     register int        k, blows;
-    int                 crptr, monptr, tot_tohit, base_tohit;
+    int                 crptr, r_idx, tot_tohit, base_tohit;
     vtype               m_name, out_val;
     register inven_type    *i_ptr;
     register struct misc   *p_ptr;
 
     crptr = cave[y][x].cptr;
-    monptr = m_list[crptr].mptr;
+    r_idx = m_list[crptr].r_idx;
 
     m_list[crptr].csleep = 0;
     i_ptr = &inventory[INVEN_WIELD];
@@ -886,10 +886,10 @@ void py_attack(int y, int x)
     if (!m_list[crptr].ml)
 	(void)strcpy(m_name, "it");
     else {
-	if (c_list[monptr].cdefense & UNIQUE)
-	    (void)sprintf(m_name, "%s", c_list[monptr].name);
+	if (c_list[r_idx].cdefense & UNIQUE)
+	    (void)sprintf(m_name, "%s", c_list[r_idx].name);
 	else
-	    (void)sprintf(m_name, "the %s", c_list[monptr].name);
+	    (void)sprintf(m_name, "the %s", c_list[r_idx].name);
     }
 
     /* Proper weapon */
@@ -933,7 +933,7 @@ void py_attack(int y, int x)
 	
 	/* We hit it! */
 	if (test_hit(base_tohit, (int)p_ptr->lev, tot_tohit,
-		     (int)c_list[monptr].ac, CLA_BTH)) {
+		     (int)c_list[r_idx].ac, CLA_BTH)) {
 
 	    if (!wizard) {
 		(void) sprintf(out_val, "You hit %s.", m_name);
@@ -943,7 +943,7 @@ void py_attack(int y, int x)
 	    /* Normal weapon. */
 	    if (i_ptr->tval != TV_NOTHING) {
 		k = pdamroll(i_ptr->damage);
-		k = tot_dam(i_ptr, k, monptr);
+		k = tot_dam(i_ptr, k, r_idx);
 		k = critical_blow((int)i_ptr->weight, tot_tohit, k, CLA_BTH);
 	    }
 
@@ -970,8 +970,8 @@ void py_attack(int y, int x)
 	    if (py.flags.confuse_monster) {
 		py.flags.confuse_monster = FALSE;
 		msg_print("Your hands stop glowing.");
-		if ((c_list[monptr].cdefense & CHARM_SLEEP) ||
-		    (randint(MAX_R_LEV) < c_list[monptr].level)) {
+		if ((c_list[r_idx].cdefense & CHARM_SLEEP) ||
+		    (randint(MAX_R_LEV) < c_list[r_idx].level)) {
 		    (void)sprintf(out_val, "%s is unaffected.", m_name);
 		}
 		else {
@@ -985,8 +985,8 @@ void py_attack(int y, int x)
 		msg_print(out_val);
 
 		if (m_list[crptr].ml && randint(4) == 1) {
-		    c_recall[monptr].r_cdefense |=
-			c_list[monptr].cdefense & CHARM_SLEEP;
+		    c_recall[r_idx].r_cdefense |=
+			c_list[r_idx].cdefense & CHARM_SLEEP;
 		}
 	    }
 
@@ -995,10 +995,10 @@ void py_attack(int y, int x)
 	    /* Is it dead yet? */
 	    if (mon_take_hit(crptr, k, FALSE) >= 0) {
 
-		if ((c_list[monptr].cdefense & (DEMON|UNDEAD|MINDLESS)) ||
-		    (c_list[monptr].cchar == 'E') ||
-		    (c_list[monptr].cchar == 'v') ||
-		    (c_list[monptr].cchar == 'g')) {
+		if ((c_list[r_idx].cdefense & (DEMON|UNDEAD|MINDLESS)) ||
+		    (c_list[r_idx].cchar == 'E') ||
+		    (c_list[r_idx].cchar == 'v') ||
+		    (c_list[r_idx].cchar == 'g')) {
 		    (void)sprintf(out_val, "You have destroyed %s.", m_name);
 		}
 		else {
@@ -1039,10 +1039,10 @@ void py_attack(int y, int x)
     if (!m_list[crptr].ml)
 	(void)strcpy(m_name, "It");
     else {
-	if (c_list[monptr].cdefense & UNIQUE)
-	    (void)sprintf(m_name, "%s", c_list[monptr].name);
+	if (c_list[r_idx].cdefense & UNIQUE)
+	    (void)sprintf(m_name, "%s", c_list[r_idx].name);
 	else
-	    (void)sprintf(m_name, "The %s", c_list[monptr].name);
+	    (void)sprintf(m_name, "The %s", c_list[r_idx].name);
     }
 
     if (monster_is_afraid == 1) {
@@ -1050,7 +1050,7 @@ void py_attack(int y, int x)
 	msg_print(out_val);
     }
     if (monster_is_afraid == -1) {
-	char                sex = c_list[monptr].gender;
+	char                sex = c_list[r_idx].gender;
 
 	sprintf(out_val, "%s recovers %s courage.", m_name,
 		(sex == 'm' ? "his" : sex == 'f' ? "her" :
@@ -1310,25 +1310,25 @@ static int stays_when_throw(inven_type *i_ptr)
  */
 void py_bash(int y, int x)
 {
-    int                     monster, k, avg_max_hp, base_tohit, monptr;
+    int                     monster, k, avg_max_hp, base_tohit, r_idx;
     register monster_race *c_ptr;
     register monster_type  *m_ptr;
     vtype                   m_name, out_val;
 
     monster = cave[y][x].cptr;
     m_ptr = &m_list[monster];
-    monptr = m_ptr->mptr;
-    c_ptr = &c_list[monptr];
+    r_idx = m_ptr->r_idx;
+    c_ptr = &c_list[r_idx];
     m_ptr->csleep = 0;
 
 /* Does the player know what he's fighting?	   */
     if (!m_ptr->ml)
 	(void)strcpy(m_name, "it");
     else {
-	if (c_list[monptr].cdefense & UNIQUE)
-	    (void)sprintf(m_name, "%s", c_list[monptr].name);
+	if (c_list[r_idx].cdefense & UNIQUE)
+	    (void)sprintf(m_name, "%s", c_list[r_idx].name);
 	else
-	    (void)sprintf(m_name, "the %s", c_list[monptr].name);
+	    (void)sprintf(m_name, "the %s", c_list[r_idx].name);
     }
 
     /* Attempt to bash */
@@ -1360,10 +1360,10 @@ void py_bash(int y, int x)
 	/* See if we done it in.				     */
 	if (mon_take_hit(monster, k, TRUE) >= 0) {
 
-	    if ((c_list[monptr].cdefense & (DEMON|UNDEAD|MINDLESS)) ||
-		(c_list[monptr].cchar == 'E') ||
-		(c_list[monptr].cchar == 'v') ||
-		(c_list[monptr].cchar == 'g')) {
+	    if ((c_list[r_idx].cdefense & (DEMON|UNDEAD|MINDLESS)) ||
+		(c_list[r_idx].cchar == 'E') ||
+		(c_list[r_idx].cchar == 'v') ||
+		(c_list[r_idx].cchar == 'g')) {
 		(void)sprintf(out_val, "You have destroyed %s.", m_name);
 	    }
 	    else {

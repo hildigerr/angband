@@ -48,7 +48,7 @@ void delete_monster(int j)
     if (j < 2)
 	return;			   /* trouble? abort! -CFT */
     m_ptr = &m_list[j];
-    if (c_list[m_ptr->mptr].cdefense & UNIQUE) u_list[m_ptr->mptr].exist = 0;
+    if (c_list[m_ptr->r_idx].cdefense & UNIQUE) u_list[m_ptr->mptr].exist = 0;
     cave[m_ptr->fy][m_ptr->fx].cptr = 0;
     if (m_ptr->ml)
 	lite_spot((int)m_ptr->fy, (int)m_ptr->fx);
@@ -102,8 +102,8 @@ void fix1_delete_monster(int j)
 	target_mon = j;
 #endif
     m_ptr = &m_list[j];
-    if (c_list[m_ptr->mptr].cdefense & UNIQUE)
-	if (c_list[m_ptr->mptr].cdefense & UNIQUE) u_list[m_ptr->mptr].exist = 0;
+    if (c_list[m_ptr->r_idx].cdefense & UNIQUE)
+	if (c_list[m_ptr->r_idx].cdefense & UNIQUE) u_list[m_ptr->mptr].exist = 0;
 /* force the hp negative to ensure that the monster is dead, for example, if
  * the monster was just eaten by another, it will still have positive hit
  * points 
@@ -137,7 +137,7 @@ void fix2_delete_monster(int j)
 #endif
 
     m_ptr = &m_list[j];		   /* Fixed from a c_list ptr to a m_list ptr. -CFT */
-    if (c_list[m_ptr->mptr].cdefense & UNIQUE) u_list[m_ptr->mptr].exist = 0;
+    if (c_list[m_ptr->r_idx].cdefense & UNIQUE) u_list[m_ptr->mptr].exist = 0;
     if (j != m_max - 1) {
 	m_ptr = &m_list[m_max - 1];
 	cave[m_ptr->fy][m_ptr->fx].cptr = j;
@@ -158,7 +158,7 @@ void wipe_m_list()
     register int i;
 
     for (i = 0; i < MAX_M_IDX; i++)
-	if (m_list[i].mptr) delete_monster(i);
+	if (m_list[i].r_idx) delete_monster(i);
     for (i = 0; i < MAX_M_IDX; i++) m_list[i] = blank_monster;
 
     /* delete_unique() Kludgey Fix ~Ludwig */
@@ -199,7 +199,7 @@ int compact_monsters(void)
 
 	    if ((cur_dis < m_ptr->cdis) && (randint(3) == 1)) {
 	    /* Don't compact Melkor! */
-		if (c_list[m_ptr->mptr].cmove & CM_WIN)
+		if (c_list[m_ptr->r_idx].cmove & CM_WIN)
 		/* do nothing */
 		    continue;
 
@@ -309,7 +309,7 @@ int place_monster(int y, int x, int r_idx, int slp)
     m_ptr->fx = x;
 
     /* Save the race */
-    m_ptr->mptr = r_idx;
+    m_ptr->r_idx = r_idx;
 
     /* Assign maximal hitpoints */
     if ((c_list[r_idx].cdefense & MAX_HP) ) {
@@ -460,12 +460,12 @@ int place_win_monster()
 
 	mon_ptr->fy = y;
 	mon_ptr->fx = x;
-	mon_ptr->mptr = MAX_R_IDX - 2;
-	if (c_list[mon_ptr->mptr].cdefense & MAX_HP)
-	    mon_ptr->hp = max_hp(c_list[mon_ptr->mptr].hd);
+	mon_ptr->r_idx = MAX_R_IDX - 2;
+	if (c_list[mon_ptr->r_idx].cdefense & MAX_HP)
+	    mon_ptr->hp = max_hp(c_list[mon_ptr->r_idx].hd);
 	else
-	    mon_ptr->hp = pdamroll(c_list[mon_ptr->mptr].hd);
-	mon_ptr->cspeed = c_list[mon_ptr->mptr].speed - 10;
+	    mon_ptr->hp = pdamroll(c_list[mon_ptr->r_idx].hd);
+	mon_ptr->cspeed = c_list[mon_ptr->r_idx].speed - 10;
 	mon_ptr->stunned = 0;
 	mon_ptr->cdis = distance(char_row, char_col, y, x);
 	cave[y][x].cptr = cur_pos;
@@ -1025,13 +1025,13 @@ int place_ghost()
     m_ptr->fy = y;
     m_ptr->fx = x;
 
-    m_ptr->mptr = (MAX_R_IDX - 1);
+    m_ptr->r_idx = (MAX_R_IDX - 1);
 
     /* Assign the hitpoints */
     m_ptr->hp = (s16b) ghost->hd[0] * (s16b) ghost->hd[1];
 
     /* the c_list speed value is 10 greater, so that it can be a byte */
-    m_ptr->cspeed = c_list[mon_ptr->mptr].speed - 10;
+    m_ptr->cspeed = c_list[mon_ptr->r_idx].speed - 10;
     
     m_ptr->stunned = 0;
     m_ptr->cdis = distance(char_row, char_col, y, x);

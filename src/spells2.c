@@ -141,14 +141,14 @@ int sleep_monsters1(int y, int x)
 	    c_ptr = &cave[i][j];
 	    if (c_ptr->cptr > 1) {
 		m_ptr = &m_list[c_ptr->cptr];
-		r_ptr = &c_list[m_ptr->mptr];
+		r_ptr = &c_list[m_ptr->r_idx];
 
 		monster_name(m_name, m_ptr, r_ptr);
 		if ((r_ptr->level >
 		     randint((py.misc.lev - 10) < 1 ? 1 : (py.misc.lev - 10)) + 10) ||
 		    (CHARM_SLEEP & r_ptr->cdefense) || (r_ptr->cdefense & UNIQUE)) {
 		    if (m_ptr->ml && (r_ptr->cdefense & CHARM_SLEEP))
-			c_recall[m_ptr->mptr].r_cdefense |= CHARM_SLEEP;
+			c_recall[m_ptr->r_idx].r_cdefense |= CHARM_SLEEP;
 		    (void)sprintf(out_val, "%s is unaffected.", m_name);
 		    msg_print(out_val);
 		} else {
@@ -287,7 +287,7 @@ int detection()
 	if (panel_contains((int)m_ptr->fy, (int)m_ptr->fx)) {
 	    m_ptr->ml = TRUE;
 	/* works correctly even if hallucinating */
-	    print((char)c_list[m_ptr->mptr].cchar, (int)m_ptr->fy,
+	    print((char)c_list[m_ptr->r_idx].cchar, (int)m_ptr->fy,
 		  (int)m_ptr->fx);
 	    detect = TRUE;
 	}
@@ -463,10 +463,10 @@ int detect_invisible()
     for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
 	if (panel_contains((int)m_ptr->fy, (int)m_ptr->fx) &&
-	    (CM_INVISIBLE & c_list[m_ptr->mptr].cmove)) {
+	    (CM_INVISIBLE & c_list[m_ptr->r_idx].cmove)) {
 	    m_ptr->ml = TRUE;
 	/* works correctly even if hallucinating */
-	    print((char)c_list[m_ptr->mptr].cchar, (int)m_ptr->fy,
+	    print((char)c_list[m_ptr->r_idx].cchar, (int)m_ptr->fy,
 		  (int)m_ptr->fx);
 	    flag = TRUE;
 	}
@@ -493,12 +493,12 @@ void mon_light_dam(int y, int x, int dam)
     c_ptr = &cave[y][x];
     if (c_ptr->cptr > 1) {
 	m_ptr = &m_list[c_ptr->cptr];
-	r_ptr = &c_list[m_ptr->mptr];
+	r_ptr = &c_list[m_ptr->r_idx];
 	monster_name(m_name, m_ptr, r_ptr);
 	m_ptr->csleep = 0;
 	if (HURT_LIGHT & r_ptr->cdefense) {
 	    if (m_ptr->ml)
-		c_recall[m_ptr->mptr].r_cdefense |= HURT_LIGHT;
+		c_recall[m_ptr->r_idx].r_cdefense |= HURT_LIGHT;
 	    i = mon_take_hit((int)c_ptr->cptr, dam, FALSE);
 	    if (i >= 0) {
 		(void)sprintf(out_val, "%s shrivels away in the light!", m_name);
@@ -742,10 +742,10 @@ int detect_monsters()
     for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
 	if (panel_contains((int)m_ptr->fy, (int)m_ptr->fx) &&
-	    ((CM_INVISIBLE & c_list[m_ptr->mptr].cmove) == 0)) {
+	    ((CM_INVISIBLE & c_list[m_ptr->r_idx].cmove) == 0)) {
 	    m_ptr->ml = TRUE;
 	/* works correctly even if hallucinating */
-	    print((char)c_list[m_ptr->mptr].cchar, (int)m_ptr->fy,
+	    print((char)c_list[m_ptr->r_idx].cchar, (int)m_ptr->fy,
 		  (int)m_ptr->fx);
 	    detect = TRUE;
 	}
@@ -894,7 +894,7 @@ void fire_bolt(int typ, int dir, int y, int x, int dam_hp)
 	    if (c_ptr->cptr > 1) {
 		flag = TRUE;
 		m_ptr = &m_list[c_ptr->cptr];
-		r_ptr = &c_list[m_ptr->mptr];
+		r_ptr = &c_list[m_ptr->r_idx];
 	    /*
 	     * light up monster and draw monster, temporarily set pl so that
 	     * update_mon() will work 
@@ -912,7 +912,7 @@ void fire_bolt(int typ, int dir, int y, int x, int dam_hp)
 		m_ptr = &m_list[c_ptr->cptr];	/* and even if not, may be
 						 * new monster if chaos
 						 * polymorphed */
-		r_ptr = &c_list[m_ptr->mptr];
+		r_ptr = &c_list[m_ptr->r_idx];
 		monster_name(m_name, m_ptr, r_ptr);
 
 		if ((dam > 0) && (m_ptr->hp >= dam)) {
@@ -1007,7 +1007,7 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
 		    c_ptr = &cave[ny][nx];
 		    /* and even if not, may be new monster if chaos polymorphed */
 		    m_ptr = &m_list[c_ptr->cptr];
-		    r_ptr = &c_list[m_ptr->mptr];
+		    r_ptr = &c_list[m_ptr->r_idx];
 		    monster_name(m_name, m_ptr, r_ptr);
 
 		    if (dam < 1)
@@ -1029,13 +1029,13 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
 			treas = monster_death((int)m_ptr->fy, (int)m_ptr->fx,
 					      r_ptr->cmove, 0, 0);
 			coin_type = 0;
-			if (m_ptr->ml || (c_list[m_ptr->mptr].cdefense & UNIQUE)) {
-			    tmp = (c_recall[m_ptr->mptr].r_cmove & CM_TREASURE)
+			if (m_ptr->ml || (c_list[m_ptr->r_idx].cdefense & UNIQUE)) {
+			    tmp = (c_recall[m_ptr->r_idx].r_cmove & CM_TREASURE)
 				>> CM_TR_SHIFT;
 			    if (tmp > ((treas & CM_TREASURE) >> CM_TR_SHIFT))
 				treas = (treas & ~CM_TREASURE) | (tmp << CM_TR_SHIFT);
-			    c_recall[m_ptr->mptr].r_cmove = treas |
-				(c_recall[m_ptr->mptr].r_cmove & ~CM_TREASURE);
+			    c_recall[m_ptr->r_idx].r_cmove = treas |
+				(c_recall[m_ptr->r_idx].r_cmove & ~CM_TREASURE);
 			}
 			if (monptr < c_ptr->cptr)
 			    delete_monster((int)c_ptr->cptr);
@@ -1563,7 +1563,7 @@ void fire_ball(int typ, int dir, int y, int x, int dam_hp, int max_dis)
 			/* may be new location if teleported by gravity warp... */
 				    m_ptr = &m_list[c_ptr->cptr];
 			/* and even if not, may be new monster if chaos polymorphed */
-				    r_ptr = &c_list[m_ptr->mptr];
+				    r_ptr = &c_list[m_ptr->r_idx];
 				    monptr = c_ptr->cptr;
 
 				/*
@@ -1650,7 +1650,7 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
     char                ch;
 
     m_ptr = &m_list[monptr];
-    r_ptr = &c_list[m_ptr->mptr];
+    r_ptr = &c_list[m_ptr->r_idx];
     ch = r_ptr->cchar;
     if ((ch == 'v' || ch == 'D' || ch == 'E' || ch == '&' || ch == 'A') ||
 	((ch == 'd' || ch == 'R') && r_ptr->cdefense & UNIQUE))
@@ -1728,7 +1728,7 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
                                                  * by gravity warp... */
 			m_ptr = &m_list[c_ptr->cptr];	/* and even if not, may be new
 							 * monster if chaos polymorphed */
-			r_ptr = &c_list[m_ptr->mptr];
+			r_ptr = &c_list[m_ptr->r_idx];
 
 		    /*
 		     * can not call mon_take_hit here, since player does not
@@ -1755,13 +1755,13 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 						  r_ptr->cmove, 0, 0);
 				coin_type = 0;
 				/* recall even invisible uniques -CWS */
-			    if (m_ptr->ml || (c_list[m_ptr->mptr].cdefense & UNIQUE)) {
-				tmp = (c_recall[m_ptr->mptr].r_cmove & CM_TREASURE)
+			    if (m_ptr->ml || (c_list[m_ptr->r_idx].cdefense & UNIQUE)) {
+				tmp = (c_recall[m_ptr->r_idx].r_cmove & CM_TREASURE)
 				    >> CM_TR_SHIFT;
 				if (tmp > ((treas & CM_TREASURE) >> CM_TR_SHIFT))
 				    treas = (treas & ~CM_TREASURE) | (tmp << CM_TR_SHIFT);
-				c_recall[m_ptr->mptr].r_cmove = treas |
-				    (c_recall[m_ptr->mptr].r_cmove & ~CM_TREASURE);
+				c_recall[m_ptr->r_idx].r_cmove = treas |
+				    (c_recall[m_ptr->r_idx].r_cmove & ~CM_TREASURE);
 			    }
 			/* It ate an already processed monster.  Handle normally. */
 			    if (monptr < c_ptr->cptr)
@@ -2294,7 +2294,7 @@ int hp_monster(int dir, int y, int x, int dam)
 	else if (c_ptr->cptr > 1) {
 	    flag = TRUE;
 	    m_ptr = &m_list[c_ptr->cptr];
-	    r_ptr = &c_list[m_ptr->mptr];
+	    r_ptr = &c_list[m_ptr->r_idx];
 	    monster_name(m_name, m_ptr, r_ptr);
 	    monster = TRUE;
 	    i = mon_take_hit((int)c_ptr->cptr, dam, TRUE);
@@ -2336,7 +2336,7 @@ int drain_life(int dir, int y, int x, int dam)
 	else if (c_ptr->cptr > 1) {
 	    flag = TRUE;
 	    m_ptr = &m_list[c_ptr->cptr];
-	    r_ptr = &c_list[m_ptr->mptr];
+	    r_ptr = &c_list[m_ptr->r_idx];
 	    if (((r_ptr->cdefense & UNDEAD) == 0) &&
 		((r_ptr->cdefense & DEMON) == 0) &&
 		(r_ptr->cchar != 'E' && r_ptr->cchar != 'g' && r_ptr->cchar != 'v')) {
@@ -2354,9 +2354,9 @@ int drain_life(int dir, int y, int x, int dam)
 		}
 	    } else {
 		if (r_ptr->cdefense & UNDEAD)
-		    c_recall[m_ptr->mptr].r_cdefense |= UNDEAD;
+		    c_recall[m_ptr->r_idx].r_cdefense |= UNDEAD;
 		else
-		    c_recall[m_ptr->mptr].r_cdefense |= DEMON;
+		    c_recall[m_ptr->r_idx].r_cdefense |= DEMON;
 	    }
 	}
     }
@@ -2387,7 +2387,7 @@ int speed_monster(int dir, int y, int x, int spd)
 	else if (c_ptr->cptr > 1) {
 	    flag = TRUE;
 	    m_ptr = &m_list[c_ptr->cptr];
-	    r_ptr = &c_list[m_ptr->mptr];
+	    r_ptr = &c_list[m_ptr->r_idx];
 	    monster_name(m_name, m_ptr, r_ptr);
 	    if (spd > 0) {
 		m_ptr->cspeed += spd;
@@ -2435,7 +2435,7 @@ int confuse_monster(int dir, int y, int x, int lvl)
 	    flag = TRUE;
 	else if (c_ptr->cptr > 1) {
 	    m_ptr = &m_list[c_ptr->cptr];
-	    r_ptr = &c_list[m_ptr->mptr];
+	    r_ptr = &c_list[m_ptr->r_idx];
 	    monster_name(m_name, m_ptr, r_ptr);
 	    flag = TRUE;
 	    if ((r_ptr->level >
@@ -2443,7 +2443,7 @@ int confuse_monster(int dir, int y, int x, int lvl)
 		(r_ptr->cdefense & UNIQUE ||
 		 r_ptr->spells2 & (BREATH_CO | BREATH_CH))) {
 		if (m_ptr->ml && (r_ptr->cdefense & CHARM_SLEEP))
-		    c_recall[m_ptr->mptr].r_cdefense |= CHARM_SLEEP;
+		    c_recall[m_ptr->r_idx].r_cdefense |= CHARM_SLEEP;
 		(void)sprintf(out_val, "%s is unaffected.", m_name);
 		msg_print(out_val);
 		m_ptr->csleep = 0;
@@ -2482,14 +2482,14 @@ int fear_monster(int dir, int y, int x, int lvl)
 	    flag = TRUE;
 	else if (c_ptr->cptr > 1) {
 	    m_ptr = &m_list[c_ptr->cptr];
-	    r_ptr = &c_list[m_ptr->mptr];
+	    r_ptr = &c_list[m_ptr->r_idx];
 	    monster_name(m_name, m_ptr, r_ptr);
 	    flag = TRUE;
 	    if ((r_ptr->level >
 	    randint((py.misc.lev - 10) < 1 ? 1 : (py.misc.lev - 10)) + 10) ||
 		(r_ptr->cdefense & UNIQUE)) {
 		if (m_ptr->ml && (r_ptr->cdefense & CHARM_SLEEP))
-		    c_recall[m_ptr->mptr].r_cdefense |= CHARM_SLEEP;
+		    c_recall[m_ptr->r_idx].r_cdefense |= CHARM_SLEEP;
 		(void)sprintf(out_val, "%s is unaffected.", m_name);
 		msg_print(out_val);
 		m_ptr->csleep = 0;
@@ -2527,7 +2527,7 @@ int sleep_monster(int dir, int y, int x)
 	    flag = TRUE;
 	else if (c_ptr->cptr > 1) {
 	    m_ptr = &m_list[c_ptr->cptr];
-	    r_ptr = &c_list[m_ptr->mptr];
+	    r_ptr = &c_list[m_ptr->r_idx];
 
 	    flag = TRUE;
 	    monster_name(m_name, m_ptr, r_ptr);
@@ -2535,7 +2535,7 @@ int sleep_monster(int dir, int y, int x)
 	    randint((py.misc.lev - 10) < 1 ? 1 : (py.misc.lev - 10)) + 10) ||
 	    (r_ptr->cdefense & UNIQUE) || (r_ptr->cdefense & CHARM_SLEEP)) {
 		if (m_ptr->ml && (r_ptr->cdefense & CHARM_SLEEP))
-		    c_recall[m_ptr->mptr].r_cdefense |= CHARM_SLEEP;
+		    c_recall[m_ptr->r_idx].r_cdefense |= CHARM_SLEEP;
 		(void)sprintf(out_val, "%s is unaffected.", m_name);
 		msg_print(out_val);
 	    } else {
@@ -2607,7 +2607,7 @@ int wall_to_mud(int dir, int y, int x)
 	
 	if (c_ptr->cptr > 1) {
 	    m_ptr = &m_list[c_ptr->cptr];
-	    r_ptr = &c_list[m_ptr->mptr];
+	    r_ptr = &c_list[m_ptr->r_idx];
 	    if (HURT_ROCK & r_ptr->cdefense) {
 		monster_name(m_name, m_ptr, r_ptr);
 		flag = m_ptr->ml;
@@ -2619,7 +2619,7 @@ int wall_to_mud(int dir, int y, int x)
 			msg_print(out_val);
 			prt_experience();	/* print msg before calling prt_exp */
 		    } else {
-			c_recall[m_ptr->mptr].r_cdefense |= HURT_ROCK;
+			c_recall[m_ptr->r_idx].r_cdefense |= HURT_ROCK;
 			(void)sprintf(out_val, "%s grunts in pain!", m_name);
 			msg_print(out_val);
 		    }
@@ -2671,7 +2671,7 @@ int td_destroy2(int dir, int y, int x)
    idea, but it won't be automatically fatal. -CFT */
 static int poly(int mnum)
 {
-    register monster_race *c_ptr = &c_list[m_list[mnum].mptr];
+    register monster_race *c_ptr = &c_list[m_list[mnum].r_idx];
     int y, x;
     int i,j,k;
     
@@ -2713,7 +2713,7 @@ int poly_monster(int dir, int y, int x)
 	    flag = TRUE;
 	else if (c_ptr->cptr > 1) {
 	    m_ptr = &m_list[c_ptr->cptr];
-	    r_ptr = &c_list[m_ptr->mptr];
+	    r_ptr = &c_list[m_ptr->r_idx];
 	    if ((r_ptr->level < randint((py.misc.lev-10)<1?1:(py.misc.lev-10))+10)
                 && !(r_ptr->cdefense & UNIQUE)) {
 		poly(c_ptr->cptr);
@@ -2755,7 +2755,7 @@ int build_wall(int dir, int y, int x)
 	    /* stop the wall building */
 		flag = TRUE;
 		m_ptr = &m_list[c_ptr->cptr];
-		r_ptr = &c_list[m_ptr->mptr];
+		r_ptr = &c_list[m_ptr->r_idx];
 
 		if (!(r_ptr->cmove & CM_PHASE)) {
 		/* monster does not move, can't escape the wall */
@@ -2821,7 +2821,7 @@ int clone_monster(int dir, int y, int x)
 	else if (c_ptr->cptr > 1) {
 	    m_list[c_ptr->cptr].csleep = 0;
 	/* monptr of 0 is safe here, since can't reach here from creatures */
-	    return multiply_monster(y, x, (int)m_list[c_ptr->cptr].mptr, 0);
+	    return multiply_monster(y, x, (int)m_list[c_ptr->cptr].r_idx, 0);
 	}
     }
     while (!flag);
@@ -2931,7 +2931,7 @@ int mass_genocide(int spell)
     result = FALSE;
     for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
-	r_ptr = &c_list[m_ptr->mptr];
+	r_ptr = &c_list[m_ptr->r_idx];
 	if (((m_ptr->cdis <= MAX_SIGHT) && ((r_ptr->cmove & CM_WIN) == 0) &&
 	     ((r_ptr->cdefense & UNIQUE) == 0)) || (wizard &&
 					      (m_ptr->cdis <= MAX_SIGHT))) {
@@ -2967,8 +2967,8 @@ int genocide(int spell)
     if (get_com("Which type of creature do you wish exterminated?", &typ))
 	for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	    m_ptr = &m_list[i];
-	    r_ptr = &c_list[m_ptr->mptr];
-	    if ((unsigned) typ == c_list[m_ptr->mptr].cchar)
+	    r_ptr = &c_list[m_ptr->r_idx];
+	    if ((unsigned) typ == c_list[m_ptr->r_idx].cchar)
 		if ((r_ptr->cmove & CM_WIN) == 0) {
 		    delete_monster(i);
 		    if (spell) {
@@ -3011,7 +3011,7 @@ int speed_monsters(int spd)
     speed = FALSE;
     for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
-	r_ptr = &c_list[m_ptr->mptr];
+	r_ptr = &c_list[m_ptr->r_idx];
 	monster_name(m_name, m_ptr, r_ptr);
 
 	if (!los(char_row, char_col, (int)m_ptr->fy, (int)m_ptr->fx))
@@ -3055,7 +3055,7 @@ int sleep_monsters2()
     sleep = FALSE;
     for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
-	r_ptr = &c_list[m_ptr->mptr];
+	r_ptr = &c_list[m_ptr->r_idx];
 	monster_name(m_name, m_ptr, r_ptr);
 	if ((m_ptr->cdis > MAX_SIGHT) ||
 	    !los(char_row, char_col, (int)m_ptr->fy, (int)m_ptr->fx))
@@ -3066,7 +3066,7 @@ int sleep_monsters2()
 	    (r_ptr->cdefense & UNIQUE) || (r_ptr->cdefense & CHARM_SLEEP)) {
 	    if (m_ptr->ml) {
 		if (r_ptr->cdefense & CHARM_SLEEP)
-		    c_recall[m_ptr->mptr].r_cdefense |= CHARM_SLEEP;
+		    c_recall[m_ptr->r_idx].r_cdefense |= CHARM_SLEEP;
 		(void)sprintf(out_val, "%s is unaffected.", m_name);
 		msg_print(out_val);
 	    }
@@ -3096,7 +3096,7 @@ int mass_poly()
     for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
 	if (m_ptr->cdis <= MAX_SIGHT) {
-	    r_ptr = &c_list[m_ptr->mptr];
+	    r_ptr = &c_list[m_ptr->r_idx];
 	    if (((r_ptr->cmove & CM_WIN) == 0) && !(r_ptr->cdefense & UNIQUE)) {
 		mass = poly(i);
 	    }
@@ -3116,10 +3116,10 @@ int detect_evil()
     for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
 	if (panel_contains((int)m_ptr->fy, (int)m_ptr->fx) &&
-	    (EVIL & c_list[m_ptr->mptr].cdefense)) {
+	    (EVIL & c_list[m_ptr->r_idx].cdefense)) {
 	    m_ptr->ml = TRUE;
 	/* works correctly even if hallucinating */
-	    print((char)c_list[m_ptr->mptr].cchar, (int)m_ptr->fy,
+	    print((char)c_list[m_ptr->r_idx].cchar, (int)m_ptr->fy,
 		  (int)m_ptr->fx);
 	    flag = TRUE;
 	}
@@ -3263,7 +3263,7 @@ void earthquake()
 			(void)delete_object(i, j);
 		if (c_ptr->cptr > 1) {
 		    m_ptr = &m_list[c_ptr->cptr];
-		    r_ptr = &c_list[m_ptr->mptr];
+		    r_ptr = &c_list[m_ptr->r_idx];
 
 		    if (!(r_ptr->cmove & CM_PHASE) && !(r_ptr->cdefense & BREAK_WALL)) {
 			if ((movement_rate(c_ptr->cptr) == 0) ||
@@ -3356,10 +3356,10 @@ int banish_creature(u32b cflag, int dist)
     dispel = FALSE;
     for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
-	if ((cflag & c_list[m_ptr->mptr].cdefense) &&
+	if ((cflag & c_list[m_ptr->r_idx].cdefense) &&
 	    (m_ptr->cdis <= MAX_SIGHT) &&
 	    los(char_row, char_col, (int)m_ptr->fy, (int)m_ptr->fx)) {
-	    c_recall[m_ptr->mptr].r_cdefense |= cflag;
+	    c_recall[m_ptr->r_idx].r_cdefense |= cflag;
 	    (void)teleport_away(i, dist);
 	    dispel = TRUE;
 	}
@@ -3380,8 +3380,8 @@ int probing()
     probe = FALSE;
     for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
-	r_ptr = &c_list[m_ptr->mptr];
-	mp = &c_recall[m_ptr->mptr];
+	r_ptr = &c_list[m_ptr->r_idx];
+	mp = &c_recall[m_ptr->r_idx];
 	if ((m_ptr->cdis <= MAX_SIGHT) &&
 	    los(char_row, char_col, (int)m_ptr->fy, (int)m_ptr->fx) && 
 	    (m_ptr->ml)) {
@@ -3420,11 +3420,11 @@ int dispel_creature(int cflag, int damage)
     dispel = FALSE;
     for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
-	if ((cflag & c_list[m_ptr->mptr].cdefense) &&
+	if ((cflag & c_list[m_ptr->r_idx].cdefense) &&
 	    (m_ptr->cdis <= MAX_SIGHT) &&
 	    los(char_row, char_col, (int)m_ptr->fy, (int)m_ptr->fx)) {
-	    r_ptr = &c_list[m_ptr->mptr];
-	    c_recall[m_ptr->mptr].r_cdefense |= cflag;
+	    r_ptr = &c_list[m_ptr->r_idx];
+	    c_recall[m_ptr->r_idx].r_cdefense |= cflag;
 	    monster_name (m_name, m_ptr, r_ptr);
 	    k = mon_take_hit(i, randint(damage), FALSE);
 	    if (k >= 0)
@@ -3452,7 +3452,7 @@ int turn_undead()
     turn_und = FALSE;
     for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
-	r_ptr = &c_list[m_ptr->mptr];
+	r_ptr = &c_list[m_ptr->r_idx];
 	if ((UNDEAD & r_ptr->cdefense)
 	    && (m_ptr->cdis <= MAX_SIGHT)
 	    && (los(char_row, char_col, (int)m_ptr->fy, (int)m_ptr->fx))) {
@@ -3463,7 +3463,7 @@ int turn_undead()
 		    (void)sprintf(out_val, "%s runs frantically!", m_name);
 		    msg_print(out_val);
 		    turn_und = TRUE;
-		    c_recall[m_ptr->mptr].r_cdefense |= UNDEAD;
+		    c_recall[m_ptr->r_idx].r_cdefense |= UNDEAD;
 		}
 		m_ptr->monfear = randint(py.misc.lev) * 2;
 	    } else if (m_ptr->ml) {
@@ -3713,7 +3713,7 @@ const char *pain_message(int monptr, int dam)
 	return "%s is unharmed.";  /* avoid potential div by 0 */
 
     m_ptr = &m_list[monptr];
-    c_ptr = &c_list[m_ptr->mptr];
+    c_ptr = &c_list[m_ptr->r_idx];
 #ifdef MSDOS			   /* more fix -CFT */
     newhp = (s32b) (m_ptr->hp);
     oldhp = newhp + (s32b) dam;
@@ -4270,7 +4270,7 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 
     *y = m_ptr->fy;		/* these only change if mon gets teleported */
     *x = m_ptr->fx; 
-    r_ptr = &c_list[m_ptr->mptr];
+    r_ptr = &c_list[m_ptr->r_idx];
     if (m_ptr->ml){
 	if (r_ptr->cdefense & UNIQUE)
 	    sprintf(cdesc, "%s ", r_ptr->name);
@@ -4289,7 +4289,7 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 	    res = RESIST;
 	    *dam /= 9;
 	    if (m_ptr->ml)
-		c_recall[m_ptr->mptr].r_cdefense |= IM_LIGHTNING;
+		c_recall[m_ptr->r_idx].r_cdefense |= IM_LIGHTNING;
         }
 	break;
       case GF_POIS:
@@ -4297,7 +4297,7 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 	    res = RESIST;
 	    *dam /= 9;
 	    if (m_ptr->ml)
-		c_recall[m_ptr->mptr].r_cdefense |= IM_POISON;
+		c_recall[m_ptr->r_idx].r_cdefense |= IM_POISON;
         }
 	break;
       case GF_ACID:
@@ -4305,7 +4305,7 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 	    res = RESIST;
 	    *dam /= 9;
 	    if (m_ptr->ml)
-		c_recall[m_ptr->mptr].r_cdefense |= IM_ACID;
+		c_recall[m_ptr->r_idx].r_cdefense |= IM_ACID;
         }
 	break;
       case GF_COLD:
@@ -4313,7 +4313,7 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 	    res = RESIST;
 	    *dam /= 9;
 	    if (m_ptr->ml)
-		c_recall[m_ptr->mptr].r_cdefense |= IM_FROST;
+		c_recall[m_ptr->r_idx].r_cdefense |= IM_FROST;
         }
 	break;
       case GF_FIRE:
@@ -4321,7 +4321,7 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 	    res = RESIST;
 	    *dam /= 9;
 	    if (m_ptr->ml)
-		c_recall[m_ptr->mptr].r_cdefense |= IM_FIRE;
+		c_recall[m_ptr->r_idx].r_cdefense |= IM_FIRE;
         }
 	break;
       case GF_HOLY_ORB:
@@ -4329,7 +4329,7 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 	    *dam *= 2;
 	    res = SUSCEPT;
 	    if (m_ptr->ml)
-		c_recall[m_ptr->mptr].r_cdefense |= EVIL;
+		c_recall[m_ptr->r_idx].r_cdefense |= EVIL;
         }
 	break;
       case GF_ARROW:		/* for now, no defense... maybe it should have a
@@ -4355,7 +4355,7 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 	    res = IMMUNE;
 	    *dam = 0;
 	    if (m_ptr->ml)
-		c_recall[m_ptr->mptr].r_cdefense |= UNDEAD;
+		c_recall[m_ptr->r_idx].r_cdefense |= UNDEAD;
         }
 	else if (r_ptr->spells2 & BREATH_LD) { /* if can breath nether, should get
 						  good resist to damage -CFT */
@@ -4367,7 +4367,7 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 	    *dam /= 2;	/* evil takes *2 for holy, so /2 for this... -CFT */
 	    res = SOME_RES;
 	    if (m_ptr->ml)
-		c_recall[m_ptr->mptr].r_cdefense |= EVIL;
+		c_recall[m_ptr->r_idx].r_cdefense |= EVIL;
         }
 	break;
       case GF_WATER:	/* water elementals should resist.  anyone else? -CFT */
@@ -4572,7 +4572,7 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 	    res = RESIST;
 	    *dam /= 9;
 	    if (m_ptr->ml)
-		c_recall[m_ptr->mptr].r_cdefense |= IM_FROST;
+		c_recall[m_ptr->r_idx].r_cdefense |= IM_FROST;
         }
 	if ((*dam <= m_ptr->hp) &&
 	    !(r_ptr->spells2 & BREATH_SD) &&
@@ -4597,13 +4597,13 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
     if (res == CHANGED)
 	sprintf(outval, "%schanges!",cdesc);
     else if ((*dam > m_ptr->hp) &&
-	     (by_player || !(c_list[m_ptr->mptr].cdefense & UNIQUE))) {
+	     (by_player || !(c_list[m_ptr->r_idx].cdefense & UNIQUE))) {
 	res = DEAD;
-	if ((c_list[m_ptr->mptr].cdefense & (DEMON|UNDEAD|MINDLESS)) ||
-	    (c_list[m_ptr->mptr].cchar == 'E') ||
-	    (c_list[m_ptr->mptr].cchar == 'v') ||
-	    (c_list[m_ptr->mptr].cchar == 'g') ||
-	    (c_list[m_ptr->mptr].cchar == 'X'))
+	if ((c_list[m_ptr->r_idx].cdefense & (DEMON|UNDEAD|MINDLESS)) ||
+	    (c_list[m_ptr->r_idx].cchar == 'E') ||
+	    (c_list[m_ptr->r_idx].cchar == 'v') ||
+	    (c_list[m_ptr->r_idx].cchar == 'g') ||
+	    (c_list[m_ptr->r_idx].cchar == 'X'))
 	    sprintf(outval, "%sis destroyed.", cdesc);
 	else
 	    sprintf(outval, "%sdies.", cdesc);

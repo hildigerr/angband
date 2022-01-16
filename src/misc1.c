@@ -358,7 +358,7 @@ unsigned char loc_symbol(int y, int x)
     if ((f_ptr->image > 0) && (randint(12) == 1))
 	return randint(95) + 31;
     if ((cave_ptr->cptr > 1) && (m_list[cave_ptr->cptr].ml))
-	return c_list[m_list[cave_ptr->cptr].mptr].cchar;
+	return c_list[m_list[cave_ptr->cptr].r_idx].cchar;
     if (!cave_ptr->pl && !cave_ptr->tl && !cave_ptr->fm)
 	return ' ';
     if ((cave_ptr->i_idx != 0)

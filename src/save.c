@@ -1719,7 +1719,7 @@ static void wr_monster(register monster_type *mon)
     wr_short((u16b) mon->maxhp); /* added -CWS */
     wr_short((u16b) mon->csleep);
     wr_short((u16b) mon->cspeed);
-    wr_short(mon->mptr);
+    wr_short(mon->r_idx);
     wr_byte(mon->fy);
     wr_byte(mon->fx);
     wr_byte(mon->cdis);
@@ -1845,7 +1845,7 @@ static void rd_monster(register monster_type *mon)
 
     rd_short((u16b *) & mon->csleep);
     rd_short((u16b *) & mon->cspeed);
-    rd_short(&mon->mptr);
+    rd_short(&mon->r_idx);
     rd_byte(&mon->fy);
     rd_byte(&mon->fx);
     rd_byte(&mon->cdis);

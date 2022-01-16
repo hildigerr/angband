@@ -98,7 +98,7 @@ int target_set()
 
 	    /* Describe, prompt for recall */
 	    sprintf(desc, "%s [(t)arget] [(p)osition] [(r)ecall] [ESC quits]",
-		    c_list[m_list[m_idx].mptr].name);
+		    c_list[m_list[m_idx].r_idx].name);
 	    prt(desc,0,0);
 	    move_cursor_relative(row,col);
 
@@ -108,7 +108,7 @@ int target_set()
 
 		/* Recall on screen */
 		save_screen();
-		query = roff_recall(m_list[m_idx].mptr);
+		query = roff_recall(m_list[m_idx].r_idx);
 		restore_screen();
 
 		/* This is done by "good" restore_screen() */
