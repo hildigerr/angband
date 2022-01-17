@@ -1758,7 +1758,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
     sex = r_ptr->gender;
 
     /* Hack -- extract the "1 in x" chance of casting spell */
-    chance = (int)(r_ptr->spells1 & CS_FREQ);
+    chance = (int)(r_ptr->spells1 & CS1_FREQ);
 
     /* Mega-Paranoia */
     if (chance == 0) {
@@ -1801,27 +1801,27 @@ static void mon_cast_spell(int m_idx, int *took_turn)
     /* Extract all possible spells into spell_choice */
     if ((r_ptr->cflags2 & MF2_INTELLIGENT) &&
 	(m_ptr->hp < ((r_ptr->hd[0] * r_ptr->hd[1]) / 10)) &&
-	(r_ptr->spells1 & CS_INT1 || r_ptr->spells2 & CS_INT2 ||
-	 r_ptr->spells3 & CS_INT3) && rand_int(2)) {
+	(r_ptr->spells1 & CS1_INT || r_ptr->spells2 & CS2_INT ||
+	 r_ptr->spells3 & CS3_INT) && rand_int(2)) {
 
 	desperate = TRUE;
 	l_list[m_ptr->r_idx].r_cflags2 |= MF2_INTELLIGENT;
     }
 
     /* Extract the first set of spells */
-    i = (r_ptr->spells1 & ~CS_FREQ);
-    if (desperate) i &= CS_INT1;
+    i = (r_ptr->spells1 & ~CS1_FREQ);
+    if (desperate) i &= CS1_INT;
 	k = 0;
     while (i) spell_choice[k++] = bit_pos(&i);
 
     /* Extract the second set of spells */
     i = r_ptr->spells2;
-    if (desperate) i &= CS_INT2;
+    if (desperate) i &= CS2_INT;
     while (i) spell_choice[k++] = bit_pos(&i) + 32;
 
     /* Extract the third set of spells */
     i = r_ptr->spells3;
-    if (desperate) i &= CS_INT3;
+    if (desperate) i &= CS3_INT;
     while (i) spell_choice[k++] = bit_pos(&i) + 64;
 
     /* Choose a spell to cast */
@@ -2823,7 +2823,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 		l_list[m_ptr->r_idx].r_spells3 |= 1L << (thrown_spell - 65);
 	    }
 
-	    if ((l_list[m_ptr->r_idx].r_spells1 & CS_FREQ) != CS_FREQ)
+	    if ((l_list[m_ptr->r_idx].r_spells1 & CS1_FREQ) != CS1_FREQ)
 		l_list[m_ptr->r_idx].r_spells1++;
 
 	/* Take note of monsters that kill you */

@@ -522,7 +522,6 @@
 #define CM_WIN          0x80000000L
 
 /* creature spell definitions */
-#define CS_FREQ         0x0000000FL
 #define CS_SPELLS       0xFF07FFF0L
 #define CS_TEL_SHORT    0x00000010L
 #define CS_TEL_LONG     0x00000020L
@@ -538,12 +537,6 @@
 #define CS_SLOW_PER     0x00008000L
 #define CS_DRAIN_MANA   0x00010000L
 
-#define CS_INT1         0x0006FC30L     /* was 0x80060020L -DGK */
-#define CS_INT2         0x71027200L     /* was 0x51023400L -DGK */
-#define CS_INT3         0x0000F900L     /* was 0x00000000L -DGK */
-#define CS_BREATHE      0x00F80000L
-#define CS_BREATHE2     0x8000003FL
-#define CS_BREATHE3     0x0000007FL
 #define CS_BR_LIGHT     0x00080000L
 #define CS_BR_GAS       0x00100000L
 #define CS_BR_ACID      0x00200000L
@@ -1170,5 +1163,23 @@
 #define MF2_MINDLESS		0x02000000L /* does not have a mind -CWS    */
 /* 5 bits missing */
 #define MF2_UNIQUE		0x80000000L /* unique monster */
+
+
+/*
+ * The "recall" of monster memory is a MESS
+ */
+
+/* Hack -- used to "count" spell attacks */
+#define CS1_FREQ        0x0000000FL
+
+/* Hack -- separate out the "breath" spells */
+#define CS1_BREATHE     0x00F80000L
+#define CS2_BREATHE     0x8000003FL
+#define CS3_BREATHE     0x0000007FL
+
+/* Hack -- take note of "intelligent" spells */
+#define CS1_INT         0x0006FC30L     /* was 0x80060020L -DGK */
+#define CS2_INT         0x71027200L     /* was 0x51023400L -DGK */
+#define CS3_INT         0x0000F900L     /* was 0x00000000L -DGK */
 
 
