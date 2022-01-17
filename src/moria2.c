@@ -627,7 +627,7 @@ static int fearless(monster_race *r_ptr)
     }
 
     /* The 'E' and 'g' monsters have NoFear *//* Demons have NoFear */
-    if (r_ptr->cchar == 'E' || r_ptr->cchar == 'g' || r_ptr->cdefense & DEMON) {
+    if (r_ptr->r_char == 'E' || r_ptr->r_char == 'g' || r_ptr->cdefense & DEMON) {
 	flag = TRUE;
     }
 
@@ -998,9 +998,7 @@ void py_attack(int y, int x)
 	    if (mon_take_hit(crptr, k, FALSE) >= 0) {
 
 		if ((r_list[r_idx].cdefense & (DEMON|UNDEAD|MINDLESS)) ||
-		    (r_list[r_idx].cchar == 'E') ||
-		    (r_list[r_idx].cchar == 'v') ||
-		    (r_list[r_idx].cchar == 'g')) {
+		    (strchr("Evg", r_list[r_idx].r_char)) {
 		    (void)sprintf(out_val, "You have destroyed %s.", m_name);
 		}
 		else {
@@ -1363,9 +1361,7 @@ void py_bash(int y, int x)
 	if (mon_take_hit(monster, k, TRUE) >= 0) {
 
 	    if ((r_list[r_idx].cdefense & (DEMON|UNDEAD|MINDLESS)) ||
-		(r_list[r_idx].cchar == 'E') ||
-		(r_list[r_idx].cchar == 'v') ||
-		(r_list[r_idx].cchar == 'g')) {
+		(strchr("Evg", r_list[r_idx].r_char)) {
 		(void)sprintf(out_val, "You have destroyed %s.", m_name);
 	    }
 	    else {

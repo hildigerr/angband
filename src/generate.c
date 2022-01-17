@@ -811,12 +811,10 @@ static void vault_jelly(int y, int x)
     /* Hack -- allocate a simple sleeping jelly */
     while (1) {
 	int m = randint(l) - 1;
-	if (((r_list[m].cchar == 'j') || (r_list[m].cchar == ',')
-	     || (r_list[m].cchar == 'i') || (r_list[m].cchar == 'm'))
-	    && !(r_list[m].cdefense & EVIL)) {
+	if (!strchr("jmi,", r_list[m].r_char)) continue;
+	if (r_list[m].cdefense & EVIL) continue;
 	place_monster(y, x, m, TRUE);
 	break;
-	}
     }
 }
 

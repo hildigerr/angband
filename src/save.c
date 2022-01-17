@@ -618,7 +618,7 @@ static int sv_write()
     wr_byte((byte) r_list[MAX_R_IDX - 1].aaf);
     wr_short((byte) r_list[MAX_R_IDX - 1].ac);
     wr_byte((byte) r_list[MAX_R_IDX - 1].speed);
-    wr_byte((byte) r_list[MAX_R_IDX - 1].cchar);
+    wr_byte((byte) r_list[MAX_R_IDX - 1].r_char);
     wr_bytes(r_list[MAX_R_IDX - 1].hd, 2);
     wr_bytes(r_list[MAX_R_IDX - 1].damage, sizeof(attid) * 4);
     wr_short((u16b) r_list[MAX_R_IDX - 1].level);
@@ -1503,7 +1503,7 @@ int load_player(int *generate)
 	    rd_byte((byte *) & (r_list[MAX_R_IDX - 1].ac));
 
 	rd_byte((byte *) & (r_list[MAX_R_IDX - 1].speed));
-	rd_byte((byte *) & (r_list[MAX_R_IDX - 1].cchar));
+	rd_byte((byte *) & (r_list[MAX_R_IDX - 1].r_char));
 
 	rd_bytes((byte *) (r_list[MAX_R_IDX - 1].hd), 2);
 

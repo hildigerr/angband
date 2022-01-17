@@ -392,7 +392,7 @@ int place_monster(int y, int x, int r_idx, int slp)
 
     if (r_ptr->cdefense & UNIQUE) {
 
-	j = r_ptr->cchar;
+	j = r_ptr->r_char;
 
 	if ((j=='k')||(j=='L')||(j=='o')||(j=='O')||(j=='T')||(j=='y')||
 	    (j=='I')||(j=='&')) {
@@ -401,7 +401,7 @@ int place_monster(int y, int x, int r_idx, int slp)
 	    for (z = MAX_R_IDX-1; z>=0; z--) {
 
 		/* Find a similar, lower level, non-unique, monster */
-		if ((r_list[z].cchar == j) &&
+		if ((r_list[z].r_char == j) &&
 		    (r_list[z].level <= r_list[r_idx].level) &&
 		    !(r_list[z].cdefense & UNIQUE)) {
 
@@ -666,7 +666,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	else g->speed = 11;
 
 	/* Use the letter 'p' */
-	g->cchar = 'p';
+	g->r_char = 'p';
 
 	/* XXX */
 	g->hd[1] = 1;
@@ -710,7 +710,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	else if (gr == 7) g->cdefense |= TROLL;
 	g->ac = 26;
 	g->speed = 11;
-	g->cchar = 's';
+	g->r_char = 's';
 	g->hd[1] = 1;
 	g->damage[0] = 5;
 	g->damage[1] = 5;
@@ -728,7 +728,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	else if (gr == 7) g->cdefense |= TROLL;
 	g->ac = 30;
 	g->speed = 11;
-	g->cchar = 'z';
+	g->r_char = 'z';
 	g->hd[1] *= 2;
 	g->damage[0] = 8;
 	g->damage[1] = 0;
@@ -743,7 +743,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	g->cdefense |= (IM_POISON | CHARM_SLEEP | UNDEAD | EVIL | IM_FROST | NO_INFRA);
 	g->ac = 20;
 	g->speed = 13;
-	g->cchar = 'G';
+	g->r_char = 'G';
 	g->damage[0] = 5;
 	g->damage[1] = 5;
 	g->damage[2] = 93;
@@ -761,7 +761,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	else if (gr == 7) g->cdefense |= TROLL;
 	g->ac = 35;
 	g->speed = 11;
-	g->cchar = 'M';
+	g->r_char = 'M';
 	g->hd[1] *= 2;
 	g->damage[0] = 16;
 	g->damage[1] = 16;
@@ -779,7 +779,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	g->cdefense |= (CHARM_SLEEP | UNDEAD | EVIL | IM_POISON | IM_FROST | NO_INFRA);
 	g->ac = 20;
 	g->speed = 11;
-	g->cchar = 'G';
+	g->r_char = 'G';
 	g->hd[1] *= 2;
 	g->damage[0] = 19;
 	g->damage[1] = 185;
@@ -796,7 +796,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	g->cdefense |= (CHARM_SLEEP | UNDEAD | EVIL | IM_POISON | IM_FROST | NO_INFRA);
 	g->ac = 40;
 	g->speed = 12;
-	g->cchar = 'G';
+	g->r_char = 'G';
 	g->hd[1] *= 2;
 	g->damage[0] = 99;
 	g->damage[1] = 99;
@@ -812,7 +812,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	g->cdefense |= (CHARM_SLEEP | UNDEAD | EVIL | IM_POISON | NO_INFRA | HURT_LIGHT);
 	g->ac = 40;
 	g->speed = 11;
-	g->cchar = 'V';
+	g->r_char = 'V';
 	g->hd[1] *= 3;
 	g->damage[0] = 20;
 	g->damage[1] = 20;
@@ -830,7 +830,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	g->cdefense |= (CHARM_SLEEP | UNDEAD | EVIL | IM_POISON | IM_FROST | NO_INFRA | HURT_LIGHT);
 	g->ac = 60;
 	g->speed = 12;
-	g->cchar = 'W';
+	g->r_char = 'W';
 	g->hd[1] *= 3;
 	g->damage[0] = 20;
 	g->damage[1] = 20;
@@ -847,7 +847,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	g->cdefense |= (CHARM_SLEEP | UNDEAD | EVIL | IM_POISON | NO_INFRA | HURT_LIGHT);
 	g->ac = 80;
 	g->speed = 11;
-	g->cchar = 'V';
+	g->r_char = 'V';
 	g->hd[1] *= 2;
 	g->hd[0] = (g->hd[0] * 5) / 2;
 	g->damage[0] = 20;
@@ -865,7 +865,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	g->cdefense |= (CHARM_SLEEP | UNDEAD | EVIL | IM_FROST | IM_POISON | NO_INFRA);
 	g->ac = 90;
 	g->speed = 13;
-	g->cchar = 'G';
+	g->r_char = 'G';
 	g->hd[1] *= 3;
 	g->damage[0] = 99;
 	g->damage[1] = 99;
@@ -884,7 +884,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	g->cdefense |= (CHARM_SLEEP | UNDEAD | EVIL | IM_FROST | NO_INFRA | IM_POISON| INTELLIGENT);
 	g->ac = 120;
 	g->speed = 12;
-	g->cchar = 'L';
+	g->r_char = 'L';
 	g->hd[1] *= 3;
 	g->hd[0] *= 2;
 	g->damage[0] = 181;
@@ -906,7 +906,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	g->cdefense |= (CHARM_SLEEP | UNDEAD | EVIL | IM_POISON | IM_FROST | NO_INFRA | INTELLIGENT);
 	g->ac = 130;
 	g->speed = 13;
-	g->cchar = 'G';
+	g->r_char = 'G';
 	g->hd[1] *= 2;
 	g->hd[0] = (g->hd[0] * 5) / 2;
 	g->damage[0] = 99;
@@ -1521,7 +1521,7 @@ int summon_wraith(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (r_list[m].cchar == 'W' && (r_list[m].cdefense & UNIQUE)) {
+	    if (r_list[m].r_char == 'W' && (r_list[m].cdefense & UNIQUE)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1567,7 +1567,7 @@ int summon_reptile(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (r_list[m].cchar == 'R' && !(r_list[m].cdefense & UNIQUE)) {
+	    if (r_list[m].r_char == 'R' && !(r_list[m].cdefense & UNIQUE)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1613,7 +1613,7 @@ int summon_spider(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (r_list[m].cchar == 'S' && !(r_list[m].cdefense & UNIQUE)) {
+	    if (r_list[m].r_char == 'S' && !(r_list[m].cdefense & UNIQUE)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1659,7 +1659,7 @@ int summon_angel(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (r_list[m].cchar == 'A' && !(r_list[m].cdefense & UNIQUE)) {
+	    if (r_list[m].r_char == 'A' && !(r_list[m].cdefense & UNIQUE)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1703,7 +1703,7 @@ int summon_ant(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (r_list[m].cchar == 'a' && !(r_list[m].cdefense & UNIQUE)) {
+	    if (r_list[m].r_char == 'a' && !(r_list[m].cdefense & UNIQUE)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1749,7 +1749,7 @@ int summon_unique(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (!(r_list[m].cchar == 'P') && (r_list[m].cdefense & UNIQUE)) {
+	    if (!(r_list[m].r_char == 'P') && (r_list[m].cdefense & UNIQUE)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1795,7 +1795,7 @@ int summon_jabberwock(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (r_list[m].cchar == 'J' && !(r_list[m].cdefense & UNIQUE)) {
+	    if (r_list[m].r_char == 'J' && !(r_list[m].cdefense & UNIQUE)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1841,8 +1841,8 @@ int summon_gundead(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if ((r_list[m].cchar == 'L') || (r_list[m].cchar == 'V')
-		|| (r_list[m].cchar == 'W')) {
+	    if ((r_list[m].r_char == 'L') || (r_list[m].r_char == 'V')
+		|| (r_list[m].r_char == 'W')) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1889,7 +1889,7 @@ int *y, *x;
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (r_list[m].cchar == 'D') {
+	    if (r_list[m].r_char == 'D') {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1935,7 +1935,7 @@ int summon_hound(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if ((r_list[m].cchar == 'C' || r_list[m].cchar == 'Z')
+	    if ((r_list[m].r_char == 'C' || r_list[m].r_char == 'Z')
 		&& !(r_list[m].cdefense & UNIQUE)) {
 		ctr = 20;
 		l = 0;

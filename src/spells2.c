@@ -287,7 +287,7 @@ int detection()
 	if (panel_contains((int)m_ptr->fy, (int)m_ptr->fx)) {
 	    m_ptr->ml = TRUE;
 	/* works correctly even if hallucinating */
-	    print((char)r_list[m_ptr->r_idx].cchar, (int)m_ptr->fy,
+	    print((char)r_list[m_ptr->r_idx].r_char, (int)m_ptr->fy,
 		  (int)m_ptr->fx);
 	    detect = TRUE;
 	}
@@ -469,7 +469,7 @@ int detect_invisible()
 
 	    m_ptr->ml = TRUE;
 	/* works correctly even if hallucinating */
-	    print((char)r_ptr->cchar, (int)m_ptr->fy,
+	    print((char)r_ptr->r_char, (int)m_ptr->fy,
 		  (int)m_ptr->fx);
 	    flag = TRUE;
 	}
@@ -748,7 +748,7 @@ int detect_monsters()
 	    ((CM_INVISIBLE & r_list[m_ptr->r_idx].cmove) == 0)) {
 	    m_ptr->ml = TRUE;
 	/* works correctly even if hallucinating */
-	    print((char)r_list[m_ptr->r_idx].cchar, (int)m_ptr->fy,
+	    print((char)r_list[m_ptr->r_idx].r_char, (int)m_ptr->fy,
 		  (int)m_ptr->fx);
 	    detect = TRUE;
 	}
@@ -1654,7 +1654,7 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 
     m_ptr = &m_list[monptr];
     r_ptr = &r_list[m_ptr->r_idx];
-    ch = r_ptr->cchar;
+    ch = r_ptr->r_char;
     if ((ch == 'v' || ch == 'D' || ch == 'E' || ch == '&' || ch == 'A') ||
 	((ch == 'd' || ch == 'R') && r_ptr->cdefense & UNIQUE))
 	max_dis = 3;
@@ -2342,7 +2342,7 @@ int drain_life(int dir, int y, int x, int dam)
 	    r_ptr = &r_list[m_ptr->r_idx];
 	    if (((r_ptr->cdefense & UNDEAD) == 0) &&
 		((r_ptr->cdefense & DEMON) == 0) &&
-		(r_ptr->cchar != 'E' && r_ptr->cchar != 'g' && r_ptr->cchar != 'v')) {
+		(r_ptr->r_char != 'E' && r_ptr->r_char != 'g' && r_ptr->r_char != 'v')) {
 		drain = TRUE;
 		monster_name(m_name, m_ptr, r_ptr);
 		i = mon_take_hit((int)c_ptr->m_idx, dam, TRUE);
@@ -2777,7 +2777,7 @@ int build_wall(int dir, int y, int x)
 			msg_print(out_val);
 		    /* prt_experience(); */
 		    }
-		} else if (r_ptr->cchar == 'E' || r_ptr->cchar == 'X') {
+		} else if (r_ptr->r_char == 'E' || r_ptr->r_char == 'X') {
 		/*
 		 * must be an earth elemental or an earth spirit, or a Xorn
 		 * increase its hit points 
@@ -2971,7 +2971,7 @@ int genocide(int spell)
 	for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	    m_ptr = &m_list[i];
 	    r_ptr = &r_list[m_ptr->r_idx];
-	    if ((unsigned) typ == r_list[m_ptr->r_idx].cchar)
+	    if ((unsigned) typ == r_list[m_ptr->r_idx].r_char)
 		if ((r_ptr->cmove & CM_WIN) == 0) {
 		    delete_monster(i);
 		    if (spell) {
@@ -3123,7 +3123,7 @@ int detect_evil()
 	    (EVIL & r_list[m_ptr->r_idx].cdefense)) {
 	    m_ptr->ml = TRUE;
 	/* works correctly even if hallucinating */
-	    print((char)r_list[m_ptr->r_idx].cchar, (int)m_ptr->fy,
+	    print((char)r_list[m_ptr->r_idx].r_char, (int)m_ptr->fy,
 		  (int)m_ptr->fx);
 	    flag = TRUE;
 	}
@@ -3727,9 +3727,9 @@ const char *pain_message(int monptr, int dam)
 #endif
     percentage = (newhp * 100) / oldhp;
 
-    if ((c_ptr->cchar == 'j') ||   /* Non-verbal creatures like molds */
-	(c_ptr->cchar == 'Q') || (c_ptr->cchar == 'v') ||
-     (c_ptr->cchar == 'm') || ((c_ptr->cchar == 'e') && stricmp(c_ptr->name,
+    if ((c_ptr->r_char == 'j') ||   /* Non-verbal creatures like molds */
+	(c_ptr->r_char == 'Q') || (c_ptr->r_char == 'v') ||
+     (c_ptr->r_char == 'm') || ((c_ptr->r_char == 'e') && stricmp(c_ptr->name,
 							     "Beholder"))) {
 	if (percentage > 95)
 	    return "%s barely notices.";
@@ -3748,7 +3748,7 @@ const char *pain_message(int monptr, int dam)
 	if (percentage > 10)
 	    return "%s writhes in agony.";
 	return "%s jerks limply.";
-    } else if (c_ptr->cchar == 'C' || c_ptr->cchar == 'Z') {
+    } else if (c_ptr->r_char == 'C' || c_ptr->r_char == 'Z') {
 	if (percentage > 95)
 	    return "%s shrugs off the attack.";
 	if (percentage > 75)
@@ -3762,11 +3762,11 @@ const char *pain_message(int monptr, int dam)
 	if (percentage > 10)
 	    return "%s writhes in agony.";
 	return "%s yelps feebly.";
-    } else if (c_ptr->cchar == 'K' || c_ptr->cchar == 'c' || c_ptr->cchar == 'a' ||
-	c_ptr->cchar == 'U' || c_ptr->cchar == 'q' || c_ptr->cchar == 'R' ||
-	c_ptr->cchar == 'X' || c_ptr->cchar == 'b' || c_ptr->cchar == 'F' ||
-	c_ptr->cchar == 'J' || c_ptr->cchar == 'l' || c_ptr->cchar == 'r' ||
-	c_ptr->cchar == 's' || c_ptr->cchar == 'S' || c_ptr->cchar == 't') {
+    } else if (c_ptr->r_char == 'K' || c_ptr->r_char == 'c' || c_ptr->r_char == 'a' ||
+	c_ptr->r_char == 'U' || c_ptr->r_char == 'q' || c_ptr->r_char == 'R' ||
+	c_ptr->r_char == 'X' || c_ptr->r_char == 'b' || c_ptr->r_char == 'F' ||
+	c_ptr->r_char == 'J' || c_ptr->r_char == 'l' || c_ptr->r_char == 'r' ||
+	c_ptr->r_char == 's' || c_ptr->r_char == 'S' || c_ptr->r_char == 't') {
 	if (percentage > 95)
 	    return "%s ignores the attack.";
 	if (percentage > 75)
@@ -4375,7 +4375,7 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
         }
 	break;
       case GF_WATER:	/* water elementals should resist.  anyone else? -CFT */
-	if ((r_ptr->cchar == 'E') && (r_ptr->name[0] == 'W')){
+	if ((r_ptr->r_char == 'E') && (r_ptr->name[0] == 'W')){
 	    res = IMMUNE;
 	    *dam = 0; /* water spirit, water ele, and Waldern -CFT */
         }
@@ -4604,10 +4604,10 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 	     (by_player || !(r_list[m_ptr->r_idx].cdefense & UNIQUE))) {
 	res = DEAD;
 	if ((r_list[m_ptr->r_idx].cdefense & (DEMON|UNDEAD|MINDLESS)) ||
-	    (r_list[m_ptr->r_idx].cchar == 'E') ||
-	    (r_list[m_ptr->r_idx].cchar == 'v') ||
-	    (r_list[m_ptr->r_idx].cchar == 'g') ||
-	    (r_list[m_ptr->r_idx].cchar == 'X'))
+	    (r_list[m_ptr->r_idx].r_char == 'E') ||
+	    (r_list[m_ptr->r_idx].r_char == 'v') ||
+	    (r_list[m_ptr->r_idx].r_char == 'g') ||
+	    (r_list[m_ptr->r_idx].r_char == 'X'))
 	    sprintf(outval, "%sis destroyed.", cdesc);
 	else
 	    sprintf(outval, "%sdies.", cdesc);

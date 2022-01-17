@@ -101,7 +101,7 @@ static cptr look_mon_desc(int mnum)
     /* Determine if the monster is "living" (vs "undead") */
     if (r_ptr->cdefense & UNDEAD) living = FALSE;
     if (r_ptr->cdefense & DEMON) living = FALSE;    
-    if (strchr("EgvX", r_ptr->cchar)) living = FALSE;    
+    if (strchr("EgvX", r_ptr->r_char)) living = FALSE;    
 
     if (m_ptr->maxhp == 0) {	   /* then we're just going to fix it! -CFT */
 	if ((r_ptr->cdefense & MAX_HP) )

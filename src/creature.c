@@ -52,8 +52,10 @@ void update_mon(int m_idx)
 
     /* if not mindless, telepathy sees -CWS */
 	if (py.flags.telepathy) {
-	    char c = r_ptr->cchar;
+
+	    char c = r_ptr->r_char;
 	    const char *n = r_ptr->name;
+
 	    if (strchr("EMXgjvz.",c));
     /* don't show these ever (elementals & golems & vorticies & xorns
      * "minds" are too different) -CFT */

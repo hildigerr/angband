@@ -66,7 +66,7 @@ struct _monster_race {
   byte aaf;			    /* Area affect radius     */
   u16b ac;			    /* AC		      */
   byte speed;			    /* Movement speed+10      */
-  byte cchar;			    /* Character rep.	      */
+  byte r_char;			/* Racial "symbol"		*/
   byte hd[2];			    /* Creatures hit die      */
   attid damage[4];		    /* Type attack and damage */
   u16b level;			    /* Level of creature      */

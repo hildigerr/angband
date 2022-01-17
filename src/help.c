@@ -311,9 +311,9 @@ void ident_char()
 #endif
     for (i = MAX_R_IDX - 1; i >= 0; i--)
 #ifdef MSDOS
-	if ((r_list[i].cchar == (unsigned) command) && bool_roff_recall(i))
+	if ((r_list[i].r_char == (unsigned) command) && bool_roff_recall(i))
 #else
-	if ((r_list[i].cchar == (unsigned) command) && bool_roff_recall(i))
+	if ((r_list[i].r_char == (unsigned) command) && bool_roff_recall(i))
 #endif
 	{
 	    if (n == 0) {
