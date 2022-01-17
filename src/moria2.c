@@ -754,7 +754,7 @@ int mon_take_hit(int m_idx, int dam, int print_fear)
 	i = monster_death((int)m_ptr->fy, (int)m_ptr->fx,
 			  r_list[m_ptr->r_idx].cflags1,
 			  (r_list[m_ptr->r_idx].cflags2 & (MF2_SPECIAL | MF2_GOOD)),
-			  (r_list[m_ptr->r_idx].cflags1 & WINNER));
+			  (r_list[m_ptr->r_idx].cflags1 & MF1_WINNER));
 	coin_type = 0;
 	if ((py.flags1.blind < 1 && m_ptr->ml) ||
 	    (r_list[m_ptr->r_idx].cflags1 & CM_WIN) ||

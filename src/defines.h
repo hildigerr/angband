@@ -1040,25 +1040,26 @@
 
 
 #define NONE8       	0x00000000L
-#define MV_ONLY_ATT    	0x00000001L
-#define MV_ATT_NORM 	0x00000002L
-#define MV_20	        0x00000004L
-#define MV_40		0x00000008L
-#define MV_75		0x00000010L
-#define MV_INVIS	0x00010000L
-#define THRO_DR		0x00020000L
-#define THRO_WALL	0x00040000L
-#define THRO_CREAT	0x00080000L
-#define PICK_UP		0x00100000L
-#define MULTIPLY        0x00200000L
-#define CARRY_OBJ   	0x01000000L
-#define CARRY_GOLD	0x02000000L
-#define HAS_60		0x04000000L
-#define HAS_90		0x08000000L
-#define HAS_1D2		0x10000000L
-#define HAS_2D2		0x20000000L
-#define HAS_4D2		0x40000000L
-#define WINNER		0x80000000L
+#define MF1_MV_ONLY_ATT		0x00000001L /* The monster does not move */
+#define MF1_MV_ATT_NORM 	0x00000002L /* The monster moves normally */
+#define MF1_MV_20	        0x00000004L /* 20% random */
+#define MF1_MV_40		0x00000008L /* 40% random */
+#define MF1_MV_75		0x00000010L /* 75% random */
+#define MF1_MV_INVIS		0x00010000L
+#define MF1_THRO_DR		0x00020000L
+#define MF1_THRO_WALL		0x00040000L
+#define MF1_THRO_CREAT		0x00080000L
+#define MF1_PICK_UP		0x00100000L
+#define MF1_MULTIPLY		0x00200000L
+/* 2 bits missing */
+#define MF1_CARRY_OBJ   	0x01000000L
+#define MF1_CARRY_GOLD		0x02000000L
+#define MF1_HAS_60		0x04000000L
+#define MF1_HAS_90		0x08000000L
+#define MF1_HAS_1D2		0x10000000L
+#define MF1_HAS_2D2		0x20000000L
+#define MF1_HAS_4D2		0x40000000L
+#define MF1_WINNER		0x80000000L
 
 #define BLINK		0x000010L
 #define TELE		0x000020L
