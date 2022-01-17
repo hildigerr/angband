@@ -161,7 +161,7 @@ int movement_rate(int monnum)
 
   ps = 1 - py.flags.speed;	/* this makes normal = 1, fast = 2,
                                  * v.fast = 3, slow = 0, v.slow = -1 -CFT */
-  ms = m_list[monnum].cspeed;
+  ms = m_list[monnum].mspeed;
   
   i = (int)(turn & 0xFF) + (int)monnum; /* 0xFF to prevent negative values -CFT */
 
@@ -2370,11 +2370,11 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    }
 	    msg_print(outval);
 
-	    if ((m_ptr->cspeed) <= ((int)(r_list[m_ptr->r_idx].speed) - 10)) {
+	    if ((m_ptr->mspeed) <= ((int)(r_list[m_ptr->r_idx].speed) - 10)) {
 		if ((r_list[m_ptr->r_idx].speed) <= 15) {
 		strcat(cdesc, "starts moving faster.");
 		msg_print(cdesc);
-		m_ptr->cspeed += 1;
+		m_ptr->mspeed += 1;
 	    }
 	    }
 

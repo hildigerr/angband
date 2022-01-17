@@ -655,8 +655,8 @@ int aggravate_monster(int dis_affect)
     for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
 	m_ptr->csleep = 0;
-	if ((m_ptr->cdis <= dis_affect) && (m_ptr->cspeed < 2)) {
-	    m_ptr->cspeed++;
+	if ((m_ptr->cdis <= dis_affect) && (m_ptr->mspeed < 2)) {
+	    m_ptr->mspeed++;
 	    aggravate = TRUE;
 	}
     }
@@ -2393,7 +2393,7 @@ int speed_monster(int dir, int y, int x, int spd)
 	    r_ptr = &r_list[m_ptr->r_idx];
 	    monster_name(m_name, m_ptr, r_ptr);
 	    if (spd > 0) {
-		m_ptr->cspeed += spd;
+		m_ptr->mspeed += spd;
 		m_ptr->csleep = 0;
 		(void)sprintf(out_val, "%s starts moving faster.", m_name);
 		msg_print(out_val);
@@ -2405,7 +2405,7 @@ int speed_monster(int dir, int y, int x, int spd)
 		msg_print(out_val);
 		m_ptr->csleep = 0;
 	    } else {
-		m_ptr->cspeed += spd;
+		m_ptr->mspeed += spd;
 		m_ptr->csleep = 0;
 		(void)sprintf(out_val, "%s starts moving slower.", m_name);
 		msg_print(out_val);
@@ -3021,7 +3021,7 @@ int speed_monsters(int spd)
 	/* do nothing */
 	    ;
 	else if (spd > 0) {
-	    m_ptr->cspeed += spd;
+	    m_ptr->mspeed += spd;
 	    m_ptr->csleep = 0;
 	    if (m_ptr->ml) {
 		speed = TRUE;
@@ -3031,7 +3031,7 @@ int speed_monsters(int spd)
 	} else if ((r_ptr->level <
 	    randint((py.misc.lev - 10) < 1 ? 1 : (py.misc.lev - 10)) + 10) &&
 		   !(r_ptr->cdefense & UNIQUE)) {
-	    m_ptr->cspeed += spd;
+	    m_ptr->mspeed += spd;
 	    m_ptr->csleep = 0;
 	    if (m_ptr->ml) {
 		(void)sprintf(out_val, "%s starts moving slower.", m_name);

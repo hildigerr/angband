@@ -141,7 +141,7 @@ struct _monster_type {
 
   s16b csleep;			/* Inactive counter		*/
 
-  s16b cspeed;			/* Monster "speed"		*/
+  s16b mspeed;			/* Monster "speed"		*/
 
   u16b r_idx;			/* Monster race index		*/
 

@@ -328,7 +328,7 @@ int place_monster(int y, int x, int r_idx, int slp)
     m_ptr->maxhp = m_ptr->hp;
 
     /* Extract the monster base speed */
-    m_ptr->cspeed = r_ptr->speed - 10;
+    m_ptr->mspeed = r_ptr->speed - 10;
     
     /* No "damage" yet */
     m_ptr->stunned = 0;
@@ -470,7 +470,7 @@ int place_win_monster()
 	    mon_ptr->hp = max_hp(r_list[mon_ptr->r_idx].hd);
 	else
 	    mon_ptr->hp = pdamroll(r_list[mon_ptr->r_idx].hd);
-	mon_ptr->cspeed = r_list[mon_ptr->r_idx].speed - 10;
+	mon_ptr->mspeed = r_list[mon_ptr->r_idx].speed - 10;
 	mon_ptr->stunned = 0;
 	mon_ptr->cdis = distance(char_row, char_col, y, x);
 	cave[y][x].m_idx = cur_pos;
@@ -1036,7 +1036,7 @@ int place_ghost()
     m_ptr->hp = (s16b) ghost->hd[0] * (s16b) ghost->hd[1];
 
     /* the r_list speed value is 10 greater, so that it can be a byte */
-    m_ptr->cspeed = r_list[mon_ptr->r_idx].speed - 10;
+    m_ptr->mspeed = r_list[mon_ptr->r_idx].speed - 10;
     
     m_ptr->stunned = 0;
     m_ptr->cdis = distance(char_row, char_col, y, x);
