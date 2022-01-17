@@ -308,7 +308,7 @@ static int sv_write()
 
     for (i = 0; i < MAX_R_IDX; i++) {
 	r_ptr = &l_list[i];
-	if (r_ptr->r_cmove || r_ptr->r_cdefense || r_ptr->r_kills ||
+	if (r_ptr->r_cmove || r_ptr->r_cflags2 || r_ptr->r_kills ||
 	    r_ptr->r_spells2 || r_ptr->r_spells3 || r_ptr->r_spells ||
 	    r_ptr->r_deaths || r_ptr->r_attacks[0] || r_ptr->r_attacks[1] ||
 	    r_ptr->r_attacks[2] || r_ptr->r_attacks[3]) {
@@ -319,7 +319,7 @@ static int sv_write()
 	    wr_long(r_ptr->r_spells3);
 	    wr_short(r_ptr->r_kills);
 	    wr_short(r_ptr->r_deaths);
-	    wr_long(r_ptr->r_cdefense);
+	    wr_long(r_ptr->r_cflags2);
 	    wr_byte(r_ptr->r_wake);
 	    wr_byte(r_ptr->r_ignore);
 	    wr_bytes(r_ptr->r_attacks, MAX_MON_NATTACK);
@@ -597,7 +597,7 @@ static int sv_write()
     wr_bytes(r_list[MAX_R_IDX - 1].name, 100);
     wr_long((u32b) r_list[MAX_R_IDX - 1].cmove);
     wr_long((u32b) r_list[MAX_R_IDX - 1].spells);
-    wr_long((u32b) r_list[MAX_R_IDX - 1].cdefense);
+    wr_long((u32b) r_list[MAX_R_IDX - 1].cflags2);
     {
 	u16b temp;
 /* fix player ghost's exp bug.  The mexp field is really an u32b, but the
@@ -1010,7 +1010,7 @@ int load_player(int *generate)
 	    rd_long(&r_ptr->r_spells3);
 	    rd_short(&r_ptr->r_kills);
 	    rd_short(&r_ptr->r_deaths);
-	    rd_long(&r_ptr->r_cdefense);
+	    rd_long(&r_ptr->r_cflags2);
 	    rd_byte(&r_ptr->r_wake);
 	    rd_byte(&r_ptr->r_ignore);
 	    rd_bytes(r_ptr->r_attacks, MAX_MON_NATTACK);
@@ -1473,7 +1473,7 @@ int load_player(int *generate)
 	rd_bytes((byte *) (r_list[MAX_R_IDX - 1].name), 100);
 	rd_long((u32b *) & (r_list[MAX_R_IDX - 1].cmove));
 	rd_long((u32b *) & (r_list[MAX_R_IDX - 1].spells));
-	rd_long((u32b *) & (r_list[MAX_R_IDX - 1].cdefense));
+	rd_long((u32b *) & (r_list[MAX_R_IDX - 1].cflags2));
 	{
 	    u16b t1;
 /* fix player ghost's exp bug.  The mexp field is really an u32b, but the

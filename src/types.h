@@ -58,7 +58,7 @@ struct _monster_race {
   cptr name;		    /* Descrip of creature    */
   u32b cmove;			    /* Bit field	      */
   u32b spells;		    /* Creature spells	      */
-  u32b cdefense;		    /* Bit field	      */
+  u32b cflags2;		/* Flags 2 (defense)		*/
   u32b spells2;		    /* More creature spells   */
   u32b spells3;		    /* Yes! even More creature spells */
   u32b mexp;			    /* Exp value for kill     */
@@ -104,7 +104,7 @@ struct _monster_lore {
     u16b r_kills;		/* Count player killing monster */
     u16b r_deaths;		/* Count monster killing player */
 
-    u32b r_cdefense;
+    u32b r_cflags2;
 
     byte r_wake;		/* Number of times woken up (?) */
     byte r_ignore;		/* Number of times ignored (?) */

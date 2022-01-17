@@ -3178,7 +3178,7 @@ static void regen_monsters()
 	if (m_list[i].hp >= 0) {
 	    if (m_list[i].maxhp == 0) {	/* then we're just going to fix it!
 					 * -CFT */
-		if ((r_list[m_list[i].r_idx].cdefense & MF2_MAX_HP) )
+		if ((r_list[m_list[i].r_idx].cflags2 & MF2_MAX_HP) )
 		    m_list[i].maxhp = max_hp(r_list[m_list[i].r_idx].hd);
 		else
 		    m_list[i].maxhp = pdamroll(r_list[m_list[i].r_idx].hd);

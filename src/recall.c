@@ -222,7 +222,7 @@ int bool_roff_recall(int r_idx)
 
     l_ptr = &l_list[r_idx];
 
-    if (l_ptr->r_cmove || l_ptr->r_cdefense ||
+    if (l_ptr->r_cmove || l_ptr->r_cflags2 ||
 	l_ptr->r_spells || l_ptr->r_spells2 || l_ptr->r_spells3 ||
 	l_ptr->r_kills || l_ptr->r_deaths) {
 	return TRUE;
@@ -253,8 +253,8 @@ int roff_recall(int r_idx)
     register u32b         i, j, k;
 
     int                 mspeed;
+    u32b              rcflags2;
     u32b              rcmove, rspells, rspells2, rspells3;
-    u32b              rcdefense; /* this was u16b, but l_list[] uses u32b -CFT */
     monster_lore         save_mem;
     int                 breath = FALSE, magic = FALSE;
     char			sex;
@@ -282,7 +282,7 @@ int roff_recall(int r_idx)
 	    ((r_ptr->cmove & CM_60_RANDOM) != 0);
 
 	l_ptr->r_cmove = (r_ptr->cmove & ~CM_TREASURE) | (j << CM_TR_SHIFT);
-	l_ptr->r_cdefense = r_ptr->cdefense;
+	l_ptr->r_cflags2 = r_ptr->cflags2;
 	l_ptr->r_spells = r_ptr->spells | CS_FREQ;
 	l_ptr->r_spells2 = r_ptr->spells2;
 	l_ptr->r_spells3 = r_ptr->spells3;
@@ -302,15 +302,15 @@ int roff_recall(int r_idx)
 
 /* the CM_WIN property is always known, set it if a win monster */
     rcmove = l_ptr->r_cmove | (CM_WIN & r_ptr->cmove);
-    rcdefense = l_ptr->r_cdefense & r_ptr->cdefense;
-    if ((r_ptr->cdefense & MF2_UNIQUE) || (sex == 'p'))
+    rcflags2 = l_ptr->r_cflags2 & r_ptr->cflags2;
+    if ((r_ptr->cflags2 & MF2_UNIQUE) || (sex == 'p'))
 	(void)sprintf(temp, "%s:\n", r_ptr->name);
     else
 	(void)sprintf(temp, "The %s:\n", r_ptr->name);
     roff(temp);
 /* Conflict history. */
 /* changed to act better for unique monsters -CFT */
-    if (r_ptr->cdefense & MF2_UNIQUE) {   /* treat unique differently... -CFT */
+    if (r_ptr->cflags2 & MF2_UNIQUE) {   /* treat unique differently... -CFT */
 	if (l_ptr->r_deaths) {	   /* We've been killed... */
 	    (void)sprintf(temp, "%s slain %d of your ancestors",
 			  (sex == 'm' ? "He has" : sex == 'f' ? "She has" :
@@ -470,7 +470,7 @@ int roff_recall(int r_idx)
     /* (natural, evil, undead) and variety (race) */
     if (l_ptr->r_kills) {
 
-	if (r_ptr->cdefense & MF2_UNIQUE) {
+	if (r_ptr->cflags2 & MF2_UNIQUE) {
 	    roff("Killing this");
 	}
 	else {
@@ -478,15 +478,15 @@ int roff_recall(int r_idx)
 	}
 
 	/* Describe the "quality" */
-	if (r_ptr->cdefense & MF2_ANIMAL) roff(" natural");
-	if (r_ptr->cdefense & MF2_EVIL) roff(" evil");
-	if (r_ptr->cdefense & MF2_UNDEAD) roff(" undead");
+	if (r_ptr->cflags2 & MF2_ANIMAL) roff(" natural");
+	if (r_ptr->cflags2 & MF2_EVIL) roff(" evil");
+	if (r_ptr->cflags2 & MF2_UNDEAD) roff(" undead");
 
-	if (r_ptr->cdefense & MF2_GIANT) roff(" giant");
-	else if (r_ptr->cdefense & MF2_ORC) roff(" orc");
-	else if (r_ptr->cdefense & MF2_DRAGON) roff(" dragon");
-	else if (r_ptr->cdefense & MF2_DEMON) roff(" demon");
-	else if (r_ptr->cdefense & MF2_TROLL) roff(" troll");
+	if (r_ptr->cflags2 & MF2_GIANT) roff(" giant");
+	else if (r_ptr->cflags2 & MF2_ORC) roff(" orc");
+	else if (r_ptr->cflags2 & MF2_DRAGON) roff(" dragon");
+	else if (r_ptr->cflags2 & MF2_DEMON) roff(" demon");
+	else if (r_ptr->cflags2 & MF2_TROLL) roff(" troll");
 	else roff((sex == 'p' ? " creatures" : " creature"));
 
 	/* calculate the integer exp part */
@@ -522,7 +522,7 @@ int roff_recall(int r_idx)
 	(void)sprintf(temp, " for a%s %lu%s level character.  ",
 		      q, (long)i, p);
 	roff(temp);
-	if (r_ptr->cdefense & MF2_GROUP) {
+	if (r_ptr->cflags2 & MF2_GROUP) {
 	    sprintf(temp, "%s usually appears in groups.  ",
 		    (sex == 'm' ? "He" : sex == 'f' ? "She" : sex == 'p' ? "They" : "It"));
 	    roff(temp);
@@ -623,7 +623,7 @@ int roff_recall(int r_idx)
 		else {
 		    roff((sex == 'm' ? "He is" : sex == 'f' ? "She is" : sex == 'p' ? "They are" : "It is"));
 		}
-		if (l_ptr->r_cdefense & MF2_INTELLIGENT) {
+		if (l_ptr->r_cflags2 & MF2_INTELLIGENT) {
 		    roff(" magical, casting spells intelligently which ");
 		}
 		else {
@@ -709,14 +709,14 @@ int roff_recall(int r_idx)
     /* Do we know how hard they are to kill? Armor class, hit die. */
     /* hasten learning of uniques -CFT */
     if (knowarmor(r_ptr->level, l_ptr->r_kills) ||
-	((r_ptr->cdefense & MF2_UNIQUE) &&
+	((r_ptr->cflags2 & MF2_UNIQUE) &&
 	 knowuniqarmor(r_ptr->level, l_ptr->r_kills))) {
 
 	(void)sprintf(temp, "%s an armor rating of %d",
 		      (sex == 'm' ? "He has" : sex == 'f' ? "She has" : sex == 'p' ? "They have" : "It has"), r_ptr->ac);
 	roff(temp);
 	(void)sprintf(temp, " and a%s life rating of %dd%d.  ",
-		      ((r_ptr->cdefense & MF2_MAX_HP) ? " maximized" : ""),
+		      ((r_ptr->cflags2 & MF2_MAX_HP) ? " maximized" : ""),
 		      r_ptr->hd[0], r_ptr->hd[1]);
 	roff(temp);
     }
@@ -726,7 +726,7 @@ int roff_recall(int r_idx)
     j = rcmove;
 
     /* I wonder why this wasn't here before? -CFT */
-    if (rcdefense & MF2_BREAK_WALL) {
+    if (rcflags2 & MF2_BREAK_WALL) {
 	roff((sex == 'm' ? "He can bore through rock" :
 	      sex == 'f' ? "She can bore through rock" :
 	      sex == 'p' ? "They can bore through rock" :
@@ -754,9 +754,9 @@ int roff_recall(int r_idx)
 	roff(".  ");
     }
 
-    /* Do we know its special weaknesses? Most cdefense flags. */
+    /* Do we know its special weaknesses? Most cflags2 flags. */
     k = TRUE;
-    j = rcdefense;
+    j = rcflags2;
 
     if (j & MF2_HURT_LITE) {
 	if (k) {
@@ -787,7 +787,7 @@ int roff_recall(int r_idx)
 	roff(".  ");
     }
 
-    /* Do we know its special weaknesses? Most cdefense flags. */
+    /* Do we know its special weaknesses? Most cflags2 flags. */
     k = TRUE;
     for (i = 0; j & (MF2_IM_COLD | MF2_IM_FIRE | MF2_IM_ACID | MF2_IM_POIS | MF2_IM_ELEC); i++) {
 	if (j & (MF2_IM_COLD << i)) {
@@ -812,14 +812,14 @@ int roff_recall(int r_idx)
 	roff(".  ");
     }
 
-    if (rcdefense & MF2_NO_INFRA) {
+    if (rcflags2 & MF2_NO_INFRA) {
 	roff((sex == 'm' ? "He is cold blooded" :
 	      sex == 'f' ? "She is cold blooded" :
 	      sex == 'p' ? "They are cold blooded" :
 	      "It is cold blooded"));
     }
-    if (rcdefense & MF2_CHARM_SLEEP) {
-	if (rcdefense & MF2_NO_INFRA) {
+    if (rcflags2 & MF2_CHARM_SLEEP) {
+	if (rcflags2 & MF2_NO_INFRA) {
 	    roff(", and");
 	}
 	else {
@@ -827,7 +827,7 @@ int roff_recall(int r_idx)
 	}
 	roff(" cannot be charmed or slept");
     }
-    if (rcdefense & (MF2_CHARM_SLEEP | MF2_NO_INFRA)) {
+    if (rcflags2 & (MF2_CHARM_SLEEP | MF2_NO_INFRA)) {
 	roff(".  ");
     }
 
@@ -905,10 +905,10 @@ int roff_recall(int r_idx)
 
 
 	/* Describe the treasure quality */
-	if (r_ptr->cdefense & MF2_SPECIAL) {
+	if (r_ptr->cflags2 & MF2_SPECIAL) {
 	    p = (j==1?"n exceptional object":" exceptional objects");
 	}
-	else if (r_ptr->cdefense & MF2_GOOD) {
+	else if (r_ptr->cflags2 & MF2_GOOD) {
 	    p = (j==1?" good object":" good objects");
 	}
 	else {
@@ -995,7 +995,7 @@ int roff_recall(int r_idx)
 
 		/* Hack -- do we KNOW the damage? */
 		if (knowdamage(r_ptr->level, l_ptr->r_attacks[i], (int)d1 * (int)d2) ||
-		    ((r_ptr->cdefense & MF2_UNIQUE) &&
+		    ((r_ptr->cflags2 & MF2_UNIQUE) &&
 		     knowuniqdamage(r_ptr->level, l_ptr->r_attacks[i], (int)d1 * (int)d2))) {
 
 		    /* Hack -- Loss of experience */

@@ -66,7 +66,7 @@ void update_mon(int m_idx)
     /* once in a while we see these almost mindless insects... -CFT */
 
 	    } else if (c=='S' && strncmp(n, "Drider", 6) &&
-		     !(r_ptr->cdefense & MF2_UNIQUE)) {
+		     !(r_ptr->cflags2 & MF2_UNIQUE)) {
 		if (randint(5)==1) flag = TRUE;
     /* once in a while show spiders, scops.  But DO show drider,
      * Shelob, and Ungol. -CFT */
@@ -88,7 +88,7 @@ void update_mon(int m_idx)
 	    } else if (c==',' && strncmp(n, "Magic", 5));
     /* don't show mushrooms, except magic 'shrooms -CFT */
 
-	    else if (!(r_ptr->cdefense & MF2_MINDLESS))
+	    else if (!(r_ptr->cflags2 & MF2_MINDLESS))
 		flag = TRUE;
     /* if not mindless, they show up -CWS */
 	}
@@ -100,8 +100,8 @@ void update_mon(int m_idx)
 	/* moved here to allow infra to see invis -CFT */
 	    if ((py.flags1.see_infra > 0) &&
 		(m_ptr->cdis <= py.flags1.see_infra)) {
-		if (MF2_NO_INFRA & r_ptr->cdefense)	/* changed to act sensibly -CFT */
-		    l_list[m_ptr->r_idx].r_cdefense |= MF2_NO_INFRA;
+		if (MF2_NO_INFRA & r_ptr->cflags2)	/* changed to act sensibly -CFT */
+		    l_list[m_ptr->r_idx].r_cflags2 |= MF2_NO_INFRA;
 		else
 		    flag = TRUE;   /* only can see if not MF2_NO_INFRA... */
 	    }
@@ -453,19 +453,19 @@ static void make_attack(int m_idx)
     m_ptr = &m_list[m_idx];
     r_ptr = &r_list[m_ptr->r_idx];
 
-    if (r_ptr->cdefense & MF2_DESTRUCT) shatter = TRUE;
+    if (r_ptr->cflags2 & MF2_DESTRUCT) shatter = TRUE;
 
     if (!m_ptr->ml)
 	(void)strcpy(cdesc, "It ");
     else {
-	if (r_ptr->cdefense & MF2_UNIQUE)
+	if (r_ptr->cflags2 & MF2_UNIQUE)
 	    (void)sprintf(cdesc, "%s ", r_ptr->name);
 	else
 	    (void)sprintf(cdesc, "The %s ", r_ptr->name);
     }
 
 /* For "DIED_FROM" string	   */
-    if (r_ptr->cdefense & MF2_UNIQUE)
+    if (r_ptr->cflags2 & MF2_UNIQUE)
 	(void)sprintf(ddesc, "%s", r_ptr->name);
     else if (is_a_vowel(r_ptr->name[0]))
 	(void)sprintf(ddesc, "an %s", r_ptr->name);
@@ -488,11 +488,11 @@ static void make_attack(int m_idx)
 	flag = FALSE;
 
 	/* Random (100) + level > 50 chance for stop any attack added */
-	if (((py.flags1.protevil > 0) && (r_ptr->cdefense & MF2_EVIL) &&
+	if (((py.flags1.protevil > 0) && (r_ptr->cflags2 & MF2_EVIL) &&
 	     ((py.misc.lev + 1) > r_ptr->level)) &&
 	    (randint(100) + (py.misc.lev) > 50)) {
 
-	    if (m_ptr->ml) l_list[m_ptr->r_idx].r_cdefense |= MF2_EVIL;
+	    if (m_ptr->ml) l_list[m_ptr->r_idx].r_cflags2 |= MF2_EVIL;
 	    attype = 99;
 	    adesc = 99;
 	}
@@ -1318,7 +1318,7 @@ static void make_attack(int m_idx)
 		    msg_print("Your hands stop glowing.");
 		    f_ptr->confuse_monster = FALSE;
 		    if ((randint(MAX_R_LEV) < r_ptr->level) ||
-			(MF2_CHARM_SLEEP & r_ptr->cdefense)) {
+			(MF2_CHARM_SLEEP & r_ptr->cflags2)) {
 			(void)sprintf(tmp_str, "%sis unaffected.", cdesc);
 		    }
 		    else {
@@ -1328,8 +1328,8 @@ static void make_attack(int m_idx)
 		    msg_print(tmp_str);
 
 		    if (visible && !death && !rand_int(4)) {
-			l_list[m_ptr->r_idx].r_cdefense |=
-			    r_ptr->cdefense & MF2_CHARM_SLEEP;
+			l_list[m_ptr->r_idx].r_cflags2 |=
+			    r_ptr->cflags2 & MF2_CHARM_SLEEP;
 		    }
 		}
 	    }
@@ -1431,11 +1431,11 @@ static void make_move(int m_idx, int *mm, u32b *rcmove)
 	    else if (movebits & CM_PHASE) {
 		do_move = TRUE;
 		*rcmove |= CM_PHASE;
-	    } else if (r_list[m_ptr->r_idx].cdefense & MF2_BREAK_WALL) {
+	    } else if (r_list[m_ptr->r_idx].cflags2 & MF2_BREAK_WALL) {
 	    /* Crunch up those Walls Morgoth and Umber Hulks!!!! */
 
 		do_move = TRUE;
-		l_list[m_ptr->r_idx].r_cdefense |= MF2_BREAK_WALL;
+		l_list[m_ptr->r_idx].r_cflags2 |= MF2_BREAK_WALL;
 		if ((i_ptr->tval == TV_CLOSED_DOOR) ||
 		    (i_ptr->tval == TV_SECRET_DOOR)) {	/* break the door -CFT  */
 		    invcopy(i_ptr, OBJ_OPEN_DOOR);
@@ -1675,7 +1675,7 @@ static void make_move(int m_idx, int *mm, u32b *rcmove)
 			if ((i_ptr->flags2 & TR_ARTIFACT) ||
 			    ( (i_ptr->tval >= TV_MIN_WEAR) &&
 			      (i_ptr->tval <= TV_MAX_WEAR) &&
-			      (r_list[m_ptr->r_idx].cdefense & flg) )) {
+			      (r_list[m_ptr->r_idx].cflags2 & flg) )) {
 
 /* FIXME: should use new line-splitting code */
 
@@ -1783,14 +1783,14 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	update_mon(m_idx);
     /* Describe the attack			       */
 	if (m_ptr->ml) {
-	    if (r_ptr->cdefense & MF2_UNIQUE)
+	    if (r_ptr->cflags2 & MF2_UNIQUE)
 		(void)sprintf(cdesc, "%s ", r_ptr->name);
 	    else
 		(void)sprintf(cdesc, "The %s ", r_ptr->name);
 	} else
 	    (void)strcpy(cdesc, "It ");
     /* For "DIED_FROM" string	 */
-	if (MF2_UNIQUE & r_ptr->cdefense)
+	if (MF2_UNIQUE & r_ptr->cflags2)
 	    (void)sprintf(ddesc, "%s", r_ptr->name);
 	else if (is_a_vowel(r_ptr->name[0]))
 	    (void)sprintf(ddesc, "an %s", r_ptr->name);
@@ -1799,13 +1799,13 @@ static void mon_cast_spell(int m_idx, int *took_turn)
     /* End DIED_FROM		       */
 
     /* Extract all possible spells into spell_choice */
-    if ((r_ptr->cdefense & MF2_INTELLIGENT) &&
+    if ((r_ptr->cflags2 & MF2_INTELLIGENT) &&
 	(m_ptr->hp < ((r_ptr->hd[0] * r_ptr->hd[1]) / 10)) &&
 	(r_ptr->spells & CS_INT1 || r_ptr->spells2 & CS_INT2 ||
 	 r_ptr->spells3 & CS_INT3) && rand_int(2)) {
 
 	desperate = TRUE;
-	l_list[m_ptr->r_idx].r_cdefense |= MF2_INTELLIGENT;
+	l_list[m_ptr->r_idx].r_cflags2 |= MF2_INTELLIGENT;
     }
 
     /* Extract the first set of spells */
@@ -2287,7 +2287,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    monster_is_afraid = 0;
 
 	    if (m_ptr->maxhp == 0) {	/* then we're just going to fix it! -CFT */
-		if ((r_list[m_ptr->r_idx].cdefense & MF2_MAX_HP) )
+		if ((r_list[m_ptr->r_idx].cflags2 & MF2_MAX_HP) )
 		    m_ptr->maxhp = max_hp(r_list[m_ptr->r_idx].hd);
 		else
 		    m_ptr->maxhp = pdamroll(r_list[m_ptr->r_idx].hd);
@@ -3169,7 +3169,7 @@ void creatures(int attack)
 	/* Hack -- Remove dead monsters. */
 	if (m_ptr->hp < 0) {
 
-	    if (r_list[m_ptr->r_idx].cdefense & MF2_UNIQUE) u_list[m_ptr->mptr].exist = 0;
+	    if (r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE) u_list[m_ptr->mptr].exist = 0;
 	    fix2_delete_monster(i);
 
 	    /* Continue */
@@ -3242,7 +3242,7 @@ void creatures(int attack)
 			    if (m_ptr->stunned == 0) {
 				if (!m_ptr->ml)
 				    (void)strcpy(cdesc, "It ");
-				else if (r_list[m_ptr->r_idx].cdefense & MF2_UNIQUE)
+				else if (r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE)
 				    (void)sprintf(cdesc, "%s ",
 						  r_list[m_ptr->r_idx].name);
 				else
@@ -3276,7 +3276,7 @@ void creatures(int attack)
      * may have been killed during mon_move(). 
      */
 	if (m_ptr->hp < 0) {
-	    if (r_list[m_ptr->r_idx].cdefense & MF2_UNIQUE) u_list[m_ptr->mptr].exist = 0;
+	    if (r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE) u_list[m_ptr->mptr].exist = 0;
 	    fix2_delete_monster(i);
 	    continue;
 	}
@@ -3312,7 +3312,7 @@ static void shatter_quake(int mon_y, int mon_x)
 		    r_ptr = &r_list[m_ptr->r_idx];
 
 		    if (!(r_ptr->cmove & CM_PHASE) &&
-			!(r_ptr->cdefense & MF2_BREAK_WALL)) {
+			!(r_ptr->cflags2 & MF2_BREAK_WALL)) {
 			if ((movement_rate(c_ptr->m_idx) == 0) ||
 			    (r_ptr->cmove & CM_ATTACK_ONLY))
 			/* monster can not move to escape the wall */
@@ -3348,7 +3348,7 @@ static void shatter_quake(int mon_y, int mon_x)
  * So, we let then live, but extremely wimpy.  This isn't great, because
  * monster might heal itself before player's next swing... -CFT
  */
-			if ((r_ptr->cdefense & MF2_UNIQUE) && (m_ptr->hp < 0))
+			if ((r_ptr->cflags2 & MF2_UNIQUE) && (m_ptr->hp < 0))
 			    m_ptr->hp = 0;
 			if (m_ptr->hp < 0) {
 			    u32b              temp, treas;

@@ -812,7 +812,7 @@ static void vault_jelly(int y, int x)
     while (1) {
 	int m = randint(l) - 1;
 	if (!strchr("jmi,", r_list[m].r_char)) continue;
-	if (r_list[m].cdefense & MF2_EVIL) continue;
+	if (r_list[m].cflags2 & MF2_EVIL) continue;
 	place_monster(y, x, m, TRUE);
 	break;
     }
@@ -827,8 +827,8 @@ static void vault_undead(int y, int x)
     /* Hack -- allocate a sleeping non-unique undead */
     while (1) {
 	int m = randint(l) - 1;
-	if (!(r_list[m].cdefense & MF2_UNDEAD)) continue;
-	if (r_list[m].cdefense & MF2_UNIQUE) continue;
+	if (!(r_list[m].cflags2 & MF2_UNDEAD)) continue;
+	if (r_list[m].cflags2 & MF2_UNIQUE) continue;
 	place_monster(y, x, m, TRUE);
 	break;
     }
