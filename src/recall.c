@@ -223,7 +223,7 @@ int bool_roff_recall(int r_idx)
     l_ptr = &l_list[r_idx];
 
     if (l_ptr->r_cflags1 || l_ptr->r_cflags2 ||
-	l_ptr->r_spells || l_ptr->r_spells2 || l_ptr->r_spells3 ||
+	l_ptr->r_spells1 || l_ptr->r_spells2 || l_ptr->r_spells3 ||
 	l_ptr->r_kills || l_ptr->r_deaths) {
 	return TRUE;
     }
@@ -254,7 +254,7 @@ int roff_recall(int r_idx)
 
     int                 mspeed;
     u32b              rcflags1, rcflags2;
-    u32b              rspells, rspells2, rspells3;
+    u32b              rspells1, rspells2, rspells3;
     monster_lore         save_mem;
     int                 breath = FALSE, magic = FALSE;
     char			sex;
@@ -283,7 +283,7 @@ int roff_recall(int r_idx)
 
 	l_ptr->r_cflags1 = (r_ptr->cflags1 & ~CM_TREASURE) | (j << CM_TR_SHIFT);
 	l_ptr->r_cflags2 = r_ptr->cflags2;
-	l_ptr->r_spells = r_ptr->spells | CS_FREQ;
+	l_ptr->r_spells1 = r_ptr->spells1 | CS_FREQ;
 	l_ptr->r_spells2 = r_ptr->spells2;
 	l_ptr->r_spells3 = r_ptr->spells3;
 	j = 0;
@@ -296,7 +296,7 @@ int roff_recall(int r_idx)
     }
     roffpline = 0;
     roffp = roffbuf;
-    rspells = l_ptr->r_spells & r_ptr->spells & ~CS_FREQ;
+    rspells1 = l_ptr->r_spells1 & r_ptr->spells1 & ~CS_FREQ;
     rspells2 = l_ptr->r_spells2 & r_ptr->spells2;
     rspells3 = l_ptr->r_spells3 & r_ptr->spells3;
 
@@ -533,7 +533,7 @@ int roff_recall(int r_idx)
     i = 0;
 
     /* First, handle (and forget!) the "breath" */
-    if ((rspells & CS_BREATHE) ||
+    if ((rspells1 & CS_BREATHE) ||
 	(rspells2 & CS_BREATHE2) ||
 	(rspells3 & CS_BREATHE3)) {
 
@@ -541,8 +541,8 @@ int roff_recall(int r_idx)
 	breath = TRUE;
 
 	/* Process the "breath" and remove it */
-	j = rspells & CS_BREATHE;
-	rspells &= ~CS_BREATHE;
+	j = rspells1 & CS_BREATHE;
+	rspells1 &= ~CS_BREATHE;
 	while ((i = bit_pos(&j)) != -1) {
 	    if (k) {
 		sprintf(temp, "%s can breathe ",
@@ -584,7 +584,7 @@ int roff_recall(int r_idx)
 
 	/* Process the "breath" and remove it */
 	j = rspells3 & CS_BREATHE3;
-	rspells &= ~CS_BREATHE3;
+	rspells1 &= ~CS_BREATHE3;
 	while ((i = bit_pos(&j)) != -1) {
 	    if (k) {
 		sprintf(temp, "%s can breathe ",
@@ -608,13 +608,13 @@ int roff_recall(int r_idx)
     k = TRUE;
 
     /* Dump the normal spells */
-    if (rspells || rspells2 || rspells3) {
+    if (rspells1 || rspells2 || rspells3) {
 
 	/* Note that spells exist */
 	magic = TRUE;
 
 	/* Describe the spells */
-	j = rspells & ~CS_BREATHE;
+	j = rspells1 & ~CS_BREATHE;
 	while ((i = bit_pos(&j)) != -1) {
 	    if (k) {
 		if (breath) {
@@ -696,8 +696,8 @@ int roff_recall(int r_idx)
 	/* XXX Could offset by level (?) */
 
 	/* Describe the spell frequency */
-	if ((l_ptr->r_spells & CS_FREQ) > 5) {
-	    (void)sprintf(temp, "; 1 time in %lu", r_ptr->spells & CS_FREQ);
+	if ((l_ptr->r_spells1 & CS_FREQ) > 5) {
+	    (void)sprintf(temp, "; 1 time in %lu", r_ptr->spells1 & CS_FREQ);
 	    roff(temp);
 	}
 

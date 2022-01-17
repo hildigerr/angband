@@ -309,12 +309,12 @@ static int sv_write()
     for (i = 0; i < MAX_R_IDX; i++) {
 	r_ptr = &l_list[i];
 	if (r_ptr->r_cflags1 || r_ptr->r_cflags2 || r_ptr->r_kills ||
-	    r_ptr->r_spells2 || r_ptr->r_spells3 || r_ptr->r_spells ||
+	    r_ptr->r_spells2 || r_ptr->r_spells3 || r_ptr->r_spells1 ||
 	    r_ptr->r_deaths || r_ptr->r_attacks[0] || r_ptr->r_attacks[1] ||
 	    r_ptr->r_attacks[2] || r_ptr->r_attacks[3]) {
 	    wr_short((u16b) i);
 	    wr_long(r_ptr->r_cflags1);
-	    wr_long(r_ptr->r_spells);
+	    wr_long(r_ptr->r_spells1);
 	    wr_long(r_ptr->r_spells2);
 	    wr_long(r_ptr->r_spells3);
 	    wr_short(r_ptr->r_kills);
@@ -596,7 +596,7 @@ static int sv_write()
      }
     wr_bytes(r_list[MAX_R_IDX - 1].name, 100);
     wr_long((u32b) r_list[MAX_R_IDX - 1].cflags1);
-    wr_long((u32b) r_list[MAX_R_IDX - 1].spells);
+    wr_long((u32b) r_list[MAX_R_IDX - 1].spells1);
     wr_long((u32b) r_list[MAX_R_IDX - 1].cflags2);
     {
 	u16b temp;
@@ -1005,7 +1005,7 @@ int load_player(int *generate)
 		goto error;
 	    r_ptr = &l_list[u16b_tmp];
 	    rd_long(&r_ptr->r_cflags1);
-	    rd_long(&r_ptr->r_spells);
+	    rd_long(&r_ptr->r_spells1);
 	    rd_long(&r_ptr->r_spells2);
 	    rd_long(&r_ptr->r_spells3);
 	    rd_short(&r_ptr->r_kills);
@@ -1472,7 +1472,7 @@ int load_player(int *generate)
 	*((char *) r_list[MAX_R_IDX - 1].name) = 'A';
 	rd_bytes((byte *) (r_list[MAX_R_IDX - 1].name), 100);
 	rd_long((u32b *) & (r_list[MAX_R_IDX - 1].cflags1));
-	rd_long((u32b *) & (r_list[MAX_R_IDX - 1].spells));
+	rd_long((u32b *) & (r_list[MAX_R_IDX - 1].spells1));
 	rd_long((u32b *) & (r_list[MAX_R_IDX - 1].cflags2));
 	{
 	    u16b t1;

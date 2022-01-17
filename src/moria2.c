@@ -623,7 +623,7 @@ static int fearless(monster_race *r_ptr)
 
     /* Undead --> (Spells = Mind --> Fear) + (NoSpells = NoMind --> NoFear) */
     if (r_ptr->cflags2 & MF2_UNDEAD) {
-	flag = (!(r_ptr->spells || r_ptr->spells2 || r_ptr->spells3));
+	flag = (!(r_ptr->spells1 || r_ptr->spells2 || r_ptr->spells3));
     }
 
     /* The 'E' and 'g' monsters have NoFear */

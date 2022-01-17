@@ -57,10 +57,10 @@ typedef struct _monster_race monster_race;
 struct _monster_race {
   cptr name;		    /* Descrip of creature    */
   u32b cflags1;		/* Flags 1 (movement)		*/
-  u32b spells;		    /* Creature spells	      */
+  u32b spells1;		/* Spell flags 1		*/
   u32b cflags2;		/* Flags 2 (defense)		*/
-  u32b spells2;		    /* More creature spells   */
-  u32b spells3;		    /* Yes! even More creature spells */
+  u32b spells2;		/* Spell flags 2		*/
+  u32b spells3;		/* Spell flags 3		*/
   u32b mexp;			    /* Exp value for kill     */
   u16b sleep;			    /* Inactive counter/10    */
   byte aaf;			    /* Area affect radius     */
@@ -97,7 +97,7 @@ typedef struct _monster_lore monster_lore;
 struct _monster_lore {
 
     u32b r_cflags1;
-    u32b r_spells;
+    u32b r_spells1;
     u32b r_spells2;
     u32b r_spells3;
 
