@@ -159,7 +159,7 @@ void pray()
 		    bless(randint(48) + 48);
 		    break;
 		  case 27:
-		    (void)dispel_creature(UNDEAD, (int)(3 * py.misc.lev));
+		    (void)dispel_creature(MF2_UNDEAD, (int)(3 * py.misc.lev));
 		    break;
 		  case 28:
 		    (void)hp_player(200);
@@ -180,13 +180,13 @@ void pray()
 		    }
 		    break;
 		  case 29:
-		    (void)dispel_creature(EVIL, (int)(3 * py.misc.lev));
+		    (void)dispel_creature(MF2_EVIL, (int)(3 * py.misc.lev));
 		    break;
 		  case 30:
 		    warding_glyph();
 		    break;
 		  case 31:
-		    (void)dispel_creature(EVIL, (int)(4 * py.misc.lev));
+		    (void)dispel_creature(MF2_EVIL, (int)(4 * py.misc.lev));
 		    (void)remove_fear();
 		    (void)cure_poison();
 		    (void)hp_player(1000);
@@ -271,13 +271,13 @@ void pray()
 		    (void)restore_level();
 		    break;
 		  case 42:	   /* dispel undead */
-		    (void)dispel_creature(UNDEAD, (int)(4 * py.misc.lev));
+		    (void)dispel_creature(MF2_UNDEAD, (int)(4 * py.misc.lev));
 		    break;
 		  case 43:	   /* dispel evil */
-		    (void)dispel_creature(EVIL, (int)(4 * py.misc.lev));
+		    (void)dispel_creature(MF2_EVIL, (int)(4 * py.misc.lev));
 		    break;
 		  case 44:	   /* banishment */
-		    if (banish_creature(EVIL, 100))
+		    if (banish_creature(MF2_EVIL, 100))
 			msg_print("The Power of your god banishes the creatures!");
 		    break;
 		  case 45:	   /* word of destruction */

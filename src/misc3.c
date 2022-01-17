@@ -764,16 +764,16 @@ void place_good(int y, int x, u32b good)
 	    is_good = TRUE;	   /* nor are rags! -CFT */
 	if ((tv == TV_MAGIC_BOOK) &&	/* if book, good must be one of the
 					 * deeper, special must be Raal's */
-	    (k_list[sorted_objects[tmp]].sval > ((good & SPECIAL) ? 71 : 67)))
+	    (k_list[sorted_objects[tmp]].sval > ((good & MF2_SPECIAL) ? 71 : 67)))
 	    is_good = TRUE;
 	if ((tv == TV_PRAYER_BOOK) &&	/* if book, good must be one of the
 					 * deeper, special must be Wrath of
 					 * God */
-	    (k_list[sorted_objects[tmp]].sval > ((good & SPECIAL) ? 71 : 67)))
+	    (k_list[sorted_objects[tmp]].sval > ((good & MF2_SPECIAL) ? 71 : 67)))
 	    is_good = TRUE;
     } while (!is_good);
     invcopy(&i_list[cur_pos], sorted_objects[tmp]);
-    magic_treasure(cur_pos, object_level, (good & SPECIAL) ? 666 : 1, 0);
+    magic_treasure(cur_pos, object_level, (good & MF2_SPECIAL) ? 666 : 1, 0);
     if (peek) {
 	if (k_list[sorted_objects[tmp]].level > object_level) {
 	    char                buf[200];
@@ -862,9 +862,9 @@ void special_random_object(int y, int x, int num)
 	    /* Perhaps attempt to place a "Special Object" */
 	    if (randint(5) == 1) {
 		if (!special_place_object(j, k))
-			place_good(j, k, SPECIAL);
+			place_good(j, k, MF2_SPECIAL);
 		} else {
-		    place_good(j, k, SPECIAL);
+		    place_good(j, k, MF2_SPECIAL);
 		}
 		i = 9;
 	}

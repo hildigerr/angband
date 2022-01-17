@@ -48,7 +48,7 @@ void delete_monster(int j)
     if (j < 2)
 	return;			   /* trouble? abort! -CFT */
     m_ptr = &m_list[j];
-    if (r_list[m_ptr->r_idx].cdefense & UNIQUE) u_list[m_ptr->mptr].exist = 0;
+    if (r_list[m_ptr->r_idx].cdefense & MF2_UNIQUE) u_list[m_ptr->mptr].exist = 0;
     cave[m_ptr->fy][m_ptr->fx].m_idx = 0;
     if (m_ptr->ml)
 	lite_spot((int)m_ptr->fy, (int)m_ptr->fx);
@@ -102,8 +102,8 @@ void fix1_delete_monster(int j)
 	target_mon = j;
 #endif
     m_ptr = &m_list[j];
-    if (r_list[m_ptr->r_idx].cdefense & UNIQUE)
-	if (r_list[m_ptr->r_idx].cdefense & UNIQUE) u_list[m_ptr->mptr].exist = 0;
+    if (r_list[m_ptr->r_idx].cdefense & MF2_UNIQUE)
+	if (r_list[m_ptr->r_idx].cdefense & MF2_UNIQUE) u_list[m_ptr->mptr].exist = 0;
 /* force the hp negative to ensure that the monster is dead, for example, if
  * the monster was just eaten by another, it will still have positive hit
  * points 
@@ -137,7 +137,7 @@ void fix2_delete_monster(int j)
 #endif
 
     m_ptr = &m_list[j];		   /* Fixed from a r_list ptr to a m_list ptr. -CFT */
-    if (r_list[m_ptr->r_idx].cdefense & UNIQUE) u_list[m_ptr->mptr].exist = 0;
+    if (r_list[m_ptr->r_idx].cdefense & MF2_UNIQUE) u_list[m_ptr->mptr].exist = 0;
     if (j != m_max - 1) {
 	m_ptr = &m_list[m_max - 1];
 	cave[m_ptr->fy][m_ptr->fx].m_idx = j;
@@ -163,7 +163,7 @@ void wipe_m_list()
 
     /* delete_unique() Kludgey Fix ~Ludwig */
     for (i = 0; i < MAX_R_IDX; i++)
-	if (r_list[i].cdefense & UNIQUE)
+	if (r_list[i].cdefense & MF2_UNIQUE)
 	    u_list[i].exist = 0;
 
     /* XXX Should already be done */
@@ -264,7 +264,7 @@ int place_monster(int y, int x, int r_idx, int slp)
     /* Get the race */
     r_ptr = &r_list[r_idx];
 
-    if (r_ptr->cdefense & UNIQUE) {
+    if (r_ptr->cdefense & MF2_UNIQUE) {
 	if (u_list[r_idx].exist) {
 	    if (wizard) {
 		(void)sprintf(buf, "Tried to create %s but exists.", r_ptr->name);
@@ -289,7 +289,7 @@ int place_monster(int y, int x, int r_idx, int slp)
     if (cur_pos == -1) return FALSE;
 
     /* Note the monster */
-    if ((wizard || peek) && (r_ptr->cdefense & UNIQUE)) {
+    if ((wizard || peek) && (r_ptr->cdefense & MF2_UNIQUE)) {
 	msg_print(r_ptr->name);
     }
     
@@ -301,7 +301,7 @@ int place_monster(int y, int x, int r_idx, int slp)
 	rating += ((c = r_ptr->level - dun_level) > 30) ? 15 : c / 2;
 	
 	/* Normal monsters are worth "half" as much */
-	if (r_ptr->cdefense & UNIQUE) {
+	if (r_ptr->cdefense & MF2_UNIQUE) {
 	    rating += (r_ptr->level - dun_level) / 2;
 	}
     }
@@ -317,7 +317,7 @@ int place_monster(int y, int x, int r_idx, int slp)
     m_ptr->r_idx = r_idx;
 
     /* Assign maximal hitpoints */
-    if ((r_ptr->cdefense & MAX_HP) ) {
+    if ((r_ptr->cdefense & MF2_MAX_HP) ) {
 	m_ptr->hp = max_hp(r_ptr->hd);
     }
     else {
@@ -390,7 +390,7 @@ int place_monster(int y, int x, int r_idx, int slp)
     /* get a "following" of escorts.  -DGK-    But not skeletons, */
     /* which include druj, which would make Cantoras amazingly tough -CFT */
 
-    if (r_ptr->cdefense & UNIQUE) {
+    if (r_ptr->cdefense & MF2_UNIQUE) {
 
 	j = r_ptr->r_char;
 
@@ -403,7 +403,7 @@ int place_monster(int y, int x, int r_idx, int slp)
 		/* Find a similar, lower level, non-unique, monster */
 		if ((r_list[z].r_char == j) &&
 		    (r_list[z].level <= r_list[r_idx].level) &&
-		    !(r_list[z].cdefense & UNIQUE)) {
+		    !(r_list[z].cdefense & MF2_UNIQUE)) {
 
 		    /* Try up to 50 nearby places */
 		    count = 0;
@@ -415,7 +415,7 @@ int place_monster(int y, int x, int r_idx, int slp)
 
 		    /* Certain monsters come in groups */
 		    if ((j=='k') || (j=='y') || (j=='&') ||
-			(r_list[z].cdefense & GROUP)) {
+			(r_list[z].cdefense & MF2_GROUP)) {
 			place_group(ny,nx,z,slp);
 		    }
 
@@ -466,7 +466,7 @@ int place_win_monster()
 	mon_ptr->fy = y;
 	mon_ptr->fx = x;
 	mon_ptr->r_idx = MAX_R_IDX - 2;
-	if (r_list[mon_ptr->r_idx].cdefense & MAX_HP)
+	if (r_list[mon_ptr->r_idx].cdefense & MF2_MAX_HP)
 	    mon_ptr->hp = max_hp(r_list[mon_ptr->r_idx].hd);
 	else
 	    mon_ptr->hp = pdamroll(r_list[mon_ptr->r_idx].hd);
@@ -570,13 +570,13 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	sprintf(g->name, "%s, the %s %s",
 		cap(name), cap(ghost_race), cap(ghost_class));
 
-	g->cmove |= (THRO_DR | MV_ATT_NORM | CARRY_OBJ | HAS_90 | HAS_60 | GOOD);
+	g->cmove |= (THRO_DR | MV_ATT_NORM | CARRY_OBJ | HAS_90 | HAS_60 | MF2_GOOD);
 
 	if (lev > 10) g->cmove |= (HAS_1D2);
 	if (lev > 18) g->cmove |= (HAS_2D2);
 	if (lev > 23) g->cmove |= (HAS_4D2);
 	if (lev > 40) {
-	    g->cmove |= (SPECIAL);
+	    g->cmove |= (MF2_SPECIAL);
 	    g->cmove &= (~HAS_4D2);
 	}
 
@@ -586,21 +586,21 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	      case 1:
 	      case 2:
 	      case 3:
-		g->cdefense |= (IM_FIRE);
+		g->cdefense |= (MF2_IM_FIRE);
 	      case 4:
 	      case 5:
 	      case 6:
-		g->cdefense |= (IM_ACID);
+		g->cdefense |= (MF2_IM_ACID);
 	      case 7:
 	      case 8:
 	      case 9:
-		g->cdefense |= (IM_FROST);
+		g->cdefense |= (MF2_IM_COLD);
 	      case 10:
 	      case 11:
 	      case 12:
-		g->cdefense |= (IM_LIGHTNING);
+		g->cdefense |= (MF2_IM_ELEC);
 	      case 13:
-		g->cdefense |= (IM_POISON);
+		g->cdefense |= (MF2_IM_POIS);
 	    }
 	}
 
@@ -652,10 +652,10 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	    break;
 	}
 
-	g->cdefense |= (CHARM_SLEEP | EVIL);
+	g->cdefense |= (MF2_CHARM_SLEEP | MF2_EVIL);
 
-	if (gr == 6) g->cdefense |= ORC;
-	else if (gr == 7) g->cdefense |= TROLL;
+	if (gr == 6) g->cdefense |= MF2_ORC;
+	else if (gr == 7) g->cdefense |= MF2_TROLL;
 
 	g->ac = 15 + randint(15);
 	if (gc == 0 || gc >= 3) g->ac += randint(60);
@@ -703,11 +703,11 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
       case 2:
       case 3:
 	sprintf(g->name, "%s, the Skeleton %s", name, ghost_race);
-	g->cmove |= (THRO_DR | MV_ATT_NORM | CARRY_OBJ | HAS_90 | GOOD);
+	g->cmove |= (THRO_DR | MV_ATT_NORM | CARRY_OBJ | HAS_90 | MF2_GOOD);
 	g->spells |= (NONE8);
-	g->cdefense |= (IM_POISON | CHARM_SLEEP | UNDEAD | EVIL | IM_FROST | NO_INFRA);
-	if (gr == 6) g->cdefense |= ORC;
-	else if (gr == 7) g->cdefense |= TROLL;
+	g->cdefense |= (MF2_IM_POIS | MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_COLD | MF2_NO_INFRA);
+	if (gr == 6) g->cdefense |= MF2_ORC;
+	else if (gr == 7) g->cdefense |= MF2_TROLL;
 	g->ac = 26;
 	g->speed = 11;
 	g->r_char = 's';
@@ -721,11 +721,11 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
       case 4:
       case 5:
 	sprintf(g->name, "%s, the %s zombie", name, cap(ghost_race));
-	g->cmove |= (THRO_DR | MV_ATT_NORM | CARRY_OBJ | HAS_60 | HAS_90 | GOOD);
+	g->cmove |= (THRO_DR | MV_ATT_NORM | CARRY_OBJ | HAS_60 | HAS_90 | MF2_GOOD);
 	g->spells |= (NONE8);
-	g->cdefense |= (IM_POISON | CHARM_SLEEP | UNDEAD | EVIL | NO_INFRA);
-	if (gr == 6) g->cdefense |= ORC;
-	else if (gr == 7) g->cdefense |= TROLL;
+	g->cdefense |= (MF2_IM_POIS | MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_NO_INFRA);
+	if (gr == 6) g->cdefense |= MF2_ORC;
+	else if (gr == 7) g->cdefense |= MF2_TROLL;
 	g->ac = 30;
 	g->speed = 11;
 	g->r_char = 'z';
@@ -738,9 +738,9 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 
       case 6:
 	sprintf(g->name, "%s, the Poltergeist", name);
-	g->cmove |= (MV_INVIS | MV_ATT_NORM | CARRY_OBJ | GOOD | HAS_1D2 | MV_75 | THRO_WALL);
+	g->cmove |= (MV_INVIS | MV_ATT_NORM | CARRY_OBJ | MF2_GOOD | HAS_1D2 | MV_75 | THRO_WALL);
 	g->spells |= (NONE8);
-	g->cdefense |= (IM_POISON | CHARM_SLEEP | UNDEAD | EVIL | IM_FROST | NO_INFRA);
+	g->cdefense |= (MF2_IM_POIS | MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_COLD | MF2_NO_INFRA);
 	g->ac = 20;
 	g->speed = 13;
 	g->r_char = 'G';
@@ -754,11 +754,11 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
       case 7:
       case 8:
 	sprintf(g->name, "%s, the Mummified %s", name, cap(ghost_race));
-	g->cmove |= (MV_ATT_NORM | CARRY_OBJ | HAS_1D2 | GOOD);
+	g->cmove |= (MV_ATT_NORM | CARRY_OBJ | HAS_1D2 | MF2_GOOD);
 	g->spells |= (NONE8);
-	g->cdefense |= (CHARM_SLEEP | UNDEAD | EVIL | IM_POISON | NO_INFRA);
-	if (gr == 6) g->cdefense |= ORC;
-	else if (gr == 7) g->cdefense |= TROLL;
+	g->cdefense |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_POIS | MF2_NO_INFRA);
+	if (gr == 6) g->cdefense |= MF2_ORC;
+	else if (gr == 7) g->cdefense |= MF2_TROLL;
 	g->ac = 35;
 	g->speed = 11;
 	g->r_char = 'M';
@@ -774,9 +774,9 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
       case 10:
 	sprintf(g->name, "%s%s spirit", name,
 		(name[strlen(name) - 1] == 's') ? "'" : "'s");
-	g->cmove |= (MV_INVIS | THRO_WALL | MV_ATT_NORM | CARRY_OBJ | HAS_1D2 | GOOD);
+	g->cmove |= (MV_INVIS | THRO_WALL | MV_ATT_NORM | CARRY_OBJ | HAS_1D2 | MF2_GOOD);
 	g->spells |= (NONE8);
-	g->cdefense |= (CHARM_SLEEP | UNDEAD | EVIL | IM_POISON | IM_FROST | NO_INFRA);
+	g->cdefense |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_POIS | MF2_IM_COLD | MF2_NO_INFRA);
 	g->ac = 20;
 	g->speed = 11;
 	g->r_char = 'G';
@@ -791,9 +791,9 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
       case 11:
 	sprintf(g->name, "%s%s ghost", name,
 		(name[strlen(name) - 1] == 's') ? "'" : "'s");
-	g->cmove |= (MV_INVIS | THRO_WALL | MV_ATT_NORM | CARRY_OBJ | HAS_1D2 | GOOD);
+	g->cmove |= (MV_INVIS | THRO_WALL | MV_ATT_NORM | CARRY_OBJ | HAS_1D2 | MF2_GOOD);
 	g->spells |= (0xFL | HOLD_PERSON | MANA_DRAIN | BLINDNESS);
-	g->cdefense |= (CHARM_SLEEP | UNDEAD | EVIL | IM_POISON | IM_FROST | NO_INFRA);
+	g->cdefense |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_POIS | MF2_IM_COLD | MF2_NO_INFRA);
 	g->ac = 40;
 	g->speed = 12;
 	g->r_char = 'G';
@@ -807,9 +807,9 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 
       case 12:
 	sprintf(g->name, "%s, the Vampire", name);
-	g->cmove |= (THRO_DR | MV_ATT_NORM | CARRY_OBJ | HAS_2D2 | GOOD);
+	g->cmove |= (THRO_DR | MV_ATT_NORM | CARRY_OBJ | HAS_2D2 | MF2_GOOD);
 	g->spells |= (0x8L | HOLD_PERSON | FEAR | TELE_TO | CAUSE_SERIOUS);
-	g->cdefense |= (CHARM_SLEEP | UNDEAD | EVIL | IM_POISON | NO_INFRA | HURT_LIGHT);
+	g->cdefense |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_POIS | MF2_NO_INFRA | MF2_HURT_LITE);
 	g->ac = 40;
 	g->speed = 11;
 	g->r_char = 'V';
@@ -824,10 +824,10 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
       case 13:
 	sprintf(g->name, "%s%s Wraith", name,
 		(name[strlen(name) - 1] == 's') ? "'" : "'s");
-	g->cmove |= (THRO_DR | MV_ATT_NORM | CARRY_OBJ | HAS_4D2 | HAS_2D2 | GOOD);
+	g->cmove |= (THRO_DR | MV_ATT_NORM | CARRY_OBJ | HAS_4D2 | HAS_2D2 | MF2_GOOD);
 	g->spells |= (0x7L | HOLD_PERSON | FEAR | BLINDNESS | CAUSE_CRIT);
 	g->spells2 |= (NETHER_BOLT);
-	g->cdefense |= (CHARM_SLEEP | UNDEAD | EVIL | IM_POISON | IM_FROST | NO_INFRA | HURT_LIGHT);
+	g->cdefense |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_POIS | MF2_IM_COLD | MF2_NO_INFRA | MF2_HURT_LITE);
 	g->ac = 60;
 	g->speed = 12;
 	g->r_char = 'W';
@@ -841,10 +841,10 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 
       case 14:
 	sprintf(g->name, "%s, the Vampire Lord", name);
-	g->cmove |= (THRO_DR | MV_ATT_NORM | CARRY_OBJ | HAS_1D2 | SPECIAL);
+	g->cmove |= (THRO_DR | MV_ATT_NORM | CARRY_OBJ | HAS_1D2 | MF2_SPECIAL);
 	g->spells |= (0x8L | HOLD_PERSON | FEAR | TELE_TO | CAUSE_CRIT);
 	g->spells2 |= (NETHER_BOLT);
-	g->cdefense |= (CHARM_SLEEP | UNDEAD | EVIL | IM_POISON | NO_INFRA | HURT_LIGHT);
+	g->cdefense |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_POIS | MF2_NO_INFRA | MF2_HURT_LITE);
 	g->ac = 80;
 	g->speed = 11;
 	g->r_char = 'V';
@@ -860,9 +860,9 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
       case 15:
 	sprintf(g->name, "%s%s ghost", name,
 		 (name[strlen(name) - 1] == 's') ? "'" : "'s");
-	g->cmove |= (MV_INVIS | THRO_WALL | MV_ATT_NORM | CARRY_OBJ | HAS_2D2 | SPECIAL);
+	g->cmove |= (MV_INVIS | THRO_WALL | MV_ATT_NORM | CARRY_OBJ | HAS_2D2 | MF2_SPECIAL);
 	g->spells |= (0x5L | HOLD_PERSON | MANA_DRAIN | BLINDNESS | CONFUSION);
-	g->cdefense |= (CHARM_SLEEP | UNDEAD | EVIL | IM_FROST | IM_POISON | NO_INFRA);
+	g->cdefense |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_COLD | MF2_IM_POIS | MF2_NO_INFRA);
 	g->ac = 90;
 	g->speed = 13;
 	g->r_char = 'G';
@@ -876,12 +876,12 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 
       case 17:
 	sprintf(g->name, "%s, the Lich", name);
-	g->cmove |= (THRO_DR | MV_ATT_NORM | CARRY_OBJ | HAS_2D2 | HAS_1D2 | SPECIAL);
+	g->cmove |= (THRO_DR | MV_ATT_NORM | CARRY_OBJ | HAS_2D2 | HAS_1D2 | MF2_SPECIAL);
 	g->spells |= (0x3L | FEAR | CAUSE_CRIT | TELE_TO | BLINK |
 		       S_UNDEAD | FIRE_BALL | FROST_BALL | HOLD_PERSON |
 		       MANA_DRAIN | BLINDNESS | CONFUSION | TELE);
 	g->spells2 |= (BRAIN_SMASH | RAZOR);
-	g->cdefense |= (CHARM_SLEEP | UNDEAD | EVIL | IM_FROST | NO_INFRA | IM_POISON| INTELLIGENT);
+	g->cdefense |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_COLD | MF2_NO_INFRA | MF2_IM_POIS| MF2_INTELLIGENT);
 	g->ac = 120;
 	g->speed = 12;
 	g->r_char = 'L';
@@ -898,12 +898,12 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	sprintf(g->name, "%s%s ghost", name,
 		(name[strlen(name) - 1] == 's') ? "'" : "'s");
 	g->cmove |= (MV_INVIS | THRO_WALL | MV_ATT_NORM | CARRY_OBJ |
-		       HAS_1D2 | HAS_2D2 | SPECIAL);
+		       HAS_1D2 | HAS_2D2 | MF2_SPECIAL);
 	g->spells |= (0x2L | HOLD_PERSON | MANA_DRAIN | 
 		       BLINDNESS | CONFUSION | TELE_TO);
 	g->spells2 |= (NETHER_BOLT | NETHER_BALL | BRAIN_SMASH |
 		       TELE_LEV);
-	g->cdefense |= (CHARM_SLEEP | UNDEAD | EVIL | IM_POISON | IM_FROST | NO_INFRA | INTELLIGENT);
+	g->cdefense |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_POIS | MF2_IM_COLD | MF2_NO_INFRA | MF2_INTELLIGENT);
 	g->ac = 130;
 	g->speed = 13;
 	g->r_char = 'G';
@@ -1111,13 +1111,13 @@ int get_mons_num(int level)
 
 	/* Uniques never appear out of "modified" depth */
 	if ((r_list[i].level > old) &&
-	    (r_list[i].cdefense & UNIQUE)) {
+	    (r_list[i].cdefense & MF2_UNIQUE)) {
 	    continue;
 	}
 
 	/* Quest Monsters never appear out of depth */
 	if ((r_list[i].level > dun_level) &&
-	    (r_list[i].cdefense & QUESTOR)) {
+	    (r_list[i].cdefense & MF2_QUESTOR)) {
 	    continue;
 	}
 
@@ -1168,13 +1168,13 @@ int get_nmons_num(int level)
 	    i = randint(i) - 1 + m_level[level - 1];
 	}
 
-	if ((r_list[i].level > old) && (r_list[i].cdefense & UNIQUE)) {
+	if ((r_list[i].level > old) && (r_list[i].cdefense & MF2_UNIQUE)) {
 	    continue;
 	}
 
 	/* Quest monsters never appear out of depth */
 	if ((r_list[i].level > dun_level) &&
-	    (r_list[i].cdefense & QUESTOR)) {
+	    (r_list[i].cdefense & MF2_QUESTOR)) {
 	    continue;
 	}
 
@@ -1313,7 +1313,7 @@ void alloc_monster(int num, int dis, int slp)
 	    slp = TRUE;
 	}
 
-	if (!(r_list[r_idx].cdefense & GROUP)) {
+	if (!(r_list[r_idx].cdefense & MF2_GROUP)) {
 	    place_monster(y, x, r_idx, slp);
 	}
 	else {
@@ -1347,7 +1347,7 @@ int summon_monster(int *yp, int *xp, int slp)
 	r_idx = get_mons_num(dun_level + MON_SUMMON_ADJ);
 
 	/* Place the monster */
-	if (r_list[r_idx].cdefense & GROUP) {
+	if (r_list[r_idx].cdefense & MF2_GROUP) {
 	    place_group(y, x, r_idx, slp);
 	}
 	else {
@@ -1383,7 +1383,7 @@ int summon_undead(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if ((r_list[m].cdefense & UNDEAD) && !(r_list[m].cdefense & UNIQUE) &&
+	    if ((r_list[m].cdefense & MF2_UNDEAD) && !(r_list[m].cdefense & MF2_UNIQUE) &&
 		(r_list[m].level < dun_level + 5)) {
 		ctr = 20;
 		l = 0;
@@ -1430,7 +1430,7 @@ int summon_demon(int lev, int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (r_list[m].cdefense & DEMON && !(r_list[m].cdefense & UNIQUE) &&
+	    if (r_list[m].cdefense & MF2_DEMON && !(r_list[m].cdefense & MF2_UNIQUE) &&
 		(r_list[m].level <= lev)) {
 		ctr = 20;
 		l = 0;
@@ -1474,7 +1474,7 @@ int summon_dragon(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (r_list[m].cdefense & DRAGON && !(r_list[m].cdefense & UNIQUE)) {
+	    if (r_list[m].cdefense & MF2_DRAGON && !(r_list[m].cdefense & MF2_UNIQUE)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1521,7 +1521,7 @@ int summon_wraith(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (r_list[m].r_char == 'W' && (r_list[m].cdefense & UNIQUE)) {
+	    if (r_list[m].r_char == 'W' && (r_list[m].cdefense & MF2_UNIQUE)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1567,7 +1567,7 @@ int summon_reptile(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (r_list[m].r_char == 'R' && !(r_list[m].cdefense & UNIQUE)) {
+	    if (r_list[m].r_char == 'R' && !(r_list[m].cdefense & MF2_UNIQUE)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1613,7 +1613,7 @@ int summon_spider(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (r_list[m].r_char == 'S' && !(r_list[m].cdefense & UNIQUE)) {
+	    if (r_list[m].r_char == 'S' && !(r_list[m].cdefense & MF2_UNIQUE)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1659,7 +1659,7 @@ int summon_angel(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (r_list[m].r_char == 'A' && !(r_list[m].cdefense & UNIQUE)) {
+	    if (r_list[m].r_char == 'A' && !(r_list[m].cdefense & MF2_UNIQUE)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1703,7 +1703,7 @@ int summon_ant(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (r_list[m].r_char == 'a' && !(r_list[m].cdefense & UNIQUE)) {
+	    if (r_list[m].r_char == 'a' && !(r_list[m].cdefense & MF2_UNIQUE)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1749,7 +1749,7 @@ int summon_unique(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (!(r_list[m].r_char == 'P') && (r_list[m].cdefense & UNIQUE)) {
+	    if (!(r_list[m].r_char == 'P') && (r_list[m].cdefense & MF2_UNIQUE)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1795,7 +1795,7 @@ int summon_jabberwock(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (r_list[m].r_char == 'J' && !(r_list[m].cdefense & UNIQUE)) {
+	    if (r_list[m].r_char == 'J' && !(r_list[m].cdefense & MF2_UNIQUE)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1936,7 +1936,7 @@ int summon_hound(int *y, int *x)
 	ctr = 0;
 	do {
 	    if ((r_list[m].r_char == 'C' || r_list[m].r_char == 'Z')
-		&& !(r_list[m].cdefense & UNIQUE)) {
+		&& !(r_list[m].cdefense & MF2_UNIQUE)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -2017,7 +2017,7 @@ int unique_weapon(inven_type *t_ptr)
 	    t_ptr->flags = (TR3_SEE_INVIS | TR1_SLAY_UNDEAD | TR1_SLAY_EVIL | TR3_REGEN |
 		     TR1_SPEED | TR2_RES_COLD | TR1_BRAND_COLD | TR2_FREE_ACT |
 			    TR3_SLOW_DIGEST);
-	    t_ptr->flags2 |= (TR1_SLAY_DEMON | TR_SLAY_TROLL | TR3_LITE | TR3_ACTIVATE
+	    t_ptr->flags2 |= (TR1_SLAY_DEMON | TR1_SLAY_TROLL | TR3_LITE | TR3_ACTIVATE
 			      | TR2_RES_LITE | TR_ARTIFACT);
 	    t_ptr->pval = 1;
 	    t_ptr->cost = 300000L;
@@ -2118,7 +2118,7 @@ int unique_weapon(inven_type *t_ptr)
 	    t_ptr->flags = (TR1_SLAY_X_DRAGON | TR1_STR | TR1_SLAY_EVIL | TR1_SLAY_ANIMAL |
 		  TR1_SLAY_UNDEAD | TR3_AGGRAVATE | TR1_CHR | TR1_BRAND_FIRE |
 		  TR3_SEE_INVIS | TR2_RES_FIRE | TR2_FREE_ACT | TR1_INFRA);
-	    t_ptr->flags2 |= (TR_ARTIFACT | TR1_SLAY_TROLL | TR_SLAY_ORC | TR_SLAY_GIANT
+	    t_ptr->flags2 |= (TR_ARTIFACT | TR1_SLAY_TROLL | TR_SLAY_ORC | TR_SLAY_MF2_GIANT
 			      | TR1_SLAY_DEMON | TR2_RES_CHAOS);
 	    t_ptr->pval = 4;
 	    t_ptr->damage[0] = 6;
@@ -2233,7 +2233,7 @@ int unique_weapon(inven_type *t_ptr)
 	t_ptr->damage[1] = 7;
 	t_ptr->flags = (TR1_SLAY_X_DRAGON | TR1_CON | TR3_AGGRAVATE |
 			TR3_CURSED | TR1_SLAY_EVIL);
-	t_ptr->flags2 |= (TR1_SLAY_DEMON | TR_SLAY_TROLL | TR2_RES_DISEN
+	t_ptr->flags2 |= (TR1_SLAY_DEMON | TR1_SLAY_TROLL | TR2_RES_DISEN
 			  | TR_ARTIFACT);
 	t_ptr->pval = 5;
 	t_ptr->cost = 100000L;
@@ -2254,7 +2254,7 @@ int unique_weapon(inven_type *t_ptr)
 	t_ptr->damage[0] = 2;
 	t_ptr->damage[1] = 6;
 	t_ptr->flags = (TR1_DEX | TR1_INT | TR2_FREE_ACT | TR3_SEE_INVIS);
-	t_ptr->flags2 |= (TR_ARTIFACT | TR1_SLAY_GIANT | TR_SLAY_TROLL);
+	t_ptr->flags2 |= (TR_ARTIFACT | TR1_SLAY_GIANT | TR1_SLAY_TROLL);
 	t_ptr->pval = 3;
 	t_ptr->cost = 20000L;
 	MAEDHROS = 1;
@@ -2330,7 +2330,7 @@ int unique_weapon(inven_type *t_ptr)
 	t_ptr->toac = 10;
 	t_ptr->flags = (TR1_BRAND_COLD | TR1_BRAND_FIRE | TR2_RES_FIRE | TR2_RES_COLD |
 			TR3_SLOW_DIGEST | TR1_INT | TR_SUST_STAT);
-	t_ptr->flags2 |= (TR_ARTIFACT | TR1_SLAY_DEMON | TR_SLAY_GIANT | TR_SLAY_TROLL);
+	t_ptr->flags2 |= (TR_ARTIFACT | TR1_SLAY_DEMON | TR_SLAY_MF2_GIANT | TR1_SLAY_TROLL);
 	t_ptr->pval = 2;
 	t_ptr->cost = 32000L;
 	TIL = 1;
@@ -2424,7 +2424,7 @@ int unique_weapon(inven_type *t_ptr)
 	t_ptr->tohit = 13;
 	t_ptr->todam = 19;
 	t_ptr->flags |= (TR3_SEE_INVIS | TR1_SLAY_EVIL | TR1_CON);
-	t_ptr->flags2 |= (TR1_SLAY_ORC | TR_SLAY_TROLL | TR_SLAY_GIANT | TR_ARTIFACT);
+	t_ptr->flags2 |= (TR1_SLAY_ORC | TR1_SLAY_TROLL | TR_SLAY_MF2_GIANT | TR_ARTIFACT);
 	t_ptr->pval = 3;
 	t_ptr->cost = 50000L;
 	BARUKKHELED = 1;
@@ -2540,7 +2540,7 @@ int unique_weapon(inven_type *t_ptr)
 	t_ptr->tohit = 6;
 	t_ptr->todam = 8;
 	t_ptr->flags |= (TR1_SLAY_DRAGON | TR1_SLAY_ANIMAL);
-	t_ptr->flags2 |= (TR1_SLAY_GIANT | TR_SLAY_ORC | TR_SLAY_TROLL | TR_ARTIFACT |
+	t_ptr->flags2 |= (TR1_SLAY_GIANT | TR_SLAY_ORC | TR1_SLAY_TROLL | TR_ARTIFACT |
 			  TR1_ATTACK_SPD);
 	t_ptr->pval = 1;
 	t_ptr->cost = 25000L;
@@ -2574,7 +2574,7 @@ int unique_weapon(inven_type *t_ptr)
 	t_ptr->tohit = 18;
 	t_ptr->todam = 19;
 	t_ptr->flags |= (TR3_SEE_INVIS | TR1_SLAY_EVIL | TR1_SLAY_UNDEAD | TR1_SLAY_DRAGON);
-	t_ptr->flags2 |= (TR1_SLAY_GIANT | TR_SLAY_ORC | TR_SLAY_TROLL | TR_ARTIFACT);
+	t_ptr->flags2 |= (TR1_SLAY_GIANT | TR_SLAY_ORC | TR1_SLAY_TROLL | TR_ARTIFACT);
 	t_ptr->cost = 100000L;
 	CRISDURIAN = 1;
 	return 1;
@@ -2840,7 +2840,7 @@ int unique_weapon(inven_type *t_ptr)
 	    t_ptr->toac = 15;
 	    t_ptr->flags = (TR1_SLAY_X_DRAGON | TR1_CON | TR2_FREE_ACT |
 			    TR2_RES_FIRE | TR2_RES_ACID);
-	    t_ptr->flags2 |= (TR1_SLAY_DEMON | TR_SLAY_TROLL | TR_SLAY_ORC | TR2_RES_DARK
+	    t_ptr->flags2 |= (TR1_SLAY_DEMON | TR1_SLAY_TROLL | TR_SLAY_ORC | TR2_RES_DARK
 			      | TR2_RES_LITE | TR2_RES_CHAOS | TR_ARTIFACT);
 	    t_ptr->pval = 3;
 	    t_ptr->cost = 150000L;
@@ -2887,7 +2887,7 @@ int unique_weapon(inven_type *t_ptr)
 	    t_ptr->flags = (TR3_FEATHER | TR2_RES_ELEC | TR3_SEE_INVIS | TR1_STR | TR1_CON
 			    | TR2_FREE_ACT | TR2_RES_COLD | TR2_RES_ACID
 			    | TR2_RES_FIRE | TR3_REGEN | TR1_STEALTH);
-	    t_ptr->flags2 |= (TR1_SLAY_DEMON | TR_SLAY_TROLL | TR_SLAY_ORC | TR2_RES_BLIND
+	    t_ptr->flags2 |= (TR1_SLAY_DEMON | TR1_SLAY_TROLL | TR_SLAY_ORC | TR2_RES_BLIND
 			      | TR_ARTIFACT);
 	    t_ptr->pval = 3;
 	    t_ptr->cost = 90000L;
@@ -3084,7 +3084,7 @@ int unique_weapon(inven_type *t_ptr)
 	    t_ptr->damage[1] = 10;
 	    t_ptr->flags = (TR1_SLAY_EVIL | TR3_SEE_INVIS | TR1_WIS | TR1_INT | TR1_CHR
 			    | TR1_BRAND_FIRE | TR2_RES_FIRE);
-	    t_ptr->flags2 |= (TR_ARTIFACT | TR2_HOLD_LIFE | TR1_SLAY_ORC | TR_SLAY_TROLL
+	    t_ptr->flags2 |= (TR_ARTIFACT | TR2_HOLD_LIFE | TR1_SLAY_ORC | TR1_SLAY_TROLL
 			      | TR3_ACTIVATE | TR2_RES_NETHER);
 	    t_ptr->pval = 4;
 	    t_ptr->cost = 130000L;

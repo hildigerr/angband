@@ -485,7 +485,7 @@ u32b monster_death(int y, int x, u32b flags, u32b good, u32b win)
 					TR2_RES_FIRE | TR2_RES_COLD | TR2_RES_ELEC |
 					TR2_RES_ACID | TR1_SLAY_ANIMAL | TR1_SPEED |
 					TR1_SLAY_X_DRAGON | TR3_AGGRAVATE);
-			t_ptr->flags2 = (TR1_SLAY_DEMON | TR_SLAY_TROLL | TR_SLAY_ORC |
+			t_ptr->flags2 = (TR1_SLAY_DEMON | TR1_SLAY_TROLL | TR_SLAY_ORC |
 				    TR1_IMPACT | TR3_TELEPATHY | TR_ARTIFACT);
 			t_ptr->pval = (-1);
 			t_ptr->toac = 10;
@@ -617,22 +617,22 @@ static int fearless(monster_race *r_ptr)
     int flag = FALSE;
 
     /* NoMind --> NoFear */
-    if (r_ptr->cdefense & MINDLESS) {
+    if (r_ptr->cdefense & MF2_MINDLESS) {
 	flag = TRUE;
     }
 
     /* Undead --> (Spells = Mind --> Fear) + (NoSpells = NoMind --> NoFear) */
-    if (r_ptr->cdefense & UNDEAD) {
+    if (r_ptr->cdefense & MF2_UNDEAD) {
 	flag = (!(r_ptr->spells || r_ptr->spells2 || r_ptr->spells3));
     }
 
     /* The 'E' and 'g' monsters have NoFear *//* Demons have NoFear */
-    if (r_ptr->r_char == 'E' || r_ptr->r_char == 'g' || r_ptr->cdefense & DEMON) {
+    if (r_ptr->r_char == 'E' || r_ptr->r_char == 'g' || r_ptr->cdefense & MF2_DEMON) {
 	flag = TRUE;
     }
 
     /* But intelligence --> Fear */
-    if (r_ptr->cdefense & INTELLIGENT) {
+    if (r_ptr->cdefense & MF2_INTELLIGENT) {
 	flag = FALSE;
     }
 
@@ -696,7 +696,7 @@ int mon_take_hit(int m_idx, int dam, int print_fear)
 	    unlink(temp);
 	}
 
-	if (r_list[m_ptr->r_idx].cdefense & QUESTOR) {
+	if (r_list[m_ptr->r_idx].cdefense & MF2_QUESTOR) {
 	    for (i = 0; i < DEFINED_QUESTS; i++) {	/* search for monster's
 							 * lv, not... */
 		if (quests[i] == r_list[m_ptr->r_idx].level) {	/* ...cur lv. -CFT */
@@ -748,12 +748,12 @@ int mon_take_hit(int m_idx, int dam, int print_fear)
 	get_coin_type(r_ptr);
 	i = monster_death((int)m_ptr->fy, (int)m_ptr->fx,
 			  r_list[m_ptr->r_idx].cmove,
-			  (r_list[m_ptr->r_idx].cdefense & (SPECIAL | GOOD)),
+			  (r_list[m_ptr->r_idx].cdefense & (MF2_SPECIAL | MF2_GOOD)),
 			  (r_list[m_ptr->r_idx].cmove & WINNER));
 	coin_type = 0;
 	if ((py.flags.blind < 1 && m_ptr->ml) ||
 	    (r_list[m_ptr->r_idx].cmove & CM_WIN) ||
-	    (r_list[m_ptr->r_idx].cdefense & UNIQUE)) {
+	    (r_list[m_ptr->r_idx].cdefense & MF2_UNIQUE)) {
 	    /* recall even invisible uniques */
 
 	    tmp = (l_list[m_ptr->r_idx].r_cmove & CM_TREASURE) >> CM_TR_SHIFT;
@@ -766,7 +766,7 @@ int mon_take_hit(int m_idx, int dam, int print_fear)
 	}
 
 
-	if (r_ptr->cdefense & UNIQUE) {
+	if (r_ptr->cdefense & MF2_UNIQUE) {
 	    u_list[m_ptr->r_idx].exist = 0;
 	    u_list[m_ptr->r_idx].dead = 1;
 	}
@@ -888,7 +888,7 @@ void py_attack(int y, int x)
     if (!m_list[crptr].ml)
 	(void)strcpy(m_name, "it");
     else {
-	if (r_list[r_idx].cdefense & UNIQUE)
+	if (r_list[r_idx].cdefense & MF2_UNIQUE)
 	    (void)sprintf(m_name, "%s", r_list[r_idx].name);
 	else
 	    (void)sprintf(m_name, "the %s", r_list[r_idx].name);
@@ -972,7 +972,7 @@ void py_attack(int y, int x)
 	    if (py.flags.confuse_monster) {
 		py.flags.confuse_monster = FALSE;
 		msg_print("Your hands stop glowing.");
-		if ((r_list[r_idx].cdefense & CHARM_SLEEP) ||
+		if ((r_list[r_idx].cdefense & MF2_CHARM_SLEEP) ||
 		    (randint(MAX_R_LEV) < r_list[r_idx].level)) {
 		    (void)sprintf(out_val, "%s is unaffected.", m_name);
 		}
@@ -988,7 +988,7 @@ void py_attack(int y, int x)
 
 		if (m_list[crptr].ml && randint(4) == 1) {
 		    l_list[r_idx].r_cdefense |=
-			r_list[r_idx].cdefense & CHARM_SLEEP;
+			r_list[r_idx].cdefense & MF2_CHARM_SLEEP;
 		}
 	    }
 
@@ -997,7 +997,7 @@ void py_attack(int y, int x)
 	    /* Is it dead yet? */
 	    if (mon_take_hit(crptr, k, FALSE) >= 0) {
 
-		if ((r_list[r_idx].cdefense & (DEMON|UNDEAD|MINDLESS)) ||
+		if ((r_list[r_idx].cdefense & (MF2_DEMON|MF2_UNDEAD|MF2_MINDLESS)) ||
 		    (strchr("Evg", r_list[r_idx].r_char)) {
 		    (void)sprintf(out_val, "You have destroyed %s.", m_name);
 		}
@@ -1039,7 +1039,7 @@ void py_attack(int y, int x)
     if (!m_list[crptr].ml)
 	(void)strcpy(m_name, "It");
     else {
-	if (r_list[r_idx].cdefense & UNIQUE)
+	if (r_list[r_idx].cdefense & MF2_UNIQUE)
 	    (void)sprintf(m_name, "%s", r_list[r_idx].name);
 	else
 	    (void)sprintf(m_name, "The %s", r_list[r_idx].name);
@@ -1325,7 +1325,7 @@ void py_bash(int y, int x)
     if (!m_ptr->ml)
 	(void)strcpy(m_name, "it");
     else {
-	if (r_list[r_idx].cdefense & UNIQUE)
+	if (r_list[r_idx].cdefense & MF2_UNIQUE)
 	    (void)sprintf(m_name, "%s", r_list[r_idx].name);
 	else
 	    (void)sprintf(m_name, "the %s", r_list[r_idx].name);
@@ -1360,7 +1360,7 @@ void py_bash(int y, int x)
 	/* See if we done it in.				     */
 	if (mon_take_hit(monster, k, TRUE) >= 0) {
 
-	    if ((r_list[r_idx].cdefense & (DEMON|UNDEAD|MINDLESS)) ||
+	    if ((r_list[r_idx].cdefense & (MF2_DEMON|MF2_UNDEAD|MF2_MINDLESS)) ||
 		(strchr("Evg", r_list[r_idx].r_char)) {
 		(void)sprintf(out_val, "You have destroyed %s.", m_name);
 	    }
@@ -1375,7 +1375,7 @@ void py_bash(int y, int x)
 	    m_name[0] = toupper((int)m_name[0]);	/* Capitalize */
 
 	    /* Powerful monsters cannot be stunned */
-	    avg_max_hp = ((r_ptr->cdefense & MAX_HP) ?
+	    avg_max_hp = ((r_ptr->cdefense & MF2_MAX_HP) ?
 			   (r_ptr->hd[0] * r_ptr->hd[1]) :
 			   ((r_ptr->hd[0] * (r_ptr->hd[1] + 1)) >> 1));
 

@@ -1204,7 +1204,7 @@ void do_cmd_read_scroll(void)
 	    break;
 
 	  case 30:
-	    ident = dispel_creature(UNDEAD, 60);
+	    ident = dispel_creature(MF2_UNDEAD, 60);
 	    break;
 
 	  case 31:
@@ -1404,7 +1404,7 @@ void do_cmd_read_scroll(void)
 	    break;
 
 	  case 43:
-	    place_good(char_row, char_col, SPECIAL);
+	    place_good(char_row, char_col, MF2_SPECIAL);
 	    prt_map();
 	    ident = TRUE;
 	    break;
@@ -1827,7 +1827,7 @@ void do_cmd_use_staff(void)
 	break;
 
       case SV_STAFF_HOLINESS:
-	dispel_creature(EVIL, 120);
+	dispel_creature(MF2_EVIL, 120);
 	protect_evil();
 	cure_poison();
 	remove_fear();
@@ -1989,7 +1989,7 @@ void do_cmd_use_staff(void)
 	break;
 
       case SV_STAFF_DISPEL_EVIL:
-	ident = dispel_creature(EVIL, 60);
+	ident = dispel_creature(MF2_EVIL, 60);
 	break;
 
       case SV_STAFF_DARKNESS:

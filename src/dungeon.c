@@ -2961,7 +2961,7 @@ static void activate()
 		break;
 	      case (OBJ_SPECIAL + 4):
 		msg_print("An aura of good floods the area...");
-		dispel_creature(EVIL, (int)(5 * py.misc.lev));
+		dispel_creature(MF2_EVIL, (int)(5 * py.misc.lev));
 		inventory[i].timeout = 444 + randint(222);
 		break;
 	      case (OBJ_SPECIAL + 5):
@@ -3179,7 +3179,7 @@ static void regen_monsters()
 	if (m_list[i].hp >= 0) {
 	    if (m_list[i].maxhp == 0) {	/* then we're just going to fix it!
 					 * -CFT */
-		if ((r_list[m_list[i].r_idx].cdefense & MAX_HP) )
+		if ((r_list[m_list[i].r_idx].cdefense & MF2_MAX_HP) )
 		    m_list[i].maxhp = max_hp(r_list[m_list[i].r_idx].hd);
 		else
 		    m_list[i].maxhp = pdamroll(r_list[m_list[i].r_idx].hd);

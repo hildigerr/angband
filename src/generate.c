@@ -812,7 +812,7 @@ static void vault_jelly(int y, int x)
     while (1) {
 	int m = randint(l) - 1;
 	if (!strchr("jmi,", r_list[m].r_char)) continue;
-	if (r_list[m].cdefense & EVIL) continue;
+	if (r_list[m].cdefense & MF2_EVIL) continue;
 	place_monster(y, x, m, TRUE);
 	break;
     }
@@ -823,17 +823,15 @@ static void vault_jelly(int y, int x)
  */
 static void vault_undead(int y, int x)
 {
-    int l, m, summon;
-    
-    summon = FALSE;
-    l = m_level[MAX_R_LEV];
-    do {
-	m = randint(l) - 1;
-	if ((r_list[m].cdefense & UNDEAD) && !(r_list[m].cdefense & UNIQUE)) {
-	    summon = TRUE;
+    int l = m_level[MAX_R_LEV];
+    /* Hack -- allocate a sleeping non-unique undead */
+    while (1) {
+	int m = randint(l) - 1;
+	if (!(r_list[m].cdefense & MF2_UNDEAD)) continue;
+	if (r_list[m].cdefense & MF2_UNIQUE) continue;
 	place_monster(y, x, m, TRUE);
-	}
-    } while (!summon);
+	break;
+    }
 }
 
 
@@ -1799,7 +1797,7 @@ static void build_type5(int yval, int xval)
 			      get_nmons_num(dun_level + MON_SUMMON_ADJ + 40),
 			      TRUE);
 		object_level = dun_level + MON_SUMMON_ADJ + 20;
-		place_good(y1, x1, SPECIAL);
+		place_good(y1, x1, MF2_SPECIAL);
 		object_level = dun_level + 7;
 		c_ptr->lr = TRUE;
 		break;
