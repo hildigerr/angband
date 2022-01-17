@@ -172,7 +172,8 @@ struct _inven_kind {
   u32b flags;			    /* Special flags		      */
   byte tval;			    /* Category number		      */
   byte tchar;			    /* Character representation	      */
-  s16b p1;			    /* Misc. use variable	      */
+  s16b pval;			/* Object extra info		*/
+
   s32b cost;			    /* Cost of item		      */
   byte sval;			    /* Sub-category number	      */
   byte number;			    /* Number of items		      */
@@ -213,7 +214,8 @@ struct _inven_type {
   u32b flags;			    /* Special flags		*/
   byte tval;			    /* Category number		*/
   byte tchar;			    /* Character representation */
-  s16b p1;			    /* Misc. use variable	*/
+  s16b pval;			/* Misc. use variable		*/
+
   s32b cost;			    /* Cost of item		*/
   byte sval;			    /* Sub-category number	*/
   byte number;			    /* Number of items		*/

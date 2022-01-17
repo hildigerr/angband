@@ -1411,8 +1411,8 @@ int inven_check_num(inven_type *i_ptr)
 		inventory[i].sval == i_ptr->sval &&
 	/* make sure the number field doesn't overflow */
 		((int)inventory[i].number + (int)i_ptr->number < 256) &&
-	/* they always stack (sval < 192), or else they have same p1 */
-		((i_ptr->sval < ITEM_GROUP_MIN) || (inventory[i].p1 == i_ptr->p1))
+	/* they always stack (sval < 192), or else they have same pval */
+		((i_ptr->sval < ITEM_GROUP_MIN) || (inventory[i].pval == i_ptr->pval))
 	/* only stack if both or neither are identified */
 		&& (known1_p(&inventory[i]) == known1_p(i_ptr))) return TRUE;
     }
@@ -1458,8 +1458,8 @@ int inven_carry(inven_type *i_ptr)
 		t_ptr->sval == subt &&
 	/* make sure the number field doesn't overflow */
 		((int)t_ptr->number + (int)i_ptr->number < 256) &&
-	/* they always stack (sval < 192), or else they have same p1 */
-		((subt < ITEM_GROUP_MIN) || (t_ptr->p1 == i_ptr->p1))
+	/* they always stack (sval < 192), or else they have same pval */
+		((subt < ITEM_GROUP_MIN) || (t_ptr->pval == i_ptr->pval))
 	/* only stack if both or neither are identified */
 		&& (known1_p(&inventory[locn]) == known1p)) {
 		stacked = TRUE;	   /* note that we did process the item -CFT */
@@ -2005,7 +2005,7 @@ int attack_blows(int weight, int *wtohit)
 	s = 0;				/* do Weapons of Speed */
 	for (d = INVEN_WIELD; d < INVEN_AUX; d++)
 	    if (inventory[d].flags2 & TR1_ATTACK_SPD)
-		s += inventory[d].p1;
+		s += inventory[d].pval;
 
 	/* Use the blows table */
 	d = (int)blows_table[str_index][dex_index];

@@ -2019,7 +2019,7 @@ int unique_weapon(inven_type *t_ptr)
 			    TR3_SLOW_DIGEST);
 	    t_ptr->flags2 |= (TR1_SLAY_DEMON | TR_SLAY_TROLL | TR3_LITE | TR3_ACTIVATE
 			      | TR2_RES_LITE | TR_ARTIFACT);
-	    t_ptr->p1 = 1;
+	    t_ptr->pval = 1;
 	    t_ptr->cost = 300000L;
 	    RINGIL = 1;
 	    return 1;
@@ -2038,7 +2038,7 @@ int unique_weapon(inven_type *t_ptr)
 	    t_ptr->flags = (TR3_SEE_INVIS | TR1_SLAY_EVIL | TR2_FREE_ACT |
 		     TR_SUST_STAT | TR1_STR | TR2_RES_FIRE | TR1_BRAND_FIRE);
 	    t_ptr->flags2 |= (TR1_SLAY_TROLL | TR3_ACTIVATE | TR_SLAY_ORC | TR_ARTIFACT);
-	    t_ptr->p1 = 4;
+	    t_ptr->pval = 4;
 	    t_ptr->toac = 5;
 	    t_ptr->cost = 80000L;
 	    ANDURIL = 1;
@@ -2060,7 +2060,7 @@ int unique_weapon(inven_type *t_ptr)
 			    | TR1_STR | TR1_CON);
 	    t_ptr->flags2 |= (TR_ARTIFACT |
 		       TR3_LITENING | TR_LIGHT | TR1_SLAY_DEMON | TR2_RES_LITE);
-	    t_ptr->p1 = 2;
+	    t_ptr->pval = 2;
 	    t_ptr->cost = 40000L;
 	    ANGUIREL = 1;
 	    return 1;
@@ -2077,7 +2077,7 @@ int unique_weapon(inven_type *t_ptr)
 	    t_ptr->todam = 7;
 	    t_ptr->flags |= (TR3_SEE_INVIS | TR1_CHR | TR1_DEX | TR1_STEALTH | TR3_FEATHER);
 	    t_ptr->flags2 |= (TR1_SLAY_TROLL | TR_SLAY_ORC | TR_ARTIFACT);
-	    t_ptr->p1 = 2;
+	    t_ptr->pval = 2;
 	    t_ptr->cost = 30000L;
 	    ELVAGIL = 1;
 	    return 1;
@@ -2098,7 +2098,7 @@ int unique_weapon(inven_type *t_ptr)
 	    t_ptr->flags = (TR3_REGEN | TR1_SLAY_X_DRAGON | TR1_STR |
 			    TR2_FREE_ACT | TR3_SLOW_DIGEST);
 	    t_ptr->flags2 |= (TR1_SLAY_TROLL | TR_ARTIFACT);
-	    t_ptr->p1 = 2;
+	    t_ptr->pval = 2;
 	    t_ptr->cost = 100000L;
 	    GURTHANG = 1;
 	    return 1;
@@ -2120,7 +2120,7 @@ int unique_weapon(inven_type *t_ptr)
 		  TR3_SEE_INVIS | TR2_RES_FIRE | TR2_FREE_ACT | TR1_INFRA);
 	    t_ptr->flags2 |= (TR_ARTIFACT | TR1_SLAY_TROLL | TR_SLAY_ORC | TR_SLAY_GIANT
 			      | TR1_SLAY_DEMON | TR2_RES_CHAOS);
-	    t_ptr->p1 = 4;
+	    t_ptr->pval = 4;
 	    t_ptr->damage[0] = 6;
 	    t_ptr->damage[1] = 4;
 	    t_ptr->cost = 200000L;
@@ -2138,7 +2138,7 @@ int unique_weapon(inven_type *t_ptr)
 	    t_ptr->todam = -60;
 	    t_ptr->flags = (TR1_SPEED | TR3_AGGRAVATE | TR3_CURSED);
 	    t_ptr->flags2 |= (TR_ARTIFACT);
-	    t_ptr->p1 = -1;
+	    t_ptr->pval = -1;
 	    t_ptr->toac = -50;
 	    t_ptr->cost = 10000L;
 	    MORMEGIL = 1;
@@ -2161,7 +2161,7 @@ int unique_weapon(inven_type *t_ptr)
 	    t_ptr->flags = (TR3_FEATHER | TR1_DEX |
 			    TR2_FREE_ACT | TR3_SLOW_DIGEST);
 	    t_ptr->flags2 |= (TR1_SLAY_DEMON | TR_SLAY_ORC | TR3_ACTIVATE | TR_ARTIFACT);
-	    t_ptr->p1 = 4;
+	    t_ptr->pval = 4;
 	    t_ptr->cost = 50000L;
 	    ARUNRUTH = 1;
 	    return 1;
@@ -2181,7 +2181,7 @@ int unique_weapon(inven_type *t_ptr)
 	    t_ptr->flags = (TR1_SLAY_EVIL | TR3_SLOW_DIGEST | TR1_SEARCH | TR1_BRAND_FIRE |
 			    TR2_RES_FIRE);
 	    t_ptr->flags2 |= (TR_ARTIFACT | TR1_SLAY_ORC | TR3_LITE | TR2_RES_LITE);
-	    t_ptr->p1 = 3;
+	    t_ptr->pval = 3;
 	    t_ptr->cost = 40000L;
 	    GLAMDRING = 1;
 	    return 1;
@@ -2197,7 +2197,7 @@ int unique_weapon(inven_type *t_ptr)
 	    t_ptr->todam = 16;
 	    t_ptr->flags = (TR3_SLOW_DIGEST | TR1_SEARCH | TR2_RES_ELEC);
 	    t_ptr->flags2 |= (TR_ARTIFACT | TR1_SLAY_ORC | TR3_LITE | TR_LIGHTNING);
-	    t_ptr->p1 = 4;
+	    t_ptr->pval = 4;
 	    t_ptr->cost = 45000L;
 	    AEGLIN = 1;
 	    return 1;
@@ -2214,7 +2214,7 @@ int unique_weapon(inven_type *t_ptr)
 	    t_ptr->flags = (TR1_SLAY_EVIL | TR3_SLOW_DIGEST | TR1_STEALTH | TR1_BRAND_COLD |
 			    TR2_RES_COLD);
 	    t_ptr->flags2 |= (TR_ARTIFACT | TR1_SLAY_ORC | TR3_LITE);
-	    t_ptr->p1 = 3;
+	    t_ptr->pval = 3;
 	    t_ptr->cost = 40000L;
 	    ORCRIST = 1;
 	    return 1;
@@ -2235,7 +2235,7 @@ int unique_weapon(inven_type *t_ptr)
 			TR3_CURSED | TR1_SLAY_EVIL);
 	t_ptr->flags2 |= (TR1_SLAY_DEMON | TR_SLAY_TROLL | TR2_RES_DISEN
 			  | TR_ARTIFACT);
-	t_ptr->p1 = 5;
+	t_ptr->pval = 5;
 	t_ptr->cost = 100000L;
 	CALRIS = 1;
 	return 1;
@@ -2255,7 +2255,7 @@ int unique_weapon(inven_type *t_ptr)
 	t_ptr->damage[1] = 6;
 	t_ptr->flags = (TR1_DEX | TR1_INT | TR2_FREE_ACT | TR3_SEE_INVIS);
 	t_ptr->flags2 |= (TR_ARTIFACT | TR1_SLAY_GIANT | TR_SLAY_TROLL);
-	t_ptr->p1 = 3;
+	t_ptr->pval = 3;
 	t_ptr->cost = 20000L;
 	MAEDHROS = 1;
 	return 1;
@@ -2290,7 +2290,7 @@ int unique_weapon(inven_type *t_ptr)
 	t_ptr->flags = (TR1_BRAND_FIRE | TR1_SLAY_UNDEAD | TR2_RES_FIRE |
 			TR3_FEATHER | TR1_CHR | TR3_SEE_INVIS);
 	t_ptr->flags2 |= (TR_ARTIFACT | TR2_RES_SOUND | TR1_SLAY_GIANT);
-	t_ptr->p1 = 3;
+	t_ptr->pval = 3;
 	t_ptr->cost = 22000L;
 	OSONDIR = 1;
 	return 1;
@@ -2310,7 +2310,7 @@ int unique_weapon(inven_type *t_ptr)
 	t_ptr->flags = (TR1_WIS | TR3_REGEN | TR1_BRAND_COLD | TR2_RES_COLD | TR1_INFRA);
 	t_ptr->flags2 |= (TR_ARTIFACT | TR1_SLAY_ORC | TR3_LITE |
 			  TR3_ACTIVATE | TR2_RES_LITE);
-	t_ptr->p1 = 4;
+	t_ptr->pval = 4;
 	t_ptr->cost = 30000L;
 	t_ptr->toac = 8;
 	TURMIL = 1;
@@ -2331,7 +2331,7 @@ int unique_weapon(inven_type *t_ptr)
 	t_ptr->flags = (TR1_BRAND_COLD | TR1_BRAND_FIRE | TR2_RES_FIRE | TR2_RES_COLD |
 			TR3_SLOW_DIGEST | TR1_INT | TR_SUST_STAT);
 	t_ptr->flags2 |= (TR_ARTIFACT | TR1_SLAY_DEMON | TR_SLAY_GIANT | TR_SLAY_TROLL);
-	t_ptr->p1 = 2;
+	t_ptr->pval = 2;
 	t_ptr->cost = 32000L;
 	TIL = 1;
 	return 1;
@@ -2352,7 +2352,7 @@ int unique_weapon(inven_type *t_ptr)
 		   TR1_SLAY_ANIMAL | TR1_TUNNEL | TR3_AGGRAVATE | TR2_RES_FIRE);
 	t_ptr->flags2 |= (TR_ARTIFACT | TR2_IM_FIRE | TR2_RES_CHAOS
 			  | TR2_RES_DISEN | TR2_RES_DARK);
-	t_ptr->p1 = 6;
+	t_ptr->pval = 6;
 	t_ptr->cost = 400000L;
 	DEATHWREAKER = 1;
 	return 1;
@@ -2370,7 +2370,7 @@ int unique_weapon(inven_type *t_ptr)
 	t_ptr->flags = (TR1_DEX | TR1_CHR | TR2_FREE_ACT | TR2_RES_FIRE | TR2_RES_COLD |
 			TR3_SEE_INVIS | TR1_BRAND_FIRE | TR1_BRAND_COLD);
 	t_ptr->flags2 |= (TR_ARTIFACT | TR3_LITE | TR3_ACTIVATE | TR2_RES_LITE);
-	t_ptr->p1 = 3;
+	t_ptr->pval = 3;
 	t_ptr->cost = 18000L;
 	AVAVIR = 1;
 	return 1;
@@ -2408,7 +2408,7 @@ int unique_weapon(inven_type *t_ptr)
 	t_ptr->weight = 360;
 	t_ptr->flags |= (TR3_SEE_INVIS | TR1_SLAY_EVIL | TR1_DEX);
 	t_ptr->flags2 |= (TR1_SLAY_TROLL | TR_SLAY_ORC | TR_ARTIFACT);
-	t_ptr->p1 = 2;
+	t_ptr->pval = 2;
 	t_ptr->damage[1] = 12;
 	t_ptr->cost = 55000L;
 	EORLINGAS = 1;
@@ -2425,7 +2425,7 @@ int unique_weapon(inven_type *t_ptr)
 	t_ptr->todam = 19;
 	t_ptr->flags |= (TR3_SEE_INVIS | TR1_SLAY_EVIL | TR1_CON);
 	t_ptr->flags2 |= (TR1_SLAY_ORC | TR_SLAY_TROLL | TR_SLAY_GIANT | TR_ARTIFACT);
-	t_ptr->p1 = 3;
+	t_ptr->pval = 3;
 	t_ptr->cost = 50000L;
 	BARUKKHELED = 1;
 	return 1;
@@ -2450,7 +2450,7 @@ int unique_weapon(inven_type *t_ptr)
 	    t_ptr->flags |= (TR3_SEE_INVIS | TR1_SLAY_EVIL | TR1_STR | TR1_DEX |
 			     TR1_SLAY_UNDEAD);
 	    t_ptr->flags2 |= (TR2_RES_DARK | TR2_RES_LITE | TR_ARTIFACT | TR_BLESS_BLADE);
-	    t_ptr->p1 = 2;
+	    t_ptr->pval = 2;
 	    t_ptr->cost = 90000L;
 	    WRATH = 1;
 	    return 1;
@@ -2473,7 +2473,7 @@ int unique_weapon(inven_type *t_ptr)
 			    TR2_RES_ACID);
 	    t_ptr->flags2 |= (TR2_IM_ACID | TR2_HOLD_LIFE | TR3_ACTIVATE
 			    | TR2_RES_NETHER | TR_ARTIFACT | TR_BLESS_BLADE);
-	    t_ptr->p1 = 4;
+	    t_ptr->pval = 4;
 	    t_ptr->cost = 120000L;
 	    ULMO = 1;
 	    return 1;
@@ -2491,7 +2491,7 @@ int unique_weapon(inven_type *t_ptr)
 	t_ptr->flags |= (TR3_SEE_INVIS | TR1_SLAY_EVIL | TR1_DEX | TR1_SLAY_UNDEAD
 			 | TR1_SLAY_ANIMAL);
 	t_ptr->flags2 |= (TR_ARTIFACT | TR1_ATTACK_SPD);
-	t_ptr->p1 = 2;
+	t_ptr->pval = 2;
 	t_ptr->cost = 30000L;
 	HARADEKKET = 1;
 	return 1;
@@ -2525,7 +2525,7 @@ int unique_weapon(inven_type *t_ptr)
 	t_ptr->flags |= (TR3_SEE_INVIS | TR3_FEATHER | TR3_REGEN | TR1_STEALTH | TR2_RES_FIRE |
 			 TR2_RES_COLD | TR2_RES_ACID | TR2_RES_ELEC | TR1_DEX);
 	t_ptr->flags2 |= (TR_ARTIFACT);
-	t_ptr->p1 = 3;
+	t_ptr->pval = 3;
 	t_ptr->cost = 28000L;
 	GONDRICAM = 1;
 	return 1;
@@ -2542,7 +2542,7 @@ int unique_weapon(inven_type *t_ptr)
 	t_ptr->flags |= (TR1_SLAY_DRAGON | TR1_SLAY_ANIMAL);
 	t_ptr->flags2 |= (TR1_SLAY_GIANT | TR_SLAY_ORC | TR_SLAY_TROLL | TR_ARTIFACT |
 			  TR1_ATTACK_SPD);
-	t_ptr->p1 = 1;
+	t_ptr->pval = 1;
 	t_ptr->cost = 25000L;
 	CARETH = 1;
 	return 1;
@@ -2591,7 +2591,7 @@ int unique_weapon(inven_type *t_ptr)
 	t_ptr->damage[1] = 9;
 	t_ptr->flags = (TR1_STEALTH | TR2_RES_FIRE | TR1_BRAND_FIRE | TR1_SLAY_EVIL);
 	t_ptr->flags2 |= (TR_ARTIFACT | TR3_ACTIVATE | TR2_RES_CONF);
-	t_ptr->p1 = 2;
+	t_ptr->pval = 2;
 	t_ptr->cost = 55000L;
 	TOTILA = 1;
 	return 1;
@@ -2607,7 +2607,7 @@ int unique_weapon(inven_type *t_ptr)
 	t_ptr->todam = 7;
 	t_ptr->flags = (TR3_REGEN | TR3_SLOW_DIGEST | TR1_SLAY_ANIMAL);
 	t_ptr->flags2 |= (TR_ARTIFACT | TR1_ATTACK_SPD);
-	t_ptr->p1 = 2;
+	t_ptr->pval = 2;
 	t_ptr->cost = 15000L;
 	GILETTAR = 1;
 	return 1;
@@ -2628,7 +2628,7 @@ int unique_weapon(inven_type *t_ptr)
 	t_ptr->weight = 50;
 	t_ptr->flags = (TR1_DEX | TR_SUST_STAT);
 	t_ptr->flags2 |= (TR_ARTIFACT);
-	t_ptr->p1 = 5;
+	t_ptr->pval = 5;
 	t_ptr->cost = 40000L;
 	AGLARANG = 1;
 	return 1;
@@ -2651,7 +2651,7 @@ int unique_weapon(inven_type *t_ptr)
 	    t_ptr->flags2 |= (TR1_SLAY_TROLL | TR_SLAY_ORC | TR3_ACTIVATE | TR_ARTIFACT |
 			      TR_BLESS_BLADE);
 	    t_ptr->toac = 5;
-	    t_ptr->p1 = 4;
+	    t_ptr->pval = 4;
 	    t_ptr->cost = 140000L;
 	    AEGLOS = 1;
 	    return 1;
@@ -2671,7 +2671,7 @@ int unique_weapon(inven_type *t_ptr)
 	    t_ptr->flags = (TR1_BRAND_COLD | TR2_RES_COLD | TR1_SLAY_UNDEAD |
 			    TR3_SEE_INVIS | TR1_STEALTH);
 	    t_ptr->flags2 |= (TR_ARTIFACT);
-	    t_ptr->p1 = 3;
+	    t_ptr->pval = 3;
 	    t_ptr->cost = 30000L;
 	    NIMLOTH = 1;
 	    return 1;
@@ -2690,7 +2690,7 @@ int unique_weapon(inven_type *t_ptr)
 			    TR2_RES_FIRE | TR3_FEATHER | TR1_INFRA);
 	    t_ptr->flags2 |= (TR3_ACTIVATE | TR3_LITE | TR1_SLAY_GIANT | TR2_RES_LITE
 			      | TR_ARTIFACT | TR_BLESS_BLADE);
-	    t_ptr->p1 = 4;
+	    t_ptr->pval = 4;
 	    t_ptr->cost = 60000L;
 	    OROME = 1;
 	    return 1;
@@ -2713,7 +2713,7 @@ int unique_weapon(inven_type *t_ptr)
 			    TR2_FREE_ACT);
 	    t_ptr->flags2 |= (TR1_SLAY_TROLL | TR_SLAY_ORC | TR2_RES_DARK | TR_ARTIFACT);
 	    t_ptr->toac = 5;
-	    t_ptr->p1 = 4;
+	    t_ptr->pval = 4;
 	    t_ptr->cost = 100000L;
 	    ANGRIST = 1;
 	    return 1;
@@ -2799,7 +2799,7 @@ int unique_weapon(inven_type *t_ptr)
 	    t_ptr->flags = (TR1_BRAND_COLD | TR2_RES_COLD | TR3_REGEN | TR3_SLOW_DIGEST |
 			    TR1_DEX | TR3_SEE_INVIS);
 	    t_ptr->flags2 |= (TR3_ACTIVATE | TR_ARTIFACT);
-	    t_ptr->p1 = 2;
+	    t_ptr->pval = 2;
 	    t_ptr->cost = 40000L;
 	    BELANGIL = 1;
 	    return 1;
@@ -2819,7 +2819,7 @@ int unique_weapon(inven_type *t_ptr)
 			 TR2_FREE_ACT);
 	t_ptr->flags2 |= (TR_ARTIFACT | TR1_SLAY_ORC | TR3_LITE | TR2_RES_LITE |
 			  TR1_ATTACK_SPD);
-	t_ptr->p1 = 2;
+	t_ptr->pval = 2;
 	t_ptr->cost = 100000L;
 	STING = 1;
 	return 1;
@@ -2842,7 +2842,7 @@ int unique_weapon(inven_type *t_ptr)
 			    TR2_RES_FIRE | TR2_RES_ACID);
 	    t_ptr->flags2 |= (TR1_SLAY_DEMON | TR_SLAY_TROLL | TR_SLAY_ORC | TR2_RES_DARK
 			      | TR2_RES_LITE | TR2_RES_CHAOS | TR_ARTIFACT);
-	    t_ptr->p1 = 3;
+	    t_ptr->pval = 3;
 	    t_ptr->cost = 150000L;
 	    DURIN = 1;
 	    return 1;
@@ -2863,7 +2863,7 @@ int unique_weapon(inven_type *t_ptr)
 			    TR2_FREE_ACT | TR3_SEE_INVIS | TR2_RES_COLD);
 	    t_ptr->flags2 |= (TR2_IM_COLD | TR1_SLAY_ORC | TR3_ACTIVATE | TR_ARTIFACT |
 			      TR_BLESS_BLADE);
-	    t_ptr->p1 = 2;
+	    t_ptr->pval = 2;
 	    t_ptr->cost = 200000L;
 	    EONWE = 1;
 	    return 1;
@@ -2889,7 +2889,7 @@ int unique_weapon(inven_type *t_ptr)
 			    | TR2_RES_FIRE | TR3_REGEN | TR1_STEALTH);
 	    t_ptr->flags2 |= (TR1_SLAY_DEMON | TR_SLAY_TROLL | TR_SLAY_ORC | TR2_RES_BLIND
 			      | TR_ARTIFACT);
-	    t_ptr->p1 = 3;
+	    t_ptr->pval = 3;
 	    t_ptr->cost = 90000L;
 	    BALLI = 1;
 	    return 1;
@@ -2905,7 +2905,7 @@ int unique_weapon(inven_type *t_ptr)
 	    t_ptr->todam = 3;
 	    t_ptr->flags = (TR1_STR | TR1_DEX);
 	    t_ptr->flags2 |= (TR3_ACTIVATE | TR1_SLAY_TROLL | TR_SLAY_ORC | TR_ARTIFACT);
-	    t_ptr->p1 = 1;
+	    t_ptr->pval = 1;
 	    t_ptr->cost = 21000L;
 	    LOTHARANG = 1;
 	    return 1;
@@ -2929,7 +2929,7 @@ int unique_weapon(inven_type *t_ptr)
 		    TR2_RES_FIRE | TR2_RES_ACID | TR2_RES_COLD | TR2_RES_ELEC |
 			TR2_FREE_ACT | TR3_SEE_INVIS | TR1_WIS);
 	t_ptr->flags2 |= (TR_ARTIFACT | TR1_SLAY_DEMON | TR3_LITENING | TR2_RES_NEXUS);
-	t_ptr->p1 = 4;
+	t_ptr->pval = 4;
 	t_ptr->cost = 250000L;
 	AULE = 1;
 	return 1;
@@ -2948,7 +2948,7 @@ int unique_weapon(inven_type *t_ptr)
 	t_ptr->flags = (TR1_WIS | TR1_CON | TR1_SEARCH | TR3_SLOW_DIGEST | TR1_SLAY_DRAGON);
 	t_ptr->flags2 |= (TR3_TELEPATHY | TR3_ACTIVATE | TR_ARTIFACT);
 	t_ptr->ident |= ID_NOSHOW_TYPE;
-	t_ptr->p1 = 3;
+	t_ptr->pval = 3;
 	t_ptr->cost = 40000L;
 	THEODEN = 1;
 	return 1;
@@ -2968,7 +2968,7 @@ int unique_weapon(inven_type *t_ptr)
 			TR2_RES_FIRE | TR2_RES_ELEC);
 	t_ptr->flags2 |= (TR_ARTIFACT | TR1_SLAY_TROLL | TR_SLAY_ORC
 			  | TR3_LITENING | TR2_RES_DARK);
-	t_ptr->p1 = 4;
+	t_ptr->pval = 4;
 	t_ptr->cost = 160000L;
 	THUNDERFIST = 1;
 	return 1;
@@ -2988,7 +2988,7 @@ int unique_weapon(inven_type *t_ptr)
 	    t_ptr->todam = 22;
 	    t_ptr->flags = (TR1_SLAY_ANIMAL | TR1_STR | TR3_SEE_INVIS);
 	    t_ptr->flags2 |= (TR_ARTIFACT | TR1_SLAY_TROLL | TR_SLAY_ORC | TR2_RES_NEXUS);
-	    t_ptr->p1 = 4;
+	    t_ptr->pval = 4;
 	    t_ptr->cost = 30000L;
 	    BLOODSPIKE = 1;
 	    return 1;
@@ -3026,7 +3026,7 @@ int unique_weapon(inven_type *t_ptr)
 		    TR2_RES_FIRE | TR2_RES_COLD | TR2_RES_ELEC | TR2_RES_ACID |
 			TR3_AGGRAVATE);
 	t_ptr->flags2 |= (TR1_SLAY_TROLL | TR_SLAY_ORC | TR3_TELEPATHY | TR_ARTIFACT);
-	t_ptr->p1 = -5;
+	t_ptr->pval = -5;
 	t_ptr->cost = 200000L;
 	DOOMCALLER = 1;
 	return 1;
@@ -3046,7 +3046,7 @@ int unique_weapon(inven_type *t_ptr)
 	    t_ptr->todam = 20;
 	    t_ptr->flags = (TR1_INT | TR1_SLAY_ANIMAL | TR1_BRAND_FIRE | TR2_RES_FIRE);
 	    t_ptr->flags2 |= (TR_ARTIFACT);
-	    t_ptr->p1 = 3;
+	    t_ptr->pval = 3;
 	    t_ptr->cost = 70000L;
 	    NAR = 1;
 	    return 1;
@@ -3064,7 +3064,7 @@ int unique_weapon(inven_type *t_ptr)
 	    t_ptr->todam = 5;
 	    t_ptr->flags = (TR1_SLAY_EVIL | TR3_SEE_INVIS | TR1_INT | TR1_WIS);
 	    t_ptr->flags2 |= (TR3_LITE | TR3_ACTIVATE | TR2_RES_LITE | TR_ARTIFACT);
-	    t_ptr->p1 = 4;
+	    t_ptr->pval = 4;
 	    t_ptr->cost = 20000L;
 	    ERIRIL = 1;
 	    return 1;
@@ -3086,7 +3086,7 @@ int unique_weapon(inven_type *t_ptr)
 			    | TR1_BRAND_FIRE | TR2_RES_FIRE);
 	    t_ptr->flags2 |= (TR_ARTIFACT | TR2_HOLD_LIFE | TR1_SLAY_ORC | TR_SLAY_TROLL
 			      | TR3_ACTIVATE | TR2_RES_NETHER);
-	    t_ptr->p1 = 4;
+	    t_ptr->pval = 4;
 	    t_ptr->cost = 130000L;
 	    OLORIN = 1;
 	    return 1;
@@ -3135,7 +3135,7 @@ int unique_armour(inven_type *t_ptr)
 			  TR_ARTIFACT);
 	t_ptr->ident |= ID_NOSHOW_TYPE;
 	t_ptr->toac = 25;
-	t_ptr->p1 = -2;
+	t_ptr->pval = -2;
 	t_ptr->weight = 400;
 	t_ptr->ac = 30;
 	t_ptr->tohit = -3;
@@ -3158,7 +3158,7 @@ int unique_armour(inven_type *t_ptr)
 			  | TR3_ACTIVATE);
 	t_ptr->ident |= ID_NOSHOW_TYPE;
 	t_ptr->toac = 35;
-	t_ptr->p1 = -3;
+	t_ptr->pval = -3;
 	t_ptr->ac = 50;
 	t_ptr->tohit = -4;
 	t_ptr->weight = 500;
@@ -3178,7 +3178,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->flags |= (TR2_RES_ACID | TR1_SPEED | TR1_STEALTH);
 	t_ptr->flags2 |= (TR3_ACTIVATE | TR2_RES_NEXUS | TR_ARTIFACT);
 	t_ptr->name2 = ART_FEANOR;
-	t_ptr->p1 = 1;
+	t_ptr->pval = 1;
 	t_ptr->toac = 20;
 	t_ptr->cost = 130000L;
 	FEANOR = 1;
@@ -3193,7 +3193,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->flags |= (TR2_FREE_ACT | TR1_DEX | TR_SUST_STAT | TR2_RES_ACID);
 	t_ptr->flags2 |= (TR3_ACTIVATE | TR_ARTIFACT | TR2_RES_NETHER | TR2_RES_CHAOS);
 	t_ptr->name2 = ART_DAL;
-	t_ptr->p1 = 5;
+	t_ptr->pval = 5;
 	t_ptr->toac = 15;
 	t_ptr->cost = 40000L;
 	DAL = 1;
@@ -3213,7 +3213,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->name2 = ART_THORIN;
 	t_ptr->ident |= ID_NOSHOW_TYPE;
 	t_ptr->tohit = 0;
-	t_ptr->p1 = 4;
+	t_ptr->pval = 4;
 	t_ptr->toac = 25;
 	t_ptr->cost = 60000L;
 	THORIN = 1;
@@ -3247,7 +3247,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->flags2 |= (TR2_RES_SOUND | TR2_RES_CONF | TR_ARTIFACT);
 	t_ptr->name2 = EGO_ROHAN;
 	t_ptr->tohit = 0;
-	t_ptr->p1 = 2;
+	t_ptr->pval = 2;
 	t_ptr->toac = 15;
 	t_ptr->cost = 30000L;
 	ROHAN = 1;
@@ -3265,7 +3265,7 @@ int unique_armour(inven_type *t_ptr)
 			 TR_SUST_STAT);
 	t_ptr->flags2 |= (TR_ARTIFACT);
 	t_ptr->name2 = ART_ANARION;
-	t_ptr->p1 = 10;
+	t_ptr->pval = 10;
 	t_ptr->ident |= ID_NOSHOW_P1;
 	t_ptr->tohit = 0;
 	t_ptr->toac = 20;
@@ -3285,7 +3285,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->flags2 |= (TR3_ACTIVATE | TR_ARTIFACT);
 	t_ptr->name2 = ART_FINGOLFIN;
 	t_ptr->ident |= ID_SHOW_HITDAM;
-	t_ptr->p1 = 4;
+	t_ptr->pval = 4;
 	t_ptr->tohit = 10;
 	t_ptr->todam = 10;
 	t_ptr->toac = 20;
@@ -3304,7 +3304,7 @@ int unique_armour(inven_type *t_ptr)
 	    t_ptr->flags2 |= (TR_ARTIFACT);
 	    t_ptr->name2 = ART_CAMBELEG;
 	    t_ptr->ident |= ID_SHOW_HITDAM;
-	    t_ptr->p1 = 2;
+	    t_ptr->pval = 2;
 	    t_ptr->tohit = 8;
 	    t_ptr->todam = 8;
 	    t_ptr->toac = 15;
@@ -3322,7 +3322,7 @@ int unique_armour(inven_type *t_ptr)
 	    t_ptr->flags2 |= (TR3_ACTIVATE | TR3_LITE | TR2_RES_LITE | TR_ARTIFACT);
 	    t_ptr->name2 = ART_CAMMITHRIM;
 	    t_ptr->ident |= ID_NOSHOW_P1;
-	    t_ptr->p1 = 5;
+	    t_ptr->pval = 5;
 	    t_ptr->toac = 10;
 	    t_ptr->cost = 30000L;
 	    CAMMITHRIM = 1;
@@ -3397,7 +3397,7 @@ int unique_armour(inven_type *t_ptr)
 	    t_ptr->flags2 |= (TR_ARTIFACT);
 	    t_ptr->name2 = ART_CAMLOST;
 	    t_ptr->toac = 0;
-	    t_ptr->p1 = -5;
+	    t_ptr->pval = -5;
 	    t_ptr->tohit = -11;
 	    t_ptr->todam = -12;
 	    t_ptr->ident |= (ID_SHOW_HITDAM/* | ID_SHOW_P1*/);
@@ -3416,7 +3416,7 @@ int unique_armour(inven_type *t_ptr)
 			 TR2_RES_ELEC | TR1_STEALTH);
 	t_ptr->flags2 |= (TR3_ACTIVATE | TR_ARTIFACT);
 	t_ptr->name2 = ART_BELEGENNON;
-	t_ptr->p1 = 4;
+	t_ptr->pval = 4;
 	t_ptr->toac = 20;
 	t_ptr->cost = 105000L;
 	BELEGENNON = 1;
@@ -3433,7 +3433,7 @@ int unique_armour(inven_type *t_ptr)
 			 TR1_STR | TR1_CHR);
 	t_ptr->flags2 |= (TR3_ACTIVATE | TR2_RES_DISEN | TR2_RES_DARK | TR_ARTIFACT);
 	t_ptr->name2 = ART_CELEBORN;
-	t_ptr->p1 = 4;
+	t_ptr->pval = 4;
 	t_ptr->toac = 25;
 	t_ptr->cost = 150000L;
 	CELEBORN = 1;
@@ -3450,7 +3450,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->flags |= (TR2_RES_ACID | TR2_RES_POIS | TR1_CON | TR1_WIS | TR1_INT);
 	t_ptr->flags2 |= (TR2_RES_CONF | TR3_ACTIVATE | TR_ARTIFACT);
 	t_ptr->name2 = ART_CASPANION;
-	t_ptr->p1 = 3;
+	t_ptr->pval = 3;
 	t_ptr->toac = 20;
 	t_ptr->cost = 40000L;
 	CASPANION = 1;
@@ -3466,7 +3466,7 @@ int unique_armour(inven_type *t_ptr)
 			 TR1_STEALTH);
 	t_ptr->flags2 |= (TR_ARTIFACT | TR2_RES_DARK);
 	t_ptr->name2 = ART_HITHLOMIR;
-	t_ptr->p1 = 4;
+	t_ptr->pval = 4;
 	t_ptr->toac = 20;
 	t_ptr->cost = 45000L;
 	HITHLOMIR = 1;
@@ -3483,7 +3483,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->flags2 |= (TR_ARTIFACT | TR2_RES_SHARDS);
 	t_ptr->name2 = ART_THALKETTOTH;
 	t_ptr->toac = 25;
-	t_ptr->p1 = 3;
+	t_ptr->pval = 3;
 	t_ptr->cost = 25000L;
 	THALKETTOTH = 1;
 	return 1;
@@ -3498,7 +3498,7 @@ int unique_armour(inven_type *t_ptr)
 			 TR1_STR | TR1_CHR);
 	t_ptr->flags2 |= (TR_ARTIFACT | TR2_RES_NEXUS | TR2_RES_SHARDS);
 	t_ptr->name2 = ART_ARVEDUI;
-	t_ptr->p1 = 2;
+	t_ptr->pval = 2;
 	t_ptr->toac = 15;
 	t_ptr->cost = 32000L;
 	ARVEDUI = 1;
@@ -3513,7 +3513,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->flags |= (TR2_RES_ACID | TR1_INT | TR1_WIS);
 	t_ptr->flags2 |= (TR3_TELEPATHY | TR2_RES_BLIND | TR_ARTIFACT);
 	t_ptr->name2 = ART_THRANDUIL;
-	t_ptr->p1 = 2;
+	t_ptr->pval = 2;
 	t_ptr->toac = 10;
 	t_ptr->cost = 50000L;
 	THRANDUIL = 1;
@@ -3528,7 +3528,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->flags |= (TR2_RES_ACID | TR1_WIS | TR1_CHR);
 	t_ptr->flags2 |= (TR_ARTIFACT);
 	t_ptr->name2 = ART_THENGEL;
-	t_ptr->p1 = 3;
+	t_ptr->pval = 3;
 	t_ptr->toac = 12;
 	t_ptr->cost = 22000L;
 	THENGEL = 1;
@@ -3543,7 +3543,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->flags |= (TR1_STR | TR1_CON | TR1_DEX | TR2_RES_ACID);
 	t_ptr->flags2 |= (TR_ARTIFACT | TR2_RES_NEXUS);
 	t_ptr->name2 = ART_HAMMERHAND;
-	t_ptr->p1 = 3;
+	t_ptr->pval = 3;
 	t_ptr->toac = 20;
 	t_ptr->cost = 45000L;
 	HAMMERHAND = 1;
@@ -3573,7 +3573,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->flags |= (TR1_CON | TR1_STR | TR2_RES_ACID);
 	t_ptr->flags2 |= (TR_ARTIFACT);
 	t_ptr->name2 = ART_THROR;
-	t_ptr->p1 = 3;
+	t_ptr->pval = 3;
 	t_ptr->toac = 20;
 	t_ptr->cost = 12000L;
 	THROR = 1;
@@ -3591,7 +3591,7 @@ int unique_armour(inven_type *t_ptr)
 	    t_ptr->flags2 |= (TR3_TELEPATHY | TR3_LITE | TR2_RES_LITE | TR2_RES_BLIND
 			      | TR_ARTIFACT);
 	    t_ptr->name2 = ART_DOR_LOMIN;
-	    t_ptr->p1 = 4;
+	    t_ptr->pval = 4;
 	    t_ptr->toac = 20;
 	    t_ptr->cost = 300000L;
 	    DOR_LOMIN = 1;
@@ -3607,7 +3607,7 @@ int unique_armour(inven_type *t_ptr)
 	    t_ptr->flags2 |= (TR3_ACTIVATE | TR2_RES_BLIND | TR_ARTIFACT);
 	    t_ptr->name2 = ART_HOLHENNETH;
 	    t_ptr->ident |= ID_NOSHOW_TYPE;
-	    t_ptr->p1 = 2;
+	    t_ptr->pval = 2;
 	    t_ptr->toac = 10;
 	    t_ptr->cost = 100000L;
 	    HOLHENNETH = 1;
@@ -3624,7 +3624,7 @@ int unique_armour(inven_type *t_ptr)
 	    t_ptr->flags2 |= (TR_ARTIFACT);
 	    t_ptr->name2 = ART_GORLIM;
 	    t_ptr->ident |= ID_NOSHOW_TYPE;
-	    t_ptr->p1 = -125;
+	    t_ptr->pval = -125;
 	    t_ptr->toac = 10;
 	    t_ptr->cost = 0L;
 	    GORLIM = 1;
@@ -3644,7 +3644,7 @@ int unique_armour(inven_type *t_ptr)
 			| TR2_RES_ACID | TR2_RES_FIRE);
 	t_ptr->flags2 = (TR3_ACTIVATE | TR3_LITE | TR2_RES_LITE | TR2_RES_BLIND |
 			 TR_ARTIFACT);
-	t_ptr->p1 = 3;
+	t_ptr->pval = 3;
 	t_ptr->toac = 15;
 	t_ptr->cost = 100000L;
 	GONDOR = 1;
@@ -3660,7 +3660,7 @@ int unique_armour(inven_type *t_ptr)
 		      TR2_RES_ACID | TR3_SEE_INVIS | TR2_FREE_ACT | TR3_CURSED);
 	t_ptr->flags2 |= (TR3_TELEPATHY | TR_ARTIFACT);
 	t_ptr->name2 = ART_BERUTHIEL;
-	t_ptr->p1 = -125;
+	t_ptr->pval = -125;
 	t_ptr->toac = 20;
 	t_ptr->cost = 10000L;
 	BERUTHIEL = 1;
@@ -3768,7 +3768,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		t_ptr->flags2 |= TR2_HOLD_LIFE;
 		t_ptr->ident |= ID_NOSHOW_P1;
 		give_1_hi_resist(t_ptr);	/* JLS */
-		t_ptr->p1 = 10;
+		t_ptr->pval = 10;
 		t_ptr->toac += 10 + randint(5);
 		t_ptr->name2 = EGO_MAGI;
 		t_ptr->cost = 10000L + (t_ptr->toac * 100);
@@ -3786,7 +3786,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			rating += 25;
 			give_1_hi_resist(t_ptr);	/* JLS */
 			t_ptr->flags |= TR1_STEALTH;
-			t_ptr->p1 = randint(3);
+			t_ptr->pval = randint(3);
 			t_ptr->name2 = EGO_ELVENKIND;
 			t_ptr->toac += 15;
 			t_ptr->cost += 15000L;
@@ -3904,11 +3904,11 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			t_ptr->tohit += 5;
 			t_ptr->todam += 5;
 			t_ptr->toac += randint(4);
-		    /* the value in p1 is used for strength increase */
-		    /* p1 is also used for sustain stat */
-			t_ptr->p1 = randint(4);
+		    /* the value in pval is used for strength increase */
+		    /* pval is also used for sustain stat */
+			t_ptr->pval = randint(4);
 			t_ptr->name2 = EGO_HA;
-			t_ptr->cost += t_ptr->p1 * 500;
+			t_ptr->cost += t_ptr->pval * 500;
 			t_ptr->cost += 10000L;
 			t_ptr->cost *= 2;
 			break;
@@ -3926,9 +3926,9 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			t_ptr->todam += 3;
 			t_ptr->toac += 5 + randint(5);
 			t_ptr->name2 = EGO_DF;
-		    /* the value in p1 is used for stealth */
-			t_ptr->p1 = randint(3);
-			t_ptr->cost += t_ptr->p1 * 500;
+		    /* the value in pval is used for stealth */
+			t_ptr->pval = randint(3);
+			t_ptr->cost += t_ptr->pval * 500;
 			t_ptr->cost += 7500L;
 			t_ptr->cost *= 2;
 			break;
@@ -3988,8 +3988,8 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			if (randint(3) == 1) {
 			    t_ptr->flags |= (TR1_WIS);
 			    t_ptr->flags2 |= (TR_BLESS_BLADE);
-			    t_ptr->p1 = m_bonus(0, 3, level);
-			    t_ptr->cost += (200 * t_ptr->p1);
+			    t_ptr->pval = m_bonus(0, 3, level);
+			    t_ptr->cost += (200 * t_ptr->pval);
 			}
 			if (peek)
 			    msg_print("Slay Evil");
@@ -4074,7 +4074,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			t_ptr->flags2 |= TR1_SLAY_ORC;
 			t_ptr->tohit += randint(5) + 3;
 			t_ptr->todam += randint(5) + 3;
-			t_ptr->p1 = 1;
+			t_ptr->pval = 1;
 			t_ptr->cost += 10000L;
 			t_ptr->cost *= 2;
 			t_ptr->name2 = EGO_WEST;
@@ -4091,9 +4091,9 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			t_ptr->flags2 = TR_BLESS_BLADE;
 			t_ptr->tohit += 3;
 			t_ptr->todam += 3;
-			t_ptr->p1 = randint(3);
+			t_ptr->pval = randint(3);
 			t_ptr->name2 = EGO_BLESS_BLADE;
-			t_ptr->cost += t_ptr->p1 * 1000;
+			t_ptr->cost += t_ptr->pval * 1000;
 			t_ptr->cost += 3000L;
 			break;
 		      case 30:	   /* of Speed -DGK */
@@ -4107,13 +4107,13 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			t_ptr->todam += randint(3);
 			t_ptr->flags2 = TR1_ATTACK_SPD;
 			if (t_ptr->weight <= 80)
-			    t_ptr->p1 = randint(3);
+			    t_ptr->pval = randint(3);
 			else if (t_ptr->weight <= 130)
-			    t_ptr->p1 = randint(2);
+			    t_ptr->pval = randint(2);
 			else
-			    t_ptr->p1 = 1;
+			    t_ptr->pval = 1;
 			t_ptr->name2 = EGO_ATTACKS;
-			t_ptr->cost += (t_ptr->p1 * 2000);
+			t_ptr->cost += (t_ptr->pval * 2000);
 			t_ptr->cost *= 2;
 			break;
 		    }
@@ -4158,7 +4158,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			t_ptr->sval = 4; /* make do x5 damage!! -CFT */
 			t_ptr->tohit = 20;
 			t_ptr->todam = 22;
-			t_ptr->p1 = 3;
+			t_ptr->pval = 3;
 			t_ptr->flags |= (TR1_STEALTH | TR1_DEX);
 			t_ptr->flags2 |= (TR_ARTIFACT | TR2_RES_DISEN);
 			t_ptr->cost = 35000L;
@@ -4175,7 +4175,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			t_ptr->sval = 3; /* make do x4 damage!! -CFT */
 			t_ptr->tohit = 17;
 			t_ptr->todam = 19;
-			t_ptr->p1 = 3;
+			t_ptr->pval = 3;
 			t_ptr->flags |= (TR2_FREE_ACT | TR1_DEX);
 			t_ptr->flags2 |= (TR_ARTIFACT);
 			t_ptr->cost = 20000L;
@@ -4195,7 +4195,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		    t_ptr->sval = 11;
 		    t_ptr->tohit = 10;
 		    t_ptr->todam = 14;
-		    t_ptr->p1 = 1;
+		    t_ptr->pval = 1;
 		    t_ptr->flags |= (TR1_SPEED | TR2_RES_FIRE);
 		    t_ptr->flags2 |= (TR3_ACTIVATE | TR_ARTIFACT);
 		    t_ptr->cost = 38000L;
@@ -4242,13 +4242,13 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	if (magik(chance) || (good == 666)) {
 	    tmp = randint(3);
 	    if (tmp == 1) {
-		t_ptr->p1 += m_bonus(0, 5, level);
+		t_ptr->pval += m_bonus(0, 5, level);
 	    }
 	    if (tmp == 2)	/* do not give additional plusses -CWS */
 		;
 	    else {
 	    /* a cursed digging tool */
-		t_ptr->p1 = (-m_bonus(1, 15, level));
+		t_ptr->pval = (-m_bonus(1, 15, level));
 		t_ptr->cost = 0L;
 		t_ptr->flags |= TR3_CURSED;
 	    }
@@ -4302,9 +4302,9 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		    if (peek)
 			msg_print("Agility");
 		    rating += 14;
-		    t_ptr->p1 = 2 + randint(2);
+		    t_ptr->pval = 2 + randint(2);
 		    t_ptr->flags |= TR1_DEX;
-		    t_ptr->cost += (t_ptr->p1) * 400;
+		    t_ptr->cost += (t_ptr->pval) * 400;
 		    break;
 		  case 10:
 		    if (((randint(3) == 1) || (good == 666)) && !not_unique &&
@@ -4314,13 +4314,13 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			msg_print("Power");
 		    rating += 22;
 		    t_ptr->name2 = ART_POWER;
-		    t_ptr->p1 = 1 + randint(4);
+		    t_ptr->pval = 1 + randint(4);
 		    t_ptr->tohit += 1 + randint(4);
 		    t_ptr->todam += 1 + randint(4);
 		    t_ptr->flags |= TR1_STR;
 		    t_ptr->ident |= ID_SHOW_HITDAM;
 		    t_ptr->ident |= ID_NOSHOW_TYPE;
-		    t_ptr->cost += (t_ptr->tohit + t_ptr->todam + t_ptr->p1) * 300;
+		    t_ptr->cost += (t_ptr->tohit + t_ptr->todam + t_ptr->pval) * 300;
 		    break;
 		}
 	    }
@@ -4333,7 +4333,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		    t_ptr->flags |= TR1_STR;
 		    t_ptr->name2 = EGO_WEAKNESS;
 		}
-		t_ptr->p1 = (randint(3) - m_bonus(0, 10, level));
+		t_ptr->pval = (randint(3) - m_bonus(0, 10, level));
 	    }
 	    t_ptr->toac = (-m_bonus(1, 20, level));
 	    t_ptr->flags |= TR3_CURSED;
@@ -4354,7 +4354,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			    msg_print("Boots of Speed");
 			t_ptr->name2 = EGO_SPEED;
 			rating += 30;
-			t_ptr->p1 = 1;
+			t_ptr->pval = 1;
 			t_ptr->cost += 300000L;
 		    }
 		} else if (stricmp("& Pair of Metal Shod Boots",
@@ -4367,7 +4367,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		    } else if (tmp < 5) {
 			t_ptr->flags |= TR1_STEALTH;
 			rating += 16;
-			t_ptr->p1 = randint(3);
+			t_ptr->pval = randint(3);
 			t_ptr->name2 = EGO_STEALTH;
 			t_ptr->cost += 500;
 		    } else {	   /* 5,6 */
@@ -4397,7 +4397,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	    if (tmp == 1) {
 		t_ptr->flags |= TR1_SPEED;
 		t_ptr->name2 = EGO_SLOWNESS;
-		t_ptr->p1 = -1;
+		t_ptr->pval = -1;
 	    } else if (tmp == 2) {
 		t_ptr->flags |= TR3_AGGRAVATE;
 		t_ptr->name2 = EGO_NOISE;
@@ -4427,11 +4427,11 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			      unique_armour(t_ptr))) {
 			    if (peek)
 				msg_print("Intelligence");
-			    t_ptr->p1 = randint(2);
+			    t_ptr->pval = randint(2);
 			    rating += 13;
 			    t_ptr->flags |= TR1_INT;
 			    t_ptr->name2 = EGO_INTELLIGENCE;
-			    t_ptr->cost += t_ptr->p1 * 500;
+			    t_ptr->cost += t_ptr->pval * 500;
 			}
 		    } else if (tmp < 6) {
 			if (!((randint(2) == 1) && !not_unique &&
@@ -4439,19 +4439,19 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			    if (peek)
 				msg_print("Wisdom");
 			    rating += 13;
-			    t_ptr->p1 = randint(2);
+			    t_ptr->pval = randint(2);
 			    t_ptr->flags |= TR1_WIS;
 			    t_ptr->name2 = EGO_WISDOM;
-			    t_ptr->cost += t_ptr->p1 * 500;
+			    t_ptr->cost += t_ptr->pval * 500;
 			}
 		    } else if (tmp < 10) {
 			if (!((randint(2) == 1) && !not_unique &&
 			      unique_armour(t_ptr))) {
-			    t_ptr->p1 = 1 + randint(4);
+			    t_ptr->pval = 1 + randint(4);
 			    rating += 11;
 			    t_ptr->flags |= TR1_INFRA;
 			    t_ptr->name2 = EGO_INFRAVISION;
-			    t_ptr->cost += t_ptr->p1 * 250;
+			    t_ptr->cost += t_ptr->pval * 250;
 			}
 		    } else if (tmp < 12) {
 			if (!((randint(2) == 1) && !not_unique &&
@@ -4493,37 +4493,37 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			    if (peek)
 				msg_print("Crown of Might");
 			    rating += 19;
-			    t_ptr->p1 = randint(3);
+			    t_ptr->pval = randint(3);
 			    t_ptr->flags |= (TR2_FREE_ACT | TR1_CON |
 					     TR1_DEX | TR1_STR);
 			    t_ptr->name2 = EGO_MIGHT;
-			    t_ptr->cost += 1000 + t_ptr->p1 * 500;
+			    t_ptr->cost += 1000 + t_ptr->pval * 500;
 			}
 			break;
 		      case 2:
 			if (peek)
 			    msg_print("Lordliness");
-			t_ptr->p1 = randint(3);
+			t_ptr->pval = randint(3);
 			rating += 17;
 			t_ptr->flags |= (TR1_CHR | TR1_WIS);
 			t_ptr->name2 = EGO_LORDLINESS;
-			t_ptr->cost += 1000 + t_ptr->p1 * 500;
+			t_ptr->cost += 1000 + t_ptr->pval * 500;
 			break;
 		      case 3:
 			if (peek)
 			    msg_print("Crown of the Magi");
 			rating += 15;
-			t_ptr->p1 = randint(3);
+			t_ptr->pval = randint(3);
 			t_ptr->flags |= (TR2_RES_ELEC | TR2_RES_COLD
 				      | TR2_RES_ACID | TR2_RES_FIRE | TR1_INT);
 			t_ptr->name2 = EGO_MAGI;
-			t_ptr->cost += 3000 + t_ptr->p1 * 500;
+			t_ptr->cost += 3000 + t_ptr->pval * 500;
 			break;
 		      case 4:
 			rating += 8;
 			if (peek)
 			    msg_print("Beauty");
-			t_ptr->p1 = randint(4);
+			t_ptr->pval = randint(4);
 			t_ptr->flags |= TR1_CHR;
 			t_ptr->name2 = EGO_BEAUTY;
 			t_ptr->cost += 750;
@@ -4532,10 +4532,10 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			if (peek)
 			    msg_print("Seeing");
 			rating += 8;
-			t_ptr->p1 = 5 * (1 + randint(4));
+			t_ptr->pval = 5 * (1 + randint(4));
 			t_ptr->flags |= (TR3_SEE_INVIS | TR1_SEARCH);
 			t_ptr->name2 = EGO_SEEING;
-			t_ptr->cost += 1000 + t_ptr->p1 * 100;
+			t_ptr->cost += 1000 + t_ptr->pval * 100;
 			break;
 		      case 6:
 			t_ptr->flags |= TR3_REGEN;
@@ -4556,19 +4556,19 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	    if (magik(special))
 		switch (randint(7)) {
 		  case 1:
-		    t_ptr->p1 = -randint(5);
+		    t_ptr->pval = -randint(5);
 		    t_ptr->flags |= TR1_INT;
 		    t_ptr->name2 = EGO_STUPIDITY;
 		    break;
 		  case 2:
 		  case 3:
-		    t_ptr->p1 = -randint(5);
+		    t_ptr->pval = -randint(5);
 		    t_ptr->flags |= TR1_WIS;
 		    t_ptr->name2 = EGO_DULLNESS;
 		    break;
 		  case 4:
 		  case 5:
-		    t_ptr->p1 = -randint(5);
+		    t_ptr->pval = -randint(5);
 		    t_ptr->flags |= TR1_STR;
 		    t_ptr->name2 = EGO_WEAKNESS;
 		    break;
@@ -4577,7 +4577,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		    t_ptr->name2 = EGO_TELEPORTATION;
 		    break;
 		  case 7:
-		    t_ptr->p1 = -randint(5);
+		    t_ptr->pval = -randint(5);
 		    t_ptr->flags |= TR1_CHR;
 		    t_ptr->name2 = EGO_UGLINESS;
 		    break;
@@ -4593,17 +4593,17 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	      case 2:
 	      case 3:		   /* 132-135 */
 		if (magik(cursed)) {
-		    t_ptr->p1 = -m_bonus(1, 10, level);
+		    t_ptr->pval = -m_bonus(1, 10, level);
 		    t_ptr->flags |= TR3_CURSED;
 		    t_ptr->cost = -t_ptr->cost;
 		} else {
-		    t_ptr->p1 = m_bonus(1, 6, level);
-		    t_ptr->cost += t_ptr->p1 * 100;
+		    t_ptr->pval = m_bonus(1, 6, level);
+		    t_ptr->cost += t_ptr->pval * 100;
 		}
 		break;
 	      case 4:		   /* 136 */
 		if (magik(cursed)) {
-		    t_ptr->p1 = -randint(3);
+		    t_ptr->pval = -randint(3);
 		    t_ptr->flags |= TR3_CURSED;
 		    t_ptr->cost = -t_ptr->cost;
 		} else {
@@ -4611,16 +4611,16 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			msg_print("Ring of Speed");
 		    rating += 35;
 		    if (randint(888) == 1)
-			t_ptr->p1 = 2;
+			t_ptr->pval = 2;
 		    else
-			t_ptr->p1 = 1;
+			t_ptr->pval = 1;
 		}
 		break;
 	      case 5:
-		t_ptr->p1 = 5 * m_bonus(1, 10, level);
-		t_ptr->cost += t_ptr->p1 * 30;
+		t_ptr->pval = 5 * m_bonus(1, 10, level);
+		t_ptr->cost += t_ptr->pval * 30;
 		if (magik(cursed)) {
-		    t_ptr->p1 = -t_ptr->p1;
+		    t_ptr->pval = -t_ptr->pval;
 		    t_ptr->flags |= TR3_CURSED;
 		    t_ptr->cost = -t_ptr->cost;
 		}
@@ -4635,7 +4635,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
               case 17:
               case 18:		   /* WOE, Stupidity */
 		t_ptr->toac = (-5) - m_bonus(1,10,level);
-		t_ptr->p1 = (-randint(4));
+		t_ptr->pval = (-randint(4));
 		break;
 	      case 19:		   /* Increase damage	      */
 		t_ptr->todam = m_bonus(1, 10, level);
@@ -4698,31 +4698,31 @@ void magic_treasure(int x, int level, int good, int not_unique)
       case TV_AMULET:		   /* Amulets	      */
 	if (t_ptr->sval < 2) {
 	    if (magik(cursed)) {
-		t_ptr->p1 = -m_bonus(1, 5, level);
+		t_ptr->pval = -m_bonus(1, 5, level);
 		t_ptr->flags |= TR3_CURSED;
 		t_ptr->cost = -t_ptr->cost;
 	    } else {
-		t_ptr->p1 = m_bonus(1, 5, level);
-		t_ptr->cost += t_ptr->p1 * 100;
+		t_ptr->pval = m_bonus(1, 5, level);
+		t_ptr->cost += t_ptr->pval * 100;
 	    }
 	} else if (t_ptr->sval == 2) { /* searching */
-	    t_ptr->p1 = 5 * (randint(3) + m_bonus(0, 8, level));
+	    t_ptr->pval = 5 * (randint(3) + m_bonus(0, 8, level));
 	    if (magik(cursed)) {
-		t_ptr->p1 = -t_ptr->p1;
+		t_ptr->pval = -t_ptr->pval;
 		t_ptr->cost = -t_ptr->cost;
 		t_ptr->flags |= TR3_CURSED;
 	    } else
-		t_ptr->cost += 20 * t_ptr->p1;
+		t_ptr->cost += 20 * t_ptr->pval;
 	} else if (t_ptr->sval == 8) {
 	    rating += 25;
-	    t_ptr->p1 = 5 * (randint(2) + m_bonus(0, 10, level));
+	    t_ptr->pval = 5 * (randint(2) + m_bonus(0, 10, level));
 	    t_ptr->toac = randint(4) + m_bonus(0, 8, level) - 2;
-	    t_ptr->cost += 20 * t_ptr->p1 + 50 * t_ptr->toac;
+	    t_ptr->cost += 20 * t_ptr->pval + 50 * t_ptr->toac;
 	    if (t_ptr->toac < 0) /* sort-of cursed...just to be annoying -CWS */
 		t_ptr->flags |= TR3_CURSED;
 	} else if (t_ptr->sval == 9) {
 	/* amulet of DOOM */
-	    t_ptr->p1 = (-randint(5) - m_bonus(2, 10, level));
+	    t_ptr->pval = (-randint(5) - m_bonus(2, 10, level));
 	    t_ptr->toac = (-randint(3) - m_bonus(0, 6, level));
 	    t_ptr->flags |= TR3_CURSED;
 	}
@@ -4732,7 +4732,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
     /* Dungeon found ones will be partially charged	 */
       case TV_LITE:
 	if ((t_ptr->sval % 2) == 1) {
-	    t_ptr->p1 = randint(t_ptr->p1);
+	    t_ptr->pval = randint(t_ptr->pval);
 	    t_ptr->sval -= 1;
 	}
 	break;
@@ -4740,91 +4740,91 @@ void magic_treasure(int x, int level, int good, int not_unique)
       case TV_WAND:
 	switch (t_ptr->sval) {
 	  case 0:
-	    t_ptr->p1 = randint(10) + 6;
+	    t_ptr->pval = randint(10) + 6;
 	    break;
 	  case 1:
-	    t_ptr->p1 = randint(8) + 6;
+	    t_ptr->pval = randint(8) + 6;
 	    break;
 	  case 2:
-	    t_ptr->p1 = randint(5) + 6;
+	    t_ptr->pval = randint(5) + 6;
 	    break;
 	  case 3:
-	    t_ptr->p1 = randint(8) + 6;
+	    t_ptr->pval = randint(8) + 6;
 	    break;
 	  case 4:
-	    t_ptr->p1 = randint(4) + 3;
+	    t_ptr->pval = randint(4) + 3;
 	    break;
 	  case 5:
-	    t_ptr->p1 = randint(8) + 6;
+	    t_ptr->pval = randint(8) + 6;
 	    break;
 	  case 6:
-	    t_ptr->p1 = randint(20) + 12;
+	    t_ptr->pval = randint(20) + 12;
 	    break;
 	  case 7:
-	    t_ptr->p1 = randint(20) + 12;
+	    t_ptr->pval = randint(20) + 12;
 	    break;
 	  case 8:
-	    t_ptr->p1 = randint(10) + 6;
+	    t_ptr->pval = randint(10) + 6;
 	    break;
 	  case 9:
-	    t_ptr->p1 = randint(12) + 6;
+	    t_ptr->pval = randint(12) + 6;
 	    break;
 	  case 10:
-	    t_ptr->p1 = randint(10) + 12;
+	    t_ptr->pval = randint(10) + 12;
 	    break;
 	  case 11:
-	    t_ptr->p1 = randint(3) + 3;
+	    t_ptr->pval = randint(3) + 3;
 	    break;
 	  case 12:
-	    t_ptr->p1 = randint(8) + 6;
+	    t_ptr->pval = randint(8) + 6;
 	    break;
 	  case 13:
-	    t_ptr->p1 = randint(10) + 6;
+	    t_ptr->pval = randint(10) + 6;
 	    break;
 	  case 14:
-	    t_ptr->p1 = randint(5) + 3;
+	    t_ptr->pval = randint(5) + 3;
 	    break;
 	  case 15:
-	    t_ptr->p1 = randint(5) + 3;
+	    t_ptr->pval = randint(5) + 3;
 	    break;
 	  case 16:
-	    t_ptr->p1 = randint(5) + 6;
+	    t_ptr->pval = randint(5) + 6;
 	    break;
 	  case 17:
-	    t_ptr->p1 = randint(5) + 4;
+	    t_ptr->pval = randint(5) + 4;
 	    break;
 	  case 18:
-	    t_ptr->p1 = randint(8) + 4;
+	    t_ptr->pval = randint(8) + 4;
 	    break;
 	  case 19:
-	    t_ptr->p1 = randint(6) + 2;
+	    t_ptr->pval = randint(6) + 2;
 	    break;
 	  case 20:
-	    t_ptr->p1 = randint(4) + 2;
+	    t_ptr->pval = randint(4) + 2;
 	    break;
 	  case 21:
-	    t_ptr->p1 = randint(8) + 6;
+	    t_ptr->pval = randint(8) + 6;
 	    break;
 	  case 22:
-	    t_ptr->p1 = randint(5) + 2;
+	    t_ptr->pval = randint(5) + 2;
 	    break;
 	  case 23:
-	    t_ptr->p1 = randint(12) + 12;
+	    t_ptr->pval = randint(12) + 12;
 	    break;
 	  case 24:
-	    t_ptr->p1 = randint(3) + 1;
+	    t_ptr->pval = randint(3) + 1;
 	    break;
 	  case 25:
-	    t_ptr->p1 = randint(3) + 1;
+	    t_ptr->pval = randint(3) + 1;
 	    break;
 	  case 26:
-	    t_ptr->p1 = randint(3) + 1;
+	    t_ptr->pval = randint(3) + 1;
 	    break;
 	  case 27:
-	    t_ptr->p1 = randint(2) + 1;
+	    t_ptr->pval = randint(2) + 1;
 	    break;
 	  case 28:
-	    t_ptr->p1 = randint(8) + 6;
+	    t_ptr->pval = randint(8) + 6;
 	    break;
 	  default:
 	    break;
@@ -4834,99 +4834,99 @@ void magic_treasure(int x, int level, int good, int not_unique)
       case TV_STAFF:
 	switch (t_ptr->sval) {
 	  case 0:
-	    t_ptr->p1 = randint(20) + 12;
+	    t_ptr->pval = randint(20) + 12;
 	    break;
 	  case 1:
-	    t_ptr->p1 = randint(8) + 6;
+	    t_ptr->pval = randint(8) + 6;
 	    break;
 	  case 2:
-	    t_ptr->p1 = randint(5) + 6;
+	    t_ptr->pval = randint(5) + 6;
 	    break;
 	  case 3:
-	    t_ptr->p1 = randint(20) + 12;
+	    t_ptr->pval = randint(20) + 12;
 	    break;
 	  case 4:
-	    t_ptr->p1 = randint(15) + 6;
+	    t_ptr->pval = randint(15) + 6;
 	    break;
 	  case 5:
-	    t_ptr->p1 = randint(4) + 5;
+	    t_ptr->pval = randint(4) + 5;
 	    break;
 	  case 6:
-	    t_ptr->p1 = randint(5) + 3;
+	    t_ptr->pval = randint(5) + 3;
 	    break;
 	  case 7:
-	    t_ptr->p1 = randint(3) + 1;
+	    t_ptr->pval = randint(3) + 1;
 	    t_ptr->level = 10;
 	    break;
 	  case 8:
-	    t_ptr->p1 = randint(3) + 1;
+	    t_ptr->pval = randint(3) + 1;
 	    break;
 	  case 9:
-	    t_ptr->p1 = randint(5) + 6;
+	    t_ptr->pval = randint(5) + 6;
 	    break;
 	  case 10:
-	    t_ptr->p1 = randint(10) + 12;
+	    t_ptr->pval = randint(10) + 12;
 	    break;
 	  case 11:
-	    t_ptr->p1 = randint(5) + 6;
+	    t_ptr->pval = randint(5) + 6;
 	    break;
 	  case 12:
-	    t_ptr->p1 = randint(5) + 6;
+	    t_ptr->pval = randint(5) + 6;
 	    break;
 	  case 13:
-	    t_ptr->p1 = randint(5) + 6;
+	    t_ptr->pval = randint(5) + 6;
 	    break;
 	  case 14:
-	    t_ptr->p1 = randint(10) + 12;
+	    t_ptr->pval = randint(10) + 12;
 	    break;
 	  case 15:
-	    t_ptr->p1 = randint(3) + 4;
+	    t_ptr->pval = randint(3) + 4;
 	    break;
 	  case 16:
-	    t_ptr->p1 = randint(5) + 6;
+	    t_ptr->pval = randint(5) + 6;
 	    break;
 	  case 17:
-	    t_ptr->p1 = randint(5) + 6;
+	    t_ptr->pval = randint(5) + 6;
 	    break;
 	  case 18:
-	    t_ptr->p1 = randint(3) + 4;
+	    t_ptr->pval = randint(3) + 4;
 	    break;
 	  case 19:
-	    t_ptr->p1 = randint(10) + 12;
+	    t_ptr->pval = randint(10) + 12;
 	    break;
 	  case 20:
-	    t_ptr->p1 = randint(3) + 4;
+	    t_ptr->pval = randint(3) + 4;
 	    break;
 	  case 21:
-	    t_ptr->p1 = randint(3) + 4;
+	    t_ptr->pval = randint(3) + 4;
 	    break;
 	  case 22:
-	    t_ptr->p1 = randint(10) + 6;
+	    t_ptr->pval = randint(10) + 6;
 	    t_ptr->level = 5;
 	    break;
 	  case 23:
-	    t_ptr->p1 = randint(2) + 1;
+	    t_ptr->pval = randint(2) + 1;
 	    break;
 	  case 24:
-	    t_ptr->p1 = randint(3) + 1;
+	    t_ptr->pval = randint(3) + 1;
 	    break;
 	  case 25:
-	    t_ptr->p1 = randint(2) + 2;
+	    t_ptr->pval = randint(2) + 2;
 	    break;
 	  case 26:
-	    t_ptr->p1 = randint(15) + 5;
+	    t_ptr->pval = randint(15) + 5;
 	    break;
 	  case 27:
-	    t_ptr->p1 = randint(2) + 2;
+	    t_ptr->pval = randint(2) + 2;
 	    break;
 	  case 28:
-	    t_ptr->p1 = randint(5) + 5;
+	    t_ptr->pval = randint(5) + 5;
 	    break;
 	  case 29:
-	    t_ptr->p1 = randint(2) + 1;
+	    t_ptr->pval = randint(2) + 1;
 	    break;
 	  case 30:
-	    t_ptr->p1 = randint(6) + 2;
+	    t_ptr->pval = randint(6) + 2;
 	    break;
 	  default:
 	    break;
@@ -4971,7 +4971,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			    good_item_flag = TRUE;
 			t_ptr->name2 = ART_HOLCOLLETH;
 			t_ptr->toac = 4;
-			t_ptr->p1 = 2;
+			t_ptr->pval = 2;
 			t_ptr->flags |= (TR1_INT | TR1_WIS | TR1_STEALTH |
 					 TR2_RES_ACID);
 			t_ptr->flags2 |= (TR3_ACTIVATE | TR_ARTIFACT);
@@ -4992,7 +4992,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			t_ptr->flags = (TR1_DEX | TR1_CHR | TR2_RES_FIRE |
 				   TR2_RES_ACID | TR2_RES_COLD | TR2_FREE_ACT);
 			t_ptr->flags2 = (TR3_ACTIVATE | TR_ARTIFACT);
-			t_ptr->p1 = 3;
+			t_ptr->pval = 3;
 			t_ptr->cost = 35000L;
 			made_art_cloak = 1;
 			THINGOL = 1;
@@ -5026,7 +5026,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			t_ptr->toac = 15;
 			t_ptr->flags |= (TR1_STEALTH | TR2_RES_ACID);
 			t_ptr->flags2 |= (TR3_ACTIVATE | TR_ARTIFACT);
-			t_ptr->p1 = 3;
+			t_ptr->pval = 3;
 			t_ptr->cost = 11000L;
 			made_art_cloak = 1;
 			COLANNON = 1;
@@ -5050,7 +5050,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			t_ptr->flags = (TR2_RES_FIRE | TR2_RES_COLD |
 				    TR1_INT | TR1_WIS | TR1_CHR | TR2_RES_ACID);
 			t_ptr->flags2 = (TR3_ACTIVATE | TR_ARTIFACT);
-			t_ptr->p1 = 2;
+			t_ptr->pval = 2;
 			t_ptr->cost = 45000L;
 			made_art_cloak = 1;
 			LUTHIEN = 1;
@@ -5067,7 +5067,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			t_ptr->flags = (TR1_STEALTH |
 				  TR2_FREE_ACT | TR3_SEE_INVIS | TR2_RES_ACID);
 			t_ptr->flags2 |= (TR2_IM_ACID | TR_ARTIFACT);
-			t_ptr->p1 = 4;
+			t_ptr->pval = 4;
 			t_ptr->cost = 35000L;
 			made_art_cloak = 1;
 			TUOR = 1;
@@ -5082,14 +5082,14 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			rating += 8;
 		    } else if (randint(10) < 10) {
 			t_ptr->toac += m_bonus(3, 10, level);
-			t_ptr->p1 = randint(3);
+			t_ptr->pval = randint(3);
 			t_ptr->flags |= TR1_STEALTH;
 			t_ptr->name2 = EGO_STEALTH;
-			t_ptr->cost += 500 + (50 * t_ptr->p1);
+			t_ptr->cost += 500 + (50 * t_ptr->pval);
 			rating += 9;
 		    } else {
 			t_ptr->toac += 10 + randint(10);
-			t_ptr->p1 = randint(3);
+			t_ptr->pval = randint(3);
 			t_ptr->flags |= (TR1_STEALTH | TR2_RES_ACID);
 			t_ptr->name2 = EGO_AMAN;
 			t_ptr->cost += 4000 + (100 * t_ptr->toac);
@@ -5173,9 +5173,9 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	    break;
 	}
 	if (not_unique)		/* if bought from store - dbd */
-	    t_ptr->p1 = randint(t_ptr->level);
+	    t_ptr->pval = randint(t_ptr->level);
 	else			/* store the level chest's found on - dbd */
-	    t_ptr->p1 = dun_level;
+	    t_ptr->pval = dun_level;
 	break;
 
       case TV_SPIKE:
@@ -5186,7 +5186,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	    missile_ctr = -MAX_SHORT - 1;
 	else
 	    missile_ctr++;
-	t_ptr->p1 = missile_ctr;
+	t_ptr->pval = missile_ctr;
 	break;
 
     case TV_BOLT: case TV_ARROW: case TV_SHOT:
@@ -5266,7 +5266,7 @@ static void magic_ammo(inven_type *t_ptr, int good, int chance, int special, int
 	missile_ctr = -MAX_SHORT - 1;
     else
 	missile_ctr++;
-    t_ptr->p1 = missile_ctr;
+    t_ptr->pval = missile_ctr;
 
     /* always show tohit/todam values if identified */
     t_ptr->ident |= ID_SHOW_HITDAM;

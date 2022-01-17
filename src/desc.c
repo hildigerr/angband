@@ -433,13 +433,16 @@ void unmagic_name(inven_type *i_ptr)
 }
 
 
-/* defines for p1_use, determine how the p1 field is printed */
-#define IGNORED  0		/* never show (+x) */
-#define CHARGES  1		/* show p1 as charges */
-#define PLUSSES  2		/* show p1 as (+x) only */
-#define LIGHT    3		/* show p1 as turns of light */
-#define FLAGS    4		/* show p1 as (+x of yyy) */
-#define Z_PLUSSES 5             /* always show p1 as (+x), even if x==0 -CWS */
+/*
+ * defines for pval_use, determine how the pval field is printed
+ */
+
+#define IGNORED     0		/* never show (+x) */
+#define CHARGES     1		/* show pval as charges */
+#define PLUSSES     2		/* show pval as (+x) only */
+#define LIGHT       3		/* show pval as turns of light */
+#define FLAGS       4		/* show pval as (+x of yyy) */
+#define Z_PLUSSES   5		/* always show pval as (+x), even if x==0 -CWS */
 
 
 /*
@@ -457,7 +460,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
     register cptr basenm, modstr;
     bigvtype             tmp_val;
     vtype                tmp_str, damstr;
-    int indexx, p1_use, modify, append_name;
+    int indexx, pval_use, modify, append_name;
 
     /* Hack -- Extract the sub-type "indexx" */
     indexx = i_ptr->sval & (ITEM_SINGLE_STACK_MIN - 1);
@@ -472,7 +475,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
     damstr[0] = '\0';
 
     /* Assume no display of "pval" */
-    p1_use = IGNORED;
+    pval_use = IGNORED;
 
     modify = (known1_p(i_ptr) ? FALSE : TRUE);
 
@@ -493,7 +496,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	break;
 
       case TV_LITE:
-	p1_use = LIGHT;
+	pval_use = LIGHT;
 	if (!stricmp("The Phial of Galadriel", basenm) && !known2_p(i_ptr))
 	    basenm = "a Shining Phial";
 	if (!stricmp("The Star of Elendil", basenm) && !known2_p(i_ptr))
@@ -522,8 +525,8 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	  default:        /* just in case... */
 	    strcpy(damstr, " (unknown mult.)");
 	}
-	if (i_ptr->flags2 & TR_ARTIFACT)	/* only show p1 for artifacts... */
-	    p1_use = FLAGS;
+	if (i_ptr->flags2 & TR_ARTIFACT)	/* only show pval for artifacts... */
+	    pval_use = FLAGS;
 	break;
 
       /* Weapons have a damage string, and flags */
@@ -531,11 +534,15 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
       case TV_POLEARM:
       case TV_SWORD:
 	(void)sprintf(damstr, " (%dd%d)", i_ptr->damage[0], i_ptr->damage[1]);
-	p1_use = FLAGS;
+
+	/* Show flags, if any */
+	pval_use = FLAGS;
+
+	/* All done */
 	break;
 
       case TV_DIGGING:
-	p1_use = Z_PLUSSES;
+	pval_use = Z_PLUSSES;
 	(void)sprintf(damstr, " (%dd%d)", i_ptr->damage[0], i_ptr->damage[1]);
 	break;
 
@@ -547,13 +554,13 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
       case TV_SHIELD:
       case TV_HARD_ARMOR:
       case TV_SOFT_ARMOR:
-	p1_use = FLAGS;
+	pval_use = FLAGS;
 	break;
 
       /* Amulets (including a few "Specials") */
       case TV_AMULET:
 
-	p1_use = FLAGS;
+	pval_use = FLAGS;
 
 	if (modify || !(plain_descriptions || store_bought_p(i_ptr))) {
 	    basenm = "& %s Amulet";
@@ -585,7 +592,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	    basenm = "& Ring";
 	    append_name = TRUE;
 	}
-	p1_use = PLUSSES;
+	pval_use = PLUSSES;
 	break;
 
       case TV_STAFF:
@@ -597,7 +604,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	    basenm = "& Staff";
 	    append_name = TRUE;
 	}
-	p1_use = CHARGES;
+	pval_use = CHARGES;
 	break;
 
       case TV_WAND:
@@ -610,7 +617,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	    basenm = "& Wand";
 	    append_name = TRUE;
 	}
-	p1_use = CHARGES;
+	pval_use = CHARGES;
 	break;
 
       case TV_ROD:
@@ -804,67 +811,67 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
 	tmp_str[0] = '\0';
 
-    /* override defaults, check for p1 flags in the ident field */
-	if (p1_use != IGNORED) {
-	    if (p1_use == LIGHT);
+    /* override defaults, check for pval flags in the ident field */
+	if (pval_use != IGNORED) {
+	    if (pval_use == LIGHT);
 	    else if (i_ptr->ident & ID_NOSHOW_P1)
-		p1_use = IGNORED;
+		pval_use = IGNORED;
 	    else if (i_ptr->ident & ID_NOSHOW_TYPE)
-		p1_use = PLUSSES;
+		pval_use = PLUSSES;
 	}
 
-	if (p1_use == IGNORED);
-	else if ((p1_use == LIGHT) && !(i_ptr->flags2 & TR_ARTIFACT))
-	    (void)sprintf(tmp_str, " with %d turns of light", i_ptr->p1);
+	if (pval_use == IGNORED);
+	else if ((pval_use == LIGHT) && !(i_ptr->flags2 & TR_ARTIFACT))
+	    (void)sprintf(tmp_str, " with %d turns of light", i_ptr->pval);
 
 	else if (known2_p(i_ptr)) {
 
-	    if (p1_use == CHARGES)
-		(void)sprintf(tmp_str, " (%d charge%s", i_ptr->p1,
-			      (i_ptr->p1 == 1 ? ")" : "s)"));
+	    if (pval_use == CHARGES)
+		(void)sprintf(tmp_str, " (%d charge%s", i_ptr->pval,
+			      (i_ptr->pval == 1 ? ")" : "s)"));
 
-	    else if (p1_use == Z_PLUSSES) /* (+0) digging implements -CWS */
+	    else if (pval_use == Z_PLUSSES) /* (+0) digging implements -CWS */
 		    (void)sprintf(tmp_str, " (%c%d)",
-				  (i_ptr->p1 < 0) ? '-' : '+', MY_ABS(i_ptr->p1));
+				  (i_ptr->pval < 0) ? '-' : '+', MY_ABS(i_ptr->pval));
 
-	    else if (i_ptr->p1 != 0) {
-		if (p1_use == PLUSSES)
+	    else if (i_ptr->pval != 0) {
+		if (pval_use == PLUSSES)
 		    (void)sprintf(tmp_str, " (%c%d)",
-				  (i_ptr->p1 < 0) ? '-' : '+', MY_ABS(i_ptr->p1));
+				  (i_ptr->pval < 0) ? '-' : '+', MY_ABS(i_ptr->pval));
 		else if (i_ptr->ident & ID_NOSHOW_TYPE)
 		    (void)sprintf(tmp_str, " (%c%d)",
-				  (i_ptr->p1 < 0) ? '-' : '+', MY_ABS(i_ptr->p1));
+				  (i_ptr->pval < 0) ? '-' : '+', MY_ABS(i_ptr->pval));
 
-		else if (p1_use == FLAGS) {
+		else if (pval_use == FLAGS) {
 		    if ((i_ptr->flags & TR1_SPEED) &&
 			     (i_ptr->name2 != EGO_SPEED))
 			(void)sprintf(tmp_str, " (%c%d to speed)",
-				      (i_ptr->p1 < 0) ? '-' : '+', MY_ABS(i_ptr->p1));
+				      (i_ptr->pval < 0) ? '-' : '+', MY_ABS(i_ptr->pval));
 		    else if (i_ptr->flags & TR1_SEARCH)
 			/*			&& (i_ptr->name2 != EGO_SEARCH)) */
 			(void)sprintf(tmp_str, " (%c%d to searching)",
-				      (i_ptr->p1 < 0) ? '-' : '+', MY_ABS(i_ptr->p1));
+				      (i_ptr->pval < 0) ? '-' : '+', MY_ABS(i_ptr->pval));
 		    else if ((i_ptr->flags & TR1_STEALTH) &&
 			     (i_ptr->name2 != EGO_STEALTH))
 			(void)sprintf(tmp_str, " (%c%d to stealth)",
-				      (i_ptr->p1 < 0) ? '-' : '+', MY_ABS(i_ptr->p1));
+				      (i_ptr->pval < 0) ? '-' : '+', MY_ABS(i_ptr->pval));
 		    else if ((i_ptr->flags & TR1_INFRA) &&
 			     (i_ptr->name2 != EGO_INFRAVISION))
 			(void)sprintf(tmp_str, " (%c%d to infravision)",
-				      (i_ptr->p1 < 0) ? '-' : '+', MY_ABS(i_ptr->p1));
+				      (i_ptr->pval < 0) ? '-' : '+', MY_ABS(i_ptr->pval));
 		    else if (i_ptr->flags2 & TR1_ATTACK_SPD) {
-			if (MY_ABS(i_ptr->p1) == 1)
+			if (MY_ABS(i_ptr->pval) == 1)
 			    (void)sprintf(tmp_str, " (%c%d attack)",
-					  (i_ptr->p1 < 0) ? '-' : '+', MY_ABS(i_ptr->p1));
+					  (i_ptr->pval < 0) ? '-' : '+', MY_ABS(i_ptr->pval));
 			else
 			    (void)sprintf(tmp_str, " (%c%d attacks)",
-					  (i_ptr->p1 < 0) ? '-' : '+', MY_ABS(i_ptr->p1));
+					  (i_ptr->pval < 0) ? '-' : '+', MY_ABS(i_ptr->pval));
 		    } /* attack speed */
 		    else
 			(void)sprintf(tmp_str, " (%c%d)",
-				      (i_ptr->p1 < 0) ? '-' : '+', MY_ABS(i_ptr->p1));
-		}     /* p1_use == FLAGS */
-	    }         /* p1 != 0 */
+				      (i_ptr->pval < 0) ? '-' : '+', MY_ABS(i_ptr->pval));
+		}     /* pval_use == FLAGS */
+	    }         /* pval != 0 */
 	}             /* if known2_p (fully identified) */
 
 	(void)strcat(tmp_val, tmp_str);
@@ -944,7 +951,7 @@ void invcopy(inven_type *to, int from_index)
     to->flags2 = from->flags2;
     to->tval = from->tval;
     to->tchar = from->tchar;
-    to->p1 = from->p1;
+    to->pval = from->pval;
     to->cost = from->cost;
     to->sval = from->sval;
     to->number = from->number;
@@ -967,7 +974,7 @@ void desc_charges(int item_val)
     vtype        out_val;
 
     if (known2_p(&inventory[item_val])) {
-	rem_num = inventory[item_val].p1;
+	rem_num = inventory[item_val].pval;
 	(void)sprintf(out_val, "You have %d charges remaining.", rem_num);
 	msg_print(out_val);
     }

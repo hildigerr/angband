@@ -499,7 +499,7 @@ void calc_mana(int stat)
 	if ((i_ptr->tval != TV_NOTHING) &&
 	    !((i_ptr->flags & TR2_FREE_ACT) ||
 	      ((i_ptr->flags & TR1_DEX) &&
-	       (i_ptr->p1 > 0)))) {
+	       (i_ptr->pval > 0)))) {
 
 	    /* Only mages are affected */
 	    if (p_ptr->pclass == 1 ||

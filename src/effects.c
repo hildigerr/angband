@@ -118,7 +118,7 @@ static void lose_chr()
 /*
  * Eat some food. -RAK-
  * A single food object disappears.
- * Food uses "p1" for "calories".
+ * Food uses "pval" for "calories".
  */
 void do_cmd_eat_food(void)
 {
@@ -354,7 +354,7 @@ void do_cmd_eat_food(void)
     } else if (!known1_p(i_ptr)) sample(i_ptr);
 
     /* Consume the food */
-    add_food(i_ptr->p1);
+    add_food(i_ptr->pval);
 
     /* Hack -- note loss of hunger */
     py.flags.status &= ~(PY_WEAK | PY_HUNGRY);
@@ -372,7 +372,7 @@ void do_cmd_eat_food(void)
 /*
  * Quaff a potion
  * A single potion object disappears.
- * Potions use "p1" for "calories"
+ * Potions use "pval" for "calories"
  */
 void do_cmd_quaff_potion(void)
 {
@@ -908,7 +908,7 @@ void do_cmd_quaff_potion(void)
     } else if (!known1_p(i_ptr)) sample(i_ptr);
 
     /* Potions can feed the player */
-    add_food(i_ptr->p1);
+    add_food(i_ptr->pval);
 
     /* Destroy the potion */
     inven_item_describe(item_val);
@@ -1504,7 +1504,7 @@ void do_cmd_aim_wand(void)
     }
 
     /* The wand is already empty! */
-    if (i_ptr->p1 <= 0) {
+    if (i_ptr->pval <= 0) {
 	msg_print("The wand has no charges left.");
 	if (!known2_p(i_ptr)) {
 	    add_inscribe(i_ptr, ID_EMPTY);
@@ -1514,7 +1514,7 @@ void do_cmd_aim_wand(void)
 
 	i = i_ptr->flags;
 	done_effect = 0;
-	(i_ptr->p1)--;
+	(i_ptr->pval)--;
 	while (!done_effect) {
 
     /* Start at the player */
@@ -1778,7 +1778,7 @@ void do_cmd_use_staff(void)
 	return;
     }
 
-    if (i_ptr->p1 <= 0) {
+    if (i_ptr->pval <= 0) {
 	msg_print("The staff has no charges left.");
 	if (!known2_p(i_ptr)) add_inscribe(i_ptr, ID_EMPTY);
 	return;
@@ -1786,7 +1786,7 @@ void do_cmd_use_staff(void)
 
     ident = FALSE;
 
-    (i_ptr->p1)--;
+    (i_ptr->pval)--;
 
     switch (i_ptr->flags) {
 

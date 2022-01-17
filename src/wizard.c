@@ -939,7 +939,7 @@ again:
     prt("Magic Plus Flag  : ", 0, 0);
     if (!get_string(tmp_str, 0, 20, 5)) goto end;
     tmp_val = atoi(tmp_str);
-    if (tmp_val) i_ptr->p1 = tmp_val;
+    if (tmp_val) i_ptr->pval = tmp_val;
 
 
     save_screen();

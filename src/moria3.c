@@ -661,28 +661,28 @@ void do_cmd_open()
 	else if (i_ptr->tval == TV_CLOSED_DOOR) {
 
 	    /* Stuck */
-	    if (i_ptr->p1 < 0) {
+	    if (i_ptr->pval < 0) {
 		msg_print("It appears to be stuck.");
 	    }
 
 	    /* Locked */
-	    else if (i_ptr->p1 > 0) {
+	    else if (i_ptr->pval > 0) {
 
 		i = p_ptr->disarm + 2 * todis_adj() + stat_adj(A_INT)
 		    + (class_level_adj[p_ptr->pclass][CLA_DISARM]
 		       * p_ptr->lev / 3);
 
 		/* give a 1/50 chance of opening anything, anyway -CWS */
-		if ((i - i_ptr->p1) < 2) i = i_ptr->p1 + 2;
+		if ((i - i_ptr->pval) < 2) i = i_ptr->pval + 2;
 
 		if (py.flags.confused > 0) {
 		    msg_print("You are too confused to pick the lock.");
 		}
-		else if ((i - i_ptr->p1) > randint(100)) {
+		else if ((i - i_ptr->pval) > randint(100)) {
 		    msg_print("You have picked the lock.");
 		    py.misc.exp++;
 		    prt_experience();
-		    i_ptr->p1 = 0;
+		    i_ptr->pval = 0;
 		}
 		else {
 		    count_msg_print("You failed to pick the lock.");
@@ -690,7 +690,7 @@ void do_cmd_open()
 	    }
 
 	    /* In any case, if the door is unlocked, open it */
-	    if (i_ptr->p1 == 0) {
+	    if (i_ptr->pval == 0) {
 
 		invcopy(i_ptr, OBJ_OPEN_DOOR);
 
@@ -768,7 +768,7 @@ void do_cmd_open()
 		    i_ptr->flags &= ~TR3_CURSED;
 
 		/* generate based on level chest was found on - dbd */
-		    object_level = i_ptr->p1;
+		    object_level = i_ptr->pval;
 
 	        /* but let's not get too crazy with storebought chests -CWS */
 		    if (i_ptr->ident & ID_STOREBOUGHT) {
@@ -826,7 +826,7 @@ void do_cmd_close()
 	}
 
 	/* Handle broken doors */
-	else if (i_ptr->p1) {
+	else if (i_ptr->pval) {
 	    msg_print("The door appears to be broken.");
 	}
 
@@ -1010,7 +1010,7 @@ void tunnel(int dir)
 
 	    if (i_ptr->flags & TR1_TUNNEL) {
 
-		tabil += 25 + i_ptr->p1 * 50;
+		tabil += 25 + i_ptr->pval * 50;
 	    }
 
 	    else {
@@ -1185,7 +1185,7 @@ void do_cmd_disarm()
 		/* Success */
 		if ((tot + 100 - i_ptr->level) > randint(100)) {
 		    msg_print("You have disarmed the trap.");
-		    py.misc.exp += i_ptr->p1;
+		    py.misc.exp += i_ptr->pval;
 		    delete_object(y, x);
 		    /* move the player onto the trap */
 		    tmp = py.flags.confused;
@@ -1262,10 +1262,10 @@ void do_cmd_disarm()
  *
  * Note: Affected by strength and weight of character 
  *
- * For a closed door, p1 is positive if locked; negative if stuck.
+ * For a closed door, pval is positive if locked; negative if stuck.
  * A disarm spell unlocks and unjams doors! 
  *
- * For an open door, p1 is positive for a broken door. 
+ * For an open door, pval is positive for a broken door. 
  *
  * A closed door can be opened - harder if locked. Any door might be 
  * bashed open (and thereby broken). Bashing a door is (potentially)
@@ -1326,8 +1326,8 @@ void bash()
 		tmp = py.stats.use_stat[A_STR] + py.misc.wt / 2;
 
 		/* Use (roughly) similar method as for monsters. */
-		if (randint(tmp * (20 + MY_ABS(i_ptr->p1))) <
-			10 * (tmp - MY_ABS(i_ptr->p1))) {
+		if (randint(tmp * (20 + MY_ABS(i_ptr->pval))) <
+			10 * (tmp - MY_ABS(i_ptr->pval))) {
 
 		    msg_print("The door crashes open!");
 
@@ -1335,7 +1335,7 @@ void bash()
 		    invcopy(&i_list[c_ptr->i_idx], OBJ_OPEN_DOOR);
 
 		    /* 50% chance of breaking door */
-		    i_ptr->p1 = 1 - randint(2);
+		    i_ptr->pval = 1 - randint(2);
 		    c_ptr->fval = CORR_FLOOR;
 
 		    if (py.flags.confused == 0)
@@ -1439,11 +1439,11 @@ void do_cmd_spike()
 	    count_msg_print("You jam the door with a spike.");
 
 	    /* Make locked to stuck. */
-	    if (t_ptr->p1 > 0) t_ptr->p1 = (-t_ptr->p1);
+	    if (t_ptr->pval > 0) t_ptr->pval = (-t_ptr->p1);
 
 	    /* Successive spikes have a progressively smaller effect. */
 	    /* Series is: 0 20 30 37 43 48 52 56 60 64 67 70 ... */
-	    t_ptr->p1 -= 1 + 190 / (10 - t_ptr->p1);
+	    t_ptr->pval -= 1 + 190 / (10 - t_ptr->pval);
 
 			i_ptr = &inventory[i];
 			if (i_ptr->number > 1) {

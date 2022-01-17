@@ -584,7 +584,7 @@
 #define ITEM_SINGLE_STACK_MAX   192     /* see NOTE below */
 
 
-/* these items stack with others only if have same sval and same p1,
+/* these items stack with others only if have same sval and same pval,
  * they are treated as a group for wielding, etc.
  */
 
@@ -592,7 +592,7 @@
 #define ITEM_GROUP_MAX          255
 
 /* NOTE: items with sval 192 are treated as single objects, but only stack
- * with others of same sval if have the same p1 value, only used for
+ * with others of same sval if have the same pval value, only used for
  * torches
  */
 
@@ -610,7 +610,7 @@
 #define ID_KNOWN2       0x8	/* Item is fully "known" */
 #define ID_STOREBOUGHT  0x10
 #define ID_SHOW_HITDAM  0x20
-#define ID_NOSHOW_P1    0x40    /* don't show (+x) even if p1 != 0 -CWS   */
+#define ID_NOSHOW_P1    0x40    /* don't show (+x) even if pval != 0 -CWS   */
 #define ID_NOSHOW_TYPE  0x80    /* don't show (+x of yyy), just (+x) -CWS */
 
 /* indexes into the special name table */

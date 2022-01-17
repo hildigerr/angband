@@ -52,7 +52,7 @@ void py_bonuses(inven_type *t_ptr, int factor)
 {
     register int i, amount;
 
-    amount = t_ptr->p1 * factor;
+    amount = t_ptr->pval * factor;
     if (t_ptr->flags & TR_STATS) {
 	for (i = 0; i < 6; i++)
 	    if ((1 << i) & t_ptr->flags) {
@@ -71,15 +71,15 @@ void py_bonuses(inven_type *t_ptr, int factor)
 	if ((t_ptr->tval == TV_RING) &&
 	    !stricmp("Speed",
 		     k_list[t_ptr->index].name) &&
-	    (t_ptr->p1 > 0))
+	    (t_ptr->pval > 0))
 	    if ((inventory[INVEN_RIGHT].tval == TV_RING) &&
 		!stricmp("Speed",
 			 k_list[inventory[INVEN_RIGHT].index].name) &&
-		(inventory[INVEN_RIGHT].p1 > 0) &&
+		(inventory[INVEN_RIGHT].pval > 0) &&
 		(inventory[INVEN_LEFT].tval == TV_RING) &&
 		!stricmp("Speed",
 			 k_list[inventory[INVEN_LEFT].index].name) &&
-		(inventory[INVEN_RIGHT].p1 > 0))
+		(inventory[INVEN_RIGHT].pval > 0))
 		return;
 	py.flags.speed -= amount;
 	py.flags.status |= PY_SPEED;
@@ -297,7 +297,7 @@ void calc_bonuses()
     i_ptr = &inventory[INVEN_WIELD];
     for (i = INVEN_WIELD; i < INVEN_LIGHT; i++) {
 	if (TR_SUST_STAT & i_ptr->flags)
-	    switch (i_ptr->p1) {
+	    switch (i_ptr->pval) {
 	      case 1:
 		p_ptr->sustain_str = TRUE;
 		break;

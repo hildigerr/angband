@@ -59,7 +59,7 @@ void dungeon(void)
     i_ptr = &inventory[INVEN_LIGHT];
 
 /* Check light status for setup	   */
-    if (i_ptr->p1 > 0 || f_ptr->light)
+    if (i_ptr->pval > 0 || f_ptr->light)
 	player_light = TRUE;
     else
 	player_light = FALSE;
@@ -214,13 +214,13 @@ void dungeon(void)
 	i_ptr = &inventory[INVEN_LIGHT];
 
 	if (player_light)
-	    if (i_ptr->p1 > 0) {
+	    if (i_ptr->pval > 0) {
 		if (!(i_ptr->flags2 & TR3_LITE))
 
 		/* Decrease life-span */
-		i_ptr->p1--;   /* don't dec if perm light -CFT */
+		i_ptr->pval--;   /* don't dec if perm light -CFT */
 
-		if (i_ptr->p1 == 0) {
+		if (i_ptr->pval == 0) {
 		    player_light = FALSE;
 		    disturb(0, 1);
 		/* unlight creatures */
@@ -229,7 +229,7 @@ void dungeon(void)
 		}
 
 		/* The light is getting dim */
-		else if ((i_ptr->p1 < 40) && (randint(5) == 1) &&
+		else if ((i_ptr->pval < 40) && (randint(5) == 1) &&
 			   (py.flags.blind < 1) &&
 			   !(i_ptr->flags2 & TR3_LITE)) { /* perm light doesn't dim -CFT */
 		    disturb(0, 0);
@@ -243,9 +243,9 @@ void dungeon(void)
 		    creatures(FALSE);
 		}
 	    }
-	else if (i_ptr->p1 > 0 || f_ptr->light) {
+	else if (i_ptr->pval > 0 || f_ptr->light) {
 	    if (!(i_ptr->flags2 & TR3_LITE))
-		i_ptr->p1--;	   /* don't dec if perm light -CFT */
+		i_ptr->pval--;	   /* don't dec if perm light -CFT */
 	    player_light = TRUE;
 	    disturb(0, 1);
 	/* light creatures */
@@ -1463,7 +1463,7 @@ static cptr value_check(inven_type *t_ptr)
 	return "terrible";
     if ((t_ptr->tval == TV_DIGGING) &&  /* also, good digging tools -CFT */
 	(t_ptr->flags & TR1_TUNNEL) &&
-	(t_ptr->p1 > k_list[t_ptr->index].p1)) /* better than normal for this
+	(t_ptr->pval > k_list[t_ptr->index].pval)) /* better than normal for this
 						       type of shovel/pick? -CFT */
 	return "good";
     if ((t_ptr->tohit<=0 && t_ptr->todam<=0 && t_ptr->toac<=0) &&
@@ -3153,14 +3153,14 @@ static void refill_lamp()
     else {
 	free_turn_flag = FALSE;
 	i_ptr = &inventory[INVEN_LIGHT];
-	i_ptr->p1 += inventory[i].p1;
-	if (i_ptr->p1 > FUEL_LAMP) {
-	    i_ptr->p1 = FUEL_LAMP;
+	i_ptr->pval += inventory[i].pval;
+	if (i_ptr->pval > FUEL_LAMP) {
+	    i_ptr->pval = FUEL_LAMP;
 	    msg_print("Your lamp overflows, spilling oil on the ground.");
 	    msg_print("Your lamp is full.");
-	} else if (i_ptr->p1 > FUEL_LAMP / 2)
+	} else if (i_ptr->pval > FUEL_LAMP / 2)
 	    msg_print("Your lamp is more than half full.");
-	else if (i_ptr->p1 == FUEL_LAMP / 2)
+	else if (i_ptr->pval == FUEL_LAMP / 2)
 	    msg_print("Your lamp is half full.");
 	else
 	    msg_print("Your lamp is less than half full.");

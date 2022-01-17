@@ -26,10 +26,10 @@
 		0 - 63: object can not stack
 		64 - 127: dungeon object, can stack with other D object
 		128 - 191: unused, previously for store items
-		192: stack with other iff have same p1 value, always
+		192: stack with other iff have same pval value, always
 			treated as individual objects
 		193 - 255: object can stack with others iff they have
-			the same p1 value, usually considered one group
+			the same pval value, usually considered one group
 		Objects which have two type values, e.g. potions and
 		scrolls, need to have distinct svals for
 		each item regardless of its tval
@@ -52,14 +52,14 @@
 	Flags is used to define a function which reading/quaffing
 	will cause.  Most scrolls and potions have only one bit
 	set.  Potions will generally have some food value, found
-	in p1.
+	in pval.
 
 	Wands and Staffs:
-	Flags defines a function, p1 contains number of charges
-	for item.  p1 is set in magic_init() in misc.c.
+	Flags defines a function, pval contains number of charges
+	for item.  pval is set in magic_init() in misc.c.
 
 	Chests:
-        p1 contains level chest is found on (randomly determined for
+        pval contains level chest is found on (randomly determined for
         store-bought chests).
 	Traps are added randomly by magic_init() in misc.c.	*/
 

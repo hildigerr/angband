@@ -462,7 +462,7 @@ u32b monster_death(int y, int x, u32b flags, u32b good, u32b win)
 			t_ptr->flags2 |= (TR3_TELEPATHY | TR3_LITE | TR_ARTIFACT);
 			t_ptr->ident |= ID_NOSHOW_TYPE;
 			t_ptr->name2 = ART_MORGOTH;
-			t_ptr->p1 = 125;
+			t_ptr->pval = 125;
 			t_ptr->cost = 10000000L;
 			if (cave[j][k].m_idx == 1)
 			    msg_print("You feel something roll beneath your feet.");
@@ -487,7 +487,7 @@ u32b monster_death(int y, int x, u32b flags, u32b good, u32b win)
 					TR1_SLAY_X_DRAGON | TR3_AGGRAVATE);
 			t_ptr->flags2 = (TR1_SLAY_DEMON | TR_SLAY_TROLL | TR_SLAY_ORC |
 				    TR1_IMPACT | TR3_TELEPATHY | TR_ARTIFACT);
-			t_ptr->p1 = (-1);
+			t_ptr->pval = (-1);
 			t_ptr->toac = 10;
 			t_ptr->cost = 500000L;
 			t_ptr->ident |= ID_SHOW_HITDAM;

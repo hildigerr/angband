@@ -524,8 +524,8 @@ static void place_broken_door(int y, int x)
     c_ptr->i_idx = cur_pos;
     i_ptr = &i_list[cur_pos];
     invcopy(i_ptr, OBJ_OPEN_DOOR);
+    i_ptr->pval = 1;
     c_ptr->fval = CORR_FLOOR;
-    i_ptr->p1 = 1;
 }
 
 
@@ -562,7 +562,7 @@ static void place_locked_door(int y, int x)
     c_ptr->fval = BLOCKED_FLOOR;
 
     /* Lock the door */
-    i_ptr->p1 = randint(10) + 10;
+    i_ptr->pval = randint(10) + 10;
 }
 
 
@@ -582,7 +582,7 @@ static void place_stuck_door(int y, int x)
     c_ptr->fval = BLOCKED_FLOOR;
 
     /* Stick the door */
-    i_ptr->p1 = (-randint(10) - 10);
+    i_ptr->pval = (-randint(10) - 10);
 }
 
 
