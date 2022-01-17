@@ -350,10 +350,10 @@ void prt_depth()
  */
 void prt_hunger()
 {
-    if (PY_WEAK & py.flags.status) {
+    if (PY_WEAK & py.flags1.status) {
 	put_str("Weak  ", 23, 0);
     }
-    else if (PY_HUNGRY & py.flags.status) {
+    else if (PY_HUNGRY & py.flags1.status) {
 	put_str("Hungry", 23, 0);
     }
     else {
@@ -367,7 +367,7 @@ void prt_hunger()
  */
 void prt_blind(void)
 {
-    if (PY_BLIND & py.flags.status) {
+    if (PY_BLIND & py.flags1.status) {
 	put_str("Blind", 23, 7);
     }
     else {
@@ -381,7 +381,7 @@ void prt_blind(void)
  */
 void prt_confused(void)
 {
-    if (PY_CONFUSED & py.flags.status) {
+    if (PY_CONFUSED & py.flags1.status) {
 	put_str("Confused", 23, 13);
     }
     else {
@@ -395,7 +395,7 @@ void prt_confused(void)
  */
 void prt_afraid()
 {
-    if (PY_FEAR & py.flags.status) {
+    if (PY_FEAR & py.flags1.status) {
 	put_str("Afraid", 23, 22);
     }
     else {
@@ -409,7 +409,7 @@ void prt_afraid()
  */
 void prt_poisoned(void)
 {
-    if (PY_POISONED & py.flags.status) {
+    if (PY_POISONED & py.flags1.status) {
 	put_str("Poisoned", 23, 29);
     }
     else {
@@ -427,22 +427,22 @@ void prt_state(void)
     char tmp[16];
 
     /* Turn off the flag */
-    py.flags.status &= ~PY_REPEAT;
+    py.flags1.status &= ~PY_REPEAT;
 
     /* Most important info is paralyzation */
-    if (py.flags.paralysis > 1) {
+    if (py.flags1.paralysis > 1) {
 	put_str("Paralysed ", 23, 38);
     }
 
     /* Then comes resting */
-    else if (PY_REST & py.flags.status) {
-	if (py.flags.rest > 0) {
-	    (void)sprintf(tmp, "Rest %-5d", py.flags.rest);
+    else if (PY_REST & py.flags1.status) {
+	if (py.flags1.rest > 0) {
+	    (void)sprintf(tmp, "Rest %-5d", py.flags1.rest);
 	}
-	else if (py.flags.rest == -1) {
+	else if (py.flags1.rest == -1) {
 	    (void)sprintf(tmp, "Rest *****");
 	}
-	else if (py.flags.rest == -2) {
+	else if (py.flags1.rest == -2) {
 	    (void)sprintf(tmp, "Rest &&&&&");
 	}
 	put_str(tmp, 23, 38);
@@ -452,13 +452,13 @@ void prt_state(void)
     else if (command_rep > 0) {
 
 	(void)sprintf(tmp, "Repeat %-3d", command_rep);
-	py.flags.status |= PY_REPEAT;
+	py.flags1.status |= PY_REPEAT;
 	put_str(tmp, 23, 38);
-	if (PY_SEARCH & py.flags.status)
+	if (PY_SEARCH & py.flags1.status)
 	    put_str("Search    ", 23, 38);
     }
 
-    else if (PY_SEARCH & py.flags.status) {
+    else if (PY_SEARCH & py.flags1.status) {
 	put_str("Searching ", 23, 38);
     }
     else			   /* "repeat 999" is 10 characters */
@@ -471,9 +471,9 @@ void prt_state(void)
  */
 void prt_speed()
 {
-    int i = py.flags.speed;
+    int i = py.flags1.speed;
 
-    if (PY_SEARCH & py.flags.status) i--;
+    if (PY_SEARCH & py.flags1.status) i--;
 
     if (i > 2)
 	put_str("Extremely Slow", 23, 49);
@@ -499,8 +499,8 @@ void prt_speed()
 
 void prt_study()
 {
-    py.flags.status &= ~PY_STUDY;
-    if (py.flags.new_spells != 0) {
+    py.flags1.status &= ~PY_STUDY;
+    if (py.flags1.new_spells != 0) {
 	put_str("Study", 23, 64);
     }
     else {
@@ -511,7 +511,7 @@ void prt_study()
 
 void prt_cut()
 {
-    int c = py.flags.cut;
+    int c = py.flags1.cut;
 
     if (c > 900)
 	put_str("Mortal wound", ROW_CUT, 0);
@@ -535,9 +535,9 @@ void prt_cut()
 
 void prt_stun(void)
 {
-    int s = py.flags.stun;
+    int s = py.flags1.stun;
 
-    if (!py.flags.resist_sound) {
+    if (!py.flags1.resist_sound) {
 	if (s > 100) {
 	    put_str("Knocked out ", ROW_STUN, 0);
 	}
@@ -631,7 +631,7 @@ void prt_stat_block()
     prt_stun();
     prt_study();
 
-    status = py.flags.status;
+    status = py.flags1.status;
     if ((PY_HUNGRY | PY_WEAK) & status)
 	prt_hunger();
     if (PY_BLIND & status)
@@ -646,7 +646,7 @@ void prt_stat_block()
 	prt_state();
 
     /* if speed non zero, print it, modify speed if Searching */
-    if (py.flags.speed - ((PY_SEARCH & status) >> 8) != 0)
+    if (py.flags1.speed - ((PY_SEARCH & status) >> 8) != 0)
     prt_speed();
 
 	prt_equippy_chars();
@@ -672,8 +672,8 @@ void draw_cave(void)
  */
 void cut_player(int c)
 {
-    py.flags.cut += c;
-    c = py.flags.cut;
+    c += py.flags1.cut;
+    py.flags1.cut = c;
 
     if (c > 5000) {
 	msg_print("You have been given a mortal wound.");
@@ -706,11 +706,11 @@ void stun_player(int s)
 {
     int t;
 
-    if (py.flags.resist_sound) return;
+    if (py.flags1.resist_sound) return;
 
-	t = py.flags.stun;
-	py.flags.stun += s;
-	s = py.flags.stun;
+	t = py.flags1.stun;
+	py.flags1.stun += s;
+	s = py.flags1.stun;
 	if (s > 100) {
 	    msg_print("You have been knocked out.");
 	    if (t == 0) {
@@ -786,7 +786,7 @@ void set_use_stat(int stat)
 
     /* Calculate various effects */
     if (stat == A_STR) {
-	py.flags.status |= PY_STR_WGT;
+	py.flags1.status |= PY_STR_WGT;
 	calc_bonuses();
     }
     else if (stat == A_DEX) {
@@ -1238,7 +1238,7 @@ void put_misc3()
 	   (class_level_adj[p_ptr->pclass][CLA_DEVICE] * p_ptr->lev / 3);
 
     /* Infravision string */
-    (void)sprintf(xinfra, "%d feet", py.flags.see_infra * 10);
+    (void)sprintf(xinfra, "%d feet", py.flags1.see_infra * 10);
 
     put_str("(Miscellaneous Abilities)", 15, 25);
 
@@ -1512,7 +1512,7 @@ int inven_carry(inven_type *i_ptr)
 	}
     }
     inven_weight += i_ptr->number * i_ptr->weight;
-    py.flags.status |= PY_STR_WGT;
+    py.flags1.status |= PY_STR_WGT;
     return locn;
 }
 
@@ -1851,8 +1851,8 @@ void calc_hitpoints()
     }
 
     /* Factor in the hero / superhero values */
-    if (py.flags.status & PY_HERO) hitpoints += 10;
-    if (py.flags.status & PY_SHERO) hitpoints += 30;
+    if (py.flags1.status & PY_HERO) hitpoints += 10;
+    if (py.flags1.status & PY_SHERO) hitpoints += 30;
 
     /* mhp can equal zero while character is being created */
     if (p_ptr->mhp && (hitpoints != p_ptr->mhp)) {
@@ -1868,7 +1868,7 @@ void calc_hitpoints()
 	p_ptr->mhp = hitpoints;
 
 	/* Remember to redisplay the hitpoints */
-	py.flags.status |= PY_HP;
+	py.flags1.status |= PY_HP;
     }
 }
 
@@ -2048,19 +2048,19 @@ int tot_dam(inven_type *i_ptr, int tdam, int r_idx)
 	}
 
 	/* Execute Dragon */
-	else if ((r_ptr->cdefense & MF2_DRAGON) && (i_ptr->flags & TR1_SLAY_X_DRAGON)) {
+	else if ((r_ptr->cdefense & MF2_DRAGON) && (i_ptr->flags1 & TR1_SLAY_X_DRAGON)) {
 	    tdam *= 5;
 	    l_ptr->r_cdefense |= MF2_DRAGON;
 	}
 
 	/* Slay Dragon  */
-	else if ((r_ptr->cdefense & MF2_DRAGON) && (i_ptr->flags & TR1_SLAY_DRAGON)) {
+	else if ((r_ptr->cdefense & MF2_DRAGON) && (i_ptr->flags1 & TR1_SLAY_DRAGON)) {
 	    tdam *= 3;
 	    l_ptr->r_cdefense |= MF2_DRAGON;
 	}
 
 	/* Slay Undead */
-	else if ((r_ptr->cdefense & MF2_UNDEAD) && (i_ptr->flags & TR1_SLAY_UNDEAD)) {
+	else if ((r_ptr->cdefense & MF2_UNDEAD) && (i_ptr->flags1 & TR1_SLAY_UNDEAD)) {
 	    tdam *= 3;
 	    l_ptr->r_cdefense |= MF2_UNDEAD;
 	}
@@ -2091,36 +2091,36 @@ int tot_dam(inven_type *i_ptr, int tdam, int r_idx)
 
 	/* Frost */
 	else if ((!(r_ptr->cdefense & MF2_IM_COLD))
-		 && (i_ptr->flags & TR1_BRAND_COLD)) {
+		 && (i_ptr->flags1 & TR1_BRAND_COLD)) {
 	    tdam *= 3;
 	}
 
 	/* Fire */
 	else if ((!(r_ptr->cdefense & MF2_IM_FIRE))
-		 && (i_ptr->flags & TR1_BRAND_FIRE)) {
+		 && (i_ptr->flags1 & TR1_BRAND_FIRE)) {
 	    tdam *= 3;
 	}
 
 	/* Slay Evil */
-	else if ((r_ptr->cdefense & MF2_EVIL) && (i_ptr->flags & TR1_SLAY_EVIL)) {
+	else if ((r_ptr->cdefense & MF2_EVIL) && (i_ptr->flags1 & TR1_SLAY_EVIL)) {
 	    tdam *= 2;
 	    l_ptr->r_cdefense |= MF2_EVIL;
 	}
 
 	/* Slay Animal  */
-	else if ((r_ptr->cdefense & MF2_ANIMAL) && (i_ptr->flags & TR1_SLAY_ANIMAL)) {
+	else if ((r_ptr->cdefense & MF2_ANIMAL) && (i_ptr->flags1 & TR1_SLAY_ANIMAL)) {
 	    tdam *= 2;
 	    l_ptr->r_cdefense |= MF2_ANIMAL;
 	}
 
 	/* let's do the resistances */
-	if (((r_ptr->cdefense & MF2_IM_COLD)) && (i_ptr->flags & TR1_BRAND_COLD)) {
+	if (((r_ptr->cdefense & MF2_IM_COLD)) && (i_ptr->flags1 & TR1_BRAND_COLD)) {
 	    l_ptr->r_cdefense |= MF2_IM_COLD;
 	    tdam = (tdam * 3) / 4;
 	    reduced = TRUE;
 	}
 
-	if (((r_ptr->cdefense & MF2_IM_FIRE)) && (i_ptr->flags & TR1_BRAND_FIRE)) {
+	if (((r_ptr->cdefense & MF2_IM_FIRE)) && (i_ptr->flags1 & TR1_BRAND_FIRE)) {
 	    l_ptr->r_cdefense |= MF2_IM_FIRE;
 	    if (!reduced) {
 		tdam = (tdam * 3) / 4;

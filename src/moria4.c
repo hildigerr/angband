@@ -376,7 +376,7 @@ int mmove(int dir, int *y, int *x)
 void confuse_dir (int *dir, int mode)
 {
     /* Check for confusion */
-    if (py.flags.confused > 0) {
+    if (py.flags1.confused > 0) {
 
 	/* Does the confusion get a chance to activate? */
 	if ((mode & 0x01) {
@@ -533,27 +533,27 @@ int get_dir_c(cptr prompt, int *dir)
  */
 void search_on()
 {
-    if (py.flags.status & PY_SEARCH) return;
+    if (py.flags1.status & PY_SEARCH) return;
 
-    py.flags.speed += 1;
-    py.flags.status |= PY_SPEED;
-    py.flags.status |= PY_SEARCH;
+    py.flags1.speed += 1;
+    py.flags1.status |= PY_SPEED;
+    py.flags1.status |= PY_SEARCH;
     prt_state();
     prt_speed();
-    py.flags.food_digested++;
+    py.flags1.food_digested++;
 }
 
 void search_off(void)
 {
-    if (!(py.flags.status & PY_SEARCH)) return;
+    if (!(py.flags1.status & PY_SEARCH)) return;
 
     check_view();
-    py.flags.speed -= 1;
-    py.flags.status |= PY_SPEED;
-    py.flags.status &= ~PY_SEARCH;
+    py.flags1.speed -= 1;
+    py.flags1.status |= PY_SPEED;
+    py.flags1.status &= ~PY_SEARCH;
     prt_state();
     prt_speed();
-    py.flags.food_digested--;
+    py.flags1.food_digested--;
 }
 
 
@@ -571,7 +571,7 @@ void disturb(int stop_search, int light_change)
     if (command_rep) command_rep = 0;
 
     /* Always cancel Rest */
-    if (py.flags.rest) rest_off();
+    if (py.flags1.rest) rest_off();
 
     /* Hack -- Cancel Search Mode if requested */
     if (stop_search) search_off();
@@ -594,7 +594,7 @@ void search(int y, int x, int chance)
     register int           i, j;
     register cave_type    *c_ptr;
     register inven_type   *i_ptr;
-    register struct flags *p_ptr = &py.flags;
+    register struct flags1 *p_ptr = &py.flags1;
     bigvtype               tmp_str, tmp_str2;
 
     if ((p_ptr->blind > 0) || no_lite()) chance = chance / 10;
@@ -642,7 +642,7 @@ void search(int y, int x, int chance)
 
 		/* Chest?  Trapped?  Known? */
 		else if (i_ptr->tval == TV_CHEST) {
-		    if ((i_ptr->flags & CH_TRAPPED) > 1) {
+		    if ((i_ptr->flags1 & CH_TRAPPED) > 1) {
 			if (!known2_p(i_ptr)) {
 			known2(i_ptr);
 			msg_print("You have discovered a trap on the chest!");
@@ -659,15 +659,15 @@ void search(int y, int x, int chance)
 
 void rest_off()
 {
-    py.flags.rest = 0;
+    py.flags1.rest = 0;
 
-    py.flags.status &= ~PY_REST;
+    py.flags1.status &= ~PY_REST;
     prt_state();
 
     /* flush last message, or delete "press any key" message */
     msg_print(NULL);
 
-    py.flags.food_digested++;
+    py.flags1.food_digested++;
 }
 
 
@@ -813,7 +813,7 @@ static void area_affect(int dir, int y, int x)
     register cave_type *c_ptr;
 
     /* We must be able to see... */
-    if (py.flags.blind < 1) {
+    if (py.flags1.blind < 1) {
 
 	option = 0;
 	option2 = 0;
@@ -1018,7 +1018,7 @@ void move_player(int dir, int do_pickup)
     int old_row = char_row;
     int old_col = char_col;
 
-    if (((py.flags.confused > 0) || (py.flags.stun > 0)) &&	/* Confused/Stunned?  */
+    if (((py.flags1.confused > 0) || (py.flags1.stun > 0)) &&	/* Confused/Stunned?  */
     (randint(4) > 1) &&	   /* 75% random movement */
     (dir != 5)) {		   /* Never random if sitting */
 	    dir = randint(9);
@@ -1072,7 +1072,7 @@ void move_player(int dir, int do_pickup)
 		    }
 		    else {
 			    /* Handle fear */
-			    if (py.flags.afraid < 1)
+			    if (py.flags1.afraid < 1)
 				    py_attack(y, x);
 			    else
 				    msg_print("You are too afraid!");
@@ -1099,17 +1099,17 @@ void move_player(int dir, int do_pickup)
 	/* Check to see if he notices something  */
 	/* "fos" may be negative if have good rings of searching */
 	if ((py.misc.fos <= 1) || (randint(py.misc.fos) == 1) ||
-	(py.flags.status & PY_SEARCH))
+	(py.flags1.status & PY_SEARCH))
 	    search(char_row, char_col, py.misc.srh);
 
 		    /* A room of light should be lit. */
 		    if ((c_ptr->fval == LIGHT_FLOOR) ||
 		    (c_ptr->fval == NT_LIGHT_FLOOR)) {
-			    if (!c_ptr->pl && !py.flags.blind) light_room(char_row, char_col);
+			    if (!c_ptr->pl && !py.flags1.blind) light_room(char_row, char_col);
 		    }
 
 		    /* In doorway of light-room? */
-		    else if (c_ptr->lr && (py.flags.blind < 1)) {
+		    else if (c_ptr->lr && (py.flags1.blind < 1)) {
 			    register int        i, j;
 
 			    byte lit = FALSE;	/* only call light_room once... -CFT */
@@ -1360,7 +1360,7 @@ void find_init(int dir)
 	find_flag = 1;
 	find_breakright = find_breakleft = FALSE;
 	find_prevdir = dir;
-	if (py.flags.blind < 1) {
+	if (py.flags1.blind < 1) {
 	    i = chome[dir];
 	    deepleft = deepright = FALSE;
 	    shortright = shortleft = FALSE;

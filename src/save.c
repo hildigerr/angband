@@ -129,7 +129,7 @@ static int sv_write()
     inven_type           *t_ptr;
 
 #endif
-    register struct flags *f_ptr;
+    register struct flags1 *f_ptr;
     store_type  *st_ptr;
     struct misc *m_ptr;
 
@@ -379,7 +379,7 @@ static int sv_write()
     wr_shorts((u16b *) s_ptr->mod_stat, 6);
     wr_shorts(s_ptr->use_stat, 6);
 
-    f_ptr = &py.flags;
+    f_ptr = &py.flags1;
     wr_long(f_ptr->status);
     wr_short((u16b) f_ptr->rest);
     wr_short((u16b) f_ptr->blind);
@@ -666,8 +666,8 @@ int _save_player(char *fnam)
     disturb(1, 0);		   /* Turn off resting and searching. */
 
     /* Fix the speed */
-    py.flags.speed -= pack_heavy;
-    py.flags.status |= PY_SPEED;
+    py.flags1.speed -= pack_heavy;
+    py.flags1.status |= PY_SPEED;
     pack_heavy = 0;
 
     /* Assume failure */
@@ -775,7 +775,7 @@ int load_player(int *generate)
     register monster_lore  *r_ptr;
     struct misc           *m_ptr;
     struct stats          *s_ptr;
-    register struct flags *f_ptr;
+    register struct flags1 *f_ptr;
     store_type            *st_ptr;
     byte char_tmp, ychar, xchar, count;
 
@@ -1163,7 +1163,7 @@ int load_player(int *generate)
 	    rd_shorts((u16b *) s_ptr->mod_stat, 6);
 	    rd_shorts(s_ptr->use_stat, 6);
 
-	    f_ptr = &py.flags;
+	    f_ptr = &py.flags1;
 	    rd_long(&f_ptr->status);
 	    rd_short((u16b *) & f_ptr->rest);
 	    rd_short((u16b *) & f_ptr->blind);
@@ -1324,26 +1324,26 @@ int load_player(int *generate)
 		}
 
 		/* don't let him starve to death immediately */
-		if (py.flags.food < 5000) py.flags.food = 5000;
+		if (py.flags1.food < 5000) py.flags1.food = 5000;
 
 		cure_poison();
 		cure_blindness();
 		cure_confusion();
 		remove_fear();
 
-		if (py.flags.image > 0) py.flags.image = 0;
-		if (py.flags.cut > 0) py.flags.cut = 0;
-		if (py.flags.stun > 0) {
-		    if (py.flags.stun > 50) {
+		if (py.flags1.image > 0) py.flags1.image = 0;
+		if (py.flags1.cut > 0) py.flags1.cut = 0;
+		if (py.flags1.stun > 0) {
+		    if (py.flags1.stun > 50) {
 			py.misc.ptohit += 20;
 			py.misc.ptodam += 20;
 		    } else {
 			py.misc.ptohit += 5;
 			py.misc.ptodam += 5;
 		    }
-		    py.flags.stun = 0;
+		    py.flags1.stun = 0;
 		}
-		if (py.flags.word_recall > 0) py.flags.word_recall = 0;
+		if (py.flags1.word_recall > 0) py.flags1.word_recall = 0;
 
 		/* Resurrect on the town level. */
 		dun_level = 0;
@@ -1694,7 +1694,7 @@ static void wr_item(register inven_type *item)
     wr_short(item->index);
     wr_byte(item->name2);
     wr_string(item->inscrip);
-    wr_long(item->flags);
+    wr_long(item->flags1);
     wr_byte(item->tval);
     wr_byte(item->tchar);
     wr_short((u16b) item->pval);
@@ -1814,7 +1814,7 @@ static void rd_item(register inven_type *item)
     rd_short(&item->index);
     rd_byte(&item->name2);
     rd_string(item->inscrip);
-    rd_long(&item->flags);
+    rd_long(&item->flags1);
     rd_byte(&item->tval);
     rd_byte(&item->tchar);
     rd_short((u16b *) & item->pval);

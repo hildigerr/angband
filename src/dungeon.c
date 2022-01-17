@@ -47,13 +47,13 @@ void dungeon(void)
     char                   command;      /* Last command           */
     register struct misc  *p_ptr;
     register inven_type		*i_ptr;
-    register struct flags *f_ptr;
+    register struct flags1 *f_ptr;
 
 /* Main procedure for dungeon.			-RAK-	 */
 /* Note: There is a lot of preliminary magic going on here at first */
 
 /* init pointers. */
-    f_ptr = &py.flags;
+    f_ptr = &py.flags1;
     p_ptr = &py.misc;
 
     i_ptr = &inventory[INVEN_LIGHT];
@@ -230,7 +230,7 @@ void dungeon(void)
 
 		/* The light is getting dim */
 		else if ((i_ptr->pval < 40) && (randint(5) == 1) &&
-			   (py.flags.blind < 1) &&
+			   (f_ptr->blind < 1) &&
 			   !(i_ptr->flags2 & TR3_LITE)) { /* perm light doesn't dim -CFT */
 		    disturb(0, 0);
 		    msg_print("Your light is growing faint.");
@@ -312,12 +312,12 @@ void dungeon(void)
 	}
 
 	/* Searching or Resting */
-	if ((py.flags.status & PY_SEARCH) || f_ptr->rest > 0 ||
+	if ((f_ptr->status & PY_SEARCH) || f_ptr->rest > 0 ||
 	    f_ptr->rest == -1 || f_ptr->rest == -2) {
 	    regen_amount = regen_amount * 2;
 	}
 
-	if ((py.flags.poisoned < 1) && (py.flags.cut < 1) &&
+	if ((f_ptr->poisoned < 1) && (f_ptr->cut < 1) &&
 	    (p_ptr->chp < p_ptr->mhp)) {
 	    regenhp(regen_amount);
 	}
@@ -360,7 +360,7 @@ void dungeon(void)
 		f_ptr->status &= ~PY_CONFUSED;
 		prt_confused();
 		msg_print("You feel less confused now.");
-		if (py.flags.rest > 0 || py.flags.rest == -1)
+		if (f_ptr->rest > 0 || f_ptr->rest == -1)
 		    rest_off();
 	    }
 	}
@@ -368,13 +368,13 @@ void dungeon(void)
 	/* Afraid */
 	if (f_ptr->afraid > 0) {
 	    if ((PY_FEAR & f_ptr->status) == 0) {
-		if ((f_ptr->shero + f_ptr->hero + py.flags.resist_fear) > 0)
+		if ((f_ptr->shero + f_ptr->hero + f_ptr->resist_fear) > 0)
 		    f_ptr->afraid = 0;
 		else {
 		    f_ptr->status |= PY_FEAR;
 		    prt_afraid();
 		}
-	    } else if ((f_ptr->shero + f_ptr->hero + py.flags.resist_fear) > 0)
+	    } else if ((f_ptr->shero + f_ptr->hero + f_ptr->resist_fear) > 0)
 		f_ptr->afraid = 1;
 	    f_ptr->afraid--;
 	    if (f_ptr->afraid == 0) {
@@ -481,16 +481,16 @@ void dungeon(void)
 	    if ((PY_FAST & f_ptr->status) == 0) {
 		f_ptr->status |= PY_FAST;
 		msg_print("You feel yourself moving faster.");
-		py.flags.speed -= 1;
-		py.flags.status |= PY_SPEED;
+		f_ptr->speed -= 1;
+		f_ptr->status |= PY_SPEED;
 		disturb(0, 0);
 	    }
 	    f_ptr->fast--;
 	    if (f_ptr->fast == 0) {
 		f_ptr->status &= ~PY_FAST;
 		msg_print("You feel yourself slow down.");
-		py.flags.speed += 1;
-		py.flags.status |= PY_SPEED;
+		f_ptr->speed += 1;
+		f_ptr->status |= PY_SPEED;
 		disturb(0, 0);
 	    }
 	}
@@ -500,16 +500,16 @@ void dungeon(void)
 	    if ((PY_SLOW & f_ptr->status) == 0) {
 		f_ptr->status |= PY_SLOW;
 		msg_print("You feel yourself moving slower.");
-		py.flags.speed += 1;
-		py.flags.status |= PY_SPEED;
+		f_ptr->speed += 1;
+		f_ptr->status |= PY_SPEED;
 		disturb(0, 0);
 	    }
 	    f_ptr->slow--;
 	    if (f_ptr->slow == 0) {
 		f_ptr->status &= ~PY_SLOW;
 		msg_print("You feel yourself speed up.");
-		py.flags.speed -= 1;
-		py.flags.status |= PY_SPEED;
+		f_ptr->speed -= 1;
+		f_ptr->status |= PY_SPEED;
 		disturb(0, 0);
 	    }
 	}
@@ -528,10 +528,10 @@ void dungeon(void)
 	    } else if (f_ptr->rest == -2) {	/* rest until
 						 * blind/conf/stun/
 						 * HP/mana/fear/halluc over */
-		if ((py.flags.blind < 1) && (py.flags.confused < 1) &&
-		    (py.flags.afraid < 1) && (py.flags.stun < 1) &&
-		    (py.flags.image < 1) && (py.flags.word_recall < 1) &&
-		    (py.flags.slow < 1) && (py.misc.chp == py.misc.mhp) &&
+		if ((f_ptr->blind < 1) && (f_ptr->confused < 1) &&
+		    (f_ptr->afraid < 1) && (f_ptr->stun < 1) &&
+		    (f_ptr->image < 1) && (f_ptr->word_recall < 1) &&
+		    (f_ptr->slow < 1) && (py.misc.chp == py.misc.mhp) &&
 		    (py.misc.cmana == py.misc.mana)) {
 		    f_ptr->rest = 0;
 		    rest_off();
@@ -777,7 +777,7 @@ void dungeon(void)
 		else {
 		    f_ptr->see_inv = FALSE;	/* unless item grants it */
 		    for (i = INVEN_WIELD; i <= INVEN_LIGHT; i++)
-			if (TR3_SEE_INVIS & inventory[i].flags)
+			if (TR3_SEE_INVIS & inventory[i].flags1)
 			    f_ptr->see_inv = TRUE;
 		}
 	    /* unlight but don't move creatures */
@@ -819,47 +819,47 @@ void dungeon(void)
 		f_ptr->word_recall--;
 
     /* Random teleportation */
-	if ((py.flags.teleport) && (randint(100) == 1)) {
+	if ((f_ptr->teleport) && (randint(100) == 1)) {
 	    disturb(0, 0);
 	    teleport(40);
 	}
     /* See if we are too weak to handle the weapon or pack.  -CJS- */
-	if (py.flags.status & PY_STR_WGT)
+	if (f_ptr->status & PY_STR_WGT)
 	    check_strength();
-	if (py.flags.status & PY_STUDY)
+	if (f_ptr->status & PY_STUDY)
 	    prt_study();
-	if (py.flags.status & PY_SPEED) {
-	    py.flags.status &= ~PY_SPEED;
+	if (f_ptr->status & PY_SPEED) {
+	    f_ptr->status &= ~PY_SPEED;
 	    prt_speed();
 	}
-	if ((py.flags.status & PY_PARALYSED) && (py.flags.paralysis < 1)) {
+	if ((f_ptr->status & PY_PARALYSED) && (f_ptr->paralysis < 1)) {
 	    prt_state();
-	    py.flags.status &= ~PY_PARALYSED;
-	} else if (py.flags.paralysis > 0) {
+	    f_ptr->status &= ~PY_PARALYSED;
+	} else if (f_ptr->paralysis > 0) {
 	    prt_state();
-	    py.flags.status |= PY_PARALYSED;
-	} else if (py.flags.rest > 0 || py.flags.rest == -1 || py.flags.rest == -2)
+	    f_ptr->status |= PY_PARALYSED;
+	} else if (f_ptr->rest > 0 || f_ptr->rest == -1 || f_ptr->rest == -2)
 	    prt_state();
 
-	if ((py.flags.status & PY_ARMOR) != 0) {
+	if ((f_ptr->status & PY_ARMOR) != 0) {
 	    py.misc.dis_ac = py.misc.pac + py.misc.dis_tac;	/* use updated ac */
 	    prt_pac();
-	    py.flags.status &= ~PY_ARMOR;
+	    f_ptr->status &= ~PY_ARMOR;
 	}
-	if ((py.flags.status & PY_STATS) != 0) {
+	if ((f_ptr->status & PY_STATS) != 0) {
 	    for (i = 0; i < 6; i++)
-		if ((PY_STR << i) & py.flags.status)
+		if ((PY_STR << i) & f_ptr->status)
 		    prt_stat(i);
-	    py.flags.status &= ~PY_STATS;
+	    f_ptr->status &= ~PY_STATS;
 	}
-	if (py.flags.status & PY_HP) {
+	if (f_ptr->status & PY_HP) {
 	    prt_mhp();
 	    prt_chp();
-	    py.flags.status &= ~PY_HP;
+	    f_ptr->status &= ~PY_HP;
 	}
-	if (py.flags.status & PY_MANA) {
+	if (f_ptr->status & PY_MANA) {
 	    prt_cmana();
-	    py.flags.status &= ~PY_MANA;
+	    f_ptr->status &= ~PY_MANA;
 	}
     /* Allow for a slim chance of detect enchantment -CJS- */
     /*
@@ -1009,14 +1009,14 @@ void dungeon(void)
 	if (MAX_M_IDX - m_max < 10)
 	    (void)compact_monsters();
 
-	if ((py.flags.paralysis < 1) &&	/* Accept a command?     */
-	    (py.flags.rest == 0) &&
-	    (py.flags.stun < 100) &&
+	if ((f_ptr->paralysis < 1) &&	/* Accept a command?     */
+	    (f_ptr->rest == 0) &&
+	    (f_ptr->stun < 100) &&
 	    (!death))
 	/* Accept a command and execute it				 */
 	{
 	    do {
-		if (py.flags.status & PY_REPEAT)
+		if (f_ptr->status & PY_REPEAT)
 		    prt_state();
 		default_dir = FALSE;
 		free_turn_flag = FALSE;
@@ -1419,7 +1419,7 @@ int special_check(inven_type *t_ptr)
 	return 0;
     if (t_ptr->ident & ID_DAMD)
 	return 0;
-    if (t_ptr->flags & TR3_CURSED)
+    if (t_ptr->flags1 & TR3_CURSED)
 	return -1;
     if (t_ptr->tval != TV_HARD_ARMOR && t_ptr->tval != TV_SWORD &&
 	t_ptr->tval != TV_SOFT_ARMOR && t_ptr->tval != TV_SHIELD &&
@@ -1434,7 +1434,7 @@ int special_check(inven_type *t_ptr)
 	return 1;
     if ((t_ptr->tval == TV_DIGGING) && /* digging tools will pseudo ID, either
 					  as {good} or {average} -CFT */
-	(t_ptr->flags & TR1_TUNNEL))
+	(t_ptr->flags1 & TR1_TUNNEL))
 	return 1;
 
     return 0;
@@ -1457,12 +1457,12 @@ static cptr value_check(inven_type *t_ptr)
 	return 0;
     if (t_ptr->inscrip[0] != '\0')
 	return 0;
-    if (t_ptr->flags & TR3_CURSED && t_ptr->name2 == SN_NULL)
+    if (t_ptr->flags1 & TR3_CURSED && t_ptr->name2 == SN_NULL)
 	return "worthless";
-    if (t_ptr->flags & TR3_CURSED && t_ptr->name2 != SN_NULL)
+    if (t_ptr->flags1 & TR3_CURSED && t_ptr->name2 != SN_NULL)
 	return "terrible";
     if ((t_ptr->tval == TV_DIGGING) &&  /* also, good digging tools -CFT */
-	(t_ptr->flags & TR1_TUNNEL) &&
+	(t_ptr->flags1 & TR1_TUNNEL) &&
 	(t_ptr->pval > k_list[t_ptr->index].pval)) /* better than normal for this
 						       type of shovel/pick? -CFT */
 	return "good";
@@ -1504,7 +1504,7 @@ static void do_command(char com_val)
     int                    dir_val, do_pickup;
     int                    y, x, i, j = 0;
     vtype                  out_val, tmp_str;
-    register struct flags *f_ptr;
+    register struct flags1 *f_ptr = &py.flags1;
     char                   prt1[80];
 
 /* hack for move without pickup.  Map '-' to a movement command. */
@@ -1633,7 +1633,7 @@ static void do_command(char com_val)
 	free_turn_flag = TRUE;
 	break;
       case CTRL('R'):
-	if (py.flags.image > 0)
+	if (f_ptr->image > 0)
 	    msg_print("You cannot be sure what is real and what is not!");
 	else {
 	    draw_cave();
@@ -1648,7 +1648,7 @@ static void do_command(char com_val)
  *  were all already taken.  Wiz light command moved to '$', which was unused. -CFT
  */
       case '*':
-    if (py.flags.blind > 0) {
+    if (f_ptr->blind > 0) {
 	msg_print("You can't see anything to target!");
     }
     else if (!target_set()) {
@@ -1795,7 +1795,7 @@ static void do_command(char com_val)
 	    free_turn_flag = TRUE;
 	break;
       case 'W':			/* (W)here are we on the map	(L)ocate on map */
-	if ((py.flags.blind > 0) || no_lite())
+	if ((f_ptr->blind > 0) || no_lite())
 	    msg_print("You can't see your map.");
 	else {
 	    int                 cy, cx, p_y, p_x;
@@ -1994,8 +1994,7 @@ static void do_command(char com_val)
 		(void)res_stat(A_CHR);
 		(void)restore_level();
 		(void)hp_player(2000);
-		py.flags.food = PLAYER_FOOD_MAX;
-		f_ptr = &py.flags;
+		f_ptr->food = PLAYER_FOOD_MAX;
 		if (f_ptr->slow > 1)
 		    f_ptr->slow = 1;
 		if (f_ptr->image > 1)
@@ -2490,7 +2489,7 @@ static void activate()
 		break;
 	      case (92):
 		if (inventory[i].name2 == ART_FEANOR) {
-		    py.flags.fast += randint(25) + 15;
+		    py.flags1.fast += randint(25) + 15;
 		    inventory[i].timeout = 200;
 		}
 		break;
@@ -2521,11 +2520,11 @@ static void activate()
 		break;
 	      case (71):
 		if (inventory[i].name2 == ART_AVAVIR) {
-		    if (py.flags.word_recall == 0) {
-			py.flags.word_recall = 15 + randint(20);
+		    if (py.flags1.word_recall == 0) {
+			py.flags1.word_recall = 15 + randint(20);
 			msg_print("The air about you becomes charged...");
 		    } else {
-			py.flags.word_recall = 0;
+			py.flags1.word_recall = 0;
 			msg_print("A tension leaves the air around you...");
 		    }
 		    inventory[i].timeout = 200;
@@ -2533,8 +2532,8 @@ static void activate()
 		break;
 	      case (53):
 		if (inventory[i].name2 == ART_TARATOL) {
-		    if (py.flags.fast == 0)
-			py.flags.fast += randint(30) + 15;
+		    if (py.flags1.fast == 0)
+			py.flags1.fast += randint(30) + 15;
 		    inventory[i].timeout = 166;
 		}
 		break;
@@ -2558,10 +2557,10 @@ static void activate()
 		if (inventory[i].name2 == ART_LOTHARANG) {
 		    msg_print("Your battle axe radiates deep purple...");
 		    hp_player(damroll(4, 7));
-		    if (py.flags.cut > 0) {
-			py.flags.cut = (py.flags.cut / 2) - 50;
-			if (py.flags.cut < 0)
-			    py.flags.cut = 0;
+		    if (py.flags1.cut > 0) {
+			py.flags1.cut = (py.flags1.cut / 2) - 50;
+			if (py.flags1.cut < 0)
+			    py.flags1.cut = 0;
 			msg_print("You wounds heal.");
 		    }
 		    inventory[i].timeout = 2 + randint(2);
@@ -2572,14 +2571,14 @@ static void activate()
 		    for (a = 0; a < INVEN_WIELD; a++)
 /* search for bolts that are not cursed and are not already named -CWS */
 			if ((inventory[a].tval == TV_BOLT) &&
-			    !(inventory[a].flags & TR3_CURSED) &&
+			    !(inventory[a].flags1 & TR3_CURSED) &&
 			    (inventory[a].name2 == SN_NULL))
 			    break;
 		    if (a < INVEN_WIELD) {
 			i_ptr = &inventory[a];
 			msg_print("Your bolts are covered in a fiery aura!");
 			i_ptr->name2 = EGO_FIRE;
-			i_ptr->flags |= (TR1_BRAND_FIRE|TR2_RES_FIRE);
+			i_ptr->flags1 |= (TR1_BRAND_FIRE|TR2_RES_FIRE);
 			i_ptr->cost += 25;
 			enchant(i_ptr, 3+randint(3), ENCH_TOHIT|ENCH_TODAM);
 			calc_bonuses();
@@ -2654,11 +2653,11 @@ static void activate()
 		if (inventory[i].name2 == ART_COLLUIN) {
 		    msg_print("Your cloak glows many colours...");
 		    msg_print("You feel you can resist anything.");
-		    py.flags.oppose_fire += randint(20) + 20;
-		    py.flags.oppose_cold += randint(20) + 20;
-		    py.flags.oppose_elec += randint(20) + 20;
-		    py.flags.oppose_pois += randint(20) + 20;
-		    py.flags.oppose_acid += randint(20) + 20;
+		    py.flags1.oppose_fire += randint(20) + 20;
+		    py.flags1.oppose_cold += randint(20) + 20;
+		    py.flags1.oppose_elec += randint(20) + 20;
+		    py.flags1.oppose_pois += randint(20) + 20;
+		    py.flags1.oppose_acid += randint(20) + 20;
 		    inventory[i].timeout = 111;
 		} else if (inventory[i].name2 == ART_HOLCOLLETH) {
 		    msg_print("You momentarily disappear...");
@@ -2938,13 +2937,13 @@ static void activate()
 		if (inventory[i].name2 == ART_BLADETURNER) {
 		    msg_print("Your armour glows many colours...");
 		    msg_print("You enter a berserk rage...");
-		    py.flags.hero += randint(50) + 50;
-		    py.flags.shero += randint(50) + 50;
+		    py.flags1.hero += randint(50) + 50;
+		    py.flags1.shero += randint(50) + 50;
 		    bless(randint(50) + 50);
-		    py.flags.oppose_fire += randint(50) + 50;
-		    py.flags.oppose_cold += randint(50) + 50;
-		    py.flags.oppose_elec += randint(50) + 50;
-		    py.flags.oppose_acid += randint(50) + 50;
+		    py.flags1.oppose_fire += randint(50) + 50;
+		    py.flags1.oppose_cold += randint(50) + 50;
+		    py.flags1.oppose_elec += randint(50) + 50;
+		    py.flags1.oppose_acid += randint(50) + 50;
 		    inventory[i].timeout = 400;
 		} else {
 		    msg_print("You breathe the elements...");
@@ -2985,7 +2984,7 @@ static void activate()
 		break;
 	      case (OBJ_SPECIAL + 8):
 		msg_print("The ring glows brightly...");
-		py.flags.fast += randint(100) + 50;
+		py.flags1.fast += randint(100) + 50;
 		inventory[i].timeout = 200;
 		break;
 	      default:
@@ -3018,11 +3017,11 @@ static void examine_book()
 
     if (!find_range(TV_MAGIC_BOOK, TV_PRAYER_BOOK, &i, &k))
 	msg_print("You are not carrying any books.");
-    else if (py.flags.blind > 0)
+    else if (py.flags1.blind > 0)
 	msg_print("You can't see to read your spell book!");
     else if (no_lite())
 	msg_print("You have no light to read by.");
-    else if (py.flags.confused > 0)
+    else if (py.flags1.confused > 0)
 	msg_print("You are too confused.");
     else if (get_item(&item_val, "Which Book?", i, k, 0)) {
 	flag = TRUE;
@@ -3040,9 +3039,9 @@ static void examine_book()
 	    msg_print("You do not understand the language.");
 	else {
 	    i = 0;
-	    j1 = (u32b) inventory[item_val].flags;
+	    j1 = (u32b) inventory[item_val].flags1;
 	    first_spell = bit_pos(&j1);	/* check which spell was first */
-	    j1 = (u32b) inventory[item_val].flags;	/* restore j1 value */
+	    j1 = (u32b) inventory[item_val].flags1;	/* restore j1 value */
 	    while (j1) {
 		k = bit_pos(&j1);
 		s_ptr = &magic_spell[py.misc.pclass - 1][k];

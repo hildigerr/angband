@@ -374,11 +374,11 @@ void check_view(void)
     move_light(char_row, char_col, char_row, char_col);
 /* A room of light should be lit.	 */
     if (c_ptr->fval == LIGHT_FLOOR) {
-	if ((py.flags.blind < 1) && !c_ptr->pl)
+	if ((py.flags1.blind < 1) && !c_ptr->pl)
 	    light_room(char_row, char_col);
     }
 /* In doorway of light-room?		   */
-    else if (c_ptr->lr && (py.flags.blind < 1)) {
+    else if (c_ptr->lr && (py.flags1.blind < 1)) {
 	for (i = (char_row - 1); i <= (char_row + 1); i++)
 	    for (j = (char_col - 1); j <= (char_col + 1); j++) {
 		d_ptr = &cave[i][j];

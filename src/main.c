@@ -489,8 +489,8 @@ int main(int argc, char *argv[])
 	/* if we're creating a new character, change the savefile name */
     (void) sprintf(savefile, "%s/%d%s", ANGBAND_DIR_SAVE, player_uid, py.misc.name);
 	player_outfit();
-	py.flags.food = 7500;
-	py.flags.food_digested = 2;
+	py.flags1.food = 7500;
+	py.flags1.food_digested = 2;
         if (class[py.misc.pclass].spell == MAGE)
 	{			/* Magic realm   */
 	    clear_screen();	/* makes spell list easier to read */

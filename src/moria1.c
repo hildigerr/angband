@@ -53,21 +53,21 @@ void py_bonuses(inven_type *t_ptr, int factor)
     register int i, amount;
 
     amount = t_ptr->pval * factor;
-    if (t_ptr->flags & TR_STATS) {
+    if (t_ptr->flags1 & TR_STATS) {
 	for (i = 0; i < 6; i++)
-	    if ((1 << i) & t_ptr->flags) {
+	    if ((1 << i) & t_ptr->flags1) {
 		py.stats.mod_stat[i] += amount;
 		set_use_stat(i);
-		py.flags.status |= (PY_STR << i);
+		py.flags1.status |= (PY_STR << i);
 	    }
     }
-    if (TR1_SEARCH & t_ptr->flags) {
+    if (TR1_SEARCH & t_ptr->flags1) {
 	py.misc.srh += amount;
 	py.misc.fos -= amount;
     }
-    if (TR1_STEALTH & t_ptr->flags)
+    if (TR1_STEALTH & t_ptr->flags1)
 	py.misc.stl += amount;
-    if (TR1_SPEED & t_ptr->flags) {
+    if (TR1_SPEED & t_ptr->flags1) {
 	if ((t_ptr->tval == TV_RING) &&
 	    !stricmp("Speed",
 		     k_list[t_ptr->index].name) &&
@@ -81,11 +81,11 @@ void py_bonuses(inven_type *t_ptr, int factor)
 			 k_list[inventory[INVEN_LEFT].index].name) &&
 		(inventory[INVEN_RIGHT].pval > 0))
 		return;
-	py.flags.speed -= amount;
-	py.flags.status |= PY_SPEED;
+	py.flags1.speed -= amount;
+	py.flags1.status |= PY_SPEED;
     }
-    if (TR1_INFRA & t_ptr->flags)
-	py.flags.see_infra += amount;
+    if (TR1_INFRA & t_ptr->flags1)
+	py.flags1.see_infra += amount;
 }
 
 /*
@@ -94,11 +94,11 @@ void py_bonuses(inven_type *t_ptr, int factor)
  */
 void calc_bonuses()
 {
-    u32b		item_flags, item_flags2;
+    u32b		item_flags1, item_flags2;
 
     int			old_dis_ac;
 
-    struct flags *p_ptr = &py.flags;
+    struct flags1 *p_ptr = &py.flags1;
     struct misc  *m_ptr = &py.misc;
 
     inven_type		*i_ptr;
@@ -166,7 +166,7 @@ void calc_bonuses()
     for (i = INVEN_WIELD; i <= INVEN_LIGHT; i++) {
 	i_ptr = &inventory[i];
 	if (i_ptr->tval != TV_NOTHING) {
-	    if ((TR3_CURSED & i_ptr->flags) == 0) {
+	    if ((TR3_CURSED & i_ptr->flags1) == 0) {
 		m_ptr->pac += i_ptr->ac;
 		m_ptr->dis_ac += i_ptr->ac;
 	    }
@@ -249,10 +249,10 @@ void calc_bonuses()
     p_ptr->status |= PY_ARMOR;	   /* This was in an if, but I want to be
 				    * sure ac is shown properly... -CFT */
 
-    item_flags = 0L;
+    item_flags1 = 0L;
     i_ptr = &inventory[INVEN_WIELD];
     for (i = INVEN_WIELD; i <= INVEN_LIGHT; i++) {
-	item_flags |= i_ptr->flags;
+	item_flags1 |= i_ptr->flags1;
 	i_ptr++;
     }
     item_flags2 = 0L;
@@ -262,14 +262,14 @@ void calc_bonuses()
 	i_ptr++;
     }
 
-    if (TR3_SLOW_DIGEST & item_flags) p_ptr->slow_digest = TRUE;
-    if (TR3_AGGRAVATE & item_flags) p_ptr->aggravate = TRUE;
-    if (TR3_TELEPORT & item_flags) p_ptr->teleport = TRUE;
-    if (TR3_REGEN & item_flags) p_ptr->regenerate = TRUE;
-    if (TR2_RES_FIRE & item_flags) p_ptr->resist_fire = TRUE;
-    if (TR2_RES_ACID & item_flags) p_ptr->resist_acid = TRUE;
-    if (TR2_RES_COLD & item_flags) p_ptr->resist_cold = TRUE;
-    if (TR2_RES_POIS & item_flags) p_ptr->resist_pois = TRUE;
+    if (TR3_SLOW_DIGEST & item_flags1) p_ptr->slow_digest = TRUE;
+    if (TR3_AGGRAVATE & item_flags1) p_ptr->aggravate = TRUE;
+    if (TR3_TELEPORT & item_flags1) p_ptr->teleport = TRUE;
+    if (TR3_REGEN & item_flags1) p_ptr->regenerate = TRUE;
+    if (TR2_RES_FIRE & item_flags1) p_ptr->resist_fire = TRUE;
+    if (TR2_RES_ACID & item_flags1) p_ptr->resist_acid = TRUE;
+    if (TR2_RES_COLD & item_flags1) p_ptr->resist_cold = TRUE;
+    if (TR2_RES_POIS & item_flags1) p_ptr->resist_pois = TRUE;
     if (TR2_HOLD_LIFE & item_flags2) p_ptr->hold_life = TRUE;
     if (TR3_TELEPATHY & item_flags2) p_ptr->telepathy = TRUE;
     if (TR2_IM_FIRE & item_flags2) p_ptr->immune_fire = TRUE;
@@ -278,10 +278,10 @@ void calc_bonuses()
     if (TR2_IM_ELEC & item_flags2) p_ptr->immune_elec = TRUE;
     if (TR2_IM_POIS & item_flags2) p_ptr->immune_pois = TRUE;
     if (TR3_LITE & item_flags2) p_ptr->light = TRUE;
-    if (TR2_FREE_ACT & item_flags) p_ptr->free_act = TRUE;
-    if (TR3_SEE_INVIS & item_flags) p_ptr->see_inv = TRUE;
-    if (TR2_RES_ELEC & item_flags) p_ptr->resist_elec = TRUE;
-    if (TR3_FEATHER & item_flags) p_ptr->ffall = TRUE;
+    if (TR2_FREE_ACT & item_flags1) p_ptr->free_act = TRUE;
+    if (TR3_SEE_INVIS & item_flags1) p_ptr->see_inv = TRUE;
+    if (TR2_RES_ELEC & item_flags1) p_ptr->resist_elec = TRUE;
+    if (TR3_FEATHER & item_flags1) p_ptr->ffall = TRUE;
     if (TR2_RES_CONF & item_flags2) p_ptr->resist_conf = TRUE;
     if (TR2_RES_SOUND & item_flags2) p_ptr->resist_sound = TRUE;
     if (TR2_RES_LITE & item_flags2) p_ptr->resist_lite = TRUE;
@@ -296,7 +296,7 @@ void calc_bonuses()
 
     i_ptr = &inventory[INVEN_WIELD];
     for (i = INVEN_WIELD; i < INVEN_LIGHT; i++) {
-	if (TR_SUST_STAT & i_ptr->flags)
+	if (TR_SUST_STAT & i_ptr->flags1)
 	    switch (i_ptr->pval) {
 	      case 1:
 		p_ptr->sustain_str = TRUE;
@@ -584,7 +584,7 @@ void inven_takeoff(int item_val, int posn)
     equip_ctr--;
     t_ptr = &inventory[item_val];
     inven_weight -= t_ptr->weight * t_ptr->number;
-    py.flags.status |= PY_STR_WGT;
+    py.flags1.status |= PY_STR_WGT;
 
     if (item_val == INVEN_WIELD || item_val == INVEN_AUX)
 	p = "Was wielding ";
@@ -657,7 +657,7 @@ static void inven_drop(int item_val, int drop_all)
 	(void)sprintf(prt2, "Dropped %s.", prt1);
 	msg_print(prt2);
     }
-    py.flags.status |= PY_STR_WGT;
+    py.flags1.status |= PY_STR_WGT;
 }
 
 
@@ -851,7 +851,7 @@ void inven_command(int command)
 	    if (inventory[INVEN_WIELD].tval == TV_NOTHING &&
 		inventory[INVEN_AUX].tval == TV_NOTHING)
 		msg_print("But you are wielding no weapons.");
-	    else if (TR3_CURSED & inventory[INVEN_WIELD].flags) {
+	    else if (TR3_CURSED & inventory[INVEN_WIELD].flags1) {
 		objdes(prt1, &inventory[INVEN_WIELD], FALSE);
 		(void)sprintf(prt2,
 		     "The %s you are wielding appears to be cursed.", prt1);
@@ -979,7 +979,7 @@ void inven_command(int command)
 			while (tmp >= 0);
 			if (isupper((int)which) && !verify(prompt, item))
 			    item = (-1);
-			else if (TR3_CURSED & inventory[item].flags) {
+			else if (TR3_CURSED & inventory[item].flags1) {
 			    msg_print("Hmmm, it seems to be cursed.");
 			    item = (-1);
 			} else if (command == 't' &&
@@ -1092,7 +1092,7 @@ void inven_command(int command)
 				break;
 			    }
 			if (item >= 0 && inventory[slot].tval != TV_NOTHING) {
-			    if (TR3_CURSED & inventory[slot].flags) {
+			    if (TR3_CURSED & inventory[slot].flags1) {
 				objdes(prt1, &inventory[slot], FALSE);
 				(void)sprintf(prt2, "The %s you are ", prt1);
 				if (slot == INVEN_WIELD)	/* changed from
@@ -1164,7 +1164,7 @@ void inven_command(int command)
 			    msg_print(prt1);
 			/* check_str will clear the heavy flag if necessary */
 			    check_strength();
-			    if (i_ptr->flags & TR3_CURSED) {
+			    if (i_ptr->flags1 & TR3_CURSED) {
 				msg_print("Oops! It feels deathly cold!");
 				add_inscribe(i_ptr, ID_DAMD);
 			    /* To force a cost of 0, even if unidentified. */
@@ -1281,7 +1281,7 @@ void inven_command(int command)
 	if (tmp2 < cur_lite)
 	    tmp2 = cur_lite;
 
-	if (!py.flags.blind) {
+	if (!py.flags1.blind) {
 	    min_i = MY_MAX(0, (char_row - cur_lite));
 	    max_i = MY_MIN(cur_height, (char_row + cur_lite));
 	    min_j = MY_MAX(0, (char_col - cur_lite));
@@ -1770,7 +1770,7 @@ void darken_player(int y1, int x1)
 /* Four cases : Normal, Finding, Blind, and Nolight	 -RAK-	 */
 void move_light(int y1, int x1, int y2, int x2)
 {
-    if (py.flags.blind > 0 || !player_light)
+    if (py.flags1.blind > 0 || !player_light)
 	sub3_move_light(y1, x1, y2, x2);
     else
 	sub1_move_light(y1, x1, y2, x2);
@@ -1808,10 +1808,10 @@ void rest()
     }
     if (rest_num != 0) {
 	search_off();
-	py.flags.rest = rest_num;
-	py.flags.status |= PY_REST;
+	py.flags1.rest = rest_num;
+	py.flags1.status |= PY_REST;
 	prt_state();
-	py.flags.food_digested--;
+	py.flags1.food_digested--;
 	prt("Press any key to stop resting...", 0, 0);
 	put_qio();
     } else {
@@ -1846,7 +1846,7 @@ int test_hit(int bth, int level, int pth, int ac, int attack_type)
 /* -RAK-	 */
 void take_hit(int damage, const char *hit_from)
 {
-    if (py.flags.invuln > 0 && damage < 9000)
+    if (py.flags1.invuln > 0 && damage < 9000)
 	damage = 0;
     py.misc.chp -= damage;
     if (py.misc.chp < 0) {

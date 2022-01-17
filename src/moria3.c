@@ -427,12 +427,12 @@ void do_cmd_look()
     int                 dir, dummy;
 
     /* Blind */
-    if (py.flags.blind > 0) {
+    if (py.flags1.blind > 0) {
 	msg_print("You can't see a damn thing!");
     }
 
     /* Hallucinating */
-    else if (py.flags.image > 0) {
+    else if (py.flags1.image > 0) {
 	msg_print("You can't believe what you are seeing! It's like a dream!");
     }
 
@@ -547,9 +547,9 @@ static void chest_trap(int y, int x)
     register int        i, j, k;
     register inven_type *i_ptr = &i_list[cave[y][x].i_idx];
 
-    if (i_ptr->flags & CH_LOSE_STR) {
+    if (i_ptr->flags1 & CH_LOSE_STR) {
 	msg_print("A small needle has pricked you!");
-	if (!py.flags.sustain_str) {
+	if (!py.flags1.sustain_str) {
 	    (void)dec_stat(A_STR);
 	    take_hit(damroll(1, 4), "a poison needle");
 	    msg_print("You feel weakened!");
@@ -559,28 +559,28 @@ static void chest_trap(int y, int x)
 	}
     }
 
-    if (i_ptr->flags & CH_POISON) {
+    if (i_ptr->flags1 & CH_POISON) {
 	msg_print("A small needle has pricked you!");
 	take_hit(damroll(1, 6), "a poison needle");
-	if (!(py.flags.resist_pois ||
-	      py.flags.oppose_pois ||
-	      py.flags.immune_pois)) {
-	    py.flags.poisoned += 10 + randint(20);
+	if (!(py.flags1.resist_pois ||
+	      py.flags1.oppose_pois ||
+	      py.flags1.immune_pois)) {
+	    py.flags1.poisoned += 10 + randint(20);
 	}
     }
 
-    if (i_ptr->flags & CH_PARALYSED) {
+    if (i_ptr->flags1 & CH_PARALYSED) {
 	msg_print("A puff of yellow gas surrounds you!");
-	if (py.flags.free_act) {
+	if (py.flags1.free_act) {
 	    msg_print("You are unaffected.");
 	}
 	else {
 	    msg_print("You choke and pass out.");
-	    py.flags.paralysis = 10 + randint(20);
+	    py.flags1.paralysis = 10 + randint(20);
 	}
     }
 
-    if (i_ptr->flags & CH_SUMMON) {
+    if (i_ptr->flags1 & CH_SUMMON) {
 	for (i = 0; i < 3; i++) {
 	    j = y;
 	    k = x;
@@ -588,7 +588,7 @@ static void chest_trap(int y, int x)
 	}
     }
 
-    if (i_ptr->flags & CH_EXPLODE) {
+    if (i_ptr->flags1 & CH_EXPLODE) {
 	msg_print("There is a sudden explosion!");
 	(void)delete_object(y, x);
 	take_hit(damroll(5, 8), "an exploding chest");
@@ -675,7 +675,7 @@ void do_cmd_open()
 		/* give a 1/50 chance of opening anything, anyway -CWS */
 		if ((i - i_ptr->pval) < 2) i = i_ptr->pval + 2;
 
-		if (py.flags.confused > 0) {
+		if (py.flags1.confused > 0) {
 		    msg_print("You are too confused to pick the lock.");
 		}
 		else if ((i - i_ptr->pval) > randint(100)) {
@@ -718,13 +718,13 @@ void do_cmd_open()
 	    flag = TRUE;
 
 	    /* Attempt to unlock it */
-	    if (i_ptr->flags & CH_LOCKED) {
+	    if (i_ptr->flags1 & CH_LOCKED) {
 
 		/* Assume locked, and thus not open */
 		flag = FALSE;
 
 		/* Too confused */
-		if (py.flags.confused > 0) {
+		if (py.flags1.confused > 0) {
 		    msg_print("You are too confused to pick the lock.");
 		}
 
@@ -744,7 +744,7 @@ void do_cmd_open()
 	    /* Allowed to open */
 	    if (flag) {
 
-		    i_ptr->flags &= ~CH_LOCKED;
+		    i_ptr->flags1 &= ~CH_LOCKED;
 		    i_ptr->name2 = EGO_EMPTY;
 		    known2(i_ptr);
 		    i_ptr->cost = 0;
@@ -752,7 +752,7 @@ void do_cmd_open()
 		flag = FALSE;
 
 	    /* Was chest still trapped?	 (Snicker)   */
-		if ((i_ptr->flags & CH_LOCKED) == 0) {
+		if ((i_ptr->flags1 & CH_LOCKED) == 0) {
 		    chest_trap(y, x);
 		    if (c_ptr->i_idx != 0)
 			flag = TRUE;
@@ -765,7 +765,7 @@ void do_cmd_open()
 		 * clear the cursed chest/monster win flag, so that people
 		 * can not win by opening a cursed chest 
 		 */
-		    i_ptr->flags &= ~TR3_CURSED;
+		    i_ptr->flags1 &= ~TR3_CURSED;
 
 		/* generate based on level chest was found on - dbd */
 		    object_level = i_ptr->pval;
@@ -783,8 +783,8 @@ void do_cmd_open()
 
 		    coin_type = 0;
 		    opening_chest = TRUE; /* don't generate another chest -CWS */
-		    (void)monster_death(y, x, i_list[c_ptr->i_idx].flags, 0, 0);
-		    i_list[c_ptr->i_idx].flags = 0;
+		    (void)monster_death(y, x, i_list[c_ptr->i_idx].flags1, 0, 0);
+		    i_list[c_ptr->i_idx].flags1 = 0;
 		    opening_chest = FALSE;
 		}
 	    }
@@ -956,7 +956,7 @@ void tunnel(int dir)
     monster_type       *m_ptr;
     vtype		out_val, m_name;
 
-    if ((py.flags.confused > 0) && /* Confused?	     */
+    if ((py.flags1.confused > 0) && /* Confused?	     */
 	(randint(4) > 1))	   /* 75% random movement   */
 	dir = randint(9);
 
@@ -1002,13 +1002,13 @@ void tunnel(int dir)
 	    msg_print(out_val);
 
 	    /* let the player attack the creature */
-	    if (py.flags.afraid < 1) py_attack(y, x);
+	    if (py.flags1.afraid < 1) py_attack(y, x);
 	    else msg_print("You are too afraid!");
 	}
 
 	else if (i_ptr->tval != TV_NOTHING) {
 
-	    if (i_ptr->flags & TR1_TUNNEL) {
+	    if (i_ptr->flags1 & TR1_TUNNEL) {
 
 		tabil += 25 + i_ptr->pval * 50;
 	    }
@@ -1169,13 +1169,13 @@ void do_cmd_disarm()
 		  (class_level_adj[py.misc.pclass][CLA_DISARM] *
 		  py.misc.lev / 3);
 
-	    if ((py.flags.blind > 0) || (no_lite())) {
+	    if ((py.flags1.blind > 0) || (no_lite())) {
 		tot = tot / 10;
 	    }
-	    if (py.flags.confused > 0) {
+	    if (py.flags1.confused > 0) {
 		tot = tot / 10;
 	    }
-	    if (py.flags.image > 0) {
+	    if (py.flags1.image > 0) {
 		tot = tot / 10;
 	    }
 
@@ -1188,10 +1188,10 @@ void do_cmd_disarm()
 		    py.misc.exp += i_ptr->pval;
 		    delete_object(y, x);
 		    /* move the player onto the trap */
-		    tmp = py.flags.confused;
-		    py.flags.confused = 0;
+		    tmp = py.flags1.confused;
+		    py.flags1.confused = 0;
 		    move_player(dir, FALSE);
-		    py.flags.confused = tmp;
+		    py.flags1.confused = tmp;
 		    prt_experience();
 		}
 
@@ -1204,10 +1204,10 @@ void do_cmd_disarm()
 		else {
 		    msg_print("You set the trap off!");
 		    /* Move the player onto the trap */
-		    tmp = py.flags.confused;
-		    py.flags.confused = 0;
+		    tmp = py.flags1.confused;
+		    py.flags1.confused = 0;
 		    move_player(dir, FALSE);
-		    py.flags.confused += tmp;
+		    py.flags1.confused += tmp;
 		}
 	    }
 
@@ -1221,15 +1221,15 @@ void do_cmd_disarm()
 		}
 
 		/* No traps to find. */
-		else if (!(i_ptr->flags & CH_TRAPPED)) {
+		else if (!(i_ptr->flags1 & CH_TRAPPED)) {
 		    msg_print("The chest was not trapped.");
 		    free_turn_flag = TRUE;
 		}
 
 		/* Successful Disarm */
 		else if ((tot - i_ptr->level) > randint(100)) {
-		    i_ptr->flags &= ~CH_TRAPPED;
-		    if (i_ptr->flags & CH_LOCKED)
+		    i_ptr->flags1 &= ~CH_TRAPPED;
+		    if (i_ptr->flags1 & CH_LOCKED)
 			    i_ptr->name2 = EGO_LOCKED;
 		    else
 			    i_ptr->name2 = EGO_DISARMED;
@@ -1304,7 +1304,7 @@ void bash()
 	c_ptr = &cave[y][x];
 
 	if (c_ptr->m_idx > 1) {
-	    if (py.flags.afraid > 0) {
+	    if (py.flags1.afraid > 0) {
 		msg_print("You are too afraid!");
 	    }
 	    else {
@@ -1338,7 +1338,7 @@ void bash()
 		    i_ptr->pval = 1 - randint(2);
 		    c_ptr->fval = CORR_FLOOR;
 
-		    if (py.flags.confused == 0)
+		    if (py.flags1.confused == 0)
 			move_player(dir, FALSE);
 		    else
 			lite_spot(y, x);
@@ -1349,7 +1349,7 @@ void bash()
 
 		else if (randint(150) > py.stats.use_stat[A_DEX]) {
 		    msg_print("You are off-balance.");
-		    py.flags.paralysis = 1 + randint(2);
+		    py.flags1.paralysis = 1 + randint(2);
 		}
 
 		else if (command_rep == 0)
@@ -1361,11 +1361,11 @@ void bash()
 		if (randint(10) == 1) {
 		    msg_print("You have destroyed the chest and its contents!");
 		    i_ptr->index = OBJ_RUINED_CHEST;
-		    i_ptr->flags = 0;
+		    i_ptr->flags1 = 0;
 		}
-		else if ((CH_LOCKED & i_ptr->flags) && (randint(10) == 1)) {
+		else if ((CH_LOCKED & i_ptr->flags1) && (randint(10) == 1)) {
 		    msg_print("The lock breaks open!");
-		    i_ptr->flags &= ~CH_LOCKED;
+		    i_ptr->flags1 &= ~CH_LOCKED;
 		}
 		else {
 		    count_msg_print("The chest holds firm.");
@@ -1522,7 +1522,7 @@ void do_cmd_fire()
 	else if (!known2_p(t) && (t->ident & ID_DAMD))
 	    ok_throw = TRUE;  /* Not IDed, but user knows it's cursed... */
 	else if ((t->tval >= TV_MIN_WEAR) && (t->tval <= TV_MAX_WEAR) &&
-		 (t->flags & TR3_CURSED) && known2_p(t))
+		 (t->flags1 & TR3_CURSED) && known2_p(t))
 	    ok_throw = TRUE; /* if user wants to throw cursed, let him */
 	else if ((k_list[t->index].cost <= 0) && known1_p(t) &&
 		 !(known2_p(t) && (t->cost > 0)))
@@ -1650,7 +1650,7 @@ void do_cmd_fire()
 			}
 			else
 			{   /* do not test c_ptr->fm here */
-			    if (panel_contains(y, x) && (py.flags.blind < 1)
+			    if (panel_contains(y, x) && (py.flags1.blind < 1)
 				&& (c_ptr->tl || c_ptr->pl)) {
 				print(tchar, y, x);
 				put_qio();	/* show object moving */

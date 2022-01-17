@@ -891,7 +891,7 @@ void inven_destroy(int item_val)
 	invcopy(&inventory[inven_ctr - 1], OBJ_NOTHING);
 	inven_ctr--;
     }
-    py.flags.status |= PY_STR_WGT;
+    py.flags1.status |= PY_STR_WGT;
 }
 
 
@@ -960,11 +960,11 @@ void check_strength()
 	    msg_print("Your pack is so heavy that it slows you down.");
 	else
 	    msg_print("You move more easily under the weight of your pack.");
-	py.flags.speed += i - pack_heavy;
-	py.flags.status |= PY_SPEED;
+	py.flags1.speed += i - pack_heavy;
+	py.flags1.status |= PY_SPEED;
 	pack_heavy = i;
     }
-    py.flags.status &= ~PY_STR_WGT;
+    py.flags1.status &= ~PY_STR_WGT;
 
     if (py.misc.pclass == 2 && !notlike) {
         if ((i_ptr->tval == TV_SWORD || i_ptr->tval == TV_POLEARM)

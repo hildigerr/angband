@@ -169,7 +169,7 @@ struct _inven_kind {
 
   cptr name;			/* Name				*/
 
-  u32b flags;			    /* Special flags		      */
+  u32b flags1;		/* Flags, set 1			*/
   byte tval;			    /* Category number		      */
   byte tchar;			    /* Character representation	      */
   s16b pval;			/* Object extra info		*/
@@ -185,7 +185,7 @@ struct _inven_kind {
   byte damage[2];		    /* Damage when hits		      */
   byte level;			    /* Level item first found	      */
   byte rare;			    /* True if Rare		      */
-  u32b flags2;		    /* Yes! even more froggin' flags! */
+  u32b flags2;		/* Flags, set 2			*/
 };
 
 
@@ -211,7 +211,7 @@ struct _inven_type {
 
   byte name2;			    /* Object special name	*/
   char inscrip[INSCRIP_SIZE];	    /* Object inscription	*/
-  u32b flags;			    /* Special flags		*/
+  u32b flags1;		/* Flags, set 1			*/
   byte tval;			    /* Category number		*/
   byte tchar;			    /* Character representation */
   s16b pval;			/* Misc. use variable		*/
@@ -227,7 +227,7 @@ struct _inven_type {
   byte damage[2];		    /* Damage when hits		*/
   byte level;			    /* Level item first found	*/
   byte ident;			    /* Identify information	*/
-  u32b flags2;		    /* Yes! even more froggin' flags!			*/
+  u32b flags2;		/* Flags, set 2			*/
   u16b timeout;		    /* How long to wait before reactivating an Artifact */
 };
 
@@ -285,7 +285,7 @@ struct _player_type {
       u16b use_stat[6];	    /* What is used		    */
     } stats;
 
-  struct flags {
+  struct flags1 {
       u32b status;		    /* Status of player	   */
       s16b rest;		    /* Rest counter	   */
       s16b blind;		    /* Blindness counter   */
@@ -356,7 +356,7 @@ struct _player_type {
       byte resist_blind;	    /* Resist blindness	   */
       byte resist_nether;	    /* Resist nether	   */
       byte resist_fear;	    /* Resist fear	   */
-    } flags;
+    } flags1;
 };
 
 

@@ -230,13 +230,13 @@ void calc_spells(int stat)
 
 
     /* Take note when "study" changes */
-    if (new_spells != py.flags.new_spells) {
-	if (new_spells > 0 && py.flags.new_spells == 0) {
+    if (new_spells != py.flags1.new_spells) {
+	if (new_spells > 0 && py.flags1.new_spells == 0) {
 	    (void)sprintf(tmp_str, "You can learn some new %ss now.", p);
 	    msg_print(tmp_str);
 	}
-	py.flags.new_spells = new_spells;
-	py.flags.status |= PY_STUDY;
+	py.flags1.new_spells = new_spells;
+	py.flags1.status |= PY_STUDY;
     }
 }
 
@@ -260,7 +260,7 @@ void gain_spells(void)
 	return;
     }
 
-    if (py.flags.blind > 0) {
+    if (py.flags1.blind > 0) {
 	msg_print("You can't see to read your spell book!");
 	return;
     }
@@ -270,13 +270,13 @@ void gain_spells(void)
 	return;
     }
 
-    if (py.flags.confused > 0) {
+    if (py.flags1.confused > 0) {
 	msg_print("You are too confused.");
 	return;
     }
 
 
-    new_spells = py.flags.new_spells;
+    new_spells = py.flags1.new_spells;
     diff_spells = 0;
     p_ptr = &py.misc;
     s_ptr = &magic_spell[p_ptr->pclass - 1][0];
@@ -311,7 +311,7 @@ void gain_spells(void)
 	for (i = 0; i < inven_ctr; i++) {
 	    if (((stat == A_INT) && (inventory[i].tval == TV_MAGIC_BOOK)) ||
 		((stat == A_WIS) && (inventory[i].tval == TV_PRAYER_BOOK))) {
-		spell_flag |= inventory[i].flags1;
+		spell_flag |= inventory[i].flags11;
 		spell_flag2 |= inventory[i].flags2;
 	    }
 	}
@@ -413,11 +413,11 @@ void gain_spells(void)
 	}
     }
 
-    py.flags.new_spells = new_spells + diff_spells;
+    py.flags1.new_spells = new_spells + diff_spells;
 
     /* Player has gained some spells */
-    if (py.flags.new_spells == 0) {
-	py.flags.status |= PY_STUDY;
+    if (py.flags1.new_spells == 0) {
+	py.flags1.status |= PY_STUDY;
     }
 
     /* set the mana for first level characters when they learn first spell */
@@ -497,8 +497,8 @@ void calc_mana(int stat)
 
 	/* good gauntlets of dexterity or free action do not hurt spells */
 	if ((i_ptr->tval != TV_NOTHING) &&
-	    !((i_ptr->flags & TR2_FREE_ACT) ||
-	      ((i_ptr->flags & TR1_DEX) &&
+	    !((i_ptr->flags1 & TR2_FREE_ACT) ||
+	      ((i_ptr->flags1 & TR1_DEX) &&
 	       (i_ptr->pval > 0)))) {
 
 	    /* Only mages are affected */
@@ -562,7 +562,7 @@ void calc_mana(int stat)
 	/* No mana left */
 	if (new_mana < 1) {
 	    p_ptr->cmana = p_ptr->cmana_frac = p_ptr->mana = 0;
-	    py.flags.status |= PY_MANA;
+	    py.flags1.status |= PY_MANA;
 	    return;
 	}
 
@@ -587,7 +587,7 @@ void calc_mana(int stat)
 	    p_ptr->mana = new_mana;
 
 	    /* can't print mana here, may be in store or inventory mode */
-	    py.flags.status |= PY_MANA;
+	    py.flags1.status |= PY_MANA;
 	}
     }
 
@@ -595,7 +595,7 @@ void calc_mana(int stat)
 	p_ptr->mana = 0;
 	p_ptr->cmana = 0;
 	/* can't print mana here, may be in store or inventory mode */
-	py.flags.status |= PY_MANA;
+	py.flags1.status |= PY_MANA;
     }
 }
 
@@ -607,13 +607,13 @@ void cast()
 {
     int                    i, j, item_val, dir;
     int                    choice, chance, result;
-    register struct flags *f_ptr;
+    register struct flags1 *f_ptr = &py.flags1;
     register struct misc  *p_ptr;
     register spell_type   *s_ptr;
 
     free_turn_flag = TRUE;
 
-    if (py.flags.blind > 0) {
+    if (f_ptr->blind > 0) {
 	msg_print("You can't see to read your spell book!");
 	return;
     }
@@ -623,7 +623,7 @@ void cast()
 	return;
     }
     
-    if (py.flags.confused > 0) {
+    if (f_ptr->confused > 0) {
 	msg_print("You are too confused.");
 	return;
     }
@@ -645,8 +645,8 @@ void cast()
     result = cast_spell("Cast which spell?", item_val, &choice, &chance);
 
 
-	if (py.flags.stun > 50) chance += 25;
-	else if (py.flags.stun > 0) chance += 15;
+	if (f_ptr->stun > 50) chance += 25;
+	else if (f_ptr->stun > 0) chance += 15;
 
     /* Unknown */    
     if (result < 0) {
@@ -704,9 +704,9 @@ void cast()
 
 	  case 6:
 	    (void)hp_player(damroll(4, 4));
-	    if (py.flags.cut > 0) {
-		py.flags.cut -= 15;
-		if (py.flags.cut < 0) py.flags.cut = 0;
+	    if (f_ptr->cut > 0) {
+		f_ptr->cut -= 15;
+		if (f_ptr->cut < 0) f_ptr->cut = 0;
 		msg_print("Your wounds heal.");
 	    }
 	    break;
@@ -836,7 +836,6 @@ void cast()
 	    break;
 
 	  case 30:
-	    f_ptr = &py.flags;
 	    if (f_ptr->fast <= 0) {
 		f_ptr->fast += randint(20) + py.misc.lev;
 	    }
@@ -876,12 +875,12 @@ void cast()
 	    break;
 
 	  case 38:	   /* Word of Recall */
-	    if (py.flags.word_recall == 0) {
-		py.flags.word_recall = 15 + randint(20);
+	    if (f_ptr->word_recall == 0) {
+		f_ptr->word_recall = 15 + randint(20);
 		msg_print("The air about you becomes charged...");
 	    }
 	    else {
-		py.flags.word_recall = 0;
+		f_ptr->word_recall = 0;
 		msg_print("A tension leaves the air around you...");
 	    }
 	    break;
@@ -945,35 +944,35 @@ void cast()
 	    break;
 
 	  case 50:
-	    py.flags.oppose_fire += randint(20) + 20;
+	    f_ptr->oppose_fire += randint(20) + 20;
 	    break;
 
 	  case 51:
-	    py.flags.oppose_cold += randint(20) + 20;
+	    f_ptr->oppose_cold += randint(20) + 20;
 	    break;
 	    
 	  case 52:
-	    py.flags.oppose_acid += randint(20) + 20;
+	    f_ptr->oppose_acid += randint(20) + 20;
 	    break;
 	    
 	  case 53:
-	    py.flags.oppose_pois += randint(20) + 20;
+	    f_ptr->oppose_pois += randint(20) + 20;
 	    break;
 	    
 	  case 54:
-	    py.flags.oppose_fire += randint(20) + 20;
-	    py.flags.oppose_cold += randint(20) + 20;
-	    py.flags.oppose_elec += randint(20) + 20;
-	    py.flags.oppose_pois += randint(20) + 20;
-	    py.flags.oppose_acid += randint(20) + 20;
+	    f_ptr->oppose_fire += randint(20) + 20;
+	    f_ptr->oppose_cold += randint(20) + 20;
+	    f_ptr->oppose_elec += randint(20) + 20;
+	    f_ptr->oppose_pois += randint(20) + 20;
+	    f_ptr->oppose_acid += randint(20) + 20;
 	    break;
 	    
 	  case 55:
-	    py.flags.hero += randint(25) + 25;
+	    f_ptr->hero += randint(25) + 25;
 	    break;
 	    
 	  case 56:
-	    py.flags.shield += randint(20) + 30;
+	    f_ptr->shield += randint(20) + 30;
 	    calc_bonuses();
 	    prt_pac();
 	    calc_mana(A_INT);
@@ -981,20 +980,20 @@ void cast()
 	    break;
 	    
 	  case 57:
-	    py.flags.shero += randint(25) + 25;
+	    f_ptr->shero += randint(25) + 25;
 	    break;
 	    
 	  case 58:
-	    if (py.flags.fast <= 0) {
-		py.flags.fast += randint(30) + 30 + py.misc.lev;
+	    if (f_ptr->fast <= 0) {
+		f_ptr->fast += randint(30) + 30 + py.misc.lev;
 	    }
 	    else {
-		py.flags.fast += randint(5);
+		f_ptr->fast += randint(5);
 	    }
 	    break;
 
 	  case 59:
-	    py.flags.invuln += randint(8) + 8;
+	    f_ptr->invuln += randint(8) + 8;
 	    break;
 
 	  default:
@@ -1023,7 +1022,7 @@ void cast()
 	    if (!free_turn_flag) {
 		if (s_ptr->smana > p_ptr->cmana) {
 		    msg_print("You faint from the effort!");
-		    py.flags.paralysis =
+		    f_ptr->paralysis =
 			randint((int)(5 * (s_ptr->smana - p_ptr->cmana)));
 		    p_ptr->cmana = 0;
 		    p_ptr->cmana_frac = 0;

@@ -318,7 +318,7 @@ int file_character(cptr filename1)
 	xdev = p_ptr->save + stat_adj(A_INT)
 	    + (class_level_adj[p_ptr->pclass][CLA_DEVICE] * p_ptr->lev / 3);
 
-	(void)sprintf(xinfra, "%d feet", py.flags.see_infra * 10);
+	(void)sprintf(xinfra, "%d feet", py.flags1.see_infra * 10);
 
 	(void)fprintf(file1, "(Miscellaneous Abilities)\n\n");
 	(void)fprintf(file1, " Fighting    : %-10s", likert(xbth, 12));

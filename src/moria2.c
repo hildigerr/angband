@@ -86,7 +86,7 @@ void hit_trap(int y, int x)
 
       case 1:			   /* Open pit */
 	msg_print("You fell into a pit!");
-	if (py.flags.ffall) {
+	if (py.flags1.ffall) {
 	    msg_print("You gently float down.");
 	}
 	else {
@@ -108,7 +108,7 @@ void hit_trap(int y, int x)
 
       case 3:			   /* Covered pit */
 	msg_print("You fell into a covered pit.");
-	if (py.flags.ffall)
+	if (py.flags1.ffall)
 	    msg_print("You gently float down.");
 	else {
 	    objdes(tmp, i_ptr, TRUE);
@@ -122,7 +122,7 @@ void hit_trap(int y, int x)
 	    msg_print("You fell through a trap door!");
 	    new_level_flag = TRUE;
 	    dun_level++;
-	    if (py.flags.ffall) {
+	    if (py.flags1.ffall) {
 		msg_print("You gently float down.");
 	}
 	    else {
@@ -136,14 +136,14 @@ void hit_trap(int y, int x)
 	 /* end normal */ 
 	else {			   /* it's a quest level, can't let them fall through */
 	    msg_print("You fall into a spiked pit!");
-	    if (py.flags.ffall)
+	    if (py.flags1.ffall)
 		msg_print("You gently float down.");
 	    else {
 		dam = (dam * 3) / 2;	/* do a little extra damage for spikes */
 		if (randint(3) == 1) {
 		    msg_print("The spikes are poisoned!");
-		    if (!(py.flags.immune_pois || py.flags.resist_pois ||
-			  py.flags.oppose_pois))
+		    if (!(py.flags1.immune_pois || py.flags1.resist_pois ||
+			  py.flags1.oppose_pois))
 			dam *= 2;  /* more damage from poison!  :-)  -CFT */
 		    else
 			msg_print("You are unaffected by the poison.");
@@ -153,14 +153,14 @@ void hit_trap(int y, int x)
 	break;
 
       case 5:			   /* Sleep gas */
-	if (py.flags.paralysis == 0) {
+	if (py.flags1.paralysis == 0) {
 	    msg_print("A strange white mist surrounds you!");
-	    if (py.flags.free_act) {
+	    if (py.flags1.free_act) {
 		msg_print("You are unaffected.");
 	    }
 	    else {
 		msg_print("You fall asleep.");
-		py.flags.paralysis += randint(10) + 4;
+		py.flags1.paralysis += randint(10) + 4;
 	    }
 	}
 	break;
@@ -173,7 +173,7 @@ void hit_trap(int y, int x)
 
       case 7:			   /* STR Dart */
 	if (test_hit(125, 0, 0, p_ptr->pac + p_ptr->ptoac, CLA_MISC_HIT)) {
-	    if (!py.flags.sustain_str) {
+	    if (!py.flags1.sustain_str) {
 		(void)dec_stat(A_STR);
 		objdes(tmp, i_ptr, TRUE);
 		take_hit(dam, tmp);
@@ -229,23 +229,23 @@ void hit_trap(int y, int x)
 	break;
 
       case 14:			   /* Poison gas */
-	if (!(py.flags.immune_pois || py.flags.resist_pois ||
-	      py.flags.oppose_pois))
+	if (!(py.flags1.immune_pois || py.flags1.resist_pois ||
+	      py.flags1.oppose_pois))
 	    poison_gas(dam, "a poison gas trap");
 	msg_print("A pungent green gas surrounds you!");
 	break;
 
       case 15:			   /* Blind Gas */
 	msg_print("A black gas surrounds you!");
-	if (!py.flags.resist_blind) {
-	    py.flags.blind += randint(50) + 50;
+	if (!py.flags1.resist_blind) {
+	    py.flags1.blind += randint(50) + 50;
 	}
 	break;
 
       case 16:			   /* Confuse Gas */
 	msg_print("A gas of scintillating colors surrounds you!");
-	if ((!py.flags.resist_conf) && (!py.flags.resist_chaos)) {
-	    py.flags.confused += randint(15) + 15;
+	if ((!py.flags1.resist_conf) && (!py.flags1.resist_chaos)) {
+	    py.flags1.confused += randint(15) + 15;
 	}
 	break;
 
@@ -254,11 +254,11 @@ void hit_trap(int y, int x)
 	    objdes(tmp, i_ptr, TRUE);
 	    take_hit(dam, tmp);
 		msg_print("A small dart hits you!");
-	    if (py.flags.free_act) {
+	    if (py.flags1.free_act) {
 		msg_print("You are unaffected.");
 	    }
 	    else {
-		py.flags.slow += randint(20) + 10;
+		py.flags1.slow += randint(20) + 10;
 	    }
 	}
 	else {
@@ -268,7 +268,7 @@ void hit_trap(int y, int x)
 
       case 18:			   /* CON Dart */
 	if (test_hit(125, 0, 0, p_ptr->pac + p_ptr->ptoac, CLA_MISC_HIT)) {
-	    if (!py.flags.sustain_con) {
+	    if (!py.flags1.sustain_con) {
 	    (void)dec_stat(A_CON);
 	    objdes(tmp, i_ptr, TRUE);
 	    take_hit(dam, tmp);
@@ -318,12 +318,12 @@ int cast_spell(cptr prompt, int item_val, int *sn, int *sc)
 
     i = 0;
 
-    j1 = inventory[item_val].flags;
+    j1 = inventory[item_val].flags1;
     j2 = inventory[item_val].flags2;
 
     first_spell = bit_pos(&j1);
 /* set j1 again, since bit_pos modified it */
-    j1 = inventory[item_val].flags & spell_learned;
+    j1 = inventory[item_val].flags1 & spell_learned;
 
     s_ptr = magic_spell[py.misc.pclass - 1];
 
@@ -335,7 +335,7 @@ int cast_spell(cptr prompt, int item_val, int *sn, int *sc)
 	}
     }
 
-    if (!(inventory[item_val].flags & spell_learned))
+    if (!(inventory[item_val].flags1 & spell_learned))
 	first_spell = bit_pos(&j2) + 32;
     j2 = inventory[item_val].flags2 & spell_learned2;
 
@@ -457,7 +457,7 @@ u32b monster_death(int y, int x, u32b flags, u32b good, u32b win)
 			cave[j][k].i_idx = cur_pos;
 			invcopy(&i_list[cur_pos], 98);
 			t_ptr = &i_list[cur_pos];
-			t_ptr->flags |= (TR1_STR | TR1_DEX | TR1_CON | TR1_INT | TR1_WIS | TR1_CHR |
+			t_ptr->flags1 |= (TR1_STR | TR1_DEX | TR1_CON | TR1_INT | TR1_WIS | TR1_CHR |
 				       TR3_SEE_INVIS | TR3_CURSED | TR1_INFRA);
 			t_ptr->flags2 |= (TR3_TELEPATHY | TR3_LITE | TR_ARTIFACT);
 			t_ptr->ident |= ID_NOSHOW_TYPE;
@@ -481,7 +481,7 @@ u32b monster_death(int y, int x, u32b flags, u32b good, u32b win)
 			t_ptr->damage[0] = 10;
 			t_ptr->damage[1] = 8;
 			t_ptr->weight = 600;
-			t_ptr->flags = (TR3_SEE_INVIS | TR1_SLAY_EVIL | TR1_SLAY_UNDEAD |
+			t_ptr->flags1 = (TR3_SEE_INVIS | TR1_SLAY_EVIL | TR1_SLAY_UNDEAD |
 					TR2_RES_FIRE | TR2_RES_COLD | TR2_RES_ELEC |
 					TR2_RES_ACID | TR1_SLAY_ANIMAL | TR1_SPEED |
 					TR1_SLAY_X_DRAGON | TR3_AGGRAVATE);
@@ -751,7 +751,7 @@ int mon_take_hit(int m_idx, int dam, int print_fear)
 			  (r_list[m_ptr->r_idx].cdefense & (MF2_SPECIAL | MF2_GOOD)),
 			  (r_list[m_ptr->r_idx].cmove & WINNER));
 	coin_type = 0;
-	if ((py.flags.blind < 1 && m_ptr->ml) ||
+	if ((py.flags1.blind < 1 && m_ptr->ml) ||
 	    (r_list[m_ptr->r_idx].cmove & CM_WIN) ||
 	    (r_list[m_ptr->r_idx].cdefense & MF2_UNIQUE)) {
 	    /* recall even invisible uniques */
@@ -969,8 +969,8 @@ void py_attack(int y, int x)
 	    if (k < 0) k = 0;
 
 	    /* Confusion attack */
-	    if (py.flags.confuse_monster) {
-		py.flags.confuse_monster = FALSE;
+	    if (py.flags1.confuse_monster) {
+		py.flags1.confuse_monster = FALSE;
 		msg_print("Your hands stop glowing.");
 		if ((r_list[r_idx].cdefense & MF2_CHARM_SLEEP) ||
 		    (randint(MAX_R_LEV) < r_list[r_idx].level)) {
@@ -1015,7 +1015,7 @@ void py_attack(int y, int x)
 		&& (i_ptr->tval <= TV_ARROW)) {	/* Use missiles up */
 		i_ptr->number--;
 		inven_weight -= i_ptr->weight;
-		py.flags.status |= PY_STR_WGT;
+		py.flags1.status |= PY_STR_WGT;
 		if (i_ptr->number == 0) {
 		    equip_ctr--;
 		    py_bonuses(i_ptr, -1);
@@ -1074,7 +1074,7 @@ static void inven_throw(int item_val, inven_type *t_ptr)
 	t_ptr->number = 1;
 	i_ptr->number--;
 	inven_weight -= i_ptr->weight;
-	py.flags.status |= PY_STR_WGT;
+	py.flags1.status |= PY_STR_WGT;
     } else
 	inven_destroy(item_val);
 }
@@ -1400,7 +1400,7 @@ void py_bash(int y, int x)
     /* Stumble */
     if (randint(150) > py.stats.use_stat[A_DEX]) {
 	msg_print("You are off balance.");
-	py.flags.paralysis = 1 + randint(2);
+	py.flags1.paralysis = 1 + randint(2);
     }
 }
 

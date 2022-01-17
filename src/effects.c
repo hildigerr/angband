@@ -29,7 +29,7 @@
  */
 static void lose_str()
 {
-    if (!py.flags.sustain_str) {
+    if (!py.flags1.sustain_str) {
 	(void)dec_stat(A_STR);
 	msg_print("You feel very weak.");
     }
@@ -44,7 +44,7 @@ static void lose_str()
  */
 static void lose_int()
 {
-    if (!py.flags.sustain_int) {
+    if (!py.flags1.sustain_int) {
 	(void)dec_stat(A_INT);
 	msg_print("You become very dizzy.");
     }
@@ -59,7 +59,7 @@ static void lose_int()
  */
 static void lose_wis()
 {
-    if (!py.flags.sustain_wis) {
+    if (!py.flags1.sustain_wis) {
 	(void)dec_stat(A_WIS);
 	msg_print("You feel very naive.");
     }
@@ -74,7 +74,7 @@ static void lose_wis()
  */
 static void lose_dex()
 {
-    if (!py.flags.sustain_dex) {
+    if (!py.flags1.sustain_dex) {
 	(void)dec_stat(A_DEX);
 	msg_print("You feel very sore.");
     }
@@ -89,7 +89,7 @@ static void lose_dex()
  */
 static void lose_con()
 {
-    if (!py.flags.sustain_con) {
+    if (!py.flags1.sustain_con) {
 	(void)dec_stat(A_CON);
 	msg_print("You feel very sick.");
     }
@@ -104,7 +104,7 @@ static void lose_con()
  */
 static void lose_chr()
 {
-    if (!py.flags.sustain_chr) {
+    if (!py.flags1.sustain_chr) {
 	(void)dec_stat(A_CHR);
 	msg_print("Your skin starts to itch.");
     }
@@ -125,7 +125,7 @@ void do_cmd_eat_food(void)
     u32b                 flg;
     int			   j, ident, lev;
     int                    item_val, i1, i2;
-    register struct flags *f_ptr = &py.flags;
+    register struct flags1 *f_ptr = &py.flags1;
     register struct misc  *m_ptr = &py.misc;;
     register inven_type   *i_ptr;
 
@@ -157,7 +157,7 @@ void do_cmd_eat_food(void)
     ident = FALSE;
 
     /* Apply all of the food flags */
-    for (flg = i_ptr->flags; flg; ) {
+    for (flg = i_ptr->flags1; flg; ) {
 
 	/* Extract the next "effect" bit */
 	j = bit_pos(&flg);
@@ -172,7 +172,7 @@ void do_cmd_eat_food(void)
 	    break;
 
 	  case 2:
-	    if (!py.flags.resist_blind) {
+	    if (!f_ptr->resist_blind) {
 		f_ptr->blind += randint(250) + 10 * lev + 100;
 		draw_cave();
 		msg_print("A veil of darkness surrounds you.");
@@ -181,7 +181,7 @@ void do_cmd_eat_food(void)
 	    break;
 
 	  case 3:
-	    if (!py.flags.resist_fear) {
+	    if (!f_ptr->resist_fear) {
 		f_ptr->afraid += randint(10) + lev;
 		msg_print("You feel terrified!");
 		ident = TRUE;
@@ -189,7 +189,7 @@ void do_cmd_eat_food(void)
 	    break;
 
 	  case 4:
-	    if ((!py.flags.resist_conf) && (!py.flags.resist_chaos)) {
+	    if ((!f_ptr->resist_conf) && (!f_ptr->resist_chaos)) {
 		f_ptr->confused += randint(10) + lev;
 		msg_print("You feel drugged.");
 	    }
@@ -357,7 +357,7 @@ void do_cmd_eat_food(void)
     add_food(i_ptr->pval);
 
     /* Hack -- note loss of hunger */
-    py.flags.status &= ~(PY_WEAK | PY_HUNGRY);
+    f_ptr->status &= ~(PY_WEAK | PY_HUNGRY);
     prt_hunger();
 
     /* Destroy the food */
@@ -381,7 +381,7 @@ void do_cmd_quaff_potion(void)
     int    item_val, i1, i2;
     register inven_type   *i_ptr;
     register struct misc  *m_ptr = &py.misc;
-    register struct flags *f_ptr = &py.flags;
+    register struct flags1 *f_ptr = &py.flags1;
 
     /* Assume the turn will be free */
     free_turn_flag = TRUE;
@@ -408,13 +408,13 @@ void do_cmd_quaff_potion(void)
     ident = FALSE;
 
     /* Note potions with no effects */
-    if (i_ptr->flags == 0) {
+    if (i_ptr->flags1 == 0) {
 	msg_print("You feel less thirsty.");
 	ident = TRUE;
     }
 
     /* Analyze the first set of effects */    
-    for (flg = i_ptr->flags; flg; ) {
+    for (flg = i_ptr->flags1; flg; ) {
 
 	/* Extract the next effect bit */
 	j = bit_pos(&flg);
@@ -501,35 +501,35 @@ void do_cmd_quaff_potion(void)
 
 	  case 13:
 	    if (hp_player(damroll(2, 7))) ident = TRUE;
-	    if (py.flags.cut > 0) {
+	    if (f_ptr->cut > 0) {
 		msg_print("Your wounds heal.");
-		py.flags.cut -= 10;
-		if (py.flags.cut < 0) py.flags.cut = 0;
+		f_ptr->cut -= 10;
+		if (f_ptr->cut < 0) f_ptr->cut = 0;
 		ident = TRUE;
 	    }
 	    break;
 
 	  case 14:
 	    if (hp_player(damroll(4, 7))) ident = TRUE;
-	    if (py.flags.cut > 0) {
+	    if (f_ptr->cut > 0) {
 		msg_print("Your wounds heal.");
-		py.flags.cut = (py.flags.cut / 2) - 50;
-		if (py.flags.cut < 0) py.flags.cut = 0;
+		f_ptr->cut = (f_ptr->cut / 2) - 50;
+		if (f_ptr->cut < 0) f_ptr->cut = 0;
 		ident = TRUE;
 	    }
 	    break;
 
 	  case 15:
 	    if (hp_player(damroll(6, 7))) ident = TRUE;
-	    if (py.flags.cut > 0) {
+	    if (f_ptr->cut > 0) {
 		msg_print("Your wounds heal.");
-		py.flags.cut = 0;
+		f_ptr->cut = 0;
 		ident = TRUE;
 	    }
-	    if (py.flags.stun > 0) {
+	    if (f_ptr->stun > 0) {
 		msg_print("Your head stops stinging.");
-		py.flags.stun = 0;
-		if (py.flags.stun > 50) {
+		f_ptr->stun = 0;
+		if (f_ptr->stun > 50) {
 		    py.misc.ptohit += 20;
 		    py.misc.ptodam += 20;
 		} else {
@@ -542,10 +542,10 @@ void do_cmd_quaff_potion(void)
 
 	  case 16:
 	    if (hp_player(400)) ident = TRUE;
-	    if (py.flags.stun > 0) {
+	    if (f_ptr->stun > 0) {
 		msg_print("Your head stops stinging.");
-		py.flags.stun = 0;
-		if (py.flags.stun > 50) {
+		f_ptr->stun = 0;
+		if (f_ptr->stun > 50) {
 		    py.misc.ptohit += 20;
 		    py.misc.ptodam += 20;
 		} else {
@@ -554,9 +554,9 @@ void do_cmd_quaff_potion(void)
 		}
 		ident = TRUE;
 	    }
-	    if (py.flags.cut > 0) {
+	    if (f_ptr->cut > 0) {
 		msg_print("Your wounds heal.");
-		py.flags.cut = 0;
+		f_ptr->cut = 0;
 		ident = TRUE;
 	    }
 	    break;
@@ -590,7 +590,7 @@ void do_cmd_quaff_potion(void)
 	    break;
 
 	  case 20:
-	    if (!py.flags.resist_blind) {
+	    if (!f_ptr->resist_blind) {
 		if (f_ptr->blind == 0) {
 		    msg_print("You are covered by a veil of darkness.");
 		    ident = TRUE;
@@ -624,16 +624,16 @@ void do_cmd_quaff_potion(void)
 	    break;
 
 	  case 23:
-	    if (py.flags.fast == 0) ident = TRUE;
-	    if (py.flags.fast <= 0) {
-		py.flags.fast += randint(25) + 15;
+	    if (f_ptr->fast == 0) ident = TRUE;
+	    if (f_ptr->fast <= 0) {
+		f_ptr->fast += randint(25) + 15;
 	    } else
-		py.flags.fast += randint(5);
+		f_ptr->fast += randint(5);
 	    break;
 
 	  case 24:
-	    if (py.flags.slow == 0) ident = TRUE;
-	    py.flags.slow += randint(25) + 15;
+	    if (f_ptr->slow == 0) ident = TRUE;
+	    f_ptr->slow += randint(25) + 15;
 	    break;
 
 	  case 26:
@@ -676,7 +676,7 @@ void do_cmd_quaff_potion(void)
 	    break;	/* Unused */
 
 	  case 34:
-	    if (!py.flags.hold_life && py.misc.exp > 0) {
+	    if (!f_ptr->hold_life && m_ptr->exp > 0) {
 		s32b               m, scale;
 
 		msg_print("You feel your memories fade.");
@@ -705,13 +705,13 @@ void do_cmd_quaff_potion(void)
 	    break;
 
 	  case 37:
-	    if (py.flags.hero == 0) ident = TRUE;
-	    py.flags.hero += randint(25) + 25;
+	    if (f_ptr->hero == 0) ident = TRUE;
+	    f_ptr->hero += randint(25) + 25;
 	    break;
 
 	  case 38:
-	    if (py.flags.shero == 0) ident = TRUE;
-	    py.flags.shero += randint(25) + 25;
+	    if (f_ptr->shero == 0) ident = TRUE;
+	    f_ptr->shero += randint(25) + 25;
 	    break;
 
 	  case 39:
@@ -733,7 +733,7 @@ void do_cmd_quaff_potion(void)
 	    break;
 
 	  case 43:
-	    if (!py.flags.detect_inv) ident = TRUE;
+	    if (!f_ptr->detect_inv) ident = TRUE;
 	    detect_inv2(randint(12) + 12);
 	    break;
 
@@ -804,21 +804,21 @@ void do_cmd_quaff_potion(void)
 	    cure_poison() |
 	    cure_blindness() |
 	    cure_confusion() |
-	    (py.flags.stun > 0) |
-	    (py.flags.cut > 0) |
-	    (py.flags.image > 0) |
+	    (f_ptr->stun > 0) |
+	    (f_ptr->cut > 0) |
+	    (f_ptr->image > 0) |
 	    remove_fear()) {
-	    py.flags.cut = 0;
-	    py.flags.image = 0;
-	    if (py.flags.stun > 0) {
-		    if (py.flags.stun > 50) {
+	    f_ptr->cut = 0;
+	    f_ptr->image = 0;
+	    if (f_ptr->stun > 0) {
+		    if (f_ptr->stun > 50) {
 			py.misc.ptohit += 20;
 			py.misc.ptodam += 20;
 		    } else {
 			py.misc.ptohit += 5;
 			py.misc.ptodam += 5;
 		    }
-		    py.flags.stun = 0;
+		    f_ptr->stun = 0;
 	    }
 	    ident = TRUE;
 	    }
@@ -863,10 +863,10 @@ void do_cmd_quaff_potion(void)
 
 	  case 56:
 	    if (hp_player(1200)) ident = TRUE;
-	    if (py.flags.stun > 0) {
-		py.flags.stun = 0;
+	    if (f_ptr->stun > 0) {
+		f_ptr->stun = 0;
 		msg_print("Your head stops stinging.");
-		if (py.flags.stun > 50) {
+		if (f_ptr->stun > 50) {
 		    py.misc.ptohit += 20;
 		    py.misc.ptodam += 20;
 		} else {
@@ -875,8 +875,8 @@ void do_cmd_quaff_potion(void)
 		}
 		ident = TRUE;
 	    }
-	    if (py.flags.cut > 0) {
-		py.flags.cut = 0;
+	    if (f_ptr->cut > 0) {
+		f_ptr->cut = 0;
 		msg_print("Your wounds heal.");
 		ident = TRUE;
 	    }
@@ -934,7 +934,7 @@ void do_cmd_read_scroll(void)
 
     free_turn_flag = TRUE;
 
-    if (py.flags.blind > 0) {
+    if (py.flags1.blind > 0) {
 	msg_print("You can't see to read the scroll.");
 	return;
     }
@@ -944,7 +944,7 @@ void do_cmd_read_scroll(void)
 	return;
     }
 
-    if (py.flags.confused > 0) {
+    if (py.flags1.confused > 0) {
 	msg_print("You are too confused to read a scroll.");
 	return;
     }
@@ -974,7 +974,7 @@ void do_cmd_read_scroll(void)
     ident = FALSE;
 
     /* Apply the first set of scroll effects */
-    for (flg = i_ptr->flags; flg; ) {
+    for (flg = i_ptr->flags1; flg; ) {
 
 	/* Extract the next effect bit-flag */
 	j = bit_pos(&i);
@@ -1030,12 +1030,12 @@ void do_cmd_read_scroll(void)
 	    if (inventory[INVEN_FEET].tval != TV_NOTHING)  tmp[k++] = INVEN_FEET;
 
 	    if (k > 0) l = tmp[randint(k) - 1];
-	    if (TR3_CURSED & inventory[INVEN_BODY].flags) l = INVEN_BODY;
-	    else if (TR3_CURSED & inventory[INVEN_ARM].flags) l = INVEN_ARM;
-	    else if (TR3_CURSED & inventory[INVEN_OUTER].flags) l = INVEN_OUTER;
-	    else if (TR3_CURSED & inventory[INVEN_HEAD].flags) l = INVEN_HEAD;
-	    else if (TR3_CURSED & inventory[INVEN_HANDS].flags) l = INVEN_HANDS;
-	    else if (TR3_CURSED & inventory[INVEN_FEET].flags) l = INVEN_FEET;
+	    if (TR3_CURSED & inventory[INVEN_BODY].flags1) l = INVEN_BODY;
+	    else if (TR3_CURSED & inventory[INVEN_ARM].flags1) l = INVEN_ARM;
+	    else if (TR3_CURSED & inventory[INVEN_OUTER].flags1) l = INVEN_OUTER;
+	    else if (TR3_CURSED & inventory[INVEN_HEAD].flags1) l = INVEN_HEAD;
+	    else if (TR3_CURSED & inventory[INVEN_HANDS].flags1) l = INVEN_HANDS;
+	    else if (TR3_CURSED & inventory[INVEN_FEET].flags1) l = INVEN_FEET;
 
 	    if (l > 0) {
 	    i_ptr = &inventory[l];
@@ -1066,7 +1066,7 @@ void do_cmd_read_scroll(void)
 	     * move arbitrarily far if an identify scroll was used on another
 	     * identify scroll, but it always moves down. 
 	     */
-		while (i_ptr->tval != TV_SCROLL1 || i_ptr->flags != 0x00000008) {
+		while (i_ptr->tval != TV_SCROLL1 || i_ptr->flags1 != 0x00000008) {
 		    item_val--;
 		    i_ptr = &inventory[item_val];
 		}
@@ -1108,9 +1108,9 @@ void do_cmd_read_scroll(void)
 	    break;
 
 	  case 11:
-	    if (py.flags.confuse_monster == 0) {
+	    if (py.flags1.confuse_monster == 0) {
 		msg_print("Your hands begin to glow.");
-		py.flags.confuse_monster = TRUE;
+		py.flags1.confuse_monster = TRUE;
 		ident = TRUE;
 	    }
 	    break;
@@ -1189,8 +1189,8 @@ void do_cmd_read_scroll(void)
 
 	  case 27:
 	    ident = unlite_area(char_row, char_col);
-	    if (!py.flags.resist_blind) {
-		py.flags.blind += 3 + randint(5);
+	    if (!py.flags1.resist_blind) {
+		py.flags1.blind += 3 + randint(5);
 	    }
 	    break;
 
@@ -1254,7 +1254,7 @@ void do_cmd_read_scroll(void)
 		    i_ptr->name2 = EGO_SHATTERED;
 		    i_ptr->tohit = (-randint(5) - randint(5));
 		    i_ptr->todam = (-randint(5) - randint(5));
-		    i_ptr->flags = TR3_CURSED;
+		    i_ptr->flags1 = TR3_CURSED;
 		    i_ptr->flags2 = 0;
 		    i_ptr->damage[0] = i_ptr->damage[1] = 1;
 		    i_ptr->toac = 0;	/* in case defender... */
@@ -1282,12 +1282,12 @@ void do_cmd_read_scroll(void)
 	    if (inventory[INVEN_FEET].tval != TV_NOTHING)  tmp[k++] = INVEN_FEET;
 
 	    if (k > 0) l = tmp[randint(k) - 1];
-	    if (TR3_CURSED & inventory[INVEN_BODY].flags) l = INVEN_BODY;
-	    else if (TR3_CURSED & inventory[INVEN_ARM].flags) l = INVEN_ARM;
-	    else if (TR3_CURSED & inventory[INVEN_OUTER].flags) l = INVEN_OUTER;
-	    else if (TR3_CURSED & inventory[INVEN_HEAD].flags) l = INVEN_HEAD;
-	    else if (TR3_CURSED & inventory[INVEN_HANDS].flags) l = INVEN_HANDS;
-	    else if (TR3_CURSED & inventory[INVEN_FEET].flags) l = INVEN_FEET;
+	    if (TR3_CURSED & inventory[INVEN_BODY].flags1) l = INVEN_BODY;
+	    else if (TR3_CURSED & inventory[INVEN_ARM].flags1) l = INVEN_ARM;
+	    else if (TR3_CURSED & inventory[INVEN_OUTER].flags1) l = INVEN_OUTER;
+	    else if (TR3_CURSED & inventory[INVEN_HEAD].flags1) l = INVEN_HEAD;
+	    else if (TR3_CURSED & inventory[INVEN_HANDS].flags1) l = INVEN_HANDS;
+	    else if (TR3_CURSED & inventory[INVEN_FEET].flags1) l = INVEN_FEET;
 
 	    if (l > 0) {
 	    i_ptr = &inventory[l];
@@ -1345,7 +1345,7 @@ void do_cmd_read_scroll(void)
 		/* Blast the armor */
 		py_bonuses(i_ptr, -1);	/* take off current bonuses -CFT */
 		i_ptr->name2 = EGO_BLASTED;
-		i_ptr->flags = TR3_CURSED;
+		i_ptr->flags1 = TR3_CURSED;
 		i_ptr->flags2 = 0;
 		i_ptr->toac = (-randint(5) - randint(5));
 		i_ptr->tohit = i_ptr->todam = 0;
@@ -1387,12 +1387,12 @@ void do_cmd_read_scroll(void)
 	    break;
 
 	  case 41:
-	    if (py.flags.word_recall == 0) {
-		py.flags.word_recall = 15 + randint(20);
+	    if (py.flags1.word_recall == 0) {
+		py.flags1.word_recall = 15 + randint(20);
 		msg_print("The air about you becomes charged...");
 	    }
 	    else {
-		py.flags.word_recall = 0;
+		py.flags1.word_recall = 0;
 		msg_print("A tension leaves the air around you...");
 	    }
 	    ident = TRUE;
@@ -1489,7 +1489,7 @@ void do_cmd_aim_wand(void)
     chance = (m_ptr->save + stat_adj(A_INT) - (int)(lev > 42 ? 42 : lev) +
 	      (class_level_adj[m_ptr->pclass][CLA_DEVICE] * m_ptr->lev / 3));
 
-    if (py.flags.confused > 0) chance = chance / 2;
+    if (py.flags1.confused > 0) chance = chance / 2;
 
     /* Give everyone a slight chance */
     if ((chance < USE_DEVICE) && (randint(USE_DEVICE - chance + 1) == 1)) {
@@ -1512,7 +1512,7 @@ void do_cmd_aim_wand(void)
 	return;
     }
 
-	i = i_ptr->flags;
+	i = i_ptr->flags1;
 	done_effect = 0;
 	(i_ptr->pval)--;
 	while (!done_effect) {
@@ -1765,7 +1765,7 @@ void do_cmd_use_staff(void)
     chance = (m_ptr->save + stat_adj(A_INT) - (int)(lev > 50 ? 50 : lev) +
 	      (class_level_adj[m_ptr->pclass][CLA_DEVICE] * m_ptr->lev / 3));
 
-    if (py.flags.confused > 0) chance = chance / 2;
+    if (py.flags1.confused > 0) chance = chance / 2;
 
     if ((chance < USE_DEVICE) && (randint(USE_DEVICE - chance + 1) == 1)) {
 	chance = USE_DEVICE;   /* Give everyone a slight chance */
@@ -1788,14 +1788,14 @@ void do_cmd_use_staff(void)
 
     (i_ptr->pval)--;
 
-    switch (i_ptr->flags) {
+    switch (i_ptr->flags1) {
 
       case SV_STAFF_HEALING:
 	ident = hp_player(300);
-	if (py.flags.stun > 0) {
-	    py.flags.stun = 0;
+	if (py.flags1.stun > 0) {
+	    py.flags1.stun = 0;
 	    msg_print("Your head stops stinging.");
-	    if (py.flags.stun > 50) {
+	    if (py.flags1.stun > 50) {
 		py.misc.ptohit += 20;
 		py.misc.ptodam += 20;
 	    } else {
@@ -1804,8 +1804,8 @@ void do_cmd_use_staff(void)
 	    }
 	    ident = TRUE;
 	}
-	if (py.flags.cut > 0) {
-	    py.flags.cut = 0;
+	if (py.flags1.cut > 0) {
+	    py.flags1.cut = 0;
 	    msg_print("You feel better.");
 	    ident = TRUE;
 	}
@@ -1832,10 +1832,10 @@ void do_cmd_use_staff(void)
 	cure_poison();
 	remove_fear();
 	hp_player(50);
-	if (py.flags.stun > 0) {
-	    py.flags.stun = 0;
+	if (py.flags1.stun > 0) {
+	    py.flags1.stun = 0;
 	    msg_print("Your head stops stinging.");
-	    if (py.flags.stun > 50) {
+	    if (py.flags1.stun > 50) {
 		py.misc.ptohit += 20;
 		py.misc.ptodam += 20;
 	    } else {
@@ -1843,8 +1843,8 @@ void do_cmd_use_staff(void)
 		py.misc.ptodam += 5;
 	    }
 	}
-	if (py.flags.cut > 0) {
-	    py.flags.cut = 0;
+	if (py.flags1.cut > 0) {
+	    py.flags1.cut = 0;
 	    msg_print("You feel better.");
 	}
 	ident = TRUE;
@@ -1942,19 +1942,19 @@ void do_cmd_use_staff(void)
 	break;
 
       case SV_STAFF_SPEED:
-	if (py.flags.fast == 0) ident = TRUE;
-	if (py.flags.fast <= 0) py.flags.fast += randint(30) + 15;
-	else py.flags.fast += randint(5);
+	if (py.flags1.fast == 0) ident = TRUE;
+	if (py.flags1.fast <= 0) py.flags1.fast += randint(30) + 15;
+	else py.flags1.fast += randint(5);
 	break;
 
       case SV_STAFF_SLOWNESS:
-	if (py.flags.slow == 0) ident = TRUE;
-	py.flags.slow += randint(30) + 15;
+	if (py.flags1.slow == 0) ident = TRUE;
+	py.flags1.slow += randint(30) + 15;
 	break;
 
       case SV_STAFF_REMOVE_CURSE:
 	if (remove_curse()) {
-	    if (py.flags.blind < 1) {
+	    if (py.flags1.blind < 1) {
 		msg_print("The staff glows blue for a moment..");
 	    }
 	    ident = TRUE;
@@ -1969,10 +1969,10 @@ void do_cmd_use_staff(void)
 	if (cure_blindness()) ident = TRUE;
 	if (cure_poison()) ident = TRUE;
 	if (cure_confusion()) ident = TRUE;
-	if (py.flags.stun > 0) {
+	if (py.flags1.stun > 0) {
 	    msg_print("Your head stops stinging.");
-	    py.flags.stun = 0;
-	    if (py.flags.stun > 50) {
+	    py.flags1.stun = 0;
+	    if (py.flags1.stun > 50) {
 		py.misc.ptohit += 20;
 		py.misc.ptodam += 20;
 	    } else {
@@ -1981,9 +1981,9 @@ void do_cmd_use_staff(void)
 	    }
 	    ident = TRUE;
 	}
-	else if (py.flags.cut > 0) {
+	else if (py.flags1.cut > 0) {
 	    msg_print("You feel better.");
-	    py.flags.cut = 0;
+	    py.flags1.cut = 0;
 	    ident = TRUE;
 	}
 	break;
@@ -2055,7 +2055,7 @@ void do_cmd_zap_rod(void)
     chance = (m_ptr->save + (stat_adj(A_INT) * 2) - (int)((lev > 70) ? 70 : lev) +
 	      (class_level_adj[m_ptr->pclass][CLA_DEVICE] * m_ptr->lev / 3));
 
-    if (py.flags.confused > 0) chance = chance / 2;
+    if (py.flags1.confused > 0) chance = chance / 2;
 
     /* Give everyone a slight chance */
     if ((chance < USE_DEVICE) && (randint(USE_DEVICE - chance + 1) == 1)) {
@@ -2082,7 +2082,7 @@ void do_cmd_zap_rod(void)
     x = char_col;
 
     /* Activate it */
-    switch (i_ptr->flags) {
+    switch (i_ptr->flags1) {
 
       case SV_ROD_LIGHT:
 	if (!get_dir_c(NULL, &dir)) return;
@@ -2211,10 +2211,10 @@ void do_cmd_zap_rod(void)
 	if (cure_blindness()) ident = TRUE;
 	if (cure_poison()) ident = TRUE;
 	if (cure_confusion()) ident = TRUE;
-	if (py.flags.stun > 0) {
+	if (py.flags1.stun > 0) {
 	    msg_print("Your head stops stinging.");
-	    py.flags.stun = 0;
-	    if (py.flags.stun > 50) {
+	    py.flags1.stun = 0;
+	    if (py.flags1.stun > 50) {
 		py.misc.ptohit += 20;
 		py.misc.ptodam += 20;
 	    } else {
@@ -2223,9 +2223,9 @@ void do_cmd_zap_rod(void)
 	    }
 	    ident = TRUE;
 	}
-	else if (py.flags.cut > 0) {
+	else if (py.flags1.cut > 0) {
 	    msg_print("You feel better.");
-	    py.flags.cut = 0;
+	    py.flags1.cut = 0;
 	    ident = TRUE;
 	}
 	i_ptr->timeout = 888;
@@ -2233,10 +2233,10 @@ void do_cmd_zap_rod(void)
 
       case SV_ROD_HEALING:
 	ident = hp_player(500);
-	if (py.flags.stun > 0) {
+	if (py.flags1.stun > 0) {
 	    msg_print("Your head stops stinging.");
-	    py.flags.stun = 0;
-	    if (py.flags.stun > 50) {
+	    py.flags1.stun = 0;
+	    if (py.flags1.stun > 50) {
 		py.misc.ptohit += 20;
 		py.misc.ptodam += 20;
 	    } else {
@@ -2245,22 +2245,22 @@ void do_cmd_zap_rod(void)
 	    }
 	    ident = TRUE;
 	}
-	if (py.flags.cut > 0) {
+	if (py.flags1.cut > 0) {
 	    msg_print("You feel better.");
-	    py.flags.cut = 0;
+	    py.flags1.cut = 0;
 	    ident = TRUE;
 	}
 	i_ptr->timeout = 888;
 	break;
 
       case SV_ROD_RECALL:
-	if (py.flags.word_recall == 0) {
+	if (py.flags1.word_recall == 0) {
 	    msg_print("The air about you becomes charged...");
-	    py.flags.word_recall = 15 + randint(20);
+	    py.flags1.word_recall = 15 + randint(20);
 	}
 	else {
 	    msg_print("A tension leaves the air around you...");
-	    py.flags.word_recall = 0;
+	    py.flags1.word_recall = 0;
 	}
 	ident = TRUE;
 	i_ptr->timeout = 60;
@@ -2290,8 +2290,8 @@ void do_cmd_zap_rod(void)
 	break;
 
       case SV_ROD_SPEED:
-	if (py.flags.fast == 0) ident = TRUE;
-	py.flags.fast += randint(30) + 15;
+	if (py.flags1.fast == 0) ident = TRUE;
+	py.flags1.fast += randint(30) + 15;
 	i_ptr->timeout = 99;
 	break;
 

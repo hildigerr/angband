@@ -346,10 +346,10 @@ int max_hp(byte *array)
 unsigned char loc_symbol(int y, int x)
 {
     register cave_type    *cave_ptr;
-    register struct flags *f_ptr;
+    register struct flags1 *f_ptr;
 
     cave_ptr = &cave[y][x];
-    f_ptr = &py.flags;
+    f_ptr = &py.flags1;
 
     if ((cave_ptr->m_idx == 1) && (!find_flag || find_prself))
 	return '@';
@@ -388,7 +388,7 @@ unsigned char loc_symbol(int y, int x)
  */
 void add_food(int num)
 {
-    register struct flags *p_ptr = &py.flags;
+    register struct flags1 *p_ptr = &py.flags1;
     register int           extra, penalty;
 
     if (p_ptr->food < 0) p_ptr->food = 0;

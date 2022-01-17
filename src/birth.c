@@ -204,7 +204,7 @@ static void get_all_stats()
     p_ptr->misc.ptoac = 0;
     p_ptr->misc.pac = toac_adj();
     p_ptr->misc.expfact = r_ptr->b_exp;
-    p_ptr->flags.see_infra = r_ptr->infra;
+    p_ptr->flags1.see_infra = r_ptr->infra;
 }
 
 /* copied from misc2.c, so the display loop would work nicely -cft */

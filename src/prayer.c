@@ -18,15 +18,15 @@ void pray()
     int choice, chance, result;
     register spell_type  *s_ptr;
     register struct misc  *m_ptr;
-    register struct flags *f_ptr;
+    register struct flags1 *f_ptr = &py.flags1;
     register inven_type   *i_ptr;
 
     free_turn_flag = TRUE;
-    if (py.flags.blind > 0)
+    if (f_ptr->blind > 0)
 	msg_print("You can't see to read your prayer!");
     else if (no_lite())
 	msg_print("You have no light to read by.");
-    else if (py.flags.confused > 0)
+    else if (f_ptr->confused > 0)
 	msg_print("You are too confused.");
     else if (class[py.misc.pclass].spell != PRIEST)
 	msg_print("Pray hard enough and your prayers may be answered.");
@@ -42,9 +42,9 @@ void pray()
 	    s_ptr = &magic_spell[py.misc.pclass - 1][choice];
 	    free_turn_flag = FALSE;
 
-	    if (py.flags.stun > 50)
+	    if (f_ptr->stun > 50)
 		chance += 25;
-	    else if (py.flags.stun > 0)
+	    else if (f_ptr->stun > 0)
 		chance += 15;
 	    if (randint(100) <= chance)	/* changed -CFT */
 		msg_print("You lost your concentration!");
@@ -56,10 +56,10 @@ void pray()
 		    break;
 		  case 2:
 		    (void)hp_player(damroll(3, 3));
-		    if (py.flags.cut > 0) {
-			py.flags.cut -= 10;
-			if (py.flags.cut < 0)
-			    py.flags.cut = 0;
+		    if (f_ptr->cut > 0) {
+			f_ptr->cut -= 10;
+			if (f_ptr->cut < 0)
+			    f_ptr->cut = 0;
 			msg_print("Your wounds heal.");
 		    }
 		    break;
@@ -92,10 +92,10 @@ void pray()
 		    break;
 		  case 11:
 		    (void)hp_player(damroll(4, 4));
-		    if (py.flags.cut > 0) {
-			py.flags.cut = (py.flags.cut / 2) - 20;
-			if (py.flags.cut < 0)
-			    py.flags.cut = 0;
+		    if (f_ptr->cut > 0) {
+			f_ptr->cut = (f_ptr->cut / 2) - 20;
+			if (f_ptr->cut < 0)
+			    f_ptr->cut = 0;
 			msg_print("Your wounds heal.");
 		    }
 		    break;
@@ -112,7 +112,6 @@ void pray()
 		    remove_curse();/* -CFT */
 		    break;
 		  case 16:
-		    f_ptr = &py.flags;
 		    f_ptr->oppose_fire += randint(10) + 10;
 		    f_ptr->oppose_cold += randint(10) + 10;
 		    break;
@@ -128,8 +127,8 @@ void pray()
 		    break;
 		  case 19:
 		    (void)hp_player(damroll(8, 4));
-		    if (py.flags.cut > 0) {
-			py.flags.cut = 0;
+		    if (f_ptr->cut > 0) {
+			f_ptr->cut = 0;
 			msg_print("Your wounds heal.");
 		    }
 		    break;
@@ -147,8 +146,8 @@ void pray()
 		    break;
 		  case 24:
 		    (void)hp_player(damroll(16, 4));
-		    if (py.flags.cut > 0) {
-			py.flags.cut = 0;
+		    if (f_ptr->cut > 0) {
+			f_ptr->cut = 0;
 			msg_print("Your wounds heal.");
 		    }
 		    break;
@@ -163,19 +162,19 @@ void pray()
 		    break;
 		  case 28:
 		    (void)hp_player(200);
-		    if (py.flags.stun > 0) {
-			if (py.flags.stun > 50) {
+		    if (f_ptr->stun > 0) {
+			if (f_ptr->stun > 50) {
 			    py.misc.ptohit += 20;
 			    py.misc.ptodam += 20;
 			} else {
 			    py.misc.ptohit += 5;
 			    py.misc.ptodam += 5;
 			}
-			py.flags.stun = 0;
+			f_ptr->stun = 0;
 			msg_print("Your head stops stinging.");
 		    }
-		    if (py.flags.cut > 0) {
-			py.flags.cut = 0;
+		    if (f_ptr->cut > 0) {
+			f_ptr->cut = 0;
 			msg_print("You feel better.");
 		    }
 		    break;
@@ -190,19 +189,19 @@ void pray()
 		    (void)remove_fear();
 		    (void)cure_poison();
 		    (void)hp_player(1000);
-		    if (py.flags.stun > 0) {
-			if (py.flags.stun > 50) {
+		    if (f_ptr->stun > 0) {
+			if (f_ptr->stun > 50) {
 			    py.misc.ptohit += 20;
 			    py.misc.ptodam += 20;
 			} else {
 			    py.misc.ptohit += 5;
 			    py.misc.ptodam += 5;
 			}
-			py.flags.stun = 0;
+			f_ptr->stun = 0;
 			msg_print("Your head stops stinging.");
 		    }
-		    if (py.flags.cut > 0) {
-			py.flags.cut = 0;
+		    if (f_ptr->cut > 0) {
+			f_ptr->cut = 0;
 			msg_print("You feel better.");
 		    }
 		    break;
@@ -223,33 +222,33 @@ void pray()
 		    break;
 		  case 37:
 		    (void)hp_player(damroll(8, 4));
-		    if (py.flags.cut > 0) {
-			py.flags.cut = 0;
+		    if (f_ptr->cut > 0) {
+			f_ptr->cut = 0;
 			msg_print("Your wounds heal.");
 		    }
 		    break;
 		  case 38:
 		    (void)hp_player(damroll(16, 4));
-		    if (py.flags.cut > 0) {
-			py.flags.cut = 0;
+		    if (f_ptr->cut > 0) {
+			f_ptr->cut = 0;
 			msg_print("Your wounds heal.");
 		    }
 		    break;
 		  case 39:
 		    (void)hp_player(2000);
-		    if (py.flags.stun > 0) {
-			if (py.flags.stun > 50) {
+		    if (f_ptr->stun > 0) {
+			if (f_ptr->stun > 50) {
 			    py.misc.ptohit += 20;
 			    py.misc.ptodam += 20;
 			} else {
 			    py.misc.ptohit += 5;
 			    py.misc.ptodam += 5;
 			}
-			py.flags.stun = 0;
+			f_ptr->stun = 0;
 			msg_print("Your head stops stinging.");
 		    }
-		    if (py.flags.cut > 0) {
-			py.flags.cut = 0;
+		    if (f_ptr->cut > 0) {
+			f_ptr->cut = 0;
 			msg_print("You feel better.");
 		    }
 		    break;
@@ -330,17 +329,17 @@ void pray()
 
 			if (k > 0)
 			    l = tmp[randint(k) - 1];
-			if (TR3_CURSED & inventory[INVEN_BODY].flags)
+			if (TR3_CURSED & inventory[INVEN_BODY].flags1)
 			    l = INVEN_BODY;
-			else if (TR3_CURSED & inventory[INVEN_ARM].flags)
+			else if (TR3_CURSED & inventory[INVEN_ARM].flags1)
 			    l = INVEN_ARM;
-			else if (TR3_CURSED & inventory[INVEN_OUTER].flags)
+			else if (TR3_CURSED & inventory[INVEN_OUTER].flags1)
 			    l = INVEN_OUTER;
-			else if (TR3_CURSED & inventory[INVEN_HEAD].flags)
+			else if (TR3_CURSED & inventory[INVEN_HEAD].flags1)
 			    l = INVEN_HEAD;
-			else if (TR3_CURSED & inventory[INVEN_HANDS].flags)
+			else if (TR3_CURSED & inventory[INVEN_HANDS].flags1)
 			    l = INVEN_HANDS;
-			else if (TR3_CURSED & inventory[INVEN_FEET].flags)
+			else if (TR3_CURSED & inventory[INVEN_FEET].flags1)
 			    l = INVEN_FEET;
 
 			if (l > 0) {
@@ -359,7 +358,7 @@ void pray()
 		    i_ptr = &inventory[INVEN_WIELD];
 		    if (i_ptr->tval != TV_NOTHING &&
 			i_ptr->name2 == SN_NULL &&
-			!(i_ptr->flags & TR3_CURSED)) {
+			!(i_ptr->flags1 & TR3_CURSED)) {
 
 /* you can't create an ego weapon from a cursed object...
  * the curse would "taint" the magic -CFT
@@ -374,12 +373,12 @@ void pray()
 				    "Your %s is covered in a fiery shield!",
 				    tmp_str);
 			    i_ptr->name2 |= EGO_FT;
-			    i_ptr->flags |= (TR1_BRAND_FIRE | TR2_RES_FIRE);
+			    i_ptr->flags1 |= (TR1_BRAND_FIRE | TR2_RES_FIRE);
 			} else {
 			    sprintf(out_val, "Your %s glows deep, icy blue!",
 				    tmp_str);
 			    i_ptr->name2 |= EGO_FB;
-			    i_ptr->flags |= (TR1_BRAND_COLD | TR2_RES_COLD);
+			    i_ptr->flags1 |= (TR1_BRAND_COLD | TR2_RES_COLD);
 			}
 			msg_print(out_val);
 			enchant(i_ptr, 3+randint(3), ENCH_TOHIT|ENCH_TODAM);
@@ -402,11 +401,11 @@ void pray()
 		    (void)tele_level();
 		    break;
 		  case 57:	   /* word of recall */
-		    if (py.flags.word_recall == 0) {
-			py.flags.word_recall = 15 + randint(20);
+		    if (f_ptr->word_recall == 0) {
+			f_ptr->word_recall = 15 + randint(20);
 			msg_print("The air about you becomes charged...");
 		    } else {
-			py.flags.word_recall = 0;
+			f_ptr->word_recall = 0;
 			msg_print("A tension leaves the air around you...");
 		    }
 		    break;
@@ -438,7 +437,7 @@ void pray()
 	    if (!free_turn_flag) {
 		if (s_ptr->smana > m_ptr->cmana) {
 		    msg_print("You faint from fatigue!");
-		    py.flags.paralysis =
+		    f_ptr->paralysis =
 			randint((int)(5 * (s_ptr->smana - m_ptr->cmana)));
 		    m_ptr->cmana = 0;
 		    m_ptr->cmana_frac = 0;
