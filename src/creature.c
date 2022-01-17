@@ -110,17 +110,17 @@ void update_mon(int m_idx)
 
 #ifdef ATARIST_MWC
 		holder = CM_INVISIBLE;
-		if ((holder & r_ptr->cmove) == 0)
+		if ((holder & r_ptr->cflags1) == 0)
 #else
-		if ((CM_INVISIBLE & r_ptr->cmove) == 0)
+		if ((CM_INVISIBLE & r_ptr->cflags1) == 0)
 #endif
 		    flag = TRUE;
 		else if (py.flags1.see_inv) {
 		    flag = TRUE;
 #ifdef ATARIST_MWC
-		    l_list[m_ptr->r_idx].r_cmove |= holder;
+		    l_list[m_ptr->r_idx].r_cflags1 |= holder;
 #else
-		    l_list[m_ptr->r_idx].r_cmove |= CM_INVISIBLE;
+		    l_list[m_ptr->r_idx].r_cflags1 |= CM_INVISIBLE;
 #endif
 		}
 	    }
@@ -1372,7 +1372,7 @@ static void make_attack(int m_idx)
 /*
  * Given five choices of moves, make the first legal one. -RAK-
  */
-static void make_move(int m_idx, int *mm, u32b *rcmove)
+static void make_move(int m_idx, int *mm, u32b *rcflags1)
 {
     int do_turn, do_move, stuck_door;
     u32b                movebits;
@@ -1393,7 +1393,7 @@ static void make_move(int m_idx, int *mm, u32b *rcmove)
 
     /* Access the monster */
     m_ptr = &m_list[m_idx];
-    movebits = r_list[m_ptr->r_idx].cmove;
+    movebits = r_list[m_ptr->r_idx].cflags1;
 
     do {
 
@@ -1430,7 +1430,7 @@ static void make_move(int m_idx, int *mm, u32b *rcmove)
 	/* Creature moves through walls? */
 	    else if (movebits & CM_PHASE) {
 		do_move = TRUE;
-		*rcmove |= CM_PHASE;
+		*rcflags1 |= CM_PHASE;
 	    } else if (r_list[m_ptr->r_idx].cflags2 & MF2_BREAK_WALL) {
 	    /* Crunch up those Walls Morgoth and Umber Hulks!!!! */
 
@@ -1516,7 +1516,7 @@ static void make_move(int m_idx, int *mm, u32b *rcmove)
 		    /* Redraw door */
 		    lite_spot(newy, newx);
 
-		    *rcmove |= CM_OPEN_DOOR;
+		    *rcflags1 |= CM_OPEN_DOOR;
 
 		    /* Hack -- should move into open doorway */
 		    do_move = FALSE;
@@ -1602,9 +1602,9 @@ static void make_move(int m_idx, int *mm, u32b *rcmove)
 			 r_list[m_list[c_ptr->m_idx].r_idx].mexp)) {
 			if (m_list[c_ptr->m_idx].ml)
 #ifdef ATARIST_MWC
-			    *rcmove |= holder;
+			    *rcflags1 |= holder;
 #else
-    			    *rcmove |= CM_EATS_OTHER;
+    			    *rcflags1 |= CM_EATS_OTHER;
 #endif
 			/* It ate an already processed monster. Handle normally. */
 			if (m_idx < c_ptr->m_idx)
@@ -1657,9 +1657,9 @@ static void make_move(int m_idx, int *mm, u32b *rcmove)
 		    u32b flg = 0L;
 
 #ifdef ATARIST_MWC
-			*rcmove |= holder;
+			*rcflags1 |= holder;
 #else
-			*rcmove |= CM_PICKS_UP;
+			*rcflags1 |= CM_PICKS_UP;
 #endif
 
 			/* React to objects that hurt the monster */
@@ -2866,7 +2866,7 @@ int multiply_monster(int y, int x, int cr_index, int m_idx)
 		(c_ptr->m_idx != 1)) {
 		if (c_ptr->m_idx > 1) {	/* Creature there already?	 */
 		/* Some critters are cannibalistic!	    */
-		    if ((r_list[cr_index].cmove & CM_EATS_OTHER)
+		    if ((r_list[cr_index].cflags1 & CM_EATS_OTHER)
 		/* Check the experience level -CJS- */
 			&& r_list[cr_index].mexp >=
 			r_list[m_list[c_ptr->m_idx].r_idx].mexp) {
@@ -2917,7 +2917,7 @@ int multiply_monster(int y, int x, int cr_index, int m_idx)
 /*
  * Move a critter about the dungeon			-RAK-
  */
-static void mon_move(int m_idx, u32b *rcmove)
+static void mon_move(int m_idx, u32b *rcflags1)
 {
     int			i, j, k, move_test, dir;
     monster_race	*r_ptr;
@@ -2946,7 +2946,7 @@ static void mon_move(int m_idx, u32b *rcmove)
     }
 
     /* Does the critter multiply? */
-    if ((r_ptr->cmove & CM_MULTIPLY) &&
+    if ((r_ptr->cflags1 & CM_MULTIPLY) &&
 	(MAX_MON_MULT >= mon_tot_mult) &&
 	(((py.flags1.rest != -1) && ((py.flags1.rest % MON_MULT_ADJ) == 0)) ||
 	 ((py.flags1.rest == -1) && (randint(MON_MULT_ADJ) == 1)))) {
@@ -2968,12 +2968,12 @@ static void mon_move(int m_idx, u32b *rcmove)
 
 	    if (multiply_monster((int)m_ptr->fy, (int)m_ptr->fx, (int)m_ptr->r_idx, m_idx))
 
-		*rcmove |= CM_MULTIPLY;
+		*rcflags1 |= CM_MULTIPLY;
     }
     move_test = FALSE;
 
     /* Hack -- if in wall, must immediately escape to a clear area */
-    if (!(r_ptr->cmove & CM_PHASE) &&
+    if (!(r_ptr->cflags1 & CM_PHASE) &&
 	(cave[m_ptr->fy][m_ptr->fx].fval >= MIN_WALL)) {
 
     /* If the monster is already dead, don't kill it again! This can happen
@@ -3013,7 +3013,7 @@ static void mon_move(int m_idx, u32b *rcmove)
 	    mm[dir] = i;
 
 	    /* Move the monster */
-	    make_move(m_idx, mm, rcmove);
+	    make_move(m_idx, mm, rcflags1);
 	/* this can only fail if mm[0] has a rune of protection */
 	}
 
@@ -3052,9 +3052,9 @@ static void mon_move(int m_idx, u32b *rcmove)
 	mm[3] = randint(9);
 	mm[4] = randint(9);
     /* don't move him if he is not supposed to move! */
-	if (!(r_ptr->cmove & CM_ATTACK_ONLY)) {
-	    *rcmove |= CM_ATTACK_ONLY;
-	    make_move(m_idx, mm, rcmove);
+	if (!(r_ptr->cflags1 & CM_ATTACK_ONLY)) {
+	    *rcflags1 |= CM_ATTACK_ONLY;
+	    make_move(m_idx, mm, rcflags1);
 	}
 
     /* reduce conf, tough monsters can unconf faster -CFT */
@@ -3076,40 +3076,40 @@ static void mon_move(int m_idx, u32b *rcmove)
 
     if (!move_test) {
 	/* 75% random movement */
-	if ((r_ptr->cmove & CM_75_RANDOM) && (randint(100) < 75)) {
+	if ((r_ptr->cflags1 & CM_75_RANDOM) && (randint(100) < 75)) {
 	    mm[0] = randint(9);
 	    mm[1] = randint(9);
 	    mm[2] = randint(9);
 	    mm[3] = randint(9);
 	    mm[4] = randint(9);
-	    *rcmove |= CM_75_RANDOM;
-	    make_move(m_idx, mm, rcmove);
+	    *rcflags1 |= CM_75_RANDOM;
+	    make_move(m_idx, mm, rcflags1);
 	}
 
 	/* 40% random movement */
-	else if ((r_ptr->cmove & CM_40_RANDOM) && (randint(100) < 40)) {
+	else if ((r_ptr->cflags1 & CM_40_RANDOM) && (randint(100) < 40)) {
 	    mm[0] = randint(9);
 	    mm[1] = randint(9);
 	    mm[2] = randint(9);
 	    mm[3] = randint(9);
 	    mm[4] = randint(9);
-	    *rcmove |= CM_40_RANDOM;
-	    make_move(m_idx, mm, rcmove);
+	    *rcflags1 |= CM_40_RANDOM;
+	    make_move(m_idx, mm, rcflags1);
 	}
 
 	/* 20% random movement */
-	else if ((r_ptr->cmove & CM_20_RANDOM) && (randint(100) < 20)) {
+	else if ((r_ptr->cflags1 & CM_20_RANDOM) && (randint(100) < 20)) {
 	    mm[0] = randint(9);
 	    mm[1] = randint(9);
 	    mm[2] = randint(9);
 	    mm[3] = randint(9);
 	    mm[4] = randint(9);
-	    *rcmove |= CM_20_RANDOM;
-	    make_move(m_idx, mm, rcmove);
+	    *rcflags1 |= CM_20_RANDOM;
+	    make_move(m_idx, mm, rcflags1);
 	}
 
 	/* Normal movement */
-	else if (r_ptr->cmove & CM_MOVE_NORMAL) {
+	else if (r_ptr->cflags1 & CM_MOVE_NORMAL) {
 	    if (randint(200) == 1) {
 		mm[0] = randint(9);
 		mm[1] = randint(9);
@@ -3118,16 +3118,16 @@ static void mon_move(int m_idx, u32b *rcmove)
 		mm[4] = randint(9);
 	    } else
 		get_moves(m_idx, mm);
-	    *rcmove |= CM_MOVE_NORMAL;
-	    make_move(m_idx, mm, rcmove);
+	    *rcflags1 |= CM_MOVE_NORMAL;
+	    make_move(m_idx, mm, rcflags1);
 	}
 
 	/* Attack, but don't move */
-	else if ((r_ptr->cmove & CM_ATTACK_ONLY) && (m_ptr->cdis < 2)) {
-	    *rcmove |= CM_ATTACK_ONLY;
+	else if ((r_ptr->cflags1 & CM_ATTACK_ONLY) && (m_ptr->cdis < 2)) {
+	    *rcflags1 |= CM_ATTACK_ONLY;
 	    get_moves(m_idx, mm);
-	    make_move(m_idx, mm, rcmove);
-	} else if ((r_ptr->cmove & CM_ALL_MV_FLAGS) == 0 &&
+	    make_move(m_idx, mm, rcflags1);
+	} else if ((r_ptr->cflags1 & CM_ALL_MV_FLAGS) == 0 &&
 		   (m_ptr->cdis < 2)) {
 
 	    /* little hack for Quylthulgs, so that will eventually notice
@@ -3151,7 +3151,7 @@ void creatures(int attack)
     monster_type	*m_ptr;
     monster_lore	*r_ptr;
     
-    u32b                notice, rcmove;
+    u32b                notice, rcflags1;
     int                   wake, ignore;
     vtype                 cdesc;
 
@@ -3188,7 +3188,7 @@ void creatures(int attack)
 		    k--;
 		    wake = FALSE;
 		    ignore = FALSE;
-		    rcmove = 0;
+		    rcflags1 = 0;
 		    if ((m_ptr->ml && /* check los so telepathy won't wake lice -CFT */
 			 los(char_row, char_col, (int)m_ptr->fy, (int)m_ptr->fx)) ||
 			(m_ptr->cdis <= r_list[m_ptr->r_idx].aaf)
@@ -3196,9 +3196,9 @@ void creatures(int attack)
 			/* Monsters trapped in rock must be given a turn also,
 			 * so that they will die/dig out immediately.  */
 #ifdef ATARIST_MWC
-		    || ((!(r_list[m_ptr->r_idx].cmove & (holder = CM_PHASE)))
+		    || ((!(r_list[m_ptr->r_idx].cflags1 & (holder = CM_PHASE)))
 #else
-			|| ((!(r_list[m_ptr->r_idx].cmove & CM_PHASE))
+			|| ((!(r_list[m_ptr->r_idx].cflags1 & CM_PHASE))
 #endif
 		     && cave[m_ptr->fy][m_ptr->fx].fval >= MIN_WALL)) {
 
@@ -3253,7 +3253,7 @@ void creatures(int attack)
 			    }
 			}
 			if ((m_ptr->csleep == 0) && (m_ptr->stunned == 0))
-			    mon_move(i, &rcmove);
+			    mon_move(i, &rcflags1);
 		    }
 		    update_mon(i);
 		    if (m_ptr->ml) {
@@ -3265,7 +3265,7 @@ void creatures(int attack)
 			    if (r_ptr->r_ignore < MAX_UCHAR)
 				r_ptr->r_ignore++;
 			}
-			r_ptr->r_cmove |= rcmove;
+			r_ptr->r_cflags1 |= rcflags1;
 		    }
 		}
 	} else
@@ -3311,10 +3311,10 @@ static void shatter_quake(int mon_y, int mon_x)
 		    m_ptr = &m_list[c_ptr->m_idx];
 		    r_ptr = &r_list[m_ptr->r_idx];
 
-		    if (!(r_ptr->cmove & CM_PHASE) &&
+		    if (!(r_ptr->cflags1 & CM_PHASE) &&
 			!(r_ptr->cflags2 & MF2_BREAK_WALL)) {
 			if ((movement_rate(c_ptr->m_idx) == 0) ||
-			    (r_ptr->cmove & CM_ATTACK_ONLY))
+			    (r_ptr->cflags1 & CM_ATTACK_ONLY))
 			/* monster can not move to escape the wall */
 			    kill = TRUE;
 			else {
@@ -3358,14 +3358,14 @@ static void shatter_quake(int mon_y, int mon_x)
 			    msg_print(out_val);
 			    object_level = (dun_level + r_ptr->level) >> 1;
 			    treas = monster_death((int)m_ptr->fy, (int)m_ptr->fx,
-						  r_ptr->cmove, 0, 0);
+						  r_ptr->cflags1, 0, 0);
 			    if (m_ptr->ml) {
-				temp = (l_list[m_ptr->r_idx].r_cmove & CM_TREASURE)
+				temp = (l_list[m_ptr->r_idx].r_cflags1 & CM_TREASURE)
 				    >> CM_TR_SHIFT;
 				if (temp > ((treas & CM_TREASURE) >> CM_TR_SHIFT))
 				    treas = (treas & ~CM_TREASURE) | (temp << CM_TR_SHIFT);
-				l_list[m_ptr->r_idx].r_cmove = treas |
-				    (l_list[m_ptr->r_idx].r_cmove & ~CM_TREASURE);
+				l_list[m_ptr->r_idx].r_cflags1 = treas |
+				    (l_list[m_ptr->r_idx].r_cflags1 & ~CM_TREASURE);
 			    }
 			    if (m_idx < c_ptr->m_idx)
 				delete_monster((int)c_ptr->m_idx);

@@ -642,7 +642,7 @@ static int fearless(monster_race *r_ptr)
     }
 
     /* XXX Hack -- No "Normal Move" --> NoFear */
-    if (!(r_ptr->cmove & CM_MOVE_NORMAL)) {
+    if (!(r_ptr->cflags1 & CM_MOVE_NORMAL)) {
 	flag = TRUE;
     }
 
@@ -752,20 +752,20 @@ int mon_take_hit(int m_idx, int dam, int print_fear)
 	coin_type = 0;
 	get_coin_type(r_ptr);
 	i = monster_death((int)m_ptr->fy, (int)m_ptr->fx,
-			  r_list[m_ptr->r_idx].cmove,
+			  r_list[m_ptr->r_idx].cflags1,
 			  (r_list[m_ptr->r_idx].cflags2 & (MF2_SPECIAL | MF2_GOOD)),
-			  (r_list[m_ptr->r_idx].cmove & WINNER));
+			  (r_list[m_ptr->r_idx].cflags1 & WINNER));
 	coin_type = 0;
 	if ((py.flags1.blind < 1 && m_ptr->ml) ||
-	    (r_list[m_ptr->r_idx].cmove & CM_WIN) ||
+	    (r_list[m_ptr->r_idx].cflags1 & CM_WIN) ||
 	    (r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE)) {
 	    /* recall even invisible uniques */
 
-	    tmp = (l_list[m_ptr->r_idx].r_cmove & CM_TREASURE) >> CM_TR_SHIFT;
+	    tmp = (l_list[m_ptr->r_idx].r_cflags1 & CM_TREASURE) >> CM_TR_SHIFT;
 	    if (tmp > ((i & CM_TREASURE) >> CM_TR_SHIFT))
 		i = (i & ~CM_TREASURE) | (tmp << CM_TR_SHIFT);
-	    l_list[m_ptr->r_idx].r_cmove =
-		(l_list[m_ptr->r_idx].r_cmove & ~CM_TREASURE) | i;
+	    l_list[m_ptr->r_idx].r_cflags1 =
+		(l_list[m_ptr->r_idx].r_cflags1 & ~CM_TREASURE) | i;
 	    if (l_list[m_ptr->r_idx].r_kills < MAX_SHORT)
 		l_list[m_ptr->r_idx].r_kills++;
 	}

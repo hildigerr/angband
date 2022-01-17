@@ -222,7 +222,7 @@ int bool_roff_recall(int r_idx)
 
     l_ptr = &l_list[r_idx];
 
-    if (l_ptr->r_cmove || l_ptr->r_cflags2 ||
+    if (l_ptr->r_cflags1 || l_ptr->r_cflags2 ||
 	l_ptr->r_spells || l_ptr->r_spells2 || l_ptr->r_spells3 ||
 	l_ptr->r_kills || l_ptr->r_deaths) {
 	return TRUE;
@@ -253,8 +253,8 @@ int roff_recall(int r_idx)
     register u32b         i, j, k;
 
     int                 mspeed;
-    u32b              rcflags2;
-    u32b              rcmove, rspells, rspells2, rspells3;
+    u32b              rcflags1, rcflags2;
+    u32b              rspells, rspells2, rspells3;
     monster_lore         save_mem;
     int                 breath = FALSE, magic = FALSE;
     char			sex;
@@ -275,13 +275,13 @@ int roff_recall(int r_idx)
 	l_ptr->r_kills = MAX_SHORT;
 	l_ptr->r_wake = l_ptr->r_ignore = MAX_UCHAR;
 
-	j = (((r_ptr->cmove & CM_4D2_OBJ) != 0) * 8) +
-	    (((r_ptr->cmove & CM_2D2_OBJ) != 0) * 4) +
-	    (((r_ptr->cmove & CM_1D2_OBJ) != 0) * 2) +
-	    ((r_ptr->cmove & CM_90_RANDOM) != 0) +
-	    ((r_ptr->cmove & CM_60_RANDOM) != 0);
+	j = (((r_ptr->cflags1 & CM_4D2_OBJ) != 0) * 8) +
+	    (((r_ptr->cflags1 & CM_2D2_OBJ) != 0) * 4) +
+	    (((r_ptr->cflags1 & CM_1D2_OBJ) != 0) * 2) +
+	    ((r_ptr->cflags1 & CM_90_RANDOM) != 0) +
+	    ((r_ptr->cflags1 & CM_60_RANDOM) != 0);
 
-	l_ptr->r_cmove = (r_ptr->cmove & ~CM_TREASURE) | (j << CM_TR_SHIFT);
+	l_ptr->r_cflags1 = (r_ptr->cflags1 & ~CM_TREASURE) | (j << CM_TR_SHIFT);
 	l_ptr->r_cflags2 = r_ptr->cflags2;
 	l_ptr->r_spells = r_ptr->spells | CS_FREQ;
 	l_ptr->r_spells2 = r_ptr->spells2;
@@ -301,7 +301,7 @@ int roff_recall(int r_idx)
     rspells3 = l_ptr->r_spells3 & r_ptr->spells3;
 
 /* the CM_WIN property is always known, set it if a win monster */
-    rcmove = l_ptr->r_cmove | (CM_WIN & r_ptr->cmove);
+    rcflags1 = l_ptr->r_cflags1 | (CM_WIN & r_ptr->cflags1);
     rcflags2 = l_ptr->r_cflags2 & r_ptr->cflags2;
     if ((r_ptr->cflags2 & MF2_UNIQUE) || (sex == 'p'))
 	(void)sprintf(temp, "%s:\n", r_ptr->name);
@@ -415,7 +415,7 @@ int roff_recall(int r_idx)
     mspeed = r_ptr->speed - 10;
 
     /* Describe movement, if any observed */
-    if ((rcmove & CM_ALL_MV_FLAGS) || (rcmove & CM_RANDOM_MOVE)) {
+    if ((rcflags1 & CM_ALL_MV_FLAGS) || (rcflags1 & CM_RANDOM_MOVE)) {
 	if (k) {
 	    roff(", and");
 	}
@@ -424,15 +424,15 @@ int roff_recall(int r_idx)
 	    k = TRUE;
 	}
 	roff((sex == 'p' ? " move" : " moves"));
-	if (rcmove & CM_RANDOM_MOVE) {
-	    roff(desc_howmuch[(rcmove & CM_RANDOM_MOVE) >> 3]);
+	if (rcflags1 & CM_RANDOM_MOVE) {
+	    roff(desc_howmuch[(rcflags1 & CM_RANDOM_MOVE) >> 3]);
 	    roff(" erratically");
 	}
 	if (mspeed == 1) {
 	    roff(" at normal speed");
 	}
 	else {
-	    if (rcmove & CM_RANDOM_MOVE) {
+	    if (rcflags1 & CM_RANDOM_MOVE) {
 		roff(", and");
 	    }
 	    if (mspeed <= 0) {
@@ -449,7 +449,7 @@ int roff_recall(int r_idx)
     }
 
     /* The code above includes "attack speed" */
-    if (rcmove & CM_ATTACK_ONLY) {
+    if (rcflags1 & CM_ATTACK_ONLY) {
 	if (k) {
 	    roff(", but");
 	}
@@ -723,7 +723,7 @@ int roff_recall(int r_idx)
 
     /* Do we know how clever they are? Special abilities. */
     k = TRUE;
-    j = rcmove;
+    j = rcflags1;
 
     /* I wonder why this wasn't here before? -CFT */
     if (rcflags2 & MF2_BREAK_WALL) {
@@ -877,15 +877,15 @@ int roff_recall(int r_idx)
 
 
     /* Comment on what it carries, if known */
-    if (rcmove & (CM_CARRY_OBJ | CM_CARRY_GOLD)) {
+    if (rcflags1 & (CM_CARRY_OBJ | CM_CARRY_GOLD)) {
 
 	roff((sex == 'm' ? "He may" : sex == 'f' ? "She may" : sex == 'p' ? "They may" : "It may"));
 
-	j = (rcmove & CM_TREASURE) >> CM_TR_SHIFT;
+	j = (rcflags1 & CM_TREASURE) >> CM_TR_SHIFT;
 
 	/* Only one treasure observed */
 	if (j == 1) {
-	    if ((r_ptr->cmove & CM_TREASURE) == CM_60_RANDOM) {
+	    if ((r_ptr->cflags1 & CM_TREASURE) == CM_60_RANDOM) {
 		roff(" sometimes");
 	    }
 	    else {
@@ -895,7 +895,7 @@ int roff_recall(int r_idx)
 
 	/* Only two treasures observed */
 	else if ((j == 2) &&
-		 ((r_ptr->cmove & CM_TREASURE) ==
+		 ((r_ptr->cflags1 & CM_TREASURE) ==
 		  (CM_60_RANDOM | CM_90_RANDOM))) {
 	    roff(" often");
 	}
@@ -926,9 +926,9 @@ int roff_recall(int r_idx)
 	    roff(temp);
 	}
 
-	if (rcmove & CM_CARRY_OBJ) {
+	if (rcflags1 & CM_CARRY_OBJ) {
 	    roff(p);
-	    if (rcmove & CM_CARRY_GOLD) {
+	    if (rcflags1 & CM_CARRY_GOLD) {
 		roff(" or treasure");
 		if (j > 1) roff("s");
 	    }
@@ -1037,7 +1037,7 @@ int roff_recall(int r_idx)
 
 
     /* XXX Hack -- Always know the win creature. */
-    if (r_ptr->cmove & CM_WIN) {
+    if (r_ptr->cflags1 & CM_WIN) {
 	roff("  Killing him wins the game!");
     }
 

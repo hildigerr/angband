@@ -465,7 +465,7 @@ int detect_invisible()
 	m_ptr = &m_list[i];
 	r_ptr = &r_list[m_ptr->r_idx];
 	if (panel_contains(m_ptr->fy, m_ptr->fx) &&
-	    (r_ptr->cmove & CM_INVISIBLE )) {
+	    (r_ptr->cflags1 & CM_INVISIBLE )) {
 
 	    m_ptr->ml = TRUE;
 	/* works correctly even if hallucinating */
@@ -745,7 +745,7 @@ int detect_monsters()
     for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
 	if (panel_contains((int)m_ptr->fy, (int)m_ptr->fx) &&
-	    ((CM_INVISIBLE & r_list[m_ptr->r_idx].cmove) == 0)) {
+	    ((CM_INVISIBLE & r_list[m_ptr->r_idx].cflags1) == 0)) {
 	    m_ptr->ml = TRUE;
 	/* works correctly even if hallucinating */
 	    print((char)r_list[m_ptr->r_idx].r_char, (int)m_ptr->fy,
@@ -1030,15 +1030,15 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
 			coin_type = 0;
 			get_coin_type(r_ptr);
 			treas = monster_death((int)m_ptr->fy, (int)m_ptr->fx,
-					      r_ptr->cmove, 0, 0);
+					      r_ptr->cflags1, 0, 0);
 			coin_type = 0;
 			if (m_ptr->ml || (r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE)) {
-			    tmp = (l_list[m_ptr->r_idx].r_cmove & CM_TREASURE)
+			    tmp = (l_list[m_ptr->r_idx].r_cflags1 & CM_TREASURE)
 				>> CM_TR_SHIFT;
 			    if (tmp > ((treas & CM_TREASURE) >> CM_TR_SHIFT))
 				treas = (treas & ~CM_TREASURE) | (tmp << CM_TR_SHIFT);
-			    l_list[m_ptr->r_idx].r_cmove = treas |
-				(l_list[m_ptr->r_idx].r_cmove & ~CM_TREASURE);
+			    l_list[m_ptr->r_idx].r_cflags1 = treas |
+				(l_list[m_ptr->r_idx].r_cflags1 & ~CM_TREASURE);
 			}
 			if (monptr < c_ptr->m_idx)
 			    delete_monster((int)c_ptr->m_idx);
@@ -1755,16 +1755,16 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 				coin_type = 0;
 				get_coin_type(r_ptr);
 			    treas = monster_death((int)m_ptr->fy, (int)m_ptr->fx,
-						  r_ptr->cmove, 0, 0);
+						  r_ptr->cflags1, 0, 0);
 				coin_type = 0;
 				/* recall even invisible uniques -CWS */
 			    if (m_ptr->ml || (r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE)) {
-				tmp = (l_list[m_ptr->r_idx].r_cmove & CM_TREASURE)
+				tmp = (l_list[m_ptr->r_idx].r_cflags1 & CM_TREASURE)
 				    >> CM_TR_SHIFT;
 				if (tmp > ((treas & CM_TREASURE) >> CM_TR_SHIFT))
 				    treas = (treas & ~CM_TREASURE) | (tmp << CM_TR_SHIFT);
-				l_list[m_ptr->r_idx].r_cmove = treas |
-				    (l_list[m_ptr->r_idx].r_cmove & ~CM_TREASURE);
+				l_list[m_ptr->r_idx].r_cflags1 = treas |
+				    (l_list[m_ptr->r_idx].r_cflags1 & ~CM_TREASURE);
 			    }
 			/* It ate an already processed monster.  Handle normally. */
 			    if (monptr < c_ptr->m_idx)
@@ -2760,9 +2760,9 @@ int build_wall(int dir, int y, int x)
 		m_ptr = &m_list[c_ptr->m_idx];
 		r_ptr = &r_list[m_ptr->r_idx];
 
-		if (!(r_ptr->cmove & CM_PHASE)) {
+		if (!(r_ptr->cflags1 & CM_PHASE)) {
 		/* monster does not move, can't escape the wall */
-		    if (r_ptr->cmove & CM_ATTACK_ONLY)
+		    if (r_ptr->cflags1 & CM_ATTACK_ONLY)
 			damage = 250;
 		    else
 			damage = damroll(4, 8);
@@ -2935,7 +2935,7 @@ int mass_genocide(int spell)
     for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
 	r_ptr = &r_list[m_ptr->r_idx];
-	if (((m_ptr->cdis <= MAX_SIGHT) && ((r_ptr->cmove & CM_WIN) == 0) &&
+	if (((m_ptr->cdis <= MAX_SIGHT) && ((r_ptr->cflags1 & CM_WIN) == 0) &&
 	     ((r_ptr->cflags2 & MF2_UNIQUE) == 0)) || (wizard &&
 					      (m_ptr->cdis <= MAX_SIGHT))) {
 	    delete_monster(i);
@@ -2972,7 +2972,7 @@ int genocide(int spell)
 	    m_ptr = &m_list[i];
 	    r_ptr = &r_list[m_ptr->r_idx];
 	    if ((unsigned) typ == r_list[m_ptr->r_idx].r_char)
-		if ((r_ptr->cmove & CM_WIN) == 0) {
+		if ((r_ptr->cflags1 & CM_WIN) == 0) {
 		    delete_monster(i);
 		    if (spell) {
 			take_hit(randint(4), "the strain of casting Genocide");
@@ -3101,7 +3101,7 @@ int mass_poly()
 	m_ptr = &m_list[i];
 	if (m_ptr->cdis <= MAX_SIGHT) {
 	    r_ptr = &r_list[m_ptr->r_idx];
-	    if (((r_ptr->cmove & CM_WIN) == 0) && !(r_ptr->cflags2 & MF2_UNIQUE)) {
+	    if (((r_ptr->cflags1 & CM_WIN) == 0) && !(r_ptr->cflags2 & MF2_UNIQUE)) {
 		mass = poly(i);
 	    }
 	}
@@ -3269,9 +3269,9 @@ void earthquake()
 		    m_ptr = &m_list[c_ptr->m_idx];
 		    r_ptr = &r_list[m_ptr->r_idx];
 
-		    if (!(r_ptr->cmove & CM_PHASE) && !(r_ptr->cflags2 & MF2_BREAK_WALL)) {
+		    if (!(r_ptr->cflags1 & CM_PHASE) && !(r_ptr->cflags2 & MF2_BREAK_WALL)) {
 			if ((movement_rate(c_ptr->m_idx) == 0) ||
-			    (r_ptr->cmove & CM_ATTACK_ONLY))
+			    (r_ptr->cflags1 & CM_ATTACK_ONLY))
 			/* monster can not move to escape the wall */
 			    kill = TRUE;
 			else {
@@ -3399,7 +3399,7 @@ int probing()
 
 /* let's make probing do good things to the monster memory -CWS */
 	    mp->r_cflags2 = r_ptr->cflags2;
-	    mp->r_cmove = (r_ptr->cmove & ~CM_TREASURE);
+	    mp->r_cflags1 = (r_ptr->cflags1 & ~CM_TREASURE);
 	    probe = TRUE;
 	}
     }
