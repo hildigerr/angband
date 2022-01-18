@@ -13,7 +13,6 @@
 #include "angband.h"
 
 
-static void ball_destroy(int, int (**) ());
 static void pause_if_screen_full(int *, int);
 static void spell_hit_monster(monster_type *, int, int *, int, int *, int *, byte);
 static void replace_spot(int, int, int);
@@ -23,69 +22,6 @@ static void replace_spot(int, int, int);
 /* staves routines, and are occasionally called from other areas.	  */
 /* Now included are creature spells also.		       -RAK    */
 
-
-/* return the appropriate item destroy test to the typ.  All that's left of
- * get_flags().  -CFT 
- */
-
-/*
- * add new destroys?  maybe GF_FORCE destroy potions, GF_PLASMA as lightning,
- * GF_SHARDS and GF_ICE maybe break things (potions?), and GF_METEOR breaks
- * potions and burns scrolls?  not yet, but it's an idea... -CFT 
- */
-static void ball_destroy(int typ, int (**destroy) ())
-{
-    switch (typ) {
-      case GF_FIRE:
-	*destroy = set_fire_destroy;
-	break;
-      case GF_ACID:
-	*destroy = set_acid_destroy;
-	break;
-      case GF_COLD:
-      case GF_SHARDS:
-      case GF_ICE:
-      case GF_FORCE:
-      case GF_SOUND:
-	*destroy = set_frost_destroy;	/* just potions and flasks -DGK */
-	break;
-      case GF_ELEC:
-	*destroy = set_lightning_destroy;
-	break;
-      case GF_PLASMA:		   /* DGK */
-	*destroy = set_plasma_destroy;	/* fire+lightning -DGK */
-	break;
-      case GF_METEOR:		   /* DGK */
-	*destroy = set_meteor_destroy;	/* fire+shards -DGK */
-	break;
-      case GF_MANA:		   /* DGK */
-	*destroy = set_mana_destroy;	/* everything -DGK */
-	break;
-      case GF_HOLY_ORB:	   /* DGK */
-	*destroy = set_holy_destroy;	/* cursed stuff -DGK */
-	break;
-      case GF_MISSILE:
-      case GF_POIS:
-      case GF_ARROW:
-      case GF_NETHER:
-      case GF_WATER:
-      case GF_CHAOS:
-      case GF_CONFUSION:
-      case GF_DISENCHANT:
-      case GF_NEXUS:
-      case GF_INERTIA:
-      case GF_LITE:
-      case GF_DARK:
-      case GF_TIME:
-      case GF_GRAVITY:
-	*destroy = set_null;
-	break;
-      default:
-	msg_print("Unknown typ in ball_destroy().  This may mean trouble.");
-	*destroy = set_null;
-	break;
-    }
-}
 
 void monster_name(char *m_name, monster_type *m_ptr, monster_race      *r_ptr)
 {
@@ -1427,7 +1363,39 @@ void fire_ball(int typ, int dir, int y, int x, int dam_hp, int max_dis)
     thit = 0;
     tkill = 0;
 
-    ball_destroy(typ, &destroy);
+    switch (typ) {
+      case GF_FIRE:
+	destroy = set_fire_destroy;
+	break;
+      case GF_ACID:
+	destroy = set_acid_destroy;
+	break;
+      case GF_COLD:
+      case GF_SHARDS:
+      case GF_ICE:
+      case GF_FORCE:
+      case GF_SOUND:
+	destroy = set_frost_destroy;	/* just potions and flasks -DGK */
+	break;
+      case GF_ELEC:
+	destroy = set_lightning_destroy;
+	break;
+      case GF_PLASMA:		   /* DGK */
+	destroy = set_plasma_destroy;	/* fire+lightning -DGK */
+	break;
+      case GF_METEOR:		   /* DGK */
+	destroy = set_meteor_destroy;	/* fire+shards -DGK */
+	break;
+      case GF_MANA:		   /* DGK */
+	destroy = set_mana_destroy;	/* everything -DGK */
+	break;
+      case GF_HOLY_ORB:	   /* DGK */
+	destroy = set_holy_destroy;	/* cursed stuff -DGK */
+	break;
+      default:
+	destroy = set_null;
+	break;
+    }
 
     flag = FALSE;
     oldy = y;
@@ -1656,7 +1624,39 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
     else
 	max_dis = 2;
 
-    ball_destroy(typ, &destroy);
+    switch (typ) {
+      case GF_FIRE:
+	destroy = set_fire_destroy;
+	break;
+      case GF_ACID:
+	destroy = set_acid_destroy;
+	break;
+      case GF_COLD:
+      case GF_SHARDS:
+      case GF_ICE:
+      case GF_FORCE:
+      case GF_SOUND:
+	destroy = set_frost_destroy;	/* just potions and flasks -DGK */
+	break;
+      case GF_ELEC:
+	destroy = set_lightning_destroy;
+	break;
+      case GF_PLASMA:		   /* DGK */
+	destroy = set_plasma_destroy;	/* fire+lightning -DGK */
+	break;
+      case GF_METEOR:		   /* DGK */
+	destroy = set_meteor_destroy;	/* fire+shards -DGK */
+	break;
+      case GF_MANA:		   /* DGK */
+	destroy = set_mana_destroy;	/* everything -DGK */
+	break;
+      case GF_HOLY_ORB:	   /* DGK */
+	destroy = set_holy_destroy;	/* cursed stuff -DGK */
+	break;
+      default:
+	destroy = set_null;
+	break;
+    }
 
     if (!(py.flags1.status & PY_BLIND)) { /* only bother if the player can see */
 	for (i = y - max_dis; i <= y + max_dis; i++)
