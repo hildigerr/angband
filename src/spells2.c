@@ -2444,7 +2444,7 @@ int confuse_monster(int dir, int y, int x, int lvl)
 	    if ((r_ptr->level >
 	    randint((py.misc.lev - 10) < 1 ? 1 : (py.misc.lev - 10)) + 10) ||
 		(r_ptr->cflags2 & MF2_UNIQUE ||
-		 r_ptr->spells2 & (BREATH_CO | BREATH_CH))) {
+		 r_ptr->spells2 & (MS2_BR_CONF | MS2_BR_CHAO))) {
 		if (m_ptr->ml && (r_ptr->cflags2 & MF2_CHARM_SLEEP))
 		    l_list[m_ptr->r_idx].r_cflags2 |= MF2_CHARM_SLEEP;
 		(void)sprintf(out_val, "%s is unaffected.", m_name);
@@ -4342,7 +4342,7 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
       case GF_PLASMA:		/* maybe MF2_IM_ELEC (ball lightning is supposed
 				   to be plasma) or MF2_IM_FIRE (since it's hot)? -CFT */
 	if (!strncmp("Plasma", r_ptr->name, 6) ||
-	    (r_ptr->spells3 & BREATH_PL)){ /* if is a "plasma" monster,
+	    (r_ptr->spells3 & MS3_BR_PLAS)){ /* if is a "plasma" monster,
 					      or can breathe plasma, then
 					      we assume it should be immune.
 					      plasma bolts don't count, since
@@ -4361,7 +4361,7 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 	    if (m_ptr->ml)
 		l_list[m_ptr->r_idx].r_cflags2 |= MF2_UNDEAD;
         }
-	else if (r_ptr->spells2 & BREATH_LD) { /* if can breath nether, should get
+	else if (r_ptr->spells2 & MS2_BR_LIFE) { /* if can breath nether, should get
 						  good resist to damage -CFT */
 	    res = RESIST;
 	    *dam *= 3;  /* these 2 lines give avg dam of .33, ranging */
@@ -4381,14 +4381,14 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
         }
 	break;
       case GF_CHAOS:
-	if (r_ptr->spells2 & BREATH_CH){ /* assume anything that breathes
+	if (r_ptr->spells2 & MS2_BR_CHAO){ /* assume anything that breathes
 					    choas is chaotic enough to deserve resistance... -CFT */
 	    res = RESIST;
 	    *dam *= 3;  /* these 2 lines give avg dam of .33, ranging */
 	    *dam /= (randint(6)+6); /* from .427 to .25 -CFT */
         }
 	if ((*dam <= m_ptr->hp) && /* don't bother if it's gonna die */
-	    !(r_ptr->spells2 & BREATH_CH) &&
+	    !(r_ptr->spells2 & MS2_BR_CHAO) &&
 	    !(r_ptr->cflags2 & MF2_UNIQUE) &&
 	    (randint(90) > r_ptr->level)) { /* then we'll polymorph it -CFT */
 	    res = CHANGED;
@@ -4398,8 +4398,8 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 	} /* end of choas-poly.  If was poly-ed don't bother confuse... it's
 	     too hectic to keep track of... -CFT */
 	else if (!(r_ptr->cflags2 & MF2_CHARM_SLEEP) &&
-		 !(r_ptr->spells2 & BREATH_CH) && /* choatics hard to confuse */
-		 !(r_ptr->spells2 & BREATH_CO)){   /* so are bronze dragons */
+		 !(r_ptr->spells2 & MS2_BR_CHAO) && /* choatics hard to confuse */
+		 !(r_ptr->spells2 & MS2_BR_CONF)){   /* so are bronze dragons */
 	    if (m_ptr->confused > 0) { 
 		res = MORE_CONF;
 		if (m_ptr->confused < 240){ /* make sure not to overflow -CFT */
@@ -4413,21 +4413,21 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 	}
 	break;
       case GF_SHARDS:
-	if (r_ptr->spells2 & BREATH_SH){ /* shard breathers resist -CFT */
+	if (r_ptr->spells2 & MS2_BR_SHAR){ /* shard breathers resist -CFT */
 	    res = RESIST;
 	    *dam *= 3;  /* these 2 lines give avg dam of .33, ranging */
 	    *dam /= (randint(6)+6); /* from .427 to .25 -CFT */
         }
 	break;
       case GF_SOUND:
-      if (r_ptr->spells2 & BREATH_SD){ /* ditto for sound -CFT */
+      if (r_ptr->spells2 & MS2_BR_SOUN){ /* ditto for sound -CFT */
 	  res = RESIST;
 	  *dam *= 2;
 	  *dam /= (randint(6)+6);
       }
 	if ((*dam <= m_ptr->hp) && /* don't bother if it's dead */
-	    !(r_ptr->spells2 & BREATH_SD) &&
-	    !(r_ptr->spells3 & BREATH_WA)) { /* sound and impact breathers
+	    !(r_ptr->spells2 & MS2_BR_SOUN) &&
+	    !(r_ptr->spells3 & MS3_BR_WALL)) { /* sound and impact breathers
 	  					should not stun -CFT */
 	    if (m_ptr->confused > 0) { 
 		res = MORE_DAZED;
@@ -4442,7 +4442,7 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
   	}
 	break;
       case GF_CONFUSION:
-	if (r_ptr->spells2 & BREATH_CO){ 
+	if (r_ptr->spells2 & MS2_BR_CONF){ 
 	    res = RESIST;
 	    *dam *= 2;
 	    *dam /= (randint(6)+6);
@@ -4453,8 +4453,8 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
         }
 	if ((*dam <= m_ptr->hp) && /* don't bother if it's dead */
 	    !(r_ptr->cflags2 & MF2_CHARM_SLEEP) &&
-	    !(r_ptr->spells2 & BREATH_CH) && /* choatics hard to confuse */
-	    !(r_ptr->spells2 & BREATH_CO)) {  /* so are bronze dragons */
+	    !(r_ptr->spells2 & MS2_BR_CHAO) && /* choatics hard to confuse */
+	    !(r_ptr->spells2 & MS2_BR_CONF)) {  /* so are bronze dragons */
 	    if (m_ptr->confused > 0) { 
 		res = MORE_CONF;
 		if (m_ptr->confused < 240){ /* make sure not to overflow -CFT */
@@ -4468,7 +4468,7 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 	}
         break;
       case GF_DISENCHANT:
-	if ((r_ptr->spells2 & BREATH_DI) ||
+	if ((r_ptr->spells2 & MS2_BR_DISE) ||
 	    !strncmp("Disen", r_ptr->name, 5)) {
 	    res = RESIST;
 	    *dam *= 3;  /* these 2 lines give avg dam of .33, ranging */
@@ -4476,7 +4476,7 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
         }
 	break;
       case GF_NEXUS:
-	if ((r_ptr->spells2 & BREATH_NE) ||
+	if ((r_ptr->spells2 & MS2_BR_NETH) ||
 	    !strncmp("Nexus", r_ptr->name, 5)) {
 	    res = RESIST;
 	    *dam *= 3;  /* these 2 lines give avg dam of .33, ranging */
@@ -4484,15 +4484,15 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
         }
 	break;
       case GF_FORCE:
-	if (r_ptr->spells3 & BREATH_WA){ /* breath ele force resists
+	if (r_ptr->spells3 & MS3_BR_WALL){ /* breath ele force resists
 					    ele force -CFT */
 	    res = RESIST;
 	    *dam *= 3;  /* these 2 lines give avg dam of .33, ranging */
 	    *dam /= (randint(6)+6); /* from .427 to .25 -CFT */
         }
 	if ((*dam <= m_ptr->hp) &&
-	    !(r_ptr->spells2 & BREATH_SD) &&
-	    !(r_ptr->spells3 & BREATH_WA)){ /* sound and impact breathers
+	    !(r_ptr->spells2 & MS2_BR_SOUN) &&
+	    !(r_ptr->spells3 & MS3_BR_WALL)){ /* sound and impact breathers
 					       should not stun -CFT */
 	    if (m_ptr->confused > 0) { 
 		res = MORE_DAZED;
@@ -4507,7 +4507,7 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 	}
 	break;
       case GF_INERTIA:
-	if (r_ptr->spells3 & BREATH_SL){ /* if can breath inertia, then
+	if (r_ptr->spells3 & MS3_BR_SLOW){ /* if can breath inertia, then
 					    resist it. */
 	    res = RESIST;
 	    *dam *= 3;  /* these 2 lines give avg dam of .33, ranging */
@@ -4515,7 +4515,7 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
         }
 	break;
       case GF_LITE:
-	if (r_ptr->spells3 & BREATH_LT){ /* breathe light to res light */
+	if (r_ptr->spells3 & MS3_BR_LITE){ /* breathe light to res light */
 	    res = RESIST;
 	    *dam *= 2;
 	    *dam /= (randint(6)+6);
@@ -4524,13 +4524,13 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 	    res = SUSCEPT;
 	    *dam *= 2; /* hurt bad by light */
         }
-	else if (r_ptr->spells3 & BREATH_DA){ /* breathe dark gets hurt */
+	else if (r_ptr->spells3 & MS3_BR_DARK){ /* breathe dark gets hurt */
 	    res = SUSCEPT;
 	    *dam = (*dam * 3)/2;
         }
 	break;
       case GF_DARK:
-	if (r_ptr->spells2 & BREATH_DA){ /* shard breathers resist -CFT */
+	if (r_ptr->spells2 & MS3_BR_DARK){ /* shard breathers resist -CFT */
 	    res = RESIST;
 	    *dam *= 2;
 	    *dam /= (randint(6)+6);
@@ -4539,20 +4539,20 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 	    res = SOME_RES;
 	    *dam /= 2; /* hurt bad by light, so not hurt bad by dark */
         }
-	else if (r_ptr->spells3 & BREATH_LT){ /* breathe light gets hurt */
+	else if (r_ptr->spells3 & MS3_BR_LITE){ /* breathe light gets hurt */
 	    res = SUSCEPT;
 	    *dam = (*dam * 3)/2;
         }
 	break;
       case GF_TIME:
-	if (r_ptr->spells3 & BREATH_TI){ /* time breathers resist -CFT */
+	if (r_ptr->spells3 & MS3_BR_TIME){ /* time breathers resist -CFT */
 	    res = RESIST;
 	    *dam *= 3;  /* these 2 lines give avg dam of .33, ranging */
 	    *dam /= (randint(6)+6); /* from .427 to .25 -CFT */
         }
 	break;
       case GF_GRAVITY:
-	if (r_ptr->spells3 & BREATH_GR){ /* breathers resist -CFT */
+	if (r_ptr->spells3 & MS3_BR_GRAV){ /* breathers resist -CFT */
 	    res = RESIST;
 	    *dam *= 3;  /* these 2 lines give avg dam of .33, ranging */
 	    *dam /= (randint(6)+6); /* from .427 to .25 -CFT */
@@ -4579,8 +4579,8 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 		l_list[m_ptr->r_idx].r_cflags2 |= MF2_IM_COLD;
         }
 	if ((*dam <= m_ptr->hp) &&
-	    !(r_ptr->spells2 & BREATH_SD) &&
-	    !(r_ptr->spells3 & BREATH_WA)){  /* sound and impact breathers
+	    !(r_ptr->spells2 & MS2_BR_SOUN) &&
+	    !(r_ptr->spells3 & MS3_BR_WALL)){  /* sound and impact breathers
 	  					should not stun -CFT */
 	    if (m_ptr->confused > 0) { 
 		res += MORE_DAZED;

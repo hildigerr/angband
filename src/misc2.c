@@ -358,20 +358,20 @@ int place_monster(int y, int x, int r_idx, int slp)
     /* line-of-sight and can cast spells or breathe, should be asleep.   */
     /* This is an extension of Um55's sleeping dragon code...            */
  else
-    if (((r_ptr->spells1 & (CAUSE_LIGHT|CAUSE_SERIOUS|HOLD_PERSON|
-                                  BLINDNESS|CONFUSION|FEAR|SLOW|BREATH_L|
-                                  BREATH_G|BREATH_A|BREATH_FR|BREATH_FI|
-                                  FIRE_BOLT|FROST_BOLT|ACID_BOLT|MAG_MISS|
-                                  CAUSE_CRIT|FIRE_BALL|FROST_BALL|MANA_BOLT))
-          || (r_ptr->spells2 & (BREATH_CH|BREATH_SH|BREATH_SD|BREATH_CO|
-                                  BREATH_DI|BREATH_LD|LIGHT_BOLT|LIGHT_BALL|
-                                  ACID_BALL|TRAP_CREATE|RAZOR|MIND_BLAST|
-                                  MISSILE|PLASMA_BOLT|NETHER_BOLT|ICE_BOLT|
-                                  FORGET|BRAIN_SMASH|ST_CLOUD|TELE_LEV|
-                                  WATER_BOLT|WATER_BALL|NETHER_BALL|BREATH_NE))
-          || (r_ptr->spells3 & (BREATH_WA|BREATH_SL|BREATH_LT|BREATH_TI|
-                                  BREATH_GR|BREATH_DA|BREATH_PL|ARROW|
-                                  DARK_STORM|MANA_STORM)))
+    if (((r_ptr->spells1 & (MS1_CAUSE_1|MS1_CAUSE_2|MS1_HOLD|
+                                  MS1_BLIND|MS1_CONF|MS1_FEAR|MS1_SLOW|MS1_BR_ELEC|
+                                  MS1_BR_POIS|MS1_BR_ACID|MS1_BR_COLD|MS1_BR_FIRE|
+                                  MS1_BO_FIRE|MS1_BO_COLD|MS1_BO_ACID|MS1_ARROW_1|
+                                  MS1_CAUSE_3|MS1_BA_FIRE|MS1_BA_COLD|MS1_BO_MANA))
+          || (r_ptr->spells2 & (MS2_BR_CHAO|MS2_BR_SHAR|MS2_BR_SOUN|MS2_BR_CONF|
+                                  MS2_BR_DISE|MS2_BR_LIFE|MS2_BO_ELEC|MS2_BA_ELEC|
+                                  MS2_BA_ACID|MS2_TRAP_CREATE|MS2_RAZOR|MS2_MIND_BLAST|
+                                  MS2_ARROW_2|MS2_BO_PLAS|MS2_BO_NETH|MS2_BO_ICEE|
+                                  MS2_FORGET|MS2_BRAIN_SMASH|MS2_BA_POIS|MS2_TELE_LEVEL|
+                                  MS2_BO_WATE|MS2_BA_WATE|MS2_BA_NETH|MS2_BR_NETH))
+          || (r_ptr->spells3 & (MS3_BR_WALL|MS3_BR_SLOW|MS3_BR_LITE|MS3_BR_TIME|
+                                  MS3_BR_GRAV|MS3_BR_DARK|MS3_BR_PLAS|MS3_ARROW_3|
+                                  MS3_DARK_STORM|MS3_MANA_STORM)))
        && los(y, x, char_row, char_col)) {
       m_ptr->csleep = randint(4);   /* if asleep only to prevent
                                        * summon-breathe-breathe-breathe-die,
@@ -607,46 +607,46 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	    g->spells1 = NONE8;
 	    break;
 	  case 1:		   /* Mage */
-	    g->spells1 |= (0x3L | BLINK | MAG_MISS |
-			   SLOW | CONFUSION);
-	    if (lev > 5) g->spells2 |= ST_CLOUD;
-	    if (lev > 7) g->spells2 |= LIGHT_BOLT;
-	    if (lev > 10) g->spells1 |= FROST_BOLT;
-	    if (lev > 12) g->spells1 |= TELE;
-	    if (lev > 15) g->spells1 |= ACID_BOLT;
-	    if (lev > 20) g->spells1 |= FIRE_BOLT;
-	    if (lev > 25) g->spells1 |= FROST_BALL;
-	    if (lev > 25) g->spells2 |= HASTE;
-	    if (lev > 30) g->spells1 |= FIRE_BALL;
-	    if (lev > 40) g->spells1 |= MANA_BOLT;
+	    g->spells1 |= (0x3L | MS1_BLINK | MS1_ARROW_1 |
+			   MS1_SLOW | MS1_CONF);
+	    if (lev > 5) g->spells2 |= MS2_BA_POIS;
+	    if (lev > 7) g->spells2 |= MS2_BO_ELEC;
+	    if (lev > 10) g->spells1 |= MS1_BO_COLD;
+	    if (lev > 12) g->spells1 |= MS1_TELEPORT;
+	    if (lev > 15) g->spells1 |= MS1_BO_ACID;
+	    if (lev > 20) g->spells1 |= MS1_BO_FIRE;
+	    if (lev > 25) g->spells1 |= MS1_BA_COLD;
+	    if (lev > 25) g->spells2 |= MS2_HASTE;
+	    if (lev > 30) g->spells1 |= MS1_BA_FIRE;
+	    if (lev > 40) g->spells1 |= MS1_BO_MANA;
 	    break;
 	  case 3:		   /* Rogue */
-	    g->spells1 |= (0x5L | BLINK);
-	    if (lev > 10) g->spells1 |= CONFUSION;
-	    if (lev > 18) g->spells1 |= SLOW;
-	    if (lev > 25) g->spells1 |= TELE;
-	    if (lev > 30) g->spells1 |= HOLD_PERSON;
-	    if (lev > 35) g->spells1 |= TELE_TO;
+	    g->spells1 |= (0x5L | MS1_BLINK);
+	    if (lev > 10) g->spells1 |= MS1_CONF;
+	    if (lev > 18) g->spells1 |= MS1_SLOW;
+	    if (lev > 25) g->spells1 |= MS1_TELEPORT;
+	    if (lev > 30) g->spells1 |= MS1_HOLD;
+	    if (lev > 35) g->spells1 |= MS1_TELE_TO;
 	    break;
 	  case 4:		   /* Ranger */
-	    g->spells1 |= (0x8L | MAG_MISS);
-	    if (lev > 5) g->spells2 |= ST_CLOUD;
-	    if (lev > 7) g->spells2 |= LIGHT_BOLT;
-	    if (lev > 10) g->spells1 |= FROST_BOLT;
-	    if (lev > 18) g->spells1 |= ACID_BOLT;
-	    if (lev > 25) g->spells1 |= FIRE_BOLT;
-	    if (lev > 30) g->spells1 |= FROST_BALL;
-	    if (lev > 35) g->spells1 |= FIRE_BALL;
+	    g->spells1 |= (0x8L | MS1_ARROW_1);
+	    if (lev > 5) g->spells2 |= MS2_BA_POIS;
+	    if (lev > 7) g->spells2 |= MS2_BO_ELEC;
+	    if (lev > 10) g->spells1 |= MS1_BO_COLD;
+	    if (lev > 18) g->spells1 |= MS1_BO_ACID;
+	    if (lev > 25) g->spells1 |= MS1_BO_FIRE;
+	    if (lev > 30) g->spells1 |= MS1_BA_COLD;
+	    if (lev > 35) g->spells1 |= MS1_BA_FIRE;
 	    break;
 	  case 2:		   /* Priest */
 	  case 5:		   /* Paladin */
-	    g->spells1 |= (0x4L | CAUSE_LIGHT | FEAR);
-	    if (lev > 5) g->spells2 |= HEAL;
-	    if (lev > 10) g->spells1 |= (CAUSE_SERIOUS | BLINDNESS);
-	    if (lev > 18) g->spells1 |= HOLD_PERSON;
-	    if (lev > 25) g->spells1 |= CONFUSION;
-	    if (lev > 30) g->spells1 |= CAUSE_CRIT;
-	    if (lev > 35) g->spells1 |= MANA_DRAIN;
+	    g->spells1 |= (0x4L | MS1_CAUSE_1 | MS1_FEAR);
+	    if (lev > 5) g->spells2 |= MS2_HEAL;
+	    if (lev > 10) g->spells1 |= (MS1_CAUSE_2 | MS1_BLIND);
+	    if (lev > 18) g->spells1 |= MS1_HOLD;
+	    if (lev > 25) g->spells1 |= MS1_CONF;
+	    if (lev > 30) g->spells1 |= MS1_CAUSE_3;
+	    if (lev > 35) g->spells1 |= MS1_MANA_DRAIN;
 	    break;
 	}
 
@@ -790,7 +790,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	sprintf(g->name, "%s%s ghost", name,
 		(name[strlen(name) - 1] == 's') ? "'" : "'s");
 	g->cflags1 |= (MF1_MV_INVIS | MF1_THRO_WALL | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_1D2 | MF2_GOOD);
-	g->spells1 |= (0xFL | HOLD_PERSON | MANA_DRAIN | BLINDNESS);
+	g->spells1 |= (0xFL | MS1_HOLD | MS1_MANA_DRAIN | MS1_BLIND);
 	g->cflags2 |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_POIS | MF2_IM_COLD | MF2_NO_INFRA);
 	g->ac = 40;
 	g->speed = 12;
@@ -806,7 +806,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
       case 12:
 	sprintf(g->name, "%s, the Vampire", name);
 	g->cflags1 |= (MF1_THRO_DR | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_2D2 | MF2_GOOD);
-	g->spells1 |= (0x8L | HOLD_PERSON | FEAR | TELE_TO | CAUSE_SERIOUS);
+	g->spells1 |= (0x8L | MS1_HOLD | MS1_FEAR | MS1_TELE_TO | MS1_CAUSE_2);
 	g->cflags2 |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_POIS | MF2_NO_INFRA | MF2_HURT_LITE);
 	g->ac = 40;
 	g->speed = 11;
@@ -823,8 +823,8 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	sprintf(g->name, "%s%s Wraith", name,
 		(name[strlen(name) - 1] == 's') ? "'" : "'s");
 	g->cflags1 |= (MF1_THRO_DR | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_4D2 | MF1_HAS_2D2 | MF2_GOOD);
-	g->spells1 |= (0x7L | HOLD_PERSON | FEAR | BLINDNESS | CAUSE_CRIT);
-	g->spells2 |= (NETHER_BOLT);
+	g->spells1 |= (0x7L | MS1_HOLD | MS1_FEAR | MS1_BLIND | MS1_CAUSE_3);
+	g->spells2 |= (MS2_BO_NETH);
 	g->cflags2 |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_POIS | MF2_IM_COLD | MF2_NO_INFRA | MF2_HURT_LITE);
 	g->ac = 60;
 	g->speed = 12;
@@ -840,8 +840,8 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
       case 14:
 	sprintf(g->name, "%s, the Vampire Lord", name);
 	g->cflags1 |= (MF1_THRO_DR | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_1D2 | MF2_SPECIAL);
-	g->spells1 |= (0x8L | HOLD_PERSON | FEAR | TELE_TO | CAUSE_CRIT);
-	g->spells2 |= (NETHER_BOLT);
+	g->spells1 |= (0x8L | MS1_HOLD | MS1_FEAR | MS1_TELE_TO | MS1_CAUSE_3);
+	g->spells2 |= (MS2_BO_NETH);
 	g->cflags2 |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_POIS | MF2_NO_INFRA | MF2_HURT_LITE);
 	g->ac = 80;
 	g->speed = 11;
@@ -859,7 +859,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	sprintf(g->name, "%s%s ghost", name,
 		 (name[strlen(name) - 1] == 's') ? "'" : "'s");
 	g->cflags1 |= (MF1_MV_INVIS | MF1_THRO_WALL | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_2D2 | MF2_SPECIAL);
-	g->spells1 |= (0x5L | HOLD_PERSON | MANA_DRAIN | BLINDNESS | CONFUSION);
+	g->spells1 |= (0x5L | MS1_HOLD | MS1_MANA_DRAIN | MS1_BLIND | MS1_CONF);
 	g->cflags2 |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_COLD | MF2_IM_POIS | MF2_NO_INFRA);
 	g->ac = 90;
 	g->speed = 13;
@@ -875,10 +875,10 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
       case 17:
 	sprintf(g->name, "%s, the Lich", name);
 	g->cflags1 |= (MF1_THRO_DR | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_2D2 | MF1_HAS_1D2 | MF2_SPECIAL);
-	g->spells1 |= (0x3L | FEAR | CAUSE_CRIT | TELE_TO | BLINK |
-		       S_UNDEAD | FIRE_BALL | FROST_BALL | HOLD_PERSON |
-		       MANA_DRAIN | BLINDNESS | CONFUSION | TELE);
-	g->spells2 |= (BRAIN_SMASH | RAZOR);
+	g->spells1 |= (0x3L | MS1_FEAR | MS1_CAUSE_3 | MS1_TELE_TO | MS1_BLINK |
+		       MS1_S_UNDEAD | MS1_BA_FIRE | MS1_BA_COLD | MS1_HOLD |
+		       MS1_MANA_DRAIN | MS1_BLIND | MS1_CONF | MS1_TELEPORT);
+	g->spells2 |= (MS2_BRAIN_SMASH | MS2_RAZOR);
 	g->cflags2 |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_COLD | MF2_NO_INFRA | MF2_IM_POIS| MF2_INTELLIGENT);
 	g->ac = 120;
 	g->speed = 12;
@@ -897,10 +897,10 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 		(name[strlen(name) - 1] == 's') ? "'" : "'s");
 	g->cflags1 |= (MF1_MV_INVIS | MF1_THRO_WALL | MF1_MV_ATT_NORM | MF1_CARRY_OBJ |
 		       MF1_HAS_1D2 | MF1_HAS_2D2 | MF2_SPECIAL);
-	g->spells1 |= (0x2L | HOLD_PERSON | MANA_DRAIN | 
-		       BLINDNESS | CONFUSION | TELE_TO);
-	g->spells2 |= (NETHER_BOLT | NETHER_BALL | BRAIN_SMASH |
-		       TELE_LEV);
+	g->spells1 |= (0x2L | MS1_HOLD | MS1_MANA_DRAIN | 
+		       MS1_BLIND | MS1_CONF | MS1_TELE_TO);
+	g->spells2 |= (MS2_BO_NETH | MS2_BA_NETH | MS2_BRAIN_SMASH |
+		       MS2_TELE_LEVEL);
 	g->cflags2 |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_POIS | MF2_IM_COLD | MF2_NO_INFRA | MF2_INTELLIGENT);
 	g->ac = 130;
 	g->speed = 13;
@@ -1293,20 +1293,20 @@ void alloc_monster(int num, int dis, int slp)
      * is an extension of Um55's sleeping dragon code... 
      */
 
-	if (((r_list[r_idx].spells1 & (CAUSE_LIGHT | CAUSE_SERIOUS | HOLD_PERSON |
-			    BLINDNESS | CONFUSION | FEAR | SLOW | BREATH_L |
-			       BREATH_G | BREATH_A | BREATH_FR | BREATH_FI |
-			     FIRE_BOLT | FROST_BOLT | ACID_BOLT | MAG_MISS |
-			   CAUSE_CRIT | FIRE_BALL | FROST_BALL | MANA_BOLT))
-	     || (r_list[r_idx].spells2 & (BREATH_CH | BREATH_SH | BREATH_SD | BREATH_CO |
-			   BREATH_DI | BREATH_LD | LIGHT_BOLT | LIGHT_BALL |
-			      ACID_BALL | TRAP_CREATE | RAZOR | MIND_BLAST |
-			    MISSILE | PLASMA_BOLT | NETHER_BOLT | ICE_BOLT |
-				FORGET | BRAIN_SMASH | ST_CLOUD | TELE_LEV |
-			 WATER_BOLT | WATER_BALL | NETHER_BALL | BREATH_NE))
-	     || (r_list[r_idx].spells3 & (BREATH_WA | BREATH_SL | BREATH_LT | BREATH_TI |
-				 BREATH_GR | BREATH_DA | BREATH_PL | ARROW |
-					DARK_STORM | MANA_STORM)))
+	if (((r_list[r_idx].spells1 & (MS1_CAUSE_1 | MS1_CAUSE_2 | MS1_HOLD |
+			    MS1_BLIND | MS1_CONF | MS1_FEAR | MS1_SLOW | MS1_BR_ELEC |
+			       MS1_BR_POIS | MS1_BR_ACID | MS1_BR_COLD | MS1_BR_FIRE |
+			     MS1_BO_FIRE | MS1_BO_COLD | MS1_BO_ACID | MS1_ARROW_1 |
+			   MS1_CAUSE_3 | MS1_BA_FIRE | MS1_BA_COLD | MS1_BO_MANA))
+	     || (r_list[r_idx].spells2 & (MS2_BR_CHAO | MS2_BR_SHAR | MS2_BR_SOUN | MS2_BR_CONF |
+			   MS2_BR_DISE | MS2_BR_LIFE | MS2_BO_ELEC | MS2_BA_ELEC |
+			      MS2_BA_ACID | MS2_TRAP_CREATE | MS2_RAZOR | MS2_MIND_BLAST |
+			    MS2_ARROW_2 | MS2_BO_PLAS | MS2_BO_NETH | MS2_BO_ICEE |
+				MS2_FORGET | MS2_BRAIN_SMASH | MS2_BA_POIS | MS2_TELE_LEVEL |
+			 MS2_BO_WATE | MS2_BA_WATE | MS2_BA_NETH | MS2_BR_NETH))
+	     || (r_list[r_idx].spells3 & (MS3_BR_WALL | MS3_BR_SLOW | MS3_BR_LITE | MS3_BR_TIME |
+				 MS3_BR_GRAV | MS3_BR_DARK | MS3_BR_PLAS | MS3_ARROW_3 |
+					MS3_DARK_STORM | MS3_MANA_STORM)))
 	    && (los(y, x, char_row, char_col))) {
 	    slp = TRUE;
 	}

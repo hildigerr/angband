@@ -1032,7 +1032,6 @@
 
 
 
-#define NONE8       	0x00000000L
 #define MF1_MV_ONLY_ATT		0x00000001L /* The monster does not move */
 #define MF1_MV_ATT_NORM 	0x00000002L /* The monster moves normally */
 #define MF1_MV_20	        0x00000004L /* 20% random */
@@ -1053,87 +1052,6 @@
 #define MF1_HAS_2D2		0x20000000L
 #define MF1_HAS_4D2		0x40000000L
 #define MF1_WINNER		0x80000000L
-
-#define BLINK		0x000010L
-#define TELE		0x000020L
-#define TELE_TO	 	0x000040L
-#define CAUSE_LIGHT	0x000080L
-#define CAUSE_SERIOUS	0x000100L
-#define HOLD_PERSON	0x000200L
-#define BLINDNESS	0x000400L
-#define CONFUSION	0x000800L
-#define FEAR		0x001000L
-#define MONSTER		0x002000L
-#define S_UNDEAD	0x004000L
-#define SLOW		0x008000L
-#define MANA_DRAIN	0x010000L
-#define S_DEMON		0x020000L
-#define S_DRAGON	0x040000L
-#define BREATH_L	0x080000L
-#define BREATH_G	0x100000L
-#define BREATH_A	0x200000L
-#define BREATH_FR	0x400000L
-#define BREATH_FI	0x800000L
-#define FIRE_BOLT   	0x1000000L
-#define FROST_BOLT	0x2000000L
-#define ACID_BOLT     	0x04000000L
-#define MAG_MISS      	0x08000000L
-#define CAUSE_CRIT    	0x10000000L
-#define FIRE_BALL     	0x20000000L
-#define FROST_BALL    	0x40000000L
-#define MANA_BOLT     	0x80000000L
-
-/* spells 2 :-> */
-#define BREATH_CH   	0x00000001L /* Chaos */
-#define BREATH_SH    	0x00000002L /* Shards */
-#define BREATH_SD    	0x00000004L /* Sound */
-#define BREATH_CO   	0x00000008L /* Confusion */
-#define BREATH_DI 	0x00000010L /* Disenchantment */
-#define BREATH_LD  	0x00000020L /* Life Draining */
-#define LIGHT_BOLT 	0x00000040L
-#define LIGHT_BALL   	0x00000080L
-#define ACID_BALL    	0x00000100L
-#define TRAP_CREATE  	0x00000200L
-#define RAZOR        	0x00000400L
-#define MIND_BLAST   	0x00000800L
-#define TELE_AWAY    	0x00001000L
-#define HEAL         	0x00002000L
-#define HASTE        	0x00004000L
-#define MISSILE      	0x00008000L
-#define PLASMA_BOLT  	0x00010000L
-#define SUMMON       	0x00020000L
-#define NETHER_BOLT  	0x00040000L
-#define ICE_BOLT     	0x00080000L
-#define DARKNESS     	0x00100000L
-#define FORGET       	0x00200000L
-#define BRAIN_SMASH  	0x00400000L
-#define ST_CLOUD     	0x00800000L
-#define TELE_LEV     	0x01000000L
-#define WATER_BOLT   	0x02000000L
-#define WATER_BALL   	0x04000000L
-#define NETHER_BALL  	0x08000000L
-#define S_ANGEL      	0x10000000L
-#define S_SPIDER     	0x20000000L
-#define S_HOUND      	0x40000000L
-#define BREATH_NE    	0x80000000L /* Nexus */
-
-/* spells 3:-> */
-#define BREATH_WA    	0x00000001L /* Wall Building */
-#define BREATH_SL    	0x00000002L /* Slowness */
-#define BREATH_LT    	0x00000004L /* Light */
-#define BREATH_TI    	0x00000008L /* Time */
-#define BREATH_GR    	0x00000010L /* Gravity */
-#define BREATH_DA    	0x00000020L /* Darkness */
-#define BREATH_PL    	0x00000040L /* Plasma */
-#define ARROW        	0x00000080L /* fires an arrow */
-#define S_WRAITH     	0x00000100L /* Summon ringwraiths */
-#define DARK_STORM   	0x00000200L /* Big darkness breath */
-#define MANA_STORM   	0x00000400L /* Mana storm */
-#define S_REPTILE    	0x00000800L /* Summon reptiles */
-#define S_ANT	     	0x00001000L /* Summon ants/ant lions */
-#define S_UNIQUE     	0x00002000L /* Summon uniques */
-#define S_GUNDEAD    	0x00004000L /* Summon greater undead */
-#define S_ANCIENTD   	0x00008000L /* Summon ancient dragon */
 
 #define MF2_ANIMAL		0x00000001L
 #define MF2_EVIL		0x00000002L
@@ -1163,6 +1081,93 @@
 #define MF2_MINDLESS		0x02000000L /* does not have a mind -CWS    */
 /* 5 bits missing */
 #define MF2_UNIQUE		0x80000000L /* unique monster */
+
+/* r_ptr->spells1 */
+#define MS1_BLINK		0x00000010L
+#define MS1_TELEPORT		0x00000020L
+#define MS1_TELE_TO	 	0x00000040L
+#define MS1_CAUSE_1		0x00000080L
+#define MS1_CAUSE_2		0x00000100L
+#define MS1_HOLD		0x00000200L
+#define MS1_BLIND		0x00000400L
+#define MS1_CONF		0x00000800L
+#define MS1_FEAR		0x00001000L
+#define MS1_S_MONSTER		0x00002000L
+#define MS1_S_UNDEAD		0x00004000L
+#define MS1_SLOW		0x00008000L
+#define MS1_MANA_DRAIN		0x00010000L
+#define MS1_S_DEMON		0x00020000L
+#define MS1_S_DRAGON		0x00040000L
+#define MS1_BR_ELEC		0x00080000L
+#define MS1_BR_POIS		0x00100000L
+#define MS1_BR_ACID		0x00200000L
+#define MS1_BR_COLD		0x00400000L
+#define MS1_BR_FIRE		0x00800000L
+#define MS1_BO_FIRE   		0x01000000L
+#define MS1_BO_COLD		0x02000000L
+#define MS1_BO_ACID     	0x04000000L
+#define MS1_ARROW_1      	0x08000000L
+#define MS1_CAUSE_3    		0x10000000L
+#define MS1_BA_FIRE     	0x20000000L
+#define MS1_BA_COLD    		0x40000000L
+#define MS1_BO_MANA     	0x80000000L
+
+/* r_ptr->spells2 */
+#define MS2_BR_CHAO   		0x00000001L /* Chaos */
+#define MS2_BR_SHAR    		0x00000002L /* Shards */
+#define MS2_BR_SOUN    		0x00000004L /* Sound */
+#define MS2_BR_CONF   		0x00000008L /* Confusion */
+#define MS2_BR_DISE 		0x00000010L /* Disenchantment */
+#define MS2_BR_LIFE  		0x00000020L /* Life Draining */
+#define MS2_BO_ELEC 		0x00000040L
+#define MS2_BA_ELEC   		0x00000080L
+#define MS2_BA_ACID    		0x00000100L
+#define MS2_TRAP_CREATE  	0x00000200L
+#define MS2_RAZOR        	0x00000400L
+#define MS2_MIND_BLAST   	0x00000800L
+#define MS2_TELE_AWAY    	0x00001000L
+#define MS2_HEAL         	0x00002000L
+#define MS2_HASTE        	0x00004000L
+#define MS2_ARROW_2      	0x00008000L
+#define MS2_BO_PLAS  		0x00010000L
+#define MS2_S_SUMMON       	0x00020000L
+#define MS2_BO_NETH  		0x00040000L
+#define MS2_BO_ICEE     	0x00080000L
+#define MS2_DARKNESS     	0x00100000L
+#define MS2_FORGET       	0x00200000L
+#define MS2_BRAIN_SMASH  	0x00400000L
+#define MS2_BA_POIS     	0x00800000L
+#define MS2_TELE_LEVEL     	0x01000000L
+#define MS2_BO_WATE   		0x02000000L
+#define MS2_BA_WATE   		0x04000000L
+#define MS2_BA_NETH  		0x08000000L
+#define MS2_S_ANGEL      	0x10000000L
+#define MS2_S_SPIDER     	0x20000000L
+#define MS2_S_HOUND      	0x40000000L
+#define MS2_BR_NETH    		0x80000000L /* Nexus */
+
+/* m_ptr->spells3 */
+#define MS3_BR_WALL   		0x00000001L /* Wall Building */
+#define MS3_BR_SLOW   	 	0x00000002L /* Slowness */
+#define MS3_BR_LITE    		0x00000004L /* Light */
+#define MS3_BR_TIME    		0x00000008L /* Time */
+#define MS3_BR_GRAV    		0x00000010L /* Gravity */
+#define MS3_BR_DARK    		0x00000020L /* Darkness */
+#define MS3_BR_PLAS    		0x00000040L /* Plasma */
+#define MS3_ARROW_3        	0x00000080L /* fires an arrow */
+#define MS3_S_WRAITH     	0x00000100L /* Summon ringwraiths */
+#define MS3_DARK_STORM   	0x00000200L /* Big darkness breath */
+#define MS3_MANA_STORM   	0x00000400L /* Mana storm */
+#define MS3_S_REPTILE    	0x00000800L /* Summon reptiles */
+#define MS3_S_ANT	     	0x00001000L /* Summon ants/ant lions */
+#define MS3_S_UNIQUE     	0x00002000L /* Summon uniques */
+#define MS3_S_GUNDEAD    	0x00004000L /* Summon greater undead */
+#define MS3_S_ANCIENTD   	0x00008000L /* Summon ancient dragon */
+
+/*
+ * Eight bits of zeros
+ */
+#define NONE8			0x00000000L
 
 
 /*
