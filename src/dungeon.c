@@ -105,11 +105,7 @@ void dungeon(void)
 	c_ptr = &cave[char_row][char_col];
 	i_ptr = &i_list[c_ptr->i_idx];
 
-	if ((c_ptr->i_idx == 0) ||
-	    ((i_ptr->tval != TV_STORE_DOOR) && /* if not store */
-	     ((i_ptr->tval < TV_MIN_WEAR) ||   /* if no artifact here -CFT */
-	      (i_ptr->tval > TV_MIN_WEAR) ||
-	      !(i_ptr->flags2 & TR_ARTIFACT)))) {
+	if (valid_grid(char_row, char_col)) {
 	    if (c_ptr->i_idx != 0)
 	    delete_object(char_row, char_col);
 	    cur_pos = i_pop();

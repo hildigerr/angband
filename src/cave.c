@@ -16,6 +16,48 @@
 
 
 /*
+ * Is a given location "valid" for placing things?
+ * Note that solid rock, doors, and rubble evaluate as "valid".
+ * Note that artifacts, store doors, and stairs, do not.
+ *
+ * This function is usually "combined" with "floor_grid_bold(y,x)",
+ * which checks to see if the grid is not a wall or blockage.
+ */
+bool valid_grid(int y, int x)
+{
+    cave_type *c_ptr;
+    inven_type *i_ptr;
+
+    /* Outer wall (and illegal grids) are not "valid" */
+    if (!in_bounds(y,x)) return (FALSE);
+
+    /* Get that grid */
+    c_ptr = &cave[y][x];
+
+    /* Internal Boundary walls are invalid */
+    if (c_ptr->fval == BOUNDARY_WALL) return (FALSE);
+
+    /* Nothing here, this is very desirable */
+    if (c_ptr->i_idx == 0) return (TRUE);
+
+    /* Something there */
+    i_ptr = &i_list[c_ptr->i_idx];
+
+    /* Stairs and store doors are very important */
+    if (i_ptr->tval == TV_STORE_DOOR) return (FALSE);
+    if (i_ptr->tval == TV_DOWN_STAIR) return (FALSE);
+    if (i_ptr->tval == TV_UP_STAIR) return (FALSE);
+
+    /* Artifacts are really important */
+    if (!(i_ptr->tval < TV_MIN_WEAR) && !(i_ptr->tval > TV_MIN_WEAR) && (i_ptr->flags2 & TR_ARTIFACT)) return (FALSE);
+
+    /* Normal object may be destroyed */
+    return (TRUE);
+}
+
+
+
+/*
  * A simple, fast, integer-based line-of-sight algorithm.  By Joseph Hall,
  * 4116 Brewster Drive, Raleigh NC 27606.  Email to jnh@ecemwl.ncsu.edu. 
  *

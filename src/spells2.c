@@ -358,14 +358,9 @@ void stair_creation()
 
     c_ptr = &cave[char_row][char_col];
 
-    if ((c_ptr->i_idx == 0) ||
-        ((i_list[c_ptr->i_idx].tval != TV_UP_STAIR)  /* if not stairs or a store */
-         && (i_list[c_ptr->i_idx].tval != TV_DOWN_STAIR)
-         && (i_list[c_ptr->i_idx].tval != TV_STORE_DOOR)
-         && ((i_list[c_ptr->i_idx].tval < TV_MIN_WEAR) ||
-             (i_list[c_ptr->i_idx].tval > TV_MAX_WEAR) ||
-             !(i_list[c_ptr->i_idx].flags2 & TR_ARTIFACT)))) {
-/* if no artifact here -CFT */
+    /* Do not destroy useful stuff */
+    if (valid_grid(char_row, char_col)) {
+
 	if (c_ptr->i_idx != 0)
 	    (void)delete_object(char_row, char_col);
 	cur_pos = i_pop();
@@ -2785,16 +2780,10 @@ int build_wall(int dir, int y, int x)
 		    m_ptr->hp += damroll(4, 8);
 		}
 	    }
-	    if (c_ptr->i_idx != 0)
-		if (((i_list[c_ptr->i_idx].tval >= TV_MIN_WEAR) &&
-		     (i_list[c_ptr->i_idx].tval <= TV_MAX_WEAR) &&
-		     (i_list[c_ptr->i_idx].flags2 & TR_ARTIFACT))
-		    || (i_list[c_ptr->i_idx].tval == TV_UP_STAIR)
-		    || (i_list[c_ptr->i_idx].tval == TV_DOWN_STAIR)
-		    || (i_list[c_ptr->i_idx].tval == TV_STORE_DOOR))
-		    continue;	   /* don't bury the artifact/stair/store */
-		else
-		    (void)delete_object(y, x);
+
+	    if (!valid_grid(y,x)) continue;
+
+	    delete_object(y, x);
 	    c_ptr->fval = MAGMA_WALL;
 	    c_ptr->fm = FALSE;
 	    lite_spot(y, x);
@@ -3253,18 +3242,15 @@ void earthquake()
 	    if (((i != char_row) || (j != char_col)) &&
 		in_bounds(i, j) && (distance(char_row, char_col, i, j)<=10) &&
 		(randint(8) == 1)) {
+
+	    /* Artifacts and Stairs and Stores resist */
+	    if (!valid_grid(i,j)) continue;
+
 		c_ptr = &cave[i][j];
-		if (c_ptr->i_idx != 0)
-		    if (((i_list[c_ptr->i_idx].tval >= TV_MIN_WEAR) &&
-			 (i_list[c_ptr->i_idx].tval <= TV_MAX_WEAR) &&
-			 (i_list[c_ptr->i_idx].flags2 & TR_ARTIFACT))
-			|| (i_list[c_ptr->i_idx].tval == TV_UP_STAIR)
-			|| (i_list[c_ptr->i_idx].tval == TV_DOWN_STAIR)
-			|| (i_list[c_ptr->i_idx].tval == TV_STORE_DOOR))
-			continue;  /* don't touch artifacts or stairs or
-				    * stores -CFT */
-		    else
-			(void)delete_object(i, j);
+
+		/* Delete the object */
+		delete_object(i, j);
+
 		if (c_ptr->m_idx > 1) {
 		    m_ptr = &m_list[c_ptr->m_idx];
 		    r_ptr = &r_list[m_ptr->r_idx];
@@ -3621,11 +3607,7 @@ void destroy_area(int y, int x)
     if (dun_level > 0) {
 	for (i = (y - 15); i <= (y + 15); i++)
 	    for (j = (x - 15); j <= (x + 15); j++)
-		if (in_bounds(i, j) && (cave[i][j].fval != BOUNDARY_WALL) &&
-		    ((cave[i][j].i_idx == 0) ||
-		     ((i_list[cave[i][j].i_idx].tval != TV_UP_STAIR) &&
-		      (i_list[cave[i][j].i_idx].tval != TV_DOWN_STAIR) &&
-		      (!(i_list[cave[i][j].i_idx].flags2 & TR_ARTIFACT))))) {	/* DGK */
+		if (valid_grid(i, j)) {
 		    k = distance(i, j, y, x);
 		    if (k == 0)	   /* player's spot... */
 			replace_spot(i, j, 1);	/* clear player's spot...

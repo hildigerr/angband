@@ -448,11 +448,7 @@ static void place_destroyed()
 	    for (x = (x1 - 15); x <= (x1 + 15); x++) {
 
 		/* Do not destroy important (or illegal) stuff */
-		if (in_bounds(y, x) && (cave[y][x].fval != BOUNDARY_WALL) &&
-		    ((cave[y][x].i_idx == 0) ||	/* DGK */
-		     ((i_list[cave[y][x].i_idx].tval != TV_UP_STAIR) &&
-		      (i_list[cave[y][x].i_idx].tval != TV_DOWN_STAIR) &&
-		      (!(i_list[cave[y][x].i_idx].flags2 & TR_ARTIFACT))))) {
+		if (valid_grid(y, x)) {
 		    k = distance(y, x, y1, x1);
 		    if (y == char_row && x == char_col) repl_spot(y, x, 1);
 		    else if (k < 13) repl_spot(y, x, (int)randint(6));
@@ -469,23 +465,15 @@ static void place_destroyed()
  * This code performs the common test in all of the place_* functions,
  * and returns c_ptr if we can go ahead and place the object, or NULL
  * if we can't.
+ *
+ * Note the use of "valid_grid()" to prevent artifact destruction
+ * or stair (or store door) removal.  It also verifies "in_bounds(y,x)"
  */
 static cave_type *test_place_obj(int y, int x)
 {
-    cave_type *t;
-    int        tv;
-    
-    if (!in_bounds(y,x)) return NULL;
-    t = &cave[y][x];
-    tv = i_list[t->i_idx].tval;
-    
-    if (t->i_idx != 0)
-	if (((tv <= TV_MAX_WEAR) && (tv >= TV_MIN_WEAR) &&
-	     (i_list[t->i_idx].flags2 & TR_ARTIFACT)) ||
-	    (tv == TV_UP_STAIR) || (tv == TV_DOWN_STAIR) ||
-	    (tv == TV_STORE_DOOR))
-	    return NULL;
-	else
+    /* Don't hurt artifacts, or stairs */
+    if (!valid_grid(y, x)) return (NULL);
+
     /* Destroy any object already there */
     delete_object(y, x);
 

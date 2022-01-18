@@ -1,5 +1,6 @@
 === Basic "changes" from Angband 2.6.1 to Angband 2.7.0 ===
 
+Functions floor_grid(), clean_grid(), and valid_grid().
 Rewrite of the "pathname constructor" code.
 Added floating point (yuck!) to "standard deviation" code.
 Redid the targetting code, and the direction code.

@@ -722,19 +722,14 @@ int mon_take_hit(int m_idx, int dam, int print_fear)
 		    if (ca_ptr->i_idx != 0) {	/* don't overwrite artifact -CFT */
 			int                 ty = m_ptr->fy, tx = m_ptr->fx, ny, nx;
 
-			while ((cave[ty][tx].i_idx != 0) &&
-			  (i_list[cave[ty][tx].i_idx].tval >= TV_MIN_WEAR) &&
-			  (i_list[cave[ty][tx].i_idx].tval <= TV_MAX_WEAR) &&
-			 (i_list[cave[ty][tx].i_idx].flags2 & TR_ARTIFACT)) {
-			    do { /* pick new possible spot */
-				ny = ty + (byte) randint(3) - 2;
-				nx = tx + (byte) randint(3) - 2;
-			    } while (!in_bounds(ny, nx) ||
-				     !floor_grid_bold(ny, nx));
-			    ty = ny;	/* this is a new spot, not in a wall/door/etc */
-			    tx = nx;
-			} /* ok, to exit this, [ty][tx] must not be artifact
-			   * -CFT */
+	/* Stagger around until we find a legal grid */
+			while (!valid_grid(ty, tx)) {
+				ny = rand_spread(ty, 1);
+				nx = rand_spread(tx, 1);
+			    if (!in_bounds(ny,nx)) continue;
+			    ty = ny, tx = nx;
+			}
+
 			if (cave[ty][tx].i_idx != 0)	/* so we can delete it -CFT */
 			    (void)delete_object(ty, tx);
 			ca_ptr = &cave[ty][tx];	/* put stairway here... */
@@ -1256,13 +1251,7 @@ static void drop_throw(int y, int x, inven_type *t_ptr)
 	    k++;
 	    if (!(cur_pos = cave[i][j].i_idx) || (k>64))
 		flag = TRUE;
-	    if (flag && (((i_list[cur_pos].flags2 & TR_ARTIFACT) &&
-			  ((cur_pos = i_list[cur_pos].tval) >= TV_MIN_WEAR) &&
-			  (cur_pos <= TV_MAX_WEAR)) ||
-			 (cur_pos == TV_STORE_DOOR) ||
-			 (cur_pos == TV_UP_STAIR) ||
-			 (cur_pos == TV_DOWN_STAIR)))
-		flag = FALSE;
+	    if (flag && !valid_grid(i,j)) flag = FALSE;
 /* the above may seem convoluted, but it basically says: try up to 64 spaces,
  * if an open one, place the item.  If none, clobber the item at 64th, but keep looking
  * if that item is an artifact, store door, or stairs -CFT

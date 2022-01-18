@@ -96,6 +96,9 @@ static void compact_objects()
 	for (i = 0; i < cur_height; i++) {
 	    for (j = 0; j < cur_width; j++) {
 
+		/* Do not consider artifacts or stairs */
+		if (!valid_grid(i,j)) continue;
+
 		/* Get the location */
 		c_ptr = &cave[i][j];
 
@@ -119,20 +122,10 @@ static void compact_objects()
 		    case TV_CLOSED_DOOR:
 			chance = 5;
 			break;
-		      case TV_UP_STAIR:
-		      case TV_DOWN_STAIR:
-		      case TV_STORE_DOOR:
-			chance = 0;
-			break;
 		    case TV_SECRET_DOOR:
 			chance = 3;
 			break;
 		    default:
-			if ((i_ptr->tval >= TV_MIN_WEAR) &&
-			    (i_ptr->tval <= TV_MAX_WEAR) &&
-			    (i_ptr->flags2 & TR_ARTIFACT))
-			    chance = 0;	/* don't compact artifacts -CFT */
-			else
 			chance = 10;
 		}
 
@@ -238,17 +231,14 @@ void place_trap(int y, int x, int sval)
 {
     register int cur_pos;
 
-    if (!in_bounds(y, x)) return; /* abort! -CFT */
-    if (cave[y][x].m_idx >= MIN_M_IDX) return; /* don't put rubble under monsters, it's annoying -CFT */
 
-    if (cave[y][x].i_idx != 0)
-	if ((i_list[cave[y][x].i_idx].tval == TV_STORE_DOOR) ||
-	    (i_list[cave[y][x].i_idx].tval == TV_UP_STAIR) ||
-	    (i_list[cave[y][x].i_idx].tval == TV_DOWN_STAIR) ||
-	    ((i_list[cave[y][x].i_idx].tval >= TV_MIN_WEAR) &&
-	     (i_list[cave[y][x].i_idx].tval <= TV_MAX_WEAR) &&
-	     (i_list[cave[y][x].i_idx].flags2 & TR_ARTIFACT)))
-	    return;		   /* don't replace stairs, stores, artifacts */
+    /* Do not hurt artifacts, stairs, store doors */
+    if (!valid_grid(y, x)) return;
+
+
+    /* Don't put traps under player/monsters, it's annoying -CFT */
+    if (cave[y][x].m_idx >= MIN_M_IDX) return;
+
 
     /* Delete whatever is there */
     delete_object(y, x);
@@ -268,16 +258,8 @@ void place_rubble(int y, int x)
     register int        cur_pos;
     register cave_type *c_ptr;
 
-    if (!in_bounds(y, x)) return; /* abort! -CFT */
-
-    if (cave[y][x].i_idx != 0)
-	if ((i_list[cave[y][x].i_idx].tval == TV_STORE_DOOR) ||
-	    (i_list[cave[y][x].i_idx].tval == TV_UP_STAIR) ||
-	    (i_list[cave[y][x].i_idx].tval == TV_DOWN_STAIR) ||
-	    ((i_list[cave[y][x].i_idx].tval >= TV_MIN_WEAR) &&
-	     (i_list[cave[y][x].i_idx].tval <= TV_MAX_WEAR) &&
-	     (i_list[cave[y][x].i_idx].flags2 & TR_ARTIFACT)))
-	    return;		   /* don't replace stairs, stores, artifacts */
+    /* Do not hurt artifacts, stairs, store doors */
+    if (!valid_grid(y, x)) return;
     
     /* Delete whatever is there */
     delete_object(y, x);
@@ -313,15 +295,8 @@ void place_gold(int y, int x)
     register int        i, cur_pos;
     register inven_type *i_ptr;
 
-    if (!in_bounds(y, x)) return; /* abort! -CFT */
-    if (cave[y][x].i_idx != 0)
-	if ((i_list[cave[y][x].i_idx].tval == TV_STORE_DOOR) ||
-	    (i_list[cave[y][x].i_idx].tval == TV_UP_STAIR) ||
-	    (i_list[cave[y][x].i_idx].tval == TV_DOWN_STAIR) ||
-	    ((i_list[cave[y][x].i_idx].tval >= TV_MIN_WEAR) &&
-	     (i_list[cave[y][x].i_idx].tval <= TV_MAX_WEAR) &&
-	     (i_list[cave[y][x].i_idx].flags2 & TR_ARTIFACT)))
-	    return;		   /* don't replace stairs, stores, artifacts */
+    /* Do not hurt illegals, artifacts, stairs, store doors */
+    if (!valid_grid(y, x)) return;
 
     /* Delete the object under us (acidic gold?) */
 	delete_object(y, x);
@@ -422,15 +397,8 @@ int special_place_object(int y, int x)
     int          done = 0;
 
 
-    if (!in_bounds(y, x)) return 0; /* abort! -CFT */
-    if (cave[y][x].i_idx != 0)
-	if ((i_list[cave[y][x].i_idx].tval == TV_STORE_DOOR) ||
-	    (i_list[cave[y][x].i_idx].tval == TV_UP_STAIR) ||
-	    (i_list[cave[y][x].i_idx].tval == TV_DOWN_STAIR) ||
-	    ((i_list[cave[y][x].i_idx].tval >= TV_MIN_WEAR) &&
-	     (i_list[cave[y][x].i_idx].tval <= TV_MAX_WEAR) &&
-	     (i_list[cave[y][x].i_idx].flags2 & TR_ARTIFACT)))
-	    return 0;		   /* don't replace stairs, stores, artifacts */
+    /* Is this cave grid sacred? */
+    if (!valid_grid(y,x)) return (FALSE);
 
     /* Delete anything that is there */
     delete_object(y, x);
@@ -662,15 +630,8 @@ void place_object(int y, int x)
 {
     register int cur_pos, tmp;
 
-    if (!in_bounds(y,x)) return; /* abort! -CFT */
-    if (cave[y][x].i_idx != 0)
-	if ((i_list[cave[y][x].i_idx].tval == TV_STORE_DOOR) ||
-	    (i_list[cave[y][x].i_idx].tval == TV_UP_STAIR) ||
-	    (i_list[cave[y][x].i_idx].tval == TV_DOWN_STAIR) ||
-	    ((i_list[cave[y][x].i_idx].tval >= TV_MIN_WEAR) &&
-	     (i_list[cave[y][x].i_idx].tval <= TV_MAX_WEAR) &&
-	     (i_list[cave[y][x].i_idx].flags2 & TR_ARTIFACT)))
-	    return; /* don't replace stairs, stores, artifacts */
+    /* Certain locations are not valid */
+    if (!valid_grid(y,x)) return;
 
     /* Delete anything already there */
     delete_object(y, x);
@@ -719,15 +680,8 @@ void place_good(int y, int x, u32b good)
     register int cur_pos, tmp;
     int          tv, is_good = FALSE;
 
-    if (!in_bounds(y, x)) return; /* abort! -CFT */
-    if (cave[y][x].i_idx != 0)
-	if ((i_list[cave[y][x].i_idx].tval == TV_STORE_DOOR) ||
-	    (i_list[cave[y][x].i_idx].tval == TV_UP_STAIR) ||
-	    (i_list[cave[y][x].i_idx].tval == TV_DOWN_STAIR) ||
-	    ((i_list[cave[y][x].i_idx].tval >= TV_MIN_WEAR) &&
-	     (i_list[cave[y][x].i_idx].tval <= TV_MAX_WEAR) &&
-	     (i_list[cave[y][x].i_idx].flags2 & TR_ARTIFACT)))
-	    return;		   /* don't replace stairs, stores, artifacts */
+    /* Do not hurt artifacts, stairs, store doors */
+    if (!valid_grid(y, x)) return;
 
     /* Delete anything already there */
     delete_object(y, x);
