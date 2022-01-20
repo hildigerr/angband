@@ -1303,12 +1303,8 @@ cptr pain_message(int m_idx, int dam)
 	    return "%s flinches.";
 	if (percentage > 50)
 	    return "%s squelches.";
-	if (percentage > 35) {
-	    if (randint(4) == 1) /* thanks to dbd@panacea.phys.utk.edu -CWS */
-		return "%s quivers in pain.";
-	    else
-		return "%s imitates Bill Cosby in pain.";
-	}
+	if (percentage > 35)
+	    return "%s quivers in pain.";
 	if (percentage > 20)
 	    return "%s writhes about.";
 	if (percentage > 10)

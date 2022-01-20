@@ -11,6 +11,7 @@ Renamed a LOT of variables/fields to more "consistent" forms.
 Forced "flag constants" to refer to theie "flag set" explicitly.
 Reorganized the source to make the files more "self-contained".
 
+Threw out the "Bill Cosby" message.  "Cute" is not "good".
 Put "XXX" and "Hack" in the code to label areas of future work.
 
 
