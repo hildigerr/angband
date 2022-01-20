@@ -760,6 +760,7 @@ void do_cmd_check_uniques(void);
 
 /* moria4.c */
 int is_a_vowel(int);
+void monster_name(char *, struct monster_type *, struct monster_race *);
 int target_set(void); /* target fns stolen from Morgul -CFT */
 int target_at(int, int); /* target fns stolen from Morgul -CFT */
 void mmove2(int *, int *, int, int, int, int);
@@ -864,8 +865,6 @@ void cold_dam(int, cptr);
 void light_dam(int, cptr);
 void acid_dam(int, cptr);
 void poison_gas(int, cptr);
-void monster_name(char *, struct monster_type *, struct monster_race *);
-void lower_monster_name(char *, struct monster_type *, struct monster_race *);
 int sleep_monsters1(int, int);
 int detect_treasure(void);
 int detect_object(void);

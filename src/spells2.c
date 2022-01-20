@@ -34,29 +34,8 @@ static void pause_if_screen_full(int *i, int j)
 }
 
 
-void monster_name(char *m_name, monster_type *m_ptr, monster_race      *r_ptr)
-{
-    if (!m_ptr->ml)
-	(void)strcpy(m_name, "It");
-    else {
-	if (r_ptr->cflags2 & MF2_UNIQUE)
-	    (void)sprintf(m_name, "%s", r_ptr->name);
-	else
-	    (void)sprintf(m_name, "The %s", r_ptr->name);
-    }
-}
 
-void lower_monster_name(char *m_name, monster_type *m_ptr, monster_race *r_ptr)
-{
-    if (!m_ptr->ml)
-	(void)strcpy(m_name, "it");
-    else {
-	if (r_ptr->cflags2 & MF2_UNIQUE)
-	    (void)sprintf(m_name, "%s", r_ptr->name);
-	else
-	    (void)sprintf(m_name, "the %s", r_ptr->name);
-    }
-}
+
 
 
 /*
