@@ -622,7 +622,6 @@ int summon_jabberwock(int *, int *);
 int summon_gundead(int *, int *);
 int summon_ancientd(int *, int *);
 int summon_hound(int *, int *);
-void pusht(int);
 void magic_treasure(int, int, int, int);
 int compact_monsters(void);
 int get_nmons_num(int);
@@ -630,6 +629,7 @@ int distance(int, int, int, int);
 
 /* misc3.c */
 int i_pop(void);
+void pusht(int);
 int delete_object(int, int);
 void wipe_i_list(void);
 int magik(int);

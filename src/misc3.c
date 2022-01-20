@@ -27,6 +27,31 @@ extern int rating;
 
 
 /*
+ * Pushs a record back onto free space list		-RAK-
+ *
+ * Delete_object() should always be called instead, unless the object in
+ * question is not in the dungeon, e.g. in store1.c and files.c 
+ */
+void pusht(int my_x)
+{
+    s16b        x = (s16b) my_x;
+    register int i, j;
+
+    if (x != i_max - 1) {
+	i_list[x] = i_list[i_max - 1];
+
+    /* must change the i_idx in the cave of the object just moved */
+	for (i = 0; i < cur_height; i++)
+	    for (j = 0; j < cur_width; j++)
+		if (cave[i][j].i_idx == i_max - 1)
+		    cave[i][j].i_idx = x;
+    }
+    i_max--;
+    invcopy(&i_list[i_max], OBJ_NOTHING);
+}
+
+
+/*
  * Deletes object from given location			-RAK-	
  */
 int delete_object(int y, int x)
