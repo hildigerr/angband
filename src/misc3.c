@@ -267,6 +267,213 @@ static void give_1_hi_resist(inven_type *i_ptr)
 }
 
 
+/*
+ * Charge a wand  XXX Redo this cleanly!
+ */
+static void charge_wand(inven_type *i_ptr)
+{
+    switch (i_ptr->sval) {
+      case 0:
+	i_ptr->pval = randint(10) + 6;
+	break;
+      case 1:
+	i_ptr->pval = randint(8) + 6;
+	break;
+      case 2:
+	i_ptr->pval = randint(5) + 6;
+	break;
+      case 3:
+	i_ptr->pval = randint(8) + 6;
+	break;
+      case 4:
+	i_ptr->pval = randint(4) + 3;
+	break;
+      case 5:
+	i_ptr->pval = randint(8) + 6;
+	break;
+      case 6:
+	i_ptr->pval = randint(20) + 12;
+	break;
+      case 7:
+	i_ptr->pval = randint(20) + 12;
+	break;
+      case 8:
+	i_ptr->pval = randint(10) + 6;
+	break;
+      case 9:
+	i_ptr->pval = randint(12) + 6;
+	break;
+      case 10:
+	i_ptr->pval = randint(10) + 12;
+	break;
+      case 11:
+	i_ptr->pval = randint(3) + 3;
+	break;
+      case 12:
+	i_ptr->pval = randint(8) + 6;
+	break;
+      case 13:
+	i_ptr->pval = randint(10) + 6;
+	break;
+      case 14:
+	i_ptr->pval = randint(5) + 3;
+	break;
+      case 15:
+	i_ptr->pval = randint(5) + 3;
+	break;
+      case 16:
+	i_ptr->pval = randint(5) + 6;
+	break;
+      case 17:
+	i_ptr->pval = randint(5) + 4;
+	break;
+      case 18:
+	i_ptr->pval = randint(8) + 4;
+	break;
+      case 19:
+	i_ptr->pval = randint(6) + 2;
+	break;
+      case 20:
+	i_ptr->pval = randint(4) + 2;
+	break;
+      case 21:
+	i_ptr->pval = randint(8) + 6;
+	break;
+      case 22:
+	i_ptr->pval = randint(5) + 2;
+	break;
+      case 23:
+	i_ptr->pval = randint(12) + 12;
+	break;
+      case 24:
+	i_ptr->pval = randint(3) + 1;
+	break;
+      case 25:
+	i_ptr->pval = randint(3) + 1;
+	break;
+      case 26:
+	i_ptr->pval = randint(3) + 1;
+	break;
+      case 27:
+	i_ptr->pval = randint(2) + 1;
+	break;
+      case 28:
+	i_ptr->pval = randint(8) + 6;
+	break;
+      default:
+	break;
+    }
+}
+
+
+/*
+ * Charge a staff  XXX Redo this cleanly!
+ */
+static void charge_staff(inven_type *i_ptr)
+{        
+    switch (i_ptr->sval) {
+      case 0:
+	i_ptr->pval = randint(20) + 12;
+	break;
+      case 1:
+	i_ptr->pval = randint(8) + 6;
+	break;
+      case 2:
+	i_ptr->pval = randint(5) + 6;
+	break;
+      case 3:
+	i_ptr->pval = randint(20) + 12;
+	break;
+      case 4:
+	i_ptr->pval = randint(15) + 6;
+	break;
+      case 5:
+	i_ptr->pval = randint(4) + 5;
+	break;
+      case 6:
+	i_ptr->pval = randint(5) + 3;
+	break;
+      case 7:
+	i_ptr->pval = randint(3) + 1;
+	i_ptr->level = 10;
+	break;
+      case 8:
+	i_ptr->pval = randint(3) + 1;
+	break;
+      case 9:
+	i_ptr->pval = randint(5) + 6;
+	break;
+      case 10:
+	i_ptr->pval = randint(10) + 12;
+	break;
+      case 11:
+	i_ptr->pval = randint(5) + 6;
+	break;
+      case 12:
+	i_ptr->pval = randint(5) + 6;
+	break;
+      case 13:
+	i_ptr->pval = randint(5) + 6;
+	break;
+      case 14:
+	i_ptr->pval = randint(10) + 12;
+	break;
+      case 15:
+	i_ptr->pval = randint(3) + 4;
+	break;
+      case 16:
+	i_ptr->pval = randint(5) + 6;
+	break;
+      case 17:
+	i_ptr->pval = randint(5) + 6;
+	break;
+      case 18:
+	i_ptr->pval = randint(3) + 4;
+	break;
+      case 19:
+	i_ptr->pval = randint(10) + 12;
+	break;
+      case 20:
+	i_ptr->pval = randint(3) + 4;
+	break;
+      case 21:
+	i_ptr->pval = randint(3) + 4;
+	break;
+      case 22:
+	i_ptr->pval = randint(10) + 6;
+	i_ptr->level = 5;
+	break;
+      case 23:
+	i_ptr->pval = randint(2) + 1;
+	break;
+      case 24:
+	i_ptr->pval = randint(3) + 1;
+	break;
+      case 25:
+	i_ptr->pval = randint(2) + 2;
+	break;
+      case 26:
+	i_ptr->pval = randint(15) + 5;
+	break;
+      case 27:
+	i_ptr->pval = randint(2) + 2;
+	break;
+      case 28:
+	i_ptr->pval = randint(5) + 5;
+	break;
+      case 29:
+	i_ptr->pval = randint(2) + 1;
+	break;
+      case 30:
+	i_ptr->pval = randint(6) + 2;
+	break;
+      default:
+	break;
+    }
+}
+
+
+
 /* Chance of treasure having magic abilities		-RAK-	 */
 /* Chance increases with each dungeon level			 */
 void magic_treasure(int x, int level, int good, int not_unique)
@@ -1299,201 +1506,16 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	}
 	break;
 
+
       case TV_WAND:
-	switch (t_ptr->sval) {
-	  case 0:
-	    t_ptr->pval = randint(10) + 6;
-	    break;
-	  case 1:
-	    t_ptr->pval = randint(8) + 6;
-	    break;
-	  case 2:
-	    t_ptr->pval = randint(5) + 6;
-	    break;
-	  case 3:
-	    t_ptr->pval = randint(8) + 6;
-	    break;
-	  case 4:
-	    t_ptr->pval = randint(4) + 3;
-	    break;
-	  case 5:
-	    t_ptr->pval = randint(8) + 6;
-	    break;
-	  case 6:
-	    t_ptr->pval = randint(20) + 12;
-	    break;
-	  case 7:
-	    t_ptr->pval = randint(20) + 12;
-	    break;
-	  case 8:
-	    t_ptr->pval = randint(10) + 6;
-	    break;
-	  case 9:
-	    t_ptr->pval = randint(12) + 6;
-	    break;
-	  case 10:
-	    t_ptr->pval = randint(10) + 12;
-	    break;
-	  case 11:
-	    t_ptr->pval = randint(3) + 3;
-	    break;
-	  case 12:
-	    t_ptr->pval = randint(8) + 6;
-	    break;
-	  case 13:
-	    t_ptr->pval = randint(10) + 6;
-	    break;
-	  case 14:
-	    t_ptr->pval = randint(5) + 3;
-	    break;
-	  case 15:
-	    t_ptr->pval = randint(5) + 3;
-	    break;
-	  case 16:
-	    t_ptr->pval = randint(5) + 6;
-	    break;
-	  case 17:
-	    t_ptr->pval = randint(5) + 4;
-	    break;
-	  case 18:
-	    t_ptr->pval = randint(8) + 4;
-	    break;
-	  case 19:
-	    t_ptr->pval = randint(6) + 2;
-	    break;
-	  case 20:
-	    t_ptr->pval = randint(4) + 2;
-	    break;
-	  case 21:
-	    t_ptr->pval = randint(8) + 6;
-	    break;
-	  case 22:
-	    t_ptr->pval = randint(5) + 2;
-	    break;
-	  case 23:
-	    t_ptr->pval = randint(12) + 12;
-	    break;
-	  case 24:
-	    t_ptr->pval = randint(3) + 1;
-	    break;
-	  case 25:
-	    t_ptr->pval = randint(3) + 1;
-	    break;
-	  case 26:
-	    t_ptr->pval = randint(3) + 1;
-	    break;
-	  case 27:
-	    t_ptr->pval = randint(2) + 1;
-	    break;
-	  case 28:
-	    t_ptr->pval = randint(8) + 6;
-	    break;
-	  default:
-	    break;
-	}
+	charge_wand(t_ptr);
 	break;
 
+
       case TV_STAFF:
-	switch (t_ptr->sval) {
-	  case 0:
-	    t_ptr->pval = randint(20) + 12;
-	    break;
-	  case 1:
-	    t_ptr->pval = randint(8) + 6;
-	    break;
-	  case 2:
-	    t_ptr->pval = randint(5) + 6;
-	    break;
-	  case 3:
-	    t_ptr->pval = randint(20) + 12;
-	    break;
-	  case 4:
-	    t_ptr->pval = randint(15) + 6;
-	    break;
-	  case 5:
-	    t_ptr->pval = randint(4) + 5;
-	    break;
-	  case 6:
-	    t_ptr->pval = randint(5) + 3;
-	    break;
-	  case 7:
-	    t_ptr->pval = randint(3) + 1;
-	    t_ptr->level = 10;
-	    break;
-	  case 8:
-	    t_ptr->pval = randint(3) + 1;
-	    break;
-	  case 9:
-	    t_ptr->pval = randint(5) + 6;
-	    break;
-	  case 10:
-	    t_ptr->pval = randint(10) + 12;
-	    break;
-	  case 11:
-	    t_ptr->pval = randint(5) + 6;
-	    break;
-	  case 12:
-	    t_ptr->pval = randint(5) + 6;
-	    break;
-	  case 13:
-	    t_ptr->pval = randint(5) + 6;
-	    break;
-	  case 14:
-	    t_ptr->pval = randint(10) + 12;
-	    break;
-	  case 15:
-	    t_ptr->pval = randint(3) + 4;
-	    break;
-	  case 16:
-	    t_ptr->pval = randint(5) + 6;
-	    break;
-	  case 17:
-	    t_ptr->pval = randint(5) + 6;
-	    break;
-	  case 18:
-	    t_ptr->pval = randint(3) + 4;
-	    break;
-	  case 19:
-	    t_ptr->pval = randint(10) + 12;
-	    break;
-	  case 20:
-	    t_ptr->pval = randint(3) + 4;
-	    break;
-	  case 21:
-	    t_ptr->pval = randint(3) + 4;
-	    break;
-	  case 22:
-	    t_ptr->pval = randint(10) + 6;
-	    t_ptr->level = 5;
-	    break;
-	  case 23:
-	    t_ptr->pval = randint(2) + 1;
-	    break;
-	  case 24:
-	    t_ptr->pval = randint(3) + 1;
-	    break;
-	  case 25:
-	    t_ptr->pval = randint(2) + 2;
-	    break;
-	  case 26:
-	    t_ptr->pval = randint(15) + 5;
-	    break;
-	  case 27:
-	    t_ptr->pval = randint(2) + 2;
-	    break;
-	  case 28:
-	    t_ptr->pval = randint(5) + 5;
-	    break;
-	  case 29:
-	    t_ptr->pval = randint(2) + 1;
-	    break;
-	  case 30:
-	    t_ptr->pval = randint(6) + 2;
-	    break;
-	  default:
-	    break;
-	}
+	charge_staff(t_ptr);
 	break;
+
 
       case TV_CLOAK:
 	if (magik(chance) || good) {
