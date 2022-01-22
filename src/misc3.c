@@ -516,7 +516,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	    byte               artifact = FALSE;
 
 	/* all DSM are enchanted, I guess -CFT */
-	    i_ptr->toac += m_bonus(0, 5, level) + randint(5);
+	    i_ptr->toac += randint(3) + m_bonus(0, 5, level);
 	    rating += 30;
 	    if ((magik(chance) && magik(special)) || (good == 666)) {
 
@@ -537,7 +537,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	else
 
 	/* Good */
-	if (magik(chance) || good) {
+	if (good || magik(chance)) {
 
 	    /* Enchant */
 	    i_ptr->toac += randint(3) + m_bonus(0, 5, level);
@@ -549,17 +549,16 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		    i_ptr->flags1 |= (TR2_RES_ELEC | TR2_RES_COLD | 
 				      TR2_RES_ACID | TR2_RES_FIRE |
 				      TR_SUST_STAT);
-
-		    if (wizard || peek) msg_print("Robe of the Magi");
-		    rating += 30;
-
 		    i_ptr->flags2 |= TR2_HOLD_LIFE;
 		    i_ptr->ident |= ID_NOSHOW_P1;
-		    give_1_hi_resist(i_ptr);
 		    i_ptr->pval = 10;
 		    i_ptr->toac += 10 + randint(5);
-		    i_ptr->name2 = EGO_MAGI;
 		    i_ptr->cost = 10000L + (i_ptr->toac * 100);
+		    give_1_hi_resist(i_ptr);
+		    i_ptr->name2 = EGO_MAGI;
+
+		    rating += 30;
+		    if (wizard || peek) msg_print("Robe of the Magi");
 	    } else if (magik(special) || good == 666)
 
 		/* Make it "Excellent" */
@@ -572,21 +571,21 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		    i_ptr->flags1 |= (TR2_RES_ELEC | TR2_RES_COLD |
 				      TR2_RES_ACID | TR2_RES_FIRE);
 		    if (randint(3) == 1) {
-			if (peek) msg_print("Elvenkind");
-			rating += 25;
-			give_1_hi_resist(i_ptr);
 			i_ptr->flags1 |= TR1_STEALTH;
 			i_ptr->pval = randint(3);
-			i_ptr->name2 = EGO_ELVENKIND;
 			i_ptr->toac += 15;
 			i_ptr->cost += 15000L;
+			give_1_hi_resist(i_ptr);
+			i_ptr->name2 = EGO_ELVENKIND;
+			rating += 25;
+			if (peek) msg_print("Elvenkind");
 		    }
 		    else {
-			if (peek) msg_print("Resist");
-			rating += 20;
-			i_ptr->name2 = EGO_R;
 			i_ptr->toac += 8;
 			i_ptr->cost += 12500L;
+			i_ptr->name2 = EGO_R;
+			rating += 20;
+			if (peek) msg_print("Resist");
 		    }
 		    break;
 
@@ -599,53 +598,53 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			!strncmp(k_list[i_ptr->index].name,
 				 "Adamantite", 10))
 			break;
-		    if (peek) msg_print("Resist Acid");
-		    rating += 15;
 		    i_ptr->flags1 |= TR2_RES_ACID;
-		    i_ptr->name2 = EGO_RESIST_A;
 		    i_ptr->cost += 1000L;
+		    i_ptr->name2 = EGO_RESIST_A;
+		    rating += 15;
+		    if (peek) msg_print("Resist Acid");
 		    break;
 
 		  case 3: case 4:
 		    if ((randint(3) == 1 || good == 666) && !not_unique &&
 			unique_armour(i_ptr))
 			break;
-		    if (peek) msg_print("Resist Fire");
-		    rating += 17;
 		    i_ptr->flags1 |= TR2_RES_FIRE;
-		    i_ptr->name2 = EGO_RESIST_F;
 		    i_ptr->cost += 600L;
+		    i_ptr->name2 = EGO_RESIST_F;
+		    rating += 17;
+		    if (peek) msg_print("Resist Fire");
 		    break;
 
 		  case 5: case 6:
 		    if ((randint(3) == 1 || good == 666) && !not_unique &&
 			unique_armour(i_ptr))
 			break;
-		    if (peek) msg_print("Resist Cold");
-		    rating += 16;
 		    i_ptr->flags1 |= TR2_RES_COLD;
-		    i_ptr->name2 = EGO_RESIST_C;
 		    i_ptr->cost += 600L;
+		    i_ptr->name2 = EGO_RESIST_C;
+		    rating += 16;
+		    if (peek) msg_print("Resist Cold");
 		    break;
 
 		  case 7: case 8: case 9:
 		    if ((randint(3) == 1 || good == 666) && !not_unique &&
 			unique_armour(i_ptr))
 			break;
-		    if (peek) msg_print("Resist Lightning");
-		    rating += 15;
 		    i_ptr->flags1 |= TR2_RES_ELEC;
-		    i_ptr->name2 = EGO_RESIST_E;
 		    i_ptr->cost += 500L;
+		    i_ptr->name2 = EGO_RESIST_E;
+		    rating += 15;
+		    if (peek) msg_print("Resist Lightning");
 		    break;
 		}
 	}
 
 	/* Cursed armor */
 	else if (magik(cursed)) {
+	    i_ptr->flags1 |= TR3_CURSED;
 	    i_ptr->toac = -randint(3) - m_bonus(0, 10, level);
 	    i_ptr->cost = 0L;
-	    i_ptr->flags1 |= TR3_CURSED;
 	}
 
 	break;
@@ -654,7 +653,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
       case TV_GLOVES:
 
 	/* Good */
-	if (magik(chance) || good) {
+	if (good || magik(chance)) {
 
 	    /* Make it better */
 	    i_ptr->toac = randint(3) + m_bonus(0, 10, level);
@@ -678,47 +677,47 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		switch (randint(10)) {
 
 		  case 1: case 2: case 3:
-		    if (peek) msg_print("Free action");
-		    rating += 11;
 		    i_ptr->flags1 |= TR2_FREE_ACT;
-		    i_ptr->name2 = EGO_FREE_ACTION;
 		    i_ptr->cost += 1000L;
+		    i_ptr->name2 = EGO_FREE_ACTION;
+		    rating += 11;
+		    if (peek) msg_print("Free action");
 		    break;
 
 		  case 4: case 5: case 6:
 		    i_ptr->ident |= ID_SHOW_HITDAM;
-		    rating += 17;
-		    if (peek) msg_print("Slaying");
 		    i_ptr->tohit += 1 + randint(4);
 		    i_ptr->todam += 1 + randint(4);
-		    i_ptr->name2 = EGO_SLAYING;
 		    i_ptr->cost += (i_ptr->tohit + i_ptr->todam) * 250;
+		    i_ptr->name2 = EGO_SLAYING;
+		    rating += 17;
+		    if (peek) msg_print("Slaying");
 		    break;
 
 		  case 7: case 8: case 9:
-		    i_ptr->name2 = EGO_AGILITY;
-		    if (peek) msg_print("Agility");
-		    rating += 14;
-		    i_ptr->pval = 2 + randint(2);	/* +N DEX */
 		    i_ptr->flags1 |= TR1_DEX;
+		    i_ptr->pval = 2 + randint(2);	/* +N DEX */
 		    i_ptr->cost += (i_ptr->pval) * 400;
+		    i_ptr->name2 = EGO_AGILITY;
+		    rating += 14;
+		    if (peek) msg_print("Agility");
 		    break;
 
 		  case 10:
 		    if (((randint(3) == 1) || (good == 666)) && !not_unique &&
 			unique_armour(i_ptr))
 			break;
-		    if (peek) msg_print("Power");
-		    rating += 22;
-		    i_ptr->name2 = ART_POWER;
-		    i_ptr->pval = 1 + randint(4);	/* +N STR */
-		    i_ptr->tohit += 1 + randint(4);
-		    i_ptr->todam += 1 + randint(4);
 		    i_ptr->flags1 |= TR1_STR;
 		    i_ptr->ident |= ID_SHOW_HITDAM;
 		    i_ptr->ident |= ID_NOSHOW_TYPE;
+		    i_ptr->pval = 1 + randint(4);	/* +N STR */
+		    i_ptr->tohit += 1 + randint(4);
+		    i_ptr->todam += 1 + randint(4);
 		    i_ptr->cost += (i_ptr->tohit + i_ptr->todam +
 				      i_ptr->pval) * 300;
+		    i_ptr->name2 = ART_POWER;
+		    rating += 22;
+		    if (peek) msg_print("Power");
 		    break;
 		}
 	    }
@@ -727,23 +726,28 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	/* Cursed gloves */
 	else if (magik(cursed)) {
 
+	    /* Cursed */
+	    i_ptr->flags1 |= TR3_CURSED;
+	    i_ptr->toac = 0 - (m_bonus(1, 20, level));
+
+		/* Permanently damaged */
+	    i_ptr->cost = 0;
+
 	    /* Permanently damaged */
 	    if (magik(special)) {
 
 		/* Strength or Dexterity */
 		if (randint(2) == 1) {
 		    i_ptr->flags1 |= TR1_DEX;
+		    i_ptr->pval = (randint(3) - m_bonus(0, 10, level));
 		    i_ptr->name2 = EGO_CLUMSINESS;
 		}
 		else {
 		    i_ptr->flags1 |= TR1_STR;
+		    i_ptr->pval = (randint(3) - m_bonus(0, 10, level));
 		    i_ptr->name2 = EGO_WEAKNESS;
 		}
-		i_ptr->pval = (randint(3) - m_bonus(0, 10, level));
 	    }
-	    i_ptr->toac = (-m_bonus(1, 20, level));
-	    i_ptr->flags1 |= TR3_CURSED;
-	    i_ptr->cost = 0;
 	}
 
 	break;
@@ -752,7 +756,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
       case TV_BOOTS:
 
 	/* Good */
-	if (magik(chance) || good) {
+	if (good || magik(chance)) {
 
 	    /* Make it better */
 	    i_ptr->toac = randint(3) + m_bonus(1, 10, level);
@@ -766,45 +770,48 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		    if (!((randint(2) == 1) && !not_unique
 			  && unique_armour(i_ptr))) {
 		    i_ptr->flags1 |= TR1_SPEED;
-		    if (wizard || peek) msg_print("Boots of Speed");
 		    i_ptr->name2 = EGO_SPEED;
-		    rating += 30;
 		    i_ptr->pval = 1;
 		    i_ptr->cost += 300000L;
+		    
+		    /* Increase the rating */
+		    rating += 30;
+		    if (wizard || peek) msg_print("Boots of Speed");
 		    }
 		} else if (stricmp("& Pair of Metal Shod Boots",
 				   k_list[i_ptr->index].name))	/* not metal */
+
 		  if (tmp > 6) {
 		    i_ptr->flags1 |= TR3_FEATHER;
-		    rating += 7;
-		    i_ptr->name2 = EGO_SLOW_DESCENT;
 		    i_ptr->cost += 250;
+		    i_ptr->name2 = EGO_SLOW_DESCENT;
+		    rating += 7;
 		  } else if (tmp < 5) {
 		    i_ptr->flags1 |= TR1_STEALTH;
-		    rating += 16;
 		    i_ptr->pval = randint(3);	/* +N Stealth */
-		    i_ptr->name2 = EGO_STEALTH;
 		    i_ptr->cost += 500;
+		    i_ptr->name2 = EGO_STEALTH;
+		    rating += 16;
 		  } else {	   /* 5,6 */
 		    i_ptr->flags1 |= TR2_FREE_ACT;
-		    rating += 15;
-		    i_ptr->name2 = EGO_FREE_ACTION;
 		    i_ptr->cost += 500;
 		    i_ptr->cost *= 2;
+		    i_ptr->name2 = EGO_FREE_ACTION;
+		    rating += 15;
 		    }
 		else
 		 /* is metal boots, different odds since no stealth */
 		  if (tmp < 5) {
 		    i_ptr->flags1 |= TR2_FREE_ACT;
-		    rating += 15;
-		    i_ptr->name2 = EGO_FREE_ACTION;
 		    i_ptr->cost += 500;
 		    i_ptr->cost *= 2;
+		    i_ptr->name2 = EGO_FREE_ACTION;
+		    rating += 15;
 		  } else {	   /* tmp > 4 */
 		    i_ptr->flags1 |= TR3_FEATHER;
-		    rating += 7;
-		    i_ptr->name2 = EGO_SLOW_DESCENT;
 		    i_ptr->cost += 250;
+		    i_ptr->name2 = EGO_SLOW_DESCENT;
+		    rating += 7;
 		    }
 	    }
 	}
@@ -812,22 +819,26 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	/* Cursed */
 	else if (magik(cursed)) {
 
+	    /* Cursed */
+	    i_ptr->flags1 |= TR3_CURSED;
+	    i_ptr->toac = 0 - m_bonus(2, 20, level);
+
+		/* Permanent damage */
+		i_ptr->cost = 0;
+
 		/* Pick some damage */
 	    tmp = randint(3);
 		    if (tmp == 1) {
 			i_ptr->flags1 |= TR1_SPEED;
-			i_ptr->name2 = EGO_SLOWNESS;
 			i_ptr->pval = -1;
+			i_ptr->name2 = EGO_SLOWNESS;
 		    } else if (tmp == 2) {
 			i_ptr->flags1 |= TR3_AGGRAVATE;
 			i_ptr->name2 = EGO_NOISE;
 		    } else {
-			i_ptr->name2 = EGO_GREAT_MASS;
 			i_ptr->weight = i_ptr->weight * 5;
+			i_ptr->name2 = EGO_GREAT_MASS;
 	    }
-	    i_ptr->cost = 0;
-	    i_ptr->toac = (-m_bonus(2, 20, level));
-	    i_ptr->flags1 |= TR3_CURSED;
 	}
 
 	break;
@@ -846,7 +857,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	}
 
 	/* Apply some magic */
-	if (magik(chance) || good) {
+	if (good || magik(chance)) {
 
 	    /* Make it better */
 	    i_ptr->toac = randint(3) + m_bonus(0, 10, level);
@@ -863,64 +874,64 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		      if (tmp < 3) {
 			if (!((randint(2) == 1) && !not_unique &&
 			      unique_armour(i_ptr))) {
-			if (peek) msg_print("Intelligence");
-			i_ptr->pval = randint(2);	/* +N INT */
-			rating += 13;
 			i_ptr->flags1 |= TR1_INT;
-			i_ptr->name2 = EGO_INTELLIGENCE;
+			i_ptr->pval = randint(2);	/* +N INT */
 			i_ptr->cost += i_ptr->pval * 500;
+			i_ptr->name2 = EGO_INTELLIGENCE;
+			rating += 13;
+			if (peek) msg_print("Intelligence");
 			}
 
 		      } else if (tmp < 6) {
 			if (!((randint(2) == 1) && !not_unique &&
 			      unique_armour(i_ptr))) {
-			if (peek) msg_print("Wisdom");
-			rating += 13;
-			i_ptr->pval = randint(2);	/* +N Wis */
 			i_ptr->flags1 |= TR1_WIS;
-			i_ptr->name2 = EGO_WISDOM;
+			i_ptr->pval = randint(2);	/* +N Wis */
 			i_ptr->cost += i_ptr->pval * 500;
+			i_ptr->name2 = EGO_WISDOM;
+			rating += 13;
+			if (peek) msg_print("Wisdom");
 			}
 
 		      } else if (tmp < 10) {
 			if (!((randint(2) == 1) && !not_unique &&
 			      unique_armour(i_ptr))) {
-			i_ptr->pval = 1 + randint(4);	/* +N Infra */
-			rating += 11;
 			i_ptr->flags1 |= TR1_INFRA;
-			i_ptr->name2 = EGO_INFRAVISION;
+			i_ptr->pval = 1 + randint(4);	/* +N Infra */
 			i_ptr->cost += i_ptr->pval * 250;
+			i_ptr->name2 = EGO_INFRAVISION;
+			rating += 11;
 			}
 
 		      } else if (tmp < 12) {
 			if (!((randint(2) == 1) && !not_unique &&
 			      unique_armour(i_ptr))) {
-			if (peek) msg_print("Light");
 			i_ptr->flags2 |= (TR2_RES_LITE | TR3_LITE);
-			rating += 6;
-			i_ptr->name2 = EGO_LIGHT;
 			i_ptr->cost += 500;
+			i_ptr->name2 = EGO_LIGHT;
+			rating += 6;
+			if (peek) msg_print("Light");
 			}
 
 		      } else if (tmp < 14) {
 			if (!((randint(2) == 1) && !not_unique &&
 			      unique_armour(i_ptr))) {
-			if (peek) msg_print("Helm of Seeing");
 			i_ptr->flags1 |= TR3_SEE_INVIS;
 			i_ptr->flags2 |= TR2_RES_BLIND;
-			rating += 8;
-			i_ptr->name2 = EGO_SEEING;
 			i_ptr->cost += 1000;
+			i_ptr->name2 = EGO_SEEING;
+			rating += 8;
+			if (peek) msg_print("Helm of Seeing");
 			}
 
 		      } else {
 			if (!((randint(2) == 1) && !not_unique &&
 			      unique_armour(i_ptr))) {
-			if (peek) msg_print("Telepathy");
-			rating += 20;
 			i_ptr->flags2 |= TR3_TELEPATHY;
-			i_ptr->name2 = EGO_TELEPATHY;
 			i_ptr->cost += 50000L;
+			i_ptr->name2 = EGO_TELEPATHY;
+			rating += 20;
+			if (peek) msg_print("Telepathy");
 			}
 		    }
 		}
@@ -934,59 +945,59 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		      case 1:
 			if (!(((randint(2) == 1) || (good == 666)) &&
 			      !not_unique && unique_armour(i_ptr))) {
-			if (peek) msg_print("Crown of Might");
-			rating += 19;
-			i_ptr->pval = randint(3);	/* +N STR/DEX/CON */
 			i_ptr->flags1 |= (TR2_FREE_ACT | TR1_CON | TR1_DEX | TR1_STR);
-			i_ptr->name2 = EGO_MIGHT;
+			i_ptr->pval = randint(3);	/* +N STR/DEX/CON */
 			i_ptr->cost += 1000 + i_ptr->pval * 500;
+			i_ptr->name2 = EGO_MIGHT;
+			rating += 19;
+			if (peek) msg_print("Crown of Might");
 			}
 			break;
 
 		      case 2:
-			if (peek) msg_print("Lordliness");
-			i_ptr->pval = randint(3);	/* +N WIS/CHR */
-			rating += 17;
 			i_ptr->flags1 |= (TR1_CHR | TR1_WIS);
-			i_ptr->name2 = EGO_LORDLINESS;
+			i_ptr->pval = randint(3);	/* +N WIS/CHR */
 			i_ptr->cost += 1000 + i_ptr->pval * 500;
+			i_ptr->name2 = EGO_LORDLINESS;
+			rating += 17;
+			if (peek) msg_print("Lordliness");
 			break;
 
 		      case 3:
-			if (peek) msg_print("Crown of the Magi");
-			rating += 15;
-			i_ptr->pval = randint(3);	/* +N INT */
 			i_ptr->flags1 |= (TR2_RES_ELEC | TR2_RES_COLD |
 					  TR2_RES_ACID | TR2_RES_FIRE |
 					  TR1_INT);
-			i_ptr->name2 = EGO_MAGI;
+			i_ptr->pval = randint(3);	/* +N INT */
 			i_ptr->cost += 3000 + i_ptr->pval * 500;
+			i_ptr->name2 = EGO_MAGI;
+			rating += 15;
+			if (peek) msg_print("Crown of the Magi");
 			break;
 
 		      case 4:
+			i_ptr->flags1 |= TR1_CHR;
+			i_ptr->pval = randint(4);	/* +N CHR */
+			i_ptr->cost += 750;
+			i_ptr->name2 = EGO_BEAUTY;
 			rating += 8;
 			if (peek) msg_print("Beauty");
-			i_ptr->pval = randint(4);	/* +N CHR */
-			i_ptr->flags1 |= TR1_CHR;
-			i_ptr->name2 = EGO_BEAUTY;
-			i_ptr->cost += 750;
 			break;
 
 		      case 5:
-			if (peek) msg_print("Seeing");
-			rating += 8;
-			i_ptr->pval = 5 * (1 + randint(4));	/* +N Search */
 			i_ptr->flags1 |= (TR3_SEE_INVIS | TR1_SEARCH);
-			i_ptr->name2 = EGO_SEEING;
+			i_ptr->pval = 5 * (1 + randint(4));	/* +N Search */
 			i_ptr->cost += 1000 + i_ptr->pval * 100;
+			i_ptr->name2 = EGO_SEEING;
+			rating += 8;
+			if (peek) msg_print("Seeing");
 			break;
 
 		      case 6:
 			i_ptr->flags1 |= TR3_REGEN;
+			i_ptr->cost += 1500;
+			i_ptr->name2 = EGO_REGENERATION;
 			rating += 10;
 			if (peek) msg_print("Regeneration");
-			i_ptr->name2 = EGO_REGENERATION;
-			i_ptr->cost += 1500;
 			break;
 		    }
 		}
@@ -997,8 +1008,8 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	else if (magik(cursed)) {
 
 	    /* Cursed */
-	    i_ptr->toac -= m_bonus(1, 20, level);
 	    i_ptr->flags1 |= TR3_CURSED;
+	    i_ptr->toac -= m_bonus(1, 20, level);
 	    i_ptr->cost = 0;
 
 	    /* Permanent damage */
@@ -1007,20 +1018,20 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		/* Choose some damage */
 		switch (randint(7)) {
 		  case 1:
-		    i_ptr->pval = -randint(5);
 		    i_ptr->flags1 |= TR1_INT;
+		    i_ptr->pval = -randint(5);
 		    i_ptr->name2 = EGO_STUPIDITY;
 		    break;
 		  case 2:
 		  case 3:
-		    i_ptr->pval = -randint(5);
 		    i_ptr->flags1 |= TR1_WIS;
+		    i_ptr->pval = -randint(5);
 		    i_ptr->name2 = EGO_DULLNESS;
 		    break;
 		  case 4:
 		  case 5:
-		    i_ptr->pval = -randint(5);
 		    i_ptr->flags1 |= TR1_STR;
+		    i_ptr->pval = -randint(5);
 		    i_ptr->name2 = EGO_WEAKNESS;
 		    break;
 		  case 6:
@@ -1028,8 +1039,8 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		    i_ptr->name2 = EGO_TELEPORTATION;
 		    break;
 		  case 7:
-		    i_ptr->pval = -randint(5);
 		    i_ptr->flags1 |= TR1_CHR;
+		    i_ptr->pval = -randint(5);
 		    i_ptr->name2 = EGO_UGLINESS;
 		    break;
 		}
@@ -1041,7 +1052,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
       case TV_CLOAK:
 
 	/* Apply some magic */
-	if (magik(chance) || good) {
+	if (good || magik(chance)) {
 	    int                 made_art_cloak = 0;
 
 	    /* Make it better */
@@ -1190,9 +1201,9 @@ void magic_treasure(int x, int level, int good, int not_unique)
 
 		/* Make it "excellent" */
 		if (randint(2) == 1) {
-		    i_ptr->name2 = EGO_PROTECTION;
 		    i_ptr->toac += m_bonus(0, 10, level) + (5 + randint(3));
 		    i_ptr->cost += 250L;
+		    i_ptr->name2 = EGO_PROTECTION;
 		    rating += 8;
 		}
 		else if (randint(10) < 10) {
@@ -1218,29 +1229,31 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	/* Cursed */
 	else if (magik(cursed)) {
 
+	    /* Cursed */
+	    i_ptr->flags1 |= TR3_CURSED;
+
+		/* Permanent damage */
+		i_ptr->cost = 0;
+
 		/* Choose some damage */
 		tmp = randint(3);
 		    if (tmp == 1) {
-			i_ptr->flags1 |= TR3_AGGRAVATE;
 			i_ptr->name2 = EGO_IRRITATION;
-			i_ptr->toac -= m_bonus(1, 10, level);
 			i_ptr->ident |= ID_SHOW_HITDAM;
+			i_ptr->flags1 |= TR3_AGGRAVATE;
+			i_ptr->toac -= m_bonus(1, 10, level);
 			i_ptr->tohit -= m_bonus(1, 10, level);
 			i_ptr->todam -= m_bonus(1, 10, level);
-			i_ptr->cost = 0;
 		    } else if (tmp == 2) {
 			i_ptr->name2 = EGO_VULNERABILITY;
 			i_ptr->toac -= m_bonus(10, 20, level + 50);
-			i_ptr->cost = 0;
 		    } else {
 			i_ptr->name2 = EGO_ENVELOPING;
-			i_ptr->toac -= m_bonus(1, 10, level);
 			i_ptr->ident |= ID_SHOW_HITDAM;
+			i_ptr->toac -= m_bonus(1, 10, level);
 			i_ptr->tohit -= m_bonus(2, 15, level + 10);
 			i_ptr->todam -= m_bonus(2, 15, level + 10);
-			i_ptr->cost = 0;
 	    }
-	    i_ptr->flags1 |= TR3_CURSED;
 	}
 	break;
 
@@ -1249,6 +1262,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 
     /* always show tohit/todam values if identified */
 	i_ptr->ident |= ID_SHOW_HITDAM;
+
 	if (magik(chance) || (good == 666)) {
 	    tmp = randint(3);
 	    if (tmp == 1) {
@@ -1256,11 +1270,12 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	    }
 	    if (tmp == 2)	/* do not give additional plusses -CWS */
 		;
+
 	    else {
 	    /* a cursed digging tool */
+		i_ptr->flags1 |= TR3_CURSED;
 		i_ptr->pval = (-m_bonus(1, 15, level));
 		i_ptr->cost = 0L;
-		i_ptr->flags1 |= TR3_CURSED;
 	    }
 	}
 	
@@ -1275,7 +1290,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	i_ptr->ident |= ID_SHOW_HITDAM;
 
 	/* Apply some magic */
-	if (magik(chance) || good) {
+	if (good || magik(chance)) {
 
 	    /* Make it better */
 	    i_ptr->tohit += randint(3) + m_bonus(0, 10, level);
@@ -1287,12 +1302,15 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	 */
 	    if (magik(3*special/2)||good==666) { /* was 2 */
 
+		/* Hack -- Roll for whips of fire */
 		if (!stricmp("& Whip", k_list[i_ptr->index].name)
 		    && randint(2)==1) {
-		    if (peek) msg_print("Whip of Fire");
-		    rating += 20;
-		    i_ptr->name2 = EGO_FIRE;
+
 		    i_ptr->flags1 |= (TR1_BRAND_FIRE | TR2_RES_FIRE);
+
+		    /* Better stats */
+		    i_ptr->tohit += 5;
+		    i_ptr->todam += 5;
 
 		    /* this should allow some WICKED whips -CFT */
 		    while (randint(5 * (int)i_ptr->damage[0]) == 1) {
@@ -1300,8 +1318,11 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			i_ptr->cost += 2500;
 			i_ptr->cost *= 2;
 		    }
-		    i_ptr->tohit += 5;
-		    i_ptr->todam += 5;
+
+		    i_ptr->name2 = EGO_FIRE;
+
+		    rating += 20;
+		    if (peek) msg_print("Whip of Fire");
 		} else {
 
 		/* Make it "excellent" */
@@ -1312,173 +1333,183 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			    && !not_unique &&
 			    unique_weapon(i_ptr))
 			    break;
-		    if (peek) msg_print("Holy Avenger");
-		    rating += 30;
 			i_ptr->flags1 |= (TR3_SEE_INVIS | TR_SUST_STAT |
 				      TR1_SLAY_UNDEAD | TR1_SLAY_EVIL | TR1_WIS);
 		    i_ptr->flags2 |= (TR1_SLAY_DEMON | TR_BLESS_BLADE);
 		    i_ptr->tohit += 5;
 		    i_ptr->todam += 5;
 		    i_ptr->toac += randint(4);
+
 		    /* the value in pval is used for strength increase */
 		    /* pval is also used for sustain stat */
 		    i_ptr->pval = randint(4);
-		    i_ptr->name2 = EGO_HA;
+
 		    i_ptr->cost += i_ptr->pval * 500;
 		    i_ptr->cost += 10000L;
 		    i_ptr->cost *= 2;
+		    i_ptr->name2 = EGO_HA;
+		    rating += 30;
+		    if (peek) msg_print("Holy Avenger");
 		    break;
 
 		  case 2:
 			if (((randint(2) == 1) || (good == 666)) && !not_unique &&
 			    unique_weapon(i_ptr))
 			    break;
-		    if (peek) msg_print("Defender");
-		    rating += 23;
 		    i_ptr->flags1 |= (TR3_FEATHER | TR2_RES_ELEC | TR3_SEE_INVIS |
 				      TR2_FREE_ACT | TR2_RES_COLD | TR2_RES_ACID |
 				      TR2_RES_FIRE | TR3_REGEN | TR1_STEALTH);
 		    i_ptr->tohit += 3;
 		    i_ptr->todam += 3;
 		    i_ptr->toac += 5 + randint(5);
-		    i_ptr->name2 = EGO_DF;
 		    i_ptr->pval = randint(3);	/* +X Stealth */
 		    i_ptr->cost += i_ptr->pval * 500;
 		    i_ptr->cost += 7500L;
 		    i_ptr->cost *= 2;
+		    i_ptr->name2 = EGO_DF;
+		    rating += 23;
+		    if (peek) msg_print("Defender");
 		    break;
 
 		  case 3: case 4:
 		    if (((randint(2) == 1) || (good == 666)) && !not_unique &&
 			    unique_weapon(i_ptr))
 			    break;
-		    rating += 20;
 		    i_ptr->flags1 |= (TR1_BRAND_FIRE | TR2_RES_FIRE);
-		    if (peek) msg_print("Flame");
 		    i_ptr->tohit += 2;
 		    i_ptr->todam += 3;
-		    i_ptr->name2 = EGO_FT;
 		    i_ptr->cost += 3000L;
+		    i_ptr->name2 = EGO_FT;
+		    rating += 20;
+		    if (peek) msg_print("Flame");
 		    break;
 
 		  case 5: case 6:
 			if (((randint(2) == 1) || (good == 666)) && !not_unique &&
 			    unique_weapon(i_ptr))
 			    break;
-		    if (peek) msg_print("Frost");
-		    rating += 20;
 		    i_ptr->flags1 |= (TR1_BRAND_COLD | TR2_RES_COLD);
 		    i_ptr->tohit += 2;
 		    i_ptr->todam += 2;
-		    i_ptr->name2 = EGO_FB;
 		    i_ptr->cost += 2200L;
+		    i_ptr->name2 = EGO_FB;
+		    rating += 20;
+		    if (peek) msg_print("Frost");
 		    break;
 
 		  case 7: case 8:
 		    i_ptr->flags1 |= TR1_SLAY_ANIMAL;
-		    rating += 15;
-		    if (peek) msg_print("Slay Animal");
 		    i_ptr->tohit += 3;
 		    i_ptr->todam += 3;
-		    i_ptr->name2 = EGO_SLAY_A;
 		    i_ptr->cost += 2000L;
+		    i_ptr->name2 = EGO_SLAY_A;
+		    rating += 15;
+		    if (peek) msg_print("Slay Animal");
 		    break;
 
 		  case 9: case 10:
 		    i_ptr->flags1 |= TR1_SLAY_DRAGON;
-		    if (peek) msg_print("Slay Dragon");
-		    rating += 18;
 		    i_ptr->tohit += 3;
 		    i_ptr->todam += 3;
-		    i_ptr->name2 = EGO_SLAY_D;
 		    i_ptr->cost += 4000L;
+		    i_ptr->name2 = EGO_SLAY_D;
+		    rating += 18;
+		    if (peek) msg_print("Slay Dragon");
 		    break;
 
 		  case 11: case 12:
 		    i_ptr->flags1 |= TR1_SLAY_EVIL;
+		    i_ptr->tohit += 3;
+		    i_ptr->todam += 3;
+		    i_ptr->cost += 4000L;
+		    i_ptr->name2 = EGO_SLAY_E;
+
+		    /* One in three is also a blessed wisdom booster */
 		    if (randint(3) == 1) {
 			i_ptr->flags1 |= (TR1_WIS);
 			i_ptr->flags2 |= (TR_BLESS_BLADE);
 			i_ptr->pval = m_bonus(0, 3, level);
 			i_ptr->cost += (200 * i_ptr->pval);
-			}
-		    if (peek) msg_print("Slay Evil");
+		    }
+
 		    rating += 18;
-		    i_ptr->tohit += 3;
-		    i_ptr->todam += 3;
-		    i_ptr->name2 = EGO_SLAY_E;
-		    i_ptr->cost += 4000L;
+		    if (peek) msg_print("Slay Evil");
+
 		    break;
 
 		  case 13: case 14:
 		    i_ptr->flags1 |= (TR3_SEE_INVIS | TR1_SLAY_UNDEAD);
+		    i_ptr->tohit += 2;
+		    i_ptr->todam += 2;
+		    i_ptr->cost += 3000L;
+		    i_ptr->name2 = EGO_SLAY_U;
+
+		    /* One in three is also a Life Holder */
 		    if (randint(3) == 1) {
 			i_ptr->flags2 |= (TR2_HOLD_LIFE);
 			i_ptr->cost += 1000;
 		    }
-		    if (peek) msg_print("Slay Undead");
+
 		    rating += 18;
-		    i_ptr->tohit += 2;
-		    i_ptr->todam += 2;
-		    i_ptr->name2 = EGO_SLAY_U;
-		    i_ptr->cost += 3000L;
+		    if (peek) msg_print("Slay Undead");
+
 		    break;
 
 		  case 15: case 16: case 17:
 		    i_ptr->flags2 |= TR1_SLAY_ORC;
-		    if (peek) msg_print("Slay Orc");
-		    rating += 13;
 		    i_ptr->tohit += 2;
 		    i_ptr->todam += 2;
-		    i_ptr->name2 = EGO_SLAY_O;
 		    i_ptr->cost += 1200L;
+		    i_ptr->name2 = EGO_SLAY_O;
+		    rating += 13;
+		    if (peek) msg_print("Slay Orc");
 		    break;
 
 		  case 18: case 19: case 20:
 		    i_ptr->flags2 |= TR1_SLAY_TROLL;
-		    if (peek) msg_print("Slay Troll");
-		    rating += 13;
 		    i_ptr->tohit += 2;
 		    i_ptr->todam += 2;
-		    i_ptr->name2 = EGO_SLAY_T;
 		    i_ptr->cost += 1200L;
+		    i_ptr->name2 = EGO_SLAY_T;
+		    rating += 13;
+		    if (peek) msg_print("Slay Troll");
 		    break;
 
 		  case 21: case 22: case 23:
 		    i_ptr->flags2 |= TR1_SLAY_GIANT;
-		    if (peek) msg_print("Slay Giant");
-		    rating += 14;
 		    i_ptr->tohit += 2;
 		    i_ptr->todam += 2;
-		    i_ptr->name2 = EGO_SLAY_G;
 		    i_ptr->cost += 1200L;
+		    i_ptr->name2 = EGO_SLAY_G;
+		    rating += 14;
+		    if (peek) msg_print("Slay Giant");
 		    break;
 
 		  case 24: case 25: case 26:
 		    i_ptr->flags2 |= TR1_SLAY_DEMON;
-		    if (peek) msg_print("Slay Demon");
-		    rating += 16;
 		    i_ptr->tohit += 2;
 		    i_ptr->todam += 2;
-		    i_ptr->name2 = EGO_SLAY_DEMON;
 		    i_ptr->cost += 1200L;
+		    i_ptr->name2 = EGO_SLAY_DEMON;
+		    rating += 16;
+		    if (peek) msg_print("Slay Demon");
 		    break;
 
 		  case 27:
 			if (((randint(2) == 1) || (good == 666)) && !not_unique &&
 			    unique_weapon(i_ptr))
 			    break;
-		    if (peek) msg_print("Westernesse");
-		    rating += 20;
 		    i_ptr->flags1 |= (TR3_SEE_INVIS | TR1_DEX | TR1_CON | TR1_STR |
 				      TR2_FREE_ACT);
 		    i_ptr->flags2 |= TR1_SLAY_ORC;
-		    i_ptr->tohit += randint(5) + 3;
-		    i_ptr->todam += randint(5) + 3;
+		    i_ptr->tohit += 3 + randint(5);
+		    i_ptr->todam += 3 + randint(5);
 		    i_ptr->pval = 1;
 		    i_ptr->cost += 10000L;
 		    i_ptr->cost *= 2;
 		    i_ptr->name2 = EGO_WEST;
+		    rating += 20;
+		    if (peek) msg_print("Westernesse");
 		    break;
 
 		  /* Anything can be blessed */
@@ -1486,16 +1517,16 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			if ((i_ptr->tval != TV_SWORD) &&
 			    (i_ptr->tval != TV_POLEARM))
 			    break;
-		    if (peek) msg_print("Blessed");
-		    rating += 20;
 		    i_ptr->flags1 = TR1_WIS;
 		    i_ptr->flags2 = TR_BLESS_BLADE;
 		    i_ptr->tohit += 3;
 		    i_ptr->todam += 3;
 		    i_ptr->pval = randint(3);
-		    i_ptr->name2 = EGO_BLESS_BLADE;
 		    i_ptr->cost += i_ptr->pval * 1000;
 		    i_ptr->cost += 3000L;
+		    i_ptr->name2 = EGO_BLESS_BLADE;
+		    rating += 20;
+		    if (peek) msg_print("Blessed");
 		    break;
 
 		  /* Extra Attacks */
@@ -1503,8 +1534,6 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			if (((randint(2) == 1) || (good == 666))
 			    && !not_unique && unique_weapon(i_ptr))
 			    break;
-		    if (wizard || peek) msg_print("Weapon of Extra Attacks");
-		    rating += 20;
 		    i_ptr->tohit += randint(5);
 		    i_ptr->todam += randint(3);
 		    i_ptr->flags2 = TR1_ATTACK_SPD;
@@ -1517,9 +1546,11 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		    else {
 			i_ptr->pval = 1;
 		    }
-		    i_ptr->name2 = EGO_ATTACKS;
 		    i_ptr->cost += (i_ptr->pval * 2000);
 		    i_ptr->cost *= 2;
+		    i_ptr->name2 = EGO_ATTACKS;
+		    rating += 20;
+		    if (wizard || peek) msg_print("Weapon of Extra Attacks");
 		    break;
 		    }
 		}
@@ -1530,18 +1561,18 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	else if (magik(cursed)) {
 	
 	    /* Cursed */
-	    i_ptr->tohit = (-randint(3) - m_bonus(1, 20, level));
-	    i_ptr->todam = (-randint(3) - m_bonus(1, 20, level));
 	    i_ptr->flags1 |= TR3_CURSED;
+	    i_ptr->tohit = 0 - randint(3) - m_bonus(1, 20, level);
+	    i_ptr->todam = 0 - randint(3) - m_bonus(1, 20, level);
 
 	    /* Permanently cursed Weapon of Morgul */
 	    if (level > (20 + randint(15)) && randint(10) == 1) {
-		i_ptr->name2 = EGO_MORGUL;
 		i_ptr->flags1 |= (TR3_SEE_INVIS | TR3_AGGRAVATE);
 		i_ptr->tohit -= 15;
 		i_ptr->todam -= 15;
 		i_ptr->toac = -10;
 		i_ptr->weight += 100;
+		i_ptr->name2 = EGO_MORGUL;
 	    }
 	    i_ptr->cost = 0L;
 	}
@@ -1554,7 +1585,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	i_ptr->ident |= ID_SHOW_HITDAM;
 
 	/* Apply some magic */
-	if (magik(chance) || good) {
+	if (good || magik(chance)) {
 
 	    /* Make it better */
 	    i_ptr->tohit = randint(3) + m_bonus(0, 10, level);
@@ -1624,37 +1655,37 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		    break;
 		}
 
-		    i_ptr->name2 = EGO_MIGHT;
-		    if (peek) msg_print("Bow of Might");
-		    rating += 15;
 		    i_ptr->sval++; /* make it do an extra multiple of damage */
 		    i_ptr->tohit += 5;
 		    i_ptr->todam += 10;
+		    i_ptr->name2 = EGO_MIGHT;
+		    rating += 15;
+		    if (peek) msg_print("Bow of Might");
 		    break;
 
 		  case 4: case 5: case 6: case 7: case 8:
-		    i_ptr->name2 = EGO_MIGHT;
-		    if (peek) msg_print("Bow of Might");
-		    rating += 11;
 		    i_ptr->tohit += 5;
 		    i_ptr->todam += 12;
+		    i_ptr->name2 = EGO_MIGHT;
+		    rating += 11;
+		    if (peek) msg_print("Bow of Might");
 		    break;
 
 		  case 9: case 10: case 11: case 12:
 		  case 13: case 14: case 15:
+		    i_ptr->tohit += 12;
+		    i_ptr->todam += 5;
 		    i_ptr->name2 = EGO_ACCURACY;
 		    rating += 11;
 		    if (peek) msg_print("Accuracy");
-		    i_ptr->tohit += 12;
-		    i_ptr->todam += 5;
 		    break;
 	    }
 	}
 
 	else if (magik(cursed)) {
-	    i_ptr->tohit = (-m_bonus(5, 30, level));
-	    i_ptr->todam = (-m_bonus(5, 20, level));	/* add damage. -CJS- */
 	    i_ptr->flags1 |= TR3_CURSED;
+	    i_ptr->tohit = 0 - m_bonus(5, 30, level);
+	    i_ptr->todam = 0 - m_bonus(5, 20, level);
 	    i_ptr->cost = 0L;
 	}
 	
@@ -1682,12 +1713,12 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	  case 1:
 	  case 2:
 	  case 3:		   /* 132-135 */
+	    i_ptr->pval = m_bonus(1, 6, level);
 	    if (magik(cursed)) {
 		i_ptr->pval = -m_bonus(1, 10, level);
 		i_ptr->flags1 |= TR3_CURSED;
 		i_ptr->cost = -i_ptr->cost;
 	    } else {
-		i_ptr->pval = m_bonus(1, 6, level);
 		i_ptr->cost += i_ptr->pval * 100;
 	    }
 	    break;
@@ -1697,14 +1728,17 @@ void magic_treasure(int x, int level, int good, int not_unique)
 
 	    /* Cursed Ring */
 	    if (magik(cursed)) {
-		i_ptr->pval = -randint(3);
 		i_ptr->flags1 |= TR3_CURSED;
+		i_ptr->pval = -randint(3);
 		i_ptr->cost = -i_ptr->cost;
 	    } else {
-		if (peek) msg_print("Ring of Speed");
-		rating += 35;
-		    if (randint(888) == 1) i_ptr->pval = 2;
-		    else i_ptr->pval = 1;
+
+	    if (randint(888) == 1) i_ptr->pval = 2;
+	    else i_ptr->pval = 1;
+
+	    /* Rating boost */
+	    rating += 35;
+	    if (peek) msg_print("Ring of Speed");
 	    }
 	    break;
 
@@ -1713,8 +1747,8 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	    i_ptr->pval = 5 * m_bonus(1, 10, level);
 	    i_ptr->cost += i_ptr->pval * 30;
 	    if (magik(cursed)) {
-		i_ptr->pval = -i_ptr->pval;
 		i_ptr->flags1 |= TR3_CURSED;
+		i_ptr->pval = -i_ptr->pval;
 		i_ptr->cost = -i_ptr->cost;
 	    }
 	    break;
@@ -1741,8 +1775,8 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	    i_ptr->todam += 3 + randint(10);
 	    i_ptr->cost += i_ptr->todam * 100;
 	    if (magik(cursed)) {
-		i_ptr->todam = -i_ptr->todam;
 		i_ptr->flags1 |= TR3_CURSED;
+		i_ptr->todam = -i_ptr->todam;
 		i_ptr->cost = -i_ptr->cost;
 	    }
 	    break;
@@ -1753,8 +1787,8 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	    i_ptr->tohit += 3 + randint(10);
 	    i_ptr->cost += i_ptr->tohit * 100;
 	    if (magik(cursed)) {
-		i_ptr->tohit = -i_ptr->tohit;
 		i_ptr->flags1 |= TR3_CURSED;
+		i_ptr->tohit = -i_ptr->tohit;
 		i_ptr->cost = -i_ptr->cost;
 	    }
 	    break;
@@ -1765,8 +1799,8 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	    i_ptr->toac += 4 + randint(5);
 	    i_ptr->cost += i_ptr->toac * 100;
 	    if (magik(cursed)) {
-		i_ptr->toac = -i_ptr->toac;
 		i_ptr->flags1 |= TR3_CURSED;
+		i_ptr->toac = -i_ptr->toac;
 		i_ptr->cost = -i_ptr->cost;
 	    }
 	    break;
@@ -1789,9 +1823,9 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	    i_ptr->tohit += 2 + randint(3);
 	    i_ptr->cost += (i_ptr->tohit + i_ptr->todam) * 100;
 	    if (magik(cursed)) {
-		i_ptr->tohit = -i_ptr->tohit;
-		i_ptr->todam = -i_ptr->todam;
 		i_ptr->flags1 |= TR3_CURSED;
+		i_ptr->tohit = 0 - i_ptr->tohit;
+		i_ptr->todam = 0 - i_ptr->todam;
 		i_ptr->cost = -i_ptr->cost;
 	    }
 	    break;
@@ -1804,21 +1838,21 @@ void magic_treasure(int x, int level, int good, int not_unique)
       case TV_AMULET:
 
 	if (i_ptr->sval < 2) {
+	    i_ptr->pval = m_bonus(1, 5, level);
 	    if (magik(cursed)) {
-		i_ptr->pval = -m_bonus(1, 5, level);
 		i_ptr->flags1 |= TR3_CURSED;
+		i_ptr->pval = -m_bonus(1, 5, level);
 		i_ptr->cost = -i_ptr->cost;
 	    } else {
-		i_ptr->pval = m_bonus(1, 5, level);
 		i_ptr->cost += i_ptr->pval * 100;
 	    }
 	}
 	else if (i_ptr->sval == 2) { /* searching */
 	    i_ptr->pval = 5 * (randint(3) + m_bonus(0, 8, level));
 	    if (magik(cursed)) {
+		i_ptr->flags1 |= TR3_CURSED;
 		i_ptr->pval = -i_ptr->pval;
 		i_ptr->cost = -i_ptr->cost;
-		i_ptr->flags1 |= TR3_CURSED;
 	    } else
 		i_ptr->cost += 20 * i_ptr->pval;
 	}
@@ -1831,9 +1865,9 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		i_ptr->flags1 |= TR3_CURSED;
 	}
 	else if (i_ptr->sval == 9) { /* amulet of DOOM */
-	    i_ptr->pval = (-randint(5) - m_bonus(2, 10, level));
-	    i_ptr->toac = (-randint(3) - m_bonus(0, 6, level));
 	    i_ptr->flags1 |= TR3_CURSED;
+	    i_ptr->pval = 0 - randint(5) - m_bonus(2, 10, level);
+	    i_ptr->toac = 0 - randint(3) - m_bonus(0, 6, level);
 	}
 	break;
 
