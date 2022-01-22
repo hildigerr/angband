@@ -514,11 +514,10 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	    || (i_ptr->index >= 408 && i_ptr->index <= 409)
 	    || (i_ptr->index >= 415 && i_ptr->index <= 419)) {
 
-	    byte               artifact = FALSE;
-
 	/* all DSM are enchanted, I guess -CFT */
 	    i_ptr->toac += randint(3) + m_bonus(0, 5, level);
 	    rating += 30;
+
 	    if ((magik(chance) && magik(special)) || great) {
 
 		/* Even better */
@@ -526,16 +525,16 @@ void magic_treasure(int x, int level, int good, int not_unique)
 
 		if ((great || randint(3) == 1) && !not_unique
 		    && unique_armour(i_ptr))	/* ...but is it an artifact? */
-		    artifact = TRUE;
+		    break;
 	    }
-	    if (!artifact) {	   /* assume cost&mesg done if it was an artifact */
+
 		if (wizard || peek) msg_print("Dragon Scale Mail");
 	    /* Hack -- adjust cost for "toac" */
 	    i_ptr->cost += ((s32b) i_ptr->toac * 500L);
-	    }
+
+	break;
 	}
 	 /* end if is a DSM */
-	else
 
 	/* Good */
 	if (good || magik(chance)) {
@@ -543,9 +542,11 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	    /* Enchant */
 	    i_ptr->toac += randint(3) + m_bonus(0, 5, level);
 
+	    /* Try for artifacts */
+	    if (great || magik(special)) {
+
 	    if (!stricmp(k_list[i_ptr->index].name, "& Robe") &&
-		((magik(special) && randint(30) == 1)
-		 || (great && magik(special)))) {
+		((magik(special) && randint(30) == 1))) {
 
 		    i_ptr->flags1 |= (TR2_RES_ELEC | TR2_RES_COLD | 
 				      TR2_RES_ACID | TR2_RES_FIRE |
@@ -560,7 +561,9 @@ void magic_treasure(int x, int level, int good, int not_unique)
 
 		    rating += 30;
 		    if (wizard || peek) msg_print("Robe of the Magi");
-	    } else if (great || magik(special))
+
+		    break;
+		}
 
 		/* Make it "Excellent" */
 		switch (randint(9)) {
@@ -639,6 +642,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		    if (peek) msg_print("Resist Lightning");
 		    break;
 		}
+	    }
 	}
 
 	/* Cursed armor */
@@ -659,20 +663,20 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	    /* Make it better */
 	    i_ptr->toac = randint(3) + m_bonus(0, 10, level);
 
+		/* Roll for artifact */
 	    if ((((randint(2) == 1) && magik(5 * special / 2)) || great) &&
 		!stricmp(k_list[i_ptr->index].name,
 			 "& Set of Leather Gloves") &&
-		!not_unique && unique_armour(i_ptr));
-	    else if ((((randint(4) == 1) && magik(special)) || great)
+		!not_unique && unique_armour(i_ptr)) break;
+	    if ((((randint(4) == 1) && magik(special)) || great)
 		     && !stricmp(k_list[i_ptr->index].name,
 				 "& Set of Gauntlets") &&
-		     !not_unique && unique_armour(i_ptr));
-	    else if ((((randint(5) == 1) && magik(special)) || great)
+		     !not_unique && unique_armour(i_ptr)) break;
+	    if ((((randint(5) == 1) && magik(special)) || great)
 		     && !stricmp(k_list[i_ptr->index].name,
 				 "& Set of Cesti") &&
-		     !not_unique && unique_armour(i_ptr));
-	/* don't forget cesti -CFT */
-	    else
+		     !not_unique && unique_armour(i_ptr)) break;
+
 	    /* Apply more magic */
 	    if (great || magik(special)) {
 		
@@ -830,17 +834,20 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		i_ptr->cost = 0;
 
 		/* Pick some damage */
-	    tmp = randint(3);
-		    if (tmp == 1) {
+		switch (randint(3)) {
+		    case 1:
 			i_ptr->flags1 |= TR1_SPEED;
 			i_ptr->pval = -1;
 			i_ptr->name2 = EGO_SLOWNESS;
-		    } else if (tmp == 2) {
+			break;
+		    case 2:
 			i_ptr->flags1 |= TR3_AGGRAVATE;
 			i_ptr->name2 = EGO_NOISE;
-		    } else {
+			break;
+		    case 3:
 			i_ptr->weight = i_ptr->weight * 5;
 			i_ptr->name2 = EGO_GREAT_MASS;
+			break;
 	    }
 	}
 
@@ -872,9 +879,9 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		if (i_ptr->sval < 6) {
 
 		    /* Make it "excellent" */
-		    tmp = randint(14);
+		    switch (randint(14)) {
 
-		      if (tmp < 3) {
+		      case 1: case 2:
 			if (!((randint(2) == 1) && !not_unique &&
 			      unique_armour(i_ptr))) {
 			i_ptr->flags1 |= TR1_INT;
@@ -884,8 +891,9 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			rating += 13;
 			if (peek) msg_print("Intelligence");
 			}
+			break;
 
-		      } else if (tmp < 6) {
+		      case 3: case 4: case 5:
 			if (!((randint(2) == 1) && !not_unique &&
 			      unique_armour(i_ptr))) {
 			i_ptr->flags1 |= TR1_WIS;
@@ -895,8 +903,9 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			rating += 13;
 			if (peek) msg_print("Wisdom");
 			}
+			break;
 
-		      } else if (tmp < 10) {
+		      case 6: case 7: case 8: case 9:
 			if (!((randint(2) == 1) && !not_unique &&
 			      unique_armour(i_ptr))) {
 			i_ptr->flags1 |= TR1_INFRA;
@@ -905,8 +914,9 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			i_ptr->name2 = EGO_INFRAVISION;
 			rating += 11;
 			}
+			break;
 
-		      } else if (tmp < 12) {
+		      case 10: case 11:
 			if (!((randint(2) == 1) && !not_unique &&
 			      unique_armour(i_ptr))) {
 			i_ptr->flags2 |= (TR2_RES_LITE | TR3_LITE);
@@ -915,8 +925,9 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			rating += 6;
 			if (peek) msg_print("Light");
 			}
+			break;
 
-		      } else if (tmp < 14) {
+		      case 12: case 13:
 			if (!((randint(2) == 1) && !not_unique &&
 			      unique_armour(i_ptr))) {
 			i_ptr->flags1 |= TR3_SEE_INVIS;
@@ -926,8 +937,9 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			rating += 8;
 			if (peek) msg_print("Helm of Seeing");
 			}
+			break;
 
-		      } else {
+		     default: /* case 14: */
 			if (!((randint(2) == 1) && !not_unique &&
 			      unique_armour(i_ptr))) {
 			i_ptr->flags2 |= TR3_TELEPATHY;
@@ -936,6 +948,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 			rating += 20;
 			if (peek) msg_print("Telepathy");
 			}
+			break;
 		    }
 		}
 
@@ -1209,21 +1222,21 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		    i_ptr->name2 = EGO_PROTECTION;
 		    rating += 8;
 		}
-		else if (randint(10) < 10) {
-		    i_ptr->toac += m_bonus(3, 10, level);
-		    i_ptr->pval = randint(3);
-		    i_ptr->flags1 |= TR1_STEALTH;
-		    i_ptr->name2 = EGO_STEALTH;
-		    i_ptr->cost += 500 + (50 * i_ptr->pval);
-		    rating += 9;
-		}
-		else {
+		else if (randint(10) == 1) {
 		    i_ptr->toac += 10 + randint(10);
 		    i_ptr->pval = randint(3);
 		    i_ptr->flags1 |= (TR1_STEALTH | TR2_RES_ACID);
 		    i_ptr->name2 = EGO_AMAN;
 		    i_ptr->cost += 4000 + (100 * i_ptr->toac);
 		    rating += 16;
+		}
+		else {
+		    i_ptr->toac += m_bonus(3, 10, level);
+		    i_ptr->pval = randint(3);
+		    i_ptr->flags1 |= TR1_STEALTH;
+		    i_ptr->name2 = EGO_STEALTH;
+		    i_ptr->cost += 500 + (50 * i_ptr->pval);
+		    rating += 9;
 		}
 		}
 	    }
@@ -1239,23 +1252,26 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		i_ptr->cost = 0;
 
 		/* Choose some damage */
-		tmp = randint(3);
-		    if (tmp == 1) {
+		switch (randint(3)) {
+		    case 1:
 			i_ptr->name2 = EGO_IRRITATION;
 			i_ptr->ident |= ID_SHOW_HITDAM;
 			i_ptr->flags1 |= TR3_AGGRAVATE;
 			i_ptr->toac -= m_bonus(1, 10, level);
 			i_ptr->tohit -= m_bonus(1, 10, level);
 			i_ptr->todam -= m_bonus(1, 10, level);
-		    } else if (tmp == 2) {
+			break;
+		    case 2:
 			i_ptr->name2 = EGO_VULNERABILITY;
 			i_ptr->toac -= m_bonus(10, 20, level + 50);
-		    } else {
+			break;
+		    case 3:
 			i_ptr->name2 = EGO_ENVELOPING;
 			i_ptr->ident |= ID_SHOW_HITDAM;
 			i_ptr->toac -= m_bonus(1, 10, level);
 			i_ptr->tohit -= m_bonus(2, 15, level + 10);
 			i_ptr->todam -= m_bonus(2, 15, level + 10);
+			break;
 	    }
 	}
 	break;
@@ -1305,11 +1321,16 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	 * before change to treasure distribution, this helps keep same
 	 * number of ego weapons same as before, see also missiles 
 	 */
-	    if (magik(3*special/2)||good==666) { /* was 2 */
+
+	    /* Hack -- improve the "special" chance */
+	    special = special * 3 / 2;
+	    
+	    /* Make it "excellent" */
+	    if (great || magik(special)) {
 
 		/* Hack -- Roll for whips of fire */
-		if (!stricmp("& Whip", k_list[i_ptr->index].name)
-		    && randint(2)==1) {
+		if (!stricmp("& Whip", k_list[i_ptr->index].name) &&
+		    (randint(2) == 1)) {
 
 		    i_ptr->flags1 |= (TR1_BRAND_FIRE | TR2_RES_FIRE);
 
@@ -1328,7 +1349,9 @@ void magic_treasure(int x, int level, int good, int not_unique)
 
 		    rating += 20;
 		    if (peek) msg_print("Whip of Fire");
-		} else {
+
+		    break;
+		}
 
 		/* Make it "excellent" */
 		switch (randint(30)) {
@@ -1557,7 +1580,6 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		    rating += 20;
 		    if (wizard || peek) msg_print("Weapon of Extra Attacks");
 		    break;
-		    }
 		}
 	    }
 	}
@@ -1833,8 +1855,6 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		i_ptr->todam = 0 - i_ptr->todam;
 		i_ptr->cost = -i_ptr->cost;
 	    }
-	    break;
-	  default:
 	    break;
 	}
 	}
