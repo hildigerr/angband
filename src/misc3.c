@@ -483,6 +483,7 @@ static void charge_staff(inven_type *i_ptr)
 void magic_treasure(int x, int level, int good, int not_unique)
 {
     register inven_type *i_ptr = &i_list[x];
+    bool great = (good == 666);
     register u32b      chance, special, cursed, i;
     u32b               tmp;
 
@@ -518,12 +519,12 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	/* all DSM are enchanted, I guess -CFT */
 	    i_ptr->toac += randint(3) + m_bonus(0, 5, level);
 	    rating += 30;
-	    if ((magik(chance) && magik(special)) || (good == 666)) {
+	    if ((magik(chance) && magik(special)) || great) {
 
 		/* Even better */
 		i_ptr->toac += randint(5);
 
-		if ((randint(3) == 1 || good == 666) && !not_unique
+		if ((great || randint(3) == 1) && !not_unique
 		    && unique_armour(i_ptr))	/* ...but is it an artifact? */
 		    artifact = TRUE;
 	    }
@@ -544,7 +545,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 
 	    if (!stricmp(k_list[i_ptr->index].name, "& Robe") &&
 		((magik(special) && randint(30) == 1)
-		 || (good == 666 && magik(special)))) {
+		 || (great && magik(special)))) {
 
 		    i_ptr->flags1 |= (TR2_RES_ELEC | TR2_RES_COLD | 
 				      TR2_RES_ACID | TR2_RES_FIRE |
@@ -559,13 +560,13 @@ void magic_treasure(int x, int level, int good, int not_unique)
 
 		    rating += 30;
 		    if (wizard || peek) msg_print("Robe of the Magi");
-	    } else if (magik(special) || good == 666)
+	    } else if (great || magik(special))
 
 		/* Make it "Excellent" */
 		switch (randint(9)) {
 
 		  case 1:
-		    if ((randint(3) == 1 || good == 666) && !not_unique &&
+		    if ((great || randint(3) == 1) && !not_unique &&
 			unique_armour(i_ptr))
 			break;
 		    i_ptr->flags1 |= (TR2_RES_ELEC | TR2_RES_COLD |
@@ -590,7 +591,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		    break;
 
 		  case 2:
-		    if ((randint(3) == 1 || good == 666) && !not_unique &&
+		    if ((great || randint(3) == 1) && !not_unique &&
 			unique_armour(i_ptr))
 			break;
 		    if (!strncmp(k_list[i_ptr->index].name,
@@ -606,7 +607,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		    break;
 
 		  case 3: case 4:
-		    if ((randint(3) == 1 || good == 666) && !not_unique &&
+		    if ((great || randint(3) == 1) && !not_unique &&
 			unique_armour(i_ptr))
 			break;
 		    i_ptr->flags1 |= TR2_RES_FIRE;
@@ -617,7 +618,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		    break;
 
 		  case 5: case 6:
-		    if ((randint(3) == 1 || good == 666) && !not_unique &&
+		    if ((great || randint(3) == 1) && !not_unique &&
 			unique_armour(i_ptr))
 			break;
 		    i_ptr->flags1 |= TR2_RES_COLD;
@@ -628,7 +629,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		    break;
 
 		  case 7: case 8: case 9:
-		    if ((randint(3) == 1 || good == 666) && !not_unique &&
+		    if ((great || randint(3) == 1) && !not_unique &&
 			unique_armour(i_ptr))
 			break;
 		    i_ptr->flags1 |= TR2_RES_ELEC;
@@ -658,20 +659,22 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	    /* Make it better */
 	    i_ptr->toac = randint(3) + m_bonus(0, 10, level);
 
-	    if ((((randint(2) == 1) && magik(5 * special / 2)) || (good == 666)) &&
+	    if ((((randint(2) == 1) && magik(5 * special / 2)) || great) &&
 		!stricmp(k_list[i_ptr->index].name,
 			 "& Set of Leather Gloves") &&
 		!not_unique && unique_armour(i_ptr));
-	    else if ((((randint(4) == 1) && magik(special)) || (good == 666))
+	    else if ((((randint(4) == 1) && magik(special)) || great)
 		     && !stricmp(k_list[i_ptr->index].name,
 				 "& Set of Gauntlets") &&
 		     !not_unique && unique_armour(i_ptr));
-	    else if ((((randint(5) == 1) && magik(special)) || (good == 666))
+	    else if ((((randint(5) == 1) && magik(special)) || great)
 		     && !stricmp(k_list[i_ptr->index].name,
 				 "& Set of Cesti") &&
 		     !not_unique && unique_armour(i_ptr));
 	/* don't forget cesti -CFT */
-	    else if (magik(special) || (good == 666)) {
+	    else
+	    /* Apply more magic */
+	    if (great || magik(special)) {
 		
 		/* Make it excellent */
 		switch (randint(10)) {
@@ -704,7 +707,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		    break;
 
 		  case 10:
-		    if (((randint(3) == 1) || (good == 666)) && !not_unique &&
+		    if (((great || randint(3) == 1)) && !not_unique &&
 			unique_armour(i_ptr))
 			break;
 		    i_ptr->flags1 |= TR1_STR;
@@ -762,7 +765,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	    i_ptr->toac = randint(3) + m_bonus(1, 10, level);
 
 	    /* Apply more magic */
-	    if (magik(special) || (good == 666)) {
+	    if (great || magik(special)) {
 
 		tmp = randint(12);
 
@@ -863,7 +866,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	    i_ptr->toac = randint(3) + m_bonus(0, 10, level);
 
 	    /* Apply more magic */
-	    if (magik(special) || (good == 666)) {
+	    if (great || magik(special)) {
 
 		/* Process "helms" */
 		if (i_ptr->sval < 6) {
@@ -943,7 +946,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 		    switch (randint(6)) {
 
 		      case 1:
-			if (!(((randint(2) == 1) || (good == 666)) &&
+			if (!((great || (randint(2) == 1)) &&
 			      !not_unique && unique_armour(i_ptr))) {
 			i_ptr->flags1 |= (TR2_FREE_ACT | TR1_CON | TR1_DEX | TR1_STR);
 			i_ptr->pval = randint(3);	/* +N STR/DEX/CON */
@@ -1059,7 +1062,7 @@ void magic_treasure(int x, int level, int good, int not_unique)
 	    i_ptr->toac += 1 + m_bonus(0, 20, level);
 
 	    /* Apply more magic */
-	    if (magik(special) || (good == 666)) {
+	    if (great || magik(special)) {
 
 		/* Roll for artifact */
 		if (!not_unique &&
@@ -1263,7 +1266,9 @@ void magic_treasure(int x, int level, int good, int not_unique)
     /* always show tohit/todam values if identified */
 	i_ptr->ident |= ID_SHOW_HITDAM;
 
-	if (magik(chance) || (good == 666)) {
+	/* Apply some magic */
+	if (great || magik(chance)) {
+
 	    tmp = randint(3);
 	    if (tmp == 1) {
 		i_ptr->pval += m_bonus(0, 5, level);
