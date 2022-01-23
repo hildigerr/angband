@@ -633,7 +633,7 @@ int delete_object(int, int);
 void wipe_i_list(void);
 int magik(int);
 int m_bonus(int, int, int);
-void magic_treasure(int, int, int, int);
+void apply_magic(inven_type *, int, int, int);
 void place_trap(int, int, int);
 void place_rubble(int, int);
 void place_gold(int, int);

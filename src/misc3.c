@@ -480,9 +480,8 @@ static void charge_staff(inven_type *i_ptr)
  * The base "chance" of being "good" increases with the "level" parameter,
  * which is usually derived from the dungeon level.
  */
-void magic_treasure(int x, int level, int good, int not_unique)
+void apply_magic(inven_type *i_ptr, int level, int good, int not_unique)
 {
-    register inven_type *i_ptr = &i_list[x];
     bool great = (good == 666);
     register u32b      chance, special, cursed, i;
     u32b               tmp;
@@ -2448,7 +2447,7 @@ void place_object(int y, int x)
     } while (opening_chest && (k_list[sorted_objects[tmp]].tval == TV_CHEST));
 	
     invcopy(&i_list[cur_pos], sorted_objects[tmp]);
-    magic_treasure(cur_pos, dun_level, FALSE, 0);
+    apply_magic(&i_list[cur_pos], dun_level, FALSE, 0);
     if (k_list[sorted_objects[tmp]].level > dun_level)
 	rating += k_list[sorted_objects[tmp]].level - dun_level;
     if (peek) {
@@ -2526,7 +2525,7 @@ void place_good(int y, int x, u32b good)
 	    is_good = TRUE;
     } while (!is_good);
     invcopy(&i_list[cur_pos], sorted_objects[tmp]);
-    magic_treasure(cur_pos, object_level, (good & MF2_SPECIAL) ? 666 : 1, 0);
+    apply_magic(&i_list[cur_pos], object_level, (good & MF2_SPECIAL) ? 666 : 1, 0);
     if (peek) {
 	if (k_list[sorted_objects[tmp]].level > object_level) {
 	    char                buf[200];

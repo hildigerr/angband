@@ -740,7 +740,7 @@ static void store_create(int store_num)
 	if (store_num != 6) {
 	    i = store_choice[store_num][randint(STORE_CHOICES) - 1];
 	    invcopy(&i_list[cur_pos], i);
-	    magic_treasure(cur_pos, OBJ_TOWN_LEVEL, FALSE, TRUE);
+	    apply_magic(&i_list[cur_pos], OBJ_TOWN_LEVEL, FALSE, TRUE);
 	    t_ptr = &i_list[cur_pos];
 	    if (store_check_num(t_ptr, store_num)) {
 		if ((t_ptr->cost > 0) &&	/* Item must be good	 */
@@ -757,7 +757,7 @@ static void store_create(int store_num)
 	} else {
 	    i = get_obj_num(40, FALSE);
 	    invcopy(&i_list[cur_pos], i);
-	    magic_treasure(cur_pos, 40, FALSE, TRUE);
+	    apply_magic(&i_list[cur_pos], 40, FALSE, TRUE);
 	    t_ptr = &i_list[cur_pos];
 	    if (store_check_num(t_ptr, store_num)) {
 		if (t_ptr->cost > 0) {	/* Item must be good	 */
