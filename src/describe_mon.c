@@ -7,6 +7,12 @@
 
 #include "angband.h"
 
+typedef struct describe_mon_type {
+  cptr name;
+  cptr desc;
+  char gender;			    /* one of 'm','f','n','p' to genderize monsters -CWS */
+} describe_mon_type;
+
 describe_mon_type desc_list[MAX_R_IDX] = {
 
 {"Filthy street urchin", "He looks squalid and thoroughly revolting.", 'm'},

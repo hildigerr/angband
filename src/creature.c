@@ -434,7 +434,7 @@ static void make_attack(int m_idx)
     int                    shatter = FALSE;
     int                    CUT = FALSE, STUN = FALSE;
     s32b                  gold;
-    attid                  *attstr, *attstr_orig;
+    u16b                  *ap, *ap_orig;
     vtype                  cdesc, tmp_str, ddesc;
 
     register monster_race	*r_ptr;
@@ -474,17 +474,17 @@ static void make_attack(int m_idx)
 /* End DIED_FROM		   */
 
     attackn = 0;
-    attstr = r_ptr->damage;
-    attstr_orig = attstr;
+    ap = r_ptr->damage;
+    ap_orig = ap;
 
-    /* if has no attacks (*attstr starts off 0), still loop once */
+    /* if has no attacks (*ap starts off 0), still loop once */
     /* to accumulate notices that it has no attacks - dbd */
-    while ((*attstr != 0 || attstr == attstr_orig) && !death && !blinked) {
-	attype = a_list[*attstr].attack_type;
-	adesc = a_list[*attstr].attack_desc;
-	adice = a_list[*attstr].attack_dice;
-	asides = a_list[*attstr].attack_sides;
-	attstr++;
+    while ((*ap != 0 || ap == ap_orig) && !death && !blinked) {
+	attype = a_list[*ap].attack_type;
+	adesc = a_list[*ap].attack_desc;
+	adice = a_list[*ap].attack_dice;
+	asides = a_list[*ap].attack_sides;
+	ap++;
 	flag = FALSE;
 
 	/* Random (100) + level > 50 chance for stop any attack added */

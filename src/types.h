@@ -32,7 +32,6 @@
 
 typedef char vtype[VTYPESIZ];
 typedef char bigvtype[BIGVTYPESIZ];
-typedef char stat_type[8];
 
 
 
@@ -50,8 +49,6 @@ typedef char stat_type[8];
    results in larger and slower code
  */
 
-typedef u16b attid;
-
 typedef struct _monster_race monster_race;
 
 struct _monster_race {
@@ -68,7 +65,7 @@ struct _monster_race {
   byte speed;			    /* Movement speed+10      */
   byte r_char;			/* Racial "symbol"		*/
   byte hd[2];			    /* Creatures hit die      */
-  attid damage[4];		    /* Type attack and damage */
+  u16b damage[4];		    /* Type attack and damage */
   u16b level;			    /* Level of creature      */
   byte rarity;			    /* Rarity of creature     */
   char gender;			    /* one of 'm','f','n','p' to genderize monsters -CWS */
@@ -118,11 +115,6 @@ struct unique_mon {
   s32b dead;
 };
 
-typedef struct describe_mon_type {
-  cptr name;
-  cptr desc;
-  char gender;			    /* one of 'm','f','n','p' to genderize monsters -CWS */
-} describe_mon_type;
 
 
 
@@ -523,18 +515,3 @@ struct _store_type {
 };
 
 
-typedef struct high_scores
-{
-  s32b points;
-  u16b lev;
-  u16b max_lev;
-  s16b mhp;
-  s16b chp;
-  s16b uid;
-  s16b dun_level;
-  byte sex;
-  vtype name;
-  vtype died_from;
-  byte pclass;
-  byte prace;
-} high_scores;

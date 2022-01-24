@@ -69,6 +69,27 @@ char        *getlogin();
 #endif
 
 
+
+typedef struct _high_score high_score;
+
+struct _high_score {
+  s32b points;
+  u16b lev;
+  u16b max_lev;
+  s16b mhp;
+  s16b chp;
+  s16b uid;
+  s16b dun_level;
+  byte sex;
+  vtype name;
+  vtype died_from;
+  byte pclass;
+  byte prace;
+};
+
+
+
+
 /*
  * Open the score file while we still have the setuid privileges.
  * Later when the score is being written out, you must be sure
@@ -458,7 +479,7 @@ void display_scores(int from, int to)
 {
     register int i = 0, j, k, l;
     int          fd;
-    high_scores  score;
+    high_score  score;
 
 /* MAX_SAVE_HISCORES scores, 2 lines per score */
     char         list[2 * MAX_SAVE_HISCORES][128];
@@ -480,7 +501,7 @@ void display_scores(int from, int to)
 	prt(string, 0, 0);
 	return;
     }
-    while (0 < read(fd, (char *)&score, sizeof(high_scores))) {
+    while (0 < read(fd, (char *)&score, sizeof(high_score))) {
 	if (score.uid != -1 && getpwuid(score.uid) != NULL)
 	    (void)sprintf(hugebuffer, "%3d) %-7ld %s the %s %s (Level %d), played by %s",
 			  i / 2 + 1,
@@ -712,7 +733,7 @@ static errr top_twenty(void)
 {
     int          i, j, k;
 
-    high_scores         scores[MAX_SAVE_HISCORES], myscore;
+    high_score         scores[MAX_SAVE_HISCORES], myscore;
 
     /* Wipe screen */
     clear_screen();
@@ -780,7 +801,7 @@ static errr top_twenty(void)
     (void)lseek(highscore_fd, (off_t) 0, L_SET);
 #endif
     while ((i < MAX_SAVE_HISCORES)
-    && (0 != read(highscore_fd, (char *)&scores[i], sizeof(high_scores)))) {
+    && (0 != read(highscore_fd, (char *)&scores[i], sizeof(high_score)))) {
 	i++;
     }
 
@@ -792,19 +813,19 @@ static errr top_twenty(void)
 
 /* If its the first score, or it gets appended to the file */
     if (!i || (i == j && j < MAX_SAVE_HISCORES)) {
-	(void)lseek(highscore_fd, (long)(j * sizeof(high_scores)), L_SET);
-	(void)write(highscore_fd, (char *)&myscore, sizeof(high_scores));
+	(void)lseek(highscore_fd, (long)(j * sizeof(high_score)), L_SET);
+	(void)write(highscore_fd, (char *)&myscore, sizeof(high_score));
     } else if (j < i) {
     /* If it gets inserted in the middle */
     /* Bump all the scores up one place */
 	for (k = MY_MIN(i, (MAX_SAVE_HISCORES - 1)); k > j; k--) {
-	    (void)lseek(highscore_fd, (long)(k * sizeof(high_scores)), L_SET);
-	    (void)write(highscore_fd, (char *)&scores[k - 1], sizeof(high_scores));
+	    (void)lseek(highscore_fd, (long)(k * sizeof(high_score)), L_SET);
+	    (void)write(highscore_fd, (char *)&scores[k - 1], sizeof(high_score));
 	}
 
     /* Write out your score */
-	(void)lseek(highscore_fd, (long)(j * sizeof(high_scores)), L_SET);
-	(void)write(highscore_fd, (char *)&myscore, sizeof(high_scores));
+	(void)lseek(highscore_fd, (long)(j * sizeof(high_score)), L_SET);
+	(void)write(highscore_fd, (char *)&myscore, sizeof(high_score));
     }
 
 /* added usg lockf call - cba */
@@ -836,7 +857,7 @@ static errr top_twenty(void)
 void delete_entry(int which)
 {
     register int i;
-    high_scores  scores[MAX_SAVE_HISCORES];
+    high_score  scores[MAX_SAVE_HISCORES];
 
 /* added usg lockf call - cba */
 #ifdef USG
@@ -852,7 +873,7 @@ void delete_entry(int which)
     i = 0;
     (void)lseek(highscore_fd, (off_t) 0, L_SET);
     while ((i < MAX_SAVE_HISCORES) &&
-	 (0 != read(highscore_fd, (char *)&scores[i], sizeof(high_scores))))
+	 (0 != read(highscore_fd, (char *)&scores[i], sizeof(high_score))))
 	i++;
 
     if (i >= which) {
@@ -865,10 +886,10 @@ void delete_entry(int which)
 	lseek(highscore_fd, 0, L_SET);
 	if (which > 0)
 	    write(highscore_fd, (char *)&scores[0],
-		  (which - 1) * sizeof(high_scores));
+		  (which - 1) * sizeof(high_score));
 	if (i > which)
 	    write(highscore_fd, (char *)&scores[which],
-		  (i - which) * sizeof(high_scores));
+		  (i - which) * sizeof(high_score));
 	} else {
 	    puts(" The high score table does not have that many entries!");
 	}

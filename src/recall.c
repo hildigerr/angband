@@ -244,7 +244,7 @@ int bool_roff_recall(int r_idx)
 int roff_recall(int r_idx)
 {
     const char             *p, *q;
-    attid                  *pu;
+    u16b                  *pu;
     vtype                   temp;
 
     register monster_lore  *l_ptr;
