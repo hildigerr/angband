@@ -124,7 +124,7 @@ int build_wall(int dir, int y, int x)
 			damage = damroll(4, 8);
 		    }
 
-		    monster_name(m_name, m_ptr, r_ptr);
+		    monster_name(m_name, m_ptr);
 		    (void)sprintf(out_val, "%s wails out in pain!", m_name);
 		    msg_print(out_val);
 
@@ -380,7 +380,7 @@ int speed_monsters(int spd)
 	if (!los(char_row, char_col, (int)m_ptr->fy, (int)m_ptr->fx)) continue;
 
 	r_ptr = &r_list[m_ptr->r_idx];
-	monster_name(m_name, m_ptr, r_ptr);
+	monster_name(m_name, m_ptr);
 
 	if (spd > 0) {
 	    m_ptr->mspeed += spd;
@@ -429,7 +429,7 @@ int sleep_monsters2(void)
     for (i = m_max - 1; i >= MIN_M_IDX; i--) {
 	m_ptr = &m_list[i];
 	r_ptr = &r_list[m_ptr->r_idx];
-	monster_name(m_name, m_ptr, r_ptr);
+	monster_name(m_name, m_ptr);
 
 	if ((m_ptr->cdis > MAX_SIGHT) ||
 	    !los(char_row, char_col, (int)m_ptr->fy, (int)m_ptr->fx))
@@ -703,7 +703,7 @@ void earthquake(void)
 			    damage = damroll(3 + randint(3), 8+randint(5));
 			}
 
-			monster_name(m_name, m_ptr, r_ptr);
+			monster_name(m_name, m_ptr);
 			(void)sprintf(out_val, "%s wails out in pain!", m_name);
 			msg_print(out_val);
 
@@ -894,7 +894,7 @@ int dispel_creature(int cflag, int damage)
 	    l_ptr->r_cflags2 |= cflag;
 
 	    /* Get the name */
-	    monster_name(m_name, m_ptr, r_ptr);
+	    monster_name(m_name, m_ptr);
 
 	    if (mon_take_hit(i, randint(damage), FALSE) >= 0) {
 		(void)sprintf(out_val, "%s dissolves!", m_name);
@@ -934,7 +934,7 @@ int turn_undead(void)
 
 	r_ptr = &r_list[m_ptr->r_idx];
 	if (r_ptr->cflags2 & MF2_UNDEAD) {
-	    monster_name(m_name, m_ptr, r_ptr);
+	    monster_name(m_name, m_ptr);
 	    if (((py.misc.lev + 1) > r_ptr->level) ||
 		(randint(5) == 1)) {
 		if (m_ptr->ml) {
@@ -1874,7 +1874,7 @@ int sleep_monsters1(int y, int x)
 
 		m_ptr = &m_list[c_ptr->m_idx];
 		r_ptr = &r_list[m_ptr->r_idx];
-		monster_name(m_name, m_ptr, r_ptr);
+		monster_name(m_name, m_ptr);
 
 		if ((r_ptr->level >
 		     randint((py.misc.lev - 10) < 1 ? 1 : (py.misc.lev - 10)) + 10) ||
@@ -2778,7 +2778,6 @@ void fire_bolt(int typ, int dir, int y, int x, int dam_hp)
 /*    u32b              harm_type = 0; */
     register cave_type *c_ptr;
     register monster_type *m_ptr;
-    register monster_race *r_ptr;
     vtype               out_val, m_name;
     int                 dam = dam_hp;
     int                 ny, nx;
@@ -2811,7 +2810,6 @@ void fire_bolt(int typ, int dir, int y, int x, int dam_hp)
 	    if (c_ptr->m_idx > 1) {
 		flag = TRUE;
 		m_ptr = &m_list[c_ptr->m_idx];
-		r_ptr = &r_list[m_ptr->r_idx];
 	    /*
 	     * light up monster and draw monster, temporarily set pl so that
 	     * update_mon() will work 
@@ -2829,8 +2827,7 @@ void fire_bolt(int typ, int dir, int y, int x, int dam_hp)
 		m_ptr = &m_list[c_ptr->m_idx];	/* and even if not, may be
 						 * new monster if chaos
 						 * polymorphed */
-		r_ptr = &r_list[m_ptr->r_idx];
-		monster_name(m_name, m_ptr, r_ptr);
+		monster_name(m_name, m_ptr);
 
 		if ((dam > 0) && (m_ptr->hp >= dam)) {
 		    (void)sprintf(out_val,
@@ -3023,7 +3020,7 @@ int drain_life(int dir, int y, int x, int dam)
 		((r_ptr->cflags2 & MF2_DEMON) == 0) &&
 		(r_ptr->r_char != 'E' && r_ptr->r_char != 'g' && r_ptr->r_char != 'v')) {
 		drain = TRUE;
-		monster_name(m_name, m_ptr, r_ptr);
+		monster_name(m_name, m_ptr);
 		i = mon_take_hit((int)c_ptr->m_idx, dam, TRUE);
 		if (i >= 0) {
 		    (void)sprintf(out_val, "%s dies in a fit of agony.", m_name);
@@ -3105,7 +3102,7 @@ int wall_to_mud(int dir, int y, int x)
 	    m_ptr = &m_list[c_ptr->m_idx];
 	    r_ptr = &r_list[m_ptr->r_idx];
 	    if (MF2_HURT_ROCK & r_ptr->cflags2) {
-		monster_name(m_name, m_ptr, r_ptr);
+		monster_name(m_name, m_ptr);
 		flag = m_ptr->ml;
 		i = mon_take_hit((int)c_ptr->m_idx, (20 + randint(30)), TRUE);
 		if (flag) {
@@ -3323,7 +3320,6 @@ int hp_monster(int dir, int y, int x, int dam)
     int                 flag, dist, monster;
     register cave_type *c_ptr;
     register monster_type *m_ptr;
-    register monster_race *r_ptr;
     vtype               out_val, m_name;
 
     monster = FALSE;
@@ -3338,8 +3334,7 @@ int hp_monster(int dir, int y, int x, int dam)
 	else if (c_ptr->m_idx > 1) {
 	    flag = TRUE;
 	    m_ptr = &m_list[c_ptr->m_idx];
-	    r_ptr = &r_list[m_ptr->r_idx];
-	    monster_name(m_name, m_ptr, r_ptr);
+	    monster_name(m_name, m_ptr);
 	    monster = TRUE;
 	    i = mon_take_hit((int)c_ptr->m_idx, dam, TRUE);
 	    if (i >= 0) {
@@ -3381,7 +3376,7 @@ int speed_monster(int dir, int y, int x, int spd)
 	    flag = TRUE;
 	    m_ptr = &m_list[c_ptr->m_idx];
 	    r_ptr = &r_list[m_ptr->r_idx];
-	    monster_name(m_name, m_ptr, r_ptr);
+	    monster_name(m_name, m_ptr);
 	    if (spd > 0) {
 		m_ptr->mspeed += spd;
 		m_ptr->csleep = 0;
@@ -3431,7 +3426,7 @@ int sleep_monster(int dir, int y, int x)
 	    r_ptr = &r_list[m_ptr->r_idx];
 
 	    flag = TRUE;
-	    monster_name(m_name, m_ptr, r_ptr);
+	    monster_name(m_name, m_ptr);
 	    if ((r_ptr->level >
 	    randint((py.misc.lev - 10) < 1 ? 1 : (py.misc.lev - 10)) + 10) ||
 	    (r_ptr->cflags2 & MF2_UNIQUE) || (r_ptr->cflags2 & MF2_CHARM_SLEEP)) {
@@ -3473,7 +3468,7 @@ int confuse_monster(int dir, int y, int x, int lvl)
 	else if (c_ptr->m_idx > 1) {
 	    m_ptr = &m_list[c_ptr->m_idx];
 	    r_ptr = &r_list[m_ptr->r_idx];
-	    monster_name(m_name, m_ptr, r_ptr);
+	    monster_name(m_name, m_ptr);
 	    flag = TRUE;
 	    if ((r_ptr->level >
 	    randint((py.misc.lev - 10) < 1 ? 1 : (py.misc.lev - 10)) + 10) ||
@@ -3520,7 +3515,7 @@ int fear_monster(int dir, int y, int x, int lvl)
 	else if (c_ptr->m_idx > 1) {
 	    m_ptr = &m_list[c_ptr->m_idx];
 	    r_ptr = &r_list[m_ptr->r_idx];
-	    monster_name(m_name, m_ptr, r_ptr);
+	    monster_name(m_name, m_ptr);
 	    flag = TRUE;
 	    if ((r_ptr->level >
 	    randint((py.misc.lev - 10) < 1 ? 1 : (py.misc.lev - 10)) + 10) ||
@@ -3575,7 +3570,7 @@ int poly_monster(int dir, int y, int x)
 		if (panel_contains(y, x) && (c_ptr->tl || c_ptr->pl))
 		    p = TRUE;
 	    } else {
-		monster_name (m_name, m_ptr, r_ptr);
+		monster_name (m_name, m_ptr);
 		(void) sprintf(out_val, "%s is unaffected.", m_name);
 		msg_print(out_val);
 	    }
@@ -3650,7 +3645,7 @@ void mon_light_dam(int y, int x, int dam)
     if (c_ptr->m_idx > 1) {
 	m_ptr = &m_list[c_ptr->m_idx];
 	r_ptr = &r_list[m_ptr->r_idx];
-	monster_name(m_name, m_ptr, r_ptr);
+	monster_name(m_name, m_ptr);
 	m_ptr->csleep = 0;
 	if (MF2_HURT_LITE & r_ptr->cflags2) {
 	    if (m_ptr->ml)
@@ -4217,7 +4212,7 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
 		    /* and even if not, may be new monster if chaos polymorphed */
 		    m_ptr = &m_list[c_ptr->m_idx];
 		    r_ptr = &r_list[m_ptr->r_idx];
-		    monster_name(m_name, m_ptr, r_ptr);
+		    monster_name(m_name, m_ptr);
 
 		    if (dam < 1)
 			dam = 1;   /* protect vs neg damage -CFT */

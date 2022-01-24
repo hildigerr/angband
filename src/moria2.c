@@ -829,7 +829,7 @@ int mon_take_hit(int m_idx, int dam, int print_fear)
 
 	    /* Take note */
 	    if (print_fear && m_ptr->ml && los(char_row, char_col, m_ptr->fy, m_ptr->fx)) {
-		monster_name(m_name, m_ptr, r_ptr);
+		monster_name(m_name, m_ptr);
 		sprintf(out_val, "%s flees in terror!", m_name);
 		msg_print(out_val);
 	    }
@@ -853,7 +853,7 @@ int mon_take_hit(int m_idx, int dam, int print_fear)
 		if (m_ptr->ml && print_fear) {
 		    char                sex = r_ptr->gender;
 
-		    monster_name(m_name, m_ptr, c_ptr);
+		    monster_name(m_name, m_ptr);
 		    sprintf(out_val, "%s recovers %s courage.", m_name,
 			    (sex == 'm' ? "his" : sex == 'f' ? "her" :
 			     sex == 'p' ? "their" : "its"));

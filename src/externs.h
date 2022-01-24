@@ -760,7 +760,7 @@ void do_cmd_check_uniques(void);
 
 /* moria4.c */
 int is_a_vowel(int);
-void monster_name(char *, struct monster_type *, struct monster_race *);
+void monster_name(char *, struct monster_type *);
 int target_set(void); /* target fns stolen from Morgul -CFT */
 int target_at(int, int); /* target fns stolen from Morgul -CFT */
 void mmove2(int *, int *, int, int, int, int);

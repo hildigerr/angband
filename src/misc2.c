@@ -1972,8 +1972,13 @@ int summon_hound(int *y, int *x)
 
 /*
  */
-void monster_name(char *m_name, monster_type *m_ptr, monster_race *r_ptr)
+void monster_name(char *m_name, monster_type *m_ptr)
 {
+    monster_race *r_ptr;
+
+    /* Extract the monster race */
+    r_ptr = &(r_list[m_ptr->r_idx]);
+
     if (!m_ptr->ml)
 	(void)strcpy(m_name, "It");
     else {

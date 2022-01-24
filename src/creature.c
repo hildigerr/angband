@@ -1411,12 +1411,11 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
 
 	if ((i == 4) && (m_ptr->monfear) &&  /* cornered (or things in the way!) -CWS */
 	    (!floor_grid_bold(newy, newx) || (c_ptr->m_idx > 1))) {
-	    monster_race      *r_ptr = &r_list[m_ptr->r_idx];
 	    vtype               m_name, out_val;
 	    
 	    m_ptr->monfear = 0;
 	    if (m_ptr->ml && los(char_row, char_col, m_ptr->fy, m_ptr->fx)) {
-		monster_name(m_name, m_ptr, r_ptr);
+		monster_name(m_name, m_ptr);
 		sprintf(out_val, "%s turns to fight!", m_name);
 		msg_print(out_val);
 	    }
@@ -1686,7 +1685,7 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
 			    if ((m_ptr->ml) && los(char_row, char_col, m_ptr->fy,
 						   m_ptr->fx)) {
 			    /* if we can see it, tell us what happened -CFT */
-				monster_name(m_name, m_ptr, &(r_list[m_ptr->r_idx]));
+				monster_name(m_name, m_ptr);
 
 			    /* Acquire the object name */
 			    objdes(i_name, &(i_list[c_ptr->i_idx]), TRUE);
@@ -2340,7 +2339,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 		if (monster_is_afraid == -1) {
 		    vtype               m_name, out_val;
 
-		    monster_name(m_name, m_ptr, &r_list[m_ptr->r_idx]);
+		    monster_name(m_name, m_ptr);
 		    sprintf(out_val, "%s recovers %s courage.", m_name,
 			    (sex == 'm' ? "his" : sex == 'f' ? "her" :
 			     sex == 'p' ? "their" : "its"));
@@ -2937,7 +2936,7 @@ static void mon_move(int m_idx, u32b *rcflags1)
 	if (t <= 0) {
 	    t = 0;
 	    if (m_ptr->ml && los(char_row, char_col, m_ptr->fy, m_ptr->fx)) {
-		monster_name(m_name, m_ptr, r_ptr);
+		monster_name(m_name, m_ptr);
 		sprintf(out_val, "%s recovers its courage.", m_name);
 		msg_print(out_val);
 	    }
@@ -3336,7 +3335,7 @@ static void shatter_quake(int mon_y, int mon_x)
 			    damage = 0x7fff;	/* this will kill everything */
 			else
 			    damage = damroll(4, 8);
-			monster_name(m_name, m_ptr, r_ptr);
+			monster_name(m_name, m_ptr);
 			(void)sprintf(out_val, "%s wails out in pain!", m_name);
 			msg_print(out_val);
 		    /* kill monster "by hand", so player doesn't get exp -CFT */
