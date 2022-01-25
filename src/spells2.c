@@ -391,7 +391,7 @@ int speed_monsters(int spd)
 		msg_print(out_val);
 	    }
 	} else if ((r_ptr->level <
-	    randint((py.misc.lev - 10) < 1 ? 1 : (py.misc.lev - 10)) + 10) &&
+	    randint((py.lev - 10) < 1 ? 1 : (py.lev - 10)) + 10) &&
 		   !(r_ptr->cflags2 & MF2_UNIQUE)) {
 
 	    m_ptr->mspeed += spd;
@@ -437,7 +437,7 @@ int sleep_monsters2(void)
 	    ;
 
 	if ((r_ptr->level >
-	    randint((py.misc.lev - 10) < 1 ? 1 : (py.misc.lev - 10)) + 10) ||
+	    randint((py.lev - 10) < 1 ? 1 : (py.lev - 10)) + 10) ||
 	    (r_ptr->cflags2 & MF2_UNIQUE) || (r_ptr->cflags2 & MF2_CHARM_SLEEP)) {
 
 	    if (m_ptr->ml) {
@@ -528,15 +528,15 @@ int detect_evil(void)
 int hp_player(int num)
 {
     register int          res;
-    register struct misc *m_ptr = &py.misc;
+    player_type *p_ptr = &py;
 
     res = FALSE;
 
-    if (m_ptr->chp < m_ptr->mhp) {
-	m_ptr->chp += num;
-	if (m_ptr->chp > m_ptr->mhp) {
-	    m_ptr->chp = m_ptr->mhp;
-	    m_ptr->chp_frac = 0;
+    if (p_ptr->chp < p_ptr->mhp) {
+	p_ptr->chp += num;
+	if (p_ptr->chp > p_ptr->mhp) {
+	    p_ptr->chp = p_ptr->mhp;
+	    p_ptr->chp_frac = 0;
 	}
 	prt_chp();
 
@@ -566,12 +566,12 @@ int hp_player(int num)
 int cure_confusion()
 {
     register int           cure;
-    register struct flags1 *f_ptr = &py.flags1;
+    player_type *p_ptr = &py;
 
     cure = FALSE;
 
-    if (f_ptr->confused > 1) {
-	f_ptr->confused = 1;
+    if (p_ptr->confused > 1) {
+	p_ptr->confused = 1;
 	cure = TRUE;
     }
     return (cure);
@@ -584,12 +584,12 @@ int cure_confusion()
 int cure_blindness(void)
 {
     register int           cure;
-    register struct flags1 *f_ptr = &py.flags1;
+    player_type *p_ptr = &py;
 
     cure = FALSE;
 
-    if (f_ptr->blind > 1) {
-	f_ptr->blind = 1;
+    if (p_ptr->blind > 1) {
+	p_ptr->blind = 1;
 	cure = TRUE;
     }
     return (cure);
@@ -602,12 +602,12 @@ int cure_blindness(void)
 int cure_poison(void)
 {
     register int           cure;
-    register struct flags1 *f_ptr = &py.flags1;
+    player_type *p_ptr = &py;
 
     cure = FALSE;
 
-    if (f_ptr->poisoned > 1) {
-	f_ptr->poisoned = 1;
+    if (p_ptr->poisoned > 1) {
+	p_ptr->poisoned = 1;
 	cure = TRUE;
     }
     return (cure);
@@ -620,12 +620,12 @@ int cure_poison(void)
 int remove_fear()
 {
     register int           result;
-    register struct flags1 *f_ptr = &py.flags1;
+    player_type *p_ptr = &py;
 
     result = FALSE;
 
-    if (f_ptr->afraid > 1) {
-	f_ptr->afraid = 1;
+    if (p_ptr->afraid > 1) {
+	p_ptr->afraid = 1;
 	result = TRUE;
     }
     return (result);
@@ -745,11 +745,11 @@ void earthquake(void)
 int protect_evil()
 {
     register int           res;
-    register struct flags1 *f_ptr = &py.flags1;
+    player_type *p_ptr = &py;
 
-    res = !f_ptr->protevil;
+    res = !p_ptr->protevil;
 
-    f_ptr->protevil += randint(25) + 3 * py.misc.lev;
+    p_ptr->protevil += randint(25) + 3 * p_ptr->lev;
 
     return (res);
 }
@@ -766,14 +766,14 @@ void create_food(void)
 
 #if defined(SATISFY_HUNGER)				/* new create food code -CWS */
     /* No longer hungry */
-	 py.flags1.food = PLAYER_FOOD_MAX;
+	 py.food = PLAYER_FOOD_MAX;
 #else
      /* add to food timer rather than create mush - cba */
      add_food(k_list[OBJ_MUSH].pval);
 #endif
 
     /* Hack -- update the display */
-     py.flags1.status &= ~(PY_WEAK | PY_HUNGRY);
+     py.status &= ~(PY_WEAK | PY_HUNGRY);
      prt_hunger();
 }
 
@@ -935,7 +935,7 @@ int turn_undead(void)
 	r_ptr = &r_list[m_ptr->r_idx];
 	if (r_ptr->cflags2 & MF2_UNDEAD) {
 	    monster_name(m_name, m_ptr);
-	    if (((py.misc.lev + 1) > r_ptr->level) ||
+	    if (((py.lev + 1) > r_ptr->level) ||
 		(randint(5) == 1)) {
 		if (m_ptr->ml) {
 		    (void)sprintf(out_val, "%s runs frantically!", m_name);
@@ -943,7 +943,7 @@ int turn_undead(void)
 		    turn_und = TRUE;
 		    l_list[m_ptr->r_idx].r_cflags2 |= MF2_UNDEAD;
 		}
-		m_ptr->monfear = randint(py.misc.lev) * 2;
+		m_ptr->monfear = randint(py.lev) * 2;
 	    }
 	    else if (m_ptr->ml) {
 		(void)sprintf(out_val, "%s is unaffected.", m_name);
@@ -982,19 +982,19 @@ void warding_glyph(void)
 void lose_exp(s32b amount)
 {
     register int          i;
-    register struct misc *m_ptr = &py.misc;
+    player_type *p_ptr = &py;
 
-    if (amount > m_ptr->exp) {
-	m_ptr->exp = 0;
+    if (amount > p_ptr->exp) {
+	p_ptr->exp = 0;
     }
     else {
-	m_ptr->exp -= amount;
+	p_ptr->exp -= amount;
     }
 
     prt_experience();
 
     i = 0;
-    while (((player_exp[i] * m_ptr->expfact / 100L) <= m_ptr->exp)
+    while (((player_exp[i] * p_ptr->expfact / 100L) <= p_ptr->exp)
 	   && (i < MAX_PLAYER_LEVEL)) {
 	i++;
     }
@@ -1004,17 +1004,17 @@ void lose_exp(s32b amount)
 
     if (i > MAX_PLAYER_LEVEL) i = MAX_PLAYER_LEVEL;
 
-    if (m_ptr->lev != i) {
+    if (p_ptr->lev != i) {
 
-	m_ptr->lev = i;
+	p_ptr->lev = i;
 
 	calc_hitpoints();
 
-	if (class[m_ptr->pclass].spell == MAGE) {
+	if (class[p_ptr->pclass].spell == MAGE) {
 	    calc_spells(A_INT);
 	    calc_mana(A_INT);
 	}
-	else if (class[m_ptr->pclass].spell == PRIEST) {
+	else if (class[p_ptr->pclass].spell == PRIEST) {
 	    calc_spells(A_WIS);
 	    calc_mana(A_WIS);
 	}
@@ -1031,13 +1031,13 @@ void lose_exp(s32b amount)
 int slow_poison()
 {
     register int           slow;
-    register struct flags1 *f_ptr = &py.flags1;
+    player_type *p_ptr = &py;
 
     slow = FALSE;
 
-    if (f_ptr->poisoned > 0) {
-	f_ptr->poisoned = f_ptr->poisoned / 2;
-	if (f_ptr->poisoned < 1) f_ptr->poisoned = 1;
+    if (p_ptr->poisoned > 0) {
+	p_ptr->poisoned = p_ptr->poisoned / 2;
+	if (p_ptr->poisoned < 1) p_ptr->poisoned = 1;
 	slow = TRUE;
 	msg_print("The effect of the poison has been reduced.");
     }
@@ -1050,7 +1050,7 @@ int slow_poison()
  */
 void bless(int amount)
 {
-    py.flags1.blessed += amount;
+    py.blessed += amount;
 }
 
 
@@ -1059,7 +1059,7 @@ void bless(int amount)
  */
 void detect_inv2(int amount)
 {
-    py.flags1.detect_inv += amount;
+    py.detect_inv += amount;
 }
 
 
@@ -1121,8 +1121,8 @@ void destroy_area(int y, int x)
 
     msg_print("There is a searing blast of light!");
 
-    if (!py.flags1.resist_blind && !py.flags1.resist_lite) {
-	py.flags1.blind += 10 + randint(10);
+    if (!py.resist_blind && !py.resist_lite) {
+	py.blind += 10 + randint(10);
     }
 
     /* No destroying the town */
@@ -1141,7 +1141,7 @@ void destroy_area(int y, int x)
     }
 
     /* We need to redraw the screen. -DGK */
-    if (py.flags1.resist_blind || py.flags1.resist_lite) {
+    if (py.resist_blind || py.resist_lite) {
 
     /* Hack -- redraw the cave */
     draw_cave();
@@ -1413,16 +1413,16 @@ int remove_all_curse()
 int restore_level()
 {
     register int          restore;
-    register struct misc *m_ptr = &py.misc;
+    player_type *p_ptr = &py;
 
     restore = FALSE;
 
-    if (m_ptr->max_exp > m_ptr->exp) {
+    if (p_ptr->max_exp > p_ptr->exp) {
 	restore = TRUE;
 	msg_print("You feel your life energies returning.");
     /* this while loop is not redundant, ptr_exp may reduce the exp level */
-	while (m_ptr->exp < m_ptr->max_exp) {
-	    m_ptr->exp = m_ptr->max_exp;
+	while (p_ptr->exp < p_ptr->max_exp) {
+	    p_ptr->exp = p_ptr->max_exp;
 	    prt_experience();
 	}
     }
@@ -1470,58 +1470,58 @@ void self_knowledge()
     i = 1;
     prt("Your Attributes:", i++, j + 5);
 
-    if (py.flags1.blind > 0) {
+    if (py.blind > 0) {
 	prt("You cannot see.", i++, j);
     }
-    if (py.flags1.confused > 0) {
+    if (py.confused > 0) {
 	prt("You are confused.", i++, j);
     }
-    if (py.flags1.afraid > 0) {
+    if (py.afraid > 0) {
 	prt("You are terrified.", i++, j);
     }
-    if (py.flags1.cut > 0) {
+    if (py.cut > 0) {
 	prt("You are bleeding.", i++, j);
     }
-    if (py.flags1.stun > 0) {
+    if (py.stun > 0) {
 	prt("You are stunned and reeling.", i++, j);
     }
-    if (py.flags1.poisoned > 0) {
+    if (py.poisoned > 0) {
 	prt("You are poisoned.", i++, j);
     }
-    if (py.flags1.image > 0) {
+    if (py.image > 0) {
 	prt("You are hallucinating.", i++, j);
     }
-    if (py.flags1.aggravate) {
+    if (py.aggravate) {
 	prt("You aggravate monsters.", i++, j);
     }
-    if (py.flags1.teleport) {
+    if (py.teleport) {
 	prt("Your position is very uncertain.", i++, j);
     }
-    if (py.flags1.blessed > 0) {
+    if (py.blessed > 0) {
 	prt("You feel rightous.", i++, j);
     }
-    if (py.flags1.hero > 0) {
+    if (py.hero > 0) {
 	prt("You feel heroic.", i++, j);
     }
-    if (py.flags1.shero > 0) {
+    if (py.shero > 0) {
 	prt("You are in a battle rage.", i++, j);
     }
-    if (py.flags1.protevil > 0) {
+    if (py.protevil > 0) {
 	prt("You are protected from evil.", i++, j);
     }
-    if (py.flags1.shield > 0) {
+    if (py.shield > 0) {
 	prt("You are protected by a mystic shield.", i++, j);
     }
-    if (py.flags1.invuln > 0) {
+    if (py.invuln > 0) {
 	prt("You are temporarily invulnerable.", i++, j);
     }
-    if (py.flags1.confuse_monster) {
+    if (py.confuse_monster) {
 	prt("Your hands are glowing dull red.", i++, j);
     }
-    if (py.flags1.new_spells > 0) {
+    if (py.new_spells > 0) {
 	prt("You can learn some more spells.", i++, j);
     }
-    if (py.flags1.word_recall > 0) {
+    if (py.word_recall > 0) {
 	prt("You will soon be recalled.", i++, j);
     }
     if (f & TR1_STEALTH) {
@@ -1531,143 +1531,143 @@ void self_knowledge()
 	prt("You are magically perceptive.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if ((py.flags1.see_infra) || (py.flags1.tim_infra)) {
+    if ((py.see_infra) || (py.tim_infra)) {
 	prt("Your eyes are sensitive to infrared light.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if ((py.flags1.see_inv) || (py.flags1.detect_inv)) {
+    if ((py.see_inv) || (py.detect_inv)) {
 	prt("You can see invisible creatures.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.ffall) {
+    if (py.ffall) {
 	prt("You land gently.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.free_act) {
+    if (py.free_act) {
 	prt("You have free action.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.regenerate) {
+    if (py.regenerate) {
 	prt("You regenerate quickly.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.slow_digest) {
+    if (py.slow_digest) {
 	prt("Your appetite is small.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.telepathy) {
+    if (py.telepathy) {
 	prt("You have ESP.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.hold_life) {
+    if (py.hold_life) {
 	prt("You have a firm hold on your life force.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.light) {
+    if (py.light) {
 	prt("You are carrying a permanent light.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.resist_fear) {
+    if (py.resist_fear) {
 	prt("You are completely fearless.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.resist_blind) {
+    if (py.resist_blind) {
 	prt("Your eyes are resistant to blindness.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.immune_fire) {
+    if (py.immune_fire) {
 	prt("You are completely immune to fire.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    else if ((py.flags1.resist_fire) && (py.flags1.oppose_fire)) {
+    else if ((py.resist_fire) && (py.oppose_fire)) {
 	prt("You resist fire exceptionally well.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    else if ((py.flags1.resist_fire) || (py.flags1.oppose_fire)) {
+    else if ((py.resist_fire) || (py.oppose_fire)) {
 	prt("You are resistant to fire.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.immune_cold) {
+    if (py.immune_cold) {
 	prt("You are completely immune to cold.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    else if ((py.flags1.resist_cold) && (py.flags1.oppose_cold)) {
+    else if ((py.resist_cold) && (py.oppose_cold)) {
 	prt("You resist cold exceptionally well.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    else if ((py.flags1.resist_cold) || (py.flags1.oppose_cold)) {
+    else if ((py.resist_cold) || (py.oppose_cold)) {
 	prt("You are resistant to cold.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.immune_acid) {
+    if (py.immune_acid) {
 	prt("You are completely immune to acid.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    else if ((py.flags1.resist_acid) && (py.flags1.oppose_acid)) {
+    else if ((py.resist_acid) && (py.oppose_acid)) {
 	prt("You resist acid exceptionally well.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    else if ((py.flags1.resist_acid) || (py.flags1.oppose_acid)) {
+    else if ((py.resist_acid) || (py.oppose_acid)) {
 	prt("You are resistant to acid.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.immune_pois) {
+    if (py.immune_pois) {
 	prt("You are completely immune to poison.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    else if ((py.flags1.resist_pois) && (py.flags1.oppose_pois)) {
+    else if ((py.resist_pois) && (py.oppose_pois)) {
 	prt("You resist poison exceptionally well.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    else if ((py.flags1.resist_pois) || (py.flags1.oppose_pois)) {
+    else if ((py.resist_pois) || (py.oppose_pois)) {
 	prt("You are resistant to poison.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.immune_elec) {
+    if (py.immune_elec) {
 	prt("You are completely immune to lightning.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    else if ((py.flags1.resist_elec) && (py.flags1.oppose_elec)) {
+    else if ((py.resist_elec) && (py.oppose_elec)) {
 	prt("You resist lightning exceptionally well.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    else if ((py.flags1.resist_elec) || (py.flags1.oppose_elec)) {
+    else if ((py.resist_elec) || (py.oppose_elec)) {
 	prt("You are resistant to lightning.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.resist_lite) {
+    if (py.resist_lite) {
 	prt("You are resistant to bright light.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.resist_dark) {
+    if (py.resist_dark) {
 	prt("You are resistant to darkness.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.resist_conf) {
+    if (py.resist_conf) {
 	prt("You are resistant to confusion.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.resist_sound) {
+    if (py.resist_sound) {
 	prt("You are resistant to sonic attacks.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.resist_disen) {
+    if (py.resist_disen) {
 	prt("You are resistant to disenchantment.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.resist_chaos) {
+    if (py.resist_chaos) {
 	prt("You are resistant to chaos.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.resist_shards) {
+    if (py.resist_shards) {
 	prt("You are resistant to blasts of shards.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.resist_nexus) {
+    if (py.resist_nexus) {
 	prt("You are resistant to nexus attacks.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.resist_nether) {
+    if (py.resist_nether) {
 	prt("You are resistant to nether forces.", i++, j);
 	pause_if_screen_full(&i, j);
     }
@@ -1703,27 +1703,27 @@ void self_knowledge()
 
 #endif
 
-    if (py.flags1.sustain_str) {
+    if (py.sustain_str) {
 	prt("You will not become weaker.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.sustain_int) {
+    if (py.sustain_int) {
 	prt("You will not become dumber.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.sustain_wis) {
+    if (py.sustain_wis) {
 	prt("You will not become less wise.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.sustain_con) {
+    if (py.sustain_con) {
 	prt("You will not become out of shape.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.sustain_dex) {
+    if (py.sustain_dex) {
 	prt("You will not become clumsy.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (py.flags1.sustain_chr) {
+    if (py.sustain_chr) {
 	prt("You will not become less popular.", i++, j);
 	pause_if_screen_full(&i, j);
     }
@@ -1877,7 +1877,7 @@ int sleep_monsters1(int y, int x)
 		monster_name(m_name, m_ptr);
 
 		if ((r_ptr->level >
-		     randint((py.misc.lev - 10) < 1 ? 1 : (py.misc.lev - 10)) + 10) ||
+		     randint((py.lev - 10) < 1 ? 1 : (py.lev - 10)) + 10) ||
 		    (MF2_CHARM_SLEEP & r_ptr->cflags2) || (r_ptr->cflags2 & MF2_UNIQUE)) {
 		    if (m_ptr->ml && (r_ptr->cflags2 & MF2_CHARM_SLEEP))
 			l_list[m_ptr->r_idx].r_cflags2 |= MF2_CHARM_SLEEP;
@@ -2442,7 +2442,7 @@ void starlite(int y, int x)
 {
     register int i;
 
-    if (py.flags1.blind < 1) {
+    if (py.blind < 1) {
 	msg_print("The end of the staff bursts into a blue shimmering light.");
     }
     for (i = 1; i <= 9; i++) {
@@ -2645,7 +2645,7 @@ void fire_ball(int typ, int dir, int y, int x, int dam_hp, int max_dis)
 			if (in_bounds(i, j) && (distance(y, x, i, j) <= max_dis) &&
 			 los(char_row, char_col, i, j) && los(y, x, i, j) &&
 			    floor_grid_bold(i, j) &&
-			    panel_contains(i, j) && (py.flags1.blind < 1)) {
+			    panel_contains(i, j) && (py.blind < 1)) {
 #ifdef TC_COLOR
 			    if (!no_color_flag)
 				textcolor(bolt_color(typ));
@@ -2657,7 +2657,7 @@ void fire_ball(int typ, int dir, int y, int x, int dam_hp, int max_dis)
 				textcolor(LIGHTGRAY);
 #endif
 			}
-		if (py.flags1.blind < 1) {
+		if (py.blind < 1) {
 		    put_qio();
 #ifdef MSDOS
 		    delay(25 * delay_spd);	/* milliseconds */
@@ -2674,7 +2674,7 @@ void fire_ball(int typ, int dir, int y, int x, int dam_hp, int max_dis)
 			if (in_bounds(i, j) && (distance(y, x, i, j) <= max_dis) &&
 			 los(char_row, char_col, i, j) && los(y, x, i, j) &&
 			    floor_grid_bold(i, j) &&
-			    panel_contains(i, j) && (py.flags1.blind < 1)) {
+			    panel_contains(i, j) && (py.blind < 1)) {
 			    lite_spot(i, j);	/* draw what is below the '*' */
 			}
 		put_qio();
@@ -2743,7 +2743,7 @@ void fire_ball(int typ, int dir, int y, int x, int dam_hp, int max_dis)
 		if (tkill >= 0)
 		    prt_experience();
 	    /* End ball hitting.                 */
-	    } else if (panel_contains(y, x) && (py.flags1.blind < 1)) {
+	    } else if (panel_contains(y, x) && (py.blind < 1)) {
 #ifdef TC_COLOR
 		if (!no_color_flag)
 		    textcolor(bolt_color(typ));
@@ -2840,7 +2840,7 @@ void fire_bolt(int typ, int dir, int y, int x, int dam_hp)
 		if (i >= 0)
 		    prt_experience();
 
-	    } else if (panel_contains(y, x) && (py.flags1.blind < 1)) {
+	    } else if (panel_contains(y, x) && (py.blind < 1)) {
 		print(bolt_char, y, x);
 	    /* show the bolt */
 		put_qio();
@@ -2897,7 +2897,7 @@ void line_spell(int typ, int dir, int y, int x, int dam)
 		tdam = dam;
 		m_ptr = &m_list[c_ptr->m_idx];
 
-		if (!(py.flags1.status & PY_BLIND) && panel_contains(y,x)){
+		if (!(py.status & PY_BLIND) && panel_contains(y,x)){
 		    /* temp light monster to show it... */
 		    t = c_ptr->pl;
 		    c_ptr->pl = TRUE;
@@ -2912,7 +2912,7 @@ void line_spell(int typ, int dir, int y, int x, int dam)
 
 		(void) mon_take_hit((int)c_ptr->m_idx, tdam, TRUE); /* hurt it */
 	    }
-	    if (!(py.flags1.status & PY_BLIND)) {
+	    if (!(py.status & PY_BLIND)) {
 		for(t=1;t<=dis;t++)
 		    if (panel_contains(path[t][0],path[t][1])){
 #ifdef TC_COLOR
@@ -2934,7 +2934,7 @@ void line_spell(int typ, int dir, int y, int x, int dam)
 	} /* if hit monster */
     } while (!flag);		/* end of effects loop */
   
-    if (!(py.flags1.status & PY_BLIND)) { /* now erase it -CFT */
+    if (!(py.status & PY_BLIND)) { /* now erase it -CFT */
 	for(t=1;t<=dis;t++){	/* erase piece-by-piece... */
 	    lite_spot(path[t][0], path[t][1]);
 	    for(tdam=t+1;tdam<dis;tdam++){
@@ -3384,7 +3384,7 @@ int speed_monster(int dir, int y, int x, int spd)
 		msg_print(out_val);
 		speed = TRUE;
 	    } else if ((r_ptr->level >
-			randint((py.misc.lev - 10) < 1 ? 1 : (py.misc.lev - 10)) + 10) ||
+			randint((py.lev - 10) < 1 ? 1 : (py.lev - 10)) + 10) ||
 		       (r_ptr->cflags2 & MF2_UNIQUE)) {
 		(void)sprintf(out_val, "%s is unaffected.", m_name);
 		msg_print(out_val);
@@ -3428,7 +3428,7 @@ int sleep_monster(int dir, int y, int x)
 	    flag = TRUE;
 	    monster_name(m_name, m_ptr);
 	    if ((r_ptr->level >
-	    randint((py.misc.lev - 10) < 1 ? 1 : (py.misc.lev - 10)) + 10) ||
+	    randint((py.lev - 10) < 1 ? 1 : (py.lev - 10)) + 10) ||
 	    (r_ptr->cflags2 & MF2_UNIQUE) || (r_ptr->cflags2 & MF2_CHARM_SLEEP)) {
 		if (m_ptr->ml && (r_ptr->cflags2 & MF2_CHARM_SLEEP))
 		    l_list[m_ptr->r_idx].r_cflags2 |= MF2_CHARM_SLEEP;
@@ -3471,7 +3471,7 @@ int confuse_monster(int dir, int y, int x, int lvl)
 	    monster_name(m_name, m_ptr);
 	    flag = TRUE;
 	    if ((r_ptr->level >
-	    randint((py.misc.lev - 10) < 1 ? 1 : (py.misc.lev - 10)) + 10) ||
+	    randint((py.lev - 10) < 1 ? 1 : (py.lev - 10)) + 10) ||
 		(r_ptr->cflags2 & MF2_UNIQUE ||
 		 r_ptr->spells2 & (MS2_BR_CONF | MS2_BR_CHAO))) {
 		if (m_ptr->ml && (r_ptr->cflags2 & MF2_CHARM_SLEEP))
@@ -3518,7 +3518,7 @@ int fear_monster(int dir, int y, int x, int lvl)
 	    monster_name(m_name, m_ptr);
 	    flag = TRUE;
 	    if ((r_ptr->level >
-	    randint((py.misc.lev - 10) < 1 ? 1 : (py.misc.lev - 10)) + 10) ||
+	    randint((py.lev - 10) < 1 ? 1 : (py.lev - 10)) + 10) ||
 		(r_ptr->cflags2 & MF2_UNIQUE)) {
 		if (m_ptr->ml && (r_ptr->cflags2 & MF2_CHARM_SLEEP))
 		    l_list[m_ptr->r_idx].r_cflags2 |= MF2_CHARM_SLEEP;
@@ -3564,7 +3564,7 @@ int poly_monster(int dir, int y, int x)
 	else if (c_ptr->m_idx > 1) {
 	    m_ptr = &m_list[c_ptr->m_idx];
 	    r_ptr = &r_list[m_ptr->r_idx];
-	    if ((r_ptr->level < randint((py.misc.lev-10)<1?1:(py.misc.lev-10))+10)
+	    if ((r_ptr->level < randint((py.lev-10)<1?1:(py.lev-10))+10)
                 && !(r_ptr->cflags2 & MF2_UNIQUE)) {
 		poly(c_ptr->m_idx);
 		if (panel_contains(y, x) && (c_ptr->tl || c_ptr->pl))
@@ -3670,7 +3670,7 @@ int lite_area(int y, int x, int dam, int rad)	   /* Expanded -DGK */
     int          min_i, max_i, min_j, max_j;
 
     if (rad < 1) rad = 1;	/* sanity check -CWS */
-    if (py.flags1.blind < 1)
+    if (py.blind < 1)
 	msg_print("You are surrounded by a white light.");
 
     if ((cave[y][x].fval == LIGHT_FLOOR) && (panel_contains(y, x)))
@@ -3732,7 +3732,7 @@ int unlite_area(int y, int x)
 		}
 	    }
     }
-    if (unlight && py.flags1.blind <= 0)
+    if (unlight && py.blind <= 0)
 	msg_print("Darkness surrounds you.");
 
     return (unlight);
@@ -3762,7 +3762,7 @@ int unlite_area(int y, int x)
 static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, int *y, int *x, byte by_player)
 {
     register monster_race *r_ptr;
-    int blind = (py.flags1.status & PY_BLIND) ? 1 : 0;
+    int blind = (py.status & PY_BLIND) ? 1 : 0;
     int res;			/* controls messages, using above #defines -CFT */
     vtype cdesc, outval;
 
@@ -4164,7 +4164,7 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
     register monster_type  *m_ptr;
     register monster_race *r_ptr;
     char                bolt_char;
-    int                 blind = (py.flags1.status & PY_BLIND) ? 1 : 0;
+    int                 blind = (py.status & PY_BLIND) ? 1 : 0;
     int                 ny, nx, sourcey, sourcex, dist;
     vtype               m_name, out_val;
 
@@ -4191,7 +4191,7 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
 	if (in_bounds(i, j) && los(y, x, i, j)) {
 	    c_ptr = &cave[i][j];
 	    if (floor_grid_bold(i, j)) {
-		if (panel_contains(i, j) && !(py.flags1.status & PY_BLIND)) {
+		if (panel_contains(i, j) && !(py.status & PY_BLIND)) {
 		    print(bolt_char, i, j);
 		    put_qio();
 #ifdef MSDOS
@@ -4306,19 +4306,19 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
 		      case GF_NETHER:
 			if (blind)
 			    msg_print("You are hit by an unholy blast!");
-			if (py.flags1.resist_nether) {
+			if (py.resist_nether) {
 			    dam_hp *= 6;	/* these 2 lines give avg dam
 						 * of .655, ranging from */
 			    dam_hp /= (randint(6) + 6);	/* .858 to .5 -CFT */
 			} else {   /* no resist */
-			    if (py.flags1.hold_life && randint(5) > 1)
+			    if (py.hold_life && randint(5) > 1)
 				msg_print("You keep hold of your life force!");
-			    else if (py.flags1.hold_life) {
+			    else if (py.hold_life) {
 				msg_print("You feel your life slipping away!");
-				lose_exp(200 + (py.misc.exp / 1000) * MON_DRAIN_LIFE);
+				lose_exp(200 + (py.exp / 1000) * MON_DRAIN_LIFE);
 			    } else {
 				msg_print("You feel your life draining away!");
-				lose_exp(200 + (py.misc.exp / 100) * MON_DRAIN_LIFE);
+				lose_exp(200 + (py.exp / 100) * MON_DRAIN_LIFE);
 			    }
 			}
 			take_hit(dam_hp, ddesc);
@@ -4326,32 +4326,32 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
 		      case GF_WATER:
 			if (blind)
 			    msg_print("You are hit by a jet of water!");
-			if (!py.flags1.resist_sound)
+			if (!py.resist_sound)
 			    stun_player(randint(15));
 			take_hit(dam_hp, ddesc);
 			break;
 		      case GF_CHAOS:
 			if (blind)
 			    msg_print("You are hit by wave of entropy!");
-			if (py.flags1.resist_chaos) {
+			if (py.resist_chaos) {
 			    dam_hp *= 6;	/* these 2 lines give avg dam
 						 * of .655, ranging from */
 			    dam_hp /= (randint(6) + 6);	/* .858 to .5 -CFT */
 			}
-			if ((!py.flags1.resist_conf) && (!py.flags1.resist_chaos)) {
-			    if (py.flags1.confused > 0)
-				py.flags1.confused += 12;
+			if ((!py.resist_conf) && (!py.resist_chaos)) {
+			    if (py.confused > 0)
+				py.confused += 12;
 			    else
-				py.flags1.confused = randint(20) + 10;
+				py.confused = randint(20) + 10;
 			}
-			if (!py.flags1.resist_chaos)
-			    py.flags1.image += randint(10);
+			if (!py.resist_chaos)
+			    py.image += randint(10);
 			take_hit(dam_hp, ddesc);
 			break;
 		      case GF_SHARDS:
 			if (blind)
 			    msg_print("You are cut by sharp fragments!");
-			if (py.flags1.resist_shards) {
+			if (py.resist_shards) {
 			    dam_hp *= 6;	/* these 2 lines give avg dam
 						 * of .655, ranging from */
 			    dam_hp /= (randint(6) + 6);	/* .858 to .5 -CFT */
@@ -4363,7 +4363,7 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
 		      case GF_SOUND:
 			if (blind)
 			    msg_print("You are deafened by a blast of noise!");
-			if (py.flags1.resist_sound) {
+			if (py.resist_sound) {
 			    dam_hp *= 5;
 			    dam_hp /= (randint(6) + 6);
 			} else {
@@ -4374,22 +4374,22 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
 		      case GF_CONFUSION:
 			if (blind)
 			    msg_print("You are hit by a wave of dizziness!");
-			if (py.flags1.resist_conf) {
+			if (py.resist_conf) {
 			    dam_hp *= 5;
 			    dam_hp /= (randint(6) + 6);
 			}
-			if (!py.flags1.resist_conf && !py.flags1.resist_chaos) {
-			    if (py.flags1.confused > 0)
-				py.flags1.confused += 8;
+			if (!py.resist_conf && !py.resist_chaos) {
+			    if (py.confused > 0)
+				py.confused += 8;
 			    else
-				py.flags1.confused = randint(15) + 5;
+				py.confused = randint(15) + 5;
 			}
 			take_hit(dam_hp, ddesc);
 			break;
 		      case GF_DISENCHANT:
 			if (blind)
 			    msg_print("You are hit by something!");
-			if (py.flags1.resist_disen) {
+			if (py.resist_disen) {
 			    dam_hp *= 6;	/* these 2 lines give avg dam
 						 * of .655, ranging from */
 			    dam_hp /= (randint(6) + 6);	/* .858 to .5 -CFT */
@@ -4470,7 +4470,7 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
 		      case GF_NEXUS:
 			if (blind)
 			    msg_print("You are hit by something strange!");
-			if (py.flags1.resist_nexus) {
+			if (py.resist_nexus) {
 			    dam_hp *= 6;	/* these 2 lines give avg dam
 						 * of .655, ranging from */
 			    dam_hp /= (randint(6) + 6);	/* .858 to .5 -CFT */
@@ -4480,45 +4480,45 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
 		      case GF_FORCE:
 			if (blind)
 			    msg_print("You are hit hard by a sudden force!");
-			if (!py.flags1.resist_sound)
+			if (!py.resist_sound)
 			    stun_player(randint(15) + 1);
 			take_hit(dam_hp, ddesc);
 			break;
 		      case GF_INERTIA:
 			if (blind)
 			    msg_print("You are hit by something!");
-			if ((py.flags1.slow > 0) && (py.flags1.slow < 32000))
-			    py.flags1.slow += randint(5);
+			if ((py.slow > 0) && (py.slow < 32000))
+			    py.slow += randint(5);
 			else {
 			    msg_print("You feel less able to move.");
-			    py.flags1.slow = randint(5) + 3;
+			    py.slow = randint(5) + 3;
 			}
 			take_hit(dam_hp, ddesc);
 			break;
 		      case GF_LITE:
 			if (blind)
 			    msg_print("You are hit by something!");
-			if (py.flags1.resist_lite) {
+			if (py.resist_lite) {
 			    dam_hp *= 4;	/* these 2 lines give avg dam
 						 * of .444, ranging from */
 			    dam_hp /= (randint(6) + 6);	/* .556 to .333 -CFT */
-			} else if (!blind && !py.flags1.resist_blind) {
+			} else if (!blind && !py.resist_blind) {
 			    msg_print("You are blinded by the flash!");
-			    py.flags1.blind += randint(5) + 2;
+			    py.blind += randint(5) + 2;
 			}
 			take_hit(dam_hp, ddesc);
 			break;
 		      case GF_DARK:
 			if (blind)
 			    msg_print("You are hit by something!");
-			if (py.flags1.resist_dark) {
+			if (py.resist_dark) {
 			    dam_hp *= 4;	/* these 2 lines give avg dam
 						 * of .444, ranging from */
 			    dam_hp /= (randint(6) + 6);	/* .556 to .333 -CFT */
 			} else {
-			    if (!blind && !py.flags1.resist_blind) {
+			    if (!blind && !py.resist_blind) {
 				msg_print("The darkness prevents you from seeing!");
-				py.flags1.blind += randint(5) + 2;
+				py.blind += randint(5) + 2;
 			    }
 			}
 			take_hit(dam_hp, ddesc);
@@ -4529,7 +4529,7 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
 			    msg_print("You are hit by something!");
 			if (randint(2) == 1) {
 			    msg_print("You feel life has clocked back.");
-			    lose_exp(m_ptr->hp + (py.misc.exp / 300) * MON_DRAIN_LIFE);
+			    lose_exp(m_ptr->hp + (py.exp / 300) * MON_DRAIN_LIFE);
 			} else {
 			    int                 t = 0;
 
@@ -4559,9 +4559,9 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
 				msg_print("You're not as beautiful as you used to be...");
 				break;
 			    }
-			    py.stats.cur_stat[t] = (py.stats.cur_stat[t] * 3) / 4;
-			    if (py.stats.cur_stat[t] < 3)
-				py.stats.cur_stat[t] = 3;
+			    py.cur_stat[t] = (py.cur_stat[t] * 3) / 4;
+			    if (py.cur_stat[t] < 3)
+				py.cur_stat[t] = 3;
 			    set_use_stat(t);
 			    prt_stat(t);
 			}
@@ -4570,18 +4570,18 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
 		      case GF_GRAVITY:
 			if (blind)
 			    msg_print("You are hit by a surge of gravity!");
-			if ((!py.flags1.resist_sound) && (!py.flags1.ffall))	/* DGK */
+			if ((!py.resist_sound) && (!py.ffall))	/* DGK */
 			    stun_player(randint(15) + 1);
-			if (py.flags1.ffall) {	/* DGK */
+			if (py.ffall) {	/* DGK */
 			    dam_hp *= 3;	/* these 2 lines give avg dam
 						 * of .25, ranging from */
 			    dam_hp /= (randint(6) + 6);	/* .427 to .25 -CFT */
 			} else {   /* DGK */
-			    if ((py.flags1.slow > 0) && (py.flags1.slow < 32000))
-				py.flags1.slow += randint(5);
+			    if ((py.slow > 0) && (py.slow < 32000))
+				py.slow += randint(5);
 			    else {
 				msg_print("You feel less able to move.");
-				py.flags1.slow = randint(5) + 3;
+				py.slow = randint(5) + 3;
 			    }
 			} /* DGK */
 			take_hit(dam_hp, ddesc);
@@ -4600,9 +4600,9 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
 			if (blind)
 			    msg_print("You are hit by something cold and sharp!");
 			cold_dam(dam_hp, ddesc);
-			if (!py.flags1.resist_sound)
+			if (!py.resist_sound)
 			    stun_player(randint(15) + 1);
-			if (!py.flags1.resist_shards)
+			if (!py.resist_shards)
 			    cut_player(damroll(8, 10));
 			break;
 		      default:
@@ -4629,7 +4629,7 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
     register monster_type  *m_ptr;
     register monster_race *r_ptr;
     int                 ny, nx;
-    int                 blind = (py.flags1.status & PY_BLIND) ? 1 : 0;
+    int                 blind = (py.status & PY_BLIND) ? 1 : 0;
     char                ch;
 
     m_ptr = &m_list[monptr];
@@ -4675,7 +4675,7 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 	break;
     }
 
-    if (!(py.flags1.status & PY_BLIND)) { /* only bother if the player can see */
+    if (!(py.status & PY_BLIND)) { /* only bother if the player can see */
 	for (i = y - max_dis; i <= y + max_dis; i++)
 	    for (j = x - max_dis; j <= x + max_dis; j++)
 		if (in_bounds(i, j) && (distance(y, x, i, j) <= max_dis) &&
@@ -4826,71 +4826,71 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 			    break;
 			  case GF_PLASMA:	/* no resist to plasma? */
 			    take_hit(dam, ddesc);
-			    if (!py.flags1.resist_sound)
+			    if (!py.resist_sound)
 				stun_player(randint(
 				(dam_hp > 40) ? 35 : (dam_hp * 3 / 4 + 5)));
 			    break;
 			  case GF_NETHER:
-			    if (py.flags1.resist_nether) {
+			    if (py.resist_nether) {
 				dam *= 6;	/* these 2 lines give avg dam
 						 * of .655, ranging from */
 				dam /= (randint(5) + 6);	/* .858 to .5 -CFT */
 			    } else {	/* no resist */
-				if (py.flags1.hold_life && randint(3) > 1)
+				if (py.hold_life && randint(3) > 1)
 				    msg_print("You keep hold of your life force!");
-				else if (py.flags1.hold_life) {
+				else if (py.hold_life) {
 				    msg_print("You feel your life slipping away!");
-				    lose_exp(200 + (py.misc.exp/1000) * MON_DRAIN_LIFE);
+				    lose_exp(200 + (py.exp/1000) * MON_DRAIN_LIFE);
 				} else {
 				    msg_print("You feel your life draining away!");
-				    lose_exp(200 + (py.misc.exp/100) * MON_DRAIN_LIFE);
+				    lose_exp(200 + (py.exp/100) * MON_DRAIN_LIFE);
 				}
 			    }
 			    take_hit(dam, ddesc);
 			    break;
 			  case GF_WATER:
-			    if (!py.flags1.resist_sound)
+			    if (!py.resist_sound)
 				stun_player(randint(55));
-			    if (!player_saves() && !py.flags1.resist_conf
-				&& !py.flags1.resist_chaos) {
-				if ((py.flags1.confused > 0) &&
-				    (py.flags1.confused < 32000))
-				    py.flags1.confused += 6;
+			    if (!player_saves() && !py.resist_conf
+				&& !py.resist_chaos) {
+				if ((py.confused > 0) &&
+				    (py.confused < 32000))
+				    py.confused += 6;
 				else
-				    py.flags1.confused = randint(8) + 6;
+				    py.confused = randint(8) + 6;
 			    }
 			    take_hit(dam, ddesc);
 			    break;
 			  case GF_CHAOS:
-			    if (py.flags1.resist_chaos) {
+			    if (py.resist_chaos) {
 				dam *= 6;	/* these 2 lines give avg dam
 						 * of .655, ranging from */
 				dam /= (randint(6) + 6);	/* .858 to .5 -CFT */
 			    }
-			    if ((!py.flags1.resist_conf) &&
-				(!py.flags1.resist_chaos)) {
-				if (py.flags1.confused > 0)
-				    py.flags1.confused += 12;
+			    if ((!py.resist_conf) &&
+				(!py.resist_chaos)) {
+				if (py.confused > 0)
+				    py.confused += 12;
 				else
-				    py.flags1.confused = randint(20) + 10;
+				    py.confused = randint(20) + 10;
 			    }
-			    if (!py.flags1.resist_chaos)
-				py.flags1.image += randint(10);
-			    if (!py.flags1.resist_nether && !py.flags1.resist_chaos) {
-				if (py.flags1.hold_life && randint(3) > 1)
+			    if (!py.resist_chaos)
+				py.image += randint(10);
+			    if (!py.resist_nether && !py.resist_chaos) {
+				if (py.hold_life && randint(3) > 1)
 				    msg_print("You keep hold of your life force!");
-				else if (py.flags1.hold_life) {
+				else if (py.hold_life) {
 				    msg_print("You feel your life slipping away!");
-				    lose_exp(500 + (py.misc.exp/1000) * MON_DRAIN_LIFE);
+				    lose_exp(500 + (py.exp/1000) * MON_DRAIN_LIFE);
 				} else {
 				    msg_print("You feel your life draining away!");
-				    lose_exp(5000 + (py.misc.exp/100) * MON_DRAIN_LIFE);
+				    lose_exp(5000 + (py.exp/100) * MON_DRAIN_LIFE);
 				}
 			    }
 			    take_hit(dam, ddesc);
 			    break;
 			  case GF_SHARDS:
-			    if (py.flags1.resist_shards) {
+			    if (py.resist_shards) {
 				dam *= 6;	/* these 2 lines give avg dam
 						 * of .655, ranging from */
 				dam /= (randint(6) + 6);	/* .858 to .5 -CFT */
@@ -4900,7 +4900,7 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 			    take_hit(dam, ddesc);
 			    break;
 			  case GF_SOUND:
-			    if (py.flags1.resist_sound) {
+			    if (py.resist_sound) {
 				dam *= 5;
 				dam /= (randint(6) + 6);
 			    } else {
@@ -4909,21 +4909,21 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 			    take_hit(dam, ddesc);
 			    break;
 			  case GF_CONFUSION:
-			    if (py.flags1.resist_conf) {
+			    if (py.resist_conf) {
 				dam *= 5;	/* these 2 lines give avg dam
 						 * of .655, ranging from */
 				dam /= (randint(6) + 6);	/* .858 to .5 -CFT */
 			    }
-			    if (!py.flags1.resist_conf && !py.flags1.resist_chaos) {
-				if (py.flags1.confused > 0)
-				    py.flags1.confused += 12;
+			    if (!py.resist_conf && !py.resist_chaos) {
+				if (py.confused > 0)
+				    py.confused += 12;
 				else
-				    py.flags1.confused = randint(20) + 10;
+				    py.confused = randint(20) + 10;
 			    }
 			    take_hit(dam, ddesc);
 			    break;
 			  case GF_DISENCHANT:
-			    if (py.flags1.resist_disen) {
+			    if (py.resist_disen) {
 				dam *= 6;	/* these 2 lines give avg dam
 						 * of .655, ranging from */
 				dam /= (randint(6) + 6);	/* .858 to .5 -CFT */
@@ -5005,7 +5005,7 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 			    break;
 			  case GF_NEXUS:
 			    /* no spec. effects from nexus bolt, only breath -CFT */
-			    if (py.flags1.resist_nexus) {
+			    if (py.resist_nexus) {
 				dam *= 6;	/* these 2 lines give avg dam
 						 * of .655, ranging from */
 				dam /= (randint(6) + 6);	/* .858 to .5 -CFT */
@@ -5054,14 +5054,14 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 					do {
 					    jj = randint(6) - 1;
 					} while (ii == jj);
-					max1 = py.stats.max_stat[ii];
-					cur1 = py.stats.cur_stat[ii];
-					max2 = py.stats.max_stat[jj];
-					cur2 = py.stats.cur_stat[jj];
-					py.stats.max_stat[ii] = max2;
-					py.stats.cur_stat[ii] = cur2;
-					py.stats.max_stat[jj] = max1;
-					py.stats.cur_stat[jj] = cur1;
+					max1 = py.max_stat[ii];
+					cur1 = py.cur_stat[ii];
+					max2 = py.max_stat[jj];
+					cur2 = py.cur_stat[jj];
+					py.max_stat[ii] = max2;
+					py.cur_stat[ii] = cur2;
+					py.max_stat[jj] = max1;
+					py.cur_stat[jj] = cur1;
 					set_use_stat(ii);
 					set_use_stat(jj);
 					prt_stat(ii);
@@ -5072,38 +5072,38 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 			    take_hit(dam, ddesc);
 			    break;
 			  case GF_FORCE:
-			    if (!py.flags1.resist_sound)
+			    if (!py.resist_sound)
 				stun_player(randint(20));
 			    take_hit(dam, ddesc);
 			    break;
 			  case GF_INERTIA:
-			    if ((py.flags1.slow > 0) && (py.flags1.slow < 32000))
-				py.flags1.slow += randint(5);
+			    if ((py.slow > 0) && (py.slow < 32000))
+				py.slow += randint(5);
 			    else {
 				msg_print("You feel less able to move.");
-				py.flags1.slow = randint(5) + 3;
+				py.slow = randint(5) + 3;
 			    }
 			    take_hit(dam, ddesc);
 			    break;
 			  case GF_LITE:
-			    if (py.flags1.resist_lite) {
+			    if (py.resist_lite) {
 				dam *= 4;
 				dam /= (randint(6) + 6);
-			    } else if (!blind && !py.flags1.resist_blind) {
+			    } else if (!blind && !py.resist_blind) {
 				msg_print("You are blinded by the flash!");
-				py.flags1.blind += randint(6) + 3;
+				py.blind += randint(6) + 3;
 			    }
 			    lite_area(char_row, char_col, 0, max_dis);
 			    take_hit(dam, ddesc);
 			    break;
 			  case GF_DARK:
-			    if (py.flags1.resist_dark) {
+			    if (py.resist_dark) {
 				dam *= 4;
 				dam /= (randint(6) + 6);
 			    } else {
 				if (!blind) 
 				    msg_print("The darkness prevents you from seeing!");
-				py.flags1.blind += randint(5) + 2;
+				py.blind += randint(5) + 2;
 			    }
 			    unlite_area(char_row, char_col);
 			    take_hit(dam, ddesc);
@@ -5117,7 +5117,7 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 			      case 4:
 			      case 5:
 				msg_print("You feel life has clocked back.");
-				lose_exp(m_ptr->hp + (py.misc.exp / 300) * MON_DRAIN_LIFE);
+				lose_exp(m_ptr->hp + (py.exp / 300) * MON_DRAIN_LIFE);
 				break;
 			      case 6:
 			      case 7:
@@ -5152,9 +5152,9 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 			msg_print("You're not as beautiful as you used to be...");
 					break;
 				    }
-			    py.stats.cur_stat[t] = (py.stats.cur_stat[t] * 3) / 4;
-				    if (py.stats.cur_stat[t] < 3)
-					py.stats.cur_stat[t] = 3;
+			    py.cur_stat[t] = (py.cur_stat[t] * 3) / 4;
+				    if (py.cur_stat[t] < 3)
+					py.cur_stat[t] = 3;
 				    set_use_stat(t);
 				    prt_stat(t);
 				}
@@ -5164,9 +5164,9 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 				    int                 ii;
 
 				    for (ii = 0; ii < 6; ii++) {
-				py.stats.cur_stat[ii] = (py.stats.cur_stat[ii] * 3) / 4;
-					if (py.stats.cur_stat[ii] < 3)
-					    py.stats.cur_stat[ii] = 3;
+				py.cur_stat[ii] = (py.cur_stat[ii] * 3) / 4;
+					if (py.cur_stat[ii] < 3)
+					    py.cur_stat[ii] = 3;
 					set_use_stat(ii);
 					prt_stat(ii);
 				    }
@@ -5182,18 +5182,18 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 			    take_hit(dam, ddesc);
 			    break;
 			  case GF_GRAVITY:
-			    if ((!py.flags1.resist_sound) && (!py.flags1.ffall))	/* DGK */
+			    if ((!py.resist_sound) && (!py.ffall))	/* DGK */
 				stun_player(randint((dam > 90) ? 35 : (dam / 3 + 5)));
-			    if (py.flags1.ffall) {	/* DGK */
+			    if (py.ffall) {	/* DGK */
 				dam_hp *= 3;	/* these 2 lines give avg dam
 						 * of .33, ranging from */
 				dam_hp /= (randint(6) + 6);	/* .427 to .25 -CFT */
 			    } else {	/* DGK */
-				if ((py.flags1.slow > 0) && (py.flags1.slow < 32000))
-				    py.flags1.slow += randint(5);
+				if ((py.slow > 0) && (py.slow < 32000))
+				    py.slow += randint(5);
 				else {
 				    msg_print("You feel less able to move.");
-				    py.flags1.slow = randint(5) + 3;
+				    py.slow = randint(5) + 3;
 				}
 			    } /* DGK */
 			    msg_print("Gravity warps around you.");
@@ -5208,9 +5208,9 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 			    break;
 			  case GF_ICE:
 			    cold_dam(dam, ddesc);
-			    if (!py.flags1.resist_sound)
+			    if (!py.resist_sound)
 				stun_player(randint(25));
-			    if (!py.flags1.resist_shards)
+			    if (!py.resist_shards)
 				cut_player(damroll(8, 10));
 			    break;
 			  default:

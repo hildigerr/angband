@@ -346,16 +346,15 @@ int max_hp(byte *array)
 unsigned char loc_symbol(int y, int x)
 {
     register cave_type    *cave_ptr;
-    register struct flags1 *f_ptr;
+    player_type *p_ptr = &py;
 
     cave_ptr = &cave[y][x];
-    f_ptr = &py.flags1;
 
     if ((cave_ptr->m_idx == 1) && (!find_flag || find_prself))
 	return '@';
-    if (f_ptr->status & PY_BLIND)
+    if (p_ptr->status & PY_BLIND)
 	return ' ';
-    if ((f_ptr->image > 0) && (randint(12) == 1))
+    if ((p_ptr->image > 0) && (randint(12) == 1))
 	return randint(95) + 31;
     if ((cave_ptr->m_idx > 1) && (m_list[cave_ptr->cptr].ml))
 	return r_list[m_list[cave_ptr->m_idx].r_idx].r_char;
@@ -388,7 +387,7 @@ unsigned char loc_symbol(int y, int x)
  */
 void add_food(int num)
 {
-    register struct flags1 *p_ptr = &py.flags1;
+    player_type *p_ptr = &py;
     register int           extra, penalty;
 
     if (p_ptr->food < 0) p_ptr->food = 0;

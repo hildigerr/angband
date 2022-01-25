@@ -427,12 +427,12 @@ void do_cmd_look()
     int                 dir, dummy;
 
     /* Blind */
-    if (py.flags1.blind > 0) {
+    if (py.blind > 0) {
 	msg_print("You can't see a damn thing!");
     }
 
     /* Hallucinating */
-    else if (py.flags1.image > 0) {
+    else if (py.image > 0) {
 	msg_print("You can't believe what you are seeing! It's like a dream!");
     }
 
@@ -549,7 +549,7 @@ static void chest_trap(int y, int x)
 
     if (i_ptr->flags1 & CH_LOSE_STR) {
 	msg_print("A small needle has pricked you!");
-	if (!py.flags1.sustain_str) {
+	if (!py.sustain_str) {
 	    (void)dec_stat(A_STR);
 	    take_hit(damroll(1, 4), "a poison needle");
 	    msg_print("You feel weakened!");
@@ -562,21 +562,21 @@ static void chest_trap(int y, int x)
     if (i_ptr->flags1 & CH_POISON) {
 	msg_print("A small needle has pricked you!");
 	take_hit(damroll(1, 6), "a poison needle");
-	if (!(py.flags1.resist_pois ||
-	      py.flags1.oppose_pois ||
-	      py.flags1.immune_pois)) {
-	    py.flags1.poisoned += 10 + randint(20);
+	if (!(py.resist_pois ||
+	      py.oppose_pois ||
+	      py.immune_pois)) {
+	    py.poisoned += 10 + randint(20);
 	}
     }
 
     if (i_ptr->flags1 & CH_PARALYSED) {
 	msg_print("A puff of yellow gas surrounds you!");
-	if (py.flags1.free_act) {
+	if (py.free_act) {
 	    msg_print("You are unaffected.");
 	}
 	else {
 	    msg_print("You choke and pass out.");
-	    py.flags1.paralysis = 10 + randint(20);
+	    py.paralysis = 10 + randint(20);
 	}
     }
 
@@ -611,7 +611,7 @@ void do_cmd_open()
     int				flag;
     register cave_type		*c_ptr;
     register inven_type		*i_ptr;
-    register struct misc  *p_ptr = &py.misc;
+    player_type  *p_ptr = &py;
     register monster_type *m_ptr;
     vtype                  m_name, out_val;
 
@@ -675,12 +675,12 @@ void do_cmd_open()
 		/* give a 1/50 chance of opening anything, anyway -CWS */
 		if ((i - i_ptr->pval) < 2) i = i_ptr->pval + 2;
 
-		if (py.flags1.confused > 0) {
+		if (py.confused > 0) {
 		    msg_print("You are too confused to pick the lock.");
 		}
 		else if ((i - i_ptr->pval) > randint(100)) {
 		    msg_print("You have picked the lock.");
-		    py.misc.exp++;
+		    py.exp++;
 		    prt_experience();
 		    i_ptr->pval = 0;
 		}
@@ -724,14 +724,14 @@ void do_cmd_open()
 		flag = FALSE;
 
 		/* Too confused */
-		if (py.flags1.confused > 0) {
+		if (py.confused > 0) {
 		    msg_print("You are too confused to pick the lock.");
 		}
 
 		/* Pick the lock, leave the traps */
 		else if ((i - (int)i_ptr->level) > randint(100)) {
 		    msg_print("You have picked the lock.");
-		    py.misc.exp += i_ptr->level;
+		    py.exp += i_ptr->level;
 		    prt_experience();
 		    flag = TRUE;
 		}
@@ -956,7 +956,7 @@ void tunnel(int dir)
     monster_type       *m_ptr;
     vtype		out_val, m_name;
 
-    if ((py.flags1.confused > 0) && /* Confused?	     */
+    if ((py.confused > 0) && /* Confused?	     */
 	(randint(4) > 1))	   /* 75% random movement   */
 	dir = randint(9);
 
@@ -967,7 +967,7 @@ void tunnel(int dir)
 
 /* Compute the digging ability of player; based on	   */
 /* strength, and type of tool used			   */
-    tabil = py.stats.use_stat[A_STR];
+    tabil = py.use_stat[A_STR];
     i_ptr = &inventory[INVEN_WIELD];
 
 /* Don't let the player tunnel somewhere illegal, this is necessary to
@@ -1002,7 +1002,7 @@ void tunnel(int dir)
 	    msg_print(out_val);
 
 	    /* let the player attack the creature */
-	    if (py.flags1.afraid < 1) py_attack(y, x);
+	    if (py.afraid < 1) py_attack(y, x);
 	    else msg_print("You are too afraid!");
 	}
 
@@ -1023,7 +1023,7 @@ void tunnel(int dir)
 	    }
 
 	    if (weapon_heavy) {
-		tabil += (py.stats.use_stat[A_STR] * 15) - i_ptr->weight;
+		tabil += (py.use_stat[A_STR] * 15) - i_ptr->weight;
 		if (tabil < 0) tabil = 0;
 	    }
 
@@ -1096,7 +1096,7 @@ void tunnel(int dir)
 	    /* Secret doors. */
 	    else if (i_list[c_ptr->i_idx].tval == TV_SECRET_DOOR) {
 		count_msg_print("You tunnel into the granite wall.");
-		search(char_row, char_col, py.misc.srh);
+		search(char_row, char_col, py.srh);
 	    }
 
 	    else {
@@ -1165,17 +1165,17 @@ void do_cmd_disarm()
 	/* Normal disarm */
 	else {
 
-	    tot = py.misc.disarm + 2 * todis_adj() + stat_adj(A_INT) +
-		  (class_level_adj[py.misc.pclass][CLA_DISARM] *
-		  py.misc.lev / 3);
+	    tot = py.disarm + 2 * todis_adj() + stat_adj(A_INT) +
+		  (class_level_adj[py.pclass][CLA_DISARM] *
+		  py.lev / 3);
 
-	    if ((py.flags1.blind > 0) || (no_lite())) {
+	    if ((py.blind > 0) || (no_lite())) {
 		tot = tot / 10;
 	    }
-	    if (py.flags1.confused > 0) {
+	    if (py.confused > 0) {
 		tot = tot / 10;
 	    }
-	    if (py.flags1.image > 0) {
+	    if (py.image > 0) {
 		tot = tot / 10;
 	    }
 
@@ -1185,13 +1185,13 @@ void do_cmd_disarm()
 		/* Success */
 		if ((tot + 100 - i_ptr->level) > randint(100)) {
 		    msg_print("You have disarmed the trap.");
-		    py.misc.exp += i_ptr->pval;
+		    py.exp += i_ptr->pval;
 		    delete_object(y, x);
 		    /* move the player onto the trap */
-		    tmp = py.flags1.confused;
-		    py.flags1.confused = 0;
+		    tmp = py.confused;
+		    py.confused = 0;
 		    move_player(dir, FALSE);
-		    py.flags1.confused = tmp;
+		    py.confused = tmp;
 		    prt_experience();
 		}
 
@@ -1204,10 +1204,10 @@ void do_cmd_disarm()
 		else {
 		    msg_print("You set the trap off!");
 		    /* Move the player onto the trap */
-		    tmp = py.flags1.confused;
-		    py.flags1.confused = 0;
+		    tmp = py.confused;
+		    py.confused = 0;
 		    move_player(dir, FALSE);
-		    py.flags1.confused += tmp;
+		    py.confused += tmp;
 		}
 	    }
 
@@ -1235,7 +1235,7 @@ void do_cmd_disarm()
 			    i_ptr->name2 = EGO_DISARMED;
 		    msg_print("You have disarmed the chest.");
 		    known2(i_ptr);
-		    py.misc.exp += i_ptr->level;
+		    py.exp += i_ptr->level;
 		    prt_experience();
 		}
 
@@ -1304,7 +1304,7 @@ void bash()
 	c_ptr = &cave[y][x];
 
 	if (c_ptr->m_idx > 1) {
-	    if (py.flags1.afraid > 0) {
+	    if (py.afraid > 0) {
 		msg_print("You are too afraid!");
 	    }
 	    else {
@@ -1323,7 +1323,7 @@ void bash()
 
 		count_msg_print("You smash into the door!");
 
-		tmp = py.stats.use_stat[A_STR] + py.misc.wt / 2;
+		tmp = py.use_stat[A_STR] + py.wt / 2;
 
 		/* Use (roughly) similar method as for monsters. */
 		if (randint(tmp * (20 + MY_ABS(i_ptr->pval))) <
@@ -1338,7 +1338,7 @@ void bash()
 		    i_ptr->pval = 1 - randint(2);
 		    c_ptr->fval = CORR_FLOOR;
 
-		    if (py.flags1.confused == 0)
+		    if (py.confused == 0)
 			move_player(dir, FALSE);
 		    else
 			lite_spot(y, x);
@@ -1347,9 +1347,9 @@ void bash()
 		    check_view();
 		}
 
-		else if (randint(150) > py.stats.use_stat[A_DEX]) {
+		else if (randint(150) > py.use_stat[A_DEX]) {
 		    msg_print("You are off-balance.");
-		    py.flags1.paralysis = 1 + randint(2);
+		    py.paralysis = 1 + randint(2);
 		}
 
 		else if (command_rep == 0)
@@ -1580,10 +1580,10 @@ void do_cmd_fire()
 			 */
 			    if (!m_ptr->ml)
 				tbth = (tbth / (cur_dis + 2))
-				    - (py.misc.lev *
-				       class_level_adj[py.misc.pclass][CLA_BTHB] / 2)
+				    - (py.lev *
+				       class_level_adj[py.pclass][CLA_BTHB] / 2)
 				    - (tpth * (BTH_PLUS_ADJ - 1));
-			    if (test_hit(tbth, (int)py.misc.lev, tpth,
+			    if (test_hit(tbth, (int)py.lev, tpth,
 				   (int)r_list[m_ptr->r_idx].ac, CLA_BTHB)) {
 				i = m_ptr->r_idx;
 				objdes(tmp_str, &throw_obj, FALSE);
@@ -1650,7 +1650,7 @@ void do_cmd_fire()
 			}
 			else
 			{   /* do not test c_ptr->fm here */
-			    if (panel_contains(y, x) && (py.flags1.blind < 1)
+			    if (panel_contains(y, x) && (py.blind < 1)
 				&& (c_ptr->tl || c_ptr->pl)) {
 				print(tchar, y, x);
 				put_qio();	/* show object moving */

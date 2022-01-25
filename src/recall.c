@@ -490,12 +490,12 @@ int roff_recall(int r_idx)
 	else roff((sex == 'p' ? " creatures" : " creature"));
 
 	/* calculate the integer exp part */
-	i = (long)r_ptr->mexp * r_ptr->level / py.misc.lev;
+	i = (long)r_ptr->mexp * r_ptr->level / py.lev;
 
 	/* calculate the fractional exp part scaled by 100, */
 	/* must use long arithmetic to avoid overflow  */
-	j = ((((long)r_ptr->mexp * r_ptr->level % py.misc.lev) * (long)1000 /
-	     py.misc.lev + 5) / 10);
+	j = ((((long)r_ptr->mexp * r_ptr->level % py.lev) * (long)1000 /
+	     py.lev + 5) / 10);
 
 	/* Mention the experience */
 	(void)sprintf(temp, " is worth %lu.%02lu point%s",
@@ -504,17 +504,17 @@ int roff_recall(int r_idx)
 	roff(temp);
 
 	/* Take account of annoying English */
-	if ((py.misc.lev / 10) == 1)
+	if ((py.lev / 10) == 1)
 	p = "th";
 	else {
-	i = py.misc.lev % 10;
+	i = py.lev % 10;
 	if (i == 1) p = "st";
 	else if (i == 2) p = "nd";
 	else if (i == 3) p = "rd";
 	else p = "th";
 	}
 
-	i = py.misc.lev;
+	i = py.lev;
 	if ((i == 8) || (i == 11) || (i == 18)) q = "n";
 	else q = "";
 

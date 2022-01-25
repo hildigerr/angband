@@ -60,7 +60,7 @@ void hit_trap(int y, int x)
 {
     int                   i, ty, tx, num, dam;
     register cave_type   *c_ptr;
-    register struct misc *p_ptr = &py.misc;
+    player_type *p_ptr = &py;
     register inven_type  *i_ptr;
     bigvtype              tmp;
 
@@ -86,7 +86,7 @@ void hit_trap(int y, int x)
 
       case 1:			   /* Open pit */
 	msg_print("You fell into a pit!");
-	if (py.flags1.ffall) {
+	if (py.ffall) {
 	    msg_print("You gently float down.");
 	}
 	else {
@@ -108,7 +108,7 @@ void hit_trap(int y, int x)
 
       case 3:			   /* Covered pit */
 	msg_print("You fell into a covered pit.");
-	if (py.flags1.ffall)
+	if (py.ffall)
 	    msg_print("You gently float down.");
 	else {
 	    objdes(tmp, i_ptr, TRUE);
@@ -122,7 +122,7 @@ void hit_trap(int y, int x)
 	    msg_print("You fell through a trap door!");
 	    new_level_flag = TRUE;
 	    dun_level++;
-	    if (py.flags1.ffall) {
+	    if (py.ffall) {
 		msg_print("You gently float down.");
 	}
 	    else {
@@ -136,14 +136,14 @@ void hit_trap(int y, int x)
 	 /* end normal */ 
 	else {			   /* it's a quest level, can't let them fall through */
 	    msg_print("You fall into a spiked pit!");
-	    if (py.flags1.ffall)
+	    if (py.ffall)
 		msg_print("You gently float down.");
 	    else {
 		dam = (dam * 3) / 2;	/* do a little extra damage for spikes */
 		if (randint(3) == 1) {
 		    msg_print("The spikes are poisoned!");
-		    if (!(py.flags1.immune_pois || py.flags1.resist_pois ||
-			  py.flags1.oppose_pois))
+		    if (!(py.immune_pois || py.resist_pois ||
+			  py.oppose_pois))
 			dam *= 2;  /* more damage from poison!  :-)  -CFT */
 		    else
 			msg_print("You are unaffected by the poison.");
@@ -153,14 +153,14 @@ void hit_trap(int y, int x)
 	break;
 
       case 5:			   /* Sleep gas */
-	if (py.flags1.paralysis == 0) {
+	if (py.paralysis == 0) {
 	    msg_print("A strange white mist surrounds you!");
-	    if (py.flags1.free_act) {
+	    if (py.free_act) {
 		msg_print("You are unaffected.");
 	    }
 	    else {
 		msg_print("You fall asleep.");
-		py.flags1.paralysis += randint(10) + 4;
+		py.paralysis += randint(10) + 4;
 	    }
 	}
 	break;
@@ -173,7 +173,7 @@ void hit_trap(int y, int x)
 
       case 7:			   /* STR Dart */
 	if (test_hit(125, 0, 0, p_ptr->pac + p_ptr->ptoac, CLA_MISC_HIT)) {
-	    if (!py.flags1.sustain_str) {
+	    if (!py.sustain_str) {
 		(void)dec_stat(A_STR);
 		objdes(tmp, i_ptr, TRUE);
 		take_hit(dam, tmp);
@@ -229,23 +229,23 @@ void hit_trap(int y, int x)
 	break;
 
       case 14:			   /* Poison gas */
-	if (!(py.flags1.immune_pois || py.flags1.resist_pois ||
-	      py.flags1.oppose_pois))
+	if (!(py.immune_pois || py.resist_pois ||
+	      py.oppose_pois))
 	    poison_gas(dam, "a poison gas trap");
 	msg_print("A pungent green gas surrounds you!");
 	break;
 
       case 15:			   /* Blind Gas */
 	msg_print("A black gas surrounds you!");
-	if (!py.flags1.resist_blind) {
-	    py.flags1.blind += randint(50) + 50;
+	if (!py.resist_blind) {
+	    py.blind += randint(50) + 50;
 	}
 	break;
 
       case 16:			   /* Confuse Gas */
 	msg_print("A gas of scintillating colors surrounds you!");
-	if ((!py.flags1.resist_conf) && (!py.flags1.resist_chaos)) {
-	    py.flags1.confused += randint(15) + 15;
+	if ((!py.resist_conf) && (!py.resist_chaos)) {
+	    py.confused += randint(15) + 15;
 	}
 	break;
 
@@ -254,11 +254,11 @@ void hit_trap(int y, int x)
 	    objdes(tmp, i_ptr, TRUE);
 	    take_hit(dam, tmp);
 		msg_print("A small dart hits you!");
-	    if (py.flags1.free_act) {
+	    if (py.free_act) {
 		msg_print("You are unaffected.");
 	    }
 	    else {
-		py.flags1.slow += randint(20) + 10;
+		py.slow += randint(20) + 10;
 	    }
 	}
 	else {
@@ -268,7 +268,7 @@ void hit_trap(int y, int x)
 
       case 18:			   /* CON Dart */
 	if (test_hit(125, 0, 0, p_ptr->pac + p_ptr->ptoac, CLA_MISC_HIT)) {
-	    if (!py.flags1.sustain_con) {
+	    if (!py.sustain_con) {
 	    (void)dec_stat(A_CON);
 	    objdes(tmp, i_ptr, TRUE);
 	    take_hit(dam, tmp);
@@ -311,7 +311,7 @@ int cast_spell(cptr prompt, int item_val, int *sn, int *sc)
     register spell_type *s_ptr;
 
     /* if a warrior, abort as if by ESC -CFT */
-    if (!py.misc.pclass) return 0;
+    if (!py.pclass) return 0;
 
     /* Assume nothing to read */
     result = (-1);
@@ -325,11 +325,11 @@ int cast_spell(cptr prompt, int item_val, int *sn, int *sc)
 /* set j1 again, since bit_pos modified it */
     j1 = inventory[item_val].flags1 & spell_learned;
 
-    s_ptr = magic_spell[py.misc.pclass - 1];
+    s_ptr = magic_spell[py.pclass - 1];
 
     while (j1) {
 	k = bit_pos(&j1);
-	if (s_ptr[k].slevel <= py.misc.lev) {
+	if (s_ptr[k].slevel <= py.lev) {
 	    spell[i] = k;
 	    i++;
 	}
@@ -341,7 +341,7 @@ int cast_spell(cptr prompt, int item_val, int *sn, int *sc)
 
     while (j2) {
 	k = bit_pos(&j2);
-	if (s_ptr[k + 32].slevel <= py.misc.lev) {
+	if (s_ptr[k + 32].slevel <= py.lev) {
 	    spell[i] = k + 32;
 	    i++;
 	}
@@ -354,8 +354,8 @@ int cast_spell(cptr prompt, int item_val, int *sn, int *sc)
     result = get_spell(spell, i, sn, sc, prompt, first_spell);
 
     /* Verify if needed */
-    if (result && magic_spell[py.misc.pclass - 1][*sn].smana > py.misc.cmana) {
-	if (class[py.misc.pclass].spell == MAGE) {
+    if (result && magic_spell[py.pclass - 1][*sn].smana > py.cmana) {
+	if (class[py.pclass].spell == MAGE) {
 	    result = get_check("You summon your limited strength to cast this one! Confirm?");
 	}
 	else {
@@ -663,7 +663,7 @@ int mon_take_hit(int m_idx, int dam, int print_fear)
     s32b                   new_exp, new_exp_frac;
 
     register monster_type  *m_ptr;
-    register struct misc   *p_ptr = &py.misc;
+    player_type   *p_ptr = &py;
     register monster_race *r_ptr;
 
     int                     m_take_hit = (-1);
@@ -751,7 +751,7 @@ int mon_take_hit(int m_idx, int dam, int print_fear)
 			  (r_list[m_ptr->r_idx].cflags2 & (MF2_SPECIAL | MF2_GOOD)),
 			  (r_list[m_ptr->r_idx].cflags1 & MF1_WINNER));
 	coin_type = 0;
-	if ((py.flags1.blind < 1 && m_ptr->ml) ||
+	if ((py.blind < 1 && m_ptr->ml) ||
 	    (r_list[m_ptr->r_idx].cflags1 & CM_WIN) ||
 	    (r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE)) {
 	    /* recall even invisible uniques */
@@ -876,7 +876,7 @@ void py_attack(int y, int x)
     int                 crptr, r_idx, tot_tohit, base_tohit;
     vtype               m_name, out_val;
     register inven_type    *i_ptr;
-    register struct misc   *p_ptr;
+    player_type   *p_ptr = &py;
 
     crptr = cave[y][x].m_idx;
     r_idx = m_list[crptr].r_idx;
@@ -915,7 +915,6 @@ void py_attack(int y, int x)
     /* Fix for arrows */
 	blows = 1;
 
-    p_ptr = &py.misc;
     tot_tohit += p_ptr->ptohit;
 
     /* If creature is lit, use base rates, else, make it harder to hit */
@@ -969,8 +968,8 @@ void py_attack(int y, int x)
 	    if (k < 0) k = 0;
 
 	    /* Confusion attack */
-	    if (py.flags1.confuse_monster) {
-		py.flags1.confuse_monster = FALSE;
+	    if (py.confuse_monster) {
+		py.confuse_monster = FALSE;
 		msg_print("Your hands stop glowing.");
 		if ((r_list[r_idx].cflags2 & MF2_CHARM_SLEEP) ||
 		    (randint(MAX_R_LEV) < r_list[r_idx].level)) {
@@ -1017,7 +1016,7 @@ void py_attack(int y, int x)
 		&& (i_ptr->tval <= TV_ARROW)) {	/* Use missiles up */
 		i_ptr->number--;
 		inven_weight -= i_ptr->weight;
-		py.flags1.status |= PY_STR_WGT;
+		py.status |= PY_STR_WGT;
 		if (i_ptr->number == 0) {
 		    equip_ctr--;
 		    py_bonuses(i_ptr, -1);
@@ -1076,7 +1075,7 @@ static void inven_throw(int item_val, inven_type *t_ptr)
 	t_ptr->number = 1;
 	i_ptr->number--;
 	inven_weight -= i_ptr->weight;
-	py.flags1.status |= PY_STR_WGT;
+	py.status |= PY_STR_WGT;
     } else
 	inven_destroy(item_val);
 }
@@ -1095,14 +1094,14 @@ static void facts(inven_type *i_ptr, \
 
     /* Throwing objects			 */
     *tdam = pdamroll(i_ptr->damage) + i_ptr->todam;
-    *tbth = py.misc.bthb * 75 / 100;
-    *tpth = py.misc.ptohit + i_ptr->tohit;
+    *tbth = py.bthb * 75 / 100;
+    *tpth = py.ptohit + i_ptr->tohit;
 
     /* Add this back later if the correct throwing device. -CJS- */
     if (inventory[INVEN_WIELD].tval != TV_NOTHING)
 	*tpth -= inventory[INVEN_WIELD].tohit;
 
-    *tdis = (((py.stats.use_stat[A_STR] + 20) * 10) / tmp_weight);
+    *tdis = (((py.use_stat[A_STR] + 20) * 10) / tmp_weight);
     if (*tdis > 10)
 	*tdis = 10;
 
@@ -1122,7 +1121,7 @@ static void facts(inven_type *i_ptr, \
 	  /* Sling and ammo */
 	  case 20:
 	    if (i_ptr->tval != TV_SHOT) break;
-	    *tbth = py.misc.bthb;
+	    *tbth = py.bthb;
 	    *tpth += 2 * inventory[INVEN_WIELD].tohit;
 	    *tdam += inventory[INVEN_WIELD].todam;
 	    *tdam = *tdam * 2;
@@ -1132,7 +1131,7 @@ static void facts(inven_type *i_ptr, \
 	  /* Sling of Might and ammo */
 	  case 21:
 	    if (i_ptr->tval != TV_SHOT) break;
-	    *tbth = py.misc.bthb;
+	    *tbth = py.bthb;
 	    *tpth += 2 * inventory[INVEN_WIELD].tohit;
 	    *tdam += inventory[INVEN_WIELD].todam;
 	    *tdam = *tdam * 3;
@@ -1142,7 +1141,7 @@ static void facts(inven_type *i_ptr, \
 	  /* Short Bow and Arrow */
 	  case 1:
 	    if (i_ptr->tval != TV_ARROW) break;
-	    *tbth = py.misc.bthb;
+	    *tbth = py.bthb;
 	    *tpth += 2 * inventory[INVEN_WIELD].tohit;
 	    *tdam += inventory[INVEN_WIELD].todam;
 	    *tdam = *tdam * 2;
@@ -1152,7 +1151,7 @@ static void facts(inven_type *i_ptr, \
 	  /* Long Bow and Arrow	 */
 	  case 2:
 	    if (i_ptr->tval != TV_ARROW) break;
-	    *tbth = py.misc.bthb;
+	    *tbth = py.bthb;
 	    *tpth += 2 * inventory[INVEN_WIELD].tohit;
 	    *tdam += inventory[INVEN_WIELD].todam;
 	    *tdam = *tdam * 3;
@@ -1162,7 +1161,7 @@ static void facts(inven_type *i_ptr, \
 	  /* C Bow, BARD, L bow of M and Arrow*/
 	  case 3:
 	    if (i_ptr->tval != TV_ARROW) break;
-	    *tbth = py.misc.bthb;
+	    *tbth = py.bthb;
 	    *tpth += 2 * inventory[INVEN_WIELD].tohit;
 	    *tdam += inventory[INVEN_WIELD].todam;
 	    *tdam = *tdam * 4;
@@ -1172,7 +1171,7 @@ static void facts(inven_type *i_ptr, \
 	  /* C Bow of M, BELEG and Arrow*/
 	  case 4:
 	    if (i_ptr->tval != TV_ARROW) break;
-	    *tbth = py.misc.bthb;
+	    *tbth = py.bthb;
 	    *tpth += 2 * inventory[INVEN_WIELD].tohit;
 	    *tdam += inventory[INVEN_WIELD].todam;
 	    *tdam = *tdam * 5;
@@ -1182,7 +1181,7 @@ static void facts(inven_type *i_ptr, \
 	  /* Light Crossbow and Bolt */
 	  case 10:
 	    if (i_ptr->tval != TV_BOLT) break;
-	    *tbth = py.misc.bthb;
+	    *tbth = py.bthb;
 	    *tpth += 2 * inventory[INVEN_WIELD].tohit;
 	    *tdam += inventory[INVEN_WIELD].todam;
 	    *tdam = *tdam * 3;
@@ -1192,7 +1191,7 @@ static void facts(inven_type *i_ptr, \
 	  /* Heavy Crossbow and Bolt */
 	  case 11:
 	    if (i_ptr->tval != TV_BOLT) break;
-	    *tbth = py.misc.bthb;
+	    *tbth = py.bthb;
 	    *tpth += 2 * inventory[INVEN_WIELD].tohit;
 	    *tdam += inventory[INVEN_WIELD].todam;
 	    *tdam = *tdam * 4;
@@ -1202,7 +1201,7 @@ static void facts(inven_type *i_ptr, \
 	  /* H xbow of M and Bolt*/
 	  case 12:
 	    if (i_ptr->tval != TV_BOLT) break;
-	    *tbth = py.misc.bthb;
+	    *tbth = py.bthb;
 	    *tpth += 2 * inventory[INVEN_WIELD].tohit;
 	    *tdam += inventory[INVEN_WIELD].todam;
 	    *tdam = *tdam * 5;
@@ -1328,27 +1327,27 @@ void py_bash(int y, int x)
     }
 
     /* Attempt to bash */
-    base_tohit = (py.stats.use_stat[A_STR] +
+    base_tohit = (py.use_stat[A_STR] +
 		  inventory[INVEN_ARM].weight / 2 +
-		  py.misc.wt / 10);
+		  py.wt / 10);
 
     /* Harder to bash invisible monsters */
     if (!m_ptr->ml) {
 	base_tohit = (base_tohit / 2) - 
-	     (py.stats.use_stat[A_DEX] * (BTH_PLUS_ADJ - 1)) -
-	     (py.misc.lev * class_level_adj[py.misc.pclass][CLA_BTH] / 2);
+	     (py.use_stat[A_DEX] * (BTH_PLUS_ADJ - 1)) -
+	     (py.lev * class_level_adj[py.pclass][CLA_BTH] / 2);
     }
 
     /* Hack -- test for contact */
-    if (test_hit(base_tohit, (int)py.misc.lev,
-		 (int)py.stats.use_stat[A_DEX], (int)r_ptr->ac, CLA_BTH)) {
+    if (test_hit(base_tohit, (int)py.lev,
+		 (int)py.use_stat[A_DEX], (int)r_ptr->ac, CLA_BTH)) {
 
 	(void)sprintf(out_val, "You hit %s.", m_name);
 	msg_print(out_val);
 	k = pdamroll(inventory[INVEN_ARM].damage);
 	k = critical_blow((int)(inventory[INVEN_ARM].weight / 4 +
-				py.stats.use_stat[A_STR]), 0, k, CLA_BTH);
-	k += py.misc.wt / 60 + 3;
+				py.use_stat[A_STR]), 0, k, CLA_BTH);
+	k += py.wt / 60 + 3;
 
 	/* No negative damage */
 	if (k < 0) k = 0;
@@ -1397,9 +1396,9 @@ void py_bash(int y, int x)
     }
 
     /* Stumble */
-    if (randint(150) > py.stats.use_stat[A_DEX]) {
+    if (randint(150) > py.use_stat[A_DEX]) {
 	msg_print("You are off balance.");
-	py.flags1.paralysis = 1 + randint(2);
+	py.paralysis = 1 + randint(2);
     }
 }
 

@@ -297,10 +297,10 @@ static void change_character()
 {
     register int          tmp_val;
     register s32b        tmp_lval;
-    u16b               *a_ptr = py.stats.max_stat;
+    u16b               *a_ptr = py.max_stat;
 
     vtype                 tmp_str;
-    register struct misc *m_ptr = &py.misc;
+    player_type *p_ptr = &py;
 
     prt("(3 - 118) Strength     = ", 0, 0);
     if (!get_string(tmp_str, 0, 25, 3)) return;
@@ -358,9 +358,9 @@ static void change_character()
 
     tmp_val = atoi(tmp_str);
     if ((tmp_val > 0) && (tmp_val <= MAX_SHORT)) {
-	m_ptr->mhp = tmp_val;
-	m_ptr->chp = tmp_val;
-	m_ptr->chp_frac = 0;
+	p_ptr->mhp = tmp_val;
+	p_ptr->chp = tmp_val;
+	p_ptr->chp_frac = 0;
 	prt_mhp();
 	prt_chp();
     }
@@ -370,106 +370,106 @@ static void change_character()
 
     tmp_val = atoi(tmp_str);
     if ((tmp_val > -1) && (tmp_val <= MAX_SHORT) && (*tmp_str != '\0')) {
-	m_ptr->mana = tmp_val;
-	m_ptr->cmana = tmp_val;
-	m_ptr->cmana_frac = 0;
+	p_ptr->mana = tmp_val;
+	p_ptr->cmana = tmp_val;
+	p_ptr->cmana_frac = 0;
 	prt_cmana();
     }
 
-    (void)sprintf(tmp_str, "Current=%ld  Gold = ", (long)m_ptr->au);
+    (void)sprintf(tmp_str, "Current=%ld  Gold = ", (long)p_ptr->au);
     tmp_val = strlen(tmp_str);
     prt(tmp_str, 0, 0);
     if (!get_string(tmp_str, 0, tmp_val, 7)) return;
 
     tmp_lval = atol(tmp_str);
     if (tmp_lval > -1 && (*tmp_str != '\0')) {
-	m_ptr->au = tmp_lval;
+	p_ptr->au = tmp_lval;
 	prt_gold();
     }
 
-    (void)sprintf(tmp_str, "Current=%ld  Max Exp = ", (long)m_ptr->max_exp);
+    (void)sprintf(tmp_str, "Current=%ld  Max Exp = ", (long)p_ptr->max_exp);
     tmp_val = strlen(tmp_str);
     prt(tmp_str, 0, 0);
     if (!get_string(tmp_str, 0, tmp_val, 7)) return;
 
     tmp_lval = atol(tmp_str);
     if (tmp_lval > -1 && (*tmp_str != '\0')) {
-	m_ptr->max_exp = tmp_lval;
+	p_ptr->max_exp = tmp_lval;
 	prt_experience();
     }
 
-    (void)sprintf(tmp_str, "Current=%d  (0-200) Searching = ", m_ptr->srh);
+    (void)sprintf(tmp_str, "Current=%d  (0-200) Searching = ", p_ptr->srh);
     tmp_val = strlen(tmp_str);
     prt(tmp_str, 0, 0);
     if (!get_string(tmp_str, 0, tmp_val, 3)) return;
 
 	tmp_val = atoi(tmp_str);
 	if ((tmp_val > -1) && (tmp_val < 201) && (*tmp_str != '\0')) {
-	    m_ptr->srh = tmp_val;
+	    p_ptr->srh = tmp_val;
     }
 
-    (void)sprintf(tmp_str, "Current=%d  (-1-18) Stealth = ", m_ptr->stl);
+    (void)sprintf(tmp_str, "Current=%d  (-1-18) Stealth = ", p_ptr->stl);
     tmp_val = strlen(tmp_str);
     prt(tmp_str, 0, 0);
     if (!get_string(tmp_str, 0, tmp_val, 3)) return;
 	tmp_val = atoi(tmp_str);
 	if ((tmp_val > -2) && (tmp_val < 19) && (*tmp_str != '\0')) {
-	    m_ptr->stl = tmp_val;
+	    p_ptr->stl = tmp_val;
     }
 
-    (void)sprintf(tmp_str, "Current=%d  (0-200) Disarming = ", m_ptr->disarm);
+    (void)sprintf(tmp_str, "Current=%d  (0-200) Disarming = ", p_ptr->disarm);
     tmp_val = strlen(tmp_str);
     prt(tmp_str, 0, 0);
     if (!get_string(tmp_str, 0, tmp_val, 3)) return;
 	tmp_val = atoi(tmp_str);
 	if ((tmp_val > -1) && (tmp_val < 201) && (*tmp_str != '\0')) {
-	    m_ptr->disarm = tmp_val;
+	    p_ptr->disarm = tmp_val;
     }
 
-    (void)sprintf(tmp_str, "Current=%d  (0-100) Save = ", m_ptr->save);
+    (void)sprintf(tmp_str, "Current=%d  (0-100) Save = ", p_ptr->save);
     tmp_val = strlen(tmp_str);
     prt(tmp_str, 0, 0);
     if (!get_string(tmp_str, 0, tmp_val, 3)) return;
 	tmp_val = atoi(tmp_str);
 	if ((tmp_val > -1) && (tmp_val < 201) && (*tmp_str != '\0')) {
-	    m_ptr->save = tmp_val;
+	    p_ptr->save = tmp_val;
     }
 
-    (void)sprintf(tmp_str, "Current=%d  (0-200) Base to hit = ", m_ptr->bth);
+    (void)sprintf(tmp_str, "Current=%d  (0-200) Base to hit = ", p_ptr->bth);
     tmp_val = strlen(tmp_str);
     prt(tmp_str, 0, 0);
     if (!get_string(tmp_str, 0, tmp_val, 3)) return;
 	tmp_val = atoi(tmp_str);
 	if ((tmp_val > -1) && (tmp_val < 201) && (*tmp_str != '\0')) {
-	    m_ptr->bth = tmp_val;
+	    p_ptr->bth = tmp_val;
     }
 
-    (void)sprintf(tmp_str, "Current=%d  (0-200) Bows/Throwing = ", m_ptr->bthb);
+    (void)sprintf(tmp_str, "Current=%d  (0-200) Bows/Throwing = ", p_ptr->bthb);
     tmp_val = strlen(tmp_str);
     prt(tmp_str, 0, 0);
     if (!get_string(tmp_str, 0, tmp_val, 3)) return;
 	tmp_val = atoi(tmp_str);
 	if ((tmp_val > -1) && (tmp_val < 201) && (*tmp_str != '\0')) {
-	    m_ptr->bthb = tmp_val;
+	    p_ptr->bthb = tmp_val;
     }
 
-    (void)sprintf(tmp_str, "Current=%d  Weight = ", m_ptr->wt);
+    (void)sprintf(tmp_str, "Current=%d  Weight = ", p_ptr->wt);
     tmp_val = strlen(tmp_str);
     prt(tmp_str, 0, 0);
     if (!get_string(tmp_str, 0, tmp_val, 3)) return;
 	tmp_val = atoi(tmp_str);
 	if (tmp_val > -1 && (*tmp_str != '\0')) {
-	    m_ptr->wt = tmp_val;
+	    p_ptr->wt = tmp_val;
     }
 
     while (get_com("Alter speed? (+/-)", tmp_str)) {
 	if (*tmp_str == '+') {
-	    py.flags1.speed -= 1;
-	    py.flags1.status |= PY_SPEED;
+	    py.speed -= 1;
+	    py.status |= PY_SPEED;
 	}
 	else if (*tmp_str == '-') {
-	    py.flags1.speed += 1;
-	    py.flags1.status |= PY_SPEED;
+	    py.speed += 1;
+	    py.status |= PY_SPEED;
 	}
 	else
 	    break;

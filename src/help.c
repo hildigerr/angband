@@ -118,7 +118,7 @@ void ident_char()
 	    prt("? - A scroll.", 0, 0);
 	    break;
 	  case '@':
-	    prt(py.misc.name, 0, 0);
+	    prt(py.name, 0, 0);
 	    break;
 	  case 'A':
 	    prt("A - Angel.", 0, 0);

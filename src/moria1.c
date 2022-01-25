@@ -56,17 +56,17 @@ void py_bonuses(inven_type *t_ptr, int factor)
     if (t_ptr->flags1 & TR_STATS) {
 	for (i = 0; i < 6; i++)
 	    if ((1 << i) & t_ptr->flags1) {
-		py.stats.mod_stat[i] += amount;
+		py.mod_stat[i] += amount;
 		set_use_stat(i);
-		py.flags1.status |= (PY_STR << i);
+		py.status |= (PY_STR << i);
 	    }
     }
     if (TR1_SEARCH & t_ptr->flags1) {
-	py.misc.srh += amount;
-	py.misc.fos -= amount;
+	py.srh += amount;
+	py.fos -= amount;
     }
     if (TR1_STEALTH & t_ptr->flags1)
-	py.misc.stl += amount;
+	py.stl += amount;
     if (TR1_SPEED & t_ptr->flags1) {
 	if ((t_ptr->tval == TV_RING) &&
 	    !stricmp("Speed",
@@ -81,11 +81,11 @@ void py_bonuses(inven_type *t_ptr, int factor)
 			 k_list[inventory[INVEN_LEFT].index].name) &&
 		(inventory[INVEN_RIGHT].pval > 0))
 		return;
-	py.flags1.speed -= amount;
-	py.flags1.status |= PY_SPEED;
+	py.speed -= amount;
+	py.status |= PY_SPEED;
     }
     if (TR1_INFRA & t_ptr->flags1)
-	py.flags1.see_infra += amount;
+	py.see_infra += amount;
 }
 
 /*
@@ -98,8 +98,7 @@ void calc_bonuses()
 
     int			old_dis_ac;
 
-    struct flags1 *p_ptr = &py.flags1;
-    struct misc  *m_ptr = &py.misc;
+    player_type  *p_ptr = &py;
 
     inven_type		*i_ptr;
 
@@ -107,20 +106,20 @@ void calc_bonuses()
 
     if (p_ptr->slow_digest) p_ptr->food_digested++;
     if (p_ptr->regenerate) p_ptr->food_digested -= 3;
-    if (py.misc.prace == 9) p_ptr->see_inv = TRUE;
+    if (py.prace == 9) p_ptr->see_inv = TRUE;
     else p_ptr->see_inv = FALSE;
     p_ptr->teleport = FALSE;
-    if (py.misc.prace == 4) p_ptr->free_act = TRUE;
+    if (py.prace == 4) p_ptr->free_act = TRUE;
     else p_ptr->free_act = FALSE;
     p_ptr->slow_digest = FALSE;
     p_ptr->aggravate = FALSE;
-    if (py.misc.prace == 7) p_ptr->sustain_str = TRUE;
+    if (py.prace == 7) p_ptr->sustain_str = TRUE;
     else p_ptr->sustain_str = FALSE;
     p_ptr->sustain_int = FALSE;
     p_ptr->sustain_wis = FALSE;
-    if (py.misc.prace == 8) p_ptr->sustain_con = TRUE;
+    if (py.prace == 8) p_ptr->sustain_con = TRUE;
     else p_ptr->sustain_con = FALSE;
-    if (py.misc.prace == 3) p_ptr->sustain_dex = TRUE;
+    if (py.prace == 3) p_ptr->sustain_dex = TRUE;
     else p_ptr->sustain_dex = FALSE;
     p_ptr->sustain_chr = FALSE;
     p_ptr->resist_fire = FALSE;
@@ -128,7 +127,7 @@ void calc_bonuses()
     p_ptr->resist_cold = FALSE;
     p_ptr->regenerate = FALSE;
     p_ptr->resist_elec = FALSE;
-    if (py.misc.prace == 9) p_ptr->ffall = TRUE;
+    if (py.prace == 9) p_ptr->ffall = TRUE;
     else p_ptr->ffall = FALSE;
     p_ptr->resist_pois = FALSE;
     p_ptr->hold_life = FALSE;
@@ -141,73 +140,73 @@ void calc_bonuses()
     p_ptr->light = FALSE;
     p_ptr->resist_conf = FALSE;
     p_ptr->resist_sound = FALSE;
-    if (py.misc.prace == 2) p_ptr->resist_lite = TRUE;
+    if (py.prace == 2) p_ptr->resist_lite = TRUE;
     else p_ptr->resist_lite = FALSE;
-    if (py.misc.prace == 6) p_ptr->resist_dark = TRUE;
+    if (py.prace == 6) p_ptr->resist_dark = TRUE;
     else p_ptr->resist_dark = FALSE;
     p_ptr->resist_chaos = FALSE;
     p_ptr->resist_disen = FALSE;
     p_ptr->resist_shards = FALSE;
     p_ptr->resist_nexus = FALSE;
-    if (py.misc.prace == 5) p_ptr->resist_blind = TRUE;
+    if (py.prace == 5) p_ptr->resist_blind = TRUE;
     else p_ptr->resist_blind = FALSE;
     p_ptr->resist_nether = FALSE;
     p_ptr->resist_fear = FALSE;
 
-    old_dis_ac = m_ptr->dis_ac;
-    m_ptr->ptohit = tohit_adj();   /* Real To Hit   */
-    m_ptr->ptodam = todam_adj();   /* Real To Dam   */
-    m_ptr->ptoac = toac_adj();	   /* Real To AC    */
-    m_ptr->pac = 0;		   /* Real AC	     */
-    m_ptr->dis_th = m_ptr->ptohit; /* Display To Hit	    */
-    m_ptr->dis_td = m_ptr->ptodam; /* Display To Dam	    */
-    m_ptr->dis_ac = 0;		   /* Display AC		 */
-    m_ptr->dis_tac = m_ptr->ptoac; /* Display To AC	    */
+    old_dis_ac = p_ptr->dis_ac;
+    p_ptr->ptohit = tohit_adj();   /* Real To Hit   */
+    p_ptr->ptodam = todam_adj();   /* Real To Dam   */
+    p_ptr->ptoac = toac_adj();	   /* Real To AC    */
+    p_ptr->pac = 0;		   /* Real AC	     */
+    p_ptr->dis_th = p_ptr->ptohit; /* Display To Hit	    */
+    p_ptr->dis_td = p_ptr->ptodam; /* Display To Dam	    */
+    p_ptr->dis_ac = 0;		   /* Display AC		 */
+    p_ptr->dis_tac = p_ptr->ptoac; /* Display To AC	    */
     for (i = INVEN_WIELD; i <= INVEN_LIGHT; i++) {
 	i_ptr = &inventory[i];
 	if (i_ptr->tval != TV_NOTHING) {
 	    if ((TR3_CURSED & i_ptr->flags1) == 0) {
-		m_ptr->pac += i_ptr->ac;
-		m_ptr->dis_ac += i_ptr->ac;
+		p_ptr->pac += i_ptr->ac;
+		p_ptr->dis_ac += i_ptr->ac;
 	    }
-	    m_ptr->ptohit += i_ptr->tohit;
+	    p_ptr->ptohit += i_ptr->tohit;
 	    if (i_ptr->tval != TV_BOW)            	/* Bows can't damage. -CJS- */
-		m_ptr->ptodam += i_ptr->todam;
-	    m_ptr->ptoac += i_ptr->toac;
+		p_ptr->ptodam += i_ptr->todam;
+	    p_ptr->ptoac += i_ptr->toac;
 	    if (known2_p(i_ptr)) {
-		m_ptr->dis_th += i_ptr->tohit;
+		p_ptr->dis_th += i_ptr->tohit;
 		if (i_ptr->tval != TV_BOW)
-		    m_ptr->dis_td += i_ptr->todam;	/* Bows can't damage. -CJS- */
-		m_ptr->dis_tac += i_ptr->toac;
+		    p_ptr->dis_td += i_ptr->todam;	/* Bows can't damage. -CJS- */
+		p_ptr->dis_tac += i_ptr->toac;
 	    }
 	}
     }
 
-    if (py.misc.pclass == 2) {
+    if (py.pclass == 2) {
 	i_ptr = &inventory[INVEN_WIELD];
 	if (!(i_ptr->flags2 & TR_BLESS_BLADE) && /* blessed blade == no penalty -CWS */
 	    (i_ptr->tval == TV_SWORD || i_ptr->tval == TV_POLEARM)) {
-	    m_ptr->ptohit -= 2;
-	    m_ptr->ptodam -= 2;
-	    m_ptr->dis_th -= 2;
-	    m_ptr->dis_td -= 2;
+	    p_ptr->ptohit -= 2;
+	    p_ptr->ptodam -= 2;
+	    p_ptr->dis_th -= 2;
+	    p_ptr->dis_td -= 2;
 	}
     }
     if (weapon_heavy)
-	m_ptr->dis_th += (py.stats.use_stat[A_STR] * 15 -
+	p_ptr->dis_th += (py.use_stat[A_STR] * 15 -
 			  inventory[INVEN_WIELD].weight);
 
 /* don't forget stun adj, or we'll get incorrect values... -CFT */
     if (p_ptr->stun > 50) {
-	m_ptr->ptohit -= 20;
-	m_ptr->dis_th -= 20;
-	m_ptr->ptodam -= 20;
-	m_ptr->dis_td -= 20;
+	p_ptr->ptohit -= 20;
+	p_ptr->dis_th -= 20;
+	p_ptr->ptodam -= 20;
+	p_ptr->dis_td -= 20;
     } else if (p_ptr->stun > 0) {
-	m_ptr->ptohit -= 5;
-	m_ptr->dis_th -= 5;
-	m_ptr->ptodam -= 5;
-	m_ptr->dis_td -= 5;
+	p_ptr->ptohit -= 5;
+	p_ptr->dis_th -= 5;
+	p_ptr->ptodam -= 5;
+	p_ptr->dis_td -= 5;
     }
 /* Add in temporary spell increases	 */
 /*
@@ -215,33 +214,33 @@ void calc_bonuses()
  * sim. encumberence), and these really should be magical bonuses -CFT 
  */
     if (p_ptr->status & PY_INVULN) {
-	m_ptr->ptoac += 100;
-	m_ptr->dis_tac += 100;
+	p_ptr->ptoac += 100;
+	p_ptr->dis_tac += 100;
     }
     if (p_ptr->status & PY_BLESSED) {	/* changed to agree w/ code in
 					 * dungeon()... -CFT */
-	m_ptr->ptoac += 5;
-	m_ptr->dis_tac += 5;
-	m_ptr->ptohit += 10;
-	m_ptr->dis_th += 10;
+	p_ptr->ptoac += 5;
+	p_ptr->dis_tac += 5;
+	p_ptr->ptohit += 10;
+	p_ptr->dis_th += 10;
     }
     if (p_ptr->shield > 0) {
-	m_ptr->ptoac += 50;
-	m_ptr->dis_tac += 50;
+	p_ptr->ptoac += 50;
+	p_ptr->dis_tac += 50;
     }
     if (p_ptr->detect_inv > 0)
 	p_ptr->see_inv = TRUE;
     if (p_ptr->status & PY_HERO) { /* now agrees w/ code in dungeon() -CFT */
-	m_ptr->ptohit += 12;
-	m_ptr->dis_th += 12;
+	p_ptr->ptohit += 12;
+	p_ptr->dis_th += 12;
     }
     if (p_ptr->status & PY_SHERO) {/* now agrees w/ code in dungeon() -CFT */
-	m_ptr->ptohit += 24;
-	m_ptr->dis_th += 24;
-	m_ptr->ptoac -= 10;	   /* berserk, so not being careful... -CFT */
-	m_ptr->dis_tac -= 10;
+	p_ptr->ptohit += 24;
+	p_ptr->dis_th += 24;
+	p_ptr->ptoac -= 10;	   /* berserk, so not being careful... -CFT */
+	p_ptr->dis_tac -= 10;
     }
-    m_ptr->dis_ac += m_ptr->dis_tac;	/* this moved from above, so it will
+    p_ptr->dis_ac += p_ptr->dis_tac;	/* this moved from above, so it will
 					 * show ac adjustments from spells...
 					 * -CFT */
 
@@ -335,9 +334,9 @@ void calc_bonuses()
     if (p_ptr->regenerate)
 	p_ptr->food_digested += 3;
 
-    if (class[py.misc.pclass].spell == MAGE) {
+    if (class[py.pclass].spell == MAGE) {
 	calc_mana(A_INT);
-    } else if (class[py.misc.pclass].spell == PRIEST) {
+    } else if (class[py.pclass].spell == PRIEST) {
 	calc_mana(A_WIS);
     }
 }
@@ -491,7 +490,7 @@ int show_equip(int weight, int col)
 	if (i_ptr->tval != TV_NOTHING) {
 	    switch (i) {
 	      case INVEN_WIELD:
-		if (py.stats.use_stat[A_STR] * 15 < i_ptr->weight)
+		if (py.use_stat[A_STR] * 15 < i_ptr->weight)
 		    prt1 = "Just lifting";
 		else
 		    prt1 = "Wielding";
@@ -584,7 +583,7 @@ void inven_takeoff(int item_val, int posn)
     equip_ctr--;
     t_ptr = &inventory[item_val];
     inven_weight -= t_ptr->weight * t_ptr->number;
-    py.flags1.status |= PY_STR_WGT;
+    py.status |= PY_STR_WGT;
 
     if (item_val == INVEN_WIELD || item_val == INVEN_AUX)
 	p = "Was wielding ";
@@ -657,7 +656,7 @@ static void inven_drop(int item_val, int drop_all)
 	(void)sprintf(prt2, "Dropped %s.", prt1);
 	msg_print(prt2);
     }
-    py.flags1.status |= PY_STR_WGT;
+    py.status |= PY_STR_WGT;
 }
 
 
@@ -1281,7 +1280,7 @@ void inven_command(int command)
 	if (tmp2 < cur_lite)
 	    tmp2 = cur_lite;
 
-	if (!py.flags1.blind) {
+	if (!py.blind) {
 	    min_i = MY_MAX(0, (char_row - cur_lite));
 	    max_i = MY_MIN(cur_height, (char_row + cur_lite));
 	    min_j = MY_MAX(0, (char_col - cur_lite));
@@ -1770,7 +1769,7 @@ void darken_player(int y1, int x1)
 /* Four cases : Normal, Finding, Blind, and Nolight	 -RAK-	 */
 void move_light(int y1, int x1, int y2, int x2)
 {
-    if (py.flags1.blind > 0 || !player_light)
+    if (py.blind > 0 || !player_light)
 	sub3_move_light(y1, x1, y2, x2);
     else
 	sub1_move_light(y1, x1, y2, x2);
@@ -1808,10 +1807,10 @@ void rest()
     }
     if (rest_num != 0) {
 	search_off();
-	py.flags1.rest = rest_num;
-	py.flags1.status |= PY_REST;
+	py.rest = rest_num;
+	py.status |= PY_REST;
 	prt_state();
-	py.flags1.food_digested--;
+	py.food_digested--;
 	prt("Press any key to stop resting...", 0, 0);
 	put_qio();
     } else {
@@ -1830,7 +1829,7 @@ int test_hit(int bth, int level, int pth, int ac, int attack_type)
 
     disturb(1, 0);
     i = bth + pth * BTH_PLUS_ADJ
-	+ (level * class_level_adj[py.misc.pclass][attack_type]);
+	+ (level * class_level_adj[py.pclass][attack_type]);
 /* pth could be less than 0 if player wielding weapon too heavy for him */
 /* always miss 1 out of 20, always hit 1 out of 20 */
     die = randint(20);
@@ -1846,12 +1845,12 @@ int test_hit(int bth, int level, int pth, int ac, int attack_type)
 /* -RAK-	 */
 void take_hit(int damage, const char *hit_from)
 {
-    if (py.flags1.invuln > 0 && damage < 9000)
+    if (py.invuln > 0 && damage < 9000)
 	damage = 0;
-    py.misc.chp -= damage;
-    if (py.misc.chp < 0) {
+    py.chp -= damage;
+    if (py.chp < 0) {
 	if ((wizard) && !(get_check("Die?"))) {
-	    py.misc.chp=py.misc.mhp;
+	    py.chp=py.mhp;
 	    death=FALSE;
 	    prt_chp();
 	    msg_print("OK, so you don't die.");
@@ -1865,7 +1864,7 @@ void take_hit(int damage, const char *hit_from)
 	}
     } else
 	prt_chp();
-    if (py.misc.chp <= py.misc.mhp * hitpoint_warn / 10) {
+    if (py.chp <= py.mhp * hitpoint_warn / 10) {
 	msg_print("*** LOW HITPOINT WARNING! ***");
 	msg_print(NULL);	/* make sure they see it -CWS */
     }

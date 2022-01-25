@@ -123,15 +123,14 @@ static int sv_write()
     byte               char_tmp, prev_char;
     register cave_type   *c_ptr;
     register monster_lore *r_ptr;
-    struct stats         *s_ptr;
+    player_type         *p_ptr = &py;
 
 #ifdef MSDOS
     inven_type           *t_ptr;
 
 #endif
-    register struct flags1 *f_ptr;
     store_type  *st_ptr;
-    struct misc *m_ptr;
+    player_type *p_ptr = &py;
 
 /* clear the death flag when creating a HANGUP save file, so that player can
  * see tombstone when restart 
@@ -332,124 +331,121 @@ static int sv_write()
     wr_long(l);
     wr_long(l);
 
-    m_ptr = &py.misc;
-    wr_string(m_ptr->name);
-    wr_byte(m_ptr->male);
-    wr_long((u32b) m_ptr->au);
-    wr_long((u32b) m_ptr->max_exp);
-    wr_long((u32b) m_ptr->exp);
-    wr_short(m_ptr->exp_frac);
-    wr_short(m_ptr->age);
-    wr_short(m_ptr->ht);
-    wr_short(m_ptr->wt);
-    wr_short(m_ptr->lev);
-    wr_short(m_ptr->max_dlv);
-    wr_short((u16b) m_ptr->srh);
-    wr_short((u16b) m_ptr->fos);
-    wr_short((u16b) m_ptr->bth);
-    wr_short((u16b) m_ptr->bthb);
-    wr_short((u16b) m_ptr->mana);
-    wr_short((u16b) m_ptr->mhp);
-    wr_short((u16b) m_ptr->ptohit);
-    wr_short((u16b) m_ptr->ptodam);
-    wr_short((u16b) m_ptr->pac);
-    wr_short((u16b) m_ptr->ptoac);
-    wr_short((u16b) m_ptr->dis_th);
-    wr_short((u16b) m_ptr->dis_td);
-    wr_short((u16b) m_ptr->dis_ac);
-    wr_short((u16b) m_ptr->dis_tac);
-    wr_short((u16b) m_ptr->disarm);
-    wr_short((u16b) m_ptr->save);
-    wr_short((u16b) m_ptr->sc);
-    wr_short((u16b) m_ptr->stl);
-    wr_byte(m_ptr->pclass);
-    wr_byte(m_ptr->prace);
-    wr_byte(m_ptr->hitdie);
-    wr_byte(m_ptr->expfact);
-    wr_short((u16b) m_ptr->cmana);
-    wr_short(m_ptr->cmana_frac);
-    wr_short((u16b) m_ptr->chp);
-    wr_short(m_ptr->chp_frac);
+    wr_string(p_ptr->name);
+    wr_byte(p_ptr->male);
+    wr_long((u32b) p_ptr->au);
+    wr_long((u32b) p_ptr->max_exp);
+    wr_long((u32b) p_ptr->exp);
+    wr_short(p_ptr->exp_frac);
+    wr_short(p_ptr->age);
+    wr_short(p_ptr->ht);
+    wr_short(p_ptr->wt);
+    wr_short(p_ptr->lev);
+    wr_short(p_ptr->max_dlv);
+    wr_short((u16b) p_ptr->srh);
+    wr_short((u16b) p_ptr->fos);
+    wr_short((u16b) p_ptr->bth);
+    wr_short((u16b) p_ptr->bthb);
+    wr_short((u16b) p_ptr->mana);
+    wr_short((u16b) p_ptr->mhp);
+    wr_short((u16b) p_ptr->ptohit);
+    wr_short((u16b) p_ptr->ptodam);
+    wr_short((u16b) p_ptr->pac);
+    wr_short((u16b) p_ptr->ptoac);
+    wr_short((u16b) p_ptr->dis_th);
+    wr_short((u16b) p_ptr->dis_td);
+    wr_short((u16b) p_ptr->dis_ac);
+    wr_short((u16b) p_ptr->dis_tac);
+    wr_short((u16b) p_ptr->disarm);
+    wr_short((u16b) p_ptr->save);
+    wr_short((u16b) p_ptr->sc);
+    wr_short((u16b) p_ptr->stl);
+    wr_byte(p_ptr->pclass);
+    wr_byte(p_ptr->prace);
+    wr_byte(p_ptr->hitdie);
+    wr_byte(p_ptr->expfact);
+    wr_short((u16b) p_ptr->cmana);
+    wr_short(p_ptr->cmana_frac);
+    wr_short((u16b) p_ptr->chp);
+    wr_short(p_ptr->chp_frac);
     for (i = 0; i < 4; i++)
-	wr_string(m_ptr->history[i]);
+	wr_string(p_ptr->history[i]);
 
-    s_ptr = &py.stats;
-    wr_shorts(s_ptr->max_stat, 6);
-    wr_bytes(s_ptr->cur_stat, 6);               /* Was wr_shorts -TL */
-    wr_shorts((u16b *) s_ptr->mod_stat, 6);
-    wr_shorts(s_ptr->use_stat, 6);
+    wr_shorts(p_ptr->max_stat, 6);
+    wr_bytes(p_ptr->cur_stat, 6);               /* Was wr_shorts -TL */
+    wr_shorts((u16b *) p_ptr->mod_stat, 6);
+    wr_shorts(p_ptr->use_stat, 6);
 
-    f_ptr = &py.flags1;
-    wr_long(f_ptr->status);
-    wr_short((u16b) f_ptr->rest);
-    wr_short((u16b) f_ptr->blind);
-    wr_short((u16b) f_ptr->paralysis);
-    wr_short((u16b) f_ptr->confused);
-    wr_short((u16b) f_ptr->food);
-    wr_short((u16b) f_ptr->food_digested);
-    wr_short((u16b) f_ptr->protection);
-    wr_short((u16b) f_ptr->speed);
-    wr_short((u16b) f_ptr->fast);
-    wr_short((u16b) f_ptr->slow);
-    wr_short((u16b) f_ptr->afraid);
-    wr_short((u16b) f_ptr->cut);
-    wr_short((u16b) f_ptr->stun);
-    wr_short((u16b) f_ptr->poisoned);
-    wr_short((u16b) f_ptr->image);
-    wr_short((u16b) f_ptr->protevil);
-    wr_short((u16b) f_ptr->invuln);
-    wr_short((u16b) f_ptr->hero);
-    wr_short((u16b) f_ptr->shero);
-    wr_short((u16b) f_ptr->shield);
-    wr_short((u16b) f_ptr->blessed);
-    wr_short((u16b) f_ptr->oppose_fire);
-    wr_short((u16b) f_ptr->oppose_cold);
-    wr_short((u16b) f_ptr->oppose_acid);
-    wr_short((u16b) f_ptr->oppose_elec);
-    wr_short((u16b) f_ptr->oppose_pois);
-    wr_short((u16b) f_ptr->detect_inv);
-    wr_short((u16b) f_ptr->word_recall);
-    wr_short((u16b) f_ptr->see_infra);
-    wr_short((u16b) f_ptr->tim_infra);
-    wr_byte(f_ptr->see_inv);
-    wr_byte(f_ptr->teleport);
-    wr_byte(f_ptr->free_act);
-    wr_byte(f_ptr->slow_digest);
-    wr_byte(f_ptr->aggravate);
-    wr_byte(f_ptr->resist_fire);
-    wr_byte(f_ptr->resist_cold);
-    wr_byte(f_ptr->resist_acid);
-    wr_byte(f_ptr->regenerate);
-    wr_byte(f_ptr->resist_elec);
-    wr_byte(f_ptr->ffall);
-    wr_byte(f_ptr->sustain_str);
-    wr_byte(f_ptr->sustain_int);
-    wr_byte(f_ptr->sustain_wis);
-    wr_byte(f_ptr->sustain_con);
-    wr_byte(f_ptr->sustain_dex);
-    wr_byte(f_ptr->sustain_chr);
-    wr_byte(f_ptr->confuse_monster);
-    wr_byte(f_ptr->new_spells);
-    wr_byte(f_ptr->resist_pois);
-    wr_byte(f_ptr->hold_life);
-    wr_byte(f_ptr->telepathy);
-    wr_byte(f_ptr->immune_fire);
-    wr_byte(f_ptr->immune_acid);
-    wr_byte(f_ptr->immune_pois);
-    wr_byte(f_ptr->immune_cold);
-    wr_byte(f_ptr->immune_elec);
-    wr_byte(f_ptr->light);
-    wr_byte(f_ptr->resist_conf);
-    wr_byte(f_ptr->resist_sound);
-    wr_byte(f_ptr->resist_lite);
-    wr_byte(f_ptr->resist_dark);
-    wr_byte(f_ptr->resist_chaos);
-    wr_byte(f_ptr->resist_disen);
-    wr_byte(f_ptr->resist_shards);
-    wr_byte(f_ptr->resist_nexus);
-    wr_byte(f_ptr->resist_blind);
-    wr_byte(f_ptr->resist_nether);
-    wr_byte(f_ptr->resist_fear); /* added -CWS */
+    wr_long(p_ptr->status);
+    wr_short((u16b) p_ptr->rest);
+    wr_short((u16b) p_ptr->blind);
+    wr_short((u16b) p_ptr->paralysis);
+    wr_short((u16b) p_ptr->confused);
+    wr_short((u16b) p_ptr->food);
+    wr_short((u16b) p_ptr->food_digested);
+    wr_short((u16b) p_ptr->protection);
+    wr_short((u16b) p_ptr->speed);
+    wr_short((u16b) p_ptr->fast);
+    wr_short((u16b) p_ptr->slow);
+    wr_short((u16b) p_ptr->afraid);
+    wr_short((u16b) p_ptr->cut);
+    wr_short((u16b) p_ptr->stun);
+    wr_short((u16b) p_ptr->poisoned);
+    wr_short((u16b) p_ptr->image);
+    wr_short((u16b) p_ptr->protevil);
+    wr_short((u16b) p_ptr->invuln);
+    wr_short((u16b) p_ptr->hero);
+    wr_short((u16b) p_ptr->shero);
+    wr_short((u16b) p_ptr->shield);
+    wr_short((u16b) p_ptr->blessed);
+    wr_short((u16b) p_ptr->oppose_fire);
+    wr_short((u16b) p_ptr->oppose_cold);
+    wr_short((u16b) p_ptr->oppose_acid);
+    wr_short((u16b) p_ptr->oppose_elec);
+    wr_short((u16b) p_ptr->oppose_pois);
+    wr_short((u16b) p_ptr->detect_inv);
+    wr_short((u16b) p_ptr->word_recall);
+    wr_short((u16b) p_ptr->see_infra);
+    wr_short((u16b) p_ptr->tim_infra);
+    wr_byte(p_ptr->see_inv);
+    wr_byte(p_ptr->teleport);
+    wr_byte(p_ptr->free_act);
+    wr_byte(p_ptr->slow_digest);
+    wr_byte(p_ptr->aggravate);
+    wr_byte(p_ptr->resist_fire);
+    wr_byte(p_ptr->resist_cold);
+    wr_byte(p_ptr->resist_acid);
+    wr_byte(p_ptr->regenerate);
+    wr_byte(p_ptr->resist_elec);
+    wr_byte(p_ptr->ffall);
+    wr_byte(p_ptr->sustain_str);
+    wr_byte(p_ptr->sustain_int);
+    wr_byte(p_ptr->sustain_wis);
+    wr_byte(p_ptr->sustain_con);
+    wr_byte(p_ptr->sustain_dex);
+    wr_byte(p_ptr->sustain_chr);
+    wr_byte(p_ptr->confuse_monster);
+    wr_byte(p_ptr->new_spells);
+    wr_byte(p_ptr->resist_pois);
+    wr_byte(p_ptr->hold_life);
+    wr_byte(p_ptr->telepathy);
+    wr_byte(p_ptr->immune_fire);
+    wr_byte(p_ptr->immune_acid);
+    wr_byte(p_ptr->immune_pois);
+    wr_byte(p_ptr->immune_cold);
+    wr_byte(p_ptr->immune_elec);
+    wr_byte(p_ptr->light);
+    wr_byte(p_ptr->resist_conf);
+    wr_byte(p_ptr->resist_sound);
+    wr_byte(p_ptr->resist_lite);
+    wr_byte(p_ptr->resist_dark);
+    wr_byte(p_ptr->resist_chaos);
+    wr_byte(p_ptr->resist_disen);
+    wr_byte(p_ptr->resist_shards);
+    wr_byte(p_ptr->resist_nexus);
+    wr_byte(p_ptr->resist_blind);
+    wr_byte(p_ptr->resist_nether);
+    wr_byte(p_ptr->resist_fear); /* added -CWS */
 
     wr_short((u16b) missile_ctr);
     wr_long((u32b) turn);
@@ -666,8 +662,8 @@ int _save_player(char *fnam)
     disturb(1, 0);		   /* Turn off resting and searching. */
 
     /* Fix the speed */
-    py.flags1.speed -= pack_heavy;
-    py.flags1.status |= PY_SPEED;
+    py.speed -= pack_heavy;
+    py.status |= PY_SPEED;
     pack_heavy = 0;
 
     /* Assume failure */
@@ -773,9 +769,7 @@ int load_player(int *generate)
     u16b                 u16b_tmp;
     register cave_type    *c_ptr;
     register monster_lore  *r_ptr;
-    struct misc           *m_ptr;
-    struct stats          *s_ptr;
-    register struct flags1 *f_ptr;
+    player_type           *p_ptr = &py;
     store_type            *st_ptr;
     byte char_tmp, ychar, xchar, count;
 
@@ -1113,130 +1107,127 @@ int load_player(int *generate)
 	    && get_check("Resurrect a dead character?"))
 	    l &= ~0x80000000L;
 	if ((l & 0x80000000L) == 0) {
-	    m_ptr = &py.misc;
-	    rd_string(m_ptr->name);
-	    rd_byte(&m_ptr->male);
-	    rd_long((u32b *) & m_ptr->au);
-	    rd_long((u32b *) & m_ptr->max_exp);
-	    rd_long((u32b *) & m_ptr->exp);
-	    rd_short(&m_ptr->exp_frac);
-	    rd_short(&m_ptr->age);
-	    rd_short(&m_ptr->ht);
-	    rd_short(&m_ptr->wt);
-	    rd_short(&m_ptr->lev);
-	    rd_short(&m_ptr->max_dlv);
-	    rd_short((u16b *) & m_ptr->srh);
-	    rd_short((u16b *) & m_ptr->fos);
-	    rd_short((u16b *) & m_ptr->bth);
-	    rd_short((u16b *) & m_ptr->bthb);
-	    rd_short((u16b *) & m_ptr->mana);
-	    rd_short((u16b *) & m_ptr->mhp);
-	    rd_short((u16b *) & m_ptr->ptohit);
-	    rd_short((u16b *) & m_ptr->ptodam);
-	    rd_short((u16b *) & m_ptr->pac);
-	    rd_short((u16b *) & m_ptr->ptoac);
-	    rd_short((u16b *) & m_ptr->dis_th);
-	    rd_short((u16b *) & m_ptr->dis_td);
-	    rd_short((u16b *) & m_ptr->dis_ac);
-	    rd_short((u16b *) & m_ptr->dis_tac);
-	    rd_short((u16b *) & m_ptr->disarm);
-	    rd_short((u16b *) & m_ptr->save);
-	    rd_short((u16b *) & m_ptr->sc);
-	    rd_short((u16b *) & m_ptr->stl);
-	    rd_byte(&m_ptr->pclass);
-	    rd_byte(&m_ptr->prace);
-	    rd_byte(&m_ptr->hitdie);
-	    rd_byte(&m_ptr->expfact);
-	    rd_short((u16b *) & m_ptr->cmana);
-	    rd_short(&m_ptr->cmana_frac);
-	    rd_short((u16b *) & m_ptr->chp);
-	    rd_short(&m_ptr->chp_frac);
+	    rd_string(p_ptr->name);
+	    rd_byte(&p_ptr->male);
+	    rd_long((u32b *) & p_ptr->au);
+	    rd_long((u32b *) & p_ptr->max_exp);
+	    rd_long((u32b *) & p_ptr->exp);
+	    rd_short(&p_ptr->exp_frac);
+	    rd_short(&p_ptr->age);
+	    rd_short(&p_ptr->ht);
+	    rd_short(&p_ptr->wt);
+	    rd_short(&p_ptr->lev);
+	    rd_short(&p_ptr->max_dlv);
+	    rd_short((u16b *) & p_ptr->srh);
+	    rd_short((u16b *) & p_ptr->fos);
+	    rd_short((u16b *) & p_ptr->bth);
+	    rd_short((u16b *) & p_ptr->bthb);
+	    rd_short((u16b *) & p_ptr->mana);
+	    rd_short((u16b *) & p_ptr->mhp);
+	    rd_short((u16b *) & p_ptr->ptohit);
+	    rd_short((u16b *) & p_ptr->ptodam);
+	    rd_short((u16b *) & p_ptr->pac);
+	    rd_short((u16b *) & p_ptr->ptoac);
+	    rd_short((u16b *) & p_ptr->dis_th);
+	    rd_short((u16b *) & p_ptr->dis_td);
+	    rd_short((u16b *) & p_ptr->dis_ac);
+	    rd_short((u16b *) & p_ptr->dis_tac);
+	    rd_short((u16b *) & p_ptr->disarm);
+	    rd_short((u16b *) & p_ptr->save);
+	    rd_short((u16b *) & p_ptr->sc);
+	    rd_short((u16b *) & p_ptr->stl);
+	    rd_byte(&p_ptr->pclass);
+	    rd_byte(&p_ptr->prace);
+	    rd_byte(&p_ptr->hitdie);
+	    rd_byte(&p_ptr->expfact);
+	    rd_short((u16b *) & p_ptr->cmana);
+	    rd_short(&p_ptr->cmana_frac);
+	    rd_short((u16b *) & p_ptr->chp);
+	    rd_short(&p_ptr->chp_frac);
 	    for (i = 0; i < 4; i++)
-		rd_string(m_ptr->history[i]);
+		rd_string(p_ptr->history[i]);
 
-	    s_ptr = &py.stats;
-	    rd_shorts(s_ptr->max_stat, 6);
+	    rd_shorts(p_ptr->max_stat, 6);
 	    if (version_maj <= 2 && version_min <=5 && patch_level <= 6)
-		rd_shorts(s_ptr->cur_stat, 6);
+		rd_shorts(p_ptr->cur_stat, 6);
 	    else
-		rd_bytes(s_ptr->cur_stat, 6);                   /* -TL */
-	    rd_shorts((u16b *) s_ptr->mod_stat, 6);
-	    rd_shorts(s_ptr->use_stat, 6);
+		rd_bytes(p_ptr->cur_stat, 6);                   /* -TL */
+	    rd_shorts((u16b *) p_ptr->mod_stat, 6);
+	    rd_shorts(p_ptr->use_stat, 6);
 
-	    f_ptr = &py.flags1;
-	    rd_long(&f_ptr->status);
-	    rd_short((u16b *) & f_ptr->rest);
-	    rd_short((u16b *) & f_ptr->blind);
-	    rd_short((u16b *) & f_ptr->paralysis);
-	    rd_short((u16b *) & f_ptr->confused);
-	    rd_short((u16b *) & f_ptr->food);
-	    rd_short((u16b *) & f_ptr->food_digested);
-	    rd_short((u16b *) & f_ptr->protection);
-	    rd_short((u16b *) & f_ptr->speed);
-	    rd_short((u16b *) & f_ptr->fast);
-	    rd_short((u16b *) & f_ptr->slow);
-	    rd_short((u16b *) & f_ptr->afraid);
-	    rd_short((u16b *) & f_ptr->cut);
-	    rd_short((u16b *) & f_ptr->stun);
-	    rd_short((u16b *) & f_ptr->poisoned);
-	    rd_short((u16b *) & f_ptr->image);
-	    rd_short((u16b *) & f_ptr->protevil);
-	    rd_short((u16b *) & f_ptr->invuln);
-	    rd_short((u16b *) & f_ptr->hero);
-	    rd_short((u16b *) & f_ptr->shero);
-	    rd_short((u16b *) & f_ptr->shield);
-	    rd_short((u16b *) & f_ptr->blessed);
-	    rd_short((u16b *) & f_ptr->oppose_fire);
-	    rd_short((u16b *) & f_ptr->oppose_cold);
-	    rd_short((u16b *) & f_ptr->oppose_acid);
-	    rd_short((u16b *) & f_ptr->oppose_elec);
-	    rd_short((u16b *) & f_ptr->oppose_pois);
-	    rd_short((u16b *) & f_ptr->detect_inv);
-	    rd_short((u16b *) & f_ptr->word_recall);
-	    rd_short((u16b *) & f_ptr->see_infra);
-	    rd_short((u16b *) & f_ptr->tim_infra);
-	    rd_byte(&f_ptr->see_inv);
-	    rd_byte(&f_ptr->teleport);
-	    rd_byte(&f_ptr->free_act);
-	    rd_byte(&f_ptr->slow_digest);
-	    rd_byte(&f_ptr->aggravate);
-	    rd_byte(&f_ptr->resist_fire);
-	    rd_byte(&f_ptr->resist_cold);
-	    rd_byte(&f_ptr->resist_acid);
-	    rd_byte(&f_ptr->regenerate);
-	    rd_byte(&f_ptr->resist_elec);
-	    rd_byte(&f_ptr->ffall);
-	    rd_byte(&f_ptr->sustain_str);
-	    rd_byte(&f_ptr->sustain_int);
-	    rd_byte(&f_ptr->sustain_wis);
-	    rd_byte(&f_ptr->sustain_con);
-	    rd_byte(&f_ptr->sustain_dex);
-	    rd_byte(&f_ptr->sustain_chr);
-	    rd_byte(&f_ptr->confuse_monster);
-	    rd_byte(&f_ptr->new_spells);
-	    rd_byte(&f_ptr->resist_pois);
-	    rd_byte(&f_ptr->hold_life);
-	    rd_byte(&f_ptr->telepathy);
-	    rd_byte(&f_ptr->immune_fire);
-	    rd_byte(&f_ptr->immune_acid);
-	    rd_byte(&f_ptr->immune_pois);
-	    rd_byte(&f_ptr->immune_cold);
-	    rd_byte(&f_ptr->immune_elec);
-	    rd_byte(&f_ptr->light);
-	    rd_byte(&f_ptr->resist_conf);
-	    rd_byte(&f_ptr->resist_sound);
-	    rd_byte(&f_ptr->resist_lite);
-	    rd_byte(&f_ptr->resist_dark);
-	    rd_byte(&f_ptr->resist_chaos);
-	    rd_byte(&f_ptr->resist_disen);
-	    rd_byte(&f_ptr->resist_shards);
-	    rd_byte(&f_ptr->resist_nexus);
-	    rd_byte(&f_ptr->resist_blind);
-	    rd_byte(&f_ptr->resist_nether);
+	    rd_long(&p_ptr->status);
+	    rd_short((u16b *) & p_ptr->rest);
+	    rd_short((u16b *) & p_ptr->blind);
+	    rd_short((u16b *) & p_ptr->paralysis);
+	    rd_short((u16b *) & p_ptr->confused);
+	    rd_short((u16b *) & p_ptr->food);
+	    rd_short((u16b *) & p_ptr->food_digested);
+	    rd_short((u16b *) & p_ptr->protection);
+	    rd_short((u16b *) & p_ptr->speed);
+	    rd_short((u16b *) & p_ptr->fast);
+	    rd_short((u16b *) & p_ptr->slow);
+	    rd_short((u16b *) & p_ptr->afraid);
+	    rd_short((u16b *) & p_ptr->cut);
+	    rd_short((u16b *) & p_ptr->stun);
+	    rd_short((u16b *) & p_ptr->poisoned);
+	    rd_short((u16b *) & p_ptr->image);
+	    rd_short((u16b *) & p_ptr->protevil);
+	    rd_short((u16b *) & p_ptr->invuln);
+	    rd_short((u16b *) & p_ptr->hero);
+	    rd_short((u16b *) & p_ptr->shero);
+	    rd_short((u16b *) & p_ptr->shield);
+	    rd_short((u16b *) & p_ptr->blessed);
+	    rd_short((u16b *) & p_ptr->oppose_fire);
+	    rd_short((u16b *) & p_ptr->oppose_cold);
+	    rd_short((u16b *) & p_ptr->oppose_acid);
+	    rd_short((u16b *) & p_ptr->oppose_elec);
+	    rd_short((u16b *) & p_ptr->oppose_pois);
+	    rd_short((u16b *) & p_ptr->detect_inv);
+	    rd_short((u16b *) & p_ptr->word_recall);
+	    rd_short((u16b *) & p_ptr->see_infra);
+	    rd_short((u16b *) & p_ptr->tim_infra);
+	    rd_byte(&p_ptr->see_inv);
+	    rd_byte(&p_ptr->teleport);
+	    rd_byte(&p_ptr->free_act);
+	    rd_byte(&p_ptr->slow_digest);
+	    rd_byte(&p_ptr->aggravate);
+	    rd_byte(&p_ptr->resist_fire);
+	    rd_byte(&p_ptr->resist_cold);
+	    rd_byte(&p_ptr->resist_acid);
+	    rd_byte(&p_ptr->regenerate);
+	    rd_byte(&p_ptr->resist_elec);
+	    rd_byte(&p_ptr->ffall);
+	    rd_byte(&p_ptr->sustain_str);
+	    rd_byte(&p_ptr->sustain_int);
+	    rd_byte(&p_ptr->sustain_wis);
+	    rd_byte(&p_ptr->sustain_con);
+	    rd_byte(&p_ptr->sustain_dex);
+	    rd_byte(&p_ptr->sustain_chr);
+	    rd_byte(&p_ptr->confuse_monster);
+	    rd_byte(&p_ptr->new_spells);
+	    rd_byte(&p_ptr->resist_pois);
+	    rd_byte(&p_ptr->hold_life);
+	    rd_byte(&p_ptr->telepathy);
+	    rd_byte(&p_ptr->immune_fire);
+	    rd_byte(&p_ptr->immune_acid);
+	    rd_byte(&p_ptr->immune_pois);
+	    rd_byte(&p_ptr->immune_cold);
+	    rd_byte(&p_ptr->immune_elec);
+	    rd_byte(&p_ptr->light);
+	    rd_byte(&p_ptr->resist_conf);
+	    rd_byte(&p_ptr->resist_sound);
+	    rd_byte(&p_ptr->resist_lite);
+	    rd_byte(&p_ptr->resist_dark);
+	    rd_byte(&p_ptr->resist_chaos);
+	    rd_byte(&p_ptr->resist_disen);
+	    rd_byte(&p_ptr->resist_shards);
+	    rd_byte(&p_ptr->resist_nexus);
+	    rd_byte(&p_ptr->resist_blind);
+	    rd_byte(&p_ptr->resist_nether);
 	    if ((version_maj >= 2) && (version_min >= 6))
-		rd_byte(&f_ptr->resist_fear);
+		rd_byte(&p_ptr->resist_fear);
 	    else
-		f_ptr->resist_fear = 0;	/* sigh */
+		p_ptr->resist_fear = 0;	/* sigh */
 
 	    rd_short((u16b *) & missile_ctr);
 	    rd_long((u32b *) & turn);
@@ -1318,32 +1309,32 @@ int load_player(int *generate)
 		prt("Attempting a resurrection!", 0, 0);
 
 		/* Not quite dead */
-		if (py.misc.chp < 0) {
-		    py.misc.chp = 0;
-		    py.misc.chp_frac = 0;
+		if (py.chp < 0) {
+		    py.chp = 0;
+		    py.chp_frac = 0;
 		}
 
 		/* don't let him starve to death immediately */
-		if (py.flags1.food < 5000) py.flags1.food = 5000;
+		if (py.food < 5000) py.food = 5000;
 
 		cure_poison();
 		cure_blindness();
 		cure_confusion();
 		remove_fear();
 
-		if (py.flags1.image > 0) py.flags1.image = 0;
-		if (py.flags1.cut > 0) py.flags1.cut = 0;
-		if (py.flags1.stun > 0) {
-		    if (py.flags1.stun > 50) {
-			py.misc.ptohit += 20;
-			py.misc.ptodam += 20;
+		if (py.image > 0) py.image = 0;
+		if (py.cut > 0) py.cut = 0;
+		if (py.stun > 0) {
+		    if (py.stun > 50) {
+			py.ptohit += 20;
+			py.ptodam += 20;
 		    } else {
-			py.misc.ptohit += 5;
-			py.misc.ptodam += 5;
+			py.ptohit += 5;
+			py.ptodam += 5;
 		    }
-		    py.flags1.stun = 0;
+		    py.stun = 0;
 		}
-		if (py.flags1.word_recall > 0) py.flags1.word_recall = 0;
+		if (py.word_recall > 0) py.word_recall = 0;
 
 		/* Resurrect on the town level. */
 		dun_level = 0;
@@ -1544,7 +1535,7 @@ int load_player(int *generate)
 	    ok = FALSE;		   /* Assume bad data. */
 	} else {
 	/* don't overwrite the killed by string if character is dead */
-	    if (py.misc.chp >= 0)
+	    if (py.chp >= 0)
 		(void)strcpy(died_from, "(alive and well)");
 	    character_generated = 1;
 	}

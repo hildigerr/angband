@@ -17,7 +17,7 @@ void pray()
     int i, j, item_val, dir;
     int choice, chance, result;
     register spell_type  *s_ptr;
-    register struct misc  *m_ptr;
+    player_type  *p_ptr = &py;
     register struct flags1 *f_ptr = &py.flags1;
     register inven_type   *i_ptr;
 
@@ -28,7 +28,7 @@ void pray()
 	msg_print("You have no light to read by.");
     else if (f_ptr->confused > 0)
 	msg_print("You are too confused.");
-    else if (class[py.misc.pclass].spell != PRIEST)
+    else if (class[py.pclass].spell != PRIEST)
 	msg_print("Pray hard enough and your prayers may be answered.");
     else if (inven_ctr == 0)
 	msg_print("But you are not carrying anything!");
@@ -39,7 +39,7 @@ void pray()
 	if (result < 0)
 	    msg_print("You don't know any prayers in that book.");
 	else if (result > 0) {
-	    s_ptr = &magic_spell[py.misc.pclass - 1][choice];
+	    s_ptr = &magic_spell[py.pclass - 1][choice];
 	    free_turn_flag = FALSE;
 
 	    if (f_ptr->stun > 50)
@@ -71,7 +71,7 @@ void pray()
 		    break;
 		  case 5:
 		    (void)lite_area(char_row, char_col,
-		     damroll(2, (py.misc.lev / 2)), (py.misc.lev / 10) + 1);
+		     damroll(2, (py.lev / 2)), (py.lev / 10) + 1);
 		    break;
 /* FIXME: hammer? */
 		  case 6:
@@ -85,10 +85,10 @@ void pray()
 		    break;
 		  case 9:
 		    if (get_dir(NULL, &dir))
-			(void)fear_monster(dir, char_row, char_col, py.misc.lev);
+			(void)fear_monster(dir, char_row, char_col, py.lev);
 		    break;
 		  case 10:
-		    teleport((int)(py.misc.lev * 3));
+		    teleport((int)(py.lev * 3));
 		    break;
 		  case 11:
 		    (void)hp_player(damroll(4, 4));
@@ -121,9 +121,9 @@ void pray()
 		  case 18:
 		    if (get_dir(NULL, &dir))
 			fire_ball(GF_HOLY_ORB, dir, char_row, char_col,
-				  (int)(damroll(3,6)+py.misc.lev+
-					(py.misc.pclass==2 ? 2 : 1)*stat_adj(A_WIS)),
-				  (py.misc.lev<30 ? 2 : 3));
+				  (int)(damroll(3,6)+py.lev+
+					(py.pclass==2 ? 2 : 1)*stat_adj(A_WIS)),
+				  (py.lev<30 ? 2 : 3));
 		    break;
 		  case 19:
 		    (void)hp_player(damroll(8, 4));
@@ -158,17 +158,17 @@ void pray()
 		    bless(randint(48) + 48);
 		    break;
 		  case 27:
-		    (void)dispel_creature(MF2_UNDEAD, (int)(3 * py.misc.lev));
+		    (void)dispel_creature(MF2_UNDEAD, (int)(3 * py.lev));
 		    break;
 		  case 28:
 		    (void)hp_player(200);
 		    if (f_ptr->stun > 0) {
 			if (f_ptr->stun > 50) {
-			    py.misc.ptohit += 20;
-			    py.misc.ptodam += 20;
+			    py.ptohit += 20;
+			    py.ptodam += 20;
 			} else {
-			    py.misc.ptohit += 5;
-			    py.misc.ptodam += 5;
+			    py.ptohit += 5;
+			    py.ptodam += 5;
 			}
 			f_ptr->stun = 0;
 			msg_print("Your head stops stinging.");
@@ -179,23 +179,23 @@ void pray()
 		    }
 		    break;
 		  case 29:
-		    (void)dispel_creature(MF2_EVIL, (int)(3 * py.misc.lev));
+		    (void)dispel_creature(MF2_EVIL, (int)(3 * py.lev));
 		    break;
 		  case 30:
 		    warding_glyph();
 		    break;
 		  case 31:
-		    (void)dispel_creature(MF2_EVIL, (int)(4 * py.misc.lev));
+		    (void)dispel_creature(MF2_EVIL, (int)(4 * py.lev));
 		    (void)remove_fear();
 		    (void)cure_poison();
 		    (void)hp_player(1000);
 		    if (f_ptr->stun > 0) {
 			if (f_ptr->stun > 50) {
-			    py.misc.ptohit += 20;
-			    py.misc.ptodam += 20;
+			    py.ptohit += 20;
+			    py.ptodam += 20;
 			} else {
-			    py.misc.ptohit += 5;
-			    py.misc.ptodam += 5;
+			    py.ptohit += 5;
+			    py.ptodam += 5;
 			}
 			f_ptr->stun = 0;
 			msg_print("Your head stops stinging.");
@@ -238,11 +238,11 @@ void pray()
 		    (void)hp_player(2000);
 		    if (f_ptr->stun > 0) {
 			if (f_ptr->stun > 50) {
-			    py.misc.ptohit += 20;
-			    py.misc.ptodam += 20;
+			    py.ptohit += 20;
+			    py.ptodam += 20;
 			} else {
-			    py.misc.ptohit += 5;
-			    py.misc.ptodam += 5;
+			    py.ptohit += 5;
+			    py.ptodam += 5;
 			}
 			f_ptr->stun = 0;
 			msg_print("Your head stops stinging.");
@@ -270,10 +270,10 @@ void pray()
 		    (void)restore_level();
 		    break;
 		  case 42:	   /* dispel undead */
-		    (void)dispel_creature(MF2_UNDEAD, (int)(4 * py.misc.lev));
+		    (void)dispel_creature(MF2_UNDEAD, (int)(4 * py.lev));
 		    break;
 		  case 43:	   /* dispel evil */
-		    (void)dispel_creature(MF2_EVIL, (int)(4 * py.misc.lev));
+		    (void)dispel_creature(MF2_EVIL, (int)(4 * py.lev));
 		    break;
 		  case 44:	   /* banishment */
 		    if (banish_creature(MF2_EVIL, 100))
@@ -391,7 +391,7 @@ void pray()
 		    teleport(10);
 		    break;
 		  case 54:	   /* teleport */
-		    teleport((int)(py.misc.lev * 8));
+		    teleport((int)(py.lev * 8));
 		    break;
 		  case 55:	   /* teleport away */
 		    if (get_dir(NULL, &dir))
@@ -417,36 +417,34 @@ void pray()
 		}
 	    /* End of prayers.				 */
 		if (!free_turn_flag) {
-		    m_ptr = &py.misc;
 		    if (choice < 32) {
 			if ((spell_worked & (1L << choice)) == 0) {
-			    m_ptr->exp += s_ptr->sexp << 2;
+			    p_ptr->exp += s_ptr->sexp << 2;
 			    spell_worked |= (1L << choice);
 			    prt_experience();
 			}
 		    } else {
 			if ((spell_worked2 & (1L << (choice - 32))) == 0) {
-			    m_ptr->exp += s_ptr->sexp << 2;
+			    p_ptr->exp += s_ptr->sexp << 2;
 			    spell_worked2 |= (1L << (choice - 32));
 			    prt_experience();
 			}
 		    }
 		}
 	    }
-	    m_ptr = &py.misc;
 	    if (!free_turn_flag) {
-		if (s_ptr->smana > m_ptr->cmana) {
+		if (s_ptr->smana > p_ptr->cmana) {
 		    msg_print("You faint from fatigue!");
 		    f_ptr->paralysis =
-			randint((int)(5 * (s_ptr->smana - m_ptr->cmana)));
-		    m_ptr->cmana = 0;
-		    m_ptr->cmana_frac = 0;
+			randint((int)(5 * (s_ptr->smana - p_ptr->cmana)));
+		    p_ptr->cmana = 0;
+		    p_ptr->cmana_frac = 0;
 		    if (randint(3) == 1) {
 			msg_print("You have damaged your health!");
 			(void)dec_stat(A_CON);
 		    }
 		} else
-		    m_ptr->cmana -= s_ptr->smana;
+		    p_ptr->cmana -= s_ptr->smana;
 		prt_cmana();
 	    }
 	}

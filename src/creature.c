@@ -44,14 +44,14 @@ void update_mon(int m_idx)
     r_ptr = &r_list[m_ptr->r_idx];
 
     if ((m_ptr->cdis <= MAX_SIGHT) &&
-	(!(py.flags1.status & PY_BLIND) || py.flags1.telepathy) &&
+	(!(py.status & PY_BLIND) || py.telepathy) &&
 	(panel_contains((int)m_ptr->fy, (int)m_ptr->fx))) {
 
 	/* Wizards see everything */
 	if (wizard) flag = TRUE;
 
     /* if not mindless, telepathy sees -CWS */
-	if (py.flags1.telepathy) {
+	if (py.telepathy) {
 
 	    char c = r_ptr->r_char;
 	    const char *n = r_ptr->name;
@@ -98,8 +98,8 @@ void update_mon(int m_idx)
 	    c_ptr = &cave[m_ptr->fy][m_ptr->fx];
 
 	/* moved here to allow infra to see invis -CFT */
-	    if ((py.flags1.see_infra > 0) &&
-		(m_ptr->cdis <= py.flags1.see_infra)) {
+	    if ((py.see_infra > 0) &&
+		(m_ptr->cdis <= py.see_infra)) {
 		if (MF2_NO_INFRA & r_ptr->cflags2)	/* changed to act sensibly -CFT */
 		    l_list[m_ptr->r_idx].r_cflags2 |= MF2_NO_INFRA;
 		else
@@ -115,7 +115,7 @@ void update_mon(int m_idx)
 		if ((CM_INVISIBLE & r_ptr->cflags1) == 0)
 #endif
 		    flag = TRUE;
-		else if (py.flags1.see_inv) {
+		else if (py.see_inv) {
 		    flag = TRUE;
 #ifdef ATARIST_MWC
 		    l_list[m_ptr->r_idx].r_cflags1 |= holder;
@@ -161,7 +161,7 @@ int movement_rate(int monnum)
 {
   register int ps, ms, tm, i;
 
-  ps = 1 - py.flags1.speed;	/* this makes normal = 1, fast = 2,
+  ps = 1 - py.speed;	/* this makes normal = 1, fast = 2,
                                  * v.fast = 3, slow = 0, v.slow = -1 -CFT */
   ms = m_list[monnum].mspeed;
   
@@ -238,7 +238,7 @@ static void get_moves(int m_idx, int *mm)
  * lvl  23++  no afraid monsters      [ level=less afraid m. ]
  */
 
-    if (((s16b)(py.misc.lev - 34 - r_list[(m_list[m_idx]).r_idx].level +
+    if (((s16b)(py.lev - 34 - r_list[(m_list[m_idx]).r_idx].level +
 		 ((m_list[m_idx].maxhp) % 8)) > 0)
 	|| m_list[m_idx].monfear) { /* Run away!  Run away! -DGK */
     
@@ -439,8 +439,7 @@ static void make_attack(int m_idx)
 
     register monster_race	*r_ptr;
     monster_type		*m_ptr;
-    register struct misc   *p_ptr;
-    register struct flags1  *f_ptr = &py.flags1;
+    player_type   *p_ptr = &py;
     register inven_type		*i_ptr;
 
     /* flag to see if blinked away (after steal) -CFT */
@@ -488,16 +487,15 @@ static void make_attack(int m_idx)
 	flag = FALSE;
 
 	/* Random (100) + level > 50 chance for stop any attack added */
-	if (((py.flags1.protevil > 0) && (r_ptr->cflags2 & MF2_EVIL) &&
-	     ((py.misc.lev + 1) > r_ptr->level)) &&
-	    (randint(100) + (py.misc.lev) > 50)) {
+	if (((py.protevil > 0) && (r_ptr->cflags2 & MF2_EVIL) &&
+	     ((py.lev + 1) > r_ptr->level)) &&
+	    (randint(100) + (py.lev) > 50)) {
 
 	    if (m_ptr->ml) l_list[m_ptr->r_idx].r_cflags2 |= MF2_EVIL;
 	    attype = 99;
 	    adesc = 99;
 	}
 
-	p_ptr = &py.misc;
 	switch (attype) {
 	  case 1:		   /* Normal attack  */
 	    if (test_hit(60, (int)r_ptr->level, 0, p_ptr->pac + p_ptr->ptoac,
@@ -820,7 +818,7 @@ static void make_attack(int m_idx)
 	      /* Lose Strength */
 	      case 2:
 		take_hit(damage, ddesc);
-		if (f_ptr->sustain_str) {
+		if (p_ptr->sustain_str) {
 		    msg_print("You feel weaker for a moment, but it passes.");
 		}
 		else if (rand_int(2)) {
@@ -835,16 +833,16 @@ static void make_attack(int m_idx)
 	      /* Confusion attack */
 	      case 3:
 		take_hit(damage, ddesc);
-		if ((!f_ptr->resist_conf) && (!f_ptr->resist_chaos)) {
+		if ((!p_ptr->resist_conf) && (!p_ptr->resist_chaos)) {
 		    if (randint(2) == 1) {
-			if (f_ptr->confused < 1) {
+			if (p_ptr->confused < 1) {
 			    msg_print("You feel confused.");
-			    f_ptr->confused += randint((int)r_ptr->level);
+			    p_ptr->confused += randint((int)r_ptr->level);
 			}
 			else {
 			    notice = FALSE;
 			}
-			f_ptr->confused += 3;
+			p_ptr->confused += 3;
 		    }
 		    else {
 			notice = FALSE;
@@ -856,16 +854,16 @@ static void make_attack(int m_idx)
 	      case 4:
 		take_hit(damage, ddesc);
 		if (player_saves() ||
-		    (py.misc.pclass == 1 && randint(3) == 1) ||
-		    py.flags1.resist_fear) {
+		    (py.pclass == 1 && randint(3) == 1) ||
+		    py.resist_fear) {
 		    msg_print("You stand your ground!");
 		}
-		else if (f_ptr->afraid < 1) {
+		else if (p_ptr->afraid < 1) {
 		    msg_print("You are suddenly afraid!");
-		    f_ptr->afraid += 3 + randint((int)r_ptr->level);
+		    p_ptr->afraid += 3 + randint((int)r_ptr->level);
 		}
 		else {
-		    f_ptr->afraid += 3;
+		    p_ptr->afraid += 3;
 		    notice = FALSE;
 		}
 		break;
@@ -904,13 +902,13 @@ static void make_attack(int m_idx)
 	      /* Blindness attack */
 	      case 10:
 		take_hit(damage, ddesc);
-		if (!f_ptr->resist_blind) {
-		    if (f_ptr->blind < 1) {
-			f_ptr->blind += 10 + randint((int)r_ptr->level);
+		if (!p_ptr->resist_blind) {
+		    if (p_ptr->blind < 1) {
+			p_ptr->blind += 10 + randint((int)r_ptr->level);
 			msg_print("Your eyes begin to sting.");
 		    }
 		    else {
-			f_ptr->blind += 5;
+			p_ptr->blind += 5;
 			notice = FALSE;
 		    }
 		}
@@ -921,12 +919,12 @@ static void make_attack(int m_idx)
 		take_hit(damage, ddesc);
 		if (player_saves())
 		    msg_print("You resist the effects!");
-		else if (f_ptr->paralysis < 1) {
-		    if (f_ptr->free_act) {
+		else if (p_ptr->paralysis < 1) {
+		    if (p_ptr->free_act) {
 			msg_print("You are unaffected.");
 		    }
 		    else {
-			f_ptr->paralysis = randint((int)r_ptr->level) + 3;
+			p_ptr->paralysis = randint((int)r_ptr->level) + 3;
 			msg_print("You are paralysed.");
 		    }
 		}
@@ -938,8 +936,8 @@ static void make_attack(int m_idx)
 	      /* Steal Money */
 	      case 12:
 		/* immune to steal at 18/150 */
-		if ((f_ptr->paralysis < 1) &&
-		    (randint(168) < py.stats.use_stat[A_DEX])) {
+		if ((p_ptr->paralysis < 1) &&
+		    (randint(168) < py.use_stat[A_DEX])) {
 		    msg_print("You quickly protect your money pouch!");
 		}
 		else {		   /* make this more sane.... -CWS */
@@ -964,8 +962,8 @@ static void make_attack(int m_idx)
 	      /* Steal Object */
 	      case 13:
 		/* immune to steal at 18/150 dexterity */
-		if ((f_ptr->paralysis < 1) &&
-		    (randint(168) < py.stats.use_stat[A_DEX])) {
+		if ((p_ptr->paralysis < 1) &&
+		    (randint(168) < py.use_stat[A_DEX])) {
 		    msg_print("You grab hold of your backpack!");
 		}
 		else {
@@ -1011,11 +1009,11 @@ static void make_attack(int m_idx)
 	      /* Poison	 */
 	      case 14:
 		take_hit(damage, ddesc);
-		if (!f_ptr->immune_pois &&
-		    !f_ptr->resist_pois &&
-		    !f_ptr->oppose_pois) {
+		if (!p_ptr->immune_pois &&
+		    !p_ptr->resist_pois &&
+		    !p_ptr->oppose_pois) {
 		    msg_print("You feel very sick.");
-		    f_ptr->poisoned += randint((int)r_ptr->level) + 5;
+		    p_ptr->poisoned += randint((int)r_ptr->level) + 5;
 		}
 		else {
 		    msg_print("The poison has no effect.");
@@ -1025,7 +1023,7 @@ static void make_attack(int m_idx)
 	      /* Lose dexterity */
 	      case 15:
 		take_hit(damage, ddesc);
-		if (f_ptr->sustain_dex) {
+		if (p_ptr->sustain_dex) {
 		    msg_print("You feel clumsy for a moment, but it passes.");
 		}
 		else {
@@ -1037,7 +1035,7 @@ static void make_attack(int m_idx)
 	      /* Lose constitution */
 	      case 16:
 		take_hit(damage, ddesc);
-		if (f_ptr->sustain_con) {
+		if (p_ptr->sustain_con) {
 		    msg_print("Your body resists the effects of the disease.");
 		}
 		else {
@@ -1050,7 +1048,7 @@ static void make_attack(int m_idx)
 	      case 17:
 		take_hit(damage, ddesc);
 		msg_print("You have trouble thinking clearly.");
-		if (f_ptr->sustain_int) {
+		if (p_ptr->sustain_int) {
 		    msg_print("But your mind quickly clears.");
 		}
 		else {
@@ -1061,7 +1059,7 @@ static void make_attack(int m_idx)
 	      /* Lose wisdom */
 	      case 18:
 		take_hit(damage, ddesc);
-		if (f_ptr->sustain_wis) {
+		if (p_ptr->sustain_wis) {
 		    msg_print("Your wisdom is sustained.");
 		}
 		else {
@@ -1072,17 +1070,17 @@ static void make_attack(int m_idx)
 
 	      /* Lose experience  */
 	      case 19:
-		if (f_ptr->hold_life && rand_int(5)) {
+		if (p_ptr->hold_life && rand_int(5)) {
 		    msg_print("You keep hold of your life force!");
 		}
 		else {
-		    if (f_ptr->hold_life) {
+		    if (p_ptr->hold_life) {
 			msg_print("You feel your life slipping away!");
-			lose_exp(damage + (py.misc.exp/1000) * MON_DRAIN_LIFE);
+			lose_exp(damage + (py.exp/1000) * MON_DRAIN_LIFE);
 		    }
 		    else {
 			msg_print("You feel your life draining away!");
-			lose_exp(damage + (py.misc.exp/100) * MON_DRAIN_LIFE);
+			lose_exp(damage + (py.exp/100) * MON_DRAIN_LIFE);
 		    }
 		}
 		break;
@@ -1096,7 +1094,7 @@ static void make_attack(int m_idx)
 	      case 21:
 
 		/* Allow complete resist */
-		if (!f_ptr->resist_disen) {
+		if (!p_ptr->resist_disen) {
 		    byte               chance = 0;
 
 		    take_hit(damage, ddesc);
@@ -1186,7 +1184,7 @@ static void make_attack(int m_idx)
 		if ((i_ptr->pval > 0) && ((i_ptr->flags2 & TR_ARTIFACT) == 0)) {
 		    i_ptr->pval -= (250 + randint(250));
 		    if (i_ptr->pval < 1) i_ptr->pval = 1;
-		    if (f_ptr->blind < 1) {
+		    if (p_ptr->blind < 1) {
 			msg_print("Your light dims.");
 		    }
 		    else {
@@ -1219,21 +1217,21 @@ static void make_attack(int m_idx)
 	      /* Drain all stats. Haha! SM */
 	      case 25:
 		take_hit(damage, ddesc);
-		if (f_ptr->sustain_str) {
+		if (p_ptr->sustain_str) {
 		    msg_print("You feel weaker for a moment, but it passes.");
 		}
 		else {
 		    msg_print("You feel weaker.");
 		    (void)dec_stat(A_STR);
 		}
-		if (f_ptr->sustain_dex) {
+		if (p_ptr->sustain_dex) {
 		    msg_print("You feel clumsy for a moment, but it passes.");
 		}
 		else {
 		    msg_print("You feel more clumsy.");
 		    (void)dec_stat(A_DEX);
 		}
-		if (f_ptr->sustain_con) {
+		if (p_ptr->sustain_con) {
 		    msg_print("Your body resists the effects of the disease.");
 		}
 		else {
@@ -1241,20 +1239,20 @@ static void make_attack(int m_idx)
 		    (void)dec_stat(A_CON);
 		}
 		msg_print("You have trouble thinking clearly.");
-		if (f_ptr->sustain_int) {
+		if (p_ptr->sustain_int) {
 		    msg_print("But your mind quickly clears.");
 		}
 		else {
 		    (void)dec_stat(A_INT);
 		}
-		if (f_ptr->sustain_wis) {
+		if (p_ptr->sustain_wis) {
 		    msg_print("Your wisdom is sustained.");
 		}
 		else {
 		    msg_print("Your wisdom is drained.");
 		    (void)dec_stat(A_WIS);
 		}
-		if (f_ptr->sustain_chr) {
+		if (p_ptr->sustain_chr) {
 		    msg_print("You keep your good looks.");
 		}
 		else {
@@ -1314,9 +1312,9 @@ static void make_attack(int m_idx)
 	    /* monster is only confused if it actually hits */
 	    /* if no attacks, monster can't get confused -dbd */
 	    if (!attype) {
-		if (f_ptr->confuse_monster && f_ptr->protevil <= 0) {
+		if (p_ptr->confuse_monster && p_ptr->protevil <= 0) {
 		    msg_print("Your hands stop glowing.");
-		    f_ptr->confuse_monster = FALSE;
+		    p_ptr->confuse_monster = FALSE;
 		    if ((randint(MAX_R_LEV) < r_ptr->level) ||
 			(MF2_CHARM_SLEEP & r_ptr->cflags2)) {
 			(void)sprintf(tmp_str, "%sis unaffected.", cdesc);
@@ -1739,13 +1737,12 @@ static void mon_cast_spell(int m_idx, int *took_turn)
     bool		desperate = FALSE;
     vtype		cdesc, outval, ddesc;
 
-    struct flags1  *f_ptr = (&py.flags1);
     monster_type	*m_ptr;
     monster_race	*r_ptr;
     char                   sex;
 
     /* Extract the blind-ness -CFT */
-    int blind = (f_ptr->blind > 0);
+    int blind = (p_ptr->blind > 0);
 
     /* Already dead */
     if (death) return;
@@ -1872,18 +1869,18 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    if (!blind) strcat(cdesc, "gazes deep into your eyes!");
 	    else strcat(cdesc, "mumbles, and you feel something holding you!");
 	    msg_print(cdesc);
-	    if (f_ptr->free_act) {
+	    if (p_ptr->free_act) {
 		msg_print("You are unaffected.");
 	    }
 	    else if (player_saves()) {
 		if (!blind) msg_print("You stare back unafraid!");
 		else msg_print("You resist!");
 	    }
-	    else if (f_ptr->paralysis > 0) {
-		f_ptr->paralysis += 2;
+	    else if (p_ptr->paralysis > 0) {
+		p_ptr->paralysis += 2;
 	    }
 	    else {
-		f_ptr->paralysis = randint(5) + 4;
+		p_ptr->paralysis = randint(5) + 4;
 	    }
 	    break;
 
@@ -1891,15 +1888,15 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    if (!blind) strcat(cdesc, "casts a spell, burning your eyes!");
 	    else strcat(cdesc, "mumbles, and your eyes burn even more.");
 	    msg_print(cdesc);
-	    if ((player_saves()) || (f_ptr->resist_blind)) {
+	    if ((player_saves()) || (p_ptr->resist_blind)) {
 		if (!blind) msg_print("You blink and your vision clears.");
 		else msg_print("But the extra burning quickly fades away.");
 	    }
-	    else if (f_ptr->blind > 0) {
-		f_ptr->blind += 6;
+	    else if (p_ptr->blind > 0) {
+		p_ptr->blind += 6;
 	    }
 	    else {
-		f_ptr->blind += 12 + randint(3);
+		p_ptr->blind += 12 + randint(3);
 	    }
 	    break;
 
@@ -1908,15 +1905,15 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    else strcat(cdesc, "mumbles, and you hear puzzling noises.");
 	    msg_print(cdesc);
 	    if ((player_saves()) ||
-		(f_ptr->resist_conf) ||
-		(f_ptr->resist_chaos)) {
+		(p_ptr->resist_conf) ||
+		(p_ptr->resist_chaos)) {
 		msg_print("You disbelieve the feeble spell.");
 	    }
-	    else if (f_ptr->confused > 0) {
-		f_ptr->confused += 2;
+	    else if (p_ptr->confused > 0) {
+		p_ptr->confused += 2;
 	    }
 	    else {
-		f_ptr->confused = randint(5) + 3;
+		p_ptr->confused = randint(5) + 3;
 	    }
 	    break;
 
@@ -1924,14 +1921,14 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    if (!blind) strcat(cdesc, "casts a fearful illusion.");
 	    else strcat(cdesc, "mumbles, and you hear scary noises.");
 	    msg_print(cdesc);
-	    if (player_saves() || f_ptr->resist_fear) {
+	    if (player_saves() || p_ptr->resist_fear) {
 		msg_print("You refuse to be frightened.");
 	    }
-	    else if (f_ptr->afraid > 0) {
-		f_ptr->afraid += 2;
+	    else if (p_ptr->afraid > 0) {
+		p_ptr->afraid += 2;
 	    }
 	    else {
-		f_ptr->afraid = randint(5) + 3;
+		p_ptr->afraid = randint(5) + 3;
 	    }
 	    break;
 
@@ -1964,22 +1961,22 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	  case 16:		   /* Slow Person	 */
 	    strcat(cdesc, "drains power from your muscles!");
 	    msg_print(cdesc);
-	    if (f_ptr->free_act) {
+	    if (p_ptr->free_act) {
 		msg_print("You are unaffected.");
 	    }
 	    else if (player_saves()) {
 		msg_print("Your body resists the spell.");
 	    }
-	    else if (f_ptr->slow > 0) {
-		f_ptr->slow += 2;
+	    else if (p_ptr->slow > 0) {
+		p_ptr->slow += 2;
 	    }
 	    else {
-		f_ptr->slow = randint(5) + 3;
+		p_ptr->slow = randint(5) + 3;
 	    }
 	    break;
 
 	  case 17:		   /* Drain Mana	 */
-	    if (py.misc.cmana > 0) {
+	    if (py.cmana > 0) {
 		disturb(1, 0);
 		sprintf(outval, "%sdraws psychic energy from you!", cdesc);
 		msg_print(outval);
@@ -1988,13 +1985,13 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 		    msg_print(outval);
 		}
 		r1 = (randint((int)r_ptr->level) >> 1) + 1;
-		if (r1 > py.misc.cmana) {
-		    r1 = py.misc.cmana;
-		    py.misc.cmana = 0;
-		    py.misc.cmana_frac = 0;
+		if (r1 > py.cmana) {
+		    r1 = py.cmana;
+		    py.cmana = 0;
+		    py.cmana_frac = 0;
 		}
 		else {
-		    py.misc.cmana -= r1;
+		    py.cmana -= r1;
 		}
 		prt_cmana();
 		m_ptr->hp += 6 * (r1);
@@ -2254,12 +2251,12 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    }
 	    else {
 		msg_print("Your mind is blasted by psionic energy.");
-		if ((!f_ptr->resist_conf) && (!f_ptr->resist_chaos)) {
-		    if (f_ptr->confused > 0) {
-			f_ptr->confused += 2;
+		if ((!p_ptr->resist_conf) && (!p_ptr->resist_chaos)) {
+		    if (p_ptr->confused > 0) {
+			p_ptr->confused += 2;
 		    }
 		    else {
-			f_ptr->confused = randint(5) + 3;
+			p_ptr->confused = randint(5) + 3;
 		    }
 		}
 		take_hit(damroll(8, 8), ddesc);
@@ -2454,34 +2451,34 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    else {
 		msg_print("Your mind is blasted by psionic energy.");
 		take_hit(damroll(12, 15), ddesc);
-		if ((!f_ptr->resist_conf) && (!f_ptr->resist_chaos)) {
-		    if (f_ptr->confused > 0) {
-			f_ptr->confused += 2;
+		if ((!p_ptr->resist_conf) && (!p_ptr->resist_chaos)) {
+		    if (p_ptr->confused > 0) {
+			p_ptr->confused += 2;
 		    }
 		    else {
-			f_ptr->confused = randint(5) + 3;
+			p_ptr->confused = randint(5) + 3;
 		    }
 		}
-		if (!f_ptr->free_act) {
-		    if (f_ptr->paralysis > 0) {
-			f_ptr->paralysis += 2;
+		if (!p_ptr->free_act) {
+		    if (p_ptr->paralysis > 0) {
+			p_ptr->paralysis += 2;
 		    }
 		    else {
-			f_ptr->paralysis = randint(5) + 4;
+			p_ptr->paralysis = randint(5) + 4;
 		    }
-		    if (f_ptr->slow > 0) {
-			f_ptr->slow += 2;
+		    if (p_ptr->slow > 0) {
+			p_ptr->slow += 2;
 		    }
 		    else {
-			f_ptr->slow = randint(5) + 3;
+			p_ptr->slow = randint(5) + 3;
 		    }
 		}
-		if (!f_ptr->resist_blind) {
-		    if (f_ptr->blind > 0) {
-			f_ptr->blind += 6;
+		if (!p_ptr->resist_blind) {
+		    if (p_ptr->blind > 0) {
+			p_ptr->blind += 6;
 		    }
 		    else {
-			f_ptr->blind += 12 + randint(3);
+			p_ptr->blind += 12 + randint(3);
 		    }
 		}
 	    }
@@ -2501,7 +2498,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    msg_print(cdesc);
 	    if ((player_saves()) ||
 	        (rand_int(3)) ||
-	        (f_ptr->resist_nexus)) {
+	        (p_ptr->resist_nexus)) {
 		msg_print("You keep your feet firmly on the ground.");
 	    }
 	    else {
@@ -2947,8 +2944,8 @@ static void mon_move(int m_idx, u32b *rcflags1)
     /* Does the critter multiply? */
     if ((r_ptr->cflags1 & CM_MULTIPLY) &&
 	(MAX_MON_MULT >= mon_tot_mult) &&
-	(((py.flags1.rest != -1) && ((py.flags1.rest % MON_MULT_ADJ) == 0)) ||
-	 ((py.flags1.rest == -1) && (randint(MON_MULT_ADJ) == 1)))) {
+	(((py.rest != -1) && ((py.rest % MON_MULT_ADJ) == 0)) ||
+	 ((py.rest == -1) && (randint(MON_MULT_ADJ) == 1)))) {
 
 	/* Count the adjacent monsters */
 	for (k = 0, i = (int)m_ptr->fy - 1; i <= (int)m_ptr->fy + 1; i++) {
@@ -3204,17 +3201,17 @@ void creatures(int attack)
 	    /* Handle "sleep" */
 			if (m_ptr->csleep > 0)
 
-			    if (py.flags1.aggravate)
+			    if (py.aggravate)
 				m_ptr->csleep = 0;
 
-			    else if ((py.flags1.rest == 0 && py.flags1.paralysis < 1) ||
+			    else if ((py.rest == 0 && py.paralysis < 1) ||
 		    !(rand_int(50))) {
 
 				notice = rand_int(1024);
 			
 		    /* XXX See if monster "notices" player */
 		    if ((notice * notice * notice) <=
-			(1L << (29 - py.misc.stl))) {
+			(1L << (29 - py.stl))) {
 
 			/* Hack -- amount of "waking" */
 			m_ptr->csleep -= (100 / m_ptr->cdis);

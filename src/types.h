@@ -452,7 +452,6 @@ typedef struct _player_type player_type;
 
 struct _player_type {
 
-  struct misc {
       char name[27];		    /* Character name	*/
 
   byte prace;			/* # of race	*/
@@ -504,16 +503,11 @@ struct _player_type {
   s16b dis_tac;		/* Display +ToTAC	*/
 
       char history[4][60];	    /* History record		*/
-    } misc;
 
-  struct stats {
   u16b max_stat[6];		/* Current "maximal" stat values */
   byte cur_stat[6];		/* Current "natural" stat values */
   s16b mod_stat[6];		/* Current "stat modifiers" */
   u16b use_stat[6];		/* Current "resulting" stat values */
-    } stats;
-
-  struct flags1 {
 
   u32b status;		/* Status of player	   */
 
@@ -596,7 +590,6 @@ struct _player_type {
   byte slow_digest;		/* Lower food needs	*/
   byte confuse_monster;		/* Glowing hands.	*/
   byte new_spells;		/* Number of spells can learn. */
-    } flags1;
 };
 
 

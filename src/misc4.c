@@ -90,7 +90,7 @@ void prt_stat(int stat)
 {
     vtype out_val1;
 
-	cnv_stat(py.stats.use_stat[stat], out_val1);
+	cnv_stat(py.use_stat[stat], out_val1);
 	put_str(stat_names[stat], ROW_STAT + stat, COL_STAT);
 	put_str(out_val1, ROW_STAT + stat, COL_STAT + 6);
 }
@@ -105,7 +105,7 @@ int stat_adj(int stat)
 {
     register int value;
 
-    value = py.stats.use_stat[stat];
+    value = py.use_stat[stat];
     if (value > 228) return (20);
     if (value > 218) return (18);
     if (value > 198) return (16);
@@ -136,7 +136,7 @@ int chr_adj()
 {
     register int charisma;
 
-    charisma = py.stats.use_stat[A_CHR];
+    charisma = py.use_stat[A_CHR];
 
     if (charisma > 217) return (80);
     if (charisma > 187) return (86);
@@ -193,7 +193,7 @@ int con_adj()
 {
     register int con;
 
-    con = py.stats.use_stat[A_CON];
+    con = py.use_stat[A_CON];
 
     if (con < 7) return (con - 7);
     if (con < 17) return (0);
@@ -221,13 +221,13 @@ cptr title_string()
 {
     cptr p;
 
-    if (py.misc.lev < 1) {
+    if (py.lev < 1) {
 	p = "Babe in arms";
     }
-    else if (py.misc.lev <= MAX_PLAYER_LEVEL) {
-	p = player_title[py.misc.pclass][py.misc.lev - 1];
+    else if (py.lev <= MAX_PLAYER_LEVEL) {
+	p = player_title[py.pclass][py.lev - 1];
     }
-    else if (py.misc.male) {
+    else if (py.male) {
 	p = "**KING**";
     }
     else {
@@ -253,7 +253,7 @@ void prt_title()
 void prt_level()
 {
     char tmp[32];
-    sprintf(tmp, "%6d", py.misc.lev);
+    sprintf(tmp, "%6d", py.lev);
     put_str(tmp, ROW_LEVEL, COL_STAT + 6);
 }
 
@@ -276,7 +276,7 @@ void prt_cmana()
 {
     char tmp[32];
 
-    sprintf(tmp, "%6d", py.misc.cmana);
+    sprintf(tmp, "%6d", py.cmana);
     put_str(tmp, ROW_MANA, COL_STAT + 6);
 }
 
@@ -287,7 +287,7 @@ void prt_cmana()
 void prt_mhp()
 {
     char tmp[32];
-    sprintf(tmp, "%6d", py.misc.mhp);
+    sprintf(tmp, "%6d", py.mhp);
     put_str(tmp, ROW_MAXHP, COL_STAT + 6);
 }
 
@@ -298,7 +298,7 @@ void prt_mhp()
 void prt_chp()
 {
     char tmp[32];
-    sprintf(tmp, "%6d", py.misc.chp);
+    sprintf(tmp, "%6d", py.chp);
     put_str(tmp, ROW_CURHP, COL_STAT + 6);
 }
 
@@ -309,7 +309,7 @@ void prt_chp()
 void prt_pac()
 {
     char tmp[32];
-    sprintf(tmp, "%6d", py.misc.dis_ac);
+    sprintf(tmp, "%6d", py.dis_ac);
     put_str(tmp, ROW_AC, COL_STAT + 6);
 }
 
@@ -321,7 +321,7 @@ void prt_gold()
 {
     char tmp[32];
 
-    sprintf(tmp, "%9ld", (long)py.misc.au);
+    sprintf(tmp, "%9ld", (long)py.au);
     put_str(tmp, ROW_GOLD, COL_STAT + 3);
 }
 
@@ -350,10 +350,10 @@ void prt_depth()
  */
 void prt_hunger()
 {
-    if (PY_WEAK & py.flags1.status) {
+    if (PY_WEAK & py.status) {
 	put_str("Weak  ", 23, 0);
     }
-    else if (PY_HUNGRY & py.flags1.status) {
+    else if (PY_HUNGRY & py.status) {
 	put_str("Hungry", 23, 0);
     }
     else {
@@ -367,7 +367,7 @@ void prt_hunger()
  */
 void prt_blind(void)
 {
-    if (PY_BLIND & py.flags1.status) {
+    if (PY_BLIND & py.status) {
 	put_str("Blind", 23, 7);
     }
     else {
@@ -381,7 +381,7 @@ void prt_blind(void)
  */
 void prt_confused(void)
 {
-    if (PY_CONFUSED & py.flags1.status) {
+    if (PY_CONFUSED & py.status) {
 	put_str("Confused", 23, 13);
     }
     else {
@@ -395,7 +395,7 @@ void prt_confused(void)
  */
 void prt_afraid()
 {
-    if (PY_FEAR & py.flags1.status) {
+    if (PY_FEAR & py.status) {
 	put_str("Afraid", 23, 22);
     }
     else {
@@ -409,7 +409,7 @@ void prt_afraid()
  */
 void prt_poisoned(void)
 {
-    if (PY_POISONED & py.flags1.status) {
+    if (PY_POISONED & py.status) {
 	put_str("Poisoned", 23, 29);
     }
     else {
@@ -427,22 +427,22 @@ void prt_state(void)
     char tmp[16];
 
     /* Turn off the flag */
-    py.flags1.status &= ~PY_REPEAT;
+    py.status &= ~PY_REPEAT;
 
     /* Most important info is paralyzation */
-    if (py.flags1.paralysis > 1) {
+    if (py.paralysis > 1) {
 	put_str("Paralysed ", 23, 38);
     }
 
     /* Then comes resting */
-    else if (PY_REST & py.flags1.status) {
-	if (py.flags1.rest > 0) {
-	    (void)sprintf(tmp, "Rest %-5d", py.flags1.rest);
+    else if (PY_REST & py.status) {
+	if (py.rest > 0) {
+	    (void)sprintf(tmp, "Rest %-5d", py.rest);
 	}
-	else if (py.flags1.rest == -1) {
+	else if (py.rest == -1) {
 	    (void)sprintf(tmp, "Rest *****");
 	}
-	else if (py.flags1.rest == -2) {
+	else if (py.rest == -2) {
 	    (void)sprintf(tmp, "Rest &&&&&");
 	}
 	put_str(tmp, 23, 38);
@@ -452,13 +452,13 @@ void prt_state(void)
     else if (command_rep > 0) {
 
 	(void)sprintf(tmp, "Repeat %-3d", command_rep);
-	py.flags1.status |= PY_REPEAT;
+	py.status |= PY_REPEAT;
 	put_str(tmp, 23, 38);
-	if (PY_SEARCH & py.flags1.status)
+	if (PY_SEARCH & py.status)
 	    put_str("Search    ", 23, 38);
     }
 
-    else if (PY_SEARCH & py.flags1.status) {
+    else if (PY_SEARCH & py.status) {
 	put_str("Searching ", 23, 38);
     }
     else			   /* "repeat 999" is 10 characters */
@@ -471,9 +471,9 @@ void prt_state(void)
  */
 void prt_speed()
 {
-    int i = py.flags1.speed;
+    int i = py.speed;
 
-    if (PY_SEARCH & py.flags1.status) i--;
+    if (PY_SEARCH & py.status) i--;
 
     if (i > 2)
 	put_str("Extremely Slow", 23, 49);
@@ -499,8 +499,8 @@ void prt_speed()
 
 void prt_study()
 {
-    py.flags1.status &= ~PY_STUDY;
-    if (py.flags1.new_spells != 0) {
+    py.status &= ~PY_STUDY;
+    if (py.new_spells != 0) {
 	put_str("Study", 23, 64);
     }
     else {
@@ -511,7 +511,7 @@ void prt_study()
 
 void prt_cut()
 {
-    int c = py.flags1.cut;
+    int c = py.cut;
 
     if (c > 900)
 	put_str("Mortal wound", ROW_CUT, 0);
@@ -535,9 +535,9 @@ void prt_cut()
 
 void prt_stun(void)
 {
-    int s = py.flags1.stun;
+    int s = py.stun;
 
-    if (!py.flags1.resist_sound) {
+    if (!py.resist_sound) {
 	if (s > 100) {
 	    put_str("Knocked out ", ROW_STUN, 0);
 	}
@@ -608,30 +608,29 @@ void prt_equippy_chars(void)
 void prt_stat_block()
 {
     register u32b       status;
-    register struct misc *m_ptr;
+    rplayer_type *p_ptr = &py;
     register int          i;
 
-    m_ptr = &py.misc;
-    prt_field(race[py.misc.prace].trace, ROW_RACE, COL_STAT);
-    prt_field(class[py.misc.pclass].title, ROW_CLASS, COL_STAT);
+    prt_field(race[py.prace].trace, ROW_RACE, COL_STAT);
+    prt_field(class[py.pclass].title, ROW_CLASS, COL_STAT);
     prt_field(title_string(), ROW_TITLE, COL_STAT);
     for (i = 0; i < 6; i++) prt_stat(i);
-    prt_num("LEV", (int)m_ptr->lev, ROW_LEVEL, COL_STAT);
-    prt_lnum("EXP", m_ptr->exp, ROW_EXP, COL_STAT);
-    prt_num("MNA", m_ptr->cmana, ROW_MANA, COL_STAT);
-    prt_num("MHP", m_ptr->mhp, ROW_MAXHP, COL_STAT);
-    prt_num("CHP", m_ptr->chp, ROW_CURHP, COL_STAT);
+    prt_num("LEV", (int)p_ptr->lev, ROW_LEVEL, COL_STAT);
+    prt_lnum("EXP", p_ptr->exp, ROW_EXP, COL_STAT);
+    prt_num("MNA", p_ptr->cmana, ROW_MANA, COL_STAT);
+    prt_num("MHP", p_ptr->mhp, ROW_MAXHP, COL_STAT);
+    prt_num("CHP", p_ptr->chp, ROW_CURHP, COL_STAT);
     prt_chp();			   /* this will overwrite hp, in color, if
 				    * needed. -CFT */
-    prt_num("AC ", m_ptr->dis_ac, ROW_AC, COL_STAT);
-    prt_lnum("AU ", m_ptr->au, ROW_GOLD, COL_STAT);
+    prt_num("AC ", p_ptr->dis_ac, ROW_AC, COL_STAT);
+    prt_lnum("AU ", p_ptr->au, ROW_GOLD, COL_STAT);
 
     prt_winner();
     prt_cut();
     prt_stun();
     prt_study();
 
-    status = py.flags1.status;
+    status = py.status;
     if ((PY_HUNGRY | PY_WEAK) & status)
 	prt_hunger();
     if (PY_BLIND & status)
@@ -646,7 +645,7 @@ void prt_stat_block()
 	prt_state();
 
     /* if speed non zero, print it, modify speed if Searching */
-    if (py.flags1.speed - ((PY_SEARCH & status) >> 8) != 0)
+    if (py.speed - ((PY_SEARCH & status) >> 8) != 0)
     prt_speed();
 
 	prt_equippy_chars();
@@ -672,8 +671,8 @@ void draw_cave(void)
  */
 void cut_player(int c)
 {
-    c += py.flags1.cut;
-    py.flags1.cut = c;
+    c += py.cut;
+    py.cut = c;
 
     if (c > 5000) {
 	msg_print("You have been given a mortal wound.");
@@ -706,44 +705,44 @@ void stun_player(int s)
 {
     int t;
 
-    if (py.flags1.resist_sound) return;
+    if (py.resist_sound) return;
 
-	t = py.flags1.stun;
-	py.flags1.stun += s;
-	s = py.flags1.stun;
+	t = py.stun;
+	py.stun += s;
+	s = py.stun;
 	if (s > 100) {
 	    msg_print("You have been knocked out.");
 	    if (t == 0) {
-		py.misc.ptohit -= 20;
-		py.misc.ptodam -= 20;
-		py.misc.dis_th -= 20;
-		py.misc.dis_td -= 20;
+		py.ptohit -= 20;
+		py.ptodam -= 20;
+		py.dis_th -= 20;
+		py.dis_td -= 20;
 	    } else if (t <= 50) {
-		py.misc.ptohit -= 15;
-		py.misc.ptodam -= 15;
-		py.misc.dis_th -= 15;
-		py.misc.dis_td -= 15;
+		py.ptohit -= 15;
+		py.ptodam -= 15;
+		py.dis_th -= 15;
+		py.dis_td -= 15;
 	    }
 	} else if (s > 50) {
 	    msg_print("You've been heavily stunned.");
 	    if (t == 0) {
-		py.misc.ptohit -= 20;
-		py.misc.ptodam -= 20;
-		py.misc.dis_th -=20;
-		py.misc.dis_td -=20;
+		py.ptohit -= 20;
+		py.ptodam -= 20;
+		py.dis_th -=20;
+		py.dis_td -=20;
 	    } else if (t <= 50) {
-		py.misc.ptohit -= 15;
-		py.misc.ptodam -= 15;
-                py.misc.dis_th -= 15;
-                py.misc.dis_td -= 15;
+		py.ptohit -= 15;
+		py.ptodam -= 15;
+                py.dis_th -= 15;
+                py.dis_td -= 15;
 	    }
 	} else if (s > 0) {
 	    msg_print("You've been stunned.");
 	    if (t == 0) {
-		py.misc.ptohit -= 5;
-		py.misc.ptodam -= 5;
-                py.misc.dis_th -= 5;
-                py.misc.dis_td -= 5;
+		py.ptohit -= 5;
+		py.ptodam -= 5;
+                py.dis_th -= 5;
+                py.dis_td -= 5;
 	    }
 	}
 }
@@ -754,7 +753,7 @@ u16b modify_stat(int stat, int amount)
     register int    loop, i;
     register u16b tmp_stat;
 
-    tmp_stat = py.stats.cur_stat[stat];
+    tmp_stat = py.cur_stat[stat];
 
     loop = (amount < 0 ? -amount : amount);
 
@@ -782,11 +781,11 @@ u16b modify_stat(int stat, int amount)
 void set_use_stat(int stat)
 {
     /* Calculate the "total" stat value */
-    py.stats.use_stat[stat] = modify_stat(stat, py.stats.mod_stat[stat]);
+    py.use_stat[stat] = modify_stat(stat, py.mod_stat[stat]);
 
     /* Calculate various effects */
     if (stat == A_STR) {
-	py.flags1.status |= PY_STR_WGT;
+	py.status |= PY_STR_WGT;
 	calc_bonuses();
     }
     else if (stat == A_DEX) {
@@ -795,11 +794,11 @@ void set_use_stat(int stat)
     else if (stat == A_CON) {
 	calc_hitpoints();
     }
-    else if (stat == A_INT && class[py.misc.pclass].spell == MAGE) {
+    else if (stat == A_INT && class[py.pclass].spell == MAGE) {
 	calc_spells(A_INT);
 	calc_mana(A_INT);
     }
-    else if (stat == A_WIS && class[py.misc.pclass].spell == PRIEST) {
+    else if (stat == A_WIS && class[py.pclass].spell == PRIEST) {
 	calc_spells(A_WIS);
 	calc_mana(A_WIS);
     }
@@ -817,7 +816,7 @@ int inc_stat(int stat)
     res_stat(stat);
 
     /* Then augment the current/max stat */
-    tmp_stat = py.stats.cur_stat[stat];
+    tmp_stat = py.cur_stat[stat];
 
     /* Cannot go above 18/100 */
     if (tmp_stat < 118) {
@@ -835,9 +834,9 @@ int inc_stat(int stat)
 	    tmp_stat++;
 	}
 
-	py.stats.cur_stat[stat] = tmp_stat;
-	if (tmp_stat > py.stats.max_stat[stat]) {
-	    py.stats.max_stat[stat] = tmp_stat;
+	py.cur_stat[stat] = tmp_stat;
+	if (tmp_stat > py.max_stat[stat]) {
+	    py.max_stat[stat] = tmp_stat;
 	}
 	set_use_stat(stat);
 	prt_stat(stat);
@@ -857,7 +856,7 @@ int dec_stat(int stat)
     int cur, loss;
 
     /* Acquire current value */
-    cur = py.stats.cur_stat[stat];
+    cur = py.cur_stat[stat];
 
     /* Damage "current" value */
     if (cur > 3) {
@@ -875,7 +874,7 @@ int dec_stat(int stat)
 	    cur--;
 
 	/* Update the stat */
-	py.stats.cur_stat[stat] = cur;
+	py.cur_stat[stat] = cur;
 	set_use_stat(stat);
 	prt_stat(stat);
 	return TRUE;
@@ -890,8 +889,8 @@ int dec_stat(int stat)
 int res_stat(int stat)
 {
     /* Restore */
-    if (py.stats.max_stat[stat] != py.stats.cur_stat[stat]) {
-	py.stats.cur_stat[stat] = py.stats.max_stat[stat];
+    if (py.max_stat[stat] != py.cur_stat[stat]) {
+	py.cur_stat[stat] = py.max_stat[stat];
 	set_use_stat(stat);
 	prt_stat(stat);
 	return TRUE;
@@ -909,7 +908,7 @@ int tohit_adj()
 {
     register int total, stat;
 
-    stat = py.stats.use_stat[A_DEX];
+    stat = py.use_stat[A_DEX];
     if      (stat <   4)  total = -3;
     else if (stat <   6)  total = -2;
     else if (stat <   8)  total = -1;
@@ -930,7 +929,7 @@ int tohit_adj()
     else if (stat < 218)  total = 14;
     else if (stat < 228)  total = 15;
     else total = 17;
-    stat = py.stats.use_stat[A_STR];
+    stat = py.use_stat[A_STR];
     if      (stat <   4)  total -= 3;
     else if (stat <   5)  total -= 2;
     else if (stat <   7)  total -= 1;
@@ -961,7 +960,7 @@ int toac_adj(void)
 {
     register int stat;
 
-    stat = py.stats.use_stat[A_DEX];
+    stat = py.use_stat[A_DEX];
     if      (stat <   4)  return(-4);
     else if (stat ==  4)  return(-3);
     else if (stat ==  5)  return(-2);
@@ -993,7 +992,7 @@ int todis_adj(void)
 {
     register int stat;
 
-    stat = py.stats.use_stat[A_DEX];
+    stat = py.use_stat[A_DEX];
     if      (stat <=  3)  return(-8);
     else if (stat ==  4)  return(-6);
     else if (stat ==  5)  return(-4);
@@ -1017,7 +1016,7 @@ int todam_adj(void)
 {
     register int stat;
 
-    stat = py.stats.use_stat[A_STR];
+    stat = py.use_stat[A_STR];
     if      (stat <   4)  return(-2);
     else if (stat <   5)  return(-1);
     else if (stat <  16)  return( 0);
@@ -1070,7 +1069,7 @@ static void prt_num(cptr header, int num, int row, int col)
  */
 void put_character()
 {
-    register struct misc *m_ptr = &py.misc;
+    player_type *p_ptr = &py;
     clear_screen();
 
     put_str("Name        :", 2, 1);
@@ -1079,10 +1078,10 @@ void put_character()
     put_str("Class       :", 5, 1);
 
     if (character_generated) {
-	put_str(m_ptr->name, 2, 15);
-	put_str(race[m_ptr->prace].trace, 3, 15);
-	put_str((m_ptr->male ? "Male" : "Female"), 4, 15);
-	put_str(class[m_ptr->pclass].title, 5, 15);
+	put_str(p_ptr->name, 2, 15);
+	put_str(race[p_ptr->prace].trace, 3, 15);
+	put_str((p_ptr->male ? "Male" : "Female"), 4, 15);
+	put_str(class[p_ptr->pclass].title, 5, 15);
     }
 }
 
@@ -1093,30 +1092,30 @@ void put_character()
  */
 void put_stats()
 {
-    struct misc *m_ptr = &py.misc;
+    player_type *p_ptr = &py;
     int          i, temp;
     vtype        buf;
 
     /* Display the stats */
     for (i = 0; i < 6; i++) {
 
-	cnv_stat(py.stats.use_stat[i], buf);
+	cnv_stat(py.use_stat[i], buf);
 	put_str(stat_names[i], 2 + i, 61);
 	put_str(buf, 2 + i, 66);
-	if (py.stats.max_stat[i] > py.stats.cur_stat[i]) {
+	if (py.max_stat[i] > py.cur_stat[i]) {
 	    /* this looks silly, but it happens because modify_stat() only
 	     * looks at cur_stat -CFT */
-	    temp = py.stats.cur_stat[i];
-	    py.stats.cur_stat[i] = py.stats.max_stat[i];
-	    cnv_stat (modify_stat(i,py.stats.mod_stat[i]), buf);
-	    py.stats.cur_stat[i] = temp; /* DON'T FORGET! -CFT */
+	    temp = py.cur_stat[i];
+	    py.cur_stat[i] = py.max_stat[i];
+	    cnv_stat (modify_stat(i,py.mod_stat[i]), buf);
+	    py.cur_stat[i] = temp; /* DON'T FORGET! -CFT */
 	    put_str(buf, 2 + i, 73);
 	}
     }
-    prt_num("+ To Hit    ", m_ptr->dis_th, 9, 1);
-    prt_num("+ To Damage ", m_ptr->dis_td, 10, 1);
-    prt_num("+ To AC     ", m_ptr->dis_tac, 11, 1);
-    prt_num("  Total AC  ", m_ptr->dis_ac, 12, 1);
+    prt_num("+ To Hit    ", p_ptr->dis_th, 9, 1);
+    prt_num("+ To Damage ", p_ptr->dis_td, 10, 1);
+    prt_num("+ To AC     ", p_ptr->dis_tac, 11, 1);
+    prt_num("  Total AC  ", p_ptr->dis_ac, 12, 1);
 }
 
 
@@ -1167,12 +1166,12 @@ cptr likert(int x, int y)
  */
 void put_misc1()
 {
-    register struct misc *m_ptr = &py.misc;
+    player_type *p_ptr = &py;
 
-    prt_num("Age          ", (int)m_ptr->age, 2, 32);
-    prt_num("Height       ", (int)m_ptr->ht, 3, 32);
-    prt_num("Weight       ", (int)m_ptr->wt, 4, 32);
-    prt_num("Social Class ", (int)m_ptr->sc, 5, 32);
+    prt_num("Age          ", (int)p_ptr->age, 2, 32);
+    prt_num("Height       ", (int)p_ptr->ht, 3, 32);
+    prt_num("Weight       ", (int)p_ptr->wt, 4, 32);
+    prt_num("Social Class ", (int)p_ptr->sc, 5, 32);
 }
 
 
@@ -1181,12 +1180,12 @@ void put_misc1()
  */
 void put_misc2()
 {
-    register struct misc *m_ptr = &py.misc;
+    player_type *p_ptr = &py;
 
-    prt_num("Level      ", (int)m_ptr->lev, 9, 28);
-    prt_lnum("Experience ", m_ptr->exp, 10, 28);
-    prt_lnum("Max Exp    ", m_ptr->max_exp, 11, 28);
-    if (m_ptr->lev >= MAX_PLAYER_LEVEL) {
+    prt_num("Level      ", (int)p_ptr->lev, 9, 28);
+    prt_lnum("Experience ", p_ptr->exp, 10, 28);
+    prt_lnum("Max Exp    ", p_ptr->max_exp, 11, 28);
+    if (p_ptr->lev >= MAX_PLAYER_LEVEL) {
 	char                buf[40];	/* for this to look right, the
 					 * following should be spaced the
 					 * same as in the prt_lnum code...
@@ -1197,14 +1196,14 @@ void put_misc2()
     }
     else {
 	prt_lnum("Exp to Adv.",
-	    (s32b) (player_exp[m_ptr->lev - 1] * m_ptr->expfact / 100L),
+	    (s32b) (player_exp[p_ptr->lev - 1] * p_ptr->expfact / 100L),
 	    12, 28);
     }
-    prt_lnum("Gold       ", m_ptr->au, 13, 28);
-    prt_num("Max Hit Points ", m_ptr->mhp, 9, 52);
-    prt_num("Cur Hit Points ", m_ptr->chp, 10, 52);
-    prt_num("Max Mana       ", m_ptr->mana, 11, 52);
-    prt_num("Cur Mana       ", m_ptr->cmana, 12, 52);
+    prt_lnum("Gold       ", p_ptr->au, 13, 28);
+    prt_num("Max Hit Points ", p_ptr->mhp, 9, 52);
+    prt_num("Cur Hit Points ", p_ptr->chp, 10, 52);
+    prt_num("Max Mana       ", p_ptr->mana, 11, 52);
+    prt_num("Cur Mana       ", p_ptr->cmana, 12, 52);
 }
 
 
@@ -1216,7 +1215,7 @@ void put_misc3()
     int			xbth, xbthb, xfos, xsrh;
     int			xstl, xdis, xsave, xdev;
     vtype                xinfra;
-    register struct misc *p_ptr = &py.misc;
+    player_type *p_ptr = &py;
 
     clear_from(14);
 
@@ -1238,7 +1237,7 @@ void put_misc3()
 	   (class_level_adj[p_ptr->pclass][CLA_DEVICE] * p_ptr->lev / 3);
 
     /* Infravision string */
-    (void)sprintf(xinfra, "%d feet", py.flags1.see_infra * 10);
+    (void)sprintf(xinfra, "%d feet", py.see_infra * 10);
 
     put_str("(Miscellaneous Abilities)", 15, 25);
 
@@ -1293,7 +1292,7 @@ void get_name()
     char tmp[100];
 
     /* Prompt and ask */
-    strcpy(tmp, py.misc.name);
+    strcpy(tmp, py.name);
     prt("Enter your player's name  [press <RETURN> when finished]", 21, 2);
 
 #ifdef MAC
@@ -1301,10 +1300,10 @@ void get_name()
  * Force player to give a name, would be nice to get name from chooser (STR
  * -16096), but that name might be too long 
  */
-    while (!get_string(py.misc.name, 2, 15, 15) || py.misc.name[0] == 0);
+    while (!get_string(py.name, 2, 15, 15) || py.name[0] == 0);
 #else
-    if (!get_string(py.misc.name, 2, 15, 15) || py.misc.name[0] == 0) {
-	strcpy(py.misc.name, tmp);
+    if (!get_string(py.name, 2, 15, 15) || py.name[0] == 0) {
+	strcpy(py.name, tmp);
 	put_str(tmp, 2, 15);
     }
 #endif
@@ -1378,10 +1377,10 @@ int weight_limit(void)
     register s32b weight_cap;
 
     /* Factor in strength */
-    weight_cap = (long)py.stats.use_stat[A_STR] * (long)PLAYER_WEIGHT_CAP;
+    weight_cap = (long)py.use_stat[A_STR] * (long)PLAYER_WEIGHT_CAP;
 
     /* Hack -- large players can carry more */
-    weight_cap += (long)py.misc.wt;
+    weight_cap += (long)py.wt;
 
     /* Nobody can carry more than 300 pounds */
     if (weight_cap > 3000L) weight_cap = 3000L;
@@ -1486,14 +1485,14 @@ int inven_carry(inven_type *i_ptr)
 	/* For items which are always known1p, i.e. never have a 'color',
 	 * insert them into the inventory in sorted order.  
 	 */
-	    if ((typ == TV_PRAYER_BOOK) && (class[py.misc.pclass].spell == MAGE))
+	    if ((typ == TV_PRAYER_BOOK) && (class[py.pclass].spell == MAGE))
 		typ = TV_MAGIC_BOOK - 1;
 	/* sort is in descending, so this will be immediately after magic books.
 	 * It helps that there is no tval that uses this. -CFT
 	 */
 	    tval_tmp = t_ptr->tval;
 	    if ((tval_tmp == TV_PRAYER_BOOK) &&
-		(class[py.misc.pclass].spell == MAGE))
+		(class[py.pclass].spell == MAGE))
 		tval_tmp = TV_MAGIC_BOOK - 1;
 	/* sort is in descending, so this will be immediately after magic books.
 	 * It helps that there is no tval that uses this. -CFT
@@ -1512,7 +1511,7 @@ int inven_carry(inven_type *i_ptr)
 	}
     }
     inven_weight += i_ptr->number * i_ptr->weight;
-    py.flags1.status |= PY_STR_WGT;
+    py.status |= PY_STR_WGT;
     return locn;
 }
 
@@ -1527,12 +1526,12 @@ int spell_chance(int spell)
     register int         stat;
     int                  minfail;
 
-    s_ptr = &magic_spell[py.misc.pclass - 1][spell];
-    chance = s_ptr->sfail - 3 * (py.misc.lev - s_ptr->slevel);
-    stat = (class[py.misc.pclass].spell == MAGE) ? A_INT : A_WIS;
+    s_ptr = &magic_spell[py.pclass - 1][spell];
+    chance = s_ptr->sfail - 3 * (py.lev - s_ptr->slevel);
+    stat = (class[py.pclass].spell == MAGE) ? A_INT : A_WIS;
     chance -= 3 * (stat_adj(stat) - 1);
-    if (s_ptr->smana > py.misc.cmana) {
-	chance += 5 * (s_ptr->smana - py.misc.cmana);
+    if (s_ptr->smana > py.cmana) {
+	chance += 5 * (s_ptr->smana - py.cmana);
     }
     
     switch (stat_adj(stat)) {
@@ -1583,13 +1582,13 @@ int spell_chance(int spell)
     }
 
      /* only mages/priests can get best chances... */
-    if ((minfail < 5) && (py.misc.pclass != 1) && (py.misc.pclass != 2)) {
+    if ((minfail < 5) && (py.pclass != 1) && (py.pclass != 2)) {
 	minfail = 5;
     }
 
     /* Big prayer penalty for edged weapons  -DGK */
     /* XXX So, like, switch weapons and then pray? */
-    if (py.misc.pclass == 2) {
+    if (py.pclass == 2) {
 	register inven_type *i_ptr;
 	i_ptr = &inventory[INVEN_WIELD];
 	if ((i_ptr->tval == TV_SWORD) || (i_ptr->tval == TV_POLEARM)) {
@@ -1627,7 +1626,7 @@ void print_spells(int *spell, int num, int comment, int nonconsec)
 
     col = (comment ? 22 : 31);
 
-    offset = (class[py.misc.pclass].spell == MAGE ? SPELL_OFFSET : PRAYER_OFFSET);
+    offset = (class[py.pclass].spell == MAGE ? SPELL_OFFSET : PRAYER_OFFSET);
     erase_line(1, col);
     put_str("Name", 1, col + 5);
     put_str("Lv Mana Fail", 1, col + 35);
@@ -1637,7 +1636,7 @@ void print_spells(int *spell, int num, int comment, int nonconsec)
 
     for (i = 0; i < num; i++) {
 	j = spell[i];
-	s_ptr = &magic_spell[py.misc.pclass - 1][j];
+	s_ptr = &magic_spell[py.pclass - 1][j];
 	if (comment == FALSE) {
 	    p = "";
 	}
@@ -1693,7 +1692,7 @@ int get_spell(int *spell, int num, int *sn, int *sc, cptr prompt, int first_spel
 	   spell[0] + 'a' - first_spell, spell[num - 1] + 'a' - first_spell,
 		  prompt);
     redraw = FALSE;
-    offset = (class[py.misc.pclass].spell == MAGE ? SPELL_OFFSET : PRAYER_OFFSET);
+    offset = (class[py.pclass].spell == MAGE ? SPELL_OFFSET : PRAYER_OFFSET);
     
     /* Get a spell from the user */
     while (!flag && get_com(out_str, &choice)) {
@@ -1710,7 +1709,7 @@ int get_spell(int *spell, int num, int *sn, int *sc, cptr prompt, int first_spel
 		*sn = (-2);
 	    }
 	    else {
-		s_ptr = &magic_spell[py.misc.pclass - 1][*sn];
+		s_ptr = &magic_spell[py.pclass - 1][*sn];
 		(void)sprintf(tmp_str, "Cast %s (%d mana, %d%% fail)?",
 			      spell_names[*sn + offset], s_ptr->smana,
 			      spell_chance(*sn));
@@ -1756,7 +1755,7 @@ int get_spell(int *spell, int num, int *sn, int *sc, cptr prompt, int first_spel
 
 	if (*sn == -2) {
 	    sprintf(tmp_str, "You don't know that %s.",
-		(class[py.misc.pclass].spell == MAGE) ? "spell" : "prayer");
+		(class[py.pclass].spell == MAGE) ? "spell" : "prayer");
 	    msg_print(tmp_str);
 	}
     }
@@ -1778,7 +1777,7 @@ int get_spell(int *spell, int num, int *sn, int *sc, cptr prompt, int first_spel
 static void gain_level(void)
 {
     vtype               out_val;
-    register struct misc *p_ptr = &py.misc;
+    player_type *p_ptr = &py;
 
     p_ptr->lev++;
     (void)sprintf(out_val, "Welcome to level %d.", (int)p_ptr->lev);
@@ -1803,7 +1802,7 @@ static void gain_level(void)
  */
 void prt_experience()
 {
-    register struct misc *p_ptr = &py.misc;
+    player_type *p_ptr = &py;
     
     if (p_ptr->exp > MAX_EXP) p_ptr->exp = MAX_EXP;
 
@@ -1839,7 +1838,7 @@ void prt_experience()
 void calc_hitpoints()
 {
     register int          hitpoints;
-    register struct misc *p_ptr = &py.misc;
+    player_type *p_ptr = &py;
     register s32b        value;
 
     /* Calculate hitpoints */
@@ -1851,8 +1850,8 @@ void calc_hitpoints()
     }
 
     /* Factor in the hero / superhero values */
-    if (py.flags1.status & PY_HERO) hitpoints += 10;
-    if (py.flags1.status & PY_SHERO) hitpoints += 30;
+    if (py.status & PY_HERO) hitpoints += 10;
+    if (py.status & PY_SHERO) hitpoints += 30;
 
     /* mhp can equal zero while character is being created */
     if (p_ptr->mhp && (hitpoints != p_ptr->mhp)) {
@@ -1868,7 +1867,7 @@ void calc_hitpoints()
 	p_ptr->mhp = hitpoints;
 
 	/* Remember to redisplay the hitpoints */
-	py.flags1.status |= PY_HP;
+	py.status |= PY_HP;
     }
 }
 
@@ -1943,8 +1942,8 @@ int attack_blows(int weight, int *wtohit)
     int adj_weight, str_index, dex_index, s, d;
 
     /* Start with the strength/dexterity */
-    s = py.stats.use_stat[A_STR];
-    d = py.stats.use_stat[A_DEX];
+    s = py.use_stat[A_STR];
+    d = py.use_stat[A_DEX];
 
     /* Normal weapons */
     if (s * 15 < weight) {
@@ -1968,7 +1967,7 @@ int attack_blows(int weight, int *wtohit)
 	else dex_index = 11;
 
 	/* new class-based weight penalties -CWS */
-	switch (py.misc.pclass) {
+	switch (py.pclass) {
 	  case 0:				/* Warriors */
 	    adj_weight = ((s * 10) / ((weight < 30) ? 30 : weight));
 	    break;
@@ -2011,12 +2010,12 @@ int attack_blows(int weight, int *wtohit)
 	d = (int)blows_table[str_index][dex_index];
 
 	/* Non-warrior attack penalty */
-	if (py.misc.pclass != 0) {
+	if (py.pclass != 0) {
 	    if (d > 5) d = 5;
 	}
 	
 	/* Mage attack penalty */
-	if (py.misc.pclass == 1) {
+	if (py.pclass == 1) {
 	    if (d > 4) d = 4;
 	}
 
@@ -2156,8 +2155,8 @@ int critical_blow(int weight, int plus, int dam, int attack_type)
 /* Weight of weapon, plusses to hit, and character level all */
 /* contribute to the chance of a critical	             */
     if (randint(5000) <= (int)(weight + 5 * plus
-			     + (class_level_adj[py.misc.pclass][attack_type]
-				* py.misc.lev))) {
+			     + (class_level_adj[py.pclass][attack_type]
+				* py.lev))) {
 	weight += randint(650);
 	if (weight < 400) {
 	    critical = 2 * dam + 5;
@@ -2184,9 +2183,9 @@ int critical_blow(int weight, int plus, int dam, int attack_type)
  */
 int player_saves(void)
 {
-    int t1 = class_level_adj[py.misc.pclass][CLA_SAVE];
-    int t2 = py.misc.save + stat_adj(A_WIS);
-    int t3 = t2 + (t1 * py.misc.lev / 3);
+    int t1 = class_level_adj[py.pclass][CLA_SAVE];
+    int t2 = py.save + stat_adj(A_WIS);
+    int t3 = t2 + (t1 * py.lev / 3);
     return (randint(100) <= t3);
 }
 

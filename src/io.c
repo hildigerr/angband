@@ -212,7 +212,7 @@ int suspend()
     int            lbuf;
     long           time();
 
-    py.misc.male |= 2;
+    py.male |= 2;
     (void)ioctl(0, TIOCGETP, (char *)&tbuf);
     (void)ioctl(0, TIOCGETC, (char *)&cbuf);
     (void)ioctl(0, TIOCGLTC, (char *)&lcbuf);
@@ -228,7 +228,7 @@ int suspend()
     (void)wrefresh(curscr);
     cbreak();
     noecho();
-    py.misc.male &= ~2;
+    py.male &= ~2;
 #endif
     return 0;
 }

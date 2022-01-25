@@ -29,7 +29,7 @@
  */
 static void lose_str()
 {
-    if (!py.flags1.sustain_str) {
+    if (!py.sustain_str) {
 	(void)dec_stat(A_STR);
 	msg_print("You feel very weak.");
     }
@@ -44,7 +44,7 @@ static void lose_str()
  */
 static void lose_int()
 {
-    if (!py.flags1.sustain_int) {
+    if (!py.sustain_int) {
 	(void)dec_stat(A_INT);
 	msg_print("You become very dizzy.");
     }
@@ -59,7 +59,7 @@ static void lose_int()
  */
 static void lose_wis()
 {
-    if (!py.flags1.sustain_wis) {
+    if (!py.sustain_wis) {
 	(void)dec_stat(A_WIS);
 	msg_print("You feel very naive.");
     }
@@ -74,7 +74,7 @@ static void lose_wis()
  */
 static void lose_dex()
 {
-    if (!py.flags1.sustain_dex) {
+    if (!py.sustain_dex) {
 	(void)dec_stat(A_DEX);
 	msg_print("You feel very sore.");
     }
@@ -89,7 +89,7 @@ static void lose_dex()
  */
 static void lose_con()
 {
-    if (!py.flags1.sustain_con) {
+    if (!py.sustain_con) {
 	(void)dec_stat(A_CON);
 	msg_print("You feel very sick.");
     }
@@ -104,7 +104,7 @@ static void lose_con()
  */
 static void lose_chr()
 {
-    if (!py.flags1.sustain_chr) {
+    if (!py.sustain_chr) {
 	(void)dec_stat(A_CHR);
 	msg_print("Your skin starts to itch.");
     }
@@ -125,8 +125,7 @@ void do_cmd_eat_food(void)
     u32b                 flg;
     int			   j, ident, lev;
     int                    item_val, i1, i2;
-    register struct flags1 *f_ptr = &py.flags1;
-    register struct misc  *m_ptr = &py.misc;;
+    player_type  *p_ptr = &py;
     register inven_type   *i_ptr;
 
     /* Assume the turn is free */
@@ -166,14 +165,14 @@ void do_cmd_eat_food(void)
 	switch (j + 1) {
 
 	  case 1:
-	    if (!f_ptr->resist_pois)
-		f_ptr->poisoned += randint(10) + lev;
+	    if (!p_ptr->resist_pois)
+		p_ptr->poisoned += randint(10) + lev;
 		ident = TRUE;
 	    break;
 
 	  case 2:
-	    if (!f_ptr->resist_blind) {
-		f_ptr->blind += randint(250) + 10 * lev + 100;
+	    if (!p_ptr->resist_blind) {
+		p_ptr->blind += randint(250) + 10 * lev + 100;
 		draw_cave();
 		msg_print("A veil of darkness surrounds you.");
 		ident = TRUE;
@@ -181,23 +180,23 @@ void do_cmd_eat_food(void)
 	    break;
 
 	  case 3:
-	    if (!f_ptr->resist_fear) {
-		f_ptr->afraid += randint(10) + lev;
+	    if (!p_ptr->resist_fear) {
+		p_ptr->afraid += randint(10) + lev;
 		msg_print("You feel terrified!");
 		ident = TRUE;
 	    }
 	    break;
 
 	  case 4:
-	    if ((!f_ptr->resist_conf) && (!f_ptr->resist_chaos)) {
-		f_ptr->confused += randint(10) + lev;
+	    if ((!p_ptr->resist_conf) && (!p_ptr->resist_chaos)) {
+		p_ptr->confused += randint(10) + lev;
 		msg_print("You feel drugged.");
 	    }
 		ident = TRUE;
 	    break;
 
 	  case 5:
-	    f_ptr->image += randint(200) + 25 * lev + 200;
+	    p_ptr->image += randint(200) + 25 * lev + 200;
 	    msg_print("You feel drugged.");
 	    ident = TRUE;
 	    break;
@@ -211,8 +210,8 @@ void do_cmd_eat_food(void)
 	    break;
 
 	  case 8:
-	    if (f_ptr->afraid > 1) {
-		f_ptr->afraid = 1;
+	    if (p_ptr->afraid > 1) {
+		p_ptr->afraid = 1;
 		ident = TRUE;
 	    }
 	    break;
@@ -347,7 +346,7 @@ void do_cmd_eat_food(void)
 
     /* The player is now aware of the object */
     if (ident) { if (!known1_p(i_ptr)) {
-	m_ptr->exp += (i_ptr->level + (m_ptr->lev >> 1)) / m_ptr->lev;
+	p_ptr->exp += (i_ptr->level + (p_ptr->lev >> 1)) / p_ptr->lev;
 	prt_experience();
 	identify(&item_val);
 	}
@@ -357,7 +356,7 @@ void do_cmd_eat_food(void)
     add_food(i_ptr->pval);
 
     /* Hack -- note loss of hunger */
-    f_ptr->status &= ~(PY_WEAK | PY_HUNGRY);
+    p_ptr->status &= ~(PY_WEAK | PY_HUNGRY);
     prt_hunger();
 
     /* Destroy the food */
@@ -380,8 +379,7 @@ void do_cmd_quaff_potion(void)
     int    j, ident;
     int    item_val, i1, i2;
     register inven_type   *i_ptr;
-    register struct misc  *m_ptr = &py.misc;
-    register struct flags1 *f_ptr = &py.flags1;
+    player_type  *p_ptr = &py;
 
     /* Assume the turn will be free */
     free_turn_flag = TRUE;
@@ -501,40 +499,40 @@ void do_cmd_quaff_potion(void)
 
 	  case 13:
 	    if (hp_player(damroll(2, 7))) ident = TRUE;
-	    if (f_ptr->cut > 0) {
+	    if (p_ptr->cut > 0) {
 		msg_print("Your wounds heal.");
-		f_ptr->cut -= 10;
-		if (f_ptr->cut < 0) f_ptr->cut = 0;
+		p_ptr->cut -= 10;
+		if (p_ptr->cut < 0) p_ptr->cut = 0;
 		ident = TRUE;
 	    }
 	    break;
 
 	  case 14:
 	    if (hp_player(damroll(4, 7))) ident = TRUE;
-	    if (f_ptr->cut > 0) {
+	    if (p_ptr->cut > 0) {
 		msg_print("Your wounds heal.");
-		f_ptr->cut = (f_ptr->cut / 2) - 50;
-		if (f_ptr->cut < 0) f_ptr->cut = 0;
+		p_ptr->cut = (p_ptr->cut / 2) - 50;
+		if (p_ptr->cut < 0) p_ptr->cut = 0;
 		ident = TRUE;
 	    }
 	    break;
 
 	  case 15:
 	    if (hp_player(damroll(6, 7))) ident = TRUE;
-	    if (f_ptr->cut > 0) {
+	    if (p_ptr->cut > 0) {
 		msg_print("Your wounds heal.");
-		f_ptr->cut = 0;
+		p_ptr->cut = 0;
 		ident = TRUE;
 	    }
-	    if (f_ptr->stun > 0) {
+	    if (p_ptr->stun > 0) {
 		msg_print("Your head stops stinging.");
-		f_ptr->stun = 0;
-		if (f_ptr->stun > 50) {
-		    py.misc.ptohit += 20;
-		    py.misc.ptodam += 20;
+		p_ptr->stun = 0;
+		if (p_ptr->stun > 50) {
+		    py.ptohit += 20;
+		    py.ptodam += 20;
 		} else {
-		    py.misc.ptohit += 5;
-		    py.misc.ptodam += 5;
+		    py.ptohit += 5;
+		    py.ptodam += 5;
 		}
 		ident = TRUE;
 	    }
@@ -542,21 +540,21 @@ void do_cmd_quaff_potion(void)
 
 	  case 16:
 	    if (hp_player(400)) ident = TRUE;
-	    if (f_ptr->stun > 0) {
+	    if (p_ptr->stun > 0) {
 		msg_print("Your head stops stinging.");
-		f_ptr->stun = 0;
-		if (f_ptr->stun > 50) {
-		    py.misc.ptohit += 20;
-		    py.misc.ptodam += 20;
+		p_ptr->stun = 0;
+		if (p_ptr->stun > 50) {
+		    py.ptohit += 20;
+		    py.ptodam += 20;
 		} else {
-		    py.misc.ptohit += 5;
-		    py.misc.ptodam += 5;
+		    py.ptohit += 5;
+		    py.ptodam += 5;
 		}
 		ident = TRUE;
 	    }
-	    if (f_ptr->cut > 0) {
+	    if (p_ptr->cut > 0) {
 		msg_print("Your wounds heal.");
-		f_ptr->cut = 0;
+		p_ptr->cut = 0;
 		ident = TRUE;
 	    }
 	    break;
@@ -569,10 +567,10 @@ void do_cmd_quaff_potion(void)
 	    break;
 
 	  case 18:
-	    if (m_ptr->exp < MAX_EXP) {
-		l = (m_ptr->exp / 2) + 10;
+	    if (p_ptr->exp < MAX_EXP) {
+		l = (p_ptr->exp / 2) + 10;
 		if (l > 100000L) l = 100000L;
-		m_ptr->exp += l;
+		p_ptr->exp += l;
 		msg_print("You feel more experienced.");
 		prt_experience();
 		ident = TRUE;
@@ -580,60 +578,60 @@ void do_cmd_quaff_potion(void)
 	    break;
 
 	  case 19:
-	    if (!f_ptr->free_act) {
+	    if (!p_ptr->free_act) {
 		/* paralysis must be zero, we are drinking */
 		/* but what about multiple potion effects? */
 		msg_print("You fall asleep.");
-		f_ptr->paralysis += randint(4) + 4;
+		p_ptr->paralysis += randint(4) + 4;
 		ident = TRUE;
 	    }
 	    break;
 
 	  case 20:
-	    if (!f_ptr->resist_blind) {
-		if (f_ptr->blind == 0) {
+	    if (!p_ptr->resist_blind) {
+		if (p_ptr->blind == 0) {
 		    msg_print("You are covered by a veil of darkness.");
 		    ident = TRUE;
 		}
-		f_ptr->blind += randint(100) + 100;
+		p_ptr->blind += randint(100) + 100;
 	    }
 	    break;
 
 	  case 21:
-	    if (!f_ptr->resist_conf) {
-		if (f_ptr->confused == 0) {
+	    if (!p_ptr->resist_conf) {
+		if (p_ptr->confused == 0) {
 		    msg_print("Hey!  This is good stuff!  * Hick! *");
 		    ident = TRUE;
 		}
-		f_ptr->confused += randint(20) + 12;
+		p_ptr->confused += randint(20) + 12;
 	    }
 	    break;
 
 	  case 22:
-	    if (!(f_ptr->immune_pois ||
-		  f_ptr->resist_pois ||
-		  f_ptr->oppose_pois)) {
+	    if (!(p_ptr->immune_pois ||
+		  p_ptr->resist_pois ||
+		  p_ptr->oppose_pois)) {
 		msg_print("You feel very sick.");
-		f_ptr->poisoned += randint(15) + 10;
+		p_ptr->poisoned += randint(15) + 10;
 	    }
 	    else {
 		msg_print("The poison has no effect.");
 	    }
-	    if (!f_ptr->resist_pois)
+	    if (!p_ptr->resist_pois)
 	    ident = TRUE;
 	    break;
 
 	  case 23:
-	    if (f_ptr->fast == 0) ident = TRUE;
-	    if (f_ptr->fast <= 0) {
-		f_ptr->fast += randint(25) + 15;
+	    if (p_ptr->fast == 0) ident = TRUE;
+	    if (p_ptr->fast <= 0) {
+		p_ptr->fast += randint(25) + 15;
 	    } else
-		f_ptr->fast += randint(5);
+		p_ptr->fast += randint(5);
 	    break;
 
 	  case 24:
-	    if (f_ptr->slow == 0) ident = TRUE;
-	    f_ptr->slow += randint(25) + 15;
+	    if (p_ptr->slow == 0) ident = TRUE;
+	    p_ptr->slow += randint(25) + 15;
 	    break;
 
 	  case 26:
@@ -676,17 +674,17 @@ void do_cmd_quaff_potion(void)
 	    break;	/* Unused */
 
 	  case 34:
-	    if (!f_ptr->hold_life && m_ptr->exp > 0) {
+	    if (!p_ptr->hold_life && p_ptr->exp > 0) {
 		s32b               m, scale;
 
 		msg_print("You feel your memories fade.");
-		m = py.misc.exp / 5;
-		if (py.misc.exp > MAX_SHORT) {
-		    scale = MAX_LONG / py.misc.exp;
-		    m += (randint((int)scale) * py.misc.exp) / (scale * 5);
+		m = py.exp / 5;
+		if (py.exp > MAX_SHORT) {
+		    scale = MAX_LONG / py.exp;
+		    m += (randint((int)scale) * py.exp) / (scale * 5);
 		}
 		else {
-		    m += randint((int)py.misc.exp) / 5;
+		    m += randint((int)py.exp) / 5;
 		}
 		lose_exp(m);
 	    }
@@ -698,20 +696,20 @@ void do_cmd_quaff_potion(void)
 
 	  case 35:
 	    (void)cure_poison();
-	    if (f_ptr->food > 150) f_ptr->food = 150;
-	    f_ptr->paralysis = 4;
+	    if (p_ptr->food > 150) p_ptr->food = 150;
+	    p_ptr->paralysis = 4;
 	    msg_print("The potion makes you vomit! ");
 	    ident = TRUE;
 	    break;
 
 	  case 37:
-	    if (f_ptr->hero == 0) ident = TRUE;
-	    f_ptr->hero += randint(25) + 25;
+	    if (p_ptr->hero == 0) ident = TRUE;
+	    p_ptr->hero += randint(25) + 25;
 	    break;
 
 	  case 38:
-	    if (f_ptr->shero == 0) ident = TRUE;
-	    f_ptr->shero += randint(25) + 25;
+	    if (p_ptr->shero == 0) ident = TRUE;
+	    p_ptr->shero += randint(25) + 25;
 	    break;
 
 	  case 39:
@@ -723,17 +721,17 @@ void do_cmd_quaff_potion(void)
 	    break;
 
 	  case 41:
-	    if (!f_ptr->oppose_fire) ident = TRUE;
-	    f_ptr->oppose_fire += randint(10) + 10;
+	    if (!p_ptr->oppose_fire) ident = TRUE;
+	    p_ptr->oppose_fire += randint(10) + 10;
 	    break;
 
 	  case 42:
-	    if (!f_ptr->oppose_cold) ident = TRUE;
-	    f_ptr->oppose_cold += randint(10) + 10;
+	    if (!p_ptr->oppose_cold) ident = TRUE;
+	    p_ptr->oppose_cold += randint(10) + 10;
 	    break;
 
 	  case 43:
-	    if (!f_ptr->detect_inv) ident = TRUE;
+	    if (!p_ptr->detect_inv) ident = TRUE;
 	    detect_inv2(randint(12) + 12);
 	    break;
 
@@ -746,8 +744,8 @@ void do_cmd_quaff_potion(void)
 	    break;
 
 	  case 46:
-	    if (m_ptr->cmana < m_ptr->mana) {
-		m_ptr->cmana = m_ptr->mana;
+	    if (p_ptr->cmana < p_ptr->mana) {
+		p_ptr->cmana = p_ptr->mana;
 		msg_print("Your feel your head clear.");
 		prt_cmana();
 		ident = TRUE;
@@ -755,11 +753,11 @@ void do_cmd_quaff_potion(void)
 	    break;
 
 	  case 47:
-	    if (f_ptr->tim_infra == 0) {
+	    if (p_ptr->tim_infra == 0) {
 		msg_print("Your eyes begin to tingle.");
 		ident = TRUE;
 	    }
-	    f_ptr->tim_infra += 100 + randint(100);
+	    p_ptr->tim_infra += 100 + randint(100);
 	    break;
 
 	  case 48:
@@ -804,21 +802,21 @@ void do_cmd_quaff_potion(void)
 	    cure_poison() |
 	    cure_blindness() |
 	    cure_confusion() |
-	    (f_ptr->stun > 0) |
-	    (f_ptr->cut > 0) |
-	    (f_ptr->image > 0) |
+	    (p_ptr->stun > 0) |
+	    (p_ptr->cut > 0) |
+	    (p_ptr->image > 0) |
 	    remove_fear()) {
-	    f_ptr->cut = 0;
-	    f_ptr->image = 0;
-	    if (f_ptr->stun > 0) {
-		    if (f_ptr->stun > 50) {
-			py.misc.ptohit += 20;
-			py.misc.ptodam += 20;
+	    p_ptr->cut = 0;
+	    p_ptr->image = 0;
+	    if (p_ptr->stun > 0) {
+		    if (p_ptr->stun > 50) {
+			py.ptohit += 20;
+			py.ptodam += 20;
 		    } else {
-			py.misc.ptohit += 5;
-			py.misc.ptodam += 5;
+			py.ptohit += 5;
+			py.ptodam += 5;
 		    }
-		    f_ptr->stun = 0;
+		    p_ptr->stun = 0;
 	    }
 	    ident = TRUE;
 	    }
@@ -863,20 +861,20 @@ void do_cmd_quaff_potion(void)
 
 	  case 56:
 	    if (hp_player(1200)) ident = TRUE;
-	    if (f_ptr->stun > 0) {
-		f_ptr->stun = 0;
+	    if (p_ptr->stun > 0) {
+		p_ptr->stun = 0;
 		msg_print("Your head stops stinging.");
-		if (f_ptr->stun > 50) {
-		    py.misc.ptohit += 20;
-		    py.misc.ptodam += 20;
+		if (p_ptr->stun > 50) {
+		    py.ptohit += 20;
+		    py.ptodam += 20;
 		} else {
-		    py.misc.ptohit += 5;
-		    py.misc.ptodam += 5;
+		    py.ptohit += 5;
+		    py.ptodam += 5;
 		}
 		ident = TRUE;
 	    }
-	    if (f_ptr->cut > 0) {
-		f_ptr->cut = 0;
+	    if (p_ptr->cut > 0) {
+		p_ptr->cut = 0;
 		msg_print("Your wounds heal.");
 		ident = TRUE;
 	    }
@@ -900,7 +898,7 @@ void do_cmd_quaff_potion(void)
     /* An identification was made */
     if (ident) { if (!known1_p(i_ptr)) {
 	int lev = i_ptr->level;
-	m_ptr->exp += (lev + (m_ptr->lev >> 1)) / m_ptr->lev;
+	p_ptr->exp += (lev + (p_ptr->lev >> 1)) / p_ptr->lev;
 	prt_experience();
 	identify(&item_val);
 	i_ptr = &inventory[item_val];
@@ -930,11 +928,11 @@ void do_cmd_read_scroll(void)
     int                   tmp[6];
     register inven_type  *i_ptr;
     bigvtype              out_val, tmp_str;
-    register struct misc *m_ptr	= &py.misc;;
+    player_type *p_ptr	= &py;
 
     free_turn_flag = TRUE;
 
-    if (py.flags1.blind > 0) {
+    if (py.blind > 0) {
 	msg_print("You can't see to read the scroll.");
 	return;
     }
@@ -944,7 +942,7 @@ void do_cmd_read_scroll(void)
 	return;
     }
 
-    if (py.flags1.confused > 0) {
+    if (py.confused > 0) {
 	msg_print("You are too confused to read a scroll.");
 	return;
     }
@@ -1108,9 +1106,9 @@ void do_cmd_read_scroll(void)
 	    break;
 
 	  case 11:
-	    if (py.flags1.confuse_monster == 0) {
+	    if (py.confuse_monster == 0) {
 		msg_print("Your hands begin to glow.");
-		py.flags1.confuse_monster = TRUE;
+		py.confuse_monster = TRUE;
 		ident = TRUE;
 	    }
 	    break;
@@ -1189,8 +1187,8 @@ void do_cmd_read_scroll(void)
 
 	  case 27:
 	    ident = unlite_area(char_row, char_col);
-	    if (!py.flags1.resist_blind) {
-		py.flags1.blind += 3 + randint(5);
+	    if (!py.resist_blind) {
+		py.blind += 3 + randint(5);
 	    }
 	    break;
 
@@ -1387,12 +1385,12 @@ void do_cmd_read_scroll(void)
 	    break;
 
 	  case 41:
-	    if (py.flags1.word_recall == 0) {
-		py.flags1.word_recall = 15 + randint(20);
+	    if (py.word_recall == 0) {
+		py.word_recall = 15 + randint(20);
 		msg_print("The air about you becomes charged...");
 	    }
 	    else {
-		py.flags1.word_recall = 0;
+		py.word_recall = 0;
 		msg_print("A tension leaves the air around you...");
 	    }
 	    ident = TRUE;
@@ -1427,7 +1425,7 @@ void do_cmd_read_scroll(void)
     if (ident) { if (!known1_p(i_ptr)) {
 	int lev = i_ptr->level;
 	/* round half-way case up */
-	m_ptr->exp += (lev + (m_ptr->lev >> 1)) / m_ptr->lev;
+	p_ptr->exp += (lev + (p_ptr->lev >> 1)) / p_ptr->lev;
 	prt_experience();
 	identify(&item_val);
     }
@@ -1455,7 +1453,7 @@ void do_cmd_aim_wand(void)
     int			ident, chance, dir;
     int			item_val, i1, i2, x, y, lev, done_effect;
     inven_type		*i_ptr;
-    register struct misc *m_ptr = &py.misc;
+    player_type *p_ptr = &py;
 
     free_turn_flag = TRUE;
 
@@ -1486,10 +1484,10 @@ void do_cmd_aim_wand(void)
     ident = FALSE;
 
     /* Chance of success */
-    chance = (m_ptr->save + stat_adj(A_INT) - (int)(lev > 42 ? 42 : lev) +
-	      (class_level_adj[m_ptr->pclass][CLA_DEVICE] * m_ptr->lev / 3));
+    chance = (p_ptr->save + stat_adj(A_INT) - (int)(lev > 42 ? 42 : lev) +
+	      (class_level_adj[p_ptr->pclass][CLA_DEVICE] * p_ptr->lev / 3));
 
-    if (py.flags1.confused > 0) chance = chance / 2;
+    if (py.confused > 0) chance = chance / 2;
 
     /* Give everyone a slight chance */
     if ((chance < USE_DEVICE) && (randint(USE_DEVICE - chance + 1) == 1)) {
@@ -1712,7 +1710,7 @@ void do_cmd_aim_wand(void)
     /* Apply identification */
     if (ident) { if (!known1_p(i_ptr)) {
 	/* round half-way case up */
-	m_ptr->exp += (lev + (m_ptr->lev >> 1)) / m_ptr->lev;
+	p_ptr->exp += (lev + (p_ptr->lev >> 1)) / p_ptr->lev;
 	prt_experience();
 	identify(&item_val);
     }
@@ -1735,7 +1733,7 @@ void do_cmd_use_staff(void)
     u32b                i;
     int			  ident, chance, k, lev;
     int                   item_val, i1, i2, x, y;
-    register struct misc *m_ptr = &py.misc;
+    rplayer_type *p_ptr = &py;
     register inven_type  *i_ptr;
 
     free_turn_flag = TRUE;
@@ -1762,10 +1760,10 @@ void do_cmd_use_staff(void)
 	free_turn_flag = FALSE;
 
     /* Chance of success */
-    chance = (m_ptr->save + stat_adj(A_INT) - (int)(lev > 50 ? 50 : lev) +
-	      (class_level_adj[m_ptr->pclass][CLA_DEVICE] * m_ptr->lev / 3));
+    chance = (p_ptr->save + stat_adj(A_INT) - (int)(lev > 50 ? 50 : lev) +
+	      (class_level_adj[p_ptr->pclass][CLA_DEVICE] * p_ptr->lev / 3));
 
-    if (py.flags1.confused > 0) chance = chance / 2;
+    if (py.confused > 0) chance = chance / 2;
 
     if ((chance < USE_DEVICE) && (randint(USE_DEVICE - chance + 1) == 1)) {
 	chance = USE_DEVICE;   /* Give everyone a slight chance */
@@ -1792,20 +1790,20 @@ void do_cmd_use_staff(void)
 
       case SV_STAFF_HEALING:
 	ident = hp_player(300);
-	if (py.flags1.stun > 0) {
-	    py.flags1.stun = 0;
+	if (py.stun > 0) {
+	    py.stun = 0;
 	    msg_print("Your head stops stinging.");
-	    if (py.flags1.stun > 50) {
-		py.misc.ptohit += 20;
-		py.misc.ptodam += 20;
+	    if (py.stun > 50) {
+		py.ptohit += 20;
+		py.ptodam += 20;
 	    } else {
-		py.misc.ptohit += 5;
-		py.misc.ptodam += 5;
+		py.ptohit += 5;
+		py.ptodam += 5;
 	    }
 	    ident = TRUE;
 	}
-	if (py.flags1.cut > 0) {
-	    py.flags1.cut = 0;
+	if (py.cut > 0) {
+	    py.cut = 0;
 	    msg_print("You feel better.");
 	    ident = TRUE;
 	}
@@ -1832,19 +1830,19 @@ void do_cmd_use_staff(void)
 	cure_poison();
 	remove_fear();
 	hp_player(50);
-	if (py.flags1.stun > 0) {
-	    py.flags1.stun = 0;
+	if (py.stun > 0) {
+	    py.stun = 0;
 	    msg_print("Your head stops stinging.");
-	    if (py.flags1.stun > 50) {
-		py.misc.ptohit += 20;
-		py.misc.ptodam += 20;
+	    if (py.stun > 50) {
+		py.ptohit += 20;
+		py.ptodam += 20;
 	    } else {
-		py.misc.ptohit += 5;
-		py.misc.ptodam += 5;
+		py.ptohit += 5;
+		py.ptodam += 5;
 	    }
 	}
-	if (py.flags1.cut > 0) {
-	    py.flags1.cut = 0;
+	if (py.cut > 0) {
+	    py.cut = 0;
 	    msg_print("You feel better.");
 	}
 	ident = TRUE;
@@ -1855,8 +1853,8 @@ void do_cmd_use_staff(void)
 	    msg_print("You have a warm feeling.");
 	    ident = TRUE;
 	}
-	if (m_ptr->cmana < m_ptr->mana) {
-	    m_ptr->cmana = m_ptr->mana;
+	if (p_ptr->cmana < p_ptr->mana) {
+	    p_ptr->cmana = p_ptr->mana;
 	    ident = TRUE;
 	    msg_print("Your feel your head clear.");
 	    prt_cmana();
@@ -1942,19 +1940,19 @@ void do_cmd_use_staff(void)
 	break;
 
       case SV_STAFF_SPEED:
-	if (py.flags1.fast == 0) ident = TRUE;
-	if (py.flags1.fast <= 0) py.flags1.fast += randint(30) + 15;
-	else py.flags1.fast += randint(5);
+	if (py.fast == 0) ident = TRUE;
+	if (py.fast <= 0) py.fast += randint(30) + 15;
+	else py.fast += randint(5);
 	break;
 
       case SV_STAFF_SLOWNESS:
-	if (py.flags1.slow == 0) ident = TRUE;
-	py.flags1.slow += randint(30) + 15;
+	if (py.slow == 0) ident = TRUE;
+	py.slow += randint(30) + 15;
 	break;
 
       case SV_STAFF_REMOVE_CURSE:
 	if (remove_curse()) {
-	    if (py.flags1.blind < 1) {
+	    if (py.blind < 1) {
 		msg_print("The staff glows blue for a moment..");
 	    }
 	    ident = TRUE;
@@ -1969,21 +1967,21 @@ void do_cmd_use_staff(void)
 	if (cure_blindness()) ident = TRUE;
 	if (cure_poison()) ident = TRUE;
 	if (cure_confusion()) ident = TRUE;
-	if (py.flags1.stun > 0) {
+	if (py.stun > 0) {
 	    msg_print("Your head stops stinging.");
-	    py.flags1.stun = 0;
-	    if (py.flags1.stun > 50) {
-		py.misc.ptohit += 20;
-		py.misc.ptodam += 20;
+	    py.stun = 0;
+	    if (py.stun > 50) {
+		py.ptohit += 20;
+		py.ptodam += 20;
 	    } else {
-		py.misc.ptohit += 5;
-		py.misc.ptodam += 5;
+		py.ptohit += 5;
+		py.ptodam += 5;
 	    }
 	    ident = TRUE;
 	}
-	else if (py.flags1.cut > 0) {
+	else if (py.cut > 0) {
 	    msg_print("You feel better.");
-	    py.flags1.cut = 0;
+	    py.cut = 0;
 	    ident = TRUE;
 	}
 	break;
@@ -2003,7 +2001,7 @@ void do_cmd_use_staff(void)
 
     /* An identification was made */
     if (ident) { if (!known1_p(i_ptr)) {
-	m_ptr->exp += (lev + (m_ptr->lev >> 1)) / m_ptr->lev;
+	p_ptr->exp += (lev + (p_ptr->lev >> 1)) / p_ptr->lev;
 	prt_experience();
 	identify(&item_val);
 	}
@@ -2024,7 +2022,7 @@ void do_cmd_zap_rod(void)
     int                 ident, chance, dir, lev;
     int                 item_val, i1, i2, x, y;
     inven_type		*i_ptr;
-    register struct misc *m_ptr = &py.misc;
+    player_type *p_ptr = &py;
 
     /* Assume free turn */
     free_turn_flag = TRUE;
@@ -2052,10 +2050,10 @@ void do_cmd_zap_rod(void)
 	ident = FALSE;
 
     /* Calculate the chance */
-    chance = (m_ptr->save + (stat_adj(A_INT) * 2) - (int)((lev > 70) ? 70 : lev) +
-	      (class_level_adj[m_ptr->pclass][CLA_DEVICE] * m_ptr->lev / 3));
+    chance = (p_ptr->save + (stat_adj(A_INT) * 2) - (int)((lev > 70) ? 70 : lev) +
+	      (class_level_adj[p_ptr->pclass][CLA_DEVICE] * p_ptr->lev / 3));
 
-    if (py.flags1.confused > 0) chance = chance / 2;
+    if (py.confused > 0) chance = chance / 2;
 
     /* Give everyone a slight chance */
     if ((chance < USE_DEVICE) && (randint(USE_DEVICE - chance + 1) == 1)) {
@@ -2211,21 +2209,21 @@ void do_cmd_zap_rod(void)
 	if (cure_blindness()) ident = TRUE;
 	if (cure_poison()) ident = TRUE;
 	if (cure_confusion()) ident = TRUE;
-	if (py.flags1.stun > 0) {
+	if (py.stun > 0) {
 	    msg_print("Your head stops stinging.");
-	    py.flags1.stun = 0;
-	    if (py.flags1.stun > 50) {
-		py.misc.ptohit += 20;
-		py.misc.ptodam += 20;
+	    py.stun = 0;
+	    if (py.stun > 50) {
+		py.ptohit += 20;
+		py.ptodam += 20;
 	    } else {
-		py.misc.ptohit += 5;
-		py.misc.ptodam += 5;
+		py.ptohit += 5;
+		py.ptodam += 5;
 	    }
 	    ident = TRUE;
 	}
-	else if (py.flags1.cut > 0) {
+	else if (py.cut > 0) {
 	    msg_print("You feel better.");
-	    py.flags1.cut = 0;
+	    py.cut = 0;
 	    ident = TRUE;
 	}
 	i_ptr->timeout = 888;
@@ -2233,34 +2231,34 @@ void do_cmd_zap_rod(void)
 
       case SV_ROD_HEALING:
 	ident = hp_player(500);
-	if (py.flags1.stun > 0) {
+	if (py.stun > 0) {
 	    msg_print("Your head stops stinging.");
-	    py.flags1.stun = 0;
-	    if (py.flags1.stun > 50) {
-		py.misc.ptohit += 20;
-		py.misc.ptodam += 20;
+	    py.stun = 0;
+	    if (py.stun > 50) {
+		py.ptohit += 20;
+		py.ptodam += 20;
 	    } else {
-		py.misc.ptohit += 5;
-		py.misc.ptodam += 5;
+		py.ptohit += 5;
+		py.ptodam += 5;
 	    }
 	    ident = TRUE;
 	}
-	if (py.flags1.cut > 0) {
+	if (py.cut > 0) {
 	    msg_print("You feel better.");
-	    py.flags1.cut = 0;
+	    py.cut = 0;
 	    ident = TRUE;
 	}
 	i_ptr->timeout = 888;
 	break;
 
       case SV_ROD_RECALL:
-	if (py.flags1.word_recall == 0) {
+	if (py.word_recall == 0) {
 	    msg_print("The air about you becomes charged...");
-	    py.flags1.word_recall = 15 + randint(20);
+	    py.word_recall = 15 + randint(20);
 	}
 	else {
 	    msg_print("A tension leaves the air around you...");
-	    py.flags1.word_recall = 0;
+	    py.word_recall = 0;
 	}
 	ident = TRUE;
 	i_ptr->timeout = 60;
@@ -2290,8 +2288,8 @@ void do_cmd_zap_rod(void)
 	break;
 
       case SV_ROD_SPEED:
-	if (py.flags1.fast == 0) ident = TRUE;
-	py.flags1.fast += randint(30) + 15;
+	if (py.fast == 0) ident = TRUE;
+	py.fast += randint(30) + 15;
 	i_ptr->timeout = 99;
 	break;
 
@@ -2317,7 +2315,7 @@ void do_cmd_zap_rod(void)
 
     /* Successfully determined the object function */
     if (ident) { if (!known1_p(i_ptr)) {
-	m_ptr->exp += (lev + (m_ptr->lev >> 1)) / m_ptr->lev;
+	p_ptr->exp += (lev + (p_ptr->lev >> 1)) / p_ptr->lev;
 	prt_experience();
 	identify(&item_val);
 	}

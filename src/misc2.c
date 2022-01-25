@@ -938,10 +938,10 @@ int place_ghost()
     if (!dun_level) {
 
 	/* You have to be level 5, and even then its only 10% */
-	if (py.misc.lev < 5 || randint(10) > 1) return 0;
+	if (py.lev < 5 || randint(10) > 1) return 0;
 
 	/* Look for a proper bones file */
-	sprintf(tmp, "%s/%d", ANGBAND_DIR_BONES, py.misc.lev);
+	sprintf(tmp, "%s/%d", ANGBAND_DIR_BONES, py.lev);
 	if ((fp = my_tfopen(tmp, "r")) != NULL) {
 
 	/* Read the bones info */
@@ -961,7 +961,7 @@ int place_ghost()
 	    }
 	    ghost->hd[0] = i;	   /* set_ghost may adj for race/class/lv */
 	    ghost->hd[1] = j;
-	    level = py.misc.lev;
+	    level = py.lev;
 	} else {
 	    return 0;
 	}
