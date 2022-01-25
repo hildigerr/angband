@@ -49,27 +49,6 @@ typedef char bigvtype[BIGVTYPESIZ];
    results in larger and slower code
  */
 
-typedef struct _monster_race monster_race;
-
-struct _monster_race {
-  cptr name;		    /* Descrip of creature    */
-  u32b cflags1;		/* Flags 1 (movement)		*/
-  u32b spells1;		/* Spell flags 1		*/
-  u32b cflags2;		/* Flags 2 (defense)		*/
-  u32b spells2;		/* Spell flags 2		*/
-  u32b spells3;		/* Spell flags 3		*/
-  u32b mexp;			    /* Exp value for kill     */
-  u16b sleep;			    /* Inactive counter/10    */
-  byte aaf;			    /* Area affect radius     */
-  u16b ac;			    /* AC		      */
-  byte speed;			    /* Movement speed+10      */
-  byte r_char;			/* Racial "symbol"		*/
-  byte hd[2];			    /* Creatures hit die      */
-  u16b damage[4];		    /* Type attack and damage */
-  u16b level;			    /* Level of creature      */
-  byte rarity;			    /* Rarity of creature     */
-  char gender;			    /* one of 'm','f','n','p' to genderize monsters -CWS */
-};
 
 /*
  * Monster attack and damage types
@@ -83,6 +62,34 @@ struct _monster_attack {
     byte attack_dice;
     byte attack_sides;
 };
+
+
+/*
+ * Monster "variety" or "race"
+ */
+
+typedef struct _monster_race monster_race;
+
+struct _monster_race {
+  cptr name;			/* Descrip of creature    */
+  u32b cflags1;		/* Flags 1 (movement)		*/
+  u32b spells1;		/* Spell flags 1		*/
+  u32b cflags2;		/* Flags 2 (defense)		*/
+  u32b spells2;		/* Spell flags 2		*/
+  u32b spells3;		/* Spell flags 3		*/
+  u32b mexp;			/* Exp value for kill     */
+  u16b sleep;			/* Inactive counter/10    */
+  byte aaf;			/* Area affect radius     */
+  u16b ac;			/* AC		      */
+  byte speed;			/* Movement speed+10      */
+  byte r_char;			/* Racial "symbol"		*/
+  byte hd[2];			/* Creatures hit die      */
+  u16b damage[4];		/* Type attack and damage */
+  u16b level;			/* Level of creature      */
+  byte rarity;			/* Rarity of creature     */
+  char gender;			/* one of 'm','f','n','p' to genderize monsters -CWS */
+};
+
 
 
 /*
@@ -224,6 +231,183 @@ struct _inven_type {
 };
 
 
+
+
+
+
+/*
+ * spell name is stored in spell_names[] array at index i, +31 if priest
+ */
+
+typedef struct _spell_type spell_type;
+
+struct _spell_type {
+  byte slevel;		/* Required level */
+  byte smana;		/* Required mana */
+  byte sfail;		/* Minimum chance of failure */
+  u16b sexp;		/* 1/4 of exp gained for learning spell */
+};
+
+
+
+/*
+ * A single "grid" in a Cave
+ */
+
+typedef struct _cave_type cave_type;
+
+struct _cave_type {
+
+  u16b m_idx;		/* Monster index (in m_list) */
+  u16b i_idx;		/* Item index (in i_list) */
+
+  byte fval;
+  unsigned int lr : 1;		    /* room should be lit with perm light, walls with
+				       this set should be perm lit after tunneled out	 */
+
+  unsigned int fm : 1;		    /* field mark, used for traps/doors/stairs, object is
+				       hidden if fm is FALSE				 */
+
+  unsigned int pl : 1;		    /* permanent light, used for walls and lighted rooms */
+  unsigned int tl : 1;		    /* temporary light, used for player's lamp light,etc.*/
+
+};
+
+
+/*
+ * A store owner
+ */
+
+typedef struct _owner_type owner_type;
+
+struct _owner_type {
+  cptr owner_name;
+  s16b max_cost;
+  byte max_inflate;
+  byte min_inflate;
+  byte haggle_per;
+  byte owner_race;
+  byte insult_max;
+};
+
+
+
+typedef struct inven_record
+{
+  s32b scost;
+  inven_type sitem;
+} inven_record;
+
+
+
+/*
+ * A store.  Now holds some items, which themselves hold their store cost.
+ */
+
+typedef struct _store_type store_type;
+
+struct _store_type {
+
+  s32b store_open;
+
+  s16b insult_cur;
+  byte owner;
+  byte store_ctr;
+
+  u16b good_buy;
+  u16b bad_buy;
+
+  inven_record store_inven[STORE_INVEN_MAX];
+};
+
+
+
+typedef struct _player_race player_race;
+
+struct _player_race {
+
+  cptr trace;			    /* Type of race	    */
+
+  s16b str_adj;
+  s16b int_adj;		    
+  s16b wis_adj;
+  s16b dex_adj;
+  s16b con_adj;
+  s16b chr_adj;
+
+  byte b_age;			    /* Base age of character	 */
+  byte m_age;			    /* Maximum age of character	 */
+  byte m_b_ht;			    /* base height for males	 */
+  byte m_m_ht;			    /* mod height for males	 */
+  byte m_b_wt;			    /* base weight for males	 */
+  byte m_m_wt;			    /* mod weight for males	 */
+  byte f_b_ht;			    /* base height females	 */
+  byte f_m_ht;			    /* mod height for females	 */
+  byte f_b_wt;			    /* base weight for female	 */
+  byte f_m_wt;			    /* mod weight for females	 */
+
+  s16b b_dis;			    /* base chance to disarm	 */
+  s16b srh;			    /* base chance for search	 */
+  s16b stl;			    /* Stealth of character	 */
+  s16b fos;			    /* frequency of auto search	 */
+  s16b bth;			    /* adj base chance to hit	 */
+  s16b bthb;			    /* adj base to hit with bows */
+  s16b bsav;			    /* Race base for saving throw*/
+
+  byte bhitdie;			/* Base hit points for race	 */
+  byte infra;			/* See infra-red		 */
+  byte b_exp;			/* Base experience factor	 */
+  byte rtclass;			/* Bit field for class types */
+};
+
+typedef struct _player_class player_class;
+
+struct _player_class {
+
+  cptr title;			    /* type of class		       */
+
+  byte adj_hd;			    /* Adjust hit points	       */
+  byte mdis;			    /* mod disarming traps	       */
+  byte msrh;			    /* modifier to searching	       */
+  byte mstl;			    /* modifier to stealth	       */
+  byte mfos;			    /* modifier to freq-of-search      */
+  byte mbth;			    /* modifier to base to hit	       */
+  byte mbthb;			    /* modifier to base to hit - bows  */
+  byte msav;			    /* Class modifier to save	       */
+
+  s16b madj_str;		    /* Class modifier for strength     */
+  s16b madj_int;		    /* Class modifier for intelligence */
+  s16b madj_wis;		    /* Class modifier for wisdom       */
+  s16b madj_dex;		    /* Class modifier for dexterity    */
+  s16b madj_con;		    /* Class modifier for constitution */
+  s16b madj_chr;		    /* Class modifier for charisma     */
+
+  byte spell;			/* class use mage spells		*/
+  byte m_exp;			/* Class experience factor		*/
+  byte first_spell_lev;		/* First level spells usable		*/
+  byte age_adj;			/* age percentage (warrior = 100)	*/
+};
+
+
+/*
+ * Player background information
+ */
+
+typedef struct _player_background player_background;
+
+struct _player_background {
+
+  cptr info;			    /* History information	    */
+
+  byte roll;			    /* Die roll needed for history  */
+  byte chart;			    /* Table number		    */
+  byte next;			    /* Pointer to next table	    */
+  byte bonus;			    /* Bonus to the Social Class+50 */
+};
+
+
+
+
 typedef struct _player_type player_type;
 
 struct _player_type {
@@ -349,169 +533,6 @@ struct _player_type {
       byte resist_nether;	    /* Resist nether	   */
       byte resist_fear;	    /* Resist fear	   */
     } flags1;
-};
-
-
-
-/*
- * spell name is stored in spell_names[] array at index i, +31 if priest
- */
-
-typedef struct _spell_type spell_type;
-
-struct _spell_type {
-  byte slevel;		/* Required level */
-  byte smana;		/* Required mana */
-  byte sfail;		/* Minimum chance of failure */
-  u16b sexp;		/* 1/4 of exp gained for learning spell */
-};
-
-
-typedef struct _player_race player_race;
-
-struct _player_race {
-
-  cptr trace;			    /* Type of race	    */
-
-  s16b str_adj;
-  s16b int_adj;		    
-  s16b wis_adj;
-  s16b dex_adj;
-  s16b con_adj;
-  s16b chr_adj;
-
-  byte b_age;			    /* Base age of character	 */
-  byte m_age;			    /* Maximum age of character	 */
-  byte m_b_ht;			    /* base height for males	 */
-  byte m_m_ht;			    /* mod height for males	 */
-  byte m_b_wt;			    /* base weight for males	 */
-  byte m_m_wt;			    /* mod weight for males	 */
-  byte f_b_ht;			    /* base height females	 */
-  byte f_m_ht;			    /* mod height for females	 */
-  byte f_b_wt;			    /* base weight for female	 */
-  byte f_m_wt;			    /* mod weight for females	 */
-
-  s16b b_dis;			    /* base chance to disarm	 */
-  s16b srh;			    /* base chance for search	 */
-  s16b stl;			    /* Stealth of character	 */
-  s16b fos;			    /* frequency of auto search	 */
-  s16b bth;			    /* adj base chance to hit	 */
-  s16b bthb;			    /* adj base to hit with bows */
-  s16b bsav;			    /* Race base for saving throw*/
-
-  byte bhitdie;			/* Base hit points for race	 */
-  byte infra;			/* See infra-red		 */
-  byte b_exp;			/* Base experience factor	 */
-  byte rtclass;			/* Bit field for class types */
-};
-
-typedef struct _player_class player_class;
-
-struct _player_class {
-
-  cptr title;			    /* type of class		       */
-
-  byte adj_hd;			    /* Adjust hit points	       */
-  byte mdis;			    /* mod disarming traps	       */
-  byte msrh;			    /* modifier to searching	       */
-  byte mstl;			    /* modifier to stealth	       */
-  byte mfos;			    /* modifier to freq-of-search      */
-  byte mbth;			    /* modifier to base to hit	       */
-  byte mbthb;			    /* modifier to base to hit - bows  */
-  byte msav;			    /* Class modifier to save	       */
-
-  s16b madj_str;		    /* Class modifier for strength     */
-  s16b madj_int;		    /* Class modifier for intelligence */
-  s16b madj_wis;		    /* Class modifier for wisdom       */
-  s16b madj_dex;		    /* Class modifier for dexterity    */
-  s16b madj_con;		    /* Class modifier for constitution */
-  s16b madj_chr;		    /* Class modifier for charisma     */
-
-  byte spell;			/* class use mage spells		*/
-  byte m_exp;			/* Class experience factor		*/
-  byte first_spell_lev;		/* First level spells usable		*/
-  byte age_adj;			/* age percentage (warrior = 100)	*/
-};
-
-
-/*
- * Player background information
- */
-
-typedef struct _player_background player_background;
-
-struct _player_background {
-
-  cptr info;			    /* History information	    */
-
-  byte roll;			    /* Die roll needed for history  */
-  byte chart;			    /* Table number		    */
-  byte next;			    /* Pointer to next table	    */
-  byte bonus;			    /* Bonus to the Social Class+50 */
-};
-
-
-typedef struct _cave_type cave_type;
-
-struct _cave_type {
-
-  u16b m_idx;		/* Monster index (in m_list) */
-  u16b i_idx;		/* Item index (in i_list) */
-
-  byte fval;
-  unsigned int lr : 1;		    /* room should be lit with perm light, walls with
-				       this set should be perm lit after tunneled out	 */
-
-  unsigned int fm : 1;		    /* field mark, used for traps/doors/stairs, object is
-				       hidden if fm is FALSE				 */
-
-  unsigned int pl : 1;		    /* permanent light, used for walls and lighted rooms */
-  unsigned int tl : 1;		    /* temporary light, used for player's lamp light,etc.*/
-
-};
-
-/*
- * A store owner
- */
-
-typedef struct _owner_type owner_type;
-
-struct _owner_type {
-  cptr owner_name;
-  s16b max_cost;
-  byte max_inflate;
-  byte min_inflate;
-  byte haggle_per;
-  byte owner_race;
-  byte insult_max;
-};
-
-typedef struct inven_record
-{
-  s32b scost;
-  inven_type sitem;
-} inven_record;
-
-
-
-/*
- * A store.  Now holds some items, which themselves hold their store cost.
- */
-
-typedef struct _store_type store_type;
-
-struct _store_type {
-
-  s32b store_open;
-
-  s16b insult_cur;
-  byte owner;
-  byte store_ctr;
-
-  u16b good_buy;
-  u16b bad_buy;
-
-  inven_record store_inven[STORE_INVEN_MAX];
 };
 
 
