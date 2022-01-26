@@ -44,14 +44,14 @@ void update_mon(int m_idx)
     r_ptr = &r_list[m_ptr->r_idx];
 
     if ((m_ptr->cdis <= MAX_SIGHT) &&
-	(!(py.status & PY_BLIND) || py.telepathy) &&
+	(!(p_ptr->status & PY_BLIND) || p_ptr->telepathy) &&
 	(panel_contains((int)m_ptr->fy, (int)m_ptr->fx))) {
 
 	/* Wizards see everything */
 	if (wizard) flag = TRUE;
 
     /* if not mindless, telepathy sees -CWS */
-	if (py.telepathy) {
+	if (p_ptr->telepathy) {
 
 	    char c = r_ptr->r_char;
 	    const char *n = r_ptr->name;
@@ -98,8 +98,8 @@ void update_mon(int m_idx)
 	    c_ptr = &cave[m_ptr->fy][m_ptr->fx];
 
 	/* moved here to allow infra to see invis -CFT */
-	    if ((py.see_infra > 0) &&
-		(m_ptr->cdis <= py.see_infra)) {
+	    if ((p_ptr->see_infra > 0) &&
+		(m_ptr->cdis <= p_ptr->see_infra)) {
 		if (MF2_NO_INFRA & r_ptr->cflags2)	/* changed to act sensibly -CFT */
 		    l_list[m_ptr->r_idx].r_cflags2 |= MF2_NO_INFRA;
 		else
@@ -115,7 +115,7 @@ void update_mon(int m_idx)
 		if ((CM_INVISIBLE & r_ptr->cflags1) == 0)
 #endif
 		    flag = TRUE;
-		else if (py.see_inv) {
+		else if (p_ptr->see_inv) {
 		    flag = TRUE;
 #ifdef ATARIST_MWC
 		    l_list[m_ptr->r_idx].r_cflags1 |= holder;
@@ -161,7 +161,7 @@ int movement_rate(int monnum)
 {
   register int ps, ms, tm, i;
 
-  ps = 1 - py.speed;	/* this makes normal = 1, fast = 2,
+  ps = 1 - p_ptr->speed;	/* this makes normal = 1, fast = 2,
                                  * v.fast = 3, slow = 0, v.slow = -1 -CFT */
   ms = m_list[monnum].mspeed;
   
@@ -238,7 +238,7 @@ static void get_moves(int m_idx, int *mm)
  * lvl  23++  no afraid monsters      [ level=less afraid m. ]
  */
 
-    if (((s16b)(py.lev - 34 - r_list[(m_list[m_idx]).r_idx].level +
+    if (((s16b)(p_ptr->lev - 34 - r_list[(m_list[m_idx]).r_idx].level +
 		 ((m_list[m_idx].maxhp) % 8)) > 0)
 	|| m_list[m_idx].monfear) { /* Run away!  Run away! -DGK */
     
@@ -439,7 +439,6 @@ static void make_attack(int m_idx)
 
     register monster_race	*r_ptr;
     monster_type		*m_ptr;
-    player_type   *p_ptr = &py;
     register inven_type		*i_ptr;
 
     /* flag to see if blinked away (after steal) -CFT */
@@ -487,9 +486,9 @@ static void make_attack(int m_idx)
 	flag = FALSE;
 
 	/* Random (100) + level > 50 chance for stop any attack added */
-	if (((py.protevil > 0) && (r_ptr->cflags2 & MF2_EVIL) &&
-	     ((py.lev + 1) > r_ptr->level)) &&
-	    (randint(100) + (py.lev) > 50)) {
+	if (((p_ptr->protevil > 0) && (r_ptr->cflags2 & MF2_EVIL) &&
+	     ((p_ptr->lev + 1) > r_ptr->level)) &&
+	    (randint(100) + (p_ptr->lev) > 50)) {
 
 	    if (m_ptr->ml) l_list[m_ptr->r_idx].r_cflags2 |= MF2_EVIL;
 	    attype = 99;
@@ -854,8 +853,8 @@ static void make_attack(int m_idx)
 	      case 4:
 		take_hit(damage, ddesc);
 		if (player_saves() ||
-		    (py.pclass == 1 && randint(3) == 1) ||
-		    py.resist_fear) {
+		    (p_ptr->pclass == 1 && randint(3) == 1) ||
+		    p_ptr->resist_fear) {
 		    msg_print("You stand your ground!");
 		}
 		else if (p_ptr->afraid < 1) {
@@ -937,7 +936,7 @@ static void make_attack(int m_idx)
 	      case 12:
 		/* immune to steal at 18/150 */
 		if ((p_ptr->paralysis < 1) &&
-		    (randint(168) < py.use_stat[A_DEX])) {
+		    (randint(168) < p_ptr->use_stat[A_DEX])) {
 		    msg_print("You quickly protect your money pouch!");
 		}
 		else {		   /* make this more sane.... -CWS */
@@ -963,7 +962,7 @@ static void make_attack(int m_idx)
 	      case 13:
 		/* immune to steal at 18/150 dexterity */
 		if ((p_ptr->paralysis < 1) &&
-		    (randint(168) < py.use_stat[A_DEX])) {
+		    (randint(168) < p_ptr->use_stat[A_DEX])) {
 		    msg_print("You grab hold of your backpack!");
 		}
 		else {
@@ -1076,11 +1075,11 @@ static void make_attack(int m_idx)
 		else {
 		    if (p_ptr->hold_life) {
 			msg_print("You feel your life slipping away!");
-			lose_exp(damage + (py.exp/1000) * MON_DRAIN_LIFE);
+			lose_exp(damage + (p_ptr->exp/1000) * MON_DRAIN_LIFE);
 		    }
 		    else {
 			msg_print("You feel your life draining away!");
-			lose_exp(damage + (py.exp/100) * MON_DRAIN_LIFE);
+			lose_exp(damage + (p_ptr->exp/100) * MON_DRAIN_LIFE);
 		    }
 		}
 		break;
@@ -1976,7 +1975,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    break;
 
 	  case 17:		   /* Drain Mana	 */
-	    if (py.cmana > 0) {
+	    if (p_ptr->cmana > 0) {
 		disturb(1, 0);
 		sprintf(outval, "%sdraws psychic energy from you!", cdesc);
 		msg_print(outval);
@@ -1985,13 +1984,13 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 		    msg_print(outval);
 		}
 		r1 = (randint((int)r_ptr->level) >> 1) + 1;
-		if (r1 > py.cmana) {
-		    r1 = py.cmana;
-		    py.cmana = 0;
-		    py.cmana_frac = 0;
+		if (r1 > p_ptr->cmana) {
+		    r1 = p_ptr->cmana;
+		    p_ptr->cmana = 0;
+		    p_ptr->cmana_frac = 0;
 		}
 		else {
-		    py.cmana -= r1;
+		    p_ptr->cmana -= r1;
 		}
 		prt_cmana();
 		m_ptr->hp += 6 * (r1);
@@ -2944,8 +2943,8 @@ static void mon_move(int m_idx, u32b *rcflags1)
     /* Does the critter multiply? */
     if ((r_ptr->cflags1 & CM_MULTIPLY) &&
 	(MAX_MON_MULT >= mon_tot_mult) &&
-	(((py.rest != -1) && ((py.rest % MON_MULT_ADJ) == 0)) ||
-	 ((py.rest == -1) && (randint(MON_MULT_ADJ) == 1)))) {
+	(((p_ptr->rest != -1) && ((p_ptr->rest % MON_MULT_ADJ) == 0)) ||
+	 ((p_ptr->rest == -1) && (randint(MON_MULT_ADJ) == 1)))) {
 
 	/* Count the adjacent monsters */
 	for (k = 0, i = (int)m_ptr->fy - 1; i <= (int)m_ptr->fy + 1; i++) {
@@ -3201,17 +3200,17 @@ void creatures(int attack)
 	    /* Handle "sleep" */
 			if (m_ptr->csleep > 0)
 
-			    if (py.aggravate)
+			    if (p_ptr->aggravate)
 				m_ptr->csleep = 0;
 
-			    else if ((py.rest == 0 && py.paralysis < 1) ||
+			    else if ((p_ptr->rest == 0 && p_ptr->paralysis < 1) ||
 		    !(rand_int(50))) {
 
 				notice = rand_int(1024);
 			
 		    /* XXX See if monster "notices" player */
 		    if ((notice * notice * notice) <=
-			(1L << (29 - py.stl))) {
+			(1L << (29 - p_ptr->stl))) {
 
 			/* Hack -- amount of "waking" */
 			m_ptr->csleep -= (100 / m_ptr->cdis);

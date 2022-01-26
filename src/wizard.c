@@ -297,10 +297,9 @@ static void change_character()
 {
     register int          tmp_val;
     register s32b        tmp_lval;
-    u16b               *a_ptr = py.max_stat;
+    u16b               *a_ptr = p_ptr->max_stat;
 
     vtype                 tmp_str;
-    player_type *p_ptr = &py;
 
     prt("(3 - 118) Strength     = ", 0, 0);
     if (!get_string(tmp_str, 0, 25, 3)) return;
@@ -464,12 +463,12 @@ static void change_character()
 
     while (get_com("Alter speed? (+/-)", tmp_str)) {
 	if (*tmp_str == '+') {
-	    py.speed -= 1;
-	    py.status |= PY_SPEED;
+	    p_ptr->speed -= 1;
+	    p_ptr->status |= PY_SPEED;
 	}
 	else if (*tmp_str == '-') {
-	    py.speed += 1;
-	    py.status |= PY_SPEED;
+	    p_ptr->speed += 1;
+	    p_ptr->status |= PY_SPEED;
 	}
 	else
 	    break;

@@ -346,7 +346,6 @@ int max_hp(byte *array)
 unsigned char loc_symbol(int y, int x)
 {
     register cave_type    *cave_ptr;
-    player_type *p_ptr = &py;
 
     cave_ptr = &cave[y][x];
 
@@ -387,7 +386,6 @@ unsigned char loc_symbol(int y, int x)
  */
 void add_food(int num)
 {
-    player_type *p_ptr = &py;
     register int           extra, penalty;
 
     if (p_ptr->food < 0) p_ptr->food = 0;

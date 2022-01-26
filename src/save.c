@@ -123,14 +123,12 @@ static int sv_write()
     byte               char_tmp, prev_char;
     register cave_type   *c_ptr;
     register monster_lore *r_ptr;
-    player_type         *p_ptr = &py;
 
 #ifdef MSDOS
     inven_type           *t_ptr;
 
 #endif
     store_type  *st_ptr;
-    player_type *p_ptr = &py;
 
 /* clear the death flag when creating a HANGUP save file, so that player can
  * see tombstone when restart 
@@ -662,8 +660,8 @@ int _save_player(char *fnam)
     disturb(1, 0);		   /* Turn off resting and searching. */
 
     /* Fix the speed */
-    py.speed -= pack_heavy;
-    py.status |= PY_SPEED;
+    p_ptr->speed -= pack_heavy;
+    p_ptr->status |= PY_SPEED;
     pack_heavy = 0;
 
     /* Assume failure */
@@ -769,7 +767,6 @@ int load_player(int *generate)
     u16b                 u16b_tmp;
     register cave_type    *c_ptr;
     register monster_lore  *r_ptr;
-    player_type           *p_ptr = &py;
     store_type            *st_ptr;
     byte char_tmp, ychar, xchar, count;
 
@@ -1309,32 +1306,32 @@ int load_player(int *generate)
 		prt("Attempting a resurrection!", 0, 0);
 
 		/* Not quite dead */
-		if (py.chp < 0) {
-		    py.chp = 0;
-		    py.chp_frac = 0;
+		if (p_ptr->chp < 0) {
+		    p_ptr->chp = 0;
+		    p_ptr->chp_frac = 0;
 		}
 
 		/* don't let him starve to death immediately */
-		if (py.food < 5000) py.food = 5000;
+		if (p_ptr->food < 5000) p_ptr->food = 5000;
 
 		cure_poison();
 		cure_blindness();
 		cure_confusion();
 		remove_fear();
 
-		if (py.image > 0) py.image = 0;
-		if (py.cut > 0) py.cut = 0;
-		if (py.stun > 0) {
-		    if (py.stun > 50) {
-			py.ptohit += 20;
-			py.ptodam += 20;
+		if (p_ptr->image > 0) p_ptr->image = 0;
+		if (p_ptr->cut > 0) p_ptr->cut = 0;
+		if (p_ptr->stun > 0) {
+		    if (p_ptr->stun > 50) {
+			p_ptr->ptohit += 20;
+			p_ptr->ptodam += 20;
 		    } else {
-			py.ptohit += 5;
-			py.ptodam += 5;
+			p_ptr->ptohit += 5;
+			p_ptr->ptodam += 5;
 		    }
-		    py.stun = 0;
+		    p_ptr->stun = 0;
 		}
-		if (py.word_recall > 0) py.word_recall = 0;
+		if (p_ptr->word_recall > 0) p_ptr->word_recall = 0;
 
 		/* Resurrect on the town level. */
 		dun_level = 0;
@@ -1535,7 +1532,7 @@ int load_player(int *generate)
 	    ok = FALSE;		   /* Assume bad data. */
 	} else {
 	/* don't overwrite the killed by string if character is dead */
-	    if (py.chp >= 0)
+	    if (p_ptr->chp >= 0)
 		(void)strcpy(died_from, "(alive and well)");
 	    character_generated = 1;
 	}

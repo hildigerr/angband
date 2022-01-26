@@ -376,7 +376,7 @@ int mmove(int dir, int *y, int *x)
 void confuse_dir (int *dir, int mode)
 {
     /* Check for confusion */
-    if (py.confused > 0) {
+    if (p_ptr->confused > 0) {
 
 	/* Does the confusion get a chance to activate? */
 	if ((mode & 0x01) {
@@ -533,27 +533,27 @@ int get_dir_c(cptr prompt, int *dir)
  */
 void search_on()
 {
-    if (py.status & PY_SEARCH) return;
+    if (p_ptr->status & PY_SEARCH) return;
 
-    py.speed += 1;
-    py.status |= PY_SPEED;
-    py.status |= PY_SEARCH;
+    p_ptr->speed += 1;
+    p_ptr->status |= PY_SPEED;
+    p_ptr->status |= PY_SEARCH;
     prt_state();
     prt_speed();
-    py.food_digested++;
+    p_ptr->food_digested++;
 }
 
 void search_off(void)
 {
-    if (!(py.status & PY_SEARCH)) return;
+    if (!(p_ptr->status & PY_SEARCH)) return;
 
     check_view();
-    py.speed -= 1;
-    py.status |= PY_SPEED;
-    py.status &= ~PY_SEARCH;
+    p_ptr->speed -= 1;
+    p_ptr->status |= PY_SPEED;
+    p_ptr->status &= ~PY_SEARCH;
     prt_state();
     prt_speed();
-    py.food_digested--;
+    p_ptr->food_digested--;
 }
 
 
@@ -571,7 +571,7 @@ void disturb(int stop_search, int light_change)
     if (command_rep) command_rep = 0;
 
     /* Always cancel Rest */
-    if (py.rest) rest_off();
+    if (p_ptr->rest) rest_off();
 
     /* Hack -- Cancel Search Mode if requested */
     if (stop_search) search_off();
@@ -594,7 +594,6 @@ void search(int y, int x, int chance)
     register int           i, j;
     register cave_type    *c_ptr;
     register inven_type   *i_ptr;
-    player_type *p_ptr = &py;
     bigvtype               tmp_str, tmp_str2;
 
     if ((p_ptr->blind > 0) || no_lite()) chance = chance / 10;
@@ -659,15 +658,15 @@ void search(int y, int x, int chance)
 
 void rest_off()
 {
-    py.rest = 0;
+    p_ptr->rest = 0;
 
-    py.status &= ~PY_REST;
+    p_ptr->status &= ~PY_REST;
     prt_state();
 
     /* flush last message, or delete "press any key" message */
     msg_print(NULL);
 
-    py.food_digested++;
+    p_ptr->food_digested++;
 }
 
 
@@ -695,7 +694,7 @@ void carry(int y, int x, int pickup)
 
     /* Pick up gold */
     if (i_ptr->tval == TV_GOLD) {
-	py.au += i_ptr->cost;
+	p_ptr->au += i_ptr->cost;
 	objdes(tmp_str, i_ptr, TRUE);
 	(void)sprintf(out_val,
 		      "You have found %ld gold pieces worth of %s.",
@@ -813,7 +812,7 @@ static void area_affect(int dir, int y, int x)
     register cave_type *c_ptr;
 
     /* We must be able to see... */
-    if (py.blind < 1) {
+    if (p_ptr->blind < 1) {
 
 	option = 0;
 	option2 = 0;
@@ -1018,7 +1017,7 @@ void move_player(int dir, int do_pickup)
     int old_row = char_row;
     int old_col = char_col;
 
-    if (((py.confused > 0) || (py.stun > 0)) &&	/* Confused/Stunned?  */
+    if (((p_ptr->confused > 0) || (p_ptr->stun > 0)) &&	/* Confused/Stunned?  */
     (randint(4) > 1) &&	   /* 75% random movement */
     (dir != 5)) {		   /* Never random if sitting */
 	    dir = randint(9);
@@ -1072,7 +1071,7 @@ void move_player(int dir, int do_pickup)
 		    }
 		    else {
 			    /* Handle fear */
-			    if (py.afraid < 1)
+			    if (p_ptr->afraid < 1)
 				    py_attack(y, x);
 			    else
 				    msg_print("You are too afraid!");
@@ -1098,18 +1097,18 @@ void move_player(int dir, int do_pickup)
 
 	/* Check to see if he notices something  */
 	/* "fos" may be negative if have good rings of searching */
-	if ((py.fos <= 1) || (randint(py.fos) == 1) ||
-	(py.status & PY_SEARCH))
-	    search(char_row, char_col, py.srh);
+	if ((p_ptr->fos <= 1) || (randint(p_ptr->fos) == 1) ||
+	(p_ptr->status & PY_SEARCH))
+	    search(char_row, char_col, p_ptr->srh);
 
 		    /* A room of light should be lit. */
 		    if ((c_ptr->fval == LIGHT_FLOOR) ||
 		    (c_ptr->fval == NT_LIGHT_FLOOR)) {
-			    if (!c_ptr->pl && !py.blind) light_room(char_row, char_col);
+			    if (!c_ptr->pl && !p_ptr->blind) light_room(char_row, char_col);
 		    }
 
 		    /* In doorway of light-room? */
-		    else if (c_ptr->lr && (py.blind < 1)) {
+		    else if (c_ptr->lr && (p_ptr->blind < 1)) {
 			    register int        i, j;
 
 			    byte lit = FALSE;	/* only call light_room once... -CFT */
@@ -1360,7 +1359,7 @@ void find_init(int dir)
 	find_flag = 1;
 	find_breakright = find_breakleft = FALSE;
 	find_prevdir = dir;
-	if (py.blind < 1) {
+	if (p_ptr->blind < 1) {
 	    i = chome[dir];
 	    deepleft = deepright = FALSE;
 	    shortright = shortleft = FALSE;

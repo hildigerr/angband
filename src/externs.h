@@ -310,8 +310,9 @@ extern cave_type (*cave)[MAX_WIDTH];
 extern cave_type cave[MAX_HEIGHT][MAX_WIDTH];
 #endif
 
-/* Following are player variables				*/
-extern player_type py;
+/* A pointer to the main player record */
+extern player_type *p_ptr;
+
 
 #ifdef MACGAME
 extern char *(*player_title)[MAX_PLAYER_LEVEL];

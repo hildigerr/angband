@@ -29,7 +29,6 @@ void calc_spells(int stat)
     int             num_allowed, new_spells, num_known, levels;
     vtype           tmp_str;
     cptr	    p;
-    player_type *p_ptr = &py;
     register spell_type  *s_ptr;
 
     s_ptr = &magic_spell[p_ptr->pclass - 1][0];
@@ -160,7 +159,7 @@ void calc_spells(int stat)
 
 
 	/* only bother with spells learnable by class -CFT */
-	spell_flag = spellmasks[py.pclass][0] & ~spell_learned;
+	spell_flag = spellmasks[p_ptr->pclass][0] & ~spell_learned;
 	mask = 0x1;
 	i = 0;
 	for (j = 0, mask = 0x1; spell_flag; mask <<= 1, j++) {
@@ -171,7 +170,7 @@ void calc_spells(int stat)
 	}
 
 	/* only bother with spells learnable by class -CFT */
-	spell_flag = spellmasks[py.pclass][1] & ~spell_learned2;
+	spell_flag = spellmasks[p_ptr->pclass][1] & ~spell_learned2;
 	mask = 0x1;
 	for (j = 0, mask = 0x1; spell_flag; mask <<= 1, j++) {
 	    if (spell_flag & mask) {
@@ -230,13 +229,13 @@ void calc_spells(int stat)
 
 
     /* Take note when "study" changes */
-    if (new_spells != py.new_spells) {
-	if (new_spells > 0 && py.new_spells == 0) {
+    if (new_spells != p_ptr->new_spells) {
+	if (new_spells > 0 && p_ptr->new_spells == 0) {
 	    (void)sprintf(tmp_str, "You can learn some new %ss now.", p);
 	    msg_print(tmp_str);
 	}
-	py.new_spells = new_spells;
-	py.status |= PY_STUDY;
+	p_ptr->new_spells = new_spells;
+	p_ptr->status |= PY_STUDY;
     }
 }
 
@@ -252,15 +251,14 @@ void gain_spells(void)
     register int        i, j;
     register u32b     spell_flag = 0, spell_flag2 = 0, mask;
     vtype               tmp_str;
-    player_type         *p_ptr = &py;
     register spell_type *s_ptr;
 
-    if (!py.pclass) {
+    if (!p_ptr->pclass) {
 	msg_print("A warrior learn magic???  HA!");
 	return;
     }
 
-    if (py.blind > 0) {
+    if (p_ptr->blind > 0) {
 	msg_print("You can't see to read your spell book!");
 	return;
     }
@@ -270,13 +268,13 @@ void gain_spells(void)
 	return;
     }
 
-    if (py.confused > 0) {
+    if (p_ptr->confused > 0) {
 	msg_print("You are too confused.");
 	return;
     }
 
 
-    new_spells = py.new_spells;
+    new_spells = p_ptr->new_spells;
     diff_spells = 0;
     s_ptr = &magic_spell[p_ptr->pclass - 1][0];
 
@@ -412,15 +410,15 @@ void gain_spells(void)
 	}
     }
 
-    py.new_spells = new_spells + diff_spells;
+    p_ptr->new_spells = new_spells + diff_spells;
 
     /* Player has gained some spells */
-    if (py.new_spells == 0) {
-	py.status |= PY_STUDY;
+    if (p_ptr->new_spells == 0) {
+	p_ptr->status |= PY_STUDY;
     }
 
     /* set the mana for first level characters when they learn first spell */
-    if (py.mana == 0) calc_mana(stat);
+    if (p_ptr->mana == 0) calc_mana(stat);
 }
 
 
@@ -431,7 +429,6 @@ void gain_spells(void)
 void calc_mana(int stat)
 {
     register int          new_mana, levels;
-    player_type *p_ptr = &py;
     register s32b        value;
     register int          i;
     register inven_type  *i_ptr;
@@ -561,7 +558,7 @@ void calc_mana(int stat)
 	/* No mana left */
 	if (new_mana < 1) {
 	    p_ptr->cmana = p_ptr->cmana_frac = p_ptr->mana = 0;
-	    py.status |= PY_MANA;
+	    p_ptr->status |= PY_MANA;
 	    return;
 	}
 
@@ -586,7 +583,7 @@ void calc_mana(int stat)
 	    p_ptr->mana = new_mana;
 
 	    /* can't print mana here, may be in store or inventory mode */
-	    py.status |= PY_MANA;
+	    p_ptr->status |= PY_MANA;
 	}
     }
 
@@ -594,7 +591,7 @@ void calc_mana(int stat)
 	p_ptr->mana = 0;
 	p_ptr->cmana = 0;
 	/* can't print mana here, may be in store or inventory mode */
-	py.status |= PY_MANA;
+	p_ptr->status |= PY_MANA;
     }
 }
 
@@ -606,7 +603,6 @@ void cast()
 {
     int                    i, j, item_val, dir;
     int                    choice, chance, result;
-    player_type  *p_ptr = &py;
     register spell_type   *s_ptr;
 
     free_turn_flag = TRUE;
@@ -626,7 +622,7 @@ void cast()
 	return;
     }
 
-    if (class[py.pclass].spell != MAGE) {
+    if (class[p_ptr->pclass].spell != MAGE) {
 	msg_print("You can't cast spells!");
 	return;
     }
@@ -654,7 +650,7 @@ void cast()
 
 	else if (result > 0) {
 
-	    s_ptr = &magic_spell[py.pclass - 1][choice];
+	    s_ptr = &magic_spell[p_ptr->pclass - 1][choice];
 
 	    free_turn_flag = FALSE;
 
@@ -667,8 +663,8 @@ void cast()
     else {
 
 	/* does missile spell do line? -CFT */
-	chance =  stat_adj(A_INT) + py.lev /
-		  (py.pclass == 1 ? 2 : (py.pclass == 4 ? 4 : 5));
+	chance =  stat_adj(A_INT) + p_ptr->lev /
+		  (p_ptr->pclass == 1 ? 2 : (p_ptr->pclass == 4 ? 4 : 5));
 
 	/* Spells.  */
 	switch (choice + 1) {
@@ -677,10 +673,10 @@ void cast()
 	    if (get_dir(NULL, &dir))
 		if (randint(100) < (chance-10))
 		    line_spell(GF_MISSILE, dir, char_row, char_col,
-			       damroll(3 + ((py.lev - 1) / 5), 4) );
+			       damroll(3 + ((p_ptr->lev - 1) / 5), 4) );
 		else
 		    fire_bolt(GF_MISSILE, dir, char_row, char_col,
-			      damroll(3 + ((py.lev - 1) / 5), 4) );
+			      damroll(3 + ((p_ptr->lev - 1) / 5), 4) );
 	    break;
 
 	  case 2:
@@ -693,7 +689,7 @@ void cast()
 
 	  case 4:
 	    (void)lite_area(char_row, char_col,
-			    damroll(2, (py.lev / 2)), (py.lev / 10) + 1);
+			    damroll(2, (p_ptr->lev / 2)), (p_ptr->lev / 10) + 1);
 	    break;
 
 	  case 5:	   /* treasure detection */
@@ -721,22 +717,22 @@ void cast()
 	  case 9:
 	    if (get_dir(NULL, &dir))
 	    fire_ball(GF_POIS, dir, char_row, char_col,
-		      10 + (py.lev / 2), 2);
+		      10 + (p_ptr->lev / 2), 2);
 	    break;
 
 	  case 10:
 	    if (get_dir(NULL, &dir))
-	    (void)confuse_monster(dir, char_row, char_col, py.lev);
+	    (void)confuse_monster(dir, char_row, char_col, p_ptr->lev);
 	    break;
 
 	  case 11:
 	    if (get_dir(NULL, &dir))
 		if (randint(100) < (chance-10))
 		    line_spell(GF_ELEC, dir, char_row, char_col,
-			       damroll(3+((py.lev-5)/4),8));
+			       damroll(3+((p_ptr->lev-5)/4),8));
 		else
 		    fire_bolt(GF_ELEC, dir, char_row, char_col,
-			      damroll(3+((py.lev-5)/4),8));
+			      damroll(3+((p_ptr->lev-5)/4),8));
 	    break;
 	    
 	  case 12:
@@ -753,7 +749,7 @@ void cast()
 	    break;
 
 	  case 15:
-	    teleport((int)(py.lev * 5));
+	    teleport((int)(p_ptr->lev * 5));
 	    break;
 
 	  case 16:
@@ -767,10 +763,10 @@ void cast()
 	    if (get_dir(NULL, &dir))
 		if (randint(100) < (chance-10))
 		    line_spell(GF_COLD, dir, char_row, char_col,
-			       damroll(5+((py.lev-5)/4),8));
+			       damroll(5+((p_ptr->lev-5)/4),8));
 		else
 		    fire_bolt(GF_COLD, dir, char_row, char_col,
-			      damroll(5+((py.lev-5)/4),8));
+			      damroll(5+((p_ptr->lev-5)/4),8));
 	    break;
 
 	  case 18:
@@ -807,10 +803,10 @@ void cast()
 	    if (get_dir(NULL, &dir))
 		if (randint(100) < chance)
 		    line_spell(GF_FIRE, dir, char_row, char_col,
-			       damroll(8+((py.lev-5)/4),8));
+			       damroll(8+((p_ptr->lev-5)/4),8));
 		else
 		    fire_bolt(GF_FIRE, dir, char_row, char_col,
-			      damroll(8+((py.lev-5)/4),8));
+			      damroll(8+((p_ptr->lev-5)/4),8));
 	    break;
 	    
 	  case 26:
@@ -821,7 +817,7 @@ void cast()
 	  case 27:
 	    if (get_dir(NULL, &dir))
 	    fire_ball(GF_COLD, dir, char_row, char_col,
-		      30 + (py.lev), 2);
+		      30 + (p_ptr->lev), 2);
 	    break;
 
 	  case 28:
@@ -835,7 +831,7 @@ void cast()
 
 	  case 30:
 	    if (p_ptr->fast <= 0) {
-		p_ptr->fast += randint(20) + py.lev;
+		p_ptr->fast += randint(20) + p_ptr->lev;
 	    }
 	    else {
 		p_ptr->fast += randint(5);
@@ -845,7 +841,7 @@ void cast()
 	  case 31:
 	    if (get_dir(NULL, &dir))
 	    fire_ball(GF_FIRE, dir, char_row, char_col,
-		      55 + (py.lev), 2);
+		      55 + (p_ptr->lev), 2);
 	    break;
 
 	  case 32:
@@ -887,33 +883,33 @@ void cast()
 	    if (get_dir(NULL, &dir))
 		if (randint(100) < (chance-5))
 		    line_spell(GF_ACID, dir, char_row, char_col,
-			       damroll(6+((py.lev-5)/4), 8));
+			       damroll(6+((p_ptr->lev-5)/4), 8));
 		else
 		    fire_bolt(GF_ACID, dir, char_row, char_col,
-			      damroll(6+((py.lev-5)/4), 8));
+			      damroll(6+((p_ptr->lev-5)/4), 8));
 	    break;
 
 	  case 40:	   /* Cloud kill */
 	    if (get_dir(NULL, &dir))
 	    fire_ball(GF_POIS, dir, char_row, char_col,
-		      20 + (py.lev / 2), 3);
+		      20 + (p_ptr->lev / 2), 3);
 	    break;
 
 	  case 41:	   /* Acid Ball */
 	    if (get_dir(NULL, &dir))
 	    fire_ball(GF_ACID, dir, char_row, char_col,
-		      40 + (py.lev), 2);
+		      40 + (p_ptr->lev), 2);
 	    break;
 
 	  case 42:	   /* Ice Storm */
 	    if (get_dir(NULL, &dir))
 	    fire_ball(GF_COLD, dir, char_row, char_col,
-		      70 + (py.lev), 3);
+		      70 + (p_ptr->lev), 3);
 	    break;
 	  case 43:	   /* Meteor Swarm */
 	    if (get_dir(NULL, &dir))
 	    fire_ball(GF_METEOR, dir, char_row, char_col,
-		      65 + (py.lev), 3);
+		      65 + (p_ptr->lev), 3);
 	    break;
 
 	  case 44:	   /* Hellfire */
@@ -983,7 +979,7 @@ void cast()
 	    
 	  case 58:
 	    if (p_ptr->fast <= 0) {
-		p_ptr->fast += randint(30) + 30 + py.lev;
+		p_ptr->fast += randint(30) + 30 + p_ptr->lev;
 	    }
 	    else {
 		p_ptr->fast += randint(5);

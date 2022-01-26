@@ -68,7 +68,7 @@ static void get_stats()
     while (tot <= 42 || tot >= 54);
     
     for (i = 0; i < 6; i++)
-	py.max_stat[i] = 5 + dice[3 * i] + dice[3 * i + 1] +
+	p_ptr->max_stat[i] = 5 + dice[3 * i] + dice[3 * i + 1] +
 	    dice[3 * i + 2];
 }
 
@@ -124,8 +124,8 @@ static int adjust_stat(int stat_value, s16b amount, int auto_roll)
 /* Changes stats by given amount                                -JWT-   */
 static void change_stat(int stat, int amount)
 {
-  py.max_stat[stat] =
-        adjust_stat(py.max_stat[stat], (s16b) amount, FALSE);
+  p_ptr->max_stat[stat] =
+        adjust_stat(p_ptr->max_stat[stat], (s16b) amount, FALSE);
 }
 
 
@@ -138,7 +138,7 @@ static void save_prev_data()
 
     /* Save the stats */
     for (i = 0; i < 6; i++) {
-	prev.stat[i] = (u16b) py.max_stat[i];
+	prev.stat[i] = (u16b) p_ptr->max_stat[i];
     }
 
     return;
@@ -154,14 +154,14 @@ static int load_prev_data()
 
     if (!prev.stat[0]) return 0;
     for (i = 0; i < 6; i++) {
-	py.cur_stat[i] = prev.stat[i];
-	py.max_stat[i] = prev.stat[i];
-	py.use_stat[i] = prev.stat[i];
+	p_ptr->cur_stat[i] = prev.stat[i];
+	p_ptr->max_stat[i] = prev.stat[i];
+	p_ptr->use_stat[i] = prev.stat[i];
     }
 
-    py.ptodam = todam_adj();
-    py.ptohit = tohit_adj();
-    py.pac = toac_adj();
+    p_ptr->ptodam = todam_adj();
+    p_ptr->ptohit = tohit_adj();
+    p_ptr->pac = toac_adj();
     prev.stat[0] = 0;
     return 1;
 }
@@ -173,11 +173,9 @@ static int load_prev_data()
  */
 static void get_all_stats()
 {
-    register player_type *p_ptr;
     register player_race *r_ptr;
     register int        j;
 
-    p_ptr = &py;
     r_ptr = &race[p_ptr->prace];
     get_stats();
     change_stat(A_STR, r_ptr->str_adj);
@@ -187,8 +185,8 @@ static void get_all_stats()
     change_stat(A_CON, r_ptr->con_adj);
     change_stat(A_CHR, r_ptr->chr_adj);
     for (j = 0; j < 6; j++) {
-	py.cur_stat[j] = py.max_stat[j];
-	py.use_stat[j] = modify_stat(j, py.mod_stat[j]);
+	p_ptr->cur_stat[j] = p_ptr->max_stat[j];
+	p_ptr->use_stat[j] = modify_stat(j, p_ptr->mod_stat[j]);
     }
 
     p_ptr->srh = r_ptr->srh;
@@ -219,11 +217,11 @@ static void put_auto_stats()
     vtype        buf;
 
     for (i = 0; i < 6; i++) {
-	cnv_stat(py.use_stat[i], buf);
+	cnv_stat(p_ptr->use_stat[i], buf);
 	put_str(stat_names[i], 2 + i, 61);
 	put_str(buf, 2 + i, 66);
-	if (py.max_stat[i] > py.cur_stat[i]) {
-	    cnv_stat(py.max_stat[i], buf);
+	if (p_ptr->max_stat[i] > p_ptr->cur_stat[i]) {
+	    cnv_stat(p_ptr->max_stat[i], buf);
 	    put_str(buf, 2 + i, 73);
 	}
     }
@@ -238,7 +236,6 @@ static void choose_race(void)
     int                  j, k, l, m;
     int                  exit_flag;
     char                 s, tmp_str[80];
-    register player_type *p_ptr;
     register player_race   *r_ptr;
 
     j = 0;
@@ -279,7 +276,6 @@ static void choose_race(void)
     }
     while (!exit_flag);
 
-    p_ptr = &py;
     r_ptr = &race[j];
     p_ptr->prace = j;
     put_str(r_ptr->trace, 3, 15);
@@ -293,7 +289,7 @@ static void put_history()
 
     put_str("Character Background", 14, 27);
     for (i = 0; i < 4; i++)
-	prt(py.history[i], i + 15, 10);
+	prt(p_ptr->history[i], i + 15, 10);
 }
 
 
@@ -304,12 +300,12 @@ static void set_prev_history()
     prev.bg.chart = background->chart;
     prev.bg.next = background->next;
     prev.bg.bonus = background->bonus;
-    prev.sc = py.sc;
+    prev.sc = p_ptr->sc;
 
-    (void)strncpy(prev.history[0], py.history[0], 60);
-    (void)strncpy(prev.history[1], py.history[1], 60);
-    (void)strncpy(prev.history[2], py.history[2], 60);
-    (void)strncpy(prev.history[3], py.history[3], 60);
+    (void)strncpy(prev.history[0], p_ptr->history[0], 60);
+    (void)strncpy(prev.history[1], p_ptr->history[1], 60);
+    (void)strncpy(prev.history[2], p_ptr->history[2], 60);
+    (void)strncpy(prev.history[3], p_ptr->history[3], 60);
 
     return;
 }
@@ -324,10 +320,10 @@ static void get_prev_history()
     background->chart = prev.bg.chart;
     background->next = prev.bg.next;
     background->bonus = prev.bg.bonus;
-    py.sc = prev.sc;
+    p_ptr->sc = prev.sc;
 
     for (i = 0; i < 4; i++)
-	strncpy(py.history[i], prev.history[i], 60);
+	strncpy(p_ptr->history[i], prev.history[i], 60);
 }
 
 
@@ -346,18 +342,18 @@ static void get_history(void)
     player_background		*bp_ptr;
 
     /* Special race */
-    if (py.prace == 8) {
+    if (p_ptr->prace == 8) {
 	hist_idx = 1;
     }
 
     /* Special race */
-    else if (py.prace > 8) {
+    else if (p_ptr->prace > 8) {
 	hist_idx = 2 * 3 + 1;
     }
 
     /* Normal races */
     else {
-	hist_idx = py.prace * 3 + 1;
+	hist_idx = p_ptr->prace * 3 + 1;
     }
 
     history_block[0] = '\0';
@@ -388,7 +384,7 @@ static void get_history(void)
 
     /* clear the previous history strings */
     for (hist_idx = 0; hist_idx < 4; hist_idx++) {
-	py.history[hist_idx][0] = '\0';
+	p_ptr->history[hist_idx][0] = '\0';
     }
 
     /* Process block of history text for pretty output	 */
@@ -411,9 +407,9 @@ static void get_history(void)
 	    flag = TRUE;
 	}
 
-	(void)strncpy(py.history[line_ctr],
+	(void)strncpy(p_ptr->history[line_ctr],
 		&history_block[start_pos], cur_len);
-	py.history[line_ctr][cur_len] = '\0';
+	p_ptr->history[line_ctr][cur_len] = '\0';
 	line_ctr++;
 	start_pos = new_start;
     }
@@ -424,7 +420,7 @@ static void get_history(void)
     else if (social_class < 1) social_class = 1;
 
     /* Save the social class */
-    py.sc = social_class;
+    p_ptr->sc = social_class;
 }
 
 
@@ -443,11 +439,11 @@ static void choose_sex()
     /* speed not important here */
 	c = inkey();
 	if (c == 'f' || c == 'F') {
-	    py.male = FALSE;
+	    p_ptr->male = FALSE;
 	    put_str("Female", 4, 15);
 	    exit_flag = TRUE;
 	} else if (c == 'm' || c == 'M') {
-	    py.male = TRUE;
+	    p_ptr->male = TRUE;
 	    put_str("Male", 4, 15);
 	    exit_flag = TRUE;
 	} else if (c == '?')
@@ -464,25 +460,25 @@ static void get_ahw()
 {
     register int        i;
 
-    i = py.prace;
-    py.age = race[i].b_age + randint((int)race[i].m_age);
-    if (py.male) {
-	py.ht = randnor((int)race[i].m_b_ht, (int)race[i].m_m_ht);
-	py.wt = randnor((int)race[i].m_b_wt, (int)race[i].m_m_wt);
+    i = p_ptr->prace;
+    p_ptr->age = race[i].b_age + randint((int)race[i].m_age);
+    if (p_ptr->male) {
+	p_ptr->ht = randnor((int)race[i].m_b_ht, (int)race[i].m_m_ht);
+	p_ptr->wt = randnor((int)race[i].m_b_wt, (int)race[i].m_m_wt);
     } else {
-	py.ht = randnor((int)race[i].f_b_ht, (int)race[i].f_m_ht);
-	py.wt = randnor((int)race[i].f_b_wt, (int)race[i].f_m_wt);
+	p_ptr->ht = randnor((int)race[i].f_b_ht, (int)race[i].f_m_ht);
+	p_ptr->wt = randnor((int)race[i].f_b_wt, (int)race[i].f_m_wt);
     }
-    py.disarm += race[i].b_dis;
+    p_ptr->disarm += race[i].b_dis;
 }
 
 
 static void set_prev_ahw()
 {
-    prev.age = py.age;
-    prev.wt = py.wt;
-    prev.ht = py.ht;
-    prev.disarm = py.disarm;
+    prev.age = p_ptr->age;
+    prev.wt = p_ptr->wt;
+    prev.ht = p_ptr->ht;
+    prev.disarm = p_ptr->disarm;
 
     return;
 }
@@ -490,10 +486,10 @@ static void set_prev_ahw()
 
 static void get_prev_ahw()
 {
-    py.age = prev.age;
-    py.wt = prev.wt;
-    py.ht = prev.ht;
-    py.disarm = prev.disarm;
+    p_ptr->age = prev.age;
+    p_ptr->wt = prev.wt;
+    p_ptr->ht = prev.ht;
+    p_ptr->disarm = prev.disarm;
     prev.age = prev.wt = prev.ht = prev.disarm = 0;
 }
 
@@ -505,11 +501,9 @@ static void get_class()
     int                 min_value, max_value;
     int                 percent;
     char                buf[50];
-    register player_type *p_ptr;
     player_class         *c_ptr;
 
-    c_ptr = &class[py.pclass];
-    p_ptr = &py;
+    c_ptr = &class[p_ptr->pclass];
     change_stat(A_STR, c_ptr->madj_str);
     change_stat(A_INT, c_ptr->madj_int);
     change_stat(A_WIS, c_ptr->madj_wis);
@@ -518,8 +512,8 @@ static void get_class()
     change_stat(A_CHR, c_ptr->madj_chr);
 
     for (i = 0; i < 6; i++) {
-	p_ptr->py.cur_stat[i] = p_ptr->py.max_stat[i];
-	p_ptr->py.use_stat[i] = p_ptr->py.max_stat[i];
+	p_ptr->p_ptr->cur_stat[i] = p_ptr->p_ptr->max_stat[i];
+	p_ptr->p_ptr->use_stat[i] = p_ptr->p_ptr->max_stat[i];
     }
     p_ptr->ptodam = todam_adj();           /* Real values		 */
     p_ptr->ptohit = tohit_adj();
@@ -576,7 +570,6 @@ void rerate()
 {
     int         min_value, max_value, i, percent;
     char        buf[50];
-    player_type *p_ptr = &py;
 
     min_value = (MAX_PLAYER_LEVEL * 3 * (p_ptr->hitdie - 1)) / 8 +
 	MAX_PLAYER_LEVEL;
@@ -613,7 +606,7 @@ static void choose_class()
 
     for (j = 0; j < MAX_CLASS; j++)
 	cl[j] = 0;
-    i = py.prace;
+    i = p_ptr->prace;
     j = 0;
     k = 0;
     l = 2;
@@ -637,15 +630,15 @@ static void choose_class()
 	mask <<= 1;
     }
     while (j < MAX_CLASS);
-    py.pclass = 0;
+    p_ptr->pclass = 0;
     exit_flag = FALSE;
     do {
 	move_cursor(20, 31);
 	s = inkey();
 	j = s - 'a';
 	if ((j < k) && (j >= 0)) {
-	    py.pclass = cl[j];
-	    c_ptr = &class[py.pclass];
+	    p_ptr->pclass = cl[j];
+	    c_ptr = &class[p_ptr->pclass];
 	    exit_flag = TRUE;
 	    clear_from(20);
 	    put_str(c_ptr->title, 5, 15);
@@ -672,20 +665,20 @@ static void get_money()
     register int        tmp, gold;
     register u16b    *a_ptr;
 
-    a_ptr = py.max_stat;
+    a_ptr = p_ptr->max_stat;
     tmp = monval(a_ptr[A_STR]) + monval(a_ptr[A_INT])
 	+ monval(a_ptr[A_WIS]) + monval(a_ptr[A_CON])
 	+ monval(a_ptr[A_DEX]);
 
-    gold = py.sc * 6 + randint(25) + 325;          /* Social Class adj */
+    gold = p_ptr->sc * 6 + randint(25) + 325;          /* Social Class adj */
     gold -= tmp;		   /* Stat adj */
     gold += monval(a_ptr[A_CHR]);  /* Charisma adj	 */
-    if (!py.male)
+    if (!p_ptr->male)
 	gold += 50;		   /* She charmed the banker into it! -CJS- */
 				   /* She slept with the banker.. :) -GDH-  */
     if (gold < 80)
 	gold = 80;		   /* Minimum */
-    py.au = gold;
+    p_ptr->au = gold;
 }
 
 
@@ -725,8 +718,8 @@ void player_birth()
     choose_class();
 
     /* Access the race/class */
-    cp_ptr = &class[py.pclass];
-    rp_ptr = &race[py.prace];
+    cp_ptr = &class[p_ptr->pclass];
+    rp_ptr = &race[p_ptr->prace];
 
 
 #ifdef AUTOROLLER
@@ -865,12 +858,12 @@ void player_birth()
 	    } else
 		put_stats();
 	} while ((autoroll) &&
-		 ((stat[A_STR] > py.cur_stat[A_STR]) ||
-		  (stat[A_INT] > py.cur_stat[A_INT]) ||
-		  (stat[A_WIS] > py.cur_stat[A_WIS]) ||
-		  (stat[A_DEX] > py.cur_stat[A_DEX]) ||
-		  (stat[A_CON] > py.cur_stat[A_CON]) ||
-		  (stat[A_CHR] > py.cur_stat[A_CHR]))
+		 ((stat[A_STR] > p_ptr->cur_stat[A_STR]) ||
+		  (stat[A_INT] > p_ptr->cur_stat[A_INT]) ||
+		  (stat[A_WIS] > p_ptr->cur_stat[A_WIS]) ||
+		  (stat[A_DEX] > p_ptr->cur_stat[A_DEX]) ||
+		  (stat[A_CON] > p_ptr->cur_stat[A_CON]) ||
+		  (stat[A_CHR] > p_ptr->cur_stat[A_CHR]))
 
 #if (defined (unix) || defined(ATARI_ST)) /* CFT's if/elif/else    */
 		 && (!check_input(1)));	  /* unix needs flush here */

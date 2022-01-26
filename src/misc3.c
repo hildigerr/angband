@@ -2643,7 +2643,7 @@ void inven_destroy(int item_val)
 	invcopy(&inventory[inven_ctr - 1], OBJ_NOTHING);
 	inven_ctr--;
     }
-    py.status |= PY_STR_WGT;
+    p_ptr->status |= PY_STR_WGT;
 }
 
 
@@ -2688,7 +2688,7 @@ void check_strength()
 
     i_ptr = &inventory[INVEN_WIELD];
     if (i_ptr->tval != TV_NOTHING
-	&& (py.use_stat[A_STR] * 15 < i_ptr->weight)) {
+	&& (p_ptr->use_stat[A_STR] * 15 < i_ptr->weight)) {
 	if (weapon_heavy == FALSE) {
 	    msg_print("You have trouble wielding such a heavy weapon.");
 	    weapon_heavy = TRUE;
@@ -2712,19 +2712,19 @@ void check_strength()
 	    msg_print("Your pack is so heavy that it slows you down.");
 	else
 	    msg_print("You move more easily under the weight of your pack.");
-	py.speed += i - pack_heavy;
-	py.status |= PY_SPEED;
+	p_ptr->speed += i - pack_heavy;
+	p_ptr->status |= PY_SPEED;
 	pack_heavy = i;
     }
-    py.status &= ~PY_STR_WGT;
+    p_ptr->status &= ~PY_STR_WGT;
 
-    if (py.pclass == 2 && !notlike) {
+    if (p_ptr->pclass == 2 && !notlike) {
         if ((i_ptr->tval == TV_SWORD || i_ptr->tval == TV_POLEARM)
             && ((i_ptr->flags2 & TR_BLESS_BLADE) == 0)) {
             notlike = TRUE;
             msg_print("You do not feel comfortable with your weapon.");
         }
-    } else if (py.pclass == 2 && notlike) {
+    } else if (p_ptr->pclass == 2 && notlike) {
         if (i_ptr->tval == TV_NOTHING) {
             notlike = FALSE;
             msg_print("You feel comfortable again after removing that weapon.");

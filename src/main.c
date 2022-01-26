@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
     /* default command set defined in config.h file */
     rogue_like_commands = ROGUE_LIKE;
     
-    strcpy(py.name, "\0");
+    strcpy(p_ptr->name, "\0");
     
 
 
@@ -159,9 +159,9 @@ int main(int argc, char *argv[])
     if (player_uid < 0) {
 	quit("Can't set permissions correctly!  Getuid call failed.\n");
     }
-    user_name(py.name, player_uid);
+    user_name(p_ptr->name, player_uid);
 #else
-    user_name(py.name);
+    user_name(p_ptr->name);
 #endif
     
 #if defined(SET_UID) && !defined(SECURE)
@@ -259,8 +259,8 @@ int main(int argc, char *argv[])
 	  case 'u':
 	  case 'U':
 	    if (!argv[0][2]) goto usage;
-	    strcpy(py.name, &argv[0][2]);
-	    d_check(py.name);
+	    strcpy(p_ptr->name, &argv[0][2]);
+	    d_check(p_ptr->name);
 	    break;
 
 	  default:
@@ -336,7 +336,7 @@ int main(int argc, char *argv[])
        hence, this code is not necessary */
 #endif
 
-    (void) sprintf(savefile, "%s/%d%s", ANGBAND_DIR_SAVE, player_uid, py.name);
+    (void) sprintf(savefile, "%s/%d%s", ANGBAND_DIR_SAVE, player_uid, p_ptr->name);
 
  /* This restoration of a saved character may get ONLY the monster memory. In
     this case, load_player returns false. It may also resurrect a dead character
@@ -360,7 +360,7 @@ int main(int argc, char *argv[])
 	change_name();
 
 	/* could be restoring a dead character after a signal or HANGUP */
-	if (py.chp < 0)
+	if (p_ptr->chp < 0)
 	    death = TRUE;
     } else {			/* Create character */
 	/* Unique Weapons, Armour and Rings */
@@ -487,17 +487,17 @@ int main(int argc, char *argv[])
 	player_birth();
 
 	/* if we're creating a new character, change the savefile name */
-    (void) sprintf(savefile, "%s/%d%s", ANGBAND_DIR_SAVE, player_uid, py.name);
+    (void) sprintf(savefile, "%s/%d%s", ANGBAND_DIR_SAVE, player_uid, p_ptr->name);
 	player_outfit();
-	py.food = 7500;
-	py.food_digested = 2;
-        if (class[py.pclass].spell == MAGE)
+	p_ptr->food = 7500;
+	p_ptr->food_digested = 2;
+        if (class[p_ptr->pclass].spell == MAGE)
 	{			/* Magic realm   */
 	    clear_screen();	/* makes spell list easier to read */
 	    calc_spells(A_INT);
 	    calc_mana(A_INT);
 	}
-	else if (class[py.pclass].spell == PRIEST)
+	else if (class[p_ptr->pclass].spell == PRIEST)
 	{			/* Clerical realm*/
 	    calc_spells(A_WIS);
 	    clear_screen();	/* force out the 'learn prayer' message */
@@ -564,7 +564,7 @@ static void player_outfit()
 
     for (i = 0; i < 5; i++)
     {
-	j = player_init[py.pclass][i];
+	j = player_init[p_ptr->pclass][i];
 	invcopy(&inven_init, j);
 	store_bought(&inven_init);
 	if (inven_init.tval == TV_SWORD || inven_init.tval == TV_HAFTED

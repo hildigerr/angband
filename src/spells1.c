@@ -119,7 +119,7 @@ static int minus_ac(u32b typ_dam)
  */
 void corrode_gas(const cptr kb_str)
 {
-    if (!py.immune_acid)
+    if (!p_ptr->immune_acid)
 	if (!minus_ac((u32b) TR2_RES_ACID))
 	    take_hit(randint(8), kb_str);
     inven_damage(set_corrodes, 5);
@@ -133,13 +133,13 @@ void acid_dam(int dam, cptr kb_str)
 {
     register int flag;
 
-    if (py.resist_acid > 0) dam = dam / 3;
-    if (py.oppose_acid > 0) dam = dam / 3;
-    if (py.immune_acid) dam = 1;
+    if (p_ptr->resist_acid > 0) dam = dam / 3;
+    if (p_ptr->oppose_acid > 0) dam = dam / 3;
+    if (p_ptr->immune_acid) dam = 1;
     flag = 0;
-    if (!py.oppose_acid)
+    if (!p_ptr->oppose_acid)
 	if (minus_ac((u32b) TR2_RES_ACID)) flag = 1;
-    if (py.resist_acid) flag += 2;
+    if (p_ptr->resist_acid) flag += 2;
     inven_damage(set_acid_affect, 3);
 }
 
@@ -149,9 +149,9 @@ void acid_dam(int dam, cptr kb_str)
  */
 void light_dam(int dam, cptr kb_str)
 {
-    if (py.oppose_elec) dam = dam / 3;
-    if (py.resist_elec) dam = dam / 3;
-    if (py.immune_elec) dam = 1;
+    if (p_ptr->oppose_elec) dam = dam / 3;
+    if (p_ptr->resist_elec) dam = dam / 3;
+    if (p_ptr->immune_elec) dam = 1;
     take_hit(dam, kb_str);
     inven_damage(set_lightning_destroy, 3);
 }
@@ -164,9 +164,9 @@ void light_dam(int dam, cptr kb_str)
  */
 void fire_dam(int dam, cptr kb_str)
 {
-    if (py.resist_fire) dam = dam / 3;
-    if (py.oppose_fire > 0) dam = dam / 3;
-    if (py.immune_fire) dam = 1;
+    if (p_ptr->resist_fire) dam = dam / 3;
+    if (p_ptr->oppose_fire > 0) dam = dam / 3;
+    if (p_ptr->immune_fire) dam = 1;
     take_hit(dam, kb_str);
     inven_damage(set_flammable, 3);
 }
@@ -177,9 +177,9 @@ void fire_dam(int dam, cptr kb_str)
  */
 void cold_dam(int dam, cptr kb_str)
 {
-    if (py.resist_cold) dam = dam / 3;
-    if (py.oppose_cold > 0) dam = dam / 3;
-    if (py.immune_cold) dam = 1;
+    if (p_ptr->resist_cold) dam = dam / 3;
+    if (p_ptr->oppose_cold > 0) dam = dam / 3;
+    if (p_ptr->immune_cold) dam = 1;
     take_hit(dam, kb_str);
     inven_damage(set_frost_destroy, 5);
 }
@@ -191,13 +191,13 @@ void cold_dam(int dam, cptr kb_str)
  */
 void poison_gas(int dam, cptr kb_str)
 {
-    if (py.oppose_pois > 0) dam = 2 * dam / 3;
-    if (py.resist_pois) dam = (dam * 3) / 5;
-    if (py.immune_pois) dam = 1;
+    if (p_ptr->oppose_pois > 0) dam = 2 * dam / 3;
+    if (p_ptr->resist_pois) dam = (dam * 3) / 5;
+    if (p_ptr->immune_pois) dam = 1;
     take_hit(dam, kb_str);
-    if (!(py.resist_pois || py.oppose_pois
-	  || py.immune_pois))
-	py.poisoned += 12 + randint(dam);
+    if (!(p_ptr->resist_pois || p_ptr->oppose_pois
+	  || p_ptr->immune_pois))
+	p_ptr->poisoned += 12 + randint(dam);
 }
 
 

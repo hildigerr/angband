@@ -45,7 +45,6 @@ void dungeon(void)
     int                    regen_amount;
 
     char                   command;      /* Last command           */
-    player_type  *p_ptr = &py;
     register inven_type		*i_ptr;
 
 /* Main procedure for dungeon.			-RAK-	 */
@@ -402,7 +401,7 @@ void dungeon(void)
 	    prt_cut();
 	    if (p_ptr->cut <= 0) {
 		p_ptr->cut = 0;
-		if (py.chp >= 0) msg_print("Your wound heals.");
+		if (p_ptr->chp >= 0) msg_print("Your wound heals.");
 	    }
 	}
 
@@ -514,7 +513,7 @@ void dungeon(void)
 		if (p_ptr->rest == 0)	/* Resting over */
 		    rest_off();
 	    } else if (p_ptr->rest == -1) {
-		if (py.chp == py.mhp && py.cmana == py.mana) {
+		if (p_ptr->chp == p_ptr->mhp && p_ptr->cmana == p_ptr->mana) {
 		    p_ptr->rest = 0;
 		    rest_off();
 		}
@@ -524,8 +523,8 @@ void dungeon(void)
 		if ((p_ptr->blind < 1) && (p_ptr->confused < 1) &&
 		    (p_ptr->afraid < 1) && (p_ptr->stun < 1) &&
 		    (p_ptr->image < 1) && (p_ptr->word_recall < 1) &&
-		    (p_ptr->slow < 1) && (py.chp == py.mhp) &&
-		    (py.cmana == py.mana)) {
+		    (p_ptr->slow < 1) && (p_ptr->chp == p_ptr->mhp) &&
+		    (p_ptr->cmana == p_ptr->mana)) {
 		    p_ptr->rest = 0;
 		    rest_off();
 		}
@@ -577,8 +576,8 @@ void dungeon(void)
 	    if ((PY_INVULN & p_ptr->status) == 0) {
 		p_ptr->status |= PY_INVULN;
 		disturb(0, 0);
-		py.ptoac += 100;	/* changed to ptoac -CFT */
-		py.dis_tac += 100;
+		p_ptr->ptoac += 100;	/* changed to ptoac -CFT */
+		p_ptr->dis_tac += 100;
 		msg_print("Your skin turns to steel!");
 		p_ptr->status |= PY_ARMOR;	/* have to update ac display */
 	    }
@@ -586,8 +585,8 @@ void dungeon(void)
 	    if (p_ptr->invuln == 0) {
 		p_ptr->status &= ~PY_INVULN;
 		disturb(0, 0);
-		py.ptoac -= 100;	/* changed to ptoac -CFT */
-		py.dis_tac -= 100;
+		p_ptr->ptoac -= 100;	/* changed to ptoac -CFT */
+		p_ptr->dis_tac -= 100;
 		msg_print("Your skin returns to normal.");
 		p_ptr->status |= PY_ARMOR;	/* have to update ac display */
 	    }
@@ -690,8 +689,8 @@ void dungeon(void)
 	    if (p_ptr->shield == 0) {
 		disturb(0, 0);
 		msg_print("Your mystic shield crumbles away.");
-		py.ptoac -= 50;	/* changed to ptoac -CFT */
-		py.dis_tac -= 50;
+		p_ptr->ptoac -= 50;	/* changed to ptoac -CFT */
+		p_ptr->dis_tac -= 50;
 		p_ptr->status |= PY_ARMOR;	/* have to update ac display */
 	    }
 	}
@@ -739,8 +738,8 @@ void dungeon(void)
 		    i_ptr->timeout--;
 		if ((i_ptr->tval == TV_RING) &&
 		    (!stricmp(k_list[i_ptr->index].name, "Power")) &&
-		    (randint(20) == 1) && (py.exp > 0))
-		    py.exp--, py.max_exp--, prt_experience();
+		    (randint(20) == 1) && (p_ptr->exp > 0))
+		    p_ptr->exp--, p_ptr->max_exp--, prt_experience();
 	    }
 	}
 
@@ -765,7 +764,7 @@ void dungeon(void)
 	    if (p_ptr->detect_inv == 0) {
 		p_ptr->status &= ~PY_DET_INV;
 	    /* may still be able to see_inv if wearing magic item */
-		if (py.prace == 9)
+		if (p_ptr->prace == 9)
 		    p_ptr->see_inv = TRUE;
 		else {
 		    p_ptr->see_inv = FALSE;	/* unless item grants it */
@@ -804,8 +803,8 @@ void dungeon(void)
 		if (dun_level > 0) {
 		    dun_level = 0;
 		    msg_print("You feel yourself yanked upwards! ");
-		} else if (py.max_dlv != 0) {
-		    dun_level = py.max_dlv;
+		} else if (p_ptr->max_dlv != 0) {
+		    dun_level = p_ptr->max_dlv;
 		    msg_print("You feel yourself yanked downwards! ");
 		}
 	    } else
@@ -835,7 +834,7 @@ void dungeon(void)
 	    prt_state();
 
 	if ((p_ptr->status & PY_ARMOR) != 0) {
-	    py.dis_ac = py.pac + py.dis_tac;	/* use updated ac */
+	    p_ptr->dis_ac = p_ptr->pac + p_ptr->dis_tac;	/* use updated ac */
 	    prt_pac();
 	    p_ptr->status &= ~PY_ARMOR;
 	}
@@ -859,12 +858,12 @@ void dungeon(void)
      * for 1st level char, check once every 2160 turns for 40th level char,
      * check once every 416 turns 
      */
-	if (py.pclass == 2 ?
-	    ((p_ptr->confused == 0) && (py.pclass != 0) &&
-	(randint((int)(10000 / (py.lev * py.lev + 40)) + 1) == 1))
+	if (p_ptr->pclass == 2 ?
+	    ((p_ptr->confused == 0) && (p_ptr->pclass != 0) &&
+	(randint((int)(10000 / (p_ptr->lev * p_ptr->lev + 40)) + 1) == 1))
 	    :
 	    (((turn & 0xF) == 0) && (p_ptr->confused == 0)
-	     && (randint((int)(10 + 750 / (5 + py.lev))) == 1))
+	     && (randint((int)(10 + 750 / (5 + p_ptr->lev))) == 1))
 	    ) {
 	    vtype               tmp_str;
 
@@ -880,12 +879,12 @@ void dungeon(void)
 	     */
 		if (((i_ptr->tval >= TV_MIN_WEAR) && (i_ptr->tval <= TV_MAX_WEAR)) &&
 		    special_check(i_ptr) &&
-		    ((py.pclass == 2 || py.pclass == 3) ?
+		    ((p_ptr->pclass == 2 || p_ptr->pclass == 3) ?
 		     (randint(i < 22 ? 5 : 1) == 1) :
 		     (randint(i < 22 ? 50 : 10) == 1))) {
 
-		    if (py.pclass == 0 || py.pclass == 3 ||
-			py.pclass == 5)
+		    if (p_ptr->pclass == 0 || p_ptr->pclass == 3 ||
+			p_ptr->pclass == 5)
 			if ((i_ptr->tval == TV_SWORD) ||
 			    (i_ptr->tval == TV_HAFTED) ||
 			    (i_ptr->tval == TV_POLEARM) ||
@@ -915,14 +914,14 @@ void dungeon(void)
 	}
 
     /* Warriors, Rogues and paladins inbuilt ident */
-	if (((py.pclass == 0) && (p_ptr->confused == 0) &&
-	 (randint((int)(9000 / (py.lev * py.lev + 40)) + 1) == 1))
+	if (((p_ptr->pclass == 0) && (p_ptr->confused == 0) &&
+	 (randint((int)(9000 / (p_ptr->lev * p_ptr->lev + 40)) + 1) == 1))
 	    ||
-	    ((py.pclass == 3) && (p_ptr->confused == 0) &&
-	(randint((int)(20000 / (py.lev * py.lev + 40)) + 1) == 1))
+	    ((p_ptr->pclass == 3) && (p_ptr->confused == 0) &&
+	(randint((int)(20000 / (p_ptr->lev * p_ptr->lev + 40)) + 1) == 1))
 	    ||
-	    ((py.pclass == 5) && (p_ptr->confused == 0) &&
-	     (randint((int)(80000L / (py.lev * py.lev + 40)) + 1) == 1))) {
+	    ((p_ptr->pclass == 5) && (p_ptr->confused == 0) &&
+	     (randint((int)(80000L / (p_ptr->lev * p_ptr->lev + 40)) + 1) == 1))) {
 	    vtype               tmp_str;
 
 	    for (i = 0; i < INVEN_ARRAY_SIZE; i++) {
@@ -1497,7 +1496,6 @@ static void do_command(char com_val)
     int                    dir_val, do_pickup;
     int                    y, x, i, j = 0;
     vtype                  out_val, tmp_str;
-    player_type *p_ptr = &py;
     char                   prt1[80];
 
 /* hack for move without pickup.  Map '-' to a movement command. */
@@ -1935,7 +1933,7 @@ static void do_command(char com_val)
 	do_cmd_read_scroll();
 	break;
       case 's':			/* (s)earch for a turn */
-	search(char_row, char_col, py.srh);
+	search(char_row, char_col, p_ptr->srh);
 	break;
       case 'T':			/* (T)ake off something	(t)ake off */
 	inven_command('t');
@@ -2097,12 +2095,12 @@ static void do_command(char com_val)
 		break;
 	      case '+':
 		if (command_rep > 0) {
-		    py.exp = command_rep;
+		    p_ptr->exp = command_rep;
 		    command_rep = 0;
-		} else if (py.exp == 0)
-		    py.exp = 1;
+		} else if (p_ptr->exp == 0)
+		    p_ptr->exp = 1;
 		else
-		    py.exp = py.exp * 2;
+		    p_ptr->exp = p_ptr->exp * 2;
 		prt_experience();
 		break;
 	      default:
@@ -2216,7 +2214,6 @@ static int valid_countcommand(char c)
 /* Regenerate hit points				-RAK-	 */
 static void regenhp(int percent)
 {
-    player_type *p_ptr = &py;
     register s32b        new_chp, new_chp_frac;
     int                   old_chp;
 
@@ -2246,7 +2243,6 @@ static void regenhp(int percent)
 /* Regenerate mana points				-RAK-	 */
 static void regenmana(int percent)
 {
-    player_type *p_ptr = &py;
     register s32b        new_mana, new_mana_frac;
     int                   old_cmana;
 
@@ -2278,7 +2274,7 @@ int ruin_stat(int stat)
 {
     register int tmp_stat;
 
-    tmp_stat = py.cur_stat[stat];
+    tmp_stat = p_ptr->cur_stat[stat];
     if (tmp_stat > 3) {
 	if (tmp_stat > 6) {
 	    if (tmp_stat < 19) {
@@ -2291,8 +2287,8 @@ int ruin_stat(int stat)
 	} else
 	    tmp_stat--;
 
-	py.cur_stat[stat] = tmp_stat;
-	py.max_stat[stat] = tmp_stat;
+	p_ptr->cur_stat[stat] = tmp_stat;
+	p_ptr->max_stat[stat] = tmp_stat;
 	set_use_stat(stat);
 	prt_stat(stat);
 	return TRUE;
@@ -2305,7 +2301,6 @@ static void activate()
     int          i, a, flag, first, num, j, redraw, dir, test = FALSE;
     char         out_str[200], tmp[200], tmp2[200], choice;
     inven_type  *i_ptr;
-    player_type *p_ptr = &py;
 
     flag = FALSE;
     redraw = FALSE;
@@ -2402,8 +2397,8 @@ static void activate()
 		msg_print("It whines, glows and fades...");
 		break;
 	    }
-	    if (py.use_stat[A_INT] < randint(18) &&
-	     randint(k_list[inventory[i].index].level) > py.lev) {
+	    if (p_ptr->use_stat[A_INT] < randint(18) &&
+	     randint(k_list[inventory[i].index].level) > p_ptr->lev) {
 		msg_print("You fail to activate it properly.");
 		break;
 	    }
@@ -2480,7 +2475,7 @@ static void activate()
 		break;
 	      case (92):
 		if (inventory[i].name2 == ART_FEANOR) {
-		    py.fast += randint(25) + 15;
+		    p_ptr->fast += randint(25) + 15;
 		    inventory[i].timeout = 200;
 		}
 		break;
@@ -2511,11 +2506,11 @@ static void activate()
 		break;
 	      case (71):
 		if (inventory[i].name2 == ART_AVAVIR) {
-		    if (py.word_recall == 0) {
-			py.word_recall = 15 + randint(20);
+		    if (p_ptr->word_recall == 0) {
+			p_ptr->word_recall = 15 + randint(20);
 			msg_print("The air about you becomes charged...");
 		    } else {
-			py.word_recall = 0;
+			p_ptr->word_recall = 0;
 			msg_print("A tension leaves the air around you...");
 		    }
 		    inventory[i].timeout = 200;
@@ -2523,8 +2518,8 @@ static void activate()
 		break;
 	      case (53):
 		if (inventory[i].name2 == ART_TARATOL) {
-		    if (py.fast == 0)
-			py.fast += randint(30) + 15;
+		    if (p_ptr->fast == 0)
+			p_ptr->fast += randint(30) + 15;
 		    inventory[i].timeout = 166;
 		}
 		break;
@@ -2548,10 +2543,10 @@ static void activate()
 		if (inventory[i].name2 == ART_LOTHARANG) {
 		    msg_print("Your battle axe radiates deep purple...");
 		    hp_player(damroll(4, 7));
-		    if (py.cut > 0) {
-			py.cut = (py.cut / 2) - 50;
-			if (py.cut < 0)
-			    py.cut = 0;
+		    if (p_ptr->cut > 0) {
+			p_ptr->cut = (p_ptr->cut / 2) - 50;
+			if (p_ptr->cut < 0)
+			    p_ptr->cut = 0;
 			msg_print("You wounds heal.");
 		    }
 		    inventory[i].timeout = 2 + randint(2);
@@ -2644,11 +2639,11 @@ static void activate()
 		if (inventory[i].name2 == ART_COLLUIN) {
 		    msg_print("Your cloak glows many colours...");
 		    msg_print("You feel you can resist anything.");
-		    py.oppose_fire += randint(20) + 20;
-		    py.oppose_cold += randint(20) + 20;
-		    py.oppose_elec += randint(20) + 20;
-		    py.oppose_pois += randint(20) + 20;
-		    py.oppose_acid += randint(20) + 20;
+		    p_ptr->oppose_fire += randint(20) + 20;
+		    p_ptr->oppose_cold += randint(20) + 20;
+		    p_ptr->oppose_elec += randint(20) + 20;
+		    p_ptr->oppose_pois += randint(20) + 20;
+		    p_ptr->oppose_acid += randint(20) + 20;
 		    inventory[i].timeout = 111;
 		} else if (inventory[i].name2 == ART_HOLCOLLETH) {
 		    msg_print("You momentarily disappear...");
@@ -2758,7 +2753,7 @@ static void activate()
 		break;
 	      case (OBJ_SPECIAL + 2):	/* Power */
 		msg_print("The ring glows intensely black...");
-		switch (randint(17) + (8 - py.lev / 10)) {
+		switch (randint(17) + (8 - p_ptr->lev / 10)) {
 		  case 5:
 		    dispel_creature(0xFFFFFFFL, 1000);
 		    break;
@@ -2787,7 +2782,7 @@ static void activate()
 		    }
 		    prt_level();
 		    prt_title();
-		    take_hit((py.chp > 2) ? py.chp / 2 : 0, "malignant aura");
+		    take_hit((p_ptr->chp > 2) ? p_ptr->chp / 2 : 0, "malignant aura");
 		    break;
 		  case 8:
 		  case 9:
@@ -2927,13 +2922,13 @@ static void activate()
 		if (inventory[i].name2 == ART_BLADETURNER) {
 		    msg_print("Your armour glows many colours...");
 		    msg_print("You enter a berserk rage...");
-		    py.hero += randint(50) + 50;
-		    py.shero += randint(50) + 50;
+		    p_ptr->hero += randint(50) + 50;
+		    p_ptr->shero += randint(50) + 50;
 		    bless(randint(50) + 50);
-		    py.oppose_fire += randint(50) + 50;
-		    py.oppose_cold += randint(50) + 50;
-		    py.oppose_elec += randint(50) + 50;
-		    py.oppose_acid += randint(50) + 50;
+		    p_ptr->oppose_fire += randint(50) + 50;
+		    p_ptr->oppose_cold += randint(50) + 50;
+		    p_ptr->oppose_elec += randint(50) + 50;
+		    p_ptr->oppose_acid += randint(50) + 50;
 		    inventory[i].timeout = 400;
 		} else {
 		    msg_print("You breathe the elements...");
@@ -2950,7 +2945,7 @@ static void activate()
 		break;
 	      case (OBJ_SPECIAL + 4):
 		msg_print("An aura of good floods the area...");
-		dispel_creature(MF2_EVIL, (int)(5 * py.lev));
+		dispel_creature(MF2_EVIL, (int)(5 * p_ptr->lev));
 		inventory[i].timeout = 444 + randint(222);
 		break;
 	      case (OBJ_SPECIAL + 5):
@@ -2974,7 +2969,7 @@ static void activate()
 		break;
 	      case (OBJ_SPECIAL + 8):
 		msg_print("The ring glows brightly...");
-		py.fast += randint(100) + 50;
+		p_ptr->fast += randint(100) + 50;
 		inventory[i].timeout = 200;
 		break;
 	      default:
@@ -3007,19 +3002,19 @@ static void examine_book()
 
     if (!find_range(TV_MAGIC_BOOK, TV_PRAYER_BOOK, &i, &k))
 	msg_print("You are not carrying any books.");
-    else if (py.blind > 0)
+    else if (p_ptr->blind > 0)
 	msg_print("You can't see to read your spell book!");
     else if (no_lite())
 	msg_print("You have no light to read by.");
-    else if (py.confused > 0)
+    else if (p_ptr->confused > 0)
 	msg_print("You are too confused.");
     else if (get_item(&item_val, "Which Book?", i, k, 0)) {
 	flag = TRUE;
 	i_ptr = &inventory[item_val];
-	if (class[py.pclass].spell == MAGE) {
+	if (class[p_ptr->pclass].spell == MAGE) {
 	    if (i_ptr->tval != TV_MAGIC_BOOK)
 		flag = FALSE;
-	} else if (class[py.pclass].spell == PRIEST) {
+	} else if (class[p_ptr->pclass].spell == PRIEST) {
 	    if (i_ptr->tval != TV_PRAYER_BOOK)
 		flag = FALSE;
 	} else
@@ -3034,7 +3029,7 @@ static void examine_book()
 	    j1 = (u32b) inventory[item_val].flags1;	/* restore j1 value */
 	    while (j1) {
 		k = bit_pos(&j1);
-		s_ptr = &magic_spell[py.pclass - 1][k];
+		s_ptr = &magic_spell[p_ptr->pclass - 1][k];
 		if (s_ptr->slevel < 99) {
 		    spell_index[i] = k;
 		    i++;
@@ -3047,7 +3042,7 @@ static void examine_book()
 	    }
 	    while (j2) {
 		k = bit_pos(&j2);
-		s_ptr = &magic_spell[py.pclass - 1][k + 32];
+		s_ptr = &magic_spell[p_ptr->pclass - 1][k + 32];
 		if (s_ptr->slevel < 99) {
 		    spell_index[i] = (k + 32);
 		    i++;

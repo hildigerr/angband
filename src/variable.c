@@ -176,7 +176,8 @@ struct unique_mon u_list[MAX_R_IDX]; /* Unique check list... -LVB- */
 /* The array of dungeon items [MAX_I_IDX] */
 inven_type i_list[MAX_I_IDX];
 
-static player_type py;	/* Static player info record */
+static player_type p_body;	/* Static player info record */
+player_type *p_ptr = &p_body;	/* Pointer to the player info */
 
 u32b spell_learned = 0;       /* bit mask of spells learned */
 u32b spell_learned2 = 0;      /* bit mask of spells learned */

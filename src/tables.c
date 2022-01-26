@@ -681,7 +681,7 @@ s16b class_level_adj[MAX_CLASS][MAX_LEV_ADJ] = {
 
 /*
  * Warriors don't have spells, so there is no entry for them.  Note that
- * this means you must always subtract one from the py.pclass before
+ * this means you must always subtract one from the p_ptr->pclass before
  * indexing into magic_spell[].
  */
 spell_type magic_spell[MAX_CLASS-1][63] = {
