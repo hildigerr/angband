@@ -12,8 +12,6 @@
 
 #include "angband.h"
 
-int player_light;		/* Player carrying light */
-
 static void        regenhp(int);
 static void        regenmana(int);
 static cptr value_check(inven_type *);
@@ -33,9 +31,6 @@ static void regen_monsters();
 
 /* It has had a bit more hard work.			-CJS- */
 
-int good_item_flag = FALSE;
-int create_up_stair = FALSE;
-int create_down_stair = FALSE;
 
 void dungeon(void)
 {

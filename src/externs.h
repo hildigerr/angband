@@ -257,6 +257,8 @@ extern int monster_is_afraid;	/* redo monster fear messages -CWS */
 extern int character_generated;		/* Character generation complete */
 extern int character_saved;		/* Character has been saved. */
 extern int peek;			/* Peek like a wizard */
+extern int create_up_stair;
+extern int create_down_stair;
 
 extern int command_rep;			/* Repetition of current command */
 extern int default_dir;			/* Use last direction in repeated commands */

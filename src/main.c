@@ -540,7 +540,6 @@ int main(int argc, char *argv[])
 	    death = TRUE;
 	}
 #endif
-	good_item_flag = FALSE;
 	if (!death) generate_cave(); /* New level	*/
     }
 

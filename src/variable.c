@@ -19,6 +19,7 @@ cptr copyright[5] = {
 int hack_m_idx = (-1);		/* XXX */
 
 
+int player_light;		/* Player carrying light */
 int cur_lite = 0;		/* Current light radius (zero for none) */
 int old_lite;
 
@@ -37,6 +38,9 @@ u32b town_seed;		/* Hack -- consistent town layout */
 char last_command = ' ';  	/* Memory of previous command. */
 int command_rep;		/* Gives repetition of commands. -CJS- */
 int default_dir = FALSE;	/* Use last direction for repeated command */
+
+int create_up_stair = FALSE;
+int create_down_stair = FALSE;
 
 int death = FALSE;		/* True if player has died */
 int free_turn_flag;		/* Command is "free", do not move creatures */
@@ -111,6 +115,7 @@ int peek = FALSE;		/* Let user "see" internal stuff */
 
 int feeling = 0;		/* Most recent feeling */
 int rating = 0;			/* Level's current rating */
+int good_item_flag = FALSE;	/* True if "Artifact" on this level */
 
 char doing_inven = FALSE;	/* Hack -- track inventory commands */
 int screen_change = FALSE;	/* Track screen updates for inven_commands. */
