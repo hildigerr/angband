@@ -12,9 +12,6 @@
 
 #include "angband.h"
 
-static void        regenhp(int);
-static void        regenmana(int);
-static cptr value_check(inven_type *);
 static char original_commands();
 static void do_command();
 static int  valid_countcommand();
@@ -23,13 +20,179 @@ static void activate();
 static void go_up();
 static void go_down();
 static void refill_lamp();
-static void regen_monsters();
 
 /* ANGBAND game module					-RAK-	 */
 /* The code in this section has gone through many revisions, and */
 /* some of it could stand some more hard work.	-RAK-	       */
 
 /* It has had a bit more hard work.			-CJS- */
+
+
+
+
+
+
+
+/*
+ * Is an item an enchanted weapon or armor and we don't know?  -CJS-
+ * returns a description
+ */
+static cptr value_check(inven_type *i_ptr)
+{
+    if (i_ptr->tval == TV_NOTHING) return 0;
+
+    if (known2_p(i_ptr)) return 0;
+
+    if (store_bought_p(i_ptr)) return 0;
+
+    if (i_ptr->ident & ID_MAGIK) return 0;
+
+    if (i_ptr->ident & ID_DAMD) return 0;
+
+    if (i_ptr->inscrip[0] != '\0') return 0;
+
+    if (i_ptr->flags1 & TR3_CURSED && i_ptr->name2 == SN_NULL)
+	return "worthless";
+
+    if (i_ptr->flags1 & TR3_CURSED && i_ptr->name2 != SN_NULL)
+	return "terrible";
+
+    if ((i_ptr->tval == TV_DIGGING) &&  /* also, good digging tools -CFT */
+	(i_ptr->flags1 & TR1_TUNNEL) &&
+	(i_ptr->pval > k_list[i_ptr->index].pval)) /* better than normal for this
+						       type of shovel/pick? -CFT */
+	return "good";
+
+    if ((i_ptr->tohit<=0 && i_ptr->todam<=0 && i_ptr->toac<=0) &&
+	i_ptr->name2==SN_NULL)  /* normal shovels will also reach here -CFT */
+	return "average";
+
+    if (i_ptr->name2 == SN_NULL)
+	return "good";
+
+    if ((i_ptr->name2 == EGO_R) || (i_ptr->name2 == EGO_RESIST_A) ||
+	(i_ptr->name2 == EGO_RESIST_F) || (i_ptr->name2 == EGO_RESIST_C) ||
+	(i_ptr->name2 == EGO_RESIST_E) || (i_ptr->name2 == EGO_SLAY_E) ||
+	(i_ptr->name2 == EGO_HA) || (i_ptr->name2 == EGO_FT) ||
+	(i_ptr->name2 == EGO_DF) || (i_ptr->name2 == EGO_FB) ||
+	(i_ptr->name2 == EGO_SLAY_A) || (i_ptr->name2 == EGO_FREE_ACTION) ||
+	(i_ptr->name2 == EGO_SLAY_D) || (i_ptr->name2 == EGO_SLAYING) ||
+	(i_ptr->name2 == EGO_SLAY_U) || (i_ptr->name2 == EGO_SLOW_DESCENT) ||
+	(i_ptr->name2 == EGO_SPEED) || (i_ptr->name2 == EGO_STEALTH) ||
+	(i_ptr->name2 == EGO_INTELLIGENCE) || (i_ptr->name2 == EGO_WISDOM) ||
+	(i_ptr->name2 == EGO_INFRAVISION) || (i_ptr->name2 == EGO_MIGHT) ||
+	(i_ptr->name2 == EGO_LORDLINESS) || (i_ptr->name2 == EGO_MAGI) ||
+	(i_ptr->name2 == EGO_BEAUTY) || (i_ptr->name2 == EGO_SEEING) ||
+     (i_ptr->name2 == EGO_REGENERATION) || (i_ptr->name2 == EGO_PROTECTION) ||
+	(i_ptr->name2 == EGO_FIRE) || (i_ptr->name2 == EGO_SLAY_EVIL) ||
+	(i_ptr->name2 == EGO_DRAGON_SLAYING) || (i_ptr->name2 == EGO_SLAY_ANIMAL) ||
+	(i_ptr->name2 == EGO_ACCURACY) || (i_ptr->name2 == EGO_SLAY_O) ||
+	(i_ptr->name2 == ART_POWER) || (i_ptr->name2 == EGO_WEST) ||
+	(i_ptr->name2 == EGO_SLAY_DEMON) || (i_ptr->name2 == EGO_SLAY_T) ||
+	(i_ptr->name2 == EGO_LIGHT) || (i_ptr->name2 == EGO_AGILITY) ||
+	(i_ptr->name2 == EGO_SLAY_G) || (i_ptr->name2 == EGO_TELEPATHY) ||
+	(i_ptr->name2 == EGO_DRAGONKIND) || (i_ptr->name2 == EGO_AMAN) ||
+	(i_ptr->name2 == EGO_ELVENKIND) || (i_ptr->name2 == EGO_WOUNDING) ||
+	(i_ptr->name2 == EGO_BLESS_BLADE) || (i_ptr->name2 == EGO_ATTACKS))
+	return "excellent";
+
+    return "special";
+}
+
+
+/*
+ * Regenerate hit points				-RAK-	 
+ */
+static void regenhp(int percent)
+{
+    register s32b        new_chp, new_chp_frac;
+    int                   old_chp;
+
+    old_chp = p_ptr->chp;
+    new_chp = ((long)p_ptr->mhp) * percent + PLAYER_REGEN_HPBASE;
+    p_ptr->chp += new_chp >> 16;   /* div 65536 */
+
+    /* check for overflow */
+    if (p_ptr->chp < 0 && old_chp > 0) p_ptr->chp = MAX_SHORT;
+    new_chp_frac = (new_chp & 0xFFFF) + p_ptr->chp_frac;	/* mod 65536 */
+    if (new_chp_frac >= 0x10000L) {
+	p_ptr->chp_frac = new_chp_frac - 0x10000L;
+	p_ptr->chp++;
+    }
+    else {
+	p_ptr->chp_frac = new_chp_frac;
+    }
+
+    /* Must set frac to zero even if equal */
+    if (p_ptr->chp >= p_ptr->mhp) {
+	p_ptr->chp = p_ptr->mhp;
+	p_ptr->chp_frac = 0;
+    }
+
+    /* Notice changes */
+    if (old_chp != p_ptr->chp) prt_chp();
+}
+
+
+/* 
+ * Regenerate mana points				-RAK-	 
+ */
+static void regenmana(int percent)
+{
+    register s32b        new_mana, new_mana_frac;
+    int                   old_cmana;
+
+    old_cmana = p_ptr->cmana;
+    new_mana = ((long)p_ptr->mana) * percent + PLAYER_REGEN_MNBASE;
+    p_ptr->cmana += new_mana >> 16;	/* div 65536 */
+    /* check for overflow */
+    if (p_ptr->cmana < 0 && old_cmana > 0) {
+	p_ptr->cmana = MAX_SHORT;
+    }
+    new_mana_frac = (new_mana & 0xFFFF) + p_ptr->cmana_frac;	/* mod 65536 */
+    if (new_mana_frac >= 0x10000L) {
+	p_ptr->cmana_frac = new_mana_frac - 0x10000L;
+	p_ptr->cmana++;
+    }
+    else {
+	p_ptr->cmana_frac = new_mana_frac;
+    }
+
+    /* Must set frac to zero even if equal */
+    if (p_ptr->cmana >= p_ptr->mana) {
+	p_ptr->cmana = p_ptr->mana;
+	p_ptr->cmana_frac = 0;
+    }
+    
+    /* Redraw mana */
+    if (old_cmana != p_ptr->cmana) prt_cmana();
+}
+
+
+
+static void regen_monsters(void)
+{
+    register int i;
+    int          frac;
+
+    /* Regenerate everyone */
+    for (i = 0; i < MAX_M_IDX; i++) {
+
+	if (m_list[i].hp >= 0) {
+	    if (m_list[i].maxhp == 0) {	/* then we're just going to fix it!  -CFT */
+		if ((r_list[m_list[i].r_idx].cflags2 & MF2_MAX_HP) )
+		    m_list[i].maxhp = max_hp(r_list[m_list[i].r_idx].hd);
+		else
+		    m_list[i].maxhp = pdamroll(r_list[m_list[i].r_idx].hd);
+	    }
+	    if (m_list[i].hp < m_list[i].maxhp)
+		m_list[i].hp += ((frac = 2 * m_list[i].maxhp / 100) > 0) ? frac : 1;
+	    if (m_list[i].hp > m_list[i].maxhp)
+		m_list[i].hp = m_list[i].maxhp;
+	} /* if hp >= 0 */
+    } /* for loop */
+}
+
 
 
 void dungeon(void)
@@ -1428,64 +1591,6 @@ int special_check(inven_type *t_ptr)
 }
 
 
-/* Is an item an enchanted weapon or armor and we don't know?  -CJS- */
-/* returns a description */
-static cptr value_check(inven_type *t_ptr)
-{
-    if (t_ptr->tval == TV_NOTHING)
-	return 0;
-    if (known2_p(t_ptr))
-	return 0;
-    if (store_bought_p(t_ptr))
-	return 0;
-    if (t_ptr->ident & ID_MAGIK)
-	return 0;
-    if (t_ptr->ident & ID_DAMD)
-	return 0;
-    if (t_ptr->inscrip[0] != '\0')
-	return 0;
-    if (t_ptr->flags1 & TR3_CURSED && t_ptr->name2 == SN_NULL)
-	return "worthless";
-    if (t_ptr->flags1 & TR3_CURSED && t_ptr->name2 != SN_NULL)
-	return "terrible";
-    if ((t_ptr->tval == TV_DIGGING) &&  /* also, good digging tools -CFT */
-	(t_ptr->flags1 & TR1_TUNNEL) &&
-	(t_ptr->pval > k_list[t_ptr->index].pval)) /* better than normal for this
-						       type of shovel/pick? -CFT */
-	return "good";
-    if ((t_ptr->tohit<=0 && t_ptr->todam<=0 && t_ptr->toac<=0) &&
-	t_ptr->name2==SN_NULL)  /* normal shovels will also reach here -CFT */
-	return "average";
-    if (t_ptr->name2 == SN_NULL)
-	return "good";
-    if ((t_ptr->name2 == EGO_R) || (t_ptr->name2 == EGO_RESIST_A) ||
-	(t_ptr->name2 == EGO_RESIST_F) || (t_ptr->name2 == EGO_RESIST_C) ||
-	(t_ptr->name2 == EGO_RESIST_E) || (t_ptr->name2 == EGO_SLAY_E) ||
-	(t_ptr->name2 == EGO_HA) || (t_ptr->name2 == EGO_FT) ||
-	(t_ptr->name2 == EGO_DF) || (t_ptr->name2 == EGO_FB) ||
-	(t_ptr->name2 == EGO_SLAY_A) || (t_ptr->name2 == EGO_FREE_ACTION) ||
-	(t_ptr->name2 == EGO_SLAY_D) || (t_ptr->name2 == EGO_SLAYING) ||
-	(t_ptr->name2 == EGO_SLAY_U) || (t_ptr->name2 == EGO_SLOW_DESCENT) ||
-	(t_ptr->name2 == EGO_SPEED) || (t_ptr->name2 == EGO_STEALTH) ||
-	(t_ptr->name2 == EGO_INTELLIGENCE) || (t_ptr->name2 == EGO_WISDOM) ||
-	(t_ptr->name2 == EGO_INFRAVISION) || (t_ptr->name2 == EGO_MIGHT) ||
-	(t_ptr->name2 == EGO_LORDLINESS) || (t_ptr->name2 == EGO_MAGI) ||
-	(t_ptr->name2 == EGO_BEAUTY) || (t_ptr->name2 == EGO_SEEING) ||
-     (t_ptr->name2 == EGO_REGENERATION) || (t_ptr->name2 == EGO_PROTECTION) ||
-	(t_ptr->name2 == EGO_FIRE) || (t_ptr->name2 == EGO_SLAY_EVIL) ||
-	(t_ptr->name2 == EGO_DRAGON_SLAYING) || (t_ptr->name2 == EGO_SLAY_ANIMAL) ||
-	(t_ptr->name2 == EGO_ACCURACY) || (t_ptr->name2 == EGO_SLAY_O) ||
-	(t_ptr->name2 == ART_POWER) || (t_ptr->name2 == EGO_WEST) ||
-	(t_ptr->name2 == EGO_SLAY_DEMON) || (t_ptr->name2 == EGO_SLAY_T) ||
-	(t_ptr->name2 == EGO_LIGHT) || (t_ptr->name2 == EGO_AGILITY) ||
-	(t_ptr->name2 == EGO_SLAY_G) || (t_ptr->name2 == EGO_TELEPATHY) ||
-	(t_ptr->name2 == EGO_DRAGONKIND) || (t_ptr->name2 == EGO_AMAN) ||
-	(t_ptr->name2 == EGO_ELVENKIND) || (t_ptr->name2 == EGO_WOUNDING) ||
-	(t_ptr->name2 == EGO_BLESS_BLADE) || (t_ptr->name2 == EGO_ATTACKS))
-	return "excellent";
-    return "special";
-}
-
 static void do_command(char com_val)
 {
     int                    dir_val, do_pickup;
@@ -2204,65 +2309,6 @@ static int valid_countcommand(char c)
 	return FALSE;
     }
 }
-
-
-/* Regenerate hit points				-RAK-	 */
-static void regenhp(int percent)
-{
-    register s32b        new_chp, new_chp_frac;
-    int                   old_chp;
-
-    old_chp = p_ptr->chp;
-    new_chp = ((long)p_ptr->mhp) * percent + PLAYER_REGEN_HPBASE;
-    p_ptr->chp += new_chp >> 16;   /* div 65536 */
-/* check for overflow */
-    if (p_ptr->chp < 0 && old_chp > 0)
-	p_ptr->chp = MAX_SHORT;
-    new_chp_frac = (new_chp & 0xFFFF) + p_ptr->chp_frac;	/* mod 65536 */
-    if (new_chp_frac >= 0x10000L) {
-	p_ptr->chp_frac = new_chp_frac - 0x10000L;
-	p_ptr->chp++;
-    } else
-	p_ptr->chp_frac = new_chp_frac;
-
-/* must set frac to zero even if equal */
-    if (p_ptr->chp >= p_ptr->mhp) {
-	p_ptr->chp = p_ptr->mhp;
-	p_ptr->chp_frac = 0;
-    }
-    if (old_chp != p_ptr->chp)
-	prt_chp();
-}
-
-
-/* Regenerate mana points				-RAK-	 */
-static void regenmana(int percent)
-{
-    register s32b        new_mana, new_mana_frac;
-    int                   old_cmana;
-
-    old_cmana = p_ptr->cmana;
-    new_mana = ((long)p_ptr->mana) * percent + PLAYER_REGEN_MNBASE;
-    p_ptr->cmana += new_mana >> 16;/* div 65536 */
-/* check for overflow */
-    if (p_ptr->cmana < 0 && old_cmana > 0)
-	p_ptr->cmana = MAX_SHORT;
-    new_mana_frac = (new_mana & 0xFFFF) + p_ptr->cmana_frac;	/* mod 65536 */
-    if (new_mana_frac >= 0x10000L) {
-	p_ptr->cmana_frac = new_mana_frac - 0x10000L;
-	p_ptr->cmana++;
-    } else
-	p_ptr->cmana_frac = new_mana_frac;
-
-/* must set frac to zero even if equal */
-    if (p_ptr->cmana >= p_ptr->mana) {
-	p_ptr->cmana = p_ptr->mana;
-	p_ptr->cmana_frac = 0;
-    }
-    if (old_cmana != p_ptr->cmana)
-	prt_cmana();
-}
-
 
 
 int ruin_stat(int stat)
@@ -3146,29 +3192,6 @@ static void refill_lamp()
 	inven_item_describe(i);
 	inven_destroy(i);
     }
-}
-
-
-static void regen_monsters()
-{
-    register int i;
-    int          frac;
-
-    for (i = 0; i < MAX_M_IDX; i++) {
-	if (m_list[i].hp >= 0) {
-	    if (m_list[i].maxhp == 0) {	/* then we're just going to fix it!
-					 * -CFT */
-		if ((r_list[m_list[i].r_idx].cflags2 & MF2_MAX_HP) )
-		    m_list[i].maxhp = max_hp(r_list[m_list[i].r_idx].hd);
-		else
-		    m_list[i].maxhp = pdamroll(r_list[m_list[i].r_idx].hd);
-	    }
-	    if (m_list[i].hp < m_list[i].maxhp)
-		m_list[i].hp += ((frac = 2 * m_list[i].maxhp / 100) > 0) ? frac : 1;
-	    if (m_list[i].hp > m_list[i].maxhp)
-		m_list[i].hp = m_list[i].maxhp;
-	} /* if hp >= 0 */
-    } /* for loop */
 }
 
 
