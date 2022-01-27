@@ -15,11 +15,7 @@
 static char original_commands();
 static void do_command();
 static int  valid_countcommand();
-static void examine_book();
 static void activate();
-static void go_up();
-static void go_down();
-static void refill_lamp();
 
 /* ANGBAND game module					-RAK-	 */
 /* The code in this section has gone through many revisions, and */
@@ -1875,10 +1871,10 @@ static void do_command(char com_val)
 	}
 	break;
       case '<':			/* (<) go down a staircase */
-	go_up();
+	do_cmd_go_up();
 	break;
       case '>':			/* (>) go up a staircase */
-	go_down();
+	do_cmd_go_down();
 	break;
       case '?':			/* (?) help with commands */
 	if (rogue_like_commands)
@@ -1912,7 +1908,7 @@ static void do_command(char com_val)
 	do_cmd_eat_food();
 	break;
       case 'F':			/* (F)ill lamp */
-	refill_lamp();
+	do_cmd_refill_lamp();
 	break;
       case 'G':			/* (G)ain magic spells */
 	gain_spells();
@@ -2031,7 +2027,7 @@ static void do_command(char com_val)
 	free_turn_flag = TRUE;
 	break;
       case 'P':			/* (P)eruse a book	(B)rowse in a book */
-	examine_book();
+	do_cmd_browse();
 	free_turn_flag = TRUE;
 	break;
       case 'c':			/* (c)lose an object */
@@ -3067,170 +3063,6 @@ static void activate()
     if (!flag)			   /* if flag still false, then user aborted. 
 				    * So we don't charge him a turn. -CFT */
 	free_turn_flag = TRUE;
-}
-
-/* Examine a Book					-RAK-	 */
-static void examine_book()
-{
-    u32b               j1;
-    u32b               j2;
-    int                  i, k, item_val, flag;
-    int                  spell_index[63];
-    register inven_type *i_ptr;
-    register spell_type *s_ptr;
-    int                  first_spell;
-
-    if (!find_range(TV_MAGIC_BOOK, TV_PRAYER_BOOK, &i, &k))
-	msg_print("You are not carrying any books.");
-    else if (p_ptr->blind > 0)
-	msg_print("You can't see to read your spell book!");
-    else if (no_lite())
-	msg_print("You have no light to read by.");
-    else if (p_ptr->confused > 0)
-	msg_print("You are too confused.");
-    else if (get_item(&item_val, "Which Book?", i, k, 0)) {
-	flag = TRUE;
-	i_ptr = &inventory[item_val];
-	if (class[p_ptr->pclass].spell == MAGE) {
-	    if (i_ptr->tval != TV_MAGIC_BOOK)
-		flag = FALSE;
-	} else if (class[p_ptr->pclass].spell == PRIEST) {
-	    if (i_ptr->tval != TV_PRAYER_BOOK)
-		flag = FALSE;
-	} else
-	    flag = FALSE;
-
-	if (!flag)
-	    msg_print("You do not understand the language.");
-	else {
-	    i = 0;
-	    j1 = (u32b) inventory[item_val].flags1;
-	    first_spell = bit_pos(&j1);	/* check which spell was first */
-	    j1 = (u32b) inventory[item_val].flags1;	/* restore j1 value */
-	    while (j1) {
-		k = bit_pos(&j1);
-		s_ptr = &magic_spell[p_ptr->pclass - 1][k];
-		if (s_ptr->slevel < 99) {
-		    spell_index[i] = k;
-		    i++;
-		}
-	    }
-	    j2 = (u32b) inventory[item_val].flags2;
-	    if (first_spell == -1) {	/* if none from other set of flags */
-		first_spell = 32 + bit_pos(&j2);	/* get 1st spell # */
-		j2 = (u32b) inventory[item_val].flags2;	/* and restore j2 */
-	    }
-	    while (j2) {
-		k = bit_pos(&j2);
-		s_ptr = &magic_spell[p_ptr->pclass - 1][k + 32];
-		if (s_ptr->slevel < 99) {
-		    spell_index[i] = (k + 32);
-		    i++;
-		}
-	    }
-	    save_screen();
-	    print_spells(spell_index, i, TRUE, first_spell);
-	    pause_line(0);
-	    restore_screen();
-	}
-    }
-}
-
-/* Go up one level					-RAK-	 */
-static void go_up()
-{
-    register cave_type *c_ptr;
-    register int        no_stairs = FALSE;
-
-    c_ptr = &cave[char_row][char_col];
-    if (c_ptr->i_idx != 0)
-	if (i_list[c_ptr->i_idx].tval == TV_UP_STAIR) {
-	    if (dun_level == Q_PLANE) {
-		dun_level = 0;
-		new_level_flag = TRUE;
-		msg_print("You enter an inter-dimensional staircase. ");
-	    } else {
-		dun_level--;
-		new_level_flag = TRUE;
-		if (dun_level > 0)
-		    create_down_stair = TRUE;
-		msg_print("You enter a maze of up staircases. ");
-	    }
-	} else
-	    no_stairs = TRUE;
-    else
-	no_stairs = TRUE;
-
-    if (no_stairs) {
-	msg_print("I see no up staircase here.");
-	free_turn_flag = TRUE;
-    }
-}
-
-
-/* Go down one level					-RAK-	 */
-static void go_down()
-{
-    register cave_type *c_ptr;
-    register int        no_stairs = FALSE;
-
-    c_ptr = &cave[char_row][char_col];
-    if (c_ptr->i_idx != 0)
-	if (i_list[c_ptr->i_idx].tval == TV_DOWN_STAIR) {
-	    if (dun_level == Q_PLANE) {
-		dun_level = 0;
-		new_level_flag = TRUE;
-		msg_print("You enter an inter-dimensional staircase. ");
-	    } else {
-		dun_level++;
-		new_level_flag = TRUE;
-		create_up_stair = TRUE;
-		msg_print("You enter a maze of down staircases. ");
-	    }
-	} else
-	    no_stairs = TRUE;
-    else
-	no_stairs = TRUE;
-
-    if (no_stairs) {
-	msg_print("I see no down staircase here.");
-	free_turn_flag = TRUE;
-    }
-}
-
-
-
-
-/* Refill the players lamp				-RAK-	 */
-static void refill_lamp()
-{
-    int                  i, j;
-    register int         k;
-    register inven_type *i_ptr;
-
-    free_turn_flag = TRUE;
-    k = inventory[INVEN_LIGHT].sval;
-    if (k != 0)
-	msg_print("But you are not using a lamp.");
-    else if (!find_range(TV_FLASK, TV_NEVER, &i, &j))
-	msg_print("You have no oil.");
-    else {
-	free_turn_flag = FALSE;
-	i_ptr = &inventory[INVEN_LIGHT];
-	i_ptr->pval += inventory[i].pval;
-	if (i_ptr->pval > FUEL_LAMP) {
-	    i_ptr->pval = FUEL_LAMP;
-	    msg_print("Your lamp overflows, spilling oil on the ground.");
-	    msg_print("Your lamp is full.");
-	} else if (i_ptr->pval > FUEL_LAMP / 2)
-	    msg_print("Your lamp is more than half full.");
-	else if (i_ptr->pval == FUEL_LAMP / 2)
-	    msg_print("Your lamp is half full.");
-	else
-	    msg_print("Your lamp is less than half full.");
-	inven_item_describe(i);
-	inven_destroy(i);
-    }
 }
 
 

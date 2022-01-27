@@ -13,6 +13,218 @@
 #include "angband.h"
 
 
+
+/*
+ * Examine a Book					-RAK-	
+ */
+static void do_cmd_browse(void)
+{
+    u32b               j1, j2, tmp;
+    int                  i, k, item_val, flag;
+    int                  spell_index[63];
+    register inven_type *i_ptr;
+    register spell_type *s_ptr;
+    int                  first_spell;
+
+    if (!find_range(TV_MAGIC_BOOK, TV_PRAYER_BOOK, &i, &k)) {
+	msg_print("You are not carrying any books.");
+	return;
+    }
+
+    if (p_ptr->blind > 0) {
+	msg_print("You can't see to read your spell book!");
+	return;
+    }
+
+    if (no_lite()) {
+	msg_print("You have no light to read by.");
+	return;
+    }
+
+    if (p_ptr->confused > 0) {
+	msg_print("You are too confused.");
+	return;
+    }
+
+    /* Get a book or stop checking */
+    if (!get_item(&item_val, "Which Book?", i, k, 0)) return;
+
+    flag = FALSE;
+
+    i_ptr = &inventory[item_val];
+
+    /* Check the language */
+    if (class[p_ptr->pclass].spell == MAGE) {
+	if (i_ptr->tval == TV_MAGIC_BOOK) flag = TRUE;
+    }
+    else if (class[p_ptr->pclass].spell == PRIEST) {
+	if (i_ptr->tval == TV_PRAYER_BOOK) flag = TRUE;
+    }
+
+    if (!flag) {
+	msg_print("You do not understand the language.");
+	return;
+    }
+
+    i = 0;
+
+    j1 = i_ptr->flags1;
+
+    /* check which spell was first */
+    tmp = j1;
+    first_spell = bit_pos(&tmp);
+
+    while (j1) {
+	k = bit_pos(&j1);
+	s_ptr = &magic_spell[p_ptr->pclass - 1][k];
+	if (s_ptr->slevel < 99) {
+	    spell_index[i] = k;
+	    i++;
+	}
+    }
+
+    j2 = i_ptr->flags2;
+
+    /* if none from other set of flags */
+    if (first_spell == -1) {
+	tmp = j2;
+	first_spell = 32 + bit_pos(&tmp);
+    }
+
+    while (j2) {
+	k = bit_pos(&j2);
+	s_ptr = &magic_spell[p_ptr->pclass - 1][k + 32];
+	if (s_ptr->slevel < 99) {
+	    spell_index[i] = (k + 32);
+	    i++;
+	}
+    }
+
+    /* Display the spells */
+    save_screen();
+    print_spells(spell_index, i, TRUE, first_spell);
+    pause_line(0);
+    restore_screen();
+}
+
+
+
+
+/*
+ * Go up one level					-RAK-	
+ */
+static void do_cmd_go_up()
+{
+    register cave_type *c_ptr;
+    register int        no_stairs = FALSE;
+
+    c_ptr = &cave[char_row][char_col];
+    if (c_ptr->i_idx != 0)
+	if (i_list[c_ptr->i_idx].tval == TV_UP_STAIR) {
+	    if (dun_level == Q_PLANE) {
+		dun_level = 0;
+		new_level_flag = TRUE;
+		msg_print("You enter an inter-dimensional staircase. ");
+	    } else {
+		dun_level--;
+		new_level_flag = TRUE;
+		if (dun_level > 0)
+		    create_down_stair = TRUE;
+		msg_print("You enter a maze of up staircases. ");
+	    }
+	} else
+	    no_stairs = TRUE;
+    else
+	no_stairs = TRUE;
+
+    if (no_stairs) {
+	msg_print("I see no up staircase here.");
+	free_turn_flag = TRUE;
+    }
+}
+
+
+/*
+ * Go down one level
+ */
+static void do_cmd_go_down()
+{
+    register cave_type *c_ptr;
+    register int        no_stairs = FALSE;
+
+    c_ptr = &cave[char_row][char_col];
+    if (c_ptr->i_idx != 0)
+	if (i_list[c_ptr->i_idx].tval == TV_DOWN_STAIR) {
+	    if (dun_level == Q_PLANE) {
+		dun_level = 0;
+		new_level_flag = TRUE;
+		msg_print("You enter an inter-dimensional staircase. ");
+	    } else {
+		dun_level++;
+		new_level_flag = TRUE;
+		create_up_stair = TRUE;
+		msg_print("You enter a maze of down staircases. ");
+	    }
+	} else
+	    no_stairs = TRUE;
+    else
+	no_stairs = TRUE;
+
+    if (no_stairs) {
+	msg_print("I see no down staircase here.");
+	free_turn_flag = TRUE;
+    }
+}
+
+
+/*
+ * Refill the players lamp	-RAK-
+ */
+static void do_cmd_refill_lamp()
+{
+    int                  i, j;
+    register int         k;
+    register inven_type *i_ptr;
+
+    free_turn_flag = TRUE;
+    k = inventory[INVEN_LIGHT].sval;
+    if (k != 0)
+	msg_print("But you are not using a lamp.");
+    else if (!find_range(TV_FLASK, TV_NEVER, &i, &j)) {
+	msg_print("You have no oil.");
+    }
+
+    else {
+
+	free_turn_flag = FALSE;
+	i_ptr = &inventory[INVEN_LIGHT];
+
+	i_ptr->pval += inventory[i].pval;
+
+	if (i_ptr->pval > FUEL_LAMP) {
+	    i_ptr->pval = FUEL_LAMP;
+	    msg_print("Your lamp overflows, spilling oil on the ground.");
+	    msg_print("Your lamp is full.");
+	}
+	else if (i_ptr->pval > FUEL_LAMP / 2) {
+	    msg_print("Your lamp is more than half full.");
+	}
+	else if (i_ptr->pval == FUEL_LAMP / 2) {
+	    msg_print("Your lamp is half full.");
+	}
+	else {
+	    msg_print("Your lamp is less than half full.");
+	}
+
+	inven_item_describe(i);
+	inven_destroy(i);
+    }
+}
+
+
+
+
+
 /*
  * A simple structure to hold some options
  */
