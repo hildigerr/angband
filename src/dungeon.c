@@ -34,14 +34,15 @@ static void refill_lamp();
 
 
 /*
- * Is an item an enchanted weapon or armor and we don't know?  -CJS-
- * returns a description
+ * Given an item, return a textual "feeling" about the item.
  */
 static cptr value_check(inven_type *i_ptr)
 {
-    if (i_ptr->tval == TV_NOTHING) return 0;
+    /* Paranoia -- No item */
+    if (i_ptr->tval == TV_NOTHING) return (NULL);
 
-    if (known2_p(i_ptr)) return 0;
+    /* Known items need no feeling */
+    if (known2_p(i_ptr)) return (NULL);
 
     if (store_bought_p(i_ptr)) return 0;
 
@@ -51,17 +52,20 @@ static cptr value_check(inven_type *i_ptr)
 
     if (i_ptr->inscrip[0] != '\0') return 0;
 
-    if (i_ptr->flags1 & TR3_CURSED && i_ptr->name2 == SN_NULL)
-	return "worthless";
+    /* Cursed items (including artifacts/ego-weapons) */
+    if (i_ptr->flags1 & TR3_CURSED ) {
 
-    if (i_ptr->flags1 & TR3_CURSED && i_ptr->name2 != SN_NULL)
-	return "terrible";
+    if (i_ptr->name2 == SN_NULL) return "worthless";
 
-    if ((i_ptr->tval == TV_DIGGING) &&  /* also, good digging tools -CFT */
-	(i_ptr->flags1 & TR1_TUNNEL) &&
-	(i_ptr->pval > k_list[i_ptr->index].pval)) /* better than normal for this
-						       type of shovel/pick? -CFT */
+    if (i_ptr->name2 != SN_NULL) return "terrible";
+    }
+
+
+    /* Hack -- "good" digging tools -CFT */
+    if ((i_ptr->tval == TV_DIGGING) && (i_ptr->flags1 & TR1_TUNNEL) &&
+	(i_ptr->pval > k_list[i_ptr->index].pval)) {
 	return "good";
+    }
 
     if ((i_ptr->tohit<=0 && i_ptr->todam<=0 && i_ptr->toac<=0) &&
 	i_ptr->name2==SN_NULL)  /* normal shovels will also reach here -CFT */
@@ -173,42 +177,47 @@ static void regenmana(int percent)
 static void regen_monsters(void)
 {
     register int i;
-    int          frac;
 
     /* Regenerate everyone */
     for (i = 0; i < MAX_M_IDX; i++) {
 
-	if (m_list[i].hp >= 0) {
+	/* Paranoia -- Skip "dead" monsters */
+	if (m_list[i].hp < 0) continue;
+
 	    if (m_list[i].maxhp == 0) {	/* then we're just going to fix it!  -CFT */
 		if ((r_list[m_list[i].r_idx].cflags2 & MF2_MAX_HP) )
 		    m_list[i].maxhp = max_hp(r_list[m_list[i].r_idx].hd);
 		else
 		    m_list[i].maxhp = pdamroll(r_list[m_list[i].r_idx].hd);
 	    }
-	    if (m_list[i].hp < m_list[i].maxhp)
-		m_list[i].hp += ((frac = 2 * m_list[i].maxhp / 100) > 0) ? frac : 1;
-	    if (m_list[i].hp > m_list[i].maxhp)
-		m_list[i].hp = m_list[i].maxhp;
-	} /* if hp >= 0 */
-    } /* for loop */
+
+	/* Allow regeneration */
+	if (m_list[i].hp < m_list[i].maxhp) {
+	    int frac = 2 * m_list[i].maxhp / 100;
+	    if (!frac) frac = 1;
+	    m_list[i].hp += frac;
+	    if (m_list[i].hp > m_list[i].maxhp) m_list[i].hp = m_list[i].maxhp;
+	}
+    }
 }
 
 
 
+/*
+ * Main procedure for dungeon.			-RAK-	
+ * Note: There is a lot of preliminary magic going on here at first
+ */
 void dungeon(void)
 {
     int                    find_count, i;
 
+    register inven_type		*i_ptr;
+
     /* Regenerate hp and mana */
     int                    regen_amount;
 
+
     char                   command;      /* Last command           */
-    register inven_type		*i_ptr;
-
-/* Main procedure for dungeon.			-RAK-	 */
-/* Note: There is a lot of preliminary magic going on here at first */
-
-/* init pointers. */
 
     i_ptr = &inventory[INVEN_LIGHT];
 
@@ -228,13 +237,15 @@ void dungeon(void)
     if ((dun_level >= 0) && ((unsigned) dun_level > p_ptr->max_dlv))
 	p_ptr->max_dlv = dun_level;
 
-    /* Reset flags and initialize variables  */
-    command_rep  = 0;
+    /* Reset flags and initialize variables (most of it is overkill) */
+    new_level_flag	= FALSE;
+    teleport_flag	= FALSE;
+    find_flag		= FALSE;
+
+    command_rep		= 0;
+
     eof_flag       = FALSE;
     find_count     = 0;
-    new_level_flag = FALSE;
-    find_flag      = FALSE;
-    teleport_flag  = FALSE;
     mon_tot_mult   = 0;
     old_lite        = (-1);
     coin_type      = 0;
@@ -281,7 +292,7 @@ void dungeon(void)
 /* Ensure we display the panel. Used to do this with a global var. -CJS- */
     panel_row = panel_col = (-1);
 
-    /* Light up the area around character */
+    /* Check the view */
     check_view();
 
 /* must do this after panel_row/col set to -1, because search_off() will call
@@ -302,10 +313,11 @@ void dungeon(void)
     }
     old_turn = turn;
 
-/* Loop until dead,  or new level */
+    /* Loop until the character, level, or game, dies */
+
     do {
 
-    /*Advance the turn counter */
+    /* Advance the turn counter */
 	turn++;
 
 	/*** Check the Load ***/
@@ -411,6 +423,7 @@ void dungeon(void)
 	/* Check food status	       */
 	if (p_ptr->food < PLAYER_FOOD_ALERT) {
 	    if (p_ptr->food < PLAYER_FOOD_WEAK) {
+
 		if (p_ptr->food < 0) {
 		    regen_amount = 0;
 		}
@@ -420,6 +433,7 @@ void dungeon(void)
 		else if (p_ptr->food < PLAYER_FOOD_WEAK) {
 		    regen_amount = PLAYER_REGEN_WEAK;
 		}
+
 		if ((PY_WEAK & p_ptr->status) == 0) {
 		    p_ptr->status |= PY_WEAK;
 		    msg_print("You are getting weak from hunger.");
@@ -443,9 +457,11 @@ void dungeon(void)
 	/* Food consumption */
 	/* Note: Speeded up characters really burn up the food!  */
 	/* now summation, not square, since spd less powerful -CFT */
-
-       if (p_ptr->speed < 0)
-	   p_ptr->food -=  (p_ptr->speed*p_ptr->speed - p_ptr->speed) / 2;
+	
+	/* Fast players consume slightly more food */
+	if (p_ptr->speed < 0) {
+	    p_ptr->food -=  (p_ptr->speed * p_ptr->speed - p_ptr->speed) / 2;
+	}
 
 	/* Digest some food */
 	p_ptr->food -= p_ptr->food_digested;
@@ -626,9 +642,13 @@ void dungeon(void)
 	    }
 	}
 
+
+
+	/*** Check the Speed ***/
+
 	/* Fast */
 	if (p_ptr->fast > 0) {
-	    if ((PY_FAST & p_ptr->status) == 0) {
+	    if (!(PY_FAST & p_ptr->status)) {
 		p_ptr->status |= PY_FAST;
 		msg_print("You feel yourself moving faster.");
 		p_ptr->speed -= 1;
@@ -636,7 +656,7 @@ void dungeon(void)
 		disturb(0, 0);
 	    }
 	    p_ptr->fast--;
-	    if (p_ptr->fast == 0) {
+	    if (!p_ptr->fast) {
 		p_ptr->status &= ~PY_FAST;
 		msg_print("You feel yourself slow down.");
 		p_ptr->speed += 1;
@@ -647,7 +667,7 @@ void dungeon(void)
 
 	/* Slow */
 	if (p_ptr->slow > 0) {
-	    if ((PY_SLOW & p_ptr->status) == 0) {
+	    if (!(PY_SLOW & p_ptr->status)) {
 		p_ptr->status |= PY_SLOW;
 		msg_print("You feel yourself moving slower.");
 		p_ptr->speed += 1;
@@ -655,7 +675,7 @@ void dungeon(void)
 		disturb(0, 0);
 	    }
 	    p_ptr->slow--;
-	    if (p_ptr->slow == 0) {
+	    if (!p_ptr->slow) {
 		p_ptr->status &= ~PY_SLOW;
 		msg_print("You feel yourself speed up.");
 		p_ptr->speed -= 1;
@@ -725,8 +745,9 @@ void dungeon(void)
 	/* Protection from evil counter */
 	if (p_ptr->protevil > 0) {
 	    p_ptr->protevil--;
-	    if (p_ptr->protevil == 0)
+	    if (!p_ptr->protevil) {
 		msg_print("You no longer feel safe from evil.");
+	    }
 	}
 
 	/* Invulnerability */
@@ -752,7 +773,7 @@ void dungeon(void)
 
 	/* Heroism */
 	if (p_ptr->hero > 0) {
-	    if ((PY_HERO & p_ptr->status) == 0) {
+	    if (!(PY_HERO & p_ptr->status)) {
 		p_ptr->status |= PY_HERO;
 		disturb(0, 0);
 		p_ptr->mhp += 10;
@@ -764,7 +785,7 @@ void dungeon(void)
 		prt_chp();
 	    }
 	    p_ptr->hero--;
-	    if (p_ptr->hero == 0) {
+	    if (!p_ptr->hero) {
 		p_ptr->status &= ~PY_HERO;
 		disturb(0, 0);
 		p_ptr->mhp -= 10;
@@ -782,7 +803,7 @@ void dungeon(void)
 
 	/* Super Heroism */
 	if (p_ptr->shero > 0) {
-	    if ((PY_SHERO & p_ptr->status) == 0) {
+	    if (!(PY_SHERO & p_ptr->status)) {
 		p_ptr->status |= PY_SHERO;
 		disturb(0, 0);
 		p_ptr->mhp += 30;
@@ -797,7 +818,7 @@ void dungeon(void)
 		p_ptr->status |= PY_ARMOR;	/* have to update ac display */
 	    }
 	    p_ptr->shero--;
-	    if (p_ptr->shero == 0) {
+	    if (!p_ptr->shero) {
 		p_ptr->status &= ~PY_SHERO;
 		disturb(0, 0);
 		p_ptr->mhp -= 30;
@@ -818,7 +839,7 @@ void dungeon(void)
 
 	/* Blessed */
 	if (p_ptr->blessed > 0) {
-	    if ((PY_BLESSED & p_ptr->status) == 0) {
+	    if (!(PY_BLESSED & p_ptr->status)) {
 		p_ptr->status |= PY_BLESSED;
 		disturb(0, 0);
 		p_ptr->ptohit += 10;
@@ -829,7 +850,7 @@ void dungeon(void)
 		p_ptr->status |= PY_ARMOR;	/* have to update ac display */
 	    }
 	    p_ptr->blessed--;
-	    if (p_ptr->blessed == 0) {
+	    if (!p_ptr->blessed) {
 		p_ptr->status &= ~PY_BLESSED;
 		disturb(0, 0);
 		p_ptr->ptohit -= 10;
@@ -844,7 +865,7 @@ void dungeon(void)
 	/* Shield */
 	if (p_ptr->shield > 0) {
 	    p_ptr->shield--;
-	    if (p_ptr->shield == 0) {
+	    if (!p_ptr->shield) {
 		disturb(0, 0);
 		msg_print("Your mystic shield crumbles away.");
 		p_ptr->ptoac -= 50;	/* changed to ptoac -CFT */
@@ -856,36 +877,41 @@ void dungeon(void)
 	/* Resist Heat */
 	if (p_ptr->oppose_fire > 0) {
 	    p_ptr->oppose_fire--;
-	    if (p_ptr->oppose_fire == 0)
+	    if (!p_ptr->oppose_fire) {
 		msg_print("You no longer feel safe from flame.");
+	    }
 	}
 
 	/* Resist Cold */
 	if (p_ptr->oppose_cold > 0) {
 	    p_ptr->oppose_cold--;
-	    if (p_ptr->oppose_cold == 0)
+	    if (!p_ptr->oppose_cold) {
 		msg_print("You no longer feel safe from cold.");
+	    }
 	}
 
 	/* Resist Acid */
 	if (p_ptr->oppose_acid > 0) {
 	    p_ptr->oppose_acid--;
-	    if (p_ptr->oppose_acid == 0)
+	    if (!p_ptr->oppose_acid) {
 		msg_print("You no longer feel safe from acid.");
+	    }
 	}
 
 	/* Resist Lightning */
 	if (p_ptr->oppose_elec > 0) {
 	    p_ptr->oppose_elec--;
-	    if (p_ptr->oppose_elec == 0)
+	    if (!p_ptr->oppose_elec) {
 		msg_print("You no longer feel safe from lightning.");
+	    }
 	}
 
 	/* Resist Poison */
 	if (p_ptr->oppose_pois > 0) {
 	    p_ptr->oppose_pois--;
-	    if (p_ptr->oppose_pois == 0)
+	    if (!p_ptr->oppose_pois) {
 		msg_print("You no longer feel safe from poison.");
+	    }
 	}
 
 	/* Timeout Artifacts */
@@ -952,8 +978,8 @@ void dungeon(void)
 	    }
 	}
 
-    /* Word-of-Recall  Note: Word-of-Recall is a delayed action	 */
-	if (p_ptr->word_recall > 0)
+	/* Word-of-Recall -- Note: Word-of-Recall is a delayed action */
+	if (p_ptr->word_recall > 0) {
 	    if (p_ptr->word_recall == 1) {
 		new_level_flag = TRUE;
 		p_ptr->paralysis++;
@@ -961,12 +987,16 @@ void dungeon(void)
 		if (dun_level > 0) {
 		    dun_level = 0;
 		    msg_print("You feel yourself yanked upwards! ");
-		} else if (p_ptr->max_dlv != 0) {
+		}
+		else if (p_ptr->max_dlv) {
 		    dun_level = p_ptr->max_dlv;
 		    msg_print("You feel yourself yanked downwards! ");
 		}
-	    } else
+	    }
+	    else {
 		p_ptr->word_recall--;
+	    }
+	}
 
     /* Random teleportation */
 	if ((p_ptr->teleport) && (randint(100) == 1)) {
@@ -976,41 +1006,50 @@ void dungeon(void)
     /* See if we are too weak to handle the weapon or pack.  -CJS- */
 	if (p_ptr->status & PY_STR_WGT)
 	    check_strength();
-	if (p_ptr->status & PY_STUDY)
+
+	if (p_ptr->status & PY_STUDY) {
 	    prt_study();
+	}
+
 	if (p_ptr->status & PY_SPEED) {
 	    p_ptr->status &= ~PY_SPEED;
 	    prt_speed();
 	}
+
 	if ((p_ptr->status & PY_PARALYSED) && (p_ptr->paralysis < 1)) {
 	    prt_state();
 	    p_ptr->status &= ~PY_PARALYSED;
-	} else if (p_ptr->paralysis > 0) {
+	}
+	else if (p_ptr->paralysis > 0) {
 	    prt_state();
 	    p_ptr->status |= PY_PARALYSED;
-	} else if (p_ptr->rest > 0 || p_ptr->rest == -1 || p_ptr->rest == -2)
+	}
+	else if (p_ptr->rest > 0 || p_ptr->rest == -1 || p_ptr->rest == -2) {
 	    prt_state();
+	}
 
 	if ((p_ptr->status & PY_ARMOR) != 0) {
 	    p_ptr->dis_ac = p_ptr->pac + p_ptr->dis_tac;	/* use updated ac */
 	    prt_pac();
 	    p_ptr->status &= ~PY_ARMOR;
 	}
-	if ((p_ptr->status & PY_STATS) != 0) {
+	if ((p_ptr->status & PY_STATS)) {
 	    for (i = 0; i < 6; i++)
-		if ((PY_STR << i) & p_ptr->status)
-		    prt_stat(i);
+		if ((PY_STR << i) & p_ptr->status) prt_stat(i);
 	    p_ptr->status &= ~PY_STATS;
 	}
+
 	if (p_ptr->status & PY_HP) {
 	    prt_mhp();
 	    prt_chp();
 	    p_ptr->status &= ~PY_HP;
 	}
+
 	if (p_ptr->status & PY_MANA) {
 	    prt_cmana();
 	    p_ptr->status &= ~PY_MANA;
 	}
+
     /* Allow for a slim chance of detect enchantment -CJS- */
     /*
      * for 1st level char, check once every 2160 turns for 40th level char,
