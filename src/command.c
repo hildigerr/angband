@@ -115,32 +115,35 @@ static void do_cmd_browse(void)
  */
 static void do_cmd_go_up()
 {
-    register cave_type *c_ptr;
-    register int        no_stairs = FALSE;
+    cave_type *c_ptr;
+    inven_type *i_ptr;
 
     c_ptr = &cave[char_row][char_col];
-    if (c_ptr->i_idx != 0)
-	if (i_list[c_ptr->i_idx].tval == TV_UP_STAIR) {
-	    if (dun_level == Q_PLANE) {
-		dun_level = 0;
-		new_level_flag = TRUE;
-		msg_print("You enter an inter-dimensional staircase. ");
-	    } else {
-		dun_level--;
-		new_level_flag = TRUE;
-		if (dun_level > 0)
-		    create_down_stair = TRUE;
-		msg_print("You enter a maze of up staircases. ");
-	    }
-	} else
-	    no_stairs = TRUE;
-    else
-	no_stairs = TRUE;
+    i_ptr = &i_list[c_ptr->i_idx];
 
-    if (no_stairs) {
+    /* Verify stairs */
+    if (i_ptr->tval != TV_UP_STAIR) {
 	msg_print("I see no up staircase here.");
 	free_turn_flag = TRUE;
+	return;
     }
+
+    if (dun_level == Q_PLANE) {
+	dun_level = 0;
+	new_level_flag = TRUE;
+	msg_print("You enter an inter-dimensional staircase. ");
+	return;
+    }
+
+    /* Success */    
+    msg_print("You enter a maze of up staircases. ");
+
+    /* Go up the stairs */
+    dun_level--;
+    new_level_flag = TRUE;
+
+    /* Create a way back */
+    if (dun_level > 0) create_down_stair = TRUE;
 }
 
 
@@ -149,31 +152,34 @@ static void do_cmd_go_up()
  */
 static void do_cmd_go_down()
 {
-    register cave_type *c_ptr;
-    register int        no_stairs = FALSE;
+    cave_type *c_ptr;
+    inven_type *i_ptr;
 
     c_ptr = &cave[char_row][char_col];
-    if (c_ptr->i_idx != 0)
-	if (i_list[c_ptr->i_idx].tval == TV_DOWN_STAIR) {
-	    if (dun_level == Q_PLANE) {
-		dun_level = 0;
-		new_level_flag = TRUE;
-		msg_print("You enter an inter-dimensional staircase. ");
-	    } else {
-		dun_level++;
-		new_level_flag = TRUE;
-		create_up_stair = TRUE;
-		msg_print("You enter a maze of down staircases. ");
-	    }
-	} else
-	    no_stairs = TRUE;
-    else
-	no_stairs = TRUE;
+    i_ptr = &i_list[c_ptr->i_idx];
 
-    if (no_stairs) {
+    if (i_ptr->tval != TV_DOWN_STAIR) {
 	msg_print("I see no down staircase here.");
 	free_turn_flag = TRUE;
+	return;
     }
+
+    if (dun_level == Q_PLANE) {
+	dun_level = 0;
+	new_level_flag = TRUE;
+	msg_print("You enter an inter-dimensional staircase. ");
+	return;
+    }
+
+    /* Success */
+    msg_print("You enter a maze of down staircases. ");
+
+    /* Go down */
+    dun_level++;
+    new_level_flag = TRUE;
+
+    /* Create a way back */
+    create_up_stair = TRUE;
 }
 
 
