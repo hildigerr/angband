@@ -523,6 +523,7 @@ void do_cmd_read_scroll(void);
 void do_cmd_aim_wand(void);
 void do_cmd_use_staff(void);
 void do_cmd_zap_rod(void);
+void do_cmd_activate(void);
 
 /* files.c */
 void read_times(void);
