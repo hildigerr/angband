@@ -3222,6 +3222,10 @@ static void mon_move(int m_idx, u32b *rcflags1)
 /*
  * Creatures movement and attacking are done from here
  *
+ * Get rid of eaten/breathed on monsters.  Note: Be sure not to process
+ * these monsters. This is necessary because we can't delete monsters
+ * while scanning the m_list here.
+ *
  * Note that this routine ASSUMES that "update_monsters()" has been called
  * every time the player changes his view or lite, and that "update_mon()"
  * has been, and will be, called every time a monster moves.  Likewise, we
@@ -3232,29 +3236,37 @@ static void mon_move(int m_idx, u32b *rcflags1)
  *
  * It is very important to process the array "backwards", as "newly created"
  * monsters should not get a turn until the next round of processing.
+ *
+ * Note that (eventually) we should "remove" the "street urchin" monster
+ * record, and use "monster race zero" as the "no-race" indicator, that is,
+ * the indicator of "free space" in the monster list.  But that is of a very
+ * low priority for now.
+ *
+ * Finally, note that some estimates show that 20 percent of the CPU time
+ * is spent in this function.  So optimizations here are important.
  */
 void process_monsters(void)
 {
-    int			i, k;
+    int			i, d, k;
 
     monster_type	*m_ptr;
-    monster_lore	*r_ptr;
+    monster_race	*r_ptr;
+    monster_lore	*l_ptr;
     
-    u32b                notice, rcflags1;
-    int                   wake, ignore;
     vtype                 cdesc;
 
     /* Process the monsters (backwards) */
-    for (i = m_max - 1; i >= MIN_M_IDX && !death; i--) {
+    for (i = m_max - 1; i >= MIN_M_IDX; i--) {
+
+
+	/* Hack -- notice player death */
+	if (death) break;
+	
 
 	/* Get the i'th monster */
 	m_ptr = &m_list[i];
 
 
-    /* Get rid of an eaten/breathed on monster.  Note: Be sure not to process
-     * this monster. This is necessary because we can't delete monsters while
-     * scanning the m_list here. 
-     */
 	/* Hack -- Remove dead monsters. */
 	if (m_ptr->hp < 0) {
 
@@ -3270,102 +3282,128 @@ void process_monsters(void)
 	
 	if (k <= 0) continue;
 	
-		while (k > 0) {
-		    k--;
-		    wake = FALSE;
-		    ignore = FALSE;
-		    rcflags1 = 0;
-		    if ((m_ptr->ml && /* check los so telepathy won't wake lice -CFT */
-			 los(char_row, char_col, (int)m_ptr->fy, (int)m_ptr->fx)) ||
-			(m_ptr->cdis <= r_list[m_ptr->r_idx].aaf)
+	/* Get the monster race */
+	r_ptr = &r_list[m_ptr->r_idx];
 
+	/* Get the monster lore */
+	l_ptr = &l_list[m_ptr->r_idx];
+
+
+	while (k > 0) {
+
+	    u32b rcflags1 = 0;
+
+	    /* Get the monster location */
+	    int fx = m_ptr->fx;
+	    int fy = m_ptr->fy;
+
+
+	    k--;
+
+
+	    if ((m_ptr->ml && /* check los so telepathy won't wake lice -CFT */
+	        los(char_row, char_col, fy, fx)) ||
+	        (m_ptr->cdis <= r_list[m_ptr->r_idx].aaf) ||
 			/* Monsters trapped in rock must be given a turn also,
 			 * so that they will die/dig out immediately.  */
-#ifdef ATARIST_MWC
-		    || ((!(r_list[m_ptr->r_idx].cflags1 & (holder = CM_PHASE)))
-#else
-			|| ((!(r_list[m_ptr->r_idx].cflags1 & CM_PHASE))
-#endif
-		     && cave[m_ptr->fy][m_ptr->fx].fval >= MIN_WALL)) {
+	        ((!(r_list[m_ptr->r_idx].cflags1 & CM_PHASE)) &&
+	        cave[m_ptr->fy][m_ptr->fx].fval >= MIN_WALL)) {
+
+	    /* Hack -- Aggravation wakes up nearby monsters */
+	    if (p_ptr->aggravate) {
+		m_ptr->csleep = 0;
+	    }
 
 	    /* Handle "sleep" */
-			if (m_ptr->csleep > 0)
+	    if (m_ptr->csleep > 0) {
 
-			    if (p_ptr->aggravate)
-				m_ptr->csleep = 0;
+		/* Hack -- If the player is resting or paralyzed, then only */
+		/* run this block about one turn in 50, since he is "quiet". */
+		if ((p_ptr->rest == 0 && p_ptr->paralysis < 1) ||
+		    (!rand_int(50))) {
 
-			    else if ((p_ptr->rest == 0 && p_ptr->paralysis < 1) ||
-		    !(rand_int(50))) {
-
-				notice = rand_int(1024);
+		    u32b notice = rand_int(1024);
 			
 		    /* XXX See if monster "notices" player */
 		    if ((notice * notice * notice) <=
 			(1L << (29 - p_ptr->stl))) {
 
 			/* Hack -- amount of "waking" */
-			m_ptr->csleep -= (100 / m_ptr->cdis);
+			d = (100 / m_ptr->cdis);
 
 			/* Still asleep */
-			if (m_ptr->csleep > 0)
+			if (m_ptr->csleep > d) {
 
-					ignore = TRUE;
-				    else {
-					wake = TRUE;
-				    /* force it to be exactly zero */
-					m_ptr->csleep = 0;
-				    }
-				}
-			    }
+			    /* Monster wakes up "a little bit" */
+			    m_ptr->csleep -= d;
 
-			if (m_ptr->stunned != 0) {
-/* NOTE: Balrog = 100*100 = 10000, it always recovers instantly */
-			    if (randint(5000) < r_list[m_ptr->r_idx].level
-				* r_list[m_ptr->r_idx].level)
-				m_ptr->stunned = 0;
-			    else
-				m_ptr->stunned--;
-			    if (m_ptr->stunned == 0) {
-				if (!m_ptr->ml)
-				    (void)strcpy(cdesc, "It ");
-				else if (r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE)
-				    (void)sprintf(cdesc, "%s ",
-						  r_list[m_ptr->r_idx].name);
-				else
-				    (void)sprintf(cdesc, "The %s ",
-						  r_list[m_ptr->r_idx].name);
-				msg_print(strcat(cdesc,
-					    "recovers and glares at you."));
+			    /* Notice the "not waking up" */
+			    if (m_ptr->ml && (l_ptr->r_ignore < MAX_UCHAR)) {
+				l_ptr->r_ignore++;
 			    }
 			}
-			if ((m_ptr->csleep == 0) && (m_ptr->stunned == 0))
-			    mon_move(i, &rcflags1);
-		    }
 
-		    if (m_ptr->ml) {
-			r_ptr = &l_list[m_ptr->r_idx];
-			if (wake) {
-			    if (r_ptr->r_wake < MAX_UCHAR)
-				r_ptr->r_wake++;
-			} else if (ignore) {
-			    if (r_ptr->r_ignore < MAX_UCHAR)
-				r_ptr->r_ignore++;
+			/* Just woke up */
+			else {
+
+			    /* Reset sleep counter */
+			    m_ptr->csleep = 0;
+
+			    /* Notice the "waking up" */
+			    if (m_ptr->ml && (l_ptr->r_wake < MAX_UCHAR)) {
+				l_ptr->r_wake++;
+			    }
 			}
-			r_ptr->r_cflags1 |= rcflags1;
 		    }
 		}
 
-    /* Get rid of an eaten/breathed on monster.  This is necessary because we
-     * can't delete monsters while scanning the m_list here.  This monster
-     * may have been killed during mon_move(). 
-     */
+		/* Still sleeping */
+		if (m_ptr->csleep) continue;
+	    }
+
+
+	    /* Handle "stun" */
+	    if (m_ptr->stunned > 0) {
+
+		/* Recover a little bit */
+		m_ptr->stunned--;
+
+		/* Make a "saving throw" against stun */
+		if (rand_int(5000) <= r_ptr->level * r_ptr->level) {
+		    m_ptr->stunned = 0;
+		}
+
+		/* Hack -- Recover from stun */
+		if (!m_ptr->stunned) {
+		    if (!m_ptr->ml)
+			(void)strcpy(cdesc, "It ");
+		    else if (r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE)
+			(void)sprintf(cdesc, "%s ", r_list[m_ptr->r_idx].name);
+		    else
+			(void)sprintf(cdesc, "The %s ", r_list[m_ptr->r_idx].name);
+		    msg_print(strcat(cdesc, "recovers and glares at you."));
+		}
+
+		/* Still stunned */
+		if (m_ptr->stunned) continue;
+	    }
+
+
+	    /* Okay, let the monster move */
+	    mon_move(i, &rcflags1);
+	    }
+
+		    if (m_ptr->ml) {
+			l_ptr->r_cflags1 |= rcflags1;
+		    }
+	}
+
 	if (m_ptr->hp < 0) {
 	    if (r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE) u_list[m_ptr->mptr].exist = 0;
 	    fix2_delete_monster(i);
 	    continue;
 	}
     }
-/* End processing monsters	   */
 }
 
 
