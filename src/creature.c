@@ -23,19 +23,33 @@ static void mon_move(int, u32b *);
 static void shatter_quake(int, int);
 static void br_wall(int, int);
 
-/* Updates screen when monsters move about		-RAK-	 */
+/*
+ * This function updates the monster record of the given monster
+ * This involves extracting the distance to the player, checking
+ * for visibility (natural, infravision, see-invis, telepathy),
+ * updating the monster visibility flag, redrawing or erasing the
+ * monster, and taking note of any "visual" features of the monster.
+ * Monster fields that are changed here are "los" and "ml".
+ */
 void update_mon(int m_idx)
 {
     register cave_type     *c_ptr;
     register monster_type  *m_ptr;
     register monster_race  *r_ptr;
+    register monster_lore  *l_ptr;
 
-#ifdef ATARIST_MWC
-    u32b                 holder;
-#endif
+    /* The current monster location */
+    int fy, fx;
 
     /* Can the monster be sensed in any way? */
     int flag = FALSE;
+
+    /* Does the monster noticably avoid infravision? */
+    int no_infra = FALSE;
+
+    /* Is the monster noticably invisible? */
+    int is_invis = FALSE;
+
 
     /* Get the monster */
     m_ptr = &m_list[m_idx];
@@ -43,109 +57,148 @@ void update_mon(int m_idx)
     /* Get the monster race (to check flags) */
     r_ptr = &r_list[m_ptr->r_idx];
 
+    /* Get the monster lore (to memorize flags) */
+    l_ptr = &l_list[m_ptr->r_idx];
+
+
+    /* Get the monster location */
+    fy = m_ptr->fy;
+    fx = m_ptr->fx;
+
+    /* Determine if there is "line of sight" from player to monster */
+    m_ptr->los = los(char_row, char_col, fy, fx);
+
+
+    /* The monster is "nearby", and on the current "panel", */
+    /* and the player has "vision" (sight or telepathy or wiz-sight) */
     if ((m_ptr->cdis <= MAX_SIGHT) &&
 	(!(p_ptr->status & PY_BLIND) || p_ptr->telepathy) &&
-	(panel_contains((int)m_ptr->fy, (int)m_ptr->fx))) {
+	(panel_contains(fy, fx))) {
 
-	/* Wizards see everything */
-	if (wizard) flag = TRUE;
-
-    /* if not mindless, telepathy sees -CWS */
+	/* Telepathy can see all "nearby" monsters with "minds" */
 	if (p_ptr->telepathy) {
 
 	    char c = r_ptr->r_char;
-	    const char *n = r_ptr->name;
+	    cptr n = r_ptr->name;
 
-	    if (strchr("EMXgjvz.",c));
-    /* don't show these ever (elementals & golems & vorticies & xorns
-     * "minds" are too different) -CFT */
+	    /* Never sense monsters with "bizarre minds" */
+	    /* (elementals & golems & vorticies & xorns) -CFT */
+	    if (strchr("EMXgjvz.", c));
 
-	    else if (strchr("FKaclt",c)) {
-		if (randint(5)==1)
-		    flag = TRUE;
-    /* once in a while we see these almost mindless insects... -CFT */
+	    /* Once in a while, sense these "almost mindless" insects... -CFT */
+	    else if (strchr("FKaclt", c)) {
+		if (randint(5)==1) flag = TRUE;
+	    }
 
-	    } else if (c=='S' && strncmp(n, "Drider", 6) &&
+	    /* Once in a while, sense spiders  -CFT*/
+	    /* But always sense Driders and Uniuques (Shelob and Ungol) */
+	    else if (c=='S' && strncmp(n, "Drider", 6) &&
 		     !(r_ptr->cflags2 & MF2_UNIQUE)) {
 		if (randint(5)==1) flag = TRUE;
-    /* once in a while show spiders, scops.  But DO show drider,
-     * Shelob, and Ungol. -CFT */
+	    }
 
-	    } else if (c=='m' && strncmp(n, "Death", 5));
-    /* don't show any molds, except the Death mold -CFT */
-
-	    else if (c=='s' && !strstr(n, "ruj") &&
-		     strncmp(n, "Cantor", 6));
-    /* don't show skeletons, but DO show druj and Cantoras -CFT */
-
-	    else if (c=='i' && strncmp(n, "Blue", 4));
-    /* don't show icky things, except Blue icky things.. -CFT */
-
+	    /* Once in a while, sense worms -CFT */
+	    /* But always sense Wereworms and Giant Purple Worms */
 	    else if (c=='w' && strncmp(n, "Were", 4) && strncmp(n, "Gian", 4)) {
 		if (randint(5)==1) flag = TRUE;
-    /* occas. show worms, except Purple worms and Wereworms -CFT */
+	    }
 
-	    } else if (c==',' && strncmp(n, "Magic", 5));
-    /* don't show mushrooms, except magic 'shrooms -CFT */
+	    /* Never sense normal molds.  But always sense Death molds. */
+	    else if (c=='m' && strncmp(n, "Death", 5));
 
-	    else if (!(r_ptr->cflags2 & MF2_MINDLESS))
-		flag = TRUE;
-    /* if not mindless, they show up -CWS */
+	    /* Never sense skeletons.  But always sense Druj and Cantoras */
+	    else if (c=='s' && !strstr(n, "ruj") && strncmp(n, "Cantor", 6));
+
+	    /* Never sense icky things.  But always sense Blue icky things.. */
+	    else if (c=='i' && strncmp(n, "Blue", 4));
+
+	    /* Never sense 'shrooms.  But always sense magic 'shrooms */
+	    else if (c==',' && strncmp(n, "Magic", 5));
+
+	    /* Never sense mindless monsters. */
+	    else if (r_ptr->cflags2 & MF2_MINDLESS);
+
+	    /* Finally, sense anything not explicitly denied above. */
+	    else flag = TRUE;
 	}
 
-	/* Normal sight.	     */
-	if (los(char_row, char_col, (int)m_ptr->fy, (int)m_ptr->fx)) {
-	    c_ptr = &cave[m_ptr->fy][m_ptr->fx];
+	/* Normal line of sight */
+	if (m_ptr->los) {
 
-	/* moved here to allow infra to see invis -CFT */
+	    /* Get the cave grid (to check light) */
+	    c_ptr = &cave[fy][fx];
+
+	    /* Infravision is able to see "nearby" monsters */
 	    if ((p_ptr->see_infra > 0) &&
-		(m_ptr->cdis <= p_ptr->see_infra)) {
-		if (MF2_NO_INFRA & r_ptr->cflags2)	/* changed to act sensibly -CFT */
-		    l_list[m_ptr->r_idx].r_cflags2 |= MF2_NO_INFRA;
-		else
-		    flag = TRUE;   /* only can see if not MF2_NO_INFRA... */
+		(m_ptr->cdis <= (unsigned)(p_ptr->see_infra))) {
+
+		/* Infravision only works on "warm" creatures */
+		/* Below, we will need to know that infravision failed */
+		if (r_ptr->cflags2 & MF2_NO_INFRA) no_infra = TRUE;
+		
+		/* Infravision works */
+		if (!no_infra) flag = TRUE;
 	    }
+
+	    /* Check for "illumination" of the monster grid */
 	    if (c_ptr->pl || c_ptr->tl ||
 		(find_flag && m_ptr->cdis <= cur_lite && player_light)) {
 
-#ifdef ATARIST_MWC
-		holder = CM_INVISIBLE;
-		if ((holder & r_ptr->cflags1) == 0)
-#else
-		if ((CM_INVISIBLE & r_ptr->cflags1) == 0)
-#endif
-		    flag = TRUE;
-		else if (p_ptr->see_inv) {
-		    flag = TRUE;
-#ifdef ATARIST_MWC
-		    l_list[m_ptr->r_idx].r_cflags1 |= holder;
-#else
-		    l_list[m_ptr->r_idx].r_cflags1 |= CM_INVISIBLE;
-#endif
-		}
+		/* Take note of invisibility */
+		if (r_ptr->cflags1 & CM_INVISIBLE) is_invis = TRUE;
+		
+		/* Visible, or detectable, monsters get seen */
+		if (!is_invis || p_ptr->see_inv) flag = TRUE;
 	    }
 	}
+
+	/* Wizards see everything */
+	if (wizard) flag = TRUE;
     }
-/* Light it up.	 */
+
+
+    /* The monster is now visible */
     if (flag) {
+
 #ifdef TC_COLOR
 	if (!no_color_flag)	   /* don't waste time if no color -CFT */
 	    lite_spot((int)m_ptr->fy, (int)m_ptr->fx);
 /* redraw, even if lit, so MHD's change color -CFT */
 #endif
+
+	/* It was previously unseen */
 	if (!m_ptr->ml) {
+
+	    /* Appearing monsters can disturb the player a lot */
 	    disturb(1, 0);
+
+	    /* Mark Monster as visible */
 	    m_ptr->ml = TRUE;
-	    lite_spot((int)m_ptr->fy, (int)m_ptr->fx);
 	    screen_change = TRUE;  /* notify inven_command */
 	}
+
+	/* Infravision can be verified as failing */
+	if (no_infra) l_ptr->r_cflags2 |= MF2_NO_INFRA;
+
+	/* Invisible monsters can be verified as such */
+	if (is_invis) l_ptr->r_cflags1 |= CM_INVISIBLE;
     }
-/* Turn it off.	 */
-    else if (m_ptr->ml) {
-	m_ptr->ml = FALSE;
-	lite_spot((int)m_ptr->fy, (int)m_ptr->fx);
+
+    /* The monster has disappeared */
+    else {
+
+	/* It was previously seen */
+	if (m_ptr->ml) {
+
+	    /* Mark monster as hidden */
+	    m_ptr->ml = FALSE;
+
 	screen_change = TRUE;	   /* notify inven_command */
+	}
     }
+
+    /* Display (or erase) the monster */
+    lite_spot(fy, fx);
 }
 
 
