@@ -199,13 +199,15 @@ static void regen_monsters(void)
 
 
 /*
- * Main procedure for dungeon.			-RAK-	
- * Note: There is a lot of preliminary magic going on here at first
- */
+ * This is the main function of this file -- it places the user on the
+ * current level and processes user input until the level is completed,
+ * the user dies, or the game is terminated.
+ */ 
 void dungeon(void)
 {
     int                    find_count, i;
 
+    register cave_type		*c_ptr;
     register inven_type		*i_ptr;
 
     /* Regenerate hp and mana */
@@ -259,7 +261,6 @@ void dungeon(void)
     /* Make a stairway. */
     if (create_up_stair || create_down_stair) {
 
-	register cave_type *c_ptr;
 	register int        cur_pos;
 
 	c_ptr = &cave[char_row][char_col];
@@ -269,12 +270,13 @@ void dungeon(void)
 	    if (c_ptr->i_idx != 0)
 	    delete_object(char_row, char_col);
 	    cur_pos = i_pop();
+	    i_ptr = &i_list[cur_pos];
 	    c_ptr->i_idx = cur_pos;
 	    if (create_up_stair) {
-		invcopy(&i_list[cur_pos], OBJ_UP_STAIR);
+		invcopy(i_ptr, OBJ_UP_STAIR);
 	    }
 	    else if (create_down_stair && !is_quest(dun_level)) {
-		invcopy(&i_list[cur_pos], OBJ_DOWN_STAIR);
+		invcopy(i_ptr, OBJ_DOWN_STAIR);
 	    }
 	} else
 	    msg_print("The object resists your attempt to transform it into a stairway.");
@@ -308,11 +310,17 @@ void dungeon(void)
     }
     old_turn = turn;
 
+
+    /*** Process this dungeon level ***/
+
+
     /* Loop until the character, level, or game, dies */
 
     do {
 
-    /* Advance the turn counter */
+	/*** Handle real turns for the player ***/
+	
+	/* Advance the turn counter */
 	turn++;
 
 	/*** Check the Load ***/
@@ -342,9 +350,10 @@ void dungeon(void)
 #endif
 
 	/*** Update the Stores ***/
-
+	
     /* turn over the store contents every, say, 1000 turns */
-	if ((dun_level != 0) && ((turn % 1000) == 0)) {
+	/* Update the stores once a day */
+	if ((dun_level) && ((turn % 1000) == 0)) {
 
 	/* if (peek) msg_print("Store update: "); */
 
@@ -473,14 +482,8 @@ void dungeon(void)
 	}
 
 	/* Searching or Resting */
-	if ((p_ptr->status & PY_SEARCH) || p_ptr->rest > 0 ||
-	    p_ptr->rest == -1 || p_ptr->rest == -2) {
+	if ((p_ptr->status & PY_SEARCH) || p_ptr->rest) {
 	    regen_amount = regen_amount * 2;
-	}
-
-	if ((p_ptr->poisoned < 1) && (p_ptr->cut < 1) &&
-	    (p_ptr->chp < p_ptr->mhp)) {
-	    regenhp(regen_amount);
 	}
 
 	/* Regenerate the mana (even if poisoned or cut (?)) */
@@ -488,9 +491,23 @@ void dungeon(void)
 	    regenmana(regen_amount);
 	}
 
+	if ((p_ptr->poisoned < 1) && (p_ptr->cut < 1) &&
+	    (p_ptr->chp < p_ptr->mhp)) {
+	    regenhp(regen_amount);
+	}
+
+
+	/*** Assorted Maladies ***/
+
+	/* Paralysis -- player cannot see monster movement */
+	if (p_ptr->paralysis > 0) {
+	    p_ptr->paralysis--;
+	    disturb(1, 0);
+	}
+
 	/* Blindness */
 	if (p_ptr->blind > 0) {
-	    if ((PY_BLIND & p_ptr->status) == 0) {
+	    if (!(PY_BLIND & p_ptr->status)) {
 		p_ptr->status |= PY_BLIND;
 		prt_map();
 		prt_blind();
@@ -499,15 +516,23 @@ void dungeon(void)
 		creatures(FALSE);
 	    }
 	    p_ptr->blind--;
-	    if (p_ptr->blind == 0) {
+	    if (!p_ptr->blind) {
 		p_ptr->status &= ~PY_BLIND;
+		msg_print("The veil of darkness lifts.");
 		prt_blind();
 		prt_map();
 	    /* light creatures */
 		disturb(0, 1);
 		creatures(FALSE);
-		msg_print("The veil of darkness lifts.");
 	    }
+	}
+
+	/* Hallucinating? */
+	if (p_ptr->image > 0) {
+	    end_find();
+	    p_ptr->image--;
+	    if (p_ptr->image == 0)
+		prt_map();	   /* Used to draw entire screen! -CJS- */
 	}
 
 	/* Confusion */
@@ -517,69 +542,19 @@ void dungeon(void)
 		prt_confused();
 	    }
 	    p_ptr->confused--;
-	    if (p_ptr->confused == 0) {
+	    if (!p_ptr->confused) {
 		p_ptr->status &= ~PY_CONFUSED;
-		prt_confused();
 		msg_print("You feel less confused now.");
+		prt_confused();
+
 		if (p_ptr->rest > 0 || p_ptr->rest == -1)
 		    rest_off();
 	    }
 	}
 
-	/* Afraid */
-	if (p_ptr->afraid > 0) {
-	    if ((PY_FEAR & p_ptr->status) == 0) {
-		if ((p_ptr->shero + p_ptr->hero + p_ptr->resist_fear) > 0)
-		    p_ptr->afraid = 0;
-		else {
-		    p_ptr->status |= PY_FEAR;
-		    prt_afraid();
-		}
-	    } else if ((p_ptr->shero + p_ptr->hero + p_ptr->resist_fear) > 0)
-		p_ptr->afraid = 1;
-	    p_ptr->afraid--;
-	    if (p_ptr->afraid == 0) {
-		p_ptr->status &= ~PY_FEAR;
-		prt_afraid();
-		msg_print("You feel bolder now.");
-		disturb(0, 0);
-	    }
-	}
-
-	/* Cut */
-	if (p_ptr->cut > 0) {
-	    if (p_ptr->cut>1000) {
-		take_hit(3 , "a fatal wound");
-		disturb(1,0);
-	    }
-	    else if (p_ptr->cut>200) {
-		take_hit(3, "a fatal wound");
-		p_ptr->cut-=(con_adj()<0?1:con_adj())+1;
-		disturb(1,0);
-	    }
-	    else if (p_ptr->cut>100) {
-		take_hit(2, "a fatal wound");
-		p_ptr->cut-=(con_adj()<0?1:con_adj())+1;
-		disturb(1,0);
-	    }
-	    else {
-		take_hit(1, "a fatal wound");
-		p_ptr->cut-=(con_adj()<0?1:con_adj())+1;
-		disturb(1,0);
-	    }
-	    prt_cut();
-	    if (p_ptr->cut <= 0) {
-		p_ptr->cut = 0;
-		if (p_ptr->chp >= 0) msg_print("Your wound heals.");
-	    }
-	}
-
-	/* Always redraw "cuts" */
-	prt_cut();
-
 	/* Stun */
 	if (p_ptr->stun > 0) {
-	    int                 oldstun = p_ptr->stun;
+	    int oldstun = p_ptr->stun;
 
 	    p_ptr->stun -= (con_adj() <= 0 ? 1 : (con_adj() / 2 + 1));
 				/* fixes endless stun if bad con. -CFT */
@@ -599,7 +574,40 @@ void dungeon(void)
 		p_ptr->dis_td += 5;
 	    }
 	}
+
+	/* Hack -- Always redraw the stun */
 	prt_stun();
+
+	/* Cut */
+	if (p_ptr->cut > 0) {
+	    if (p_ptr->cut > 1000) {
+		take_hit(3 , "a fatal wound");
+		disturb(1,0);
+	    }
+	    else if (p_ptr->cut > 200) {
+		take_hit(3, "a fatal wound");
+		p_ptr->cut-=(con_adj()<0?1:con_adj())+1;
+		disturb(1,0);
+	    }
+	    else if (p_ptr->cut > 100) {
+		take_hit(2, "a fatal wound");
+		p_ptr->cut-=(con_adj()<0?1:con_adj())+1;
+		disturb(1,0);
+	    }
+	    else {
+		take_hit(1, "a fatal wound");
+		p_ptr->cut -= (con_adj()<0?1:con_adj())+1;
+		disturb(1,0);
+	    }
+	    prt_cut();
+	    if (p_ptr->cut <= 0) {
+		p_ptr->cut = 0;
+		if (p_ptr->chp >= 0) msg_print("Your wound heals.");
+	    }
+	}
+
+	/* Always redraw "cuts" */
+	prt_cut();
 
 	/* Poisoned */
 	if (p_ptr->poisoned > 0) {
@@ -609,7 +617,8 @@ void dungeon(void)
 	    }
 	    p_ptr->poisoned--;
 	    if (p_ptr->poisoned == 0 || p_ptr->immune_pois ||
-		p_ptr->resist_pois || p_ptr->oppose_pois) {
+		p_ptr->resist_pois ||
+		p_ptr->oppose_pois) {
 		p_ptr->poisoned = 0;
 		p_ptr->status &= ~PY_POISONED;
 		prt_poisoned();
@@ -637,6 +646,25 @@ void dungeon(void)
 	    }
 	}
 
+	/* Afraid */
+	if (p_ptr->afraid > 0) {
+	    if ((PY_FEAR & p_ptr->status) == 0) {
+		if ((p_ptr->shero + p_ptr->hero + p_ptr->resist_fear) > 0)
+		    p_ptr->afraid = 0;
+		else {
+		    p_ptr->status |= PY_FEAR;
+		    prt_afraid();
+		}
+	    } else if ((p_ptr->shero + p_ptr->hero + p_ptr->resist_fear) > 0)
+		p_ptr->afraid = 1;
+	    p_ptr->afraid--;
+	    if (!p_ptr->afraid) {
+		p_ptr->status &= ~PY_FEAR;
+		prt_afraid();
+		msg_print("You feel bolder now.");
+		disturb(0, 0);
+	    }
+	}
 
 
 	/*** Check the Speed ***/
@@ -679,30 +707,6 @@ void dungeon(void)
 	    }
 	}
 
-	/* Resting is over? */
-	if (p_ptr->rest > 0 || p_ptr->rest == -1 || p_ptr->rest == -2) {
-	    if (p_ptr->rest > 0) {
-		p_ptr->rest--;
-		if (p_ptr->rest == 0)	/* Resting over */
-		    rest_off();
-	    } else if (p_ptr->rest == -1) {
-		if (p_ptr->chp == p_ptr->mhp && p_ptr->cmana == p_ptr->mana) {
-		    p_ptr->rest = 0;
-		    rest_off();
-		}
-	    } else if (p_ptr->rest == -2) {	/* rest until
-						 * blind/conf/stun/
-						 * HP/mana/fear/halluc over */
-		if ((p_ptr->blind < 1) && (p_ptr->confused < 1) &&
-		    (p_ptr->afraid < 1) && (p_ptr->stun < 1) &&
-		    (p_ptr->image < 1) && (p_ptr->word_recall < 1) &&
-		    (p_ptr->slow < 1) && (p_ptr->chp == p_ptr->mhp) &&
-		    (p_ptr->cmana == p_ptr->mana)) {
-		    p_ptr->rest = 0;
-		    rest_off();
-		}
-	    }
-	}
     /* Check for interrupts to find or rest. */
 	if ((command_rep > 0 || find_flag || p_ptr->rest > 0 || p_ptr->rest == -1
 	     || p_ptr->rest == -2)
@@ -722,20 +726,8 @@ void dungeon(void)
 	    disturb(0, 0);
 	}
 
-	/* Hallucinating?	 (Random characters appear!) */
-	if (p_ptr->image > 0) {
-	    end_find();
-	    p_ptr->image--;
-	    if (p_ptr->image == 0)
-		prt_map();	   /* Used to draw entire screen! -CJS- */
-	}
 
-	/* Paralysis */
-	if (p_ptr->paralysis > 0) {
-	/* when paralysis true, you can not see any movement that occurs */
-	    p_ptr->paralysis--;
-	    disturb(1, 0);
-	}
+	/*** All good things must come to an end... ***/
 
 	/* Protection from evil counter */
 	if (p_ptr->protevil > 0) {
@@ -749,19 +741,19 @@ void dungeon(void)
 	if (p_ptr->invuln > 0) {
 	    if ((PY_INVULN & p_ptr->status) == 0) {
 		p_ptr->status |= PY_INVULN;
+		msg_print("Your skin turns to steel!");
 		disturb(0, 0);
 		p_ptr->ptoac += 100;	/* changed to ptoac -CFT */
 		p_ptr->dis_tac += 100;
-		msg_print("Your skin turns to steel!");
 		p_ptr->status |= PY_ARMOR;	/* have to update ac display */
 	    }
 	    p_ptr->invuln--;
 	    if (p_ptr->invuln == 0) {
 		p_ptr->status &= ~PY_INVULN;
+		msg_print("Your skin returns to normal.");
 		disturb(0, 0);
 		p_ptr->ptoac -= 100;	/* changed to ptoac -CFT */
 		p_ptr->dis_tac -= 100;
-		msg_print("Your skin returns to normal.");
 		p_ptr->status |= PY_ARMOR;	/* have to update ac display */
 	    }
 	}
@@ -770,18 +762,19 @@ void dungeon(void)
 	if (p_ptr->hero > 0) {
 	    if (!(PY_HERO & p_ptr->status)) {
 		p_ptr->status |= PY_HERO;
+		msg_print("You feel like a HERO!");
 		disturb(0, 0);
 		p_ptr->mhp += 10;
 		p_ptr->chp += 10;
 		p_ptr->ptohit += 12;
 		p_ptr->dis_th += 12;
-		msg_print("You feel like a HERO!");
 		prt_mhp();
 		prt_chp();
 	    }
 	    p_ptr->hero--;
 	    if (!p_ptr->hero) {
 		p_ptr->status &= ~PY_HERO;
+		msg_print("The heroism wears off.");
 		disturb(0, 0);
 		p_ptr->mhp -= 10;
 		if (p_ptr->chp > p_ptr->mhp) {
@@ -791,7 +784,6 @@ void dungeon(void)
 		}
 		p_ptr->ptohit -= 12;
 		p_ptr->dis_th -= 12;
-		msg_print("The heroism wears off.");
 		prt_mhp();
 	    }
 	}
@@ -800,6 +792,7 @@ void dungeon(void)
 	if (p_ptr->shero > 0) {
 	    if (!(PY_SHERO & p_ptr->status)) {
 		p_ptr->status |= PY_SHERO;
+		msg_print("You feel like a killing machine!");
 		disturb(0, 0);
 		p_ptr->mhp += 30;
 		p_ptr->chp += 30;
@@ -807,7 +800,6 @@ void dungeon(void)
 		p_ptr->dis_th += 24;
 		p_ptr->ptoac -= 10;
 		p_ptr->dis_tac -= 10;
-		msg_print("You feel like a killing machine!");
 		prt_mhp();
 		prt_chp();
 		p_ptr->status |= PY_ARMOR;	/* have to update ac display */
@@ -815,6 +807,7 @@ void dungeon(void)
 	    p_ptr->shero--;
 	    if (!p_ptr->shero) {
 		p_ptr->status &= ~PY_SHERO;
+		msg_print("You feel less Berserk.");
 		disturb(0, 0);
 		p_ptr->mhp -= 30;
 		p_ptr->ptoac += 10;
@@ -826,7 +819,6 @@ void dungeon(void)
 		}
 		p_ptr->ptohit -= 24;
 		p_ptr->dis_th -= 24;
-		msg_print("You feel less Berserk.");
 		prt_mhp();
 		p_ptr->status |= PY_ARMOR;	/* have to update ac display */
 	    }
@@ -836,23 +828,23 @@ void dungeon(void)
 	if (p_ptr->blessed > 0) {
 	    if (!(PY_BLESSED & p_ptr->status)) {
 		p_ptr->status |= PY_BLESSED;
+		msg_print("You feel righteous!");
 		disturb(0, 0);
 		p_ptr->ptohit += 10;
 		p_ptr->dis_th += 10;
 		p_ptr->ptoac += 5; /* changed to ptoac -CFT */
 		p_ptr->dis_tac += 5;
-		msg_print("You feel righteous!");
 		p_ptr->status |= PY_ARMOR;	/* have to update ac display */
 	    }
 	    p_ptr->blessed--;
 	    if (!p_ptr->blessed) {
 		p_ptr->status &= ~PY_BLESSED;
+		msg_print("The prayer has expired.");
 		disturb(0, 0);
 		p_ptr->ptohit -= 10;
 		p_ptr->dis_th -= 10;
 		p_ptr->ptoac -= 5; /* changed to ptoac -CFT */
 		p_ptr->dis_tac -= 5;
-		msg_print("The prayer has expired.");
 		p_ptr->status |= PY_ARMOR;	/* have to update ac display */
 	    }
 	}
@@ -861,86 +853,24 @@ void dungeon(void)
 	if (p_ptr->shield > 0) {
 	    p_ptr->shield--;
 	    if (!p_ptr->shield) {
-		disturb(0, 0);
 		msg_print("Your mystic shield crumbles away.");
+		disturb(0, 0);
 		p_ptr->ptoac -= 50;	/* changed to ptoac -CFT */
 		p_ptr->dis_tac -= 50;
 		p_ptr->status |= PY_ARMOR;	/* have to update ac display */
 	    }
 	}
 
-	/* Resist Heat */
-	if (p_ptr->oppose_fire > 0) {
-	    p_ptr->oppose_fire--;
-	    if (!p_ptr->oppose_fire) {
-		msg_print("You no longer feel safe from flame.");
-	    }
-	}
-
-	/* Resist Cold */
-	if (p_ptr->oppose_cold > 0) {
-	    p_ptr->oppose_cold--;
-	    if (!p_ptr->oppose_cold) {
-		msg_print("You no longer feel safe from cold.");
-	    }
-	}
-
-	/* Resist Acid */
-	if (p_ptr->oppose_acid > 0) {
-	    p_ptr->oppose_acid--;
-	    if (!p_ptr->oppose_acid) {
-		msg_print("You no longer feel safe from acid.");
-	    }
-	}
-
-	/* Resist Lightning */
-	if (p_ptr->oppose_elec > 0) {
-	    p_ptr->oppose_elec--;
-	    if (!p_ptr->oppose_elec) {
-		msg_print("You no longer feel safe from lightning.");
-	    }
-	}
-
-	/* Resist Poison */
-	if (p_ptr->oppose_pois > 0) {
-	    p_ptr->oppose_pois--;
-	    if (!p_ptr->oppose_pois) {
-		msg_print("You no longer feel safe from poison.");
-	    }
-	}
-
-	/* Timeout Artifacts */
-	for (i = 22; i < (INVEN_ARRAY_SIZE - 1); i++) {
-	    i_ptr = &inventory[i];
-	    if (i_ptr->tval != TV_NOTHING && (i_ptr->flags2 & TR3_ACTIVATE)) {
-		if (i_ptr->timeout > 0)
-		    i_ptr->timeout--;
-		if ((i_ptr->tval == TV_RING) &&
-		    (!stricmp(k_list[i_ptr->index].name, "Power")) &&
-		    (randint(20) == 1) && (p_ptr->exp > 0))
-		    p_ptr->exp--, p_ptr->max_exp--, prt_experience();
-	    }
-	}
-
-	/* Timeout rods */
-	for (i = 0; i < 22; i++) {
-	    i_ptr = &inventory[i];
-	    if (i_ptr->tval == TV_ROD && (i_ptr->flags2 & TR3_ACTIVATE)) {
-		if (i_ptr->timeout > 0)
-		    i_ptr->timeout--;
-	    }
-	}
-
 	/* Detect Invisible */
 	if (p_ptr->detect_inv > 0) {
-	    if ((PY_DET_INV & p_ptr->status) == 0) {
+	    if (!(PY_DET_INV & p_ptr->status)) {
 		p_ptr->status |= PY_DET_INV;
 		p_ptr->see_inv = TRUE;
 	    /* light but don't move creatures */
 		creatures(FALSE);
 	    }
 	    p_ptr->detect_inv--;
-	    if (p_ptr->detect_inv == 0) {
+	    if (!p_ptr->detect_inv) {
 		p_ptr->status &= ~PY_DET_INV;
 	    /* may still be able to see_inv if wearing magic item */
 		if (p_ptr->prace == 9)
@@ -958,20 +888,62 @@ void dungeon(void)
 
 	/* Timed infra-vision */
 	if (p_ptr->tim_infra > 0) {
-	    if ((PY_TIM_INFRA & p_ptr->status) == 0) {
+	    if (!(PY_TIM_INFRA & p_ptr->status)) {
 		p_ptr->status |= PY_TIM_INFRA;
 		p_ptr->see_infra++;
 	    /* light but don't move creatures */
 		creatures(FALSE);
 	    }
 	    p_ptr->tim_infra--;
-	    if (p_ptr->tim_infra == 0) {
+	    if (!p_ptr->tim_infra) {
 		p_ptr->status &= ~PY_TIM_INFRA;
 		p_ptr->see_infra--;
 	    /* unlight but don't move creatures */
 		creatures(FALSE);
 	    }
 	}
+
+
+	/*** Timed resistance must end eventually ***/
+
+
+	if (p_ptr->oppose_fire > 0) {
+	    p_ptr->oppose_fire--;
+	    if (!p_ptr->oppose_fire) {
+		msg_print("You no longer feel safe from flame.");
+	    }
+	}
+
+	if (p_ptr->oppose_cold > 0) {
+	    p_ptr->oppose_cold--;
+	    if (!p_ptr->oppose_cold) {
+		msg_print("You no longer feel safe from cold.");
+	    }
+	}
+
+	if (p_ptr->oppose_acid > 0) {
+	    p_ptr->oppose_acid--;
+	    if (!p_ptr->oppose_acid) {
+		msg_print("You no longer feel safe from acid.");
+	    }
+	}
+
+	if (p_ptr->oppose_elec > 0) {
+	    p_ptr->oppose_elec--;
+	    if (!p_ptr->oppose_elec) {
+		msg_print("You no longer feel safe from lightning.");
+	    }
+	}
+
+	if (p_ptr->oppose_pois > 0) {
+	    p_ptr->oppose_pois--;
+	    if (!p_ptr->oppose_pois) {
+		msg_print("You no longer feel safe from poison.");
+	    }
+	}
+
+
+	/*** Involuntary Movement ***/
 
 	/* Word-of-Recall -- Note: Word-of-Recall is a delayed action */
 	if (p_ptr->word_recall > 0) {
@@ -998,9 +970,56 @@ void dungeon(void)
 	    disturb(0, 0);
 	    teleport(40);
 	}
+
+
+
+	/*** Handle Resting ***/
+
+	/* Check "Resting" status */
+	if (p_ptr->rest != 0) {
+
+	    /* +n -> rest for n turns */
+	    if (p_ptr->rest > 0) {
+		p_ptr->rest--;
+		if (p_ptr->rest == 0) {
+		    rest_off();
+		}
+	    }
+
+	    /* -1 -> rest until HP/mana restored */
+	    else if (p_ptr->rest == -1) {
+		if ((p_ptr->chp == p_ptr->mhp) &&
+		    (p_ptr->cmana == p_ptr->mana)) {
+
+		    p_ptr->rest = 0;
+		    rest_off();
+		}
+	    }
+
+	    /* -2 -> like -1, plus blind/conf/fear/stun/halluc/recall/slow */
+	    /* Note: stop (via "disturb") as soon as blind or recall is done */
+	    else if (p_ptr->rest == -2) {
+		if ((p_ptr->blind < 1) && (p_ptr->confused < 1) &&
+		    (p_ptr->afraid < 1) && (p_ptr->stun < 1) &&
+		    (p_ptr->image < 1) && (p_ptr->word_recall < 1) &&
+		    (p_ptr->slow < 1) &&
+		    (p_ptr->chp == p_ptr->mhp) &&
+		    (p_ptr->cmana == p_ptr->mana)) {
+
+		    p_ptr->rest = 0;
+		    rest_off();
+		}
+	    }
+	}
+
+
     /* See if we are too weak to handle the weapon or pack.  -CJS- */
-	if (p_ptr->status & PY_STR_WGT)
+	if (p_ptr->status & PY_STR_WGT) {
 	    check_strength();
+	}
+
+	
+	/*** Display some things ***/
 
 	if (p_ptr->status & PY_STUDY) {
 	    prt_study();
@@ -1012,38 +1031,82 @@ void dungeon(void)
 	}
 
 	if ((p_ptr->status & PY_PARALYSED) && (p_ptr->paralysis < 1)) {
-	    prt_state();
 	    p_ptr->status &= ~PY_PARALYSED;
+	    prt_state();
 	}
 	else if (p_ptr->paralysis > 0) {
-	    prt_state();
 	    p_ptr->status |= PY_PARALYSED;
+	    prt_state();
 	}
-	else if (p_ptr->rest > 0 || p_ptr->rest == -1 || p_ptr->rest == -2) {
+	else if (p_ptr->rest != 0) {
 	    prt_state();
 	}
 
-	if ((p_ptr->status & PY_ARMOR) != 0) {
-	    p_ptr->dis_ac = p_ptr->pac + p_ptr->dis_tac;	/* use updated ac */
-	    prt_pac();
-	    p_ptr->status &= ~PY_ARMOR;
-	}
-	if ((p_ptr->status & PY_STATS)) {
-	    for (i = 0; i < 6; i++)
-		if ((PY_STR << i) & p_ptr->status) prt_stat(i);
+	if (p_ptr->status & PY_STATS) {
+	    if (p_ptr->status & PY_STR) prt_stat(A_STR);
+	    if (p_ptr->status & PY_INT) prt_stat(A_INT);
+	    if (p_ptr->status & PY_WIS) prt_stat(A_WIS);
+	    if (p_ptr->status & PY_DEX) prt_stat(A_DEX);
+	    if (p_ptr->status & PY_CON) prt_stat(A_CON);
+	    if (p_ptr->status & PY_CHR) prt_stat(A_CHR);
 	    p_ptr->status &= ~PY_STATS;
 	}
 
+	if (p_ptr->status & PY_ARMOR) {
+	    p_ptr->dis_ac = p_ptr->pac + p_ptr->dis_tac;	/* use updated ac */
+	    p_ptr->status &= ~PY_ARMOR;
+	    prt_pac();
+	}
+
 	if (p_ptr->status & PY_HP) {
+	    p_ptr->status &= ~PY_HP;
 	    prt_mhp();
 	    prt_chp();
-	    p_ptr->status &= ~PY_HP;
 	}
 
 	if (p_ptr->status & PY_MANA) {
-	    prt_cmana();
 	    p_ptr->status &= ~PY_MANA;
+	    prt_cmana();
 	}
+
+
+	/*** Process Inventory ***/
+
+	/* Timeout Artifacts */
+	for (i = 22; i < (INVEN_ARRAY_SIZE - 1); i++) {
+
+	    /* Get the object */
+	    i_ptr = &inventory[i];
+
+	    /* Skip fake objects */
+	    if (i_ptr->tval == TV_NOTHING) continue;
+
+	    if (i_ptr->flags2 & TR3_ACTIVATE) {
+
+	    /* Let activatable objects recharge */
+	    if (i_ptr->timeout > 0) i_ptr->timeout--;
+
+	    if ((i_ptr->tval == TV_RING) && (!stricmp(k_list[i_ptr->index].name, "Power"))) {
+		if ((randint(20) == 1) && (p_ptr->exp > 0)) {
+		    p_ptr->exp--;
+		    p_ptr->max_exp--;
+		    prt_experience();
+		}
+	    }
+	}
+
+	/* Timeout rods */
+	for (i = 0; i < 22; i++) {
+
+	    i_ptr = &inventory[i];
+
+	    if (i_ptr->tval == TV_ROD && (i_ptr->flags2 & TR3_ACTIVATE)) {
+		if (i_ptr->timeout > 0) i_ptr->timeout--;
+	    }
+	}
+
+
+	/*** Auto-Detect-Enchantment ***/
 
     /* Allow for a slim chance of detect enchantment -CJS- */
     /*
@@ -1060,9 +1123,11 @@ void dungeon(void)
 	    vtype               tmp_str;
 
 	    for (i = 0; i < INVEN_ARRAY_SIZE; i++) {
-		if (i == inven_ctr)
-		    i = 22;
-		i_ptr = &inventory[i];
+
+		if (i == inven_ctr) i = 22;
+
+	    /* Get the object */
+	    i_ptr = &inventory[i];
 
 	    /*
 	     * if in inventory, succeed 1 out of 50 times, if in equipment
@@ -1117,9 +1182,12 @@ void dungeon(void)
 	    vtype               tmp_str;
 
 	    for (i = 0; i < INVEN_ARRAY_SIZE; i++) {
-		if (i == inven_ctr)
-		    i = 22;
-		i_ptr = &inventory[i];
+
+		if (i == inven_ctr) i = 22;
+
+	    /* Get the object */
+	    i_ptr = &inventory[i];
+
 	    /*
 	     * if in inventory, succeed 1 out of 5 times, if in equipment
 	     * list, always succeed! 
@@ -1183,6 +1251,7 @@ void dungeon(void)
 		}
 	    }
 	}
+
     /*
      * Check the state of the monster list, and delete some monsters if the
      * monster list is nearly full.  This helps to avoid problems in
@@ -1193,23 +1262,46 @@ void dungeon(void)
 	if (MAX_M_IDX - m_max < 10)
 	    (void)compact_monsters();
 
-	if ((p_ptr->paralysis < 1) &&	/* Accept a command?     */
-	    (p_ptr->rest == 0) &&
-	    (p_ptr->stun < 100) &&
-	    (!death))
-	/* Accept a command and execute it				 */
-	{
+	/* Resting -- Voluntary trade of moves for regeneration */
+	/* Mega-Stunned -- Unable to do anything but stagger */
+	/* Paralyzed -- Not allowed to do anything */
+	/* Dead -- Not really able to do anything */
+
+	if ((p_ptr->rest) ||
+	    (p_ptr->stun >= 100) ||
+	    (p_ptr->paralysis > 0) ||
+	    (death) ) {
+
+	    /* Hilite the player */
+	    move_cursor_relative(char_row, char_col);
+
+	    /* Flush output */
+	    put_qio();
+	}
+
+
+	/* Get (and execute) one or more user commands */
+	else {
+
 	    do {
-		if (p_ptr->status & PY_REPEAT)
-		    prt_state();
-		default_dir = FALSE;
+
+		/* Commands are assumed to take time */
 		free_turn_flag = FALSE;
+
+		/* Update the "repeat" count */
+		if (p_ptr->status & PY_REPEAT) prt_state();
+
+		default_dir = FALSE;
 
 		if ((old_lite >= 0) && (!find_flag)) {
 		    cur_lite = old_lite;
 		    old_lite = (-1);
 		}
+
+		/* Hack -- If running, run some more */
 		if (find_flag) {
+
+		    /* Take a step */
 		    find_step();
 		    find_count--;
 		    if (find_count == 0)
@@ -1275,6 +1367,7 @@ void dungeon(void)
 				command = inkey();
 			    }
 			}
+
 		    /* Another way of typing control codes -CJS- */
 			if (command == '^') {
 			    if (command_rep > 0)
@@ -1291,6 +1384,7 @@ void dungeon(void)
 			    } else
 				command = ' ';
 			}
+
 		    /* move cursor to player char again, in case it moved */
 			move_cursor_relative(char_row, char_col);
 		    /* Commands are always converted to rogue form. -CJS- */
@@ -1329,16 +1423,12 @@ void dungeon(void)
 	    /* End of commands				     */
 	    }
 	    while (free_turn_flag && !new_level_flag && !eof_flag);
-	} else {
-	/* if paralyzed, resting, or dead, flush output */
-	/* but first move the cursor onto the player, for aesthetics */
-	    move_cursor_relative(char_row, char_col);
-	    put_qio();
 	}
 
-    /* Teleport?		       */
-	if (teleport_flag)
-	    teleport(100);
+
+	/* Mega-Hack -- process teleport traps */
+	if (teleport_flag) teleport(100);
+
     /* Move the creatures	       */
 	if (!new_level_flag)
 	    creatures(TRUE);
