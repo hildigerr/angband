@@ -76,7 +76,7 @@ void delete_monster(int j)
 
 /*
  * The following two procedures implement the same function as delete
- * monster. However, they are used within creatures(), because deleting a
+ * monster. However, they are used within process_monsters(), because deleting a
  * monster while scanning the m_list causes two problems, monsters might get
  * two turns, and m_ptr/monptr might be invalid after the delete_monster.
  * Hence the delete is done in two steps. 
@@ -117,7 +117,7 @@ void fix1_delete_monster(int j)
 }
 
 /* fix2_delete_monster does everything in delete_monster that wasn't done by
- * fix1_monster_delete above, this is only called in creatures() 
+ * fix1_monster_delete above, this is only called in process_monsters() 
  */
 void fix2_delete_monster(int j)
 {
@@ -204,8 +204,8 @@ int compact_monsters(void)
 	    /* Don't compact Melkor! */
 		if (r_ptr->cflags1 & CM_WIN) continue;
 
-	    /* in case this is called from within creatures(), this is a
-	     * horrible hack, the m_list/creatures() code needs to be
+	    /* in case this is called from within process_monsters(), this is a
+	     * horrible hack, the m_list/process_monsters() code needs to be
 	     * rewritten 
 	     */
 		else if (hack_m_idx < i) {

@@ -29,7 +29,16 @@ static void br_wall(int, int);
  * for visibility (natural, infravision, see-invis, telepathy),
  * updating the monster visibility flag, redrawing or erasing the
  * monster, and taking note of any "visual" features of the monster.
- * Monster fields that are changed here are "los" and "ml".
+ * Monster fields that are changed here are "cdis" and "los" and "ml".
+ *
+ * It is slightly inefficient to calculate "distance from player" (cdis)
+ * in this function, especially for monsters that never move, but it will
+ * prevent the calculation from being done in multiple places.
+ * Perhaps the "cdis" field should be recalculated as needed.
+ *
+ * We need to verify that "update_mon()" is called after every change to
+ * a monster's location, and that "update_monsters()" is called after
+ * every change to the player location.
  */
 void update_mon(int m_idx)
 {
@@ -64,6 +73,9 @@ void update_mon(int m_idx)
     /* Get the monster location */
     fy = m_ptr->fy;
     fx = m_ptr->fx;
+
+    /* Re-Calculate the "distance from player" field */
+    m_ptr->cdis = distance(char_row, char_col, fy, fx);
 
     /* Determine if there is "line of sight" from player to monster */
     m_ptr->los = los(char_row, char_col, fy, fx);
@@ -199,6 +211,22 @@ void update_mon(int m_idx)
 
     /* Display (or erase) the monster */
     lite_spot(fy, fx);
+}
+
+
+
+
+/*
+ * This function simply updates all the monsters (see above).
+ * Note that this may include a few "pending monster deaths",
+ * but that is a very minor inconvenience (and rare, too).
+ */
+void update_monsters(void)
+{
+    register int          i;
+
+    /* Process the monsters (backwards, for historical reasons) */
+    for (i = m_max - 1; i >= MIN_M_IDX; i--) update_mon(i);
 }
 
 
@@ -2964,6 +2992,8 @@ int multiply_monster(int y, int x, int cr_index, int m_idx)
 
 /*
  * Move a critter about the dungeon			-RAK-
+ *
+ * Note that this routine is called ONLY from "process_monsters()".
  */
 static void mon_move(int m_idx, u32b *rcflags1)
 {
@@ -3191,8 +3221,19 @@ static void mon_move(int m_idx, u32b *rcflags1)
 
 /*
  * Creatures movement and attacking are done from here
+ *
+ * Note that this routine ASSUMES that "update_monsters()" has been called
+ * every time the player changes his view or lite, and that "update_mon()"
+ * has been, and will be, called every time a monster moves.  Likewise, we
+ * rely on the lite/view/etc being "verified" EVERY time a door/wall appears
+ * or disappears.  This will then require minimal scans of the "monster" array.
+ * Note that only "some" calls to "update_mon()" actually need to recalculate
+ * the "distance" field, but they all do now for consistency.
+ *
+ * It is very important to process the array "backwards", as "newly created"
+ * monsters should not get a turn until the next round of processing.
  */
-void creatures(int attack)
+void process_monsters(void)
 {
     int			i, k;
 
@@ -3224,14 +3265,11 @@ void creatures(int attack)
 	    continue;
 	}
 
-	m_ptr->cdis = distance(char_row, char_col,
-			       (int)m_ptr->fy, (int)m_ptr->fx);
 
-	if (attack) {		   /* Attack is argument passed to CREATURE */
-	    k = movement_rate(i);
-	    if (k <= 0)
-		update_mon(i);
-	    else
+	k = movement_rate(i);
+	
+	if (k <= 0) continue;
+	
 		while (k > 0) {
 		    k--;
 		    wake = FALSE;
@@ -3303,7 +3341,7 @@ void creatures(int attack)
 			if ((m_ptr->csleep == 0) && (m_ptr->stunned == 0))
 			    mon_move(i, &rcflags1);
 		    }
-		    update_mon(i);
+
 		    if (m_ptr->ml) {
 			r_ptr = &l_list[m_ptr->r_idx];
 			if (wake) {
@@ -3316,8 +3354,6 @@ void creatures(int attack)
 			r_ptr->r_cflags1 |= rcflags1;
 		    }
 		}
-	} else
-	    update_mon(i);
 
     /* Get rid of an eaten/breathed on monster.  This is necessary because we
      * can't delete monsters while scanning the m_list here.  This monster
@@ -3479,7 +3515,7 @@ static void shatter_quake(int mon_y, int mon_x)
 			char_col = x;
 			check_view();
 		    /* light creatures */
-			creatures(FALSE);
+			update_monsters();
 		    }
 		    take_hit(damage, "an Earthquake");
 		}
@@ -3604,7 +3640,7 @@ static void br_wall(int mon_y, int mon_x)
     } /* !kill */
     check_view();
 /* light creatures */
-    creatures(FALSE);
+    update_monsters();
     lite_spot(char_row, char_col);
     take_hit(damage, "an Earthquake");
 }

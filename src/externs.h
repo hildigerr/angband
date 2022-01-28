@@ -151,7 +151,7 @@ extern int player_uid;
 
 /* horrible hack:
  * Needed because compact_monster() can be called from within
- * creatures() via place_monster() and summon_monster() 
+ * process_monsters() via place_monster() and summon_monster() 
  */
 
 extern int hack_m_idx;			/* The "current" monster, if any */
@@ -475,7 +475,8 @@ void player_birth(void);
 void update_mon(int);
 int movement_rate(int);
 int multiply_monster(int, int, int, int);
-void creatures(int);
+void update_monsters(void);
+void process_monsters(void);
 
 /* death.c */
 void init_scorefile(void);

@@ -297,8 +297,9 @@ void dungeon(void)
  * search_off() is called 
  */
 	search_off();
-/* Light,  but do not move critters	    */
-    creatures(FALSE);
+
+    /* Update the monsters */
+    update_monsters();
 
     /* Print the depth */
     prt_depth();
@@ -390,7 +391,7 @@ void dungeon(void)
 		    player_light = FALSE;
 		    disturb(0, 1);
 		/* unlight creatures */
-		    creatures(FALSE);
+		    update_monsters();
 		    msg_print("Your light has gone out!");
 		}
 
@@ -406,7 +407,7 @@ void dungeon(void)
 		    player_light = FALSE;
 		    disturb(0, 1);
 		/* unlight creatures */
-		    creatures(FALSE);
+		    update_monsters();
 		}
 	    }
 	else if (i_ptr->pval > 0 || p_ptr->light) {
@@ -415,7 +416,7 @@ void dungeon(void)
 	    player_light = TRUE;
 	    disturb(0, 1);
 	/* light creatures */
-	    creatures(FALSE);
+	    update_monsters();
 	}
 
 
@@ -513,7 +514,7 @@ void dungeon(void)
 		prt_blind();
 		disturb(0, 1);
 	    /* unlight creatures */
-		creatures(FALSE);
+		update_monsters();
 	    }
 	    p_ptr->blind--;
 	    if (!p_ptr->blind) {
@@ -523,7 +524,7 @@ void dungeon(void)
 		prt_map();
 	    /* light creatures */
 		disturb(0, 1);
-		creatures(FALSE);
+		update_monsters();
 	    }
 	}
 
@@ -866,8 +867,7 @@ void dungeon(void)
 	    if (!(PY_DET_INV & p_ptr->status)) {
 		p_ptr->status |= PY_DET_INV;
 		p_ptr->see_inv = TRUE;
-	    /* light but don't move creatures */
-		creatures(FALSE);
+		update_monsters();
 	    }
 	    p_ptr->detect_inv--;
 	    if (!p_ptr->detect_inv) {
@@ -881,8 +881,7 @@ void dungeon(void)
 			if (TR3_SEE_INVIS & inventory[i].flags1)
 			    p_ptr->see_inv = TRUE;
 		}
-	    /* unlight but don't move creatures */
-		creatures(FALSE);
+		update_monsters();
 	    }
 	}
 
@@ -891,15 +890,13 @@ void dungeon(void)
 	    if (!(PY_TIM_INFRA & p_ptr->status)) {
 		p_ptr->status |= PY_TIM_INFRA;
 		p_ptr->see_infra++;
-	    /* light but don't move creatures */
-		creatures(FALSE);
+		update_monsters();
 	    }
 	    p_ptr->tim_infra--;
 	    if (!p_ptr->tim_infra) {
 		p_ptr->status &= ~PY_TIM_INFRA;
 		p_ptr->see_infra--;
-	    /* unlight but don't move creatures */
-		creatures(FALSE);
+		update_monsters();
 	    }
 	}
 
@@ -1257,7 +1254,7 @@ void dungeon(void)
      * monster list is nearly full.  This helps to avoid problems in
      * creature.c when monsters try to multiply.  Compact_monsters() is much
      * more likely to succeed if called from here, than if called from within
-     * creatures().  
+     * process_monsters().  
      */
 	if (MAX_M_IDX - m_max < 10)
 	    (void)compact_monsters();
@@ -1431,7 +1428,7 @@ void dungeon(void)
 
     /* Move the creatures	       */
 	if (!new_level_flag)
-	    creatures(TRUE);
+	    process_monsters();
     /* Exit when new_level_flag is set   */
     }
     while (!new_level_flag && !eof_flag);
@@ -1852,7 +1849,7 @@ static void do_command(char com_val)
 	    msg_print("You cannot be sure what is real and what is not!");
 	else {
 	    draw_cave();
-	    creatures(FALSE);	  /* draw monsters */
+	    update_monsters();	  /* draw monsters */
 	    prt_equippy_chars();  /* redraw equippy chars */
 	}
 	free_turn_flag = TRUE;
@@ -2295,7 +2292,7 @@ static void do_command(char com_val)
 		y = char_row;
 		x = char_col;
 		(void)summon_monster(&y, &x, TRUE);
-		creatures(FALSE);
+		update_monsters();
 		break;
 	      case '*':		/* '*' = identify all up to a level */
 		prt("Identify objects upto which level (0-200) ? ", 0, 0);

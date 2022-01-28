@@ -2253,10 +2253,13 @@ void teleport(int dis)
     char_row = y;
     char_col = x;
 
+    /* Update the monsters */
+    update_monsters();
+
+
     /* Check the view */
     check_view();
 
-    creatures(FALSE);
 
     /* Hack -- The teleport is dealt with */
     teleport_flag = FALSE;

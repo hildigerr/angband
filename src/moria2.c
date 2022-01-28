@@ -793,8 +793,8 @@ int mon_take_hit(int m_idx, int dam, int print_fear)
 	 * message appearing before "monster dies" message 
 	 */
 	m_take_hit = m_ptr->r_idx;
-	/* in case this is called from within creatures(), this is a horrible
-	 * hack, the m_list/creatures() code needs to be rewritten 
+	/* in case this is called from within process_monsters(), this is a horrible
+	 * hack, the m_list/process_monsters() code needs to be rewritten 
 	 */
 	if (hack_m_idx < m_idx)
 	    delete_monster(m_idx);

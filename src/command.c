@@ -298,7 +298,7 @@ void do_cmd_options()
 	switch (ch) {
 	  case ESCAPE:	  
 	    draw_cave();
-	    creatures(FALSE);	 /* draw monsters */
+	    update_monsters();	 /* draw monsters */
 	    prt_equippy_chars(); /* redraw equippy chars */
 	    return;
 	  case '-':

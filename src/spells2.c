@@ -247,11 +247,12 @@ void teleport_to(int ny, int nx)
     char_row = y;
     char_col = x;
 
+    /* Update creatures */
+    update_monsters();
+
+
     /* Check the view */
     check_view();
-
-    /* light creatures */
-    creatures(FALSE);
 }
 
 
@@ -514,8 +515,8 @@ int detect_evil(void)
 	msg_print("You sense the presence of evil!");
 	msg_print(NULL);
 
-    /* must unlight every monster just lighted */
-	creatures(FALSE);
+	/* Fix the monsters */
+	update_monsters();
     }
 
     return (flag);
@@ -1135,9 +1136,10 @@ void destroy_area(int y, int x)
     /* We need to redraw the screen. -DGK */
     if (p_ptr->resist_blind || p_ptr->resist_lite) {
 
+    update_monsters();
+
     /* Hack -- redraw the cave */
     draw_cave();
-	creatures(FALSE);	   /* draw monsters */
     }
 }
 
@@ -2065,7 +2067,7 @@ int detection(void)
 	msg_print(NULL);
 
 	/* Fix the monsters */
-	creatures(FALSE);
+	update_monsters();
     }
 
     /* XXX Only returns true if monsters were detected */
@@ -2259,7 +2261,7 @@ int detect_invisible()
 	msg_print(NULL);
 
 	/* Fix the monsters */
-	creatures(FALSE);
+	update_monsters();
     }
 
     return (flag);
@@ -2401,7 +2403,7 @@ int detect_monsters(void)
 	msg_print(NULL);
 
 	/* Fix the monsters */
-	creatures(FALSE);
+	update_monsters();
     }
 
     return (detect);
