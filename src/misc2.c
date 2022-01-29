@@ -39,39 +39,62 @@ static int test_place(int y, int x)
 
 
 /*
- * Deletes a monster entry from the level		-RAK-	
+ * Deletes a monster entry from the level.
  */
 void delete_monster(int j)
 {
+    register cave_type *c_ptr;
     register monster_type *m_ptr;
+    register int fx, fy;
 
-    if (j < 2)
-	return;			   /* trouble? abort! -CFT */
+    /* Paranoia */
+    if (j < MIN_M_IDX) return;
+
+    /* Get the monster */
     m_ptr = &m_list[j];
-    if (r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE) u_list[m_ptr->mptr].exist = 0;
-    cave[m_ptr->fy][m_ptr->fx].m_idx = 0;
-    if (m_ptr->ml)
-	lite_spot((int)m_ptr->fy, (int)m_ptr->fx);
-    if (j != m_max - 1) {
-#ifdef TARGET
-	/* This targetting code stolen from Morgul -CFT */
-	/* Targetted monster dead or compacted.      CDW */
-	if (j==target_mon)
-	    target_mode = FALSE;
 
-	/* Targetted monster moved to replace dead or compacted monster   CDW */
-	if (target_mon==m_max-1)
-	    target_mon = j;
+    /* Get the monster location */
+    fx = m_ptr->fx;
+    fy = m_ptr->fy;
+
+    if (r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE) u_list[m_ptr->mptr].exist = 0;
+
+    /* Forget that the monster is here */
+    cave[fy][fx].m_idx = 0;
+
+    /* Visual update */
+    if (m_ptr->ml) lite_spot((int)m_ptr->fy, (int)m_ptr->fx);
+
+    /* Do structure dumping */
+    if (j != m_max - 1) {
+
+#ifdef TARGET
+    /* This targetting code stolen from Morgul -CFT */
+    /* Targetted monster dead or compacted.      CDW */
+    if (j == target_mon) target_mode = FALSE;
 #endif
-	m_ptr = &m_list[m_max - 1];
-	cave[m_ptr->fy][m_ptr->fx].m_idx = j;
-	m_list[j] = m_list[m_max - 1];
-    }
+
+    /* One less monster */
     m_max--;
+
+#ifdef TARGET
+	/* Targetted monster moved to replace dead or compacted monster -CDW */
+	if (target_mon == m_max) target_mon = j;
+#endif
+
+	/* Slide the last monster into the dead monster's slot */
+	m_ptr = &m_list[m_max];
+	c_ptr = &cave[m_ptr->fy][m_ptr->fx];
+	c_ptr->m_idx = j;
+	m_list[j] = m_list[m_max];
+    }
+
+    /* Wipe the monster record */
     m_list[m_max] = blank_monster;
-    if (mon_tot_mult > 0)
-	mon_tot_mult--;
+    if (mon_tot_mult > 0) mon_tot_mult--;
 }
+
+
 
 
 /*
@@ -80,8 +103,11 @@ void delete_monster(int j)
  * monster while scanning the m_list causes two problems, monsters might get
  * two turns, and m_ptr/monptr might be invalid after the delete_monster.
  * Hence the delete is done in two steps. 
- */
-/*
+ *
+ * force the hp negative to ensure that the monster is dead, for example, if
+ * the monster was just eaten by another, it will still have positive hit
+ * points 
+ *
  * fix1_delete_monster does everything delete_monster does except delete the
  * monster record and reduce m_max, this is called in breathe, and a couple
  * of places in creatures.c 
@@ -89,62 +115,76 @@ void delete_monster(int j)
 void fix1_delete_monster(int j)
 {
     register monster_type *m_ptr;
+    register int fx, fy;
 
-    if (j < 2)
-	return;			   /* trouble? abort! -CFT */
+    /* Paranoia */
+    if (j < MIN_M_IDX) return;
+
+    /* Get the monster */
+    m_ptr = &m_list[j];
+
+    /* Get the cave */
+    fy = m_ptr->fy;
+    fx = m_ptr->fx;
+
 #ifdef TARGET
     /* Targetted monster dead or compacted.      CDW */
-    if (j==target_mon)
-	target_mode = FALSE;
+    if (j == target_mon) target_mode = FALSE;
 
     /* Targetted monster moved to replace dead or compacted monster   CDW */
-    if (target_mon==m_max-1)
-	target_mon = j;
+    if (target_mon == m_max-1) target_mon = j;
 #endif
-    m_ptr = &m_list[j];
-    if (r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE)
+
 	if (r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE) u_list[m_ptr->mptr].exist = 0;
-/* force the hp negative to ensure that the monster is dead, for example, if
- * the monster was just eaten by another, it will still have positive hit
- * points 
- */
+
+    /* Mark the monster as "dead" (non-optimal method) */
     m_ptr->hp = (-1);
     cave[m_ptr->fy][m_ptr->fx].m_idx = 0;
-    if (m_ptr->ml)
-	lite_spot((int)m_ptr->fy, (int)m_ptr->fx);
-    if (mon_tot_mult > 0)
-	mon_tot_mult--;
+    if (m_ptr->ml) lite_spot((int)m_ptr->fy, (int)m_ptr->fx);
+    if (mon_tot_mult > 0) mon_tot_mult--;
 }
 
-/* fix2_delete_monster does everything in delete_monster that wasn't done by
+
+/*
+ * fix2_delete_monster does everything in delete_monster that wasn't done by
  * fix1_monster_delete above, this is only called in process_monsters() 
  */
 void fix2_delete_monster(int j)
 {
+    register cave_type *c_ptr;
     register monster_type *m_ptr;
 
-    if (j < 2)
-	return;			   /* trouble? abort! -CFT */
-    
-#ifdef TARGET
-    /* Targetted monster dead or compacted. CDW */
-    if (j==target_mon)
-	target_mode = FALSE;
+    /* Paranoia */
+    if (j < MIN_M_IDX) return;
 
-    /* Targetted monster moved to replace dead or compacted monster   CDW */
-    if (target_mon==m_max-1)
-	target_mon = j; 
+    /* Get the monster */
+    m_ptr = &m_list[j];
+
+#ifdef TARGET
+    /* Targetted monster dead or compacted.      CDW */
+    if (j == target_mon) target_mode = FALSE;
 #endif
 
-    m_ptr = &m_list[j];		   /* Fixed from a r_list ptr to a m_list ptr. -CFT */
-    if (r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE) u_list[m_ptr->mptr].exist = 0;
-    if (j != m_max - 1) {
-	m_ptr = &m_list[m_max - 1];
-	cave[m_ptr->fy][m_ptr->fx].m_idx = j;
-	m_list[j] = m_list[m_max - 1];
-    }
-    m_list[m_max - 1] = blank_monster;
+    /* One less monster */
     m_max--;
+
+#ifdef TARGET
+	/* Targetted monster moved to replace dead or compacted monster -CDW */
+	if (target_mon == m_max) target_mon = j;
+#endif
+
+    if (r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE) u_list[m_ptr->mptr].exist = 0;
+
+    /* Do structure dumping */
+    if (j != m_max) {
+	m_ptr = &m_list[m_max];
+	c_ptr = &cave[m_ptr->fy][m_ptr->fx];
+	c_ptr->m_idx = j;
+	m_list[j] = m_list[m_max];
+    }
+
+    /* Wipe the monster record */
+    m_list[m_max] = blank_monster;
 }
 
 
