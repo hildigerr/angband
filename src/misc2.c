@@ -1373,6 +1373,8 @@ void alloc_monster(int num, int dis, int slp)
 
 /*
  * Places a random creature at or adjacent to the given location
+ * We modify the given location to hold the location used, if any.
+ * We return TRUE if a monster (or group of monsters) was summoned.
  */
 int summon_monster(int *yp, int *xp, int slp)
 {
@@ -1525,48 +1527,51 @@ static bool summon_specific_okay(int type, int m)
 
 
 /*
- * Place a monster (of the specified "type") adjacent to the given location
+ * Place a monster (of the specified "type") adjacent to the given
+ * location, and re-set the given location to the location of the
+ * summoned monster.  Return TRUE iff a monster was actually summoned.
  */
-static int summon_specific(int *y, int *x, int type)
+static int summon_specific(int *yp, int *xp, int type)
 {
     register int        i, j, k;
-    int                 l, m, ctr, summon;
+    int                 l, m, ctr, summon = FALSE;
     register cave_type *cave_ptr;
 
-    i = 0;
-    summon = FALSE;
-    l = m_level[MAX_R_LEV];
-    do {
+
+    for (l = m_level[MAX_R_LEV]; l != 0;) {
 	m = randint(l) - 1;
-	ctr = 0;
-	do {
+
+	for (ctr = 0; ctr <= 19;) {
+
 	    if (summon_specific_okay(type, m)) {
 		ctr = 20;
 		l = 0;
-	    } else {
-		m++;
-		if (m > l)
-		    ctr = 20;
-		else
-		    ctr++;
 	    }
-	} while (ctr <= 19);
-    } while (l != 0);
-    do {
-	j = *y - 2 + randint(3);
-	k = *x - 2 + randint(3);
-	if (in_bounds(j, k)) {
+	    else {
+		m++;
+		if (m > l)  ctr = 20;
+		else ctr++;
+	    }
+	}
+    }
+
+    for (i = 0; i <= 9; i++) {
+
+	j = *yp - 2 + randint(3);
+	k = *xp - 2 + randint(3);
+
+	if (in_bounds(j, k)) continue;
+
 	    cave_ptr = &cave[j][k];
+
 	    if (floor_grid_bold(j, k) && (cave_ptr->m_idx == 0)) {
 		place_monster(j, k, m, FALSE);
 		summon = TRUE;
 		i = 9;
-		*y = j;
-		*x = k;
+		*yp = j;
+		*xp = k;
 	    }
-	}
-	i++;
-    } while (i <= 9);
+    }
     return (summon);
 }
 
