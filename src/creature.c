@@ -13,14 +13,7 @@
 #include "angband.h"
 
 
-static void get_moves(int, int *);
-static int  monster_critical(int, int, int);
-static void make_attack(int);
-static void make_move(int, int *, u32b *);
-static void mon_cast_spell(int, int *);
-static void mon_move(int, u32b *);
-static void shatter_quake(int, int);
-static void br_wall(int, int);
+
 
 /*
  * This function updates the monster record of the given monster
@@ -488,6 +481,289 @@ static int monster_critical(int dice, int sides, int dam)
 
     return 0;
 }
+
+
+
+
+/*
+ * This is a fun one.  In a given block, pick some walls and
+ * turn them into open spots.  Pick some open spots and turn
+ * them into walls.  An "Earthquake" effect.	       -LVB- 
+ */
+static void br_wall(int mon_y, int mon_x)
+{
+    register int        k, l;
+    register cave_type *c_ptr;
+    int                 kill, damage = 0, tmp, y, x = 0;
+
+    kill = TRUE;
+    for (y = char_row - 1; y <= char_row + 1; y++) {
+	for (x = char_col - 1; x <= char_col + 1; x++) {
+	    if (floor_grid_bold(y,x) &&
+	      (cave[y][x].m_idx == 0) && !(y == char_row && x == char_col)) {
+		kill = FALSE;
+		break;
+	    }
+	}
+	if (!kill)
+	    break;
+    }
+
+    switch (randint(3)) {
+      case 1:
+	msg_print("The cave ceiling collapses!");
+	break;
+      case 2:
+	msg_print("The floor turns and crushes you!");
+	break;
+      case 3:
+	msg_print("You are pummeled with debris!");
+	break;
+    }
+    if (kill) {
+	msg_print("You are trapped, crushed and cannot move!");
+	damage = 250;
+    } else {
+	switch (randint(3)) {
+	  case 1:
+	    msg_print("The rubble bashes you!");
+	    damage = damroll(10, 4);
+	    stun_player(randint(50));
+	    break;
+	  case 2:
+	    msg_print("But you nimbly dodge the blast!");
+	    damage = 0;
+	    break;
+	  case 3:
+	    msg_print("The floor crushes you against the ceiling!");
+	    damage = damroll(10, 4);
+	    stun_player(randint(50));
+	    break;
+	}
+	c_ptr = &cave[char_row][char_col];
+	move_rec(char_row, char_col, y, x);
+    /* don't destroy floor if stairs, shop, or artifact... */
+	if ((c_ptr->fval <= MAX_CAVE_FLOOR) &&
+	((c_ptr->i_idx == 0) || ((i_list[c_ptr->tptr].tval != TV_UP_STAIR) &&
+			      (i_list[c_ptr->i_idx].tval != TV_DOWN_STAIR) &&
+			      (i_list[c_ptr->i_idx].tval != TV_STORE_DOOR) &&
+			      !((i_list[c_ptr->i_idx].tval >= TV_MIN_WEAR) &&
+				(i_list[c_ptr->i_idx].tval <= TV_MAX_WEAR) &&
+			    (i_list[c_ptr->i_idx].flags2 & TR_ARTIFACT))))) {
+	    if (c_ptr->i_idx)
+		delete_object(char_row, char_col);
+	    tmp = randint(10);
+	    if (tmp < 6)
+		c_ptr->fval = QUARTZ_WALL;
+	    else if (tmp < 9)
+		c_ptr->fval = MAGMA_WALL;
+	    else
+		c_ptr->fval = GRANITE_WALL;
+
+	    c_ptr->fm = FALSE;
+	}
+	for (k = char_row - 1; k <= char_row + 1; k++)
+	    for (l = char_col - 1; l <= char_col + 1; l++) {
+		c_ptr = &cave[k][l];
+		c_ptr->tl = FALSE;
+		lite_spot(k, l);
+	    }
+	lite_spot(char_row, char_col);
+	char_row = y;
+	char_col = x;
+    } /* !kill */
+    check_view();
+/* light creatures */
+    update_monsters();
+    lite_spot(char_row, char_col);
+    take_hit(damage, "an Earthquake");
+}
+
+
+
+
+/*
+ * This is a fun one.  In a given block, pick some walls and
+ * turn them into open spots.  Pick some open spots and turn
+ * them into walls.  An "Earthquake" effect.	       -LVB-
+ */
+static void shatter_quake(int mon_y, int mon_x)
+{
+    register int           i, j, k, l;
+    register cave_type     *c_ptr;
+    register monster_type  *m_ptr;
+    register monster_race *r_ptr;
+    int                    kill, damage = 0, tmp, y, x = 0;
+    vtype                  out_val, m_name;
+    int                    m_idx = cave[mon_y][mon_x].m_idx;
+    /* needed when we kill another monster */
+
+    for (i = mon_y - 8; i <= mon_y + 8; i++)
+	for (j = mon_x - 8; j <= mon_x + 8; j++)
+	    if (in_bounds(i, j) && (randint(8) == 1)) {
+		if ((i == mon_y) && (j == mon_x))
+		    continue;
+		c_ptr = &cave[i][j];
+		if (c_ptr->m_idx > 1) {
+		    m_ptr = &m_list[c_ptr->m_idx];
+		    r_ptr = &r_list[m_ptr->r_idx];
+
+		    if (!(r_ptr->cflags1 & CM_PHASE) &&
+			!(r_ptr->cflags2 & MF2_BREAK_WALL)) {
+			if ((movement_rate(c_ptr->m_idx) == 0) ||
+			    (r_ptr->cflags1 & CM_ATTACK_ONLY))
+			/* monster can not move to escape the wall */
+			    kill = TRUE;
+			else {
+/* only kill if there is nowhere for the monster to escape to */
+			    kill = TRUE;
+			    for (y = i - 1; y <= i + 1; y++) {
+				for (x = j - 1; x <= j + 1; x++) {
+				    if (floor_grid_bold(y, x) &&
+					!(y == i && x == j)) {
+					kill = FALSE;
+					break;
+				    }
+				}
+				if (!kill)
+				    break;
+			    }
+			}
+			if (kill)
+			    damage = 0x7fff;	/* this will kill everything */
+			else
+			    damage = damroll(4, 8);
+			monster_name(m_name, m_ptr);
+			(void)sprintf(out_val, "%s wails out in pain!", m_name);
+			msg_print(out_val);
+		    /* kill monster "by hand", so player doesn't get exp -CFT */
+			m_ptr->hp = m_ptr->hp - damage;
+			m_ptr->csleep = 0;
+
+/* prevent unique monster from death by other monsters.  It causes trouble
+ * (monster not marked as dead, quest monsters don't satisfy quest, etc).
+ * So, we let then live, but extremely wimpy.  This isn't great, because
+ * monster might heal itself before player's next swing... -CFT
+ */
+			if ((r_ptr->cflags2 & MF2_UNIQUE) && (m_ptr->hp < 0))
+			    m_ptr->hp = 0;
+			if (m_ptr->hp < 0) {
+			    u32b              temp, treas;
+
+			    (void)sprintf(out_val, "%s is embedded in the rock.",
+					  m_name);
+			    msg_print(out_val);
+			    object_level = (dun_level + r_ptr->level) >> 1;
+			    treas = monster_death((int)m_ptr->fy, (int)m_ptr->fx,
+						  r_ptr->cflags1, 0, 0);
+			    if (m_ptr->ml) {
+				temp = (l_list[m_ptr->r_idx].r_cflags1 & CM_TREASURE)
+				    >> CM_TR_SHIFT;
+				if (temp > ((treas & CM_TREASURE) >> CM_TR_SHIFT))
+				    treas = (treas & ~CM_TREASURE) | (temp << CM_TR_SHIFT);
+				l_list[m_ptr->r_idx].r_cflags1 = treas |
+				    (l_list[m_ptr->r_idx].r_cflags1 & ~CM_TREASURE);
+			    }
+			    if (m_idx < c_ptr->m_idx)
+				delete_monster((int)c_ptr->m_idx);
+			    else
+				fix1_delete_monster((int)c_ptr->m_idx);
+			} /* if monster's hp < 0 */
+		    }
+		} else if (c_ptr->m_idx == 1) {	/* Kill the dumb player! */
+		    kill = TRUE;
+		    for (y = i - 1; y <= i + 1; y++) {
+			for (x = j - 1; x <= j + 1; x++) {
+			    if (floor_grid_bold(y, x) &&
+			    (cave[y][x].m_idx == 0) && !(y == i && x == j)) {
+				kill = FALSE;
+				break;
+			    }
+			}
+			if (!kill)
+			    break;
+		    }
+
+		    switch (randint(3)) {
+		      case 1:
+			msg_print("The cave ceiling collapses!");
+			break;
+		      case 2:
+			msg_print("The floor turns and crushes you!");
+			break;
+		      case 3:
+			msg_print("You are pummeled with debris!");
+			break;
+		    }
+		    if (kill) {
+	msg_print("You are trapped and cannot move!  You are crushed beneath rock!");
+	msg_print(NULL);
+			damage = 320;
+		    } else {
+			switch (randint(3)) {
+			  case 1:
+			    msg_print("The rubble bashes you!");
+			    damage = damroll(10, 4);
+			    stun_player(randint(50));
+			    break;
+			  case 2:
+			    msg_print("But you nimbly dodge the blast!");
+			    damage = 0;
+			    break;
+			  case 3:
+			    msg_print("The floor crushes you against the ceiling!");
+			    damage = damroll(10, 4);
+			    stun_player(randint(50));
+			    break;
+			}
+			move_rec(char_row, char_col, y, x);
+			for (k = char_row - 1; k <= char_row + 1; k++)
+			    for (l = char_col - 1; l <= char_col + 1; l++) {
+				c_ptr = &cave[k][l];
+				c_ptr->tl = FALSE;
+				lite_spot(k, l);
+			    }
+			lite_spot(char_row, char_col);
+			char_row = y;
+			char_col = x;
+			check_view();
+		    /* light creatures */
+			update_monsters();
+		    }
+		    take_hit(damage, "an Earthquake");
+		}
+		if (c_ptr->i_idx != 0)
+		    if (((i_list[c_ptr->i_idx].tval >= TV_MIN_WEAR) &&
+			 (i_list[c_ptr->i_idx].tval <= TV_MAX_WEAR) &&
+			 (i_list[c_ptr->i_idx].flags2 & TR_ARTIFACT)) ||
+			(i_list[c_ptr->i_idx].tval == TV_UP_STAIR) ||
+			(i_list[c_ptr->i_idx].tval == TV_DOWN_STAIR) ||
+			(i_list[c_ptr->i_idx].tval == TV_STORE_DOOR))
+			continue;  /* don't kill artifacts... */
+		    else
+			(void)delete_object(i, j);
+
+		if ((c_ptr->fval >= MIN_WALL) && (c_ptr->fval != BOUNDARY_WALL)) {
+		    c_ptr->fval = CORR_FLOOR;
+		    c_ptr->pl = FALSE;
+		    c_ptr->fm = FALSE;
+		} else if ((c_ptr->fval <= MAX_CAVE_FLOOR) && (c_ptr->i_idx == 0)
+			   && (c_ptr->m_idx != 1)) {
+		    /* don't bury player, it made him unattackable -CFT */
+		    tmp = randint(10);
+		    if (tmp < 6)
+			c_ptr->fval = QUARTZ_WALL;
+		    else if (tmp < 9)
+			c_ptr->fval = MAGMA_WALL;
+		    else
+			c_ptr->fval = GRANITE_WALL;
+
+		    c_ptr->fm = FALSE;
+		}
+		lite_spot(i, j);
+	    }
+}
+
 
 
 /*
@@ -3398,278 +3674,4 @@ void process_monsters(void)
 }
 
 
-/*
- * This is a fun one.  In a given block, pick some walls and
- * turn them into open spots.  Pick some open spots and turn
- * them into walls.  An "Earthquake" effect.	       -LVB-
- */
-static void shatter_quake(int mon_y, int mon_x)
-{
-    register int           i, j, k, l;
-    register cave_type     *c_ptr;
-    register monster_type  *m_ptr;
-    register monster_race *r_ptr;
-    int                    kill, damage = 0, tmp, y, x = 0;
-    vtype                  out_val, m_name;
-    int                    m_idx = cave[mon_y][mon_x].m_idx;
-    /* needed when we kill another monster */
 
-    for (i = mon_y - 8; i <= mon_y + 8; i++)
-	for (j = mon_x - 8; j <= mon_x + 8; j++)
-	    if (in_bounds(i, j) && (randint(8) == 1)) {
-		if ((i == mon_y) && (j == mon_x))
-		    continue;
-		c_ptr = &cave[i][j];
-		if (c_ptr->m_idx > 1) {
-		    m_ptr = &m_list[c_ptr->m_idx];
-		    r_ptr = &r_list[m_ptr->r_idx];
-
-		    if (!(r_ptr->cflags1 & CM_PHASE) &&
-			!(r_ptr->cflags2 & MF2_BREAK_WALL)) {
-			if ((movement_rate(c_ptr->m_idx) == 0) ||
-			    (r_ptr->cflags1 & CM_ATTACK_ONLY))
-			/* monster can not move to escape the wall */
-			    kill = TRUE;
-			else {
-/* only kill if there is nowhere for the monster to escape to */
-			    kill = TRUE;
-			    for (y = i - 1; y <= i + 1; y++) {
-				for (x = j - 1; x <= j + 1; x++) {
-				    if (floor_grid_bold(y, x) &&
-					!(y == i && x == j)) {
-					kill = FALSE;
-					break;
-				    }
-				}
-				if (!kill)
-				    break;
-			    }
-			}
-			if (kill)
-			    damage = 0x7fff;	/* this will kill everything */
-			else
-			    damage = damroll(4, 8);
-			monster_name(m_name, m_ptr);
-			(void)sprintf(out_val, "%s wails out in pain!", m_name);
-			msg_print(out_val);
-		    /* kill monster "by hand", so player doesn't get exp -CFT */
-			m_ptr->hp = m_ptr->hp - damage;
-			m_ptr->csleep = 0;
-
-/* prevent unique monster from death by other monsters.  It causes trouble
- * (monster not marked as dead, quest monsters don't satisfy quest, etc).
- * So, we let then live, but extremely wimpy.  This isn't great, because
- * monster might heal itself before player's next swing... -CFT
- */
-			if ((r_ptr->cflags2 & MF2_UNIQUE) && (m_ptr->hp < 0))
-			    m_ptr->hp = 0;
-			if (m_ptr->hp < 0) {
-			    u32b              temp, treas;
-
-			    (void)sprintf(out_val, "%s is embedded in the rock.",
-					  m_name);
-			    msg_print(out_val);
-			    object_level = (dun_level + r_ptr->level) >> 1;
-			    treas = monster_death((int)m_ptr->fy, (int)m_ptr->fx,
-						  r_ptr->cflags1, 0, 0);
-			    if (m_ptr->ml) {
-				temp = (l_list[m_ptr->r_idx].r_cflags1 & CM_TREASURE)
-				    >> CM_TR_SHIFT;
-				if (temp > ((treas & CM_TREASURE) >> CM_TR_SHIFT))
-				    treas = (treas & ~CM_TREASURE) | (temp << CM_TR_SHIFT);
-				l_list[m_ptr->r_idx].r_cflags1 = treas |
-				    (l_list[m_ptr->r_idx].r_cflags1 & ~CM_TREASURE);
-			    }
-			    if (m_idx < c_ptr->m_idx)
-				delete_monster((int)c_ptr->m_idx);
-			    else
-				fix1_delete_monster((int)c_ptr->m_idx);
-			} /* if monster's hp < 0 */
-		    }
-		} else if (c_ptr->m_idx == 1) {	/* Kill the dumb player! */
-		    kill = TRUE;
-		    for (y = i - 1; y <= i + 1; y++) {
-			for (x = j - 1; x <= j + 1; x++) {
-			    if (floor_grid_bold(y, x) &&
-			    (cave[y][x].m_idx == 0) && !(y == i && x == j)) {
-				kill = FALSE;
-				break;
-			    }
-			}
-			if (!kill)
-			    break;
-		    }
-
-		    switch (randint(3)) {
-		      case 1:
-			msg_print("The cave ceiling collapses!");
-			break;
-		      case 2:
-			msg_print("The floor turns and crushes you!");
-			break;
-		      case 3:
-			msg_print("You are pummeled with debris!");
-			break;
-		    }
-		    if (kill) {
-	msg_print("You are trapped and cannot move!  You are crushed beneath rock!");
-	msg_print(NULL);
-			damage = 320;
-		    } else {
-			switch (randint(3)) {
-			  case 1:
-			    msg_print("The rubble bashes you!");
-			    damage = damroll(10, 4);
-			    stun_player(randint(50));
-			    break;
-			  case 2:
-			    msg_print("But you nimbly dodge the blast!");
-			    damage = 0;
-			    break;
-			  case 3:
-			    msg_print("The floor crushes you against the ceiling!");
-			    damage = damroll(10, 4);
-			    stun_player(randint(50));
-			    break;
-			}
-			move_rec(char_row, char_col, y, x);
-			for (k = char_row - 1; k <= char_row + 1; k++)
-			    for (l = char_col - 1; l <= char_col + 1; l++) {
-				c_ptr = &cave[k][l];
-				c_ptr->tl = FALSE;
-				lite_spot(k, l);
-			    }
-			lite_spot(char_row, char_col);
-			char_row = y;
-			char_col = x;
-			check_view();
-		    /* light creatures */
-			update_monsters();
-		    }
-		    take_hit(damage, "an Earthquake");
-		}
-		if (c_ptr->i_idx != 0)
-		    if (((i_list[c_ptr->i_idx].tval >= TV_MIN_WEAR) &&
-			 (i_list[c_ptr->i_idx].tval <= TV_MAX_WEAR) &&
-			 (i_list[c_ptr->i_idx].flags2 & TR_ARTIFACT)) ||
-			(i_list[c_ptr->i_idx].tval == TV_UP_STAIR) ||
-			(i_list[c_ptr->i_idx].tval == TV_DOWN_STAIR) ||
-			(i_list[c_ptr->i_idx].tval == TV_STORE_DOOR))
-			continue;  /* don't kill artifacts... */
-		    else
-			(void)delete_object(i, j);
-
-		if ((c_ptr->fval >= MIN_WALL) && (c_ptr->fval != BOUNDARY_WALL)) {
-		    c_ptr->fval = CORR_FLOOR;
-		    c_ptr->pl = FALSE;
-		    c_ptr->fm = FALSE;
-		} else if ((c_ptr->fval <= MAX_CAVE_FLOOR) && (c_ptr->i_idx == 0)
-			   && (c_ptr->m_idx != 1)) {
-		    /* don't bury player, it made him unattackable -CFT */
-		    tmp = randint(10);
-		    if (tmp < 6)
-			c_ptr->fval = QUARTZ_WALL;
-		    else if (tmp < 9)
-			c_ptr->fval = MAGMA_WALL;
-		    else
-			c_ptr->fval = GRANITE_WALL;
-
-		    c_ptr->fm = FALSE;
-		}
-		lite_spot(i, j);
-	    }
-}
-
-/*
- * This is a fun one.  In a given block, pick some walls and
- * turn them into open spots.  Pick some open spots and turn
- * them into walls.  An "Earthquake" effect.	       -LVB- 
- */
-static void br_wall(int mon_y, int mon_x)
-{
-    register int        k, l;
-    register cave_type *c_ptr;
-    int                 kill, damage = 0, tmp, y, x = 0;
-
-    kill = TRUE;
-    for (y = char_row - 1; y <= char_row + 1; y++) {
-	for (x = char_col - 1; x <= char_col + 1; x++) {
-	    if (floor_grid_bold(y,x) &&
-	      (cave[y][x].m_idx == 0) && !(y == char_row && x == char_col)) {
-		kill = FALSE;
-		break;
-	    }
-	}
-	if (!kill)
-	    break;
-    }
-
-    switch (randint(3)) {
-      case 1:
-	msg_print("The cave ceiling collapses!");
-	break;
-      case 2:
-	msg_print("The floor turns and crushes you!");
-	break;
-      case 3:
-	msg_print("You are pummeled with debris!");
-	break;
-    }
-    if (kill) {
-	msg_print("You are trapped, crushed and cannot move!");
-	damage = 250;
-    } else {
-	switch (randint(3)) {
-	  case 1:
-	    msg_print("The rubble bashes you!");
-	    damage = damroll(10, 4);
-	    stun_player(randint(50));
-	    break;
-	  case 2:
-	    msg_print("But you nimbly dodge the blast!");
-	    damage = 0;
-	    break;
-	  case 3:
-	    msg_print("The floor crushes you against the ceiling!");
-	    damage = damroll(10, 4);
-	    stun_player(randint(50));
-	    break;
-	}
-	c_ptr = &cave[char_row][char_col];
-	move_rec(char_row, char_col, y, x);
-    /* don't destroy floor if stairs, shop, or artifact... */
-	if ((c_ptr->fval <= MAX_CAVE_FLOOR) &&
-	((c_ptr->i_idx == 0) || ((i_list[c_ptr->tptr].tval != TV_UP_STAIR) &&
-			      (i_list[c_ptr->i_idx].tval != TV_DOWN_STAIR) &&
-			      (i_list[c_ptr->i_idx].tval != TV_STORE_DOOR) &&
-			      !((i_list[c_ptr->i_idx].tval >= TV_MIN_WEAR) &&
-				(i_list[c_ptr->i_idx].tval <= TV_MAX_WEAR) &&
-			    (i_list[c_ptr->i_idx].flags2 & TR_ARTIFACT))))) {
-	    if (c_ptr->i_idx)
-		delete_object(char_row, char_col);
-	    tmp = randint(10);
-	    if (tmp < 6)
-		c_ptr->fval = QUARTZ_WALL;
-	    else if (tmp < 9)
-		c_ptr->fval = MAGMA_WALL;
-	    else
-		c_ptr->fval = GRANITE_WALL;
-
-	    c_ptr->fm = FALSE;
-	}
-	for (k = char_row - 1; k <= char_row + 1; k++)
-	    for (l = char_col - 1; l <= char_col + 1; l++) {
-		c_ptr = &cave[k][l];
-		c_ptr->tl = FALSE;
-		lite_spot(k, l);
-	    }
-	lite_spot(char_row, char_col);
-	char_row = y;
-	char_col = x;
-    } /* !kill */
-    check_view();
-/* light creatures */
-    update_monsters();
-    lite_spot(char_row, char_col);
-    take_hit(damage, "an Earthquake");
-}
