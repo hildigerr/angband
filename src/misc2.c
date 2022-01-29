@@ -1525,9 +1525,9 @@ static bool summon_specific_okay(int type, int m)
 
 
 /*
- * Places undead adjacent to given location
+ * Place a monster (of the specified "type") adjacent to the given location
  */
-int summon_undead(int *y, int *x)
+static int summon_specific(int *y, int *x, int type)
 {
     register int        i, j, k;
     int                 l, m, ctr, summon;
@@ -1540,7 +1540,7 @@ int summon_undead(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (summon_specific_okay(SUMMON_UNDEAD, m)) {
+	    if (summon_specific_okay(type, m)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1570,557 +1570,97 @@ int summon_undead(int *y, int *x)
     return (summon);
 }
 
+
+
+
+
+
+
+
 /*
- * Summon a demon.
+ * Summon a demon.  Hack -- enforce max-level 
  */
 int summon_demon(int lev, int *y, int *x)
 {
-    register int        i, j, k;
-    int                 l, m, ctr, summon;
-    register cave_type *cave_ptr;
-
+    int summon;
     summon_level = lev;
+    summon = summon_specific(y, x, SUMMON_DEMON);
+    return (summon);
+}
 
-    i = 0;
-    summon = FALSE;
-    l = m_level[MAX_R_LEV];
-    do {
-	m = randint(l) - 1;
-	ctr = 0;
-	do {
-	    if (summon_specific_okay(SUMMON_DEMON, m)) {
-		ctr = 20;
-		l = 0;
-	    } else {
-		m++;
-		if (m > l)
-		    ctr = 20;
-		else
-		    ctr++;
-	    }
-	} while (ctr <= 19);
-    } while (l != 0);
-    do {
-	j = *y - 2 + randint(3);
-	k = *x - 2 + randint(3);
-	if (in_bounds(j, k)) {
-	    cave_ptr = &cave[j][k];
-	    if (floor_grid_bold(j, k) && (cave_ptr->m_idx == 0)) {
-		place_monster(j, k, m, FALSE);
-		summon = TRUE;
-		i = 9;
-		*y = j;
-		*x = k;
-	    }
-	}
-	i++;
-    } while (i <= 9);
+/*
+ * Summon things (see above)
+ */
+
+int summon_undead(int *y, int *x)
+{
+    int summon = summon_specific(y, x, SUMMON_UNDEAD);
     return (summon);
 }
 
 int summon_dragon(int *y, int *x)
 {
-    register int        i, j, k;
-    int                 l, m, ctr, summon;
-    register cave_type *cave_ptr;
-
-    i = 0;
-    summon = FALSE;
-    l = m_level[MAX_R_LEV];
-    do {
-	m = randint(l) - 1;
-	ctr = 0;
-	do {
-	    if (summon_specific_okay(SUMMON_DRAGON, m)) {
-		ctr = 20;
-		l = 0;
-	    } else {
-		m++;
-		if (m > l)
-		    ctr = 20;
-		else
-		    ctr++;
-	    }
-	}
-	while (ctr <= 19);
-    }
-    while (l != 0);
-    do {
-	j = *y - 2 + randint(3);
-	k = *x - 2 + randint(3);
-	if (in_bounds(j, k)) {
-	    cave_ptr = &cave[j][k];
-	    if (floor_grid_bold(j, k) && (cave_ptr->m_idx == 0)) {
-		place_monster(j, k, m, FALSE);
-		summon = TRUE;
-		i = 9;
-		*y = j;
-		*x = k;
-	    }
-	}
-	i++;
-    }
-    while (i <= 9);
-    return (summon);
-}
-
-/* Summon ringwraiths */
-int summon_wraith(int *y, int *x)
-{
-    register int        i, j, k;
-    int                 l, m, ctr, summon;
-    register cave_type *cave_ptr;
-
-    i = 0;
-    summon = FALSE;
-    l = m_level[MAX_R_LEV];
-    do {
-	m = randint(l) - 1;
-	ctr = 0;
-	do {
-	    if (summon_specific_okay(SUMMON_WRAITH, m)) {
-		ctr = 20;
-		l = 0;
-	    } else {
-		m++;
-		if (m > l)
-		    ctr = 20;
-		else
-		    ctr++;
-	    }
-	}
-	while (ctr <= 19);
-    }
-    while (l != 0);
-    do {
-	j = *y - 2 + randint(3);
-	k = *x - 2 + randint(3);
-	if (in_bounds(j, k)) {
-	    cave_ptr = &cave[j][k];
-	    if (floor_grid_bold(j, k) && (cave_ptr->m_idx == 0)) {
-		place_monster(j, k, m, FALSE);
-		summon = TRUE;
-		i = 9;
-		*y = j;
-		*x = k;
-	    }
-	}
-	i++;
-    }
-    while (i <= 9);
+    int summon = summon_specific(y, x, SUMMON_DRAGON);
     return (summon);
 }
 
 int summon_reptile(int *y, int *x)
 {
-    register int        i, j, k;
-    int                 l, m, ctr, summon;
-    register cave_type *cave_ptr;
-
-    i = 0;
-    summon = FALSE;
-    l = m_level[MAX_R_LEV];
-    do {
-	m = randint(l) - 1;
-	ctr = 0;
-	do {
-	    if  (summon_specific_okay(SUMMON_REPTILE, m)){
-		ctr = 20;
-		l = 0;
-	    } else {
-		m++;
-		if (m > l)
-		    ctr = 20;
-		else
-		    ctr++;
-	    }
-	}
-	while (ctr <= 19);
-    }
-    while (l != 0);
-    do {
-	j = *y - 2 + randint(3);
-	k = *x - 2 + randint(3);
-	if (in_bounds(j, k)) {
-	    cave_ptr = &cave[j][k];
-	    if (floor_grid_bold(j, k) && (cave_ptr->m_idx == 0)) {
-		place_monster(j, k, m, FALSE);
-		summon = TRUE;
-		i = 9;
-		*y = j;
-		*x = k;
-	    }
-	}
-	i++;
-    }
-    while (i <= 9);
+    int summon = summon_specific(y, x, SUMMON_REPTILE);
     return (summon);
 }
 
 int summon_spider(int *y, int *x)
 {
-    register int        i, j, k;
-    int                 l, m, ctr, summon;
-    register cave_type *cave_ptr;
-
-    i = 0;
-    summon = FALSE;
-    l = m_level[MAX_R_LEV];
-    do {
-	m = randint(l) - 1;
-	ctr = 0;
-	do {
-	    if (summon_specific_okay(SUMMON_SPIDER, m)) {
-		ctr = 20;
-		l = 0;
-	    } else {
-		m++;
-		if (m > l)
-		    ctr = 20;
-		else
-		    ctr++;
-	    }
-	}
-	while (ctr <= 19);
-    }
-    while (l != 0);
-    do {
-	j = *y - 2 + randint(3);
-	k = *x - 2 + randint(3);
-	if (in_bounds(j, k)) {
-	    cave_ptr = &cave[j][k];
-	    if (floor_grid_bold(j, k) && (cave_ptr->m_idx == 0)) {
-		place_monster(j, k, m, FALSE);
-		summon = TRUE;
-		i = 9;
-		*y = j;
-		*x = k;
-	    }
-	}
-	i++;
-    }
-    while (i <= 9);
+    int summon = summon_specific(y, x, SUMMON_SPIDER);
     return (summon);
 }
 
 int summon_angel(int *y, int *x)
 {
-    register int        i, j, k;
-    int                 l, m, ctr, summon;
-    register cave_type *cave_ptr;
-
-    i = 0;
-    summon = FALSE;
-    l = m_level[MAX_R_LEV];
-    do {
-	m = randint(l) - 1;
-	ctr = 0;
-	do {
-	    if (summon_specific_okay(SUMMON_ANGEL, m)) {
-		ctr = 20;
-		l = 0;
-	    } else {
-		m++;
-		if (m > l)
-		    ctr = 20;
-		else
-		    ctr++;
-	    }
-	} while (ctr <= 19);
-    }
-    while (l != 0);
-    do {
-	j = *y - 2 + randint(3);
-	k = *x - 2 + randint(3);
-	if (in_bounds(j, k)) {
-	    cave_ptr = &cave[j][k];
-	    if (floor_grid_bold(j, k) && (cave_ptr->m_idx == 0)) {
-		place_monster(j, k, m, FALSE);
-		summon = TRUE;
-		i = 9;
-		*y = j;
-		*x = k;
-	    }
-	}
-	i++;
-    } while (i <= 9);
+    int summon = summon_specific(y, x, SUMMON_ANGEL);
     return (summon);
 }
 
 int summon_ant(int *y, int *x)
 {
-    register int        i, j, k;
-    int                 l, m, ctr, summon;
-    register cave_type *cave_ptr;
-
-    i = 0;
-    summon = FALSE;
-    l = m_level[MAX_R_LEV];
-    do {
-	m = randint(l) - 1;
-	ctr = 0;
-	do {
-	    if (summon_specific_okay(SUMMON_ANT, m)) {
-		ctr = 20;
-		l = 0;
-	    } else {
-		m++;
-		if (m > l)
-		    ctr = 20;
-		else
-		    ctr++;
-	    }
-	}
-	while (ctr <= 19);
-    }
-    while (l != 0);
-    do {
-	j = *y - 2 + randint(3);
-	k = *x - 2 + randint(3);
-	if (in_bounds(j, k)) {
-	    cave_ptr = &cave[j][k];
-	    if (floor_grid_bold(j, k) && (cave_ptr->m_idx == 0)) {
-		place_monster(j, k, m, FALSE);
-		summon = TRUE;
-		i = 9;
-		*y = j;
-		*x = k;
-	    }
-	}
-	i++;
-    }
-    while (i <= 9);
-    return (summon);
-}
-
-int summon_unique(int *y, int *x)
-{
-    register int        i, j, k;
-    int                 l, m, ctr, summon;
-    register cave_type *cave_ptr;
-
-    i = 0;
-    summon = FALSE;
-    l = m_level[MAX_R_LEV];
-    do {
-	m = randint(l) - 1;
-	ctr = 0;
-	do {
-	    if (summon_specific_okay(SUMMON_UNIQUE, m)) {
-		ctr = 20;
-		l = 0;
-	    } else {
-		m++;
-		if (m > l)
-		    ctr = 20;
-		else
-		    ctr++;
-	    }
-	}
-	while (ctr <= 19);
-    }
-    while (l != 0);
-    do {
-	j = *y - 2 + randint(3);
-	k = *x - 2 + randint(3);
-	if (in_bounds(j, k)) {
-	    cave_ptr = &cave[j][k];
-	    if (floor_grid_bold(j, k) && (cave_ptr->m_idx == 0)) {
-		place_monster(j, k, m, FALSE);
-		summon = TRUE;
-		i = 9;
-		*y = j;
-		*x = k;
-	    }
-	}
-	i++;
-    }
-    while (i <= 9);
-    return (summon);
-}
-
-int summon_jabberwock(int *y, int *x)
-{
-    register int        i, j, k;
-    int                 l, m, ctr, summon;
-    register cave_type *cave_ptr;
-
-    i = 0;
-    summon = FALSE;
-    l = m_level[MAX_R_LEV];
-    do {
-	m = randint(l) - 1;
-	ctr = 0;
-	do {
-	    if (summon_specific_okay(SUMMON_JABBER, m)) {
-		ctr = 20;
-		l = 0;
-	    } else {
-		m++;
-		if (m > l)
-		    ctr = 20;
-		else
-		    ctr++;
-	    }
-	}
-	while (ctr <= 19);
-    }
-    while (l != 0);
-    do {
-	j = *y - 2 + randint(3);
-	k = *x - 2 + randint(3);
-	if (in_bounds(j, k)) {
-	    cave_ptr = &cave[j][k];
-	    if (floor_grid_bold(j, k) && (cave_ptr->m_idx == 0)) {
-		place_monster(j, k, m, FALSE);
-		summon = TRUE;
-		i = 9;
-		*y = j;
-		*x = k;
-	    }
-	}
-	i++;
-    }
-    while (i <= 9);
-    return (summon);
-}
-
-int summon_gundead(int *y, int *x)
-{
-    register int        i, j, k;
-    int                 l, m, ctr, summon;
-    register cave_type *cave_ptr;
-
-    i = 0;
-    summon = FALSE;
-    l = m_level[MAX_R_LEV];
-    do {
-	m = randint(l) - 1;
-	ctr = 0;
-	do {
-	    if (summon_specific_okay(SUMMON_GUNDEAD, m)) {
-		ctr = 20;
-		l = 0;
-	    } else {
-		m++;
-		if (m > l)
-		    ctr = 20;
-		else
-		    ctr++;
-	    }
-	}
-	while (ctr <= 19);
-    }
-    while (l != 0);
-    do {
-	j = *y - 2 + randint(3);
-	k = *x - 2 + randint(3);
-	if (in_bounds(j, k)) {
-	    cave_ptr = &cave[j][k];
-	    if (floor_grid_bold(j, k) && (cave_ptr->m_idx == 0)) {
-		place_monster(j, k, m, FALSE);
-		summon = TRUE;
-		i = 9;
-		*y = j;
-		*x = k;
-	    }
-	}
-	i++;
-    }
-    while (i <= 9);
-    return (summon);
-}
-
-int summon_ancientd(int *y, int *x)
-int *y, *x;
-{
-    register int        i, j, k;
-    int                 l, m, ctr, summon;
-    register cave_type *cave_ptr;
-
-    i = 0;
-    summon = FALSE;
-    l = m_level[MAX_R_LEV];
-    do {
-	m = randint(l) - 1;
-	ctr = 0;
-	do {
-	    if (summon_specific_okay(SUMMON_ANCIENTD, m)) {
-		ctr = 20;
-		l = 0;
-	    } else {
-		m++;
-		if (m > l)
-		    ctr = 20;
-		else
-		    ctr++;
-	    }
-	}
-	while (ctr <= 19);
-    }
-    while (l != 0);
-    do {
-	j = *y - 2 + randint(3);
-	k = *x - 2 + randint(3);
-	if (in_bounds(j, k)) {
-	    cave_ptr = &cave[j][k];
-	    if (floor_grid_bold(j, k) && (cave_ptr->m_idx == 0)) {
-		place_monster(j, k, m, FALSE);
-		summon = TRUE;
-		i = 9;
-		*y = j;
-		*x = k;
-	    }
-	}
-	i++;
-    }
-    while (i <= 9);
+    int summon = summon_specific(y, x, SUMMON_ANT);
     return (summon);
 }
 
 int summon_hound(int *y, int *x)
 {
-    register int        i, j, k;
-    int                 l, m, ctr, summon;
-    register cave_type *cave_ptr;
+    int summon = summon_specific(y, x, SUMMON_HOUND);
+    return (summon);
+}
 
-    i = 0;
-    summon = FALSE;
-    l = m_level[MAX_R_LEV];
-    do {
-	m = randint(l) - 1;
-	ctr = 0;
-	do {
-	    if (summon_specific_okay(SUMMON_HOUND, m)) {
-		ctr = 20;
-		l = 0;
-	    } else {
-		m++;
-		if (m > l)
-		    ctr = 20;
-		else
-		    ctr++;
-	    }
-	}
-	while (ctr <= 19);
-    }
-    while (l != 0);
-    do {
-	j = *y - 2 + randint(3);
-	k = *x - 2 + randint(3);
-	if (in_bounds(j, k)) {
-	    cave_ptr = &cave[j][k];
-	    if (floor_grid_bold(j, k) && (cave_ptr->m_idx == 0)) {
-		place_monster(j, k, m, FALSE);
-		summon = TRUE;
-		i = 9;
-		*y = j;
-		*x = k;
-	    }
-	}
-	i++;
-    }
-    while (i <= 9);
+int summon_jabberwock(int *y, int *x)
+{
+    int summon = summon_specific(y, x, SUMMON_JABBER);
+    return (summon);
+}
+
+int summon_unique(int *y, int *x)
+{
+    int summon = summon_specific(y, x, SUMMON_UNIQUE);
+    return (summon);
+}
+
+int summon_wraith(int *y, int *x)
+{
+    int summon = summon_specific(y, x, SUMMON_WRAITH);
+    return (summon);
+}
+
+int summon_gundead(int *y, int *x)
+{
+    int summon = summon_specific(y, x, SUMMON_GUNDEAD);
+    return (summon);
+}
+
+int summon_ancientd(int *y, int *x)
+{
+    int summon = summon_specific(y, x, SUMMON_ANCIENTD);
     return (summon);
 }
 
