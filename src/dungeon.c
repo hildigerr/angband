@@ -202,6 +202,12 @@ static void regen_monsters(void)
  * This is the main function of this file -- it places the user on the
  * current level and processes user input until the level is completed,
  * the user dies, or the game is terminated.
+ *
+ * Note that "compact_monsters()" is much more likely to succeed
+ * here than in creatures.c, so we do it even if there are up to 10
+ * monsters slots remaining.  This greatly reduces the chances of
+ * failure during monster reproduction.  We do the compaction via
+ * "tighten_m_list()" which only compacts if space is tight.
  */ 
 void dungeon(void)
 {
@@ -1249,14 +1255,11 @@ void dungeon(void)
 	    }
 	}
 
-    /*
-     * Check the state of the monster list, and delete some monsters if the
-     * monster list is nearly full.  This helps to avoid problems in
-     * creature.c when monsters try to multiply.  Compact_monsters() is much
-     * more likely to succeed if called from here, than if called from within
-     * process_monsters().  
-     */
-	if (MAX_M_IDX - m_max < 10) compact_monsters();
+	/*** Compact the Monsters ***/
+
+	/* "Tighten" up the monster list */
+	tighten_m_list();
+
 
 	/* Resting -- Voluntary trade of moves for regeneration */
 	/* Mega-Stunned -- Unable to do anything but stagger */

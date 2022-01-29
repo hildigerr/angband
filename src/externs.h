@@ -605,6 +605,8 @@ void add_food(int);
 /* misc2.c */
 void delete_monster_idx(int);
 void delete_monster(int);
+void tighten_m_list(void);
+void wipe_m_list(void);
 int m_pop(void);
 int max_hp(byte *);
 int place_monster(int, int, int, int);
@@ -626,7 +628,6 @@ int summon_jabberwock(int *, int *);
 int summon_gundead(int *, int *);
 int summon_ancientd(int *, int *);
 int summon_hound(int *, int *);
-void compact_monsters(void);
 int get_nmons_num(int);
 int distance(int, int, int, int);
 

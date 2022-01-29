@@ -197,7 +197,7 @@ void wipe_m_list()
  * XXX Base the saving throw on a combination of
  * monster level and current "desperation".
  */
-void compact_monsters(void)
+static void compact_monsters(void)
 {
     register int           i;
     int                    cur_dis, orig;
@@ -241,6 +241,16 @@ void compact_monsters(void)
 	    }
 	}
     }
+}
+
+
+/*
+ * Allow "dungeon.c" to pre-emptively compact the monster list
+ */
+void tighten_m_list(void)
+{
+    /* If not much space left, try compacting */
+    if (MAX_M_IDX - m_max < 10) compact_monsters();
 }
 
 
