@@ -603,6 +603,7 @@ void prt_map(void);
 void add_food(int);
 
 /* misc2.c */
+void delete_monster_idx(int);
 void delete_monster(int);
 void fix1_delete_monster(int);
 void fix2_delete_monster(int);

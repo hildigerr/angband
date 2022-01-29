@@ -188,6 +188,32 @@ void fix2_delete_monster(int j)
 }
 
 
+/*
+ * Delete a monster, now if possible, later if necessary
+ *
+ * We use "hack_m_idx" to determine if the monster can be safely deleted now.
+ * The "hack_m_idx" is set only in "process_monsters()" and is always "-1"
+ * except during the execution of process_monsters().
+ */
+void delete_monster_idx(int i)
+{
+    /* Paranoia */
+    if (i < MIN_M_IDX) return;
+
+    /* This monster will be processed later */
+    if (i < hack_m_idx) {
+
+	/* Mark the monster as dead */
+	fix1_delete_monster(i);
+    }
+
+    /* This monster might as well be deleted now */
+    else {
+
+	/* Actually delete the monster */
+	delete_monster(i);
+    }
+}
 
 
 /*
