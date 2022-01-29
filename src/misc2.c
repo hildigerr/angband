@@ -98,21 +98,24 @@ void delete_monster(int j)
 
 
 /*
- * The following two procedures implement the same function as delete
- * monster. However, they are used within process_monsters(), because deleting a
- * monster while scanning the m_list causes two problems, monsters might get
- * two turns, and m_ptr/monptr might be invalid after the delete_monster.
- * Hence the delete is done in two steps. 
+ * This routine "marks" a monster to be killed later.  The obvious method
+ * is to set the hitpoints to be negative, though this is not the best method,
+ * since negative hitpoints can be "cured".  We should really have a "nuke" flag.
  *
- * force the hp negative to ensure that the monster is dead, for example, if
- * the monster was just eaten by another, it will still have positive hit
- * points 
+ * But anyway, this routine marks a monster to be deleted "later".  Currently,
+ * the algorithm involves setting "hack_m_idx" to the index of the highest
+ * monster that should be left alone.  This is done mostly in "process_monsters()",
+ * where the monsters are processed from the last monster down, and we do not
+ * want monsters that have already had a turn to replace monsters that have not
+ * had a turn yet, or they will get two turns.  So we mark monsters as "dead",
+ * and then, when it is actually their turn, we remove them.
  *
- * fix1_delete_monster does everything delete_monster does except delete the
- * monster record and reduce m_max, this is called in breathe, and a couple
- * of places in creatures.c 
+ * In fact, in general, it is a bad idea to delete "monsters" or any other type
+ * of record "mid-processing", the standard technique is to mark things as dead,
+ * and then to "garbage collect" at the end of each turn.
+ *
  */
-void fix1_delete_monster(int j)
+static void delete_monster_later(int j)
 {
     register monster_type *m_ptr;
     register int fx, fy;
@@ -146,49 +149,6 @@ void fix1_delete_monster(int j)
 
 
 /*
- * fix2_delete_monster does everything in delete_monster that wasn't done by
- * fix1_monster_delete above, this is only called in process_monsters() 
- */
-void fix2_delete_monster(int j)
-{
-    register cave_type *c_ptr;
-    register monster_type *m_ptr;
-
-    /* Paranoia */
-    if (j < MIN_M_IDX) return;
-
-    /* Get the monster */
-    m_ptr = &m_list[j];
-
-#ifdef TARGET
-    /* Targetted monster dead or compacted.      CDW */
-    if (j == target_mon) target_mode = FALSE;
-#endif
-
-    /* One less monster */
-    m_max--;
-
-#ifdef TARGET
-	/* Targetted monster moved to replace dead or compacted monster -CDW */
-	if (target_mon == m_max) target_mon = j;
-#endif
-
-    if (r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE) u_list[m_ptr->mptr].exist = 0;
-
-    /* Do structure dumping */
-    if (j != m_max) {
-	m_ptr = &m_list[m_max];
-	c_ptr = &cave[m_ptr->fy][m_ptr->fx];
-	c_ptr->m_idx = j;
-	m_list[j] = m_list[m_max];
-    }
-
-    /* Wipe the monster record */
-    m_list[m_max] = blank_monster;
-}
-
-
-/*
  * Delete a monster, now if possible, later if necessary
  *
  * We use "hack_m_idx" to determine if the monster can be safely deleted now.
@@ -204,7 +164,7 @@ void delete_monster_idx(int i)
     if (i < hack_m_idx) {
 
 	/* Mark the monster as dead */
-	fix1_delete_monster(i);
+	delete_monster_later(i);
     }
 
     /* This monster might as well be deleted now */
@@ -223,14 +183,8 @@ void wipe_m_list()
 {
     register int i;
 
-    for (i = 0; i < MAX_M_IDX; i++)
-	if (m_list[i].r_idx) delete_monster(i);
-    for (i = 0; i < MAX_M_IDX; i++) m_list[i] = blank_monster;
-
-    /* delete_unique() Kludgey Fix ~Ludwig */
-    for (i = 0; i < MAX_R_IDX; i++)
-	if (r_list[i].cflags2 & MF2_UNIQUE)
-	    u_list[i].exist = 0;
+    /* Delete the existing monsters (backwards!) */
+    for (i = m_max-1; i >= MIN_M_IDX; i--) delete_monster_idx(i);
 
     /* XXX Should already be done */
     m_max = MIN_M_IDX;
@@ -270,19 +224,10 @@ int compact_monsters(void)
 	    /* Don't compact Melkor! */
 		if (r_ptr->cflags1 & CM_WIN) continue;
 
-	    /* in case this is called from within process_monsters(), this is a
-	     * horrible hack, the m_list/process_monsters() code needs to be
-	     * rewritten 
-	     */
-		else if (hack_m_idx < i) {
-		    delete_monster(i);
-		    delete_any = TRUE;
-		} else
+		else if (hack_m_idx < i) delete_any = TRUE;
 
-		/* fix1_delete_monster() does not decrement m_max, so don't
-		 * set delete_any if this was called 
-		 */
-		    fix1_delete_monster(i);
+		/* Delete the monster */
+		delete_monster_idx(i);
 	    }
 	}
 	if (!delete_any) {

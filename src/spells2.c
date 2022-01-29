@@ -4234,10 +4234,7 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
 			    l_list[m_ptr->r_idx].r_cflags1 = treas |
 				(l_list[m_ptr->r_idx].r_cflags1 & ~CM_TREASURE);
 			}
-			if (monptr < c_ptr->m_idx)
-			    delete_monster((int)c_ptr->m_idx);
-			else
-			    fix1_delete_monster((int)c_ptr->m_idx);
+			delete_monster_idx(c_ptr->m_idx);
 		    } else {
 			(void)sprintf(out_val, pain_message((int)c_ptr->m_idx, dam),
 				      m_name);
@@ -4771,15 +4768,7 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 				l_list[m_ptr->r_idx].r_cflags1 = treas |
 				    (l_list[m_ptr->r_idx].r_cflags1 & ~CM_TREASURE);
 			    }
-			/* It ate an already processed monster.  Handle normally. */
-			    if (monptr < c_ptr->m_idx)
-				delete_monster((int)c_ptr->m_idx);
-
-/* If it eats this monster, an already processed monster will take its place,
- * causing all kinds of havoc. Delay the kill a bit.
- */
-			    else
-				fix1_delete_monster((int)c_ptr->m_idx);
+				delete_monster_idx(c_ptr->m_idx);
 			}
 		    } else if (c_ptr->m_idx == 1) {
 			dam = (dam_hp / (distance(i, j, y, x) + 1));

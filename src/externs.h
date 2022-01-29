@@ -605,8 +605,6 @@ void add_food(int);
 /* misc2.c */
 void delete_monster_idx(int);
 void delete_monster(int);
-void fix1_delete_monster(int);
-void fix2_delete_monster(int);
 int m_pop(void);
 int max_hp(byte *);
 int place_monster(int, int, int, int);

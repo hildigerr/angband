@@ -793,13 +793,10 @@ int mon_take_hit(int m_idx, int dam, int print_fear)
 	 * message appearing before "monster dies" message 
 	 */
 	m_take_hit = m_ptr->r_idx;
-	/* in case this is called from within process_monsters(), this is a horrible
-	 * hack, the m_list/process_monsters() code needs to be rewritten 
-	 */
-	if (hack_m_idx < m_idx)
-	    delete_monster(m_idx);
-	else
-	    fix1_delete_monster(m_idx);
+
+	/* Delete the monster, decrement the "current" population */
+	delete_monster_idx(m_idx);
+
 	monster_is_afraid = 0;
     } else {
 	if (m_ptr->maxhp <= 0)	   /* Then fix it! -DGK */

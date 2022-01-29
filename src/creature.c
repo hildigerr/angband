@@ -694,8 +694,8 @@ static void shatter_quake(int cy, int cx)
 				    (l_list[m_ptr->r_idx].r_cflags1 & ~CM_TREASURE);
 			    }
 
-			    if (m_idx < c_ptr->m_idx) delete_monster((int)c_ptr->m_idx);
-			    else fix1_delete_monster((int)c_ptr->m_idx);
+			    /* Delete it -- see "hack_m_idx" */
+			    delete_monster_idx(c_ptr->m_idx);
 			}
 		    }
 		}
@@ -1979,16 +1979,10 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
 #else
     			    *rcflags1 |= CM_EATS_OTHER;
 #endif
-			/* It ate an already processed monster. Handle normally. */
-			if (m_idx < c_ptr->m_idx)
-			    delete_monster((int)c_ptr->m_idx);
-		    /*
-		     * If it eats this monster, an already processed monster
-		     * will take its place, causing all kinds of havoc. 
-		     * Delay the kill a bit. 
-		     */
-			else
-			    fix1_delete_monster((int)c_ptr->m_idx);
+
+		    /* Eat the monster */
+		    delete_monster_idx(c_ptr->m_idx);
+
 		    } else
 			do_move = FALSE;
 		    }
@@ -3242,16 +3236,8 @@ int multiply_monster(int y, int x, int cr_index, int m_idx)
 		/* Check the experience level -CJS- */
 			&& r_list[cr_index].mexp >=
 			r_list[m_list[c_ptr->m_idx].r_idx].mexp) {
-		    /* It ate an already processed monster.Handle normally. */
-			if (m_idx < c_ptr->m_idx)
-			    delete_monster((int)c_ptr->m_idx);
-		    /*
-		     * If it eats this monster, an already processed mosnter
-		     * will take its place, causing all kinds of havoc. Delay
-		     * the kill a bit. 
-		     */
-			else
-			    fix1_delete_monster((int)c_ptr->m_idx);
+
+		    delete_monster_idx(c_ptr->m_idx);
 
 		    /* in case compact_monster() is called,it needs m_idx */
 			hack_m_idx = m_idx;
@@ -3400,9 +3386,6 @@ static void mon_move(int m_idx, u32b *rcflags1)
 
 	/* Hack -- if still in a wall, apply more damage, and dig out */
 	if (cave[m_ptr->fy][m_ptr->fx].fval >= MIN_WALL) {
-/* in case the monster dies, may need to call fix1_delete_monster()
- * instead of delete_monsters() 
- */
 
 	    /* XXX XXX XXX XXX The player may not have caused the rocks */
 
@@ -3526,7 +3509,13 @@ static void mon_move(int m_idx, u32b *rcflags1)
  *
  * Get rid of eaten/breathed on monsters.  Note: Be sure not to process
  * these monsters. This is necessary because we can't delete monsters
- * while scanning the m_list here.
+ * while scanning the m_list here.  See "hack_m_idx".
+ *
+ * Notice the hacks to deal with "dead" monsters that could not be deleted
+ * at the time.  See "hack_m_idx" for info.  Note that we check this at the
+ * beginning to deal with the monster having been killed by another monster
+ * appearing later in the list.  No monster can induce its own death.
+ *
  *
  * Note that this routine ASSUMES that "update_monsters()" has been called
  * every time the player changes his view or lite, and that "update_mon()"
@@ -3535,6 +3524,13 @@ static void mon_move(int m_idx, u32b *rcflags1)
  * or disappears.  This will then require minimal scans of the "monster" array.
  * Note that only "some" calls to "update_mon()" actually need to recalculate
  * the "distance" field, but they all do now for consistency.
+ *
+ * We assume that a monster, during its own "turn", can NEVER:
+ *   move in the monster array
+ *
+ * This is guaranteed by the use of "hack_m_idx" to hold the
+ * "current monster index", and by the "queuing" of monster deaths by
+ * monsters who appear "earlier" in the array than the "hack_m_idx" monster.
  *
  * It is very important to process the array "backwards", as "newly created"
  * monsters should not get a turn until the next round of processing.
@@ -3572,8 +3568,11 @@ void process_monsters(void)
 	/* Hack -- Remove dead monsters. */
 	if (m_ptr->hp < 0) {
 
-	    if (r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE) u_list[m_ptr->mptr].exist = 0;
-	    fix2_delete_monster(i);
+	    /* Hack -- allow deletion */
+	    hack_m_idx = i - 1;
+
+	    /* Kill ourself */
+	    delete_monster_idx(i);
 
 	    /* Continue */
 	    continue;
@@ -3584,6 +3583,10 @@ void process_monsters(void)
 	
 	if (k <= 0) continue;
 	
+
+	/* Hack -- This monster is now "sacred" */
+	hack_m_idx = i;
+
 	/* Get the monster race */
 	r_ptr = &r_list[m_ptr->r_idx];
 
@@ -3694,19 +3697,16 @@ void process_monsters(void)
 	    /* Okay, let the monster move */
 	    mon_move(i, &rcflags1);
 	    }
-
-		    if (m_ptr->ml) {
-			l_ptr->r_cflags1 |= rcflags1;
-		    }
-	}
-
-	if (m_ptr->hp < 0) {
-	    if (r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE) u_list[m_ptr->mptr].exist = 0;
-	    fix2_delete_monster(i);
-	    continue;
+	    if (m_ptr->ml) l_ptr->r_cflags1 |= rcflags1;
 	}
     }
+
+
+    /* Hack -- nobody is sacred now */
+    hack_m_idx = -1;
 }
+
+
 
 
 
