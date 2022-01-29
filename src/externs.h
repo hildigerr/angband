@@ -149,7 +149,9 @@ extern char *copyright[5];
 
 extern int player_uid;
 
-/* horrible hack:
+
+/*
+ * Note that "hack_m_idx" is not nearly as horrible a hack as before.
  * Needed because compact_monster() can be called from within
  * process_monsters() via place_monster() and summon_monster() 
  */

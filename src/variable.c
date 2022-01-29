@@ -14,8 +14,7 @@ cptr copyright[5] = {
     "are included in all such copies."
 };
 
-/* a horrible hack: needed because compact_monster() can be called from
-   process_monsters() via summon_monster() and place_monster() */
+
 int hack_m_idx = (-1);		/* XXX Current monster in "process_monsters()" */
 
 

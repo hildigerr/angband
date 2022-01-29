@@ -2308,11 +2308,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    msg_print(cdesc);
 	    y = char_row;
 	    x = char_col;
-	/* in case compact_monster() is called,it needs m_idx */
-	    hack_m_idx = m_idx;
 	    summon_monster(&y, &x, FALSE);
-	    hack_m_idx = (-1);
-	    update_mon((int)cave[y][x].m_idx);
 	    break;
 
 	  case 15:		   /* Summon Undead */
@@ -2321,11 +2317,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    msg_print(cdesc);
 	    y = char_row;
 	    x = char_col;
-	/* in case compact_monster() is called,it needs m_idx */
-	    hack_m_idx = m_idx;
 	    summon_undead(&y, &x);
-	    hack_m_idx = (-1);
-	    update_mon((int)cave[y][x].m_idx);
 	    break;
 
 	  case 16:		   /* Slow Person	 */
@@ -2374,11 +2366,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    msg_print(cdesc);
 	    y = char_row;
 	    x = char_col;
-	/* in case compact_monster() is called,it needs m_idx */
-	    hack_m_idx = m_idx;
 	    summon_demon(r_list[m_ptr->r_idx].level, &y, &x);
-	    hack_m_idx = (-1);
-	    update_mon((int)cave[y][x].m_idx);
 	    break;
 
 	  case 19:		   /* Summon Dragon */
@@ -2387,11 +2375,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    msg_print(cdesc);
 	    y = char_row;
 	    x = char_col;
-	/* in case compact_monster() is called,it needs m_idx */
-	    hack_m_idx = m_idx;
 	    summon_dragon(&y, &x);
-	    hack_m_idx = (-1);
-	    update_mon((int)cave[y][x].m_idx);
 	    break;
 
 	  case 20:		   /* Breath Lightning */
@@ -2758,13 +2742,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    msg_print(cdesc);
 	    y = char_row;
 	    x = char_col;
-	/* in case compact_monster() is called,it needs m_idx */
-	    for (k = 0; k < 8; k++) {
-		hack_m_idx = m_idx;
-		summon_monster(&y, &x, FALSE);
-		hack_m_idx = (-1);
-		update_mon((int)cave[y][x].m_idx);
-	    }
+	    for (k = 0; k < 8; k++) summon_monster(&y, &x, FALSE);
 	    break;
 
 	  case 51:
@@ -2927,11 +2905,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    msg_print(cdesc);
 	    y = char_row;
 	    x = char_col;
-	/* in case compact_monster() is called,it needs m_idx */
-	    hack_m_idx = m_idx;
 	    summon_angel(&y, &x);
-	    hack_m_idx = (-1);
-	    update_mon((int)cave[y][x].m_idx);
 	    break;
 
 	  case 62:
@@ -2940,13 +2914,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    msg_print(cdesc);
 	    y = char_row;
 	    x = char_col;
-	/* in case compact_monster() is called,it needs m_idx */
-	    for (k = 0; k < 6; k++) {
-		hack_m_idx = m_idx;
-		summon_spider(&y, &x);
-		hack_m_idx = (-1);
-		update_mon((int)cave[y][x].m_idx);
-	    }
+	    for (k = 0; k < 6; k++) summon_spider(&y, &x);
 	    break;
 
 	  case 63:
@@ -2955,13 +2923,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    msg_print(cdesc);
 	    y = char_row;
 	    x = char_col;
-	/* in case compact_monster() is called,it needs m_idx */
-	    for (k = 0; k < 8; k++) {
-		hack_m_idx = m_idx;
-		summon_hound(&y, &x);
-		hack_m_idx = (-1);
-		update_mon((int)cave[y][x].m_idx);
-	    }
+	    for (k = 0; k < 8; k++) summon_hound(&y, &x);
 	    break;
 
 	  case 64:
@@ -3055,19 +3017,8 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    msg_print(cdesc);
 	    y = char_row;
 	    x = char_col;
-	/* in case compact_monster() is called, it needs m_idx */
-	    for (k = 0; k < 10; k++) {
-		hack_m_idx = m_idx;
-		summon_wraith(&y, &x);
-		hack_m_idx = (-1);
-		update_mon((int)cave[y][x].m_idx);
-	    }
-	    for (k = 0; k < 7; k++) {
-		hack_m_idx = m_idx;
-		summon_gundead(&y, &x);
-		hack_m_idx = (-1);
-		update_mon((int)cave[y][x].m_idx);
-	    }
+	    for (k = 0; k < 10; k++) summon_wraith(&y, &x);
+	    for (k = 0; k < 7; k++) summon_gundead(&y, &x);
 	    break;
 
 	  case 74:		   /* Big darkness storm */
@@ -3093,13 +3044,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    msg_print(cdesc);
 	    y = char_row;
 	    x = char_col;
-	/* in case compact_monster() is called, it needs m_idx */
-	    for (k = 0; k < 8; k++) {
-		hack_m_idx = m_idx;
-		summon_reptile(&y, &x);
-		hack_m_idx = (-1);
-		update_mon((int)cave[y][x].m_idx);
-	    }
+	    for (k = 0; k < 8; k++) summon_reptile(&y, &x);
 	    break;
 
 	  case 77:		   /* Summon ants */
@@ -3108,13 +3053,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    msg_print(cdesc);
 	    y = char_row;
 	    x = char_col;
-	/* in case compact_monster() is called, it needs m_idx */
-	    for (k = 0; k < 7; k++) {
-		hack_m_idx = m_idx;
-		summon_ant(&y, &x);
-		hack_m_idx = (-1);
-		update_mon((int)cave[y][x].m_idx);
-	    }
+	    for (k = 0; k < 7; k++) summon_ant(&y, &x);
 	    break;
 
 	  case 78:		   /* Summon unique monsters */
@@ -3123,19 +3062,8 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    msg_print(cdesc);
 	    y = char_row;
 	    x = char_col;
-	/* in case compact_monster() is called, it needs m_idx */
-	    for (k = 0; k < 5; k++) {
-		hack_m_idx = m_idx;
-		summon_unique(&y, &x);
-		hack_m_idx = (-1);
-		update_mon((int)cave[y][x].m_idx);
-	    }
-	    for (k = 0; k < 4; k++) {
-		hack_m_idx = m_idx;
-		summon_jabberwock(&y, &x);
-		hack_m_idx = (-1);
-		update_mon((int)cave[y][x].m_idx);
-	    }
+	    for (k = 0; k < 5; k++) summon_unique(&y, &x);
+	    for (k = 0; k < 4; k++) summon_jabberwock(&y, &x);
 	    break;
 
 	  case 79:		   /* Summon greater undead */
@@ -3144,13 +3072,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    msg_print(cdesc);
 	    y = char_row;
 	    x = char_col;
-	/* in case compact_monster() is called, it needs m_idx */
-	    for (k = 0; k < 8; k++) {
-		hack_m_idx = m_idx;
-		summon_gundead(&y, &x);
-		hack_m_idx = (-1);
-		update_mon((int)cave[y][x].m_idx);
-	    }
+	    for (k = 0; k < 8; k++) summon_gundead(&y, &x);
 	    break;
 
 	  case 80:		   /* Summon ancient dragons */
@@ -3159,13 +3081,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    msg_print(cdesc);
 	    y = char_row;
 	    x = char_col;
-	/* in case compact_monster() is called, it needs m_idx */
-	    for (k = 0; k < 5; k++) {
-		hack_m_idx = m_idx;
-		summon_ancientd(&y, &x);
-		hack_m_idx = (-1);
-		update_mon((int)cave[y][x].m_idx);
-	    }
+	    for (k = 0; k < 5; k++) summon_ancientd(&y, &x);
 	    break;
 
 	  default:
@@ -3239,10 +3155,8 @@ int multiply_monster(int y, int x, int cr_index, int m_idx)
 
 		    delete_monster_idx(c_ptr->m_idx);
 
-		    /* in case compact_monster() is called,it needs m_idx */
-			hack_m_idx = m_idx;
 			result = place_monster(j, k, cr_index, FALSE);
-			hack_m_idx = (-1);
+
 			if (!result)
 			    return FALSE;
 			mon_tot_mult++;
@@ -3254,10 +3168,9 @@ int multiply_monster(int y, int x, int cr_index, int m_idx)
 		} else
 		/* All clear,  place a monster	  */
 		{
-		/* in case compact_monster() is called,it needs m_idx */
-		    hack_m_idx = m_idx;
+
 		    result = place_monster(j, k, cr_index, FALSE);
-		    hack_m_idx = (-1);
+
 		    if (!result)
 			return FALSE;
 		    mon_tot_mult++;
@@ -3390,10 +3303,7 @@ static void mon_move(int m_idx, u32b *rcflags1)
 	    /* XXX XXX XXX XXX The player may not have caused the rocks */
 
 	    /* Apply damage, check for death */
-	    hack_m_idx = m_idx;
-	    i = mon_take_hit(m_idx, damroll(8, 8), FALSE);
-	    hack_m_idx = (-1);
-	    if (i >= 0) {
+	    if (mon_take_hit(m_idx, damroll(8, 8), FALSE)) {
 		msg_print("You hear a scream muffled by rock!");
 	    }
 	    else {
