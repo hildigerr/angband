@@ -1416,6 +1416,115 @@ int summon_monster(int *yp, int *xp, int slp)
 
 
 /*
+ * The things we can summon with the function below
+ */
+
+#define SUMMON_UNDEAD	11
+#define SUMMON_DEMON	12
+#define SUMMON_DRAGON	13
+#define SUMMON_REPTILE	14
+#define SUMMON_SPIDER	15
+#define SUMMON_ANGEL	16
+#define SUMMON_ANT	17
+#define SUMMON_HOUND	18
+#define SUMMON_JABBER	19
+#define SUMMON_UNIQUE	31
+#define SUMMON_WRAITH	32
+#define SUMMON_GUNDEAD	51
+#define SUMMON_ANCIENTD	52
+
+
+/*
+ * Hack -- in summon_specific() below, if the type is SUMMON_DEMON,
+ * do not accept any demon whose level exceeds "summon_level"
+ */
+static int summon_level;
+
+
+/* 
+ * Check if monster race "m" is "okay" for summon type "type"
+ */
+static bool summon_specific_okay(int type, int m)
+{
+    bool okay = FALSE;
+    
+    /* Check our requirements */
+    switch (type) {
+
+	    case SUMMON_UNDEAD:
+		okay = ((r_list[m].cflags2 & MF2_UNDEAD) &&
+		    !(r_list[m].cflags2 & MF2_UNIQUE) &&
+		    (r_list[m].level < dun_level + 5));
+		break;
+
+	    case SUMMON_DEMON:
+		okay = ((r_list[m].cflags2 & MF2_DEMON) &&
+		    !(r_list[m].cflags2 & MF2_UNIQUE) &&
+		    (r_list[m].level <= summon_level));
+		break;
+
+	    case SUMMON_DRAGON:
+		okay = ((r_list[m].cflags2 & MF2_DRAGON) &&
+		        !(r_list[m].cflags2 & MF2_UNIQUE));
+		break;
+
+	    case SUMMON_REPTILE:
+		okay = ((r_list[m].r_char == 'R') &&
+			!(r_list[m].cflags2 & MF2_UNIQUE));
+		break;
+
+	    case SUMMON_SPIDER:
+		okay = ((r_list[m].r_char == 'S') &&
+			!(r_list[m].cflags2 & MF2_UNIQUE));
+		break;
+
+	    case SUMMON_ANGEL:
+		okay = ((r_list[m].r_char == 'A') &&
+			!(r_list[m].cflags2 & MF2_UNIQUE));
+		break;
+
+	    case SUMMON_ANT:
+		okay = ((r_list[m].r_char == 'a') &&
+			!(r_list[m].cflags2 & MF2_UNIQUE));
+		break;
+
+	    case SUMMON_HOUND:
+		okay = (((r_list[m].r_char == 'C') || (r_list[m].r_char == 'Z')) &&
+			!(r_list[m].cflags2 & MF2_UNIQUE));
+		break;
+
+	    case SUMMON_JABBER:
+		okay = ((r_list[m].r_char == 'J') &&
+		        !(r_list[m].cflags2 & MF2_UNIQUE));
+		break;
+
+	    case SUMMON_UNIQUE:
+		okay = (!(r_list[m].r_char == 'P') &&
+			(r_list[m].cflags2 & MF2_UNIQUE));
+		break;
+
+	    case SUMMON_WRAITH:
+		okay = ((r_list[m].r_char == 'W') &&
+			(r_list[m].cflags2 & MF2_UNIQUE));
+		break;
+
+	    case SUMMON_GUNDEAD:
+		okay = ((r_list[m].r_char == 'L') ||
+			(r_list[m].r_char == 'V') ||
+			(r_list[m].r_char == 'W'));
+		break;
+
+	    case SUMMON_ANCIENTD:
+		okay = (r_list[m].r_char == 'D');
+		break;
+    }
+
+    /* Return the result */
+    return (okay);
+}
+
+
+/*
  * Places undead adjacent to given location
  */
 int summon_undead(int *y, int *x)
@@ -1431,8 +1540,7 @@ int summon_undead(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if ((r_list[m].cflags2 & MF2_UNDEAD) && !(r_list[m].cflags2 & MF2_UNIQUE) &&
-		(r_list[m].level < dun_level + 5)) {
+	    if (summon_specific_okay(SUMMON_UNDEAD, m)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1471,6 +1579,8 @@ int summon_demon(int lev, int *y, int *x)
     int                 l, m, ctr, summon;
     register cave_type *cave_ptr;
 
+    summon_level = lev;
+
     i = 0;
     summon = FALSE;
     l = m_level[MAX_R_LEV];
@@ -1478,8 +1588,7 @@ int summon_demon(int lev, int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (r_list[m].cflags2 & MF2_DEMON && !(r_list[m].cflags2 & MF2_UNIQUE) &&
-		(r_list[m].level <= lev)) {
+	    if (summon_specific_okay(SUMMON_DEMON, m)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1522,7 +1631,7 @@ int summon_dragon(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (r_list[m].cflags2 & MF2_DRAGON && !(r_list[m].cflags2 & MF2_UNIQUE)) {
+	    if (summon_specific_okay(SUMMON_DRAGON, m)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1569,7 +1678,7 @@ int summon_wraith(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (r_list[m].r_char == 'W' && (r_list[m].cflags2 & MF2_UNIQUE)) {
+	    if (summon_specific_okay(SUMMON_WRAITH, m)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1615,7 +1724,7 @@ int summon_reptile(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (r_list[m].r_char == 'R' && !(r_list[m].cflags2 & MF2_UNIQUE)) {
+	    if  (summon_specific_okay(SUMMON_REPTILE, m)){
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1661,7 +1770,7 @@ int summon_spider(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (r_list[m].r_char == 'S' && !(r_list[m].cflags2 & MF2_UNIQUE)) {
+	    if (summon_specific_okay(SUMMON_SPIDER, m)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1707,7 +1816,7 @@ int summon_angel(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (r_list[m].r_char == 'A' && !(r_list[m].cflags2 & MF2_UNIQUE)) {
+	    if (summon_specific_okay(SUMMON_ANGEL, m)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1751,7 +1860,7 @@ int summon_ant(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (r_list[m].r_char == 'a' && !(r_list[m].cflags2 & MF2_UNIQUE)) {
+	    if (summon_specific_okay(SUMMON_ANT, m)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1797,7 +1906,7 @@ int summon_unique(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (!(r_list[m].r_char == 'P') && (r_list[m].cflags2 & MF2_UNIQUE)) {
+	    if (summon_specific_okay(SUMMON_UNIQUE, m)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1843,7 +1952,7 @@ int summon_jabberwock(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (r_list[m].r_char == 'J' && !(r_list[m].cflags2 & MF2_UNIQUE)) {
+	    if (summon_specific_okay(SUMMON_JABBER, m)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1889,8 +1998,7 @@ int summon_gundead(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if ((r_list[m].r_char == 'L') || (r_list[m].r_char == 'V')
-		|| (r_list[m].r_char == 'W')) {
+	    if (summon_specific_okay(SUMMON_GUNDEAD, m)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1937,7 +2045,7 @@ int *y, *x;
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if (r_list[m].r_char == 'D') {
+	    if (summon_specific_okay(SUMMON_ANCIENTD, m)) {
 		ctr = 20;
 		l = 0;
 	    } else {
@@ -1983,8 +2091,7 @@ int summon_hound(int *y, int *x)
 	m = randint(l) - 1;
 	ctr = 0;
 	do {
-	    if ((r_list[m].r_char == 'C' || r_list[m].r_char == 'Z')
-		&& !(r_list[m].cflags2 & MF2_UNIQUE)) {
+	    if (summon_specific_okay(SUMMON_HOUND, m)) {
 		ctr = 20;
 		l = 0;
 	    } else {
