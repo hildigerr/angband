@@ -626,7 +626,7 @@ int summon_jabberwock(int *, int *);
 int summon_gundead(int *, int *);
 int summon_ancientd(int *, int *);
 int summon_hound(int *, int *);
-int compact_monsters(void);
+void compact_monsters(void);
 int get_nmons_num(int);
 int distance(int, int, int, int);
 

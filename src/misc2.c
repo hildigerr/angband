@@ -192,26 +192,34 @@ void wipe_m_list()
 
 
 /*
- * Compact monsters	-RAK-
+ * Attempt to Compact some monsters (safely)	-RAK-
  *
- * Return TRUE if any monsters were deleted, FALSE if could not delete any
- * monsters. 
+ * XXX Base the saving throw on a combination of
+ * monster level and current "desperation".
  */
-int compact_monsters(void)
+void compact_monsters(void)
 {
     register int           i;
-    int                    cur_dis, delete_any;
+    int                    cur_dis, orig;
     monster_type	*m_ptr;
     monster_race	*r_ptr;
 
     msg_print("Compacting monsters...");
 
+    /* Remember how many monsters we started with */
+    orig = m_max;
+
     /* Start 66 (that is, 72-6) units away */
     cur_dis = 66;
-    delete_any = FALSE;
 
     /* Keep going until someone is deleted */
-    while (!delete_any) {
+    while (m_max == orig) {
+
+	/* Nothing to compact (!!!) */
+	if (cur_dis < 0) return;
+
+	/* Come closer to the player */
+	cur_dis -= 6;
 
 	/* Check all the monsters */
 	for (i = m_max - 1; i >= MIN_M_IDX; i--) {
@@ -219,26 +227,20 @@ int compact_monsters(void)
 	    m_ptr = &m_list[i];
 	    r_ptr = &r_list[m_ptr->r_idx];
 
-	    if ((cur_dis < m_ptr->cdis) && (randint(3) == 1)) {
+	    /* Ignore nearby monsters */
+	    if (m_ptr->cdis < cur_dis) continue;
 
 	    /* Don't compact Melkor! */
-		if (r_ptr->cflags1 & CM_WIN) continue;
+	    if (r_ptr->cflags1 & CM_WIN) continue;
 
-		else if (hack_m_idx < i) delete_any = TRUE;
+	    /* All monsters get a saving throw */
+	    if (randint(3) == 1) {
 
 		/* Delete the monster */
 		delete_monster_idx(i);
 	    }
 	}
-	if (!delete_any) {
-	    cur_dis -= 6;
-	/* can't do anything else but abort, if can't delete any monsters */
-	    if (cur_dis < 0)
-		return FALSE;
-	}
     }
-    
-    return TRUE;
 }
 
 
@@ -247,9 +249,13 @@ int compact_monsters(void)
  */
 int m_pop(void)
 {
-    if (m_max == MAX_M_IDX)
-	if (!compact_monsters())
-	    return (-1);
+    /* Out of space?  Compact. */
+    if (m_max == MAX_M_IDX) compact_monsters();
+
+    /* XXX XXX XXX XXX Out of memory! */    
+    if (m_max == MAX_M_IDX) return (-1);
+
+    /* Return (and increase) free slot */
     return (m_max++);
 }
 

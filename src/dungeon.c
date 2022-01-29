@@ -1256,8 +1256,7 @@ void dungeon(void)
      * more likely to succeed if called from here, than if called from within
      * process_monsters().  
      */
-	if (MAX_M_IDX - m_max < 10)
-	    (void)compact_monsters();
+	if (MAX_M_IDX - m_max < 10) compact_monsters();
 
 	/* Resting -- Voluntary trade of moves for regeneration */
 	/* Mega-Stunned -- Unable to do anything but stagger */
