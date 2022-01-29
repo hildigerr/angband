@@ -13,7 +13,6 @@
 #include "angband.h"
 
 
-static int  check_mon_lite(int, int);
 static void get_moves(int, int *);
 static int  monster_critical(int, int, int);
 static void make_attack(int);
@@ -285,20 +284,6 @@ int movement_rate(int monnum)
    *  monster should get an "extra" move.  It also prevents "clumps". -CFT
    */
   return ((ms / ps) + (((i*tm) % ps) < tm));
-}
-
-/* Makes sure a new creature gets lit up.			-CJS- */
-static int check_mon_lite(int y, int x)
-{
-    register int m_idx;
-
-    m_idx = cave[y][x].m_idx;
-    if (m_idx <= 1)
-	return FALSE;
-    else {
-	update_mon(m_idx);
-	return m_list[m_idx].ml;
-    }
 }
 
 
@@ -2964,7 +2949,10 @@ int multiply_monster(int y, int x, int cr_index, int m_idx)
 			if (!result)
 			    return FALSE;
 			mon_tot_mult++;
-			return check_mon_lite(j, k);
+			/* Makes sure a new creature gets lit up. -CJS- */
+			if (c_ptr->m_idx <= 1) return FALSE;
+			update_mon(c_ptr->m_idx);
+			return m_list[c_ptr->m_idx].ml;
 		    }
 		} else
 		/* All clear,  place a monster	  */
@@ -2976,7 +2964,10 @@ int multiply_monster(int y, int x, int cr_index, int m_idx)
 		    if (!result)
 			return FALSE;
 		    mon_tot_mult++;
-		    return check_mon_lite(j, k);
+		    /* Makes sure a new creature gets lit up. -CJS- */
+		    if (c_ptr->m_idx <= 1) return FALSE;
+		    update_mon(c_ptr->m_idx);
+		    return m_list[c_ptr->m_idx].ml;
 		}
 	    }
 	}
