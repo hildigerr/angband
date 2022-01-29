@@ -423,7 +423,7 @@ static void repl_spot(int y, int x, int typ)
     if (c_ptr->i_idx != 0) delete_object(y, x);
 
     /* Delete any monster at that location */
-    if (c_ptr->m_idx > 1) delete_monster((int)c_ptr->m_idx);
+    delete_monster(y, x);
 }
 
 

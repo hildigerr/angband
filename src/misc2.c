@@ -41,7 +41,7 @@ static int test_place(int y, int x)
 /*
  * Deletes a monster entry from the level.
  */
-void delete_monster(int j)
+static void delete_monster_fully(int j)
 {
     register cave_type *c_ptr;
     register monster_type *m_ptr;
@@ -171,9 +171,32 @@ void delete_monster_idx(int i)
     else {
 
 	/* Actually delete the monster */
-	delete_monster(i);
+	delete_monster_fully(i);
     }
 }
+
+
+/*
+ * Delete the monster, if any, at a given location
+ */
+void delete_monster(int y, int x)
+{
+    cave_type *c_ptr;
+
+    /* Paranoia */
+    if (!in_bounds(y,x)) return;
+
+    /* Check the grid */
+    c_ptr = &cave[y][x];
+
+    /* Hack -- no such monster */
+    if (c_ptr->m_idx < MIN_M_IDX) return;
+
+    /* Delete the monster */
+    delete_monster_idx(c_ptr->m_idx);
+}
+
+
 
 
 /*

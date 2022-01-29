@@ -604,7 +604,7 @@ void add_food(int);
 
 /* misc2.c */
 void delete_monster_idx(int);
-void delete_monster(int);
+void delete_monster(int, int);
 void tighten_m_list(void);
 void wipe_m_list(void);
 int m_pop(void);

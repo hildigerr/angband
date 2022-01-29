@@ -67,7 +67,7 @@ static int poly(int mnum)
     if ((k +=r_idx)>MAX_R_LEV) k = MAX_R_LEV;
 
     /* "Kill" the monster */
-    delete_monster(mnum);
+    delete_monster_idx(mnum);
 
     do {
 	r_idx = randint(m_level[k]-m_level[j])-1+m_level[j];  /* new creature index */
@@ -279,7 +279,7 @@ int mass_genocide(int spell)
 	    (wizard && (m_ptr->cdis <= MAX_SIGHT))) {
 
 	    /* Delete the monster */
-	    delete_monster(i);
+	    delete_monster_idx(i);
 
 	    /* Cute visual feedback as the player slowly dies */
 	    if (spell) {
@@ -340,7 +340,7 @@ int genocide(int spell)
 		/* Genocide it */
 		else {
 		    /* Delete the monster */
-		    delete_monster(i);
+		    delete_monster_idx(i);
 
 		    if (spell) {
 			take_hit(randint(4), "the strain of casting Genocide");
@@ -1098,8 +1098,7 @@ static void replace_spot(int y, int x, int typ)
 	(void)delete_object(y, x);
 
     /* Delete the monster (if any) */
-    if (c_ptr->m_idx > 1)
-	delete_monster((int)c_ptr->m_idx);
+    delete_monster(y, x);
 }
 
 
