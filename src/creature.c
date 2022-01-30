@@ -1808,24 +1808,39 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
 	    break;		/* don't try to actually do anything -CWS */
 	}
 
+	/* Floor is open? */
+	if (floor_grid_bold(newy, newx)) {
 
-	    if (floor_grid_bold(newy, newx))
-		do_move = TRUE;
+	    do_move = TRUE;
+	}
+
 	/* Creature moves through walls? */
-	    else if (r_ptr->cflags1 & CM_PHASE) {
-		do_move = TRUE;
-		*rcflags1 |= CM_PHASE;
-	    } else if (r_list[m_ptr->r_idx].cflags2 & MF2_BREAK_WALL) {
-	    /* Crunch up those Walls Morgoth and Umber Hulks!!!! */
+	else if (r_ptr->cflags1 & CM_PHASE) {
 
-		do_move = TRUE;
-		l_list[m_ptr->r_idx].r_cflags2 |= MF2_BREAK_WALL;
-		if ((i_ptr->tval == TV_CLOSED_DOOR) ||
-		    (i_ptr->tval == TV_SECRET_DOOR)) {	/* break the door -CFT  */
-		    invcopy(i_ptr, OBJ_OPEN_DOOR);
-		    i_ptr->pval = (-1);          /* make it broken, not just open */
-		    c_ptr->fval = CORR_FLOOR;	        /* change floor setting */
-		    lite_spot(newy, newx);	        /* show broken door     */
+	    do_move = TRUE;
+	    
+	    *rcflags1 |= CM_PHASE;
+	}
+
+	/* Crunch up those Walls Morgoth and Umber Hulks!!!! */
+	else if (r_list[m_ptr->r_idx].cflags2 & MF2_BREAK_WALL) {
+
+	    do_move = TRUE;
+
+	    /* XXX Hack -- assume the player can see it */
+	    l_ptr->r_cflags2 |= MF2_BREAK_WALL;
+
+	    /* Hack -- break open doors */
+	    if ((i_ptr->tval == TV_CLOSED_DOOR) ||
+		(i_ptr->tval == TV_SECRET_DOOR)) {
+
+		/* Hack -- break the door */
+		invcopy(i_ptr, OBJ_OPEN_DOOR);
+		i_ptr->pval = (-1);
+		c_ptr->fval = CORR_FLOOR;
+
+		/* Redraw door */
+		lite_spot(newy, newx);
 
 		/* Message */
 		msg_print("You hear a door burst open!");
@@ -1951,18 +1966,21 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
 		    if (r_ptr->cflags1 & CM_ATTACK_ONLY)
 			do_turn = TRUE;
 		}
-	    }
+	}
+
 
 	/* Process player or OTHER monster in the way */
-	if (do_move)
-		if (c_ptr->m_idx == 1) {
+	if (do_move) {
+
+	    /* Is the player in the next grid? */
+	    if (c_ptr->m_idx == 1) {
+
 		/*
 		 * if the monster is not lit, must call update_mon, it may be
 		 * faster than character, and hence could have just moved
 		 * next to character this same turn 
 		 */
-		    if (!m_ptr->ml)
-			update_mon(m_idx);
+		    if (!m_ptr->ml) update_mon(m_idx);
 
 		/* Do the attack */
 		make_attack(m_idx);
@@ -1979,18 +1997,21 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
 
 		/* Creature eats other creatures? */
 #ifdef ATARIST_MWC
-		    if ((r_ptr->cflags1 & (holder = CM_EATS_OTHER)) &&
+		if ((r_ptr->cflags1 & (holder = CM_EATS_OTHER)) &&
 #else
-		    if ((r_ptr->cflags1 & CM_EATS_OTHER) &&
+		if ((r_ptr->cflags1 & CM_EATS_OTHER) &&
 #endif
-			(r_list[m_ptr->r_idx].mexp >
-			 r_list[m_list[c_ptr->m_idx].r_idx].mexp)) {
-			if (m_list[c_ptr->m_idx].ml)
+		    (r_list[m_ptr->r_idx].mexp >
+		     r_list[m_list[c_ptr->m_idx].r_idx].mexp)) {
+
+		    /* If the OTHER monster is visible... */
+		    if (m_list[c_ptr->m_idx].ml) {
 #ifdef ATARIST_MWC
-			    *rcflags1 |= holder;
+			*rcflags1 |= holder;
 #else
-    			    *rcflags1 |= CM_EATS_OTHER;
+			*rcflags1 |= CM_EATS_OTHER;
 #endif
+		    }
 
 		    /* Eat the monster */
 		    delete_monster_idx(c_ptr->m_idx);
@@ -2000,6 +2021,7 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
 		    do_move = FALSE;
 		}
 	    }
+	}
 
 	/* Creature has been allowed move */
 	if (do_move) {
@@ -2021,9 +2043,9 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
 
 	    /* Pick up or eat an object	*/
 #ifdef ATARIST_MWC
-		if (r_ptr->cflags1 & (holder = CM_PICKS_UP))
+	    if (r_ptr->cflags1 & (holder = CM_PICKS_UP))
 #else
-		if (r_ptr->cflags1 & CM_PICKS_UP)
+	    if (r_ptr->cflags1 & CM_PICKS_UP)
 #endif
 		{
 
@@ -2031,15 +2053,16 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
 		c_ptr = &cave[newy][newx];
 		i_ptr = &i_list[c_ptr->i_idx];
 
-		    if ((c_ptr->i_idx != 0) && (i_ptr->tval <= TV_MAX_OBJECT)) {
+		if ((c_ptr->i_idx != 0) && (i_ptr->tval <= TV_MAX_OBJECT)) {
 
 		    /* Prevent monsters from picking up certain objects */
 		    u32b flg = 0L;
 
+		    /* The monster TRIES to pick things up */
 #ifdef ATARIST_MWC
-			*rcflags1 |= holder;
+		    *rcflags1 |= holder;
 #else
-			*rcflags1 |= CM_PICKS_UP;
+		    *rcflags1 |= CM_PICKS_UP;
 #endif
 
 			/* React to objects that hurt the monster */
@@ -2052,31 +2075,31 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
 			if (i_ptr->flags2 & TR1_SLAY_ORC) flg |= MF2_ORC;
 
 		    /* if artifact, or wearable & hurts this monster -CWS */
-			if ((i_ptr->flags2 & TR_ARTIFACT) ||
+		    if ((i_ptr->flags2 & TR_ARTIFACT) ||
 			    ( (i_ptr->tval >= TV_MIN_WEAR) &&
 			      (i_ptr->tval <= TV_MAX_WEAR) &&
 			      (r_ptr->cflags2 & flg) )) {
 
 /* FIXME: should use new line-splitting code */
 
-			    vtype               m_name, out_val, i_name;
+			vtype               out_val, i_name;
 			    int                 ii, split = (-1);
 
 			    update_mon(m_idx);	/* make sure ml see right -CFT */
-			    if ((m_ptr->ml) && los(char_row, char_col, m_ptr->fy,
-						   m_ptr->fx)) {
-			    /* if we can see it, tell us what happened -CFT */
+
+			/* Can the player "see" the grid? */
+			if ((m_ptr->ml) && los(char_row, char_col, m_ptr->fy, m_ptr->fx)) {
+
 				monster_name(m_name, m_ptr);
 
 			    /* Acquire the object name */
 			    objdes(i_name, &(i_list[c_ptr->i_idx]), TRUE);
 
-				sprintf(out_val,
-					"%s tries to pick up %s, but stops suddenly!",
-					m_name, i_name);
+				sprintf(out_val, "%s tries to pick up %s, but stops suddenly!", m_name, i_name);
+
+			    /* Compose, split, and dump a message */
 				for (ii = 0; ii < 72 && out_val[ii]; ii++)
-				    if (out_val[ii] == ' ')
-					split = ii;
+				    if (out_val[ii] == ' ') split = ii;
 				if ((ii > 71) && (split != (-1))) {
 				/* then we should probably split it -CFT */
 				    out_val[split] = 0;
@@ -2086,16 +2109,16 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
 			   /* if ii <= 71, then it'll fit nicely in 1 line.
 			    * Or, we found no space to split at... -CFT */
 				    msg_print(out_val);
-			    } /* if can see */
 			}
+		    }
 
 		    /* Let the creature "eat" it */
 		    else {
 			delete_object(newy, newx);
 		    }
-		    }
 		}
-	    }
+		}
+	}
     }
 }
 
