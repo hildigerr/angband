@@ -1760,7 +1760,6 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
     u32b              holder;
 #endif
 
-    i = 0;
     do_turn = FALSE;
     do_move = FALSE;
 
@@ -1769,7 +1768,11 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
     m_ptr = &m_list[m_idx];
     movebits = r_list[m_ptr->r_idx].cflags1;
 
-    do {
+
+    /* Take an array of five directions to try */
+    /* XXX We should terminate the array with zero */
+    /* Or pass the number of directions as an argument */
+    for (i = 0; !do_turn && (i < 5); i++) {
 
 	/* Get the position of the i'th move */
 	newy = m_ptr->fy;
@@ -1781,6 +1784,10 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
 
 	/* Access that cave grid's contents */
 	i_ptr = &i_list[c_ptr->i_idx];
+
+
+	/* XXX Ignore requests to move through boundary walls */
+	if (c_ptr->fval == BOUNDARY_WALL) continue;
 
 
 	if ((i == 4) && (m_ptr->monfear) &&  /* cornered (or things in the way!) -CWS */
@@ -1796,8 +1803,7 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
 	    break;		/* don't try to actually do anything -CWS */
 	}
 
-	if (c_ptr->fval != BOUNDARY_WALL) {
-	/* Floor is open?		   */
+
 	    if (floor_grid_bold(newy, newx))
 		do_move = TRUE;
 	/* Creature moves through walls? */
@@ -1822,9 +1828,10 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
 	    }
 
 	    /* Smash through walls */
-	    else
+	    else {
 		(void)twall(newy, newx, 1, 0);
 	    }
+	}
 
 	/* Creature can open doors? */
 	else if (c_ptr->i_idx) {
@@ -1982,10 +1989,12 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
 
 		    /* Eat the monster */
 		    delete_monster_idx(c_ptr->m_idx);
+		}
 
-		    } else
-			do_move = FALSE;
-		    }
+		else {
+		    do_move = FALSE;
+		}
+	    }
 
 	/* Creature has been allowed move */
 	if (do_move) {
@@ -2017,8 +2026,7 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
 		c_ptr = &cave[newy][newx];
 		i_ptr = &i_list[c_ptr->i_idx];
 
-		    if ((c_ptr->i_idx != 0)
-			&& (i_ptr->tval <= TV_MAX_OBJECT)) {
+		    if ((c_ptr->i_idx != 0) && (i_ptr->tval <= TV_MAX_OBJECT)) {
 
 		    /* Prevent monsters from picking up certain objects */
 		    u32b flg = 0L;
@@ -2083,11 +2091,7 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
 		    }
 		}
 	    }
-        }
-	i++;
-    /* Up to 5 attempts at moving,   give up.	  */
     }
-	while ((!do_turn) && (i < 5));
 }
 
 
