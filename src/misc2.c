@@ -254,7 +254,7 @@ static void compact_monsters(void)
 	    if (m_ptr->cdis < cur_dis) continue;
 
 	    /* Don't compact Melkor! */
-	    if (r_ptr->cflags1 & CM_WIN) continue;
+	    if (r_ptr->cflags1 & MF1_WINNER) continue;
 
 	    /* All monsters get a saving throw */
 	    if (randint(3) == 1) {

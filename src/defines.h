@@ -492,35 +492,6 @@
 #define CH_EXPLODE      0x00000080L
 #define CH_SUMMON       0x00000100L
 
-/* definitions for creatures, cflags1 field */
-#define CM_ALL_MV_FLAGS 0x0000001FL
-#define CM_ATTACK_ONLY  0x00000001L
-#define CM_MOVE_NORMAL  0x00000002L
-
-#define CM_RANDOM_MOVE  0x0000001CL
-#define CM_20_RANDOM    0x00000004L
-#define CM_40_RANDOM    0x00000008L
-#define CM_75_RANDOM    0x00000010L
-
-#define CM_SPECIAL      0x003F0000L
-#define CM_INVISIBLE    0x00010000L
-#define CM_OPEN_DOOR    0x00020000L
-#define CM_PHASE        0x00040000L
-#define CM_EATS_OTHER   0x00080000L
-#define CM_PICKS_UP     0x00100000L
-#define CM_MULTIPLY     0x00200000L
-
-#define CM_CARRY_OBJ    0x01000000L
-#define CM_CARRY_GOLD   0x02000000L
-#define CM_TREASURE     0x7C000000L
-#define CM_TR_SHIFT     26              /* used for recall of treasure */
-#define CM_60_RANDOM    0x04000000L
-#define CM_90_RANDOM    0x08000000L
-#define CM_1D2_OBJ      0x10000000L
-#define CM_2D2_OBJ      0x20000000L
-#define CM_4D2_OBJ      0x40000000L
-#define CM_WIN          0x80000000L
-
 /* creature spell definitions */
 #define CS_SPELLS       0xFF07FFF0L
 #define CS_TEL_SHORT    0x00000010L
@@ -1028,6 +999,17 @@
  * Adaptation of the old monster.h file
  *
  * Definitions of various monster flags
+ *
+ * Note that MF1_WINNER is used to see if the monster will drop
+ * distinguished objects, while MF2_QUESTOR is used to see if
+ * killing the monster satisfies any special quest, including
+ * the one that wins the game.  That is, you win the game when
+ * you manage to kill the last Quest Monster.
+ *
+ * Note that the code has been simplified quite a lot by first requiring
+ * that the "WINNER" Monster be treated as a "Quest", and thus be set as
+ * "QUESTOR".  Now the "WINNER" flag means only that he drops special stuff.
+ * While the "QUESTOR" flag, among other things, means never out of depth.
  */
 
 
@@ -1173,6 +1155,17 @@
 /*
  * The "recall" of monster memory is a MESS
  */
+
+/* Hack -- scan for "movement" */
+#define CM1_ALL_MV_FLAGS 0x0000001FL
+#define CM1_RANDOM_MOVE  0x0000001CL
+
+/* Hack -- scan for "special movement" */
+#define CM1_SPECIAL      0x003F0000L
+
+/* Hack -- used to "count" treasures */
+#define CM1_TREASURE     0x7C000000L
+#define CM1_TR_SHIFT     26
 
 /* Hack -- used to "count" spell attacks */
 #define CS1_FREQ        0x0000000FL

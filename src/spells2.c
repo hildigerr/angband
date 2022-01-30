@@ -114,10 +114,10 @@ int build_wall(int dir, int y, int x)
 		/* stop the wall building */
 		flag = TRUE;
 
-		if (!(r_ptr->cflags1 & CM_PHASE)) {
+		if (!(r_ptr->cflags1 & MF1_THRO_WALL)) {
 
 		    /* monster does not move, can't escape the wall */
-		    if (r_ptr->cflags1 & CM_ATTACK_ONLY) {
+		    if (r_ptr->cflags1 & MF1_MV_ONLY_ATT) {
 			damage = 250;
 		    }
 		    else {
@@ -274,7 +274,7 @@ int mass_genocide(int spell)
 	r_ptr = &r_list[m_ptr->r_idx];
 
 	if (((m_ptr->cdis <= MAX_SIGHT) &&
-	     ((r_ptr->cflags1 & CM_WIN) == 0) &&
+	     ((r_ptr->cflags1 & MF1_WINNER) == 0) &&
 	     (!(r_ptr->cflags2 & MF2_UNIQUE))) ||
 	    (wizard && (m_ptr->cdis <= MAX_SIGHT))) {
 
@@ -324,7 +324,7 @@ int genocide(int spell)
 	    if (r_list[m_ptr->r_idx].r_char == typ) {
 
 		/* Cannot genocide a Quest Monster */
-		if ((r_ptr->cflags1 & CM_WIN)) {
+		if ((r_ptr->cflags1 & MF1_WINNER)) {
 
 			/* genocide is a powerful spell, so we will let the */
 			/* player know the names of the creatures he did not */
@@ -478,7 +478,7 @@ int mass_poly()
 	m_ptr = &m_list[i];
 	if (m_ptr->cdis <= MAX_SIGHT) {
 	    r_ptr = &r_list[m_ptr->r_idx];
-	    if (((r_ptr->cflags1 & CM_WIN) == 0) && !(r_ptr->cflags2 & MF2_UNIQUE)) {
+	    if (((r_ptr->cflags1 & MF1_WINNER) == 0) && !(r_ptr->cflags2 & MF2_UNIQUE)) {
 		if (poly(i)) mass = TRUE;
 	    }
 	}
@@ -673,12 +673,12 @@ void earthquake(void)
 		    m_ptr = &m_list[c_ptr->m_idx];
 		    r_ptr = &r_list[m_ptr->r_idx];
 
-		    if (!(r_ptr->cflags1 & CM_PHASE) &&
+		    if (!(r_ptr->cflags1 & MF1_THRO_WALL) &&
 			!(r_ptr->cflags2 & MF2_BREAK_WALL)) {
 
 			/* monster can not move to escape the wall */
 			if ((movement_rate(c_ptr->m_idx) == 0) ||
-			    (r_ptr->cflags1 & CM_ATTACK_ONLY)) {
+			    (r_ptr->cflags1 & MF1_MV_ONLY_ATT)) {
 			    kill = TRUE;
 			}
 
@@ -829,7 +829,7 @@ int probing(void)
 
 	    /* let's make probing do good things to the monster memory -CWS */
 	    l_ptr->r_cflags2 = r_ptr->cflags2;
-	    l_ptr->r_cflags1 = (r_ptr->cflags1 & ~CM_TREASURE);
+	    l_ptr->r_cflags1 = (r_ptr->cflags1 & ~CM1_TREASURE);
 
 	    /* Probe worked */
 	    probe = TRUE;
@@ -2242,7 +2242,7 @@ int detect_invisible()
 	m_ptr = &m_list[i];
 	r_ptr = &r_list[m_ptr->r_idx];
 	if (panel_contains(m_ptr->fy, m_ptr->fx) &&
-	    (r_ptr->cflags1 & CM_INVISIBLE )) {
+	    (r_ptr->cflags1 & MF1_MV_INVIS )) {
 
 	    /* Draw the monster (even if invisible) */
 	    m_ptr->ml = TRUE;
@@ -2384,7 +2384,7 @@ int detect_monsters(void)
 	m_ptr = &m_list[i];
 
 	if (panel_contains((int)m_ptr->fy, (int)m_ptr->fx) &&
-	    ((CM_INVISIBLE & r_list[m_ptr->r_idx].cflags1) == 0)) {
+	    ((MF1_MV_INVIS & r_list[m_ptr->r_idx].cflags1) == 0)) {
 
 	    /* Draw the monster (unless invisible) */
 	    m_ptr->ml = TRUE;
@@ -4226,12 +4226,12 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
 					      r_ptr->cflags1, 0, 0);
 			coin_type = 0;
 			if (m_ptr->ml || (r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE)) {
-			    tmp = (l_list[m_ptr->r_idx].r_cflags1 & CM_TREASURE)
-				>> CM_TR_SHIFT;
-			    if (tmp > ((treas & CM_TREASURE) >> CM_TR_SHIFT))
-				treas = (treas & ~CM_TREASURE) | (tmp << CM_TR_SHIFT);
+			    tmp = (l_list[m_ptr->r_idx].r_cflags1 & CM1_TREASURE)
+				>> CM1_TR_SHIFT;
+			    if (tmp > ((treas & CM1_TREASURE) >> CM1_TR_SHIFT))
+				treas = (treas & ~CM1_TREASURE) | (tmp << CM1_TR_SHIFT);
 			    l_list[m_ptr->r_idx].r_cflags1 = treas |
-				(l_list[m_ptr->r_idx].r_cflags1 & ~CM_TREASURE);
+				(l_list[m_ptr->r_idx].r_cflags1 & ~CM1_TREASURE);
 			}
 			delete_monster_idx(c_ptr->m_idx);
 		    } else {
@@ -4760,12 +4760,12 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 				coin_type = 0;
 				/* recall even invisible uniques -CWS */
 			    if (m_ptr->ml || (r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE)) {
-				tmp = (l_list[m_ptr->r_idx].r_cflags1 & CM_TREASURE)
-				    >> CM_TR_SHIFT;
-				if (tmp > ((treas & CM_TREASURE) >> CM_TR_SHIFT))
-				    treas = (treas & ~CM_TREASURE) | (tmp << CM_TR_SHIFT);
+				tmp = (l_list[m_ptr->r_idx].r_cflags1 & CM1_TREASURE)
+				    >> CM1_TR_SHIFT;
+				if (tmp > ((treas & CM1_TREASURE) >> CM1_TR_SHIFT))
+				    treas = (treas & ~CM1_TREASURE) | (tmp << CM1_TR_SHIFT);
 				l_list[m_ptr->r_idx].r_cflags1 = treas |
-				    (l_list[m_ptr->r_idx].r_cflags1 & ~CM_TREASURE);
+				    (l_list[m_ptr->r_idx].r_cflags1 & ~CM1_TREASURE);
 			    }
 				delete_monster_idx(c_ptr->m_idx);
 			}
