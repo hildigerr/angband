@@ -483,7 +483,7 @@ u32b monster_death(int y, int x, u32b flags, u32b good, u32b win)
 			t_ptr->flags1 = (TR3_SEE_INVIS | TR1_SLAY_EVIL | TR1_SLAY_UNDEAD |
 					TR2_RES_FIRE | TR2_RES_COLD | TR2_RES_ELEC |
 					TR2_RES_ACID | TR1_SLAY_ANIMAL | TR1_SPEED |
-					TR1_SLAY_X_DRAGON | TR3_AGGRAVATE);
+					TR1_KILL_DRAGON | TR3_AGGRAVATE);
 			t_ptr->flags2 = (TR1_SLAY_DEMON | TR1_SLAY_TROLL | TR_SLAY_ORC |
 				    TR1_IMPACT | TR3_TELEPATHY | TR_ARTIFACT);
 			t_ptr->pval = (-1);

@@ -2067,7 +2067,7 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
 
 			/* React to objects that hurt the monster */
 			if (i_ptr->flags1 & TR1_SLAY_DRAGON) flg |= MF2_DRAGON;
-			if (i_ptr->flags1 & TR1_SLAY_X_DRAGON) flg |= MF2_DRAGON;                            
+			if (i_ptr->flags1 & TR1_KILL_DRAGON) flg |= MF2_DRAGON;                            
 			if (i_ptr->flags1 & TR1_SLAY_UNDEAD) flg |= MF2_UNDEAD;
 			if (i_ptr->flags2 & TR1_SLAY_DEMON) flg |= MF2_DEMON;
 			if (i_ptr->flags2 & TR1_SLAY_TROLL) flg |= MF2_TROLL;

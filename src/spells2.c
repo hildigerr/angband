@@ -1778,7 +1778,7 @@ void self_knowledge()
 	prt("Your weapon is especially deadly against natural creatures.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f & TR1_SLAY_X_DRAGON) {
+    if (f & TR1_KILL_DRAGON) {
 	prt("Your weapon is a great bane of dragons.", i++, j);
 	pause_if_screen_full(&i, j);
     }

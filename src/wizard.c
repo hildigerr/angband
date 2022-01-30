@@ -996,7 +996,7 @@ again:
 		goto end;
 	    if (get_com("Execute Dragon? [yn]: ", &ch)) {
 		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags1 |= TR1_SLAY_X_DRAGON;
+		    i_ptr->flags1 |= TR1_KILL_DRAGON;
 	    } else if (ch == '\033')
 		goto end;
 	    if (get_com("Frost Brand? [yn]: ", &ch)) {

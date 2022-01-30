@@ -2035,7 +2035,7 @@ int tot_dam(inven_type *i_ptr, int tdam, int r_idx)
 	}
 
 	/* Execute Dragon */
-	else if ((r_ptr->cflags2 & MF2_DRAGON) && (i_ptr->flags1 & TR1_SLAY_X_DRAGON)) {
+	else if ((r_ptr->cflags2 & MF2_DRAGON) && (i_ptr->flags1 & TR1_KILL_DRAGON)) {
 	    tdam *= 5;
 	    l_ptr->r_cflags2 |= MF2_DRAGON;
 	}
