@@ -1748,11 +1748,11 @@ static void make_attack(int m_idx)
  */
 static void make_move(int m_idx, int *mm, u32b *rcflags1)
 {
-    int do_turn, do_move, stuck_door;
-    u32b                movebits;
     register cave_type    *c_ptr;
     register inven_type   *i_ptr;
     register monster_type *m_ptr;
+    register monster_race *r_ptr;
+    register monster_lore *l_ptr;
 
     int                   i, newy, newx;
 
@@ -1760,13 +1760,18 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
     u32b              holder;
 #endif
 
-    do_turn = FALSE;
-    do_move = FALSE;
+    bool stuck_door = FALSE;
+
+    bool do_turn = FALSE;
+    bool do_move = FALSE;
+
+    char		  m_name[80];
 
 
     /* Access the monster */
     m_ptr = &m_list[m_idx];
-    movebits = r_list[m_ptr->r_idx].cflags1;
+    r_ptr = &r_list[m_ptr->r_idx];
+    l_ptr = &l_list[m_ptr->r_idx];
 
 
     /* Take an array of five directions to try */
@@ -1792,7 +1797,7 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
 
 	if ((i == 4) && (m_ptr->monfear) &&  /* cornered (or things in the way!) -CWS */
 	    (!floor_grid_bold(newy, newx) || (c_ptr->m_idx > 1))) {
-	    vtype               m_name, out_val;
+	    vtype               out_val;
 	    
 	    m_ptr->monfear = 0;
 	    if (m_ptr->ml && los(char_row, char_col, m_ptr->fy, m_ptr->fx)) {
@@ -1807,7 +1812,7 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
 	    if (floor_grid_bold(newy, newx))
 		do_move = TRUE;
 	/* Creature moves through walls? */
-	    else if (movebits & CM_PHASE) {
+	    else if (r_ptr->cflags1 & CM_PHASE) {
 		do_move = TRUE;
 		*rcflags1 |= CM_PHASE;
 	    } else if (r_list[m_ptr->r_idx].cflags2 & MF2_BREAK_WALL) {
@@ -1837,7 +1842,7 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
 	else if (c_ptr->i_idx) {
 
 	    /* Creature can open doors. */
-	    if (movebits & CM_OPEN_DOOR) {
+	    if (r_ptr->cflags1 & CM_OPEN_DOOR) {
 
 		stuck_door = FALSE;
 
@@ -1943,7 +1948,7 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
 		    do_move = FALSE;
 /* If the creature moves only to attack, don't let it move if the glyph
  * prevents it from attacking */
-		    if (movebits & CM_ATTACK_ONLY)
+		    if (r_ptr->cflags1 & CM_ATTACK_ONLY)
 			do_turn = TRUE;
 		}
 	    }
@@ -1974,9 +1979,9 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
 
 		/* Creature eats other creatures? */
 #ifdef ATARIST_MWC
-		    if ((movebits & (holder = CM_EATS_OTHER)) &&
+		    if ((r_ptr->cflags1 & (holder = CM_EATS_OTHER)) &&
 #else
-		    if ((movebits & CM_EATS_OTHER) &&
+		    if ((r_ptr->cflags1 & CM_EATS_OTHER) &&
 #endif
 			(r_list[m_ptr->r_idx].mexp >
 			 r_list[m_list[c_ptr->m_idx].r_idx].mexp)) {
@@ -2016,9 +2021,9 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
 
 	    /* Pick up or eat an object	*/
 #ifdef ATARIST_MWC
-		if (movebits & (holder = CM_PICKS_UP))
+		if (r_ptr->cflags1 & (holder = CM_PICKS_UP))
 #else
-		if (movebits & CM_PICKS_UP)
+		if (r_ptr->cflags1 & CM_PICKS_UP)
 #endif
 		{
 
@@ -2050,7 +2055,7 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
 			if ((i_ptr->flags2 & TR_ARTIFACT) ||
 			    ( (i_ptr->tval >= TV_MIN_WEAR) &&
 			      (i_ptr->tval <= TV_MAX_WEAR) &&
-			      (r_list[m_ptr->r_idx].cflags2 & flg) )) {
+			      (r_ptr->cflags2 & flg) )) {
 
 /* FIXME: should use new line-splitting code */
 
@@ -2113,6 +2118,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 
     monster_type	*m_ptr;
     monster_race	*r_ptr;
+    monster_lore	*l_ptr;
     char                   sex;
 
     /* Extract the blind-ness -CFT */
@@ -2124,6 +2130,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
     /* Access the monster */
     m_ptr = &m_list[m_idx];
     r_ptr = &r_list[m_ptr->r_idx];
+    l_ptr = &l_list[m_ptr->r_idx];
 
     sex = r_ptr->gender;
 
@@ -3100,21 +3107,21 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	if ((m_ptr->ml)	|| (thrown_spell == 45) || (thrown_spell == 57)) {
 
 	    if (thrown_spell < 33) {
-		l_list[m_ptr->r_idx].r_spells1 |= 1L << (thrown_spell - 1);
+		l_ptr->r_spells1 |= 1L << (thrown_spell - 1);
 	    }
 	    else if (thrown_spell < 65) {
-		l_list[m_ptr->r_idx].r_spells2 |= 1L << (thrown_spell - 33);
+		l_ptr->r_spells2 |= 1L << (thrown_spell - 33);
 	    }
 	    else if (thrown_spell < 97) {
-		l_list[m_ptr->r_idx].r_spells3 |= 1L << (thrown_spell - 65);
+		l_ptr->r_spells3 |= 1L << (thrown_spell - 65);
 	    }
 
-	    if ((l_list[m_ptr->r_idx].r_spells1 & CS1_FREQ) != CS1_FREQ)
-		l_list[m_ptr->r_idx].r_spells1++;
+	    if ((l_ptr->r_spells1 & CS1_FREQ) != CS1_FREQ)
+		l_ptr->r_spells1++;
 
 	/* Take note of monsters that kill you */
-	    if (death && l_list[m_ptr->r_idx].r_deaths < MAX_SHORT)
-		l_list[m_ptr->r_idx].r_deaths++;
+	    if (death && l_ptr->r_deaths < MAX_SHORT)
+		l_ptr->r_deaths++;
 	}
     }
 }
@@ -3203,14 +3210,16 @@ int multiply_monster(int y, int x, int cr_index, int m_idx)
 static void mon_move(int m_idx, u32b *rcflags1)
 {
     int			i, j, k, move_test, dir;
-    monster_race	*r_ptr;
     monster_type	*m_ptr;
+    monster_race	*r_ptr;
+    monster_lore	*l_ptr;
     int			mm[9];
     bigvtype               out_val, m_name;
 
     /* Get the monster and its race */
     m_ptr = &m_list[m_idx];
     r_ptr = &r_list[m_ptr->r_idx];
+    l_ptr = &l_list[m_ptr->r_idx];
 
 
     /* reduce fear, tough monsters can unfear faster -CFT, hacked by DGK */
@@ -3409,8 +3418,8 @@ static void mon_move(int m_idx, u32b *rcflags1)
 
 	    /* little hack for Quylthulgs, so that will eventually notice
 	     * that they have no physical attacks */
-	    if (l_list[m_ptr->r_idx].r_attacks[0] < MAX_UCHAR)
-		l_list[m_ptr->r_idx].r_attacks[0]++;
+	    if (l_ptr->r_attacks[0] < MAX_UCHAR)
+		l_ptr->r_attacks[0]++;
 	}
     }
 }
