@@ -27,34 +27,6 @@
 
 
 
-#if !defined(USG) && defined(lint)
-/*
- * This use_value hack is for curses macros which return a value, but don't
- * shut up about it when you try to tell them (void).	 
- */
-/* only needed for Berkeley UNIX */
-int                 Use_value;
-
-#define use_value   Use_value +=
-#else
-#define use_value
-#endif
-
-#if defined(SYS_V) && defined(lint)
-/*
- * This use_value2 hack is for curses macros which use a conditional
- * expression, and which say null effect even if you cast to (void). 
- */
-/* only needed for SYS V */
-int                 Use_value2;
-
-#define use_value2  Use_value2 +=
-#else
-#define use_value2
-#endif
-
-#endif
-
 #ifndef MAC
 char *getenv();
 
@@ -246,13 +218,13 @@ void moriaterm()
 
     curses_on = TRUE;
 #ifndef BSD4_3
-    use_value crmode();
+    crmode();
 
 #else
-    use_value cbreak();
+    cbreak();
 
 #endif
-    use_value noecho();
+    noecho();
 
 /* can not use nonl(), because some curses do not handle it correctly */
 #ifdef MSDOS
@@ -470,17 +442,17 @@ void shell_out()
 #endif
 /* would call nl() here if could use nl()/nonl(), see moriaterm() */
 #ifndef BSD4_3
-    use_value           nocrmode();
+    nocrmode();
 
 #else
-    use_value           nocbreak();
+    nocbreak();
 
 #endif
 #ifdef MSDOS
-    use_value           msdos_noraw();
+    msdos_noraw();
 
 #endif
-    use_value           echo();
+    echo();
 
     ignore_signals();
 #ifdef MSDOS			   /* { */
@@ -543,13 +515,13 @@ void shell_out()
 /* restore the cave to the screen */
     restore_screen();
 #ifndef BSD4_3
-    use_value           crmode();
+    crmode();
 
 #else
-    use_value           cbreak();
+    cbreak();
 
 #endif
-    use_value           noecho();
+    noecho();
 
 /* would call nonl() here if could use nl()/nonl(), see moriaterm() */
 #ifdef MSDOS
@@ -1123,7 +1095,7 @@ int get_string(char *in_str, int row, int column, int slen)
 		DSetScreenCursor(column, row);
 		DWriteScreenCharAttr((char)i, ATTR_NORMAL);
 #else
-		use_value2          mvaddch(row, column, (char)i);
+		mvaddch(row, column, (char)i);
 
 #endif
 		*p++ = i;

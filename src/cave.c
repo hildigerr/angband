@@ -552,7 +552,7 @@ void screen_map(void)
 	DWriteScreenCharAttr(CH_HE, ATTR_NORMAL);
     DWriteScreenCharAttr(CH_TR, ATTR_NORMAL);
 #else
-    use_value2          mvaddch(0, 0, CH_TL);
+    mvaddch(0, 0, CH_TL);
 
     for (i = 0; i < MAP_WID; i++)
 	(void)addch(CH_HE);
@@ -576,7 +576,7 @@ void screen_map(void)
 	     */
 		(void)sprintf(prntscrnbuf, "%c%s%c",
 			      CH_VE, map, CH_VE);
-		use_value2          mvaddstr(orow + 1, 0, prntscrnbuf);
+		mvaddstr(orow + 1, 0, prntscrnbuf);
 
 #endif
 	    }
@@ -604,7 +604,7 @@ void screen_map(void)
 #else
 	(void)sprintf(prntscrnbuf, "%c%s%c",
 		      CH_VE, map, CH_VE);
-	use_value2          mvaddstr(orow + 1, 0, prntscrnbuf);
+	mvaddstr(orow + 1, 0, prntscrnbuf);
 
 #endif
     }
@@ -615,7 +615,7 @@ void screen_map(void)
 	DWriteScreenCharAttr(CH_HE, ATTR_NORMAL);
     DWriteScreenCharAttr(CH_BR, ATTR_NORMAL);
 #else
-    use_value2          mvaddch(orow + 2, 0, CH_BL);
+    mvaddch(orow + 2, 0, CH_BL);
 
     for (i = 0; i < MAP_WID; i++)
 	(void)addch(CH_HE);
@@ -628,7 +628,7 @@ void screen_map(void)
     if (mycol > 0)
 	DSetScreenCursor(mycol, myrow);
 #else
-    use_value2          mvaddstr(23, 23, "Hit any key to continue");
+    mvaddstr(23, 23, "Hit any key to continue");
 
     if (mycol > 0)
 	(void)move(myrow, mycol);
