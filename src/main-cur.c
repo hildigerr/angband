@@ -1,11 +1,11 @@
+/* File: main-cur.c */
+
 /*
- * unix.c: UNIX dependent code.					-CJS- 
- *
- * Copyright (c) 1989 James E. Wilson, Christopher J. Stuart 
+ * Copyright (c) 1989 James E. Wilson, Christopher J. Stuart , Robert A. Koeneke
  *
  * This software may be copied and distributed for educational, research, and
  * not for profit purposes provided that this copyright and statement are
- * included in all such copies. 
+ * included in all such copies.
  */
 
 #if defined(unix) || defined(__MINT__)
@@ -20,7 +20,15 @@
 #include <curses.h>
 #endif
 
+
+/*
+ * Some annoying machines define "bool" in various packages
+ * Note that this "redefinition" should work on any machine.
+ */
+
+#define bool bool_hack
 #include "angband.h"
+#undef bool
 
 #if defined(SYS_V) && defined(lint)
 /* for AIX, prevent hundreds of unnecessary lint errors, must define before
@@ -33,27 +41,24 @@ typedef struct {
 
 #endif
 
-#include <signal.h>
+#   include <signal.h>
 
 #ifdef M_XENIX
-#include <sys/select.h>
-#endif
-
-#ifndef USG
-#include <sys/resource.h>
-#include <sys/param.h>
+# include <sys/select.h>
 #endif
 
 #ifdef USG
-#ifndef __MINT__
-#include <termio.h>
-#endif
+# ifndef __MINT__
+#  include <termio.h>
+# endif
 #else
-#if defined(atarist) && defined(__GNUC__) && !defined(__MINT__)
-/* doesn't have <sys/wait.h> */
-#else
-#include <sys/wait.h>
-#endif
+# if defined(atarist) && defined(__GNUC__) && !defined(__MINT__)
+   /* doesn't have <sys/wait.h> */
+# else
+#  include <sys/wait.h>
+# endif
+# include <sys/resource.h>
+# include <sys/param.h>
 #endif
 
 
@@ -94,7 +99,8 @@ static
 #define ioctl	    Ioctl
 #endif
 
-/* Provides for a timeout on input. Does a non-blocking read, consuming the
+/*
+ * Provides for a timeout on input. Does a non-blocking read, consuming the
  * data if any, and then returns 1 if data was read, zero otherwise. 
  *
  * Porting: 
@@ -107,15 +113,14 @@ static
  * or you might hack a static accumulation of times to wait. When the
  * accumulation reaches a certain point, sleep for a second. There would need
  * to be a way of resetting the count, with a call made for commands like run
- * or rest. 
+ * or rest.
  */
-int 
-check_input(microsec)
-    int                 microsec;
+int check_input(int microsec)
 {
 #if defined(USG) && !defined(M_XENIX)
-    int                 arg, result;
+    int result;
 
+    int                 arg;
 #else
     struct timeval      tbuf;
     int                 ch;
@@ -127,6 +132,7 @@ check_input(microsec)
     int                 smask;
 
 #endif
+
 #endif
 
 /* Return true if a read on descriptor 1 will not block. */
@@ -151,11 +157,14 @@ check_input(microsec)
 	return 1;
     } else
 	return 0;
-#else				   /* SYS V code follows */
-    if (microsec != 0 && (turn & 0x7F) == 0)
-	(void)sleep(1);		   /* mod 128, sleep one sec every 128 turns */
-/* Can't check for input, but can do non-blocking read, so... */
-/* Ugh! */
+#else
+
+    /*** SysV code (?) ***/
+
+    /* XXX Hack -- mod 128, sleep one sec every 128 turns */
+    if (microsec != 0 && (turn & 0x7F) == 0) (void)sleep(1);
+
+    /* XXX Hack -- Can't check for input, but can do non-blocking read */
     arg = 0;
     arg = fcntl(0, F_GETFL, arg);
     arg |= O_NDELAY;
@@ -167,17 +176,18 @@ check_input(microsec)
     arg = fcntl(0, F_GETFL, arg);
     arg &= ~O_NDELAY;
     (void)fcntl(0, F_SETFL, arg);
-    if (result == -1)
-	return 0;
-    else
-	return 1;
+
+    if (result == -1) return 0;
+
+    else return 1;
 #endif
 }
 
 #if 0
+
 /*
- * This is not used, however, this should be compared against shell_out in
- * io.c 
+ * This is not used.  It will only work on some systems.
+ * It should be compared against shell_out in io.c 
  */
 
 /*
@@ -186,9 +196,7 @@ check_input(microsec)
  * careful with signals and interrupts, and does rudimentary job control, and
  * puts the terminal back in a standard mode. 
  */
-int 
-system_cmd(p)
-    char               *p;
+int system_cmd(cptr p)
 {
     int                 pgrp, pid, i, mask;
     union wait          w;
@@ -196,13 +204,16 @@ system_cmd(p)
 
     mask = sigsetmask(~0);	   /* No interrupts. */
     restore_term();		   /* Terminal in original state. */
-/* Are we in the control terminal group? */
-    if (ioctl(0, TIOCGPGRP, (char *)&pgrp) < 0 || pgrp != getpgrp(0))
+
+    /* Are we in the control terminal group? */
+    if (ioctl(0, TIOCGPGRP, (char *)&pgrp) < 0 || pgrp != getpgrp(0)) {
 	pgrp = (-1);
+    }
+
     pid = fork();
     if (pid < 0) {
 	(void)sigsetmask(mask);
-	moriaterm();
+    moriaterm();		   /* Terminal in moria mode. */
 	return (-1);
     }
     if (pid == 0) {
@@ -221,10 +232,15 @@ system_cmd(p)
 	    if (p)
 		execl(p, p, 0);
 	    execl("/bin/sh", "sh", 0);
-	} else
+	}
+	else {
 	    execl("/bin/sh", "sh", "-c", p, 0);
+	}
+
+	/* Hack (?) */
 	_exit(1);
     }
+
 /* Wait for child termination. */
     for (;;) {
 	i = wait3(&w, WUNTRACED, (struct rusage *) 0);
@@ -240,9 +256,12 @@ system_cmd(p)
 		break;
 	}
     }
-/* Get the control terminal back. */
-    if (pgrp >= 0)
+
+    /* Get the control terminal back. */
+    if (pgrp >= 0) {
 	(void)ioctl(0, TIOCSPGRP, (char *)&pgrp);
+    }
+
     (void)sigsetmask(mask);	   /* Interrupts on. */
     moriaterm();		   /* Terminal in moria mode. */
     return 0;
@@ -250,7 +269,6 @@ system_cmd(p)
 
 #endif
 
-
-
-
 #endif
+
+
