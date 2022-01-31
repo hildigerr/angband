@@ -1,34 +1,48 @@
 # File: Makefile
 
+##
+## Note that you may have to make modifications below according
+## to your machine, available libraries, compilation options,
+## etc...
+##
+
+
 SRCS = \
-  main.c main-cur.c misc1.c misc2.c misc3.c misc4.c store.c arrays.c io.c birth.c desc.c\
-  generate.c sets.c dungeon.c  command.ccreature.c death.c eat.c help.c magic.c\
-  potions.c prayer.c save.c staffs.c wands.c scrolls.c spells1.c spells2.c cave.c\
-  wizard.c signals.c moria1.c moria2.c moria3.c moria4.c  monsters.c\
-  treasure.c variable.c recall.c \
-  player.c tables.c describe_mon.c rods.c random.c util.c z-util.c z-virt.c z-form.c
+  main.c main-cur.c \
+  signals.c util.c io.c arrays.c save.c death.c \
+  generate.c birth.c creature.c effects.c magic.c dungeon.c command.c \
+  misc1.c misc2.c misc3.c misc4.c moria1.c moria2.c moria3.c moria4.c \
+  spells1.c spells2.c cave.c desc.c tables.c variable.c \
+  store.c recall.c wizard.c \
+  sets.c eat.c help.c monsters.c treasure.c player.c describe_mon.c \
+  potions.c prayer.c staffs.c wands.c scrolls.c rods.c \
+  random.c z-util.c z-virt.c z-form.c
 
 OBJS = \
-  main.o main-cur.o misc1.o misc2.o misc3.o misc4.c store.o arrays.o io.o birth.o desc.o\
-  generate.o sets.o dungeon.o  command.o creature.o death.o eat.o help.o magic.o\
-  potions.o prayer.o save.o staffs.o wands.o scrolls.o spells1.o spells2.o cave.o\
-  wizard.o signals.o moria1.o moria2.o moria3.o moria4.o  monsters.o\
-  treasure.o variable.o recall.o \
-  player.o tables.o describe_mon.o rods.o util.o random.o z-util.o z-virt.o z-form.o
+  main.o main-cur.o \
+  signals.o util.o io.o arrays.o save.o death.o \
+  generate.o birth.o creature.o effects.o magic.o dungeon.o command.o \
+  misc1.o misc2.o misc3.o misc4.o moria1.o moria2.o moria3.o moria4.o \
+  spells1.o spells2.o cave.o desc.o tables.o variable.o \
+  store.o recall.o wizard.o \
+  sets.o eat.o help.o monsters.o treasure.o player.o describe_mon.o \
+  potions.o prayer.o staffs.o wands.o scrolls.o rods.o \
+  random.o z-util.o z-virt.o z-form.o
 
 
 
 
-####
-# Please take a look at config.h and h-config.h for *critical* configuration steps needed.
+###
+### Following are some "system" definitions
+###
+### See also "config.h" and "h-config.h".
+###
 
 
-####
-# If you use gcc, you may find that adding '-traditional-cpp' will fix
-# defining the LIBDIR in config.h.  '-Dconst' may also help if your compiler
-# complains about conflicting definitions
-
-CC = cc
+#
+# This is my compiler of choice, it seems to work most everywhere
+#
+CC = gcc
 
 ####
 # Compiler flags
@@ -93,17 +107,10 @@ LIBS = -lcurses -ltermcap -lrpcsvc
 # ....unless you don't have the BSD/SunOS 4.x compatibility kit:
 # LIBS = -ltermlib -ltermcap -lrpcsvc -lnsl
 
-
-
-
 # end of user configurable stuff
 #######
 
 
-default: angband
-
-.c.o:
-	$(CC) $(CFLAGS) -c $*.c
 
 #
 # Build the "Angband" program and move it up one directory
@@ -113,6 +120,9 @@ angband: $(OBJS)
 	$(CC) $(CFLAGS)  -o angband $(OBJS) $(LIBS)
 	mv angband ..
 
+#
+# Generate dependancies automatically (not required)
+#
 
 depend:
 	/usr/local/bin/X11/makedepend $(INCLUDES) -p$(OBJDIR)/ $(SRCS)
@@ -135,3 +145,4 @@ query:
 
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
+
