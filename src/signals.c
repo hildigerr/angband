@@ -77,12 +77,6 @@ typedef struct {
 #include "angband.h"
 #include "externs.h"
 
-#ifndef USG
-/* only needed for Berkeley UNIX */
-#include <sys/param.h>
-#endif
-
-
 #ifdef USG
 void                exit();
 

@@ -10,11 +10,6 @@
  * included in all such copies. 
  */
 
-/* include before angband.h because param.h defines NULL incorrectly */
-#ifndef USG
-#include <sys/param.h>
-#endif
-
 #include "angband.h"
 
 

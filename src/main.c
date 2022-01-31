@@ -13,12 +13,6 @@
 #include "angband.h"
 
 
-/* include before constant, because param.h defines NULL incorrectly */
-#ifndef USG
-#include <sys/param.h>
-#include <sys/resource.h>
-#endif
-
 /*
  * Hack -- Local "game mode" vars
  */

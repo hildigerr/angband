@@ -59,6 +59,7 @@ typedef struct {
 # endif
 # include <sys/resource.h>
 # include <sys/param.h>
+#  include <sys/param.h>
 #endif
 
 

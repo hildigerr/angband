@@ -71,11 +71,6 @@ typedef struct {
 #endif
 #endif
 
-#ifndef USG
-/* only needed for Berkeley UNIX */
-#include <sys/param.h>
-#endif
-
 #ifdef USG
 #if !defined(MAC) && !defined(MSDOS) && !defined(ATARIST_MWC) && !defined(__MINT__)
 #include <termio.h>
