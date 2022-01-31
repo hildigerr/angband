@@ -118,46 +118,24 @@ static
 int check_input(int microsec)
 {
 #if defined(USG) && !defined(M_XENIX)
-    int result;
+    int result = 0;
 
     int                 arg;
 #else
     struct timeval      tbuf;
-    int                 ch;
 
 #if defined(BSD4_3) || defined(M_XENIX) || defined(linux)
     fd_set              smask;
-
+    fd_set		*no_fds = NULL;
 #else
     int                 smask;
-
+    int			*no_fds = NULL;
 #endif
 
 #endif
 
-/* Return true if a read on descriptor 1 will not block. */
-#if !defined(USG) || defined(M_XENIX)
-    tbuf.tv_sec = 0;
-    tbuf.tv_usec = microsec;
-#if defined(BSD4_3) || defined(M_XENIX) || defined(linux)
-    FD_ZERO(&smask);
-    FD_SET(fileno(stdin), &smask);
-    if (select(1, &smask, (fd_set *) 0, (fd_set *) 0, &tbuf) == 1)
-#else
-    smask = 1;			   /* i.e. (1 << 0) */
-    if (select(1, &smask, (int *)0, (int *)0, &tbuf) == 1)
-#endif
-    {
-	ch = getch();
-    /* check for EOF errors here, select sometimes works even when EOF */
-	if (ch == -1) {
-	    eof_flag++;
-	    return 0;
-	}
-	return 1;
-    } else
-	return 0;
-#else
+
+#if defined(USG) && !defined(M_XENIX)
 
     /*** SysV code (?) ***/
 
@@ -179,8 +157,34 @@ int check_input(int microsec)
 
     if (result == -1) return 0;
 
-    else return 1;
+#else
+
+    /*** Do a nice clean "select" ***/
+
+    tbuf.tv_sec = 0;
+    tbuf.tv_usec = microsec;
+
+#if defined(BSD4_3) || defined(M_XENIX) || defined(linux)
+    FD_ZERO(&smask);
+    FD_SET(0, &smask);		/* standard input is bit 0 */
+#else
+    smask = 0x0001;		/* standard input is bit 0 */
 #endif
+
+    /* If we time out, no key ready */
+    if (select(1, &smask, no_fds, no_fds, &tbuf) != 1) return (0);
+
+    /* Get a key */
+    retsult = getch();
+
+    /* check for EOF errors here, select sometimes works even when EOF */
+    if (result == -1) {
+	    eof_flag++;
+	    return 0;
+	}
+#endif
+
+    return 1;
 }
 
 #if 0
