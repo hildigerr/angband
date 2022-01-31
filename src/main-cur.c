@@ -1,5 +1,7 @@
 /* File: main-cur.c */
 
+/* Purpose: Actual Unix Curses support for Angband */
+
 /*
  * Copyright (c) 1989 James E. Wilson, Christopher J. Stuart , Robert A. Koeneke
  *
@@ -7,16 +9,6 @@
  * not for profit purposes provided that this copyright and statement are
  * included in all such copies.
  */
-
-#if defined(unix) || defined(__MINT__)
-
-/* defines TRUE and FALSE */
-#ifdef linux
-#include <ncurses.h>
-#else
-#include <curses.h>
-#endif
-
 
 /*
  * Some annoying machines define "bool" in various packages
@@ -30,6 +22,14 @@
 
 # ifdef linux
 #  include <bsd/sgtty.h>
+# endif
+
+# ifdef GEMDOS
+#  define ATARIST_MWC
+#  include "curses.h"
+#  include <osbind.h>
+   long               wgetch();
+   char               *getenv();
 # endif
 
 #if defined(SYS_V) && defined(lint)
@@ -55,7 +55,11 @@ typedef struct {
 # else /* not MSDOS */
 #  if !defined(ATARIST_MWC) && !defined(MAC)
 
+/*** OPEN NORMAL ***/
 #   include <signal.h>
+#   undef TRUE
+#   undef FALSE
+#   include <curses.h>
 #   ifndef VMS
 #    include <sys/ioctl.h>
 #   endif

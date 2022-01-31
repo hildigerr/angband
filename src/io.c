@@ -11,29 +11,10 @@
  */
 
 
-#if defined(NLS) && defined(lint)
-/* for AIX, don't let curses include the NL stuff */
-#undef NLS
-#endif
-
 #if !defined(GEMDOS)
-
 #ifdef MAC
 #include <scrnmgr.h>
-#else
-#ifdef linux
-#include <ncurses.h>
-#else
-#include <curses.h>
 #endif
-#endif
-
-#else
-#define ATARIST_MWC
-#include "curses.h"
-#include <osbind.h>
-long                wgetch();
-char               *getenv();
 #endif
 
 #include "angband.h"

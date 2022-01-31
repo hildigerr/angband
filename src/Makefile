@@ -8,7 +8,7 @@
 
 
 SRCS = \
-  main.c main-cur.c \
+  main.c main-gcu.c main-ncu.c main-cur.c \
   signals.c util.c io.c arrays.c save.c death.c \
   generate.c birth.c creature.c effects.c magic.c dungeon.c command.c \
   misc1.c misc2.c misc3.c misc4.c moria1.c moria2.c moria3.c moria4.c \
@@ -19,7 +19,7 @@ SRCS = \
   random.c z-util.c z-virt.c z-form.c
 
 OBJS = \
-  main.o main-cur.o \
+  main.o main-gcu.o main-ncu.o main-cur.o \
   signals.o util.o io.o arrays.o save.o death.o \
   generate.o birth.o creature.o effects.o magic.o dungeon.o command.o \
   misc1.o misc2.o misc3.o misc4.o moria1.o moria2.o moria3.o moria4.o \
