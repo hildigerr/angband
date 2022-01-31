@@ -19,19 +19,6 @@
 
 #include "angband.h"
 
-
-#if defined(SYS_V) && defined(lint)
-/*
- * for AIX, prevent hundreds of unnecessary lint errors, must define before
- * signal.h is included 
- */
-#define _h_IEEETRAP
-typedef struct {
-    int stuff;
-} fpvmach;
-
-#endif
-
 #if !defined(MSDOS)
 #if !defined(ATARIST_MWC) && !defined(MAC)
 #include <signal.h>

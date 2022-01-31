@@ -32,16 +32,6 @@
    char               *getenv();
 # endif
 
-#if defined(SYS_V) && defined(lint)
-/* for AIX, prevent hundreds of unnecessary lint errors, must define before
- * signal.h is included 
- */
-#define _h_IEEETRAP
-typedef struct {
-    int                 stuff;
-}                   fpvmach;
-
-#endif
 
 # ifdef MSDOS
 

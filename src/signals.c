@@ -59,18 +59,6 @@ signals_init()
 /* to get the SYS_V def if needed */
 #include "config.h"
 
-#if defined(SYS_V) && defined(lint)
-/*
- * for AIX, prevent hundreds of unnecessary lint errors, define before
- * signal.h is included 
- */
-#define _h_IEEETRAP
-typedef struct {
-    int                 stuff;
-}                   fpvmach;
-
-#endif
-
 /* must include before externs.h, because that uses SIGTSTP */
 #include <signal.h>
 
