@@ -51,30 +51,12 @@ typedef struct {
 
 #endif
 
-#if defined(MSDOS)
-#if defined(ANSI)
-#include "ms_ansi.h"
-#endif
-#else				   /* not msdos */
+#if !defined(MSDOS)
 #if !defined(ATARIST_MWC) && !defined(MAC)
 #include <signal.h>
 #endif
 #endif
 
-#ifdef USG
-#if !defined(MAC) && !defined(MSDOS) && !defined(ATARIST_MWC) && !defined(__MINT__)
-#include <termio.h>
-#endif
-#else
-#ifndef VMS
-#include <sys/wait.h>
-#endif /* !VMS */
-#endif /* USG */
-
-/* ARGH!  This is driving me up the wall!  Brute force never hurt... [cjh] */
-#if defined(__MINT__) && !defined(_WAIT_H)
-#include <wait.h>
-#endif
 
 #if defined(SYS_V) && defined(lint)
 struct screen {

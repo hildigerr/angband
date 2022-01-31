@@ -47,6 +47,9 @@ typedef struct {
 
 /*** OPEN MSDOS ***/
 #  include <process.h>
+#  if defined(ANSI)
+#   include "ms_ansi.h"
+#  endif
 /*** SHUT MSDOS ***/
 
 # else /* not MSDOS */
@@ -56,6 +59,9 @@ typedef struct {
 #   ifndef VMS
 #    include <sys/ioctl.h>
 #   endif
+#   ifdef USG
+#    ifndef __MINT__
+#     include <termio.h>
 #    endif
 #   endif
 
@@ -76,8 +82,16 @@ typedef struct {
 # include <sys/resource.h>
 # include <sys/param.h>
 #  include <sys/param.h>
+#  ifndef VMS
+#   include <sys/wait.h>
+#  endif /* !VMS */
+
 #endif
 
+/* Hack --  Brute force never hurt... [cjh] */
+# if defined(__MINT__) && !defined(_WAIT_H)
+#  include <wait.h>
+# endif
 
 #if defined(SYS_V) && defined(lint)
 struct screen {
