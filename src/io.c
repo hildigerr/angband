@@ -10,13 +10,6 @@
  * included in all such copies. 
  */
 
-#ifdef linux
-#include <bsd/sgtty.h>
-#endif
-
-#ifdef MSDOS
-#include <process.h>
-#endif
 
 #if defined(NLS) && defined(lint)
 /* for AIX, don't let curses include the NL stuff */
@@ -64,9 +57,6 @@ typedef struct {
 #endif
 #else				   /* not msdos */
 #if !defined(ATARIST_MWC) && !defined(MAC)
-#ifndef VMS
-#include <sys/ioctl.h>
-#endif
 #include <signal.h>
 #endif
 #endif

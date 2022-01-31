@@ -10,9 +10,6 @@
 
 #if defined(unix) || defined(__MINT__)
 
-/* defines CTRL */
-#include <sys/ioctl.h>
-
 /* defines TRUE and FALSE */
 #ifdef linux
 #include <ncurses.h>
@@ -30,6 +27,11 @@
 #include "angband.h"
 #undef bool
 
+
+# ifdef linux
+#  include <bsd/sgtty.h>
+# endif
+
 #if defined(SYS_V) && defined(lint)
 /* for AIX, prevent hundreds of unnecessary lint errors, must define before
  * signal.h is included 
@@ -41,7 +43,21 @@ typedef struct {
 
 #endif
 
+# ifdef MSDOS
+
+/*** OPEN MSDOS ***/
+#  include <process.h>
+/*** SHUT MSDOS ***/
+
+# else /* not MSDOS */
+#  if !defined(ATARIST_MWC) && !defined(MAC)
+
 #   include <signal.h>
+#   ifndef VMS
+#    include <sys/ioctl.h>
+#   endif
+#    endif
+#   endif
 
 #ifdef M_XENIX
 # include <sys/select.h>
