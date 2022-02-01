@@ -1107,6 +1107,28 @@ static u16b r_level[MAX_R_LEV+1];
 
 
 /*
+ * Initializes r_level array for use with PLACE_MONSTER	-RAK-	
+ */
+static void init_r_level()
+{
+    register int i, k;
+
+    /* Start with no monsters per level */
+    for (i = 0; i <= MAX_R_LEV; i++) r_level[i] = 0;
+
+    /* Count the NORMAL monsters on each level */
+    k = MAX_R_IDX - WIN_MON_TOT;
+    for (i = 0; i < k; i++) r_level[r_list[i].level]++;
+
+    /* Deduce the monsters on or below each level */
+    for (i = 1; i <= MAX_R_LEV; i++) r_level[i] += r_level[i-1];
+}
+
+
+
+
+
+/*
  * Return a monster suitable to be placed at a given level.  This makes high
  * level monsters (up to the given level) slightly more common than low level
  * monsters at any given level.   -CJS- 
