@@ -10,7 +10,12 @@
  */
 
 
+/*
+ * Include the correct vararg's support
+ */
+#ifndef __MAKEDEPEND__
 # include <stdarg.h>
+#endif
 
 
 

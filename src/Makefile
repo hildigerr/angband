@@ -125,7 +125,7 @@ angband: $(OBJS)
 #
 
 depend:
-	/usr/local/bin/X11/makedepend $(INCLUDES) -p$(OBJDIR)/ $(SRCS)
+	makedepend -D__MAKEDEPEND__ $(SRCS)
 
 ####
 # verify that the monsters.c and describe_mon.c files correspond

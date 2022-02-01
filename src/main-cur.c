@@ -20,6 +20,9 @@
 #undef bool
 
 
+#ifndef __MAKEDEPEND__
+
+
 # ifdef linux
 #  include <bsd/sgtty.h>
 # endif
@@ -86,6 +89,14 @@
 # if defined(__MINT__) && !defined(_WAIT_H)
 #  include <wait.h>
 # endif
+
+
+/*** SHUT NORMAL ***/
+
+#  endif
+# endif /* MSDOS */
+
+#endif /* __MAKEDEPEND__ */
 
 
 /*
