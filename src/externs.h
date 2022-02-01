@@ -377,7 +377,6 @@ extern inven_kind *k_list;
 extern inven_kind k_list[MAX_OBJECTS];
 #endif
 extern byte object_ident[OBJECT_IDENT_SIZE];
-extern s16b t_level[MAX_OBJ_LEVEL+1];
 
 /* Treasure heap pointer (used with i_list) */
 extern s16b i_max;

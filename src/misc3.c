@@ -2576,6 +2576,31 @@ int get_obj_num(int level, int good)
 {
     register int i, j;
 
+    static u16b size = 0;
+
+    static s16b t_level[MAX_OBJ_LEVEL+1];
+
+    /* Initialize the table */
+    if (!size) {
+
+	int tmp[MAX_OBJ_LEVEL+1];
+
+	for (i = 0; i <= MAX_OBJ_LEVEL; i++) t_level[i] = 0;
+	for (i = 0; i < MAX_DUNGEON_OBJ; i++) t_level[k_list[i].level]++;
+	for (i = 1; i <= MAX_OBJ_LEVEL; i++) t_level[i] += t_level[i-1];
+	/* now produce an array with object indexes sorted by level, by using
+	the info in t_level, this is an O(n) sort! */
+	/* this is not a stable sort, but that does not matter */
+	for (i = 0; i <= MAX_OBJ_LEVEL; i++) tmp[i] = 1;
+	for (i = 0; i < MAX_DUNGEON_OBJ; i++) {
+		int l = k_list[i].level;
+		sorted_objects[t_level[l] - tmp[l]] = i;
+		tmp[l]++;
+    }
+
+    size++;
+    }
+
     do {
 	if (level == 0)
 	    i = randint(t_level[0]) - 1;

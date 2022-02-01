@@ -1212,7 +1212,6 @@ s16b sorted_objects[MAX_DUNGEON_OBJ];
 
 /* Identified objects flags					*/
 byte object_ident[OBJECT_IDENT_SIZE];
-s16b t_level[MAX_OBJ_LEVEL+1];
 inven_type inventory[INVEN_ARRAY_SIZE];
 
 /* Treasure related values					*/

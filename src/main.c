@@ -24,7 +24,6 @@ static int force_keys_to = FALSE;
 
 
 
-static void init_t_level();
 static void player_outfit();
 
 int unfelt    = TRUE;
@@ -324,9 +323,6 @@ int main(int argc, char *argv[])
     /* Grab a random seed from the clock          */
     init_seeds();
 
-    /* Init monster and treasure levels for allocate */
-    init_t_level();
-
     /* Init the store inventories			*/
     store_init();
 
@@ -578,30 +574,6 @@ static void player_outfit()
 }
 
 
-/* Initializes T_LEVEL array for use with PLACE_OBJECT	-RAK-	*/
-static void init_t_level()
-{
-    register int i, l;
-    int tmp[MAX_OBJ_LEVEL+1];
 
-    for (i = 0; i <= MAX_OBJ_LEVEL; i++)
-	t_level[i] = 0;
-    for (i = 0; i < MAX_DUNGEON_OBJ; i++)
-	t_level[k_list[i].level]++;
-    for (i = 1; i <= MAX_OBJ_LEVEL; i++)
-	t_level[i] += t_level[i-1];
-
-    /* now produce an array with object indexes sorted by level, by using
-       the info in t_level, this is an O(n) sort! */
-    /* this is not a stable sort, but that does not matter */
-    for (i = 0; i <= MAX_OBJ_LEVEL; i++)
-	tmp[i] = 1;
-    for (i = 0; i < MAX_DUNGEON_OBJ; i++)
-    {
-	l = k_list[i].level;
-	sorted_objects[t_level[l] - tmp[l]] = i;
-	tmp[l]++;
-    }
-}
 
 
