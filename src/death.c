@@ -60,10 +60,6 @@ static void  print_tomb(void);
 static void  kingly(void);
 
 
-#ifndef MAC
-char        *getlogin();
-#endif
-
 #if !defined(time_t)
 #define time_t long
 #endif

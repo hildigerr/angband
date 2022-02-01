@@ -785,26 +785,6 @@ void find_step(void);
 void find_init(int);
 void end_find(void);
 
-#ifdef MSDOS
-/* ms_misc.c */
-char *getlogin(void);
-#ifdef __TURBOC__
-void sleep(int);
-#else
-unsigned int sleep(int );
-#endif
-void error(char *, ...);
-void warn(char *, ...);
-void msdos_init(void);
-void msdos_raw(void);
-void msdos_noraw(void);
-int bios_getch(void);
-int msdos_getch(void);
-void bios_clear(void);
-void msdos_intro(void);
-void bios_clear(void);
-#endif
-
 /* prayer.c */
 void pray(void);
 

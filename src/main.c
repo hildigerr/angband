@@ -137,10 +137,6 @@ int main(int argc, char *argv[])
 #ifdef SECURE
     Authenticate();
 #endif
-    
-#ifdef MSDOS			/* -CFT */
-    msdos_init();		/* set up some screen stuff + get cnf file */
-#endif
 
     /* Get the file paths */
     get_file_paths();
