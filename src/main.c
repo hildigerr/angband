@@ -24,9 +24,6 @@ static int force_keys_to = FALSE;
 
 
 
-
-
-static int d_check(char *);
 static void init_t_level();
 static void player_outfit();
 
@@ -85,6 +82,17 @@ static bool is_wizard(int uid)
 
     /* Result */
     return (allow);
+}
+
+
+static int d_check(char *a)
+{
+    while (*a)
+	if (iscntrl(*a)) {
+	    msg_print("Yuch! No control characters, Thankyou!");
+	    exit_game();
+	} else a++;
+    return (0);
 }
 
 
@@ -596,15 +604,4 @@ static void init_t_level()
     }
 }
 
-
-
-static int d_check(char *a)
-{
-    while (*a)
-	if (iscntrl(*a)) {
-	    msg_print("Yuch! No control characters, Thankyou!");
-	    exit_game();
-	} else a++;
-    return (0);
-}
 

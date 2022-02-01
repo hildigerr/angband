@@ -36,6 +36,39 @@ static WINDOW *savescr;	   /* Spare window for saving the screen.
 #define ATTR_HILITED	attrReversed
 #endif
 
+
+/* 
+ * Flush the screen, make a noise
+ */
+void bell()
+{
+    /* Flush the output */
+    put_qio();
+
+#ifdef MAC
+    mac_beep();
+#else
+    (void)write(1, "\007", 1);
+#endif
+}
+
+
+
+/*
+ * Move the cursor
+ */
+void move_cursor(int row, int col)
+{
+#ifdef MAC
+    DSetScreenCursor(col, row);
+#else
+    (void)move(row, col);
+#endif
+}
+
+
+
+
 #ifdef MAC
 
 /* initializes curses routines */
@@ -396,18 +429,6 @@ void prt(cptr str_buff, int row, int col)
 
 
 
-/* move cursor to a given y, x position */
-void move_cursor(int row, int col)
-{
-#ifdef MAC
-    DSetScreenCursor(col, row);
-#else
-    (void)move(row, col);
-#endif
-}
-
-
-
 /* Outputs message to top line of screen				 */
 /* These messages are kept for later reference.	 */
 void msg_print(cptr str_buff)
@@ -687,13 +708,4 @@ void restore_screen()
 
 
 
-void bell()
-{
-    put_qio();
-#ifdef MAC
-    mac_beep();
-#else
-    (void)write(1, "\007", 1);
-#endif
-}
 

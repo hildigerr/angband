@@ -2017,172 +2017,6 @@ void apply_magic(inven_type *i_ptr, int level, int good, int not_unique)
 
 
 
-/*
- * Places a particular trap at location y, x		-RAK-	 
- */
-void place_trap(int y, int x, int sval)
-{
-    register int cur_pos;
-
-
-    /* Do not hurt artifacts, stairs, store doors */
-    if (!valid_grid(y, x)) return;
-
-
-    /* Don't put traps under player/monsters, it's annoying -CFT */
-    if (cave[y][x].m_idx >= MIN_M_IDX) return;
-
-
-    /* Delete whatever is there */
-    delete_object(y, x);
-
-    /* Make a new object */
-    cur_pos = i_pop();
-    cave[y][x].i_idx = cur_pos;
-    invcopy(&i_list[cur_pos], OBJ_TRAP_LIST + sval);
-}
-
-
-/*
- * Places rubble at location y, x			-RAK-	
- */
-void place_rubble(int y, int x)
-{
-    register int        cur_pos;
-    register cave_type *c_ptr;
-
-    /* Do not hurt artifacts, stairs, store doors */
-    if (!valid_grid(y, x)) return;
-    
-    /* Delete whatever is there */
-    delete_object(y, x);
-
-    cur_pos = i_pop();
-    c_ptr = &cave[y][x];
-    c_ptr->i_idx = cur_pos;
-    c_ptr->fval = BLOCKED_FLOOR;
-    invcopy(&i_list[cur_pos], OBJ_RUBBLE);
-}
-
-
-/*
- * if killed a 'Creeping _xxx_ coins'... -CWS
- */
-void get_coin_type(monster_race *r_ptr)
-{
-    cptr name;
-
-    name = r_ptr->name;
-    if (!stricmp(name, "Creeping copper coins")) coin_type = 2;
-    if (!stricmp(name, "Creeping silver coins")) coin_type = 5;
-    if (!stricmp(name, "Creeping gold coins")) coin_type = 10;
-    if (!stricmp(name, "Creeping mithril coins"))coin_type = 16;
-    if (!stricmp(name, "Creeping adamantite coins")) coin_type = 17;
-}
-
-/*
- * Places a treasure (Gold or Gems) at given row, column -RAK-	
- */
-void place_gold(int y, int x)
-{
-    register int        i, cur_pos;
-    register inven_type *i_ptr;
-
-    /* Do not hurt illegals, artifacts, stairs, store doors */
-    if (!valid_grid(y, x)) return;
-
-    /* Delete the object under us (acidic gold?) */
-	delete_object(y, x);
-
-    /* Make it */
-    cur_pos = i_pop();
-
-    /* Pick a Treasure variety */
-    i = ((randint(object_level + 2) + 2) / 2) - 1;
-
-    /* Apply "extra" magic */
-    if (randint(GREAT_OBJ) == 1) {
-	i += randint(object_level + 1);
-    }
-
-    /* Do not create "illegal" Treasure Types */
-    if (i >= MAX_GOLD) i = MAX_GOLD - 1;
-
-    if (coin_type) {			/* if killed a Creeping _xxx_ coins... */
-	if (coin_type > MAX_GOLD - 1)
-	    coin_type = 0;		/* safety check -CWS */
-	i = coin_type;
-    }
-
-    cave[y][x].i_idx = cur_pos;
-    invcopy(&i_list[cur_pos], OBJ_GOLD_LIST + i);
-    i_ptr = &i_list[cur_pos];
-    i_ptr->cost += (8L * (long)randint((int)i_ptr->cost)) + randint(8);
-
-    /* average the values to make Creeping _xxx_ coins not give too great treasure drops */
-    if (coin_type) {
-	i_ptr->cost = ((8L * (long)randint((int)k_list[OBJ_GOLD_LIST + i].cost))
-		       + (i_ptr->cost)) >> 1;
-    }
-
-    /* Under the player */
-    if (cave[y][x].m_idx == 1) {
-	msg_print("You feel something roll beneath your feet.");
-    }
-}
-
-
-/*
- * Returns the array number of a random object -RAK-
- */
-int get_obj_num(int level, int good)
-{
-    register int i, j;
-
-    do {
-	if (level == 0)
-	    i = randint(t_level[0]) - 1;
-	else {
-	    if (level >= MAX_OBJ_LEVEL)
-		level = MAX_OBJ_LEVEL;
-	    else if (randint(GREAT_OBJ) == 1) {
-		level = level * MAX_OBJ_LEVEL / randint(MAX_OBJ_LEVEL) + 1;
-		if (level > MAX_OBJ_LEVEL)
-		    level = MAX_OBJ_LEVEL;
-	    }
-	/*
-	 * This code has been added to make it slightly more likely to get
-	 * the higher level objects.	Originally a uniform distribution
-	 * over all objects less than or equal to the dungeon level.  This
-	 * distribution makes a level n objects occur approx 2/n% of the time
-	 * on level n, and 1/2n are 0th level. 
-	 */
-
-	    if (randint(2) == 1)
-		i = randint(t_level[level]) - 1;
-	    else {		   /* Choose three objects, pick the highest level. */
-		i = randint(t_level[level]) - 1;
-		j = randint(t_level[level]) - 1;
-		if (i < j)
-		    i = j;
-		j = randint(t_level[level]) - 1;
-		if (i < j)
-		    i = j;
-		j = k_list[sorted_objects[i]].level;
-		if (j == 0)
-		    i = randint(t_level[0]) - 1;
-		else
-		    i = randint(t_level[j] - t_level[j - 1]) - 1 + t_level[j - 1];
-	    }
-	}
-    } while (((k_list[sorted_objects[i]].rare ?
-	       (randint(k_list[sorted_objects[i]].rare) - 1) : 0) && !good)
-	     || (k_list[sorted_objects[i]].rare == 255));
-    return (i);
-}
-
-
-
 int special_place_object(int y, int x)
 {
     register int	cur_pos, tmp;
@@ -2619,6 +2453,170 @@ void special_random_object(int y, int x, int num)
 }
 
 
+
+
+/*
+ * Places a particular trap at location y, x		-RAK-	 
+ */
+void place_trap(int y, int x, int sval)
+{
+    register int cur_pos;
+
+
+    /* Do not hurt artifacts, stairs, store doors */
+    if (!valid_grid(y, x)) return;
+
+
+    /* Don't put traps under player/monsters, it's annoying -CFT */
+    if (cave[y][x].m_idx >= MIN_M_IDX) return;
+
+
+    /* Delete whatever is there */
+    delete_object(y, x);
+
+    /* Make a new object */
+    cur_pos = i_pop();
+    cave[y][x].i_idx = cur_pos;
+    invcopy(&i_list[cur_pos], OBJ_TRAP_LIST + sval);
+}
+
+
+/*
+ * Places rubble at location y, x			-RAK-	
+ */
+void place_rubble(int y, int x)
+{
+    register int        cur_pos;
+    register cave_type *c_ptr;
+
+    /* Do not hurt artifacts, stairs, store doors */
+    if (!valid_grid(y, x)) return;
+    
+    /* Delete whatever is there */
+    delete_object(y, x);
+
+    cur_pos = i_pop();
+    c_ptr = &cave[y][x];
+    c_ptr->i_idx = cur_pos;
+    c_ptr->fval = BLOCKED_FLOOR;
+    invcopy(&i_list[cur_pos], OBJ_RUBBLE);
+}
+
+/*
+ * if killed a 'Creeping _xxx_ coins'... -CWS
+ */
+void get_coin_type(monster_race *r_ptr)
+{
+    cptr name;
+
+    name = r_ptr->name;
+    if (!stricmp(name, "Creeping copper coins")) coin_type = 2;
+    if (!stricmp(name, "Creeping silver coins")) coin_type = 5;
+    if (!stricmp(name, "Creeping gold coins")) coin_type = 10;
+    if (!stricmp(name, "Creeping mithril coins"))coin_type = 16;
+    if (!stricmp(name, "Creeping adamantite coins")) coin_type = 17;
+}
+
+/*
+ * Places a treasure (Gold or Gems) at given row, column -RAK-	
+ */
+void place_gold(int y, int x)
+{
+    register int        i, cur_pos;
+    register inven_type *i_ptr;
+
+    /* Do not hurt illegals, artifacts, stairs, store doors */
+    if (!valid_grid(y, x)) return;
+
+    /* Delete the object under us (acidic gold?) */
+	delete_object(y, x);
+
+    /* Make it */
+    cur_pos = i_pop();
+
+    /* Pick a Treasure variety */
+    i = ((randint(object_level + 2) + 2) / 2) - 1;
+
+    /* Apply "extra" magic */
+    if (randint(GREAT_OBJ) == 1) {
+	i += randint(object_level + 1);
+    }
+
+    /* Do not create "illegal" Treasure Types */
+    if (i >= MAX_GOLD) i = MAX_GOLD - 1;
+
+    if (coin_type) {			/* if killed a Creeping _xxx_ coins... */
+	if (coin_type > MAX_GOLD - 1)
+	    coin_type = 0;		/* safety check -CWS */
+	i = coin_type;
+    }
+
+    cave[y][x].i_idx = cur_pos;
+    invcopy(&i_list[cur_pos], OBJ_GOLD_LIST + i);
+    i_ptr = &i_list[cur_pos];
+    i_ptr->cost += (8L * (long)randint((int)i_ptr->cost)) + randint(8);
+
+    /* average the values to make Creeping _xxx_ coins not give too great treasure drops */
+    if (coin_type) {
+	i_ptr->cost = ((8L * (long)randint((int)k_list[OBJ_GOLD_LIST + i].cost))
+		       + (i_ptr->cost)) >> 1;
+    }
+
+    /* Under the player */
+    if (cave[y][x].m_idx == 1) {
+	msg_print("You feel something roll beneath your feet.");
+    }
+}
+
+
+/*
+ * Returns the array number of a random object -RAK-
+ */
+int get_obj_num(int level, int good)
+{
+    register int i, j;
+
+    do {
+	if (level == 0)
+	    i = randint(t_level[0]) - 1;
+	else {
+	    if (level >= MAX_OBJ_LEVEL)
+		level = MAX_OBJ_LEVEL;
+	    else if (randint(GREAT_OBJ) == 1) {
+		level = level * MAX_OBJ_LEVEL / randint(MAX_OBJ_LEVEL) + 1;
+		if (level > MAX_OBJ_LEVEL)
+		    level = MAX_OBJ_LEVEL;
+	    }
+	/*
+	 * This code has been added to make it slightly more likely to get
+	 * the higher level objects.	Originally a uniform distribution
+	 * over all objects less than or equal to the dungeon level.  This
+	 * distribution makes a level n objects occur approx 2/n% of the time
+	 * on level n, and 1/2n are 0th level. 
+	 */
+
+	    if (randint(2) == 1)
+		i = randint(t_level[level]) - 1;
+	    else {		   /* Choose three objects, pick the highest level. */
+		i = randint(t_level[level]) - 1;
+		j = randint(t_level[level]) - 1;
+		if (i < j)
+		    i = j;
+		j = randint(t_level[level]) - 1;
+		if (i < j)
+		    i = j;
+		j = k_list[sorted_objects[i]].level;
+		if (j == 0)
+		    i = randint(t_level[0]) - 1;
+		else
+		    i = randint(t_level[j] - t_level[j - 1]) - 1 + t_level[j - 1];
+	    }
+	}
+    } while (((k_list[sorted_objects[i]].rare ?
+	       (randint(k_list[sorted_objects[i]].rare) - 1) : 0) && !good)
+	     || (k_list[sorted_objects[i]].rare == 255));
+    return (i);
+}
 
 
 /* Destroy an item in the inventory			-RAK-	 */
