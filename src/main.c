@@ -27,7 +27,6 @@ static int force_keys_to = FALSE;
 
 
 static int d_check(char *);
-static void init_r_level();
 static void init_t_level();
 static void player_outfit();
 
@@ -318,7 +317,6 @@ int main(int argc, char *argv[])
     init_seeds();
 
     /* Init monster and treasure levels for allocate */
-    init_r_level();
     init_t_level();
 
     /* Init the store inventories			*/

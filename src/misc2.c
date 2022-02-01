@@ -1107,11 +1107,15 @@ static u16b r_level[MAX_R_LEV+1];
 
 
 /*
- * Initializes r_level array for use with PLACE_MONSTER	-RAK-	
+ * Major Hack -- Initializes r_level array
  */
 static void init_r_level()
 {
     register int i, k;
+    static bool done = FALSE;
+
+    /* Only initialize once */    
+    if (done) return;
 
     /* Start with no monsters per level */
     for (i = 0; i <= MAX_R_LEV; i++) r_level[i] = 0;
@@ -1122,6 +1126,9 @@ static void init_r_level()
 
     /* Deduce the monsters on or below each level */
     for (i = 1; i <= MAX_R_LEV; i++) r_level[i] += r_level[i-1];
+
+    /* Only do this once */
+    done = TRUE;
 }
 
 
@@ -1145,6 +1152,7 @@ int get_mons_num(int level)
 
     int          old = level;
 
+    init_r_level();
 
     while (1) {
 
@@ -1208,6 +1216,7 @@ int get_nmons_num(int level)
 
     old = level;
 
+    init_r_level();
 
     while (1) {
 
