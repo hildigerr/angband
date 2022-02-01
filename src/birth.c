@@ -921,9 +921,36 @@ void player_birth()
     get_name();
     msg_print(NULL);
 
-/* This delay may be reduced, but is recommended to keep players
+/*
+ * Pauses for user response before returning		-RAK-	 
+ * NOTE: Delay is for players trying to roll up "perfect"	 
+ * characters.  Make them wait a bit.			
+ * This delay may be reduced, but is recommended to keep players
  * from continuously rolling up characters, which can be VERY
  * expensive CPU wise.
  */
-    pause_exit(23, PLAYER_EXIT_PAUSE);
+    /* Prompt for it */    
+    prt("[Press any key to continue, or Q to exit.]", 23, 10);
+
+    /* Get a key */
+    c = inkey();
+
+    if (c == 'Q') {
+	erase_line(23, 0);
+#ifndef MSDOS			   /* PCs are slow enough as is  -dgk */
+	if (PLAYER_EXIT_PAUSE > 0)
+	    (void)sleep((unsigned)PLAYER_EXIT_PAUSE);
+#else
+#endif
+#ifdef MAC
+	enablefilemenu(FALSE);
+	exit_game();
+	enablefilemenu(TRUE);
+#else
+	exit_game();
+#endif
+    }
+    erase_line(23, 0);
 }
+
+
