@@ -24,8 +24,6 @@ static int force_keys_to = FALSE;
 
 
 
-static void player_outfit();
-
 int unfelt    = TRUE;
 int quests[MAX_QUESTS];
 monster_race ghost;
@@ -100,8 +98,6 @@ static int d_check(char *a)
  */
 int main(int argc, char *argv[])
 {
-    int generate, i;
-    int result=FALSE;
 
 #ifndef __MINT__
     FILE *fp;
@@ -314,17 +310,8 @@ int main(int argc, char *argv[])
     /* must come after init_curses as some of the signal handlers use curses */
     signals_init();
 
-    /* Check operating hours			*/
-    /* If not wizard  No_Control_Y	        */
+    /* Check operating hours */
     read_times();
-
-
-
-    /* Grab a random seed from the clock          */
-    init_seeds();
-
-    /* Init the store inventories			*/
-    store_init();
 
 #ifndef MAC
     /* On Mac, if -n is passed, no savefile is used */
@@ -334,31 +321,91 @@ int main(int argc, char *argv[])
 
     (void) sprintf(savefile, "%s/%d%s", ANGBAND_DIR_SAVE, player_uid, p_ptr->name);
 
- /* This restoration of a saved character may get ONLY the monster memory. In
-    this case, load_player returns false. It may also resurrect a dead character
-    (if you are the wizard). In this case, it returns true, but also sets the
-    parameter "generate" to true, as it does not recover any cave details. */
+    /* Call the main function */
+    play_game();
 
+    /* Exit (never gets here) */
+    return (0);
+}
+
+
+/*
+ * Init players with some belongings
+ */
+static void player_outfit()
+{
+    register int i, j;
+    inven_type inven_init;
+    
+    /* this is needed for bash to work right, it can't hurt anyway */
+    for (i = 0; i < INVEN_ARRAY_SIZE; i++)
+	invcopy(&inventory[i], OBJ_NOTHING);
+
+    for (i = 0; i < 5; i++)
+    {
+	j = player_init[p_ptr->pclass][i];
+	invcopy(&inven_init, j);
+	store_bought(&inven_init);
+	if (inven_init.tval == TV_SWORD || inven_init.tval == TV_HAFTED
+	    || inven_init.tval == TV_BOW)
+	    inven_init.ident |= ID_SHOW_HITDAM;
+	(void) inven_carry(&inven_init);
+    }
+
+    /* weird place for it, but why not? */
+    for (i = 0; i < 64; i++)
+	spell_order[i] = 99;
+}
+
+
+
+/*
+ * Actually play a game
+ */
+void play_game()
+{
+    int i;
+    int generate;
+    int result = FALSE;
+
+
+    /* Grab a random seed from the clock          */
+    init_seeds();
+
+    /* Load and re-save a player's character (only Unix) */
     if (fiddle) {
-	if (load_player(&generate))
-	    save_player();
+	if (load_player(&generate)) save_player();
 	exit_game();
     }
 
-    result = load_player(&generate);
-    /* enter wizard mode before showing the character display, but must wait
-       until after load_player in case it was just a resurrection */
-    if (to_be_wizard)
-	if (!enter_wiz_mode())
-	    exit_game();
+    /*
+     * This restoration of a saved character may get ONLY the monster memory.
+     * In this case, load_player returns false. It may also resurrect a dead
+     * character (if you are a wizard). In this case, it returns true, but
+     * also sets the parameter "generate" to true, as it does not recover
+     * any cave details.
+     */
 
-    if ((new_game == FALSE) && result) {
+    result = load_player(&generate);
+
+    /* Enter wizard mode before showing the character display, but must wait
+       until after load_player in case it was just a "resurrection" */
+    if (to_be_wizard && !enter_wiz_mode()) exit_game();
+
+
+    /* See above */
+    if (!new_game && result) {
+
+	/* Display character, allow name change */
 	change_name();
 
 	/* could be restoring a dead character after a signal or HANGUP */
-	if (p_ptr->chp < 0)
-	    death = TRUE;
-    } else {			/* Create character */
+	if (p_ptr->chp < 0) death = TRUE;
+    }
+
+    /* Create character */
+    else {
+
 	/* Unique Weapons, Armour and Rings */
 	GROND=0;
 	RINGIL=0;
@@ -480,13 +527,22 @@ int main(int argc, char *argv[])
 	/* Unique Monster Flags */
 	for (i=0; i<MAX_R_IDX; i++)
 	    u_list[i].exist=0, u_list[i].dead=0;
+
+	/* Roll up a new character */
 	player_birth();
 
 	/* if we're creating a new character, change the savefile name */
     (void) sprintf(savefile, "%s/%d%s", ANGBAND_DIR_SAVE, player_uid, p_ptr->name);
+
+	/* Give him some stuff */
 	player_outfit();
+
+	/* Init the stores */
+	store_init();
+
 	p_ptr->food = 7500;
 	p_ptr->food_digested = 2;
+
         if (class[p_ptr->pclass].spell == MAGE)
 	{			/* Magic realm   */
 	    clear_screen();	/* makes spell list easier to read */
@@ -499,28 +555,36 @@ int main(int argc, char *argv[])
 	    clear_screen();	/* force out the 'learn prayer' message */
 	    calc_mana(A_WIS);
 	}
+
 	/* prevent ^c quit from entering score into scoreboard,
 	   and prevent signal from creating panic save until this point,
 	   all info needed for save file is now valid */
 	character_generated = 1;
+
+	/* Force "level generation" */
 	generate = TRUE;
     }
 
-    if (force_rogue_like)
+    /* Reset "rogue_like_commands" */
+    if (force_rogue_like) {
 	rogue_like_commands = force_keys_to;
+    }
 
     magic_init();
 
-    /* Begin the game				*/
+    /* Begin the game */
     clear_screen();
     prt_stat_block();
-    if (generate)
-	generate_cave();
 
-    /* Loop till dead, or exit			*/
-    while(!death)
-    {
-	dungeon();		/* Dungeon logic */
+    /* Make a level */
+    if (generate) generate_cave();
+
+
+    /* Loop till dead */
+    while (!death) {
+
+	/* Process the level */
+	dungeon();
 
 #ifndef MAC
 	/* check for eof here, see inkey() in io.c */
@@ -536,44 +600,13 @@ int main(int argc, char *argv[])
 	    death = TRUE;
 	}
 #endif
-	if (!death) generate_cave(); /* New level	*/
+
+	/* Make the New level */
+	if (!death) generate_cave();
     }
 
-    exit_game();		/* Character gets buried. */
-    /* should never reach here, but just in case */
-    return (0);
+    /* Character gets buried. */
+    exit_game();
 }
-
-
-/*
- * Init players with some belongings
- */
-static void player_outfit()
-{
-    register int i, j;
-    inven_type inven_init;
-    
-    /* this is needed for bash to work right, it can't hurt anyway */
-    for (i = 0; i < INVEN_ARRAY_SIZE; i++)
-	invcopy(&inventory[i], OBJ_NOTHING);
-
-    for (i = 0; i < 5; i++)
-    {
-	j = player_init[p_ptr->pclass][i];
-	invcopy(&inven_init, j);
-	store_bought(&inven_init);
-	if (inven_init.tval == TV_SWORD || inven_init.tval == TV_HAFTED
-	    || inven_init.tval == TV_BOW)
-	    inven_init.ident |= ID_SHOW_HITDAM;
-	(void) inven_carry(&inven_init);
-    }
-
-    /* weird place for it, but why not? */
-    for (i = 0; i < 64; i++)
-	spell_order[i] = 99;
-}
-
-
-
 
 

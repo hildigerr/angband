@@ -586,7 +586,7 @@ void cast(void);
 void get_file_paths(void);
 
 /* main.c */
-int main(int, char **);
+void play_game(void);
 
 /* misc1.c */
 void init_seeds();
