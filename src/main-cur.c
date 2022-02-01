@@ -120,6 +120,57 @@ static int     curses_on = FALSE;
 
 
 /*
+ * Shut down curses (restore_term)
+ * Put the terminal in the original mode.			   -CJS-
+ */
+void restore_term()
+{
+    if (!curses_on) return;
+
+    put_qio();			   /* Dump any remaining buffer */
+#ifdef MSDOS
+    (void)sleep(2);		   /* And let it be read. */
+#endif
+#ifdef VMS
+    pause_line(15);
+#endif
+
+    /* this moves curses to bottom right corner */
+    mvcur(curscr->_cury, curscr->_curx, LINES - 1, 0);
+
+#ifdef VMS
+    pause_line(15);
+#endif
+
+    endwin();			   /* exit curses */
+
+    (void)fflush(stdout);
+
+#ifdef MSDOS
+    msdos_noraw();
+    (void)clear();
+#endif
+
+/* restore the saved values of the special chars */
+#ifdef USG
+# if !defined(MSDOS) && !defined(ATARIST_MWC) && !defined(__MINT__)
+    (void)ioctl(0, TCSETA, (char *)&save_termio);
+# endif
+#else
+# ifndef VMS
+    (void)ioctl(0, TIOCSLTC, (char *)&save_special_chars);
+    (void)ioctl(0, TIOCSETP, (char *)&save_ttyb);
+    (void)ioctl(0, TIOCSETC, (char *)&save_tchars);
+    (void)ioctl(0, TIOCLSET, (char *)&save_local_chars);
+# endif
+#endif
+
+    curses_on = FALSE;
+}
+
+
+
+/*
  * Hack -- Suspend Curses
  * Handle the stop and start signals. This ensures that the log is up to
  * date, and that the terminal is fully reset and restored.  
