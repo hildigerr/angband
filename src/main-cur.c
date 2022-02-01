@@ -31,7 +31,6 @@
 #  define ATARIST_MWC
 #  include "curses.h"
 #  include <osbind.h>
-   long               wgetch();
    char               *getenv();
 # endif
 
@@ -79,6 +78,8 @@
 # include <sys/resource.h>
 # include <sys/param.h>
 #  include <sys/param.h>
+#  include <sys/file.h>
+#  include <sys/types.h>
 #  ifndef VMS
 #   include <sys/wait.h>
 #  endif /* !VMS */
@@ -102,6 +103,11 @@
 
 extern char *getenv();
 
+#ifdef ATARIST_MWC
+extern WINDOW *newwin();
+#endif
+
+
 #if !defined(MSDOS) && !defined(ATARIST_MWC) && !defined(__MINT__)
 #ifdef USG
 static struct termio save_termio;
@@ -121,7 +127,6 @@ static int     curses_on = FALSE;
 
 /*
  * Shut down curses (restore_term)
- * Put the terminal in the original mode.			   -CJS-
  */
 void restore_term()
 {
@@ -172,8 +177,7 @@ void restore_term()
 
 /*
  * Hack -- Suspend Curses
- * Handle the stop and start signals. This ensures that the log is up to
- * date, and that the terminal is fully reset and restored.  
+ * See "signals.h" for usage
  */
 int suspend()
 {
@@ -187,13 +191,12 @@ int suspend()
 
 #else
 
-    struct sgttyb  tbuf;
-    struct ltchars lcbuf;
-    struct tchars  cbuf;
-    int            lbuf;
-    long           time();
+    static struct sgttyb  tbuf;
+    static struct ltchars lcbuf;
+    static struct tchars  cbuf;
+    static int            lbuf;
+    static long           time();
 
-    p_ptr->male |= 2;
 	(void)ioctl(0, TIOCGETP, (char *)&tbuf);
 	(void)ioctl(0, TIOCGETC, (char *)&cbuf);
 	(void)ioctl(0, TIOCGLTC, (char *)&lcbuf);
@@ -201,7 +204,6 @@ int suspend()
 
 	restore_term();
 
-    (void)kill(0, SIGSTOP);
 	curses_on = TRUE;
 
 	(void)ioctl(0, TIOCSETP, (char *)&tbuf);
@@ -215,14 +217,13 @@ int suspend()
 	cbreak();
 	noecho();
 
-    p_ptr->male &= ~2;
 #endif
     return 0;
 }
 
 
 /*
- * Set up the terminal into a suitable state for moria.	 -CJS-
+ * Set up the terminal for a standard "moria" type game
  */
 void moriaterm()
 {
@@ -266,15 +267,10 @@ void moriaterm()
     tbuf.c_cc[VERASE] = (char)-1;
     tbuf.c_cc[VKILL] = (char)-1;
     tbuf.c_cc[VEOF] = (char)-1;
-
-/* don't know what these are for */
     tbuf.c_cc[VEOL] = (char)-1;
     tbuf.c_cc[VEOL2] = (char)-1;
-
-/* stuff needed when !icanon, i.e. cbreak/raw mode */
     tbuf.c_cc[VMIN] = 1;	   /* Input should wait for at least 1 char */
     tbuf.c_cc[VTIME] = 0;	   /* no matter how long that takes. */
-
     (void)ioctl(0, TCSETA, (char *)&tbuf);
 
 #else
@@ -329,9 +325,9 @@ void moriaterm()
  */
 int check_input(int microsec)
 {
-#if defined(USG) && !defined(M_XENIX)
     int result = 0;
 
+#if defined(USG) && !defined(M_XENIX)
     int                 arg;
 #else
     struct timeval      tbuf;
@@ -400,21 +396,24 @@ int check_input(int microsec)
 }
 
 
-/* 
+/*
  * initializes curses routines
  */
 void init_curses(void)
 {
-    int i, y, x;
+    int i, y, x, err;
 
+
+#if defined(VMS) || defined(MSDOS) || \
+    defined(ATARIST_MWC) || defined(__MINT__)
+
+    /* Nothing */
+
+#else
 #ifdef USG
-
-#if !defined(VMS) && !defined(MSDOS) && \
-    !defined(ATARIST_MWC) && !defined(__MINT__)
 
     (void)ioctl(0, TCGETA, (char *)&save_termio);
 
-#endif
 #else
 
     (void)ioctl(0, TIOCGLTC, (char *)&save_special_chars);
@@ -423,27 +422,31 @@ void init_curses(void)
     (void)ioctl(0, TIOCLGET, (char *)&save_local_chars);
 
 #endif
+#endif
 
 
 #ifdef ATARIST_MWC
-    WINDOW *newwin();
-
     initscr();
-    if (ERR)
+    err = (ERR)
 #else
 #if defined(USG) && !defined(PC_CURSES)	/* PC curses returns ERR */
-    if (initscr() == NULL)
+    err = (initscr() == NULL);
 #else
-    if (initscr() == ERR)
+    err = (initscr() == ERR);
 #endif
 #endif
-    {
+
+    /* Quit on error */
+    if (err) {
 	(void)printf("Error allocating screen in curses package.\n");
 	exit(1);
     }
 
     /* Check we have enough screen. -CJS- */
-    if (LINES < 24 || COLS < 80)
+    err = (LINES < 24 || COLS < 80);
+
+    /* Quit with message */
+    if (err) {
 	(void)printf(
 	  "Your screen is too small for Angband; you need at least 80x24.\n");
 	exit(1);
@@ -461,12 +464,15 @@ void init_curses(void)
 	(void)printf("Out of memory in starting up curses.\n");
 	exit_game();
     }
+
     (void)clear();
     (void)refresh();
 
     moriaterm();
 
-/* check tab settings, exit with error if they are not 8 spaces apart */
+
+    /*** Check tab settings ***/
+
 #ifdef ATARIST_MWC
     move(0, 0);
 #else
@@ -494,6 +500,16 @@ void init_curses(void)
 }
 
 
+
+
+
+
+
+#if 0
+
+/*
+ * Another unused function -- note the "curses" dependancies
+ */
 void shell_out()
 {
 #ifndef MACINTOSH
@@ -592,11 +608,6 @@ void shell_out()
 #endif
 #endif
 
-#ifndef MSDOS
-    /* close scoreboard descriptor */
-    /* it is not open on MSDOS machines */
-#endif
-
 	if ((str = getenv("SHELL")))
 #ifndef ATARIST_MWC
 	    (void)execl(str, str, (char *)0);
@@ -664,7 +675,6 @@ void shell_out()
 
 /*
  * This is not used.  It will only work on some systems.
- * It should be compared against shell_out in io.c 
  */
 
 /*
