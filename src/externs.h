@@ -529,6 +529,7 @@ void do_cmd_activate(void);
 
 /* files.c */
 void read_times(void);
+void show_news(void);
 void helpfile(cptr);
 int file_character(cptr);
 

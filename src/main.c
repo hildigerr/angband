@@ -319,6 +319,12 @@ int main(int argc, char *argv[])
     /* Check operating hours */
     read_times();
 
+    /* Show news file */
+    show_news();
+    
+    /* Wait for response */
+    pause_line(23);
+
 #ifndef MAC
     /* On Mac, if -n is passed, no savefile is used */
     /* If -n is not passed, the calling routine will know savefile name,

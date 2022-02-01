@@ -107,16 +107,17 @@ void init_scorefile()
 
 
 /*
- * Attempt to open the intro file			-RAK-
  * Hack -- Check the hours file vs. what time it is	-Doc
  */
 void read_times(void)
 {
+
+#ifdef CHECK_HOURS
+
     register int i;
     vtype        in_line;
     FILE        *file1;
 
-#ifdef CHECK_HOURS
 /* Attempt to read hours.dat.	 If it does not exist,	   */
 /* inform the user so he can tell the wizard about it	 */
 
@@ -164,12 +165,33 @@ void read_times(void)
     }
 #endif				   /* CHECK_HOURS */
 
-/* Print the introduction message, news, etc.		 */
-    if ((file1 = my_tfopen(ANGBAND_NEWS, "r")) != NULL) {
+}
+
+
+/*
+ * Attempt to open, and display, the intro "news" file		-RAK-
+ */
+void show_news(void)
+{
+    register int i;
+    vtype        in_line;
+    FILE        *file1;
+
+
+    /* Try to open the News file */
+    file1 = my_tfopen(ANGBAND_NEWS, "r");
+
+    if (file1 != NULL) {
+
+    /* Clear the screen */ 
 	clear_screen();
-	for (i = 0; fgets(in_line, 80, file1) != NULL; i++)
+
+    /* Dump the file */
+	for (i = 0; fgets(in_line, 80, file1) != NULL; i++) {
 	    put_str(in_line, i, 0);
-	pause_line(23);
+    }
+
+    /* Close */
 	(void)fclose(file1);
     }
 }
