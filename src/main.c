@@ -98,6 +98,8 @@ static int d_check(char *a)
  */
 int main(int argc, char *argv[])
 {
+    /* Dump score list (num lines)? */
+    int show_score = 0;
 
 #ifndef __MINT__
     FILE *fp;
@@ -190,8 +192,6 @@ int main(int argc, char *argv[])
     fclose(fp);
 #endif
 
-    /* use curses */
-    init_curses();
 
     /* check for user interface option */
     for (--argc, ++argv; argc > 0 && argv[0][0] == '-'; --argc, ++argv) {
@@ -219,12 +219,9 @@ int main(int argc, char *argv[])
 	    break;
 	  case 'S':
 	  case 's':
-	    init_curses();
-	    if (isdigit((int)argv[0][2]))
-		display_scores(0, atoi(&argv[0][2]));
-	    else
-		display_scores(0, 10);
-	    exit_game();
+	    show_score = atoi(&argv[0][2]);
+	    if (show_score <= 0) show_score = 10;
+	    break;
 	  case 'D':
 	  case 'd':
 	    if (!can_be_wizard) goto usage;
@@ -257,6 +254,8 @@ int main(int argc, char *argv[])
 
 	  default:
 	  usage:
+
+	    /* Note -- the Term is NOT initialized */
 	    if (can_be_wizard) {
 #ifdef MSDOS
 		puts("Usage: angband [-afnorw] [-s<num>] [-d<num>] <file>");
@@ -300,6 +299,17 @@ int main(int argc, char *argv[])
 	    /* Actually abort the process */
 	    quit(NULL);
 	}
+    }
+
+
+    /* use curses */
+    init_curses();
+
+
+    /* Handle "score list" requests */
+    if (show_score > 0) {
+	display_scores(0, show_score);
+	exit_game();
     }
 
     /* catch those nasty signals */
