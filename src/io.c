@@ -554,12 +554,12 @@ void shell_out()
  * returns ^R.	 
  */
 char inkey()
+{
 #ifdef MAC
 /* The Mac does not need ^R, so it just consumes it */
 /* This routine does nothing special with direction keys */
 /* Just returns their keypad ascii value (e.g. '0'-'9') */
 /* Compare with inkeydir() below */
-{
     char ch;
     int  dir;
     int  shift_flag, ctrl_flag;
@@ -576,10 +576,7 @@ char inkey()
 	ch = '0' + dir;
 
     return (ch);
-}
-
 #else
-{
     int i;
 
     put_qio();			   /* Dump IO buffer		 */
@@ -621,9 +618,8 @@ char inkey()
 	(void)wrefresh(curscr);
 	moriaterm();
     }
-}
-
 #endif
+}
 
 
 #ifdef MAC
@@ -674,20 +670,16 @@ char inkeydir()
     }
     return (ch);
 }
-
 #endif
 
 
 /* Flush the buffer					-RAK-	 */
 void flush()
-#ifdef MAC
 {
+#ifdef MAC
 /* Removed put_qio() call.  Reduces flashing.  Doesn't seem to hurt. */
     FlushScreenKeys();
-}
-
 #else
-{
 #ifdef MSDOS
     while (kbhit())
 	(void)getch();
@@ -704,16 +696,15 @@ void flush()
 #endif
 
 /* used to call put_qio() here to drain output, but it is not necessary */
+#endif
 }
 
-#endif
 
 
 /* Clears given line of text				-RAK-	 */
 void erase_line(int row, int col)
-
-#ifdef MAC
 {
+#ifdef MAC
     Rect line;
 
     if (row == MSG_LINE && msg_flag)
@@ -724,23 +715,20 @@ void erase_line(int row, int col)
     line.right = SCRN_COLS;
     line.bottom = row + 1;
     DEraseScreen(&line);
-}
-
 #else
-{
     if (row == MSG_LINE && msg_flag)
 	msg_print(NULL);
     (void)move(row, col);
     clrtoeol();
+#endif
 }
 
-#endif
 
 
 /* Clears screen */
 void clear_screen()
-#ifdef MAC
 {
+#ifdef MAC
     Rect area;
 
     if (msg_flag)
@@ -750,23 +738,19 @@ void clear_screen()
     area.right = SCRN_COLS;
     area.bottom = SCRN_ROWS;
     DEraseScreen(&area);
-}
-
 #else
-{
     if (msg_flag)
 	msg_print(NULL);
     touchwin(stdscr);
     (void)clear();
     refresh();
+#endif
 }
 
-#endif
 
 void clear_from(int row)
-
-#ifdef MAC
 {
+#ifdef MAC
     Rect area;
 
     area.left = 0;
@@ -774,15 +758,12 @@ void clear_from(int row)
     area.right = SCRN_COLS;
     area.bottom = SCRN_ROWS;
     DEraseScreen(&area);
-}
-
 #else
-{
     (void)move(row, 0);
     clrtobot();
+#endif
 }
 
-#endif
 
 /* Outputs a char to a given interpolated y, x position	-RAK-	 */
 /* sign bit of a character used to indicate standout mode. -CJS */
@@ -816,8 +797,7 @@ void print(int ch, int row, int col)
 
 
 /* Print a message so as not to interrupt a counted command. -CJS- */
-void count_msg_print(p)
-const char *p;
+void count_msg_print(cptr p)
 {
     int i;
 
@@ -829,9 +809,8 @@ const char *p;
 
 /* Outputs a line to a given y, x position		-RAK-	 */
 void prt(cptr str_buff, int row, int col)
-
-#ifdef MAC
 {
+#ifdef MAC
     Rect line;
 
     if (row == MSG_LINE && msg_flag)
@@ -844,34 +823,27 @@ void prt(cptr str_buff, int row, int col)
     DEraseScreen(&line);
 
     put_str(str_buff, row, col);
-}
-
 #else
-{
     if (row == MSG_LINE && msg_flag)
 	msg_print(NULL);
     (void)move(row, col);
     clrtoeol();
     put_str(str_buff, row, col);
+#endif
 }
 
-#endif
 
 
 /* move cursor to a given y, x position */
 void move_cursor(int row, int col)
-
+{
 #ifdef MAC
-{
     DSetScreenCursor(col, row);
-}
-
 #else
-{
     (void)move(row, col);
+#endif
 }
 
-#endif
 
 
 /* Outputs message to top line of screen				 */
@@ -961,12 +933,17 @@ void msg_print(cptr str_buff)
     }
 }
 
-/* Used to verify a choice - user gets the chance to abort choice.  -CJS- */
+
+/*
+ * Let the player verify a choice.  -CJS-
+ * Return TRUE on "yes", else FALSE
+ */
 int get_check(cptr prompt)
 {
     int res, y, x;
 
     prt(prompt, 0, 0);
+
 #ifdef MAC
     GetScreenCursor(&x, &y);
 #else
@@ -989,35 +966,33 @@ int get_check(cptr prompt)
 #else
     (void)addstr(" [y/n]");
 #endif
+
+    /* Get an acceptable answer */
     do {
 	res = inkey();
     }
     while (res == ' ');
+
+    /* Erase the prompt */
     erase_line(0, 0);
-    if (res == 'Y' || res == 'y')
-	return TRUE;
-    else
-	return FALSE;
+
+    return ((res == 'Y' || res == 'y') ? TRUE : FALSE);
 }
 
 
 /*
- * Prompts (optional) and returns ord value of input char
- * Function returns false if <ESCAPE> is input	
+ * Prompts (optional), then gets and stores a keypress
+ * Returns false if <ESCAPE> is input
  */
 int get_com(cptr prompt, char *command)
 {
-    int res;
+    if (prompt) prt(prompt, 0, 0);
 
-    if (prompt)
-	prt(prompt, 0, 0);
     *command = inkey();
-    if (*command == 0 || *command == ESCAPE)
-	res = FALSE;
-    else
-	res = TRUE;
+
     erase_line(MSG_LINE, 0);
-    return (res);
+
+    return (*command != 0 && *command != ESCAPE);
 }
 
 #ifdef MAC
@@ -1026,17 +1001,12 @@ int get_comdir(char *prompt, char *command)
 {
     int res;
 
-    if (prompt)
-	prt(prompt, 0, 0);
-    *command = inkeydir();
-    if (*command == 0 || *command == ESCAPE)
-	res = FALSE;
-    else
-	res = TRUE;
-    erase_line(MSG_LINE, 0);
-    return (res);
-}
+    if (prompt) prt(prompt, 0, 0);
 
+    *command = inkeydir();
+
+    return (*command != 0 && *command != ESCAPE);
+}
 #endif
 
 
@@ -1044,72 +1014,69 @@ int get_comdir(char *prompt, char *command)
  * Gets a string terminated by <RETURN>
  * Function returns false if <ESCAPE> is input
  */
-int get_string(char *in_str, int row, int column, int slen)
+int get_string(char *buf, int row, int col, int len)
 {
-    register int start_col, end_col, i;
-    char        *p;
-    int          flag, aborted;
+    register int i, x1, x2;
+    char        *p = buf;
+    int done;
 
-    aborted = FALSE;
-    flag = FALSE;
-    (void)move(row, column);
-    for (i = slen; i > 0; i--)
+    (void)move(row, col);
+    for (i = len; i > 0; i--)
 	(void)addch(' ');
-    (void)move(row, column);
-    start_col = column;
-    end_col = column + slen - 1;
-    if (end_col > 79) {
-	slen = 80 - column;
-	end_col = 79;
+    (void)move(row, col);
+
+    /* Find the box bounds */
+    x1 = col;
+    x2 = x1 + len - 1;
+    if (x2 > 79) {
+	len = 80 - x1;
+	x2 = 79;
     }
-    p = in_str;
-    do {
+
+    /* Process input */    
+    while (!done) {
+
 	i = inkey();
 
 	switch (i) {
 
 	  case ESCAPE:
-	    aborted = TRUE;
-	    break;
+	    return (FALSE);
 
 	  case CTRL('J'):
 	  case CTRL('M'):
-	    flag = TRUE;
+	    done = TRUE;
 	    break;
 
 	  case DELETE:
 	  case CTRL('H'):
-	    if (column > start_col) {
-		column--;
-		put_str(" ", row, column);
-		move_cursor(row, column);
+	    if (col > x1) {
+		col--;
+		put_str(" ", row, col);
+		move_cursor(row, col);
 		*--p = '\0';
 	    }
 	    break;
 
 	  default:
-	    if (!isprint(i) || column > end_col)
+	    if (!isprint(i) || col > x2)
 		bell();
 	    else {
 #ifdef MAC
-		DSetScreenCursor(column, row);
+		DSetScreenCursor(col, row);
 		DWriteScreenCharAttr((char)i, ATTR_NORMAL);
 #else
-		mvaddch(row, column, (char)i);
-
+		mvaddch(row, col, (char)i);
 #endif
 		*p++ = i;
-		column++;
+		col++;
 	    }
 	    break;
 	}
     }
-    while ((!flag) && (!aborted));
-
-    if (aborted) return (FALSE);
 
     /* Remove trailing blanks */
-    while (p > in_str && p[-1] == ' ') p--;
+    while (p > buf && p[-1] == ' ') p--;
 
     /* Terminate it */
     *p = '\0';
@@ -1162,30 +1129,33 @@ void pause_exit(int prt_line, int delay)
     erase_line(prt_line, 0);
 }
 
+
+
+
+/*
+ * Save and restore the screen -- no flushing
+ */
+
+void save_screen()
+{
 #ifdef MAC
-void save_screen()
-{
     mac_save_screen();
-}
-
-void restore_screen()
-{
-    mac_restore_screen();
-}
-
 #else
-void save_screen()
-{
     overwrite(stdscr, savescr);
+#endif
 }
 
 void restore_screen()
 {
+#ifdef MAC
+    mac_restore_screen();
+#else
     overwrite(savescr, stdscr);
     touchwin(stdscr);
+#endif
 }
 
-#endif
+
 
 void bell()
 {
