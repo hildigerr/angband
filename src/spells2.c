@@ -70,7 +70,7 @@ static int poly(int mnum)
     delete_monster_idx(mnum);
 
     do {
-	r_idx = randint(m_level[k]-m_level[j])-1+m_level[j];  /* new creature index */
+	r_idx = randint(r_level[k]-r_level[j])-1+r_level[j];  /* new creature index */
     } while (r_list[r_idx].cflags2 & MF2_UNIQUE);
 
     /* Place the new monster where the old one was */

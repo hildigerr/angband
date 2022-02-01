@@ -1102,7 +1102,7 @@ int place_ghost()
  *
  * Number of monsters with level 0-N 
  */
-s16b m_level[MAX_R_LEV+1];
+static u16b r_level[MAX_R_LEV+1];
 
 
 
@@ -1127,7 +1127,7 @@ int get_mons_num(int level)
     while (1) {
 
 	if (level == 0) {
-	    i = rand_int(m_level[0]);
+	    i = rand_int(r_level[0]);
 	}
 
 	else {
@@ -1144,17 +1144,17 @@ int get_mons_num(int level)
 	    }
 	    else {
 		/* Make high level monsters more likely at high levels */
-		num = m_level[level] - m_level[0];
+		num = r_level[level] - r_level[0];
 		i = randint(num) - 1;
 		j = randint(num) - 1;
 		if (j > i) i = j;
-		level = r_list[i + m_level[0]].level;
+		level = r_list[i + r_level[0]].level;
 	    }
 
 	    /* Bizarre function */            
-	    i = m_level[level] - m_level[level - 1];
+	    i = r_level[level] - r_level[level - 1];
 	    if (i == 0) i++;
-	    i = randint(i) - 1 + m_level[level - 1];
+	    i = randint(i) - 1 + r_level[level - 1];
 	}
 
 	/* Uniques never appear out of "modified" depth */
@@ -1190,14 +1190,14 @@ int get_nmons_num(int level)
     while (1) {
 
 	if (level == 0) {
-	    i = rand_int(m_level[0]);
+	    i = rand_int(r_level[0]);
 	}
 
 	else {
 
 	    if (level > MAX_R_LEV) level = MAX_R_LEV;
 
-	    num = m_level[level] - m_level[0];
+	    num = r_level[level] - r_level[0];
 
 	    i = rand_int(num);
 	    i += 15;
@@ -1209,11 +1209,11 @@ int get_nmons_num(int level)
 	    j = rand_int(num);
 	    if (j > i) i = j;
 
-	    level = r_list[i + m_level[0]].level;
-	    i = m_level[level] - m_level[level - 1];
+	    level = r_list[i + r_level[0]].level;
+	    i = r_level[level] - r_level[level - 1];
 	    if (i == 0) i = 1;
 
-	    i = randint(i) - 1 + m_level[level - 1];
+	    i = randint(i) - 1 + r_level[level - 1];
 	}
 
 	if ((r_list[i].level > old) && (r_list[i].cflags2 & MF2_UNIQUE)) {
@@ -1538,7 +1538,7 @@ static int summon_specific(int *yp, int *xp, int type)
     register cave_type *cave_ptr;
 
 
-    for (l = m_level[MAX_R_LEV]; l != 0;) {
+    for (l = r_level[MAX_R_LEV]; l != 0;) {
 	m = randint(l) - 1;
 
 	for (ctr = 0; ctr <= 19;) {

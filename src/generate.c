@@ -794,7 +794,7 @@ static void vault_monster(int y1, int x1, int num)
  */
 static void vault_jelly(int y, int x)
 {
-    int l = m_level[MAX_R_LEV];
+    int l = r_level[MAX_R_LEV];
 
     /* Hack -- allocate a simple sleeping jelly */
     while (1) {
@@ -811,7 +811,7 @@ static void vault_jelly(int y, int x)
  */
 static void vault_undead(int y, int x)
 {
-    int l = m_level[MAX_R_LEV];
+    int l = r_level[MAX_R_LEV];
     /* Hack -- allocate a sleeping non-unique undead */
     while (1) {
 	int m = randint(l) - 1;

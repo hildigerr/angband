@@ -27,7 +27,7 @@ static int force_keys_to = FALSE;
 
 
 static int d_check(char *);
-static void init_m_level();
+static void init_r_level();
 static void init_t_level();
 static void player_outfit();
 
@@ -318,7 +318,7 @@ int main(int argc, char *argv[])
     init_seeds();
 
     /* Init monster and treasure levels for allocate */
-    init_m_level();
+    init_r_level();
     init_t_level();
 
     /* Init the store inventories			*/
@@ -573,19 +573,19 @@ static void player_outfit()
 
 
 /* Initializes M_LEVEL array for use with PLACE_MONSTER	-RAK-	*/
-static void init_m_level()
+static void init_r_level()
 {
     register int i, k;
 
     for (i = 0; i <= MAX_R_LEV; i++)
-	m_level[i] = 0;
+	r_level[i] = 0;
 
     k = MAX_R_IDX - WIN_MON_TOT;
     for (i = 0; i < k; i++)
-	m_level[r_list[i].level]++;
+	r_level[r_list[i].level]++;
 
     for (i = 1; i <= MAX_R_LEV; i++)
-	m_level[i] += m_level[i-1];
+	r_level[i] += r_level[i-1];
 }
 
 
