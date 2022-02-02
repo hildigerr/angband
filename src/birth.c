@@ -86,26 +86,24 @@ static int load_prev_data()
  */
 static void choose_sex(void)
 {
-    register int        exit_flag = FALSE;
     char        c;
 
     clear_from(20);
     put_str("Choose a sex (? for Help):", 20, 2);
     put_str("m) Male       f) Female", 21, 2);
 
-    while (!exit_flag) {
+    while (1) {
 	move_cursor(20, 29);
-    /* speed not important here */
 	c = inkey();
 	if (c == 'm' || c == 'M') {
 	    p_ptr->male = TRUE;
 	    put_str("Male", 4, 15);
-	    exit_flag = TRUE;
+	    break;
 	}
 	else if (c == 'f' || c == 'F') {
 	    p_ptr->male = FALSE;
 	    put_str("Female", 4, 15);
-	    exit_flag = TRUE;
+	    break;
 	}
 	else if (c == '?') {
 	    helpfile(ANGBAND_WELCOME);
@@ -123,11 +121,8 @@ static void choose_sex(void)
 static void choose_race(void)
 {
     int                  j, k, l, m;
-    int                  exit_flag;
     char                 s, tmp_str[80];
-    register player_race   *r_ptr;
 
-    j = 0;
     k = 0;
     l = 2;
     m = 21;
@@ -135,7 +130,7 @@ static void choose_race(void)
     clear_from(20);
 
     put_str("Choose a race (? for Help):", 20, 2);
-    do {
+    for (j = 0; j < MAX_RACES; j++) {
 	(void)sprintf(tmp_str, "%c) %s", k + 'a', race[j].trace);
 	put_str(tmp_str, m, l);
 	k++;
@@ -144,17 +139,14 @@ static void choose_race(void)
 	    l = 2;
 	    m++;
 	}
-	j++;
     }
 
-    while (j < MAX_RACES);
-    exit_flag = FALSE;
-    do {
+    while (1) {
 	move_cursor(20, 30);
 	s = inkey();
 	j = s - 'a';
 	if ((j < MAX_RACES) && (j >= 0)) {
-	    exit_flag = TRUE;
+	    break;
 	}
 	else if (s == '?') {
 	    helpfile(ANGBAND_WELCOME);
@@ -163,11 +155,9 @@ static void choose_race(void)
 	    bell();
 	}
     }
-    while (!exit_flag);
 
-    r_ptr = &race[j];
     p_ptr->prace = j;
-    put_str(r_ptr->trace, 3, 15);
+    put_str(race[j].trace, 3, 15);
 }
 
 
@@ -177,52 +167,47 @@ static void choose_race(void)
  */
 static void choose_class()
 {
-    register int i;
     int          j, k, l, m;
-    int          cl[MAX_CLASS], exit_flag;
-    player_class   *c_ptr;
+    int          cl[MAX_CLASS];
     char         tmp_str[80], s;
-    u32b       mask;
 
-    for (j = 0; j < MAX_CLASS; j++) cl[j] = 0;
+    /* Clear the display */
+    clear_from(20);
 
-    i = p_ptr->prace;
-    j = 0;
+    /* Prepare to list */
     k = 0;
     l = 2;
     m = 21;
-    mask = 0x1;
-    clear_from(20);
+
+    /* No legal choices yet */
+    for (j = 0; j < MAX_CLASS; j++) cl[j] = 0;
+
+    /* Display the legal choices */
     put_str("Choose a class (? for Help):", 20, 2);
-    do {
-	if (race[i].rtclass & mask) {
-	    (void)sprintf(tmp_str, "%c) %s", k + 'a', class[j].title);
+    for (j = 0; j < MAX_CLASS; j++) {
+	if (race[p_ptr->prace].rtclass & (1L << j)) {
+	    sprintf(tmp_str, "%c) %s", k + 'a', class[j].title);
 	    put_str(tmp_str, m, l);
-	    cl[k] = j;
+	    cl[k++] = j;
 	    l += 15;
 	    if (l > 70) {
 		l = 2;
 		m++;
 	    }
-	    k++;
 	}
-	j++;
-	mask <<= 1;
     }
-    while (j < MAX_CLASS);
 
     p_ptr->pclass = 0;
-    exit_flag = FALSE;
-    do {
+
+    while (1) {
 	move_cursor(20, 31);
 	s = inkey();
 	j = s - 'a';
 	if ((j < k) && (j >= 0)) {
 	    p_ptr->pclass = cl[j];
-	    c_ptr = &class[p_ptr->pclass];
-	    exit_flag = TRUE;
 	    clear_from(20);
-	    put_str(c_ptr->title, 5, 15);
+	    put_str(class[p_ptr->pclass].title, 5, 15);
+	    break;
 	}
 	else if (s == '?') {
 	    helpfile(ANGBAND_WELCOME);
@@ -230,7 +215,7 @@ static void choose_class()
 	else {
 	    bell();
 	}
-    } while (!exit_flag);
+    }
 }
 
 
@@ -253,9 +238,6 @@ static int adjust_stat(int stat_value, s16b amount, int auto_roll)
     /* Negative amounts (unused) */
     if (amount < 0) {
 	for (i = 0; i > amount; i--) {
-/* OK so auto_roll conditions not needed for negative amounts since stat_value
- * is always 15 at least currently!  -JK
- */
 
 	    if (stat_value > 108) {
 		stat_value--;
@@ -301,8 +283,9 @@ static int adjust_stat(int stat_value, s16b amount, int auto_roll)
  */
 static void change_stat(int stat, int amount)
 {
-  p_ptr->max_stat[stat] =
-        adjust_stat(p_ptr->max_stat[stat], (s16b) amount, FALSE);
+    int max = p_ptr->max_stat[stat];
+    int tmp = adjust_stat(max, amount, FALSE);
+    p_ptr->max_stat[stat] = tmp;
 }
 
 
@@ -337,18 +320,18 @@ static void get_all_stats(void)
 {
     register int        j;
 
-    player_race *r_ptr = &race[p_ptr->prace];
+    player_race		*rp_ptr = &race[p_ptr->prace];
 
 
     get_stats();
 
     /* Modify the stats for "race" */
-    change_stat(A_STR, r_ptr->str_adj);
-    change_stat(A_INT, r_ptr->int_adj);
-    change_stat(A_WIS, r_ptr->wis_adj);
-    change_stat(A_DEX, r_ptr->dex_adj);
-    change_stat(A_CON, r_ptr->con_adj);
-    change_stat(A_CHR, r_ptr->chr_adj);
+    change_stat(A_STR, rp_ptr->str_adj);
+    change_stat(A_INT, rp_ptr->int_adj);
+    change_stat(A_WIS, rp_ptr->wis_adj);
+    change_stat(A_DEX, rp_ptr->dex_adj);
+    change_stat(A_CON, rp_ptr->con_adj);
+    change_stat(A_CHR, rp_ptr->chr_adj);
 
     /* Analyze the stats */
     for (j = 0; j < 6; j++) {
@@ -357,20 +340,20 @@ static void get_all_stats(void)
     }
 
 
-    p_ptr->srh = r_ptr->srh;
-    p_ptr->bth = r_ptr->bth;
-    p_ptr->bthb = r_ptr->bthb;
-    p_ptr->fos = r_ptr->fos;
-    p_ptr->stl = r_ptr->stl;
-    p_ptr->save = r_ptr->bsav;
-    p_ptr->hitdie = r_ptr->bhitdie;
+    p_ptr->srh = rp_ptr->srh;
+    p_ptr->bth = rp_ptr->bth;
+    p_ptr->bthb = rp_ptr->bthb;
+    p_ptr->fos = rp_ptr->fos;
+    p_ptr->stl = rp_ptr->stl;
+    p_ptr->save = rp_ptr->bsav;
+    p_ptr->hitdie = rp_ptr->bhitdie;
     p_ptr->lev = 1;
     p_ptr->ptodam = todam_adj();
     p_ptr->ptohit = tohit_adj();
     p_ptr->ptoac = 0;
     p_ptr->pac = toac_adj();
-    p_ptr->expfact = r_ptr->b_exp;
-    p_ptr->see_infra = r_ptr->infra;
+    p_ptr->expfact = rp_ptr->b_exp;
+    p_ptr->see_infra = rp_ptr->infra;
 }
 
 
@@ -479,9 +462,8 @@ static void get_history(void)
     cur_idx = 0;
 
     /* Process the history */
-    do {
-	flag = FALSE;
-	do {
+    while (hist_idx >= 1) {
+	for (flag = FALSE; !flag; ) {
 	    if (background[cur_idx].chart == hist_idx) {
 		test_roll = randint(100);
 		while (test_roll > background[cur_idx].roll) cur_idx++;
@@ -496,9 +478,7 @@ static void get_history(void)
 		cur_idx++;
 	    }
 	}
-	while (!flag);
     }
-    while (hist_idx >= 1);
 
     /* clear the previous history strings */
     for (hist_idx = 0; hist_idx < 4; hist_idx++) {
@@ -512,7 +492,7 @@ static void get_history(void)
     flag = FALSE;
     while (history_block[end_pos] == ' ') end_pos--;
 
-    do {
+    for (flag = FALSE; !flag; ) {
 	while (history_block[start_pos] == ' ') start_pos++;
 	cur_len = end_pos - start_pos + 1;
 	if (cur_len > 60) {
@@ -531,7 +511,6 @@ static void get_history(void)
 	line_ctr++;
 	start_pos = new_start;
     }
-    while (!flag);
 
     /* Verify social class */
     if (social_class > 100) social_class = 100;
@@ -542,18 +521,26 @@ static void get_history(void)
 }
 
 
-
-/* Computes character's age, height, and weight		-JWT-	 */
-static void get_ahw()
+/*
+ * Computes character's age, height, and weight
+ */
+static void get_ahw(void)
 {
     register int        i;
 
     i = p_ptr->prace;
+    
+    /* Calculate the starting age */
     p_ptr->age = race[i].b_age + randint((int)race[i].m_age);
+
+    /* Calculate the height/weight for males */
     if (p_ptr->male) {
 	p_ptr->ht = randnor((int)race[i].m_b_ht, (int)race[i].m_m_ht);
 	p_ptr->wt = randnor((int)race[i].m_b_wt, (int)race[i].m_m_wt);
-    } else {
+    }
+
+    /* Calculate the height/weight for females */
+    else {
 	p_ptr->ht = randnor((int)race[i].f_b_ht, (int)race[i].f_m_ht);
 	p_ptr->wt = randnor((int)race[i].f_b_wt, (int)race[i].f_m_wt);
     }
@@ -656,40 +643,55 @@ static void get_class()
 
 
 
-/* Given a stat value, return a monetary value, which affects the amount of
- * gold a player has. 
+/*
+ * Given a stat value, return a monetary value,
+ * which affects the amount of gold a player has. 
  */
-static int monval(i)
-    int                 i;
+static int monval(int i)
 {
-    return 5 * ((int)i - 10);
+    return (5 * (i - 10));
 }
 
-
-static void get_money()
+/*
+ * Get the player's starting money
+ */
+static void get_money(void)
 {
-    register int        tmp, gold;
-    register u16b    *a_ptr;
+    register int        gold;
+    register u16b    *a_ptr = p_ptr->max_stat;
 
-    a_ptr = p_ptr->max_stat;
-    tmp = monval(a_ptr[A_STR]) + monval(a_ptr[A_INT])
+    int tmp = monval(a_ptr[A_STR]) + monval(a_ptr[A_INT])
 	+ monval(a_ptr[A_WIS]) + monval(a_ptr[A_CON])
 	+ monval(a_ptr[A_DEX]);
 
-    gold = p_ptr->sc * 6 + randint(25) + 325;          /* Social Class adj */
-    gold -= tmp;		   /* Stat adj */
-    gold += monval(a_ptr[A_CHR]);  /* Charisma adj	 */
-    if (!p_ptr->male)
-	gold += 50;		   /* She charmed the banker into it! -CJS- */
-				   /* She slept with the banker.. :) -GDH-  */
-    if (gold < 80)
-	gold = 80;		   /* Minimum */
+    /* Social Class is very important */
+    gold = p_ptr->sc * 6 + randint(25) + 325;
+
+    /* Stat adj */
+    gold -= tmp;
+
+    /* Charisma adj */
+    gold += monval(a_ptr[A_CHR]);
+
+    /* Minimum 80 gold */
+    if (gold < 80) gold = 80;
+
+    /* She charmed the banker into it! -CJS- */
+    /* She slept with the banker.. :) -GDH-  */
+    if (!p_ptr->male) gold += 50;
+
+    /* Save the gold */
     p_ptr->au = gold;
 }
 
 
-/* ---------- M A I N  for Character Creation Routine ---------- */
-/* -JWT-	 */
+/*
+ * Create a character.  Then wait for a moment.
+ *
+ * The delay may be reduced, but is recommended to keep players
+ * from continuously rolling up characters, which can be VERY
+ * expensive CPU wise.
+ */
 void player_birth()
 {
     char		c;
@@ -699,11 +701,12 @@ void player_birth()
 
 #ifdef AUTOROLLER
 
-    u32b		auto_round = 0;
     register int	i;
+    u32b		auto_round = 0;
     int			stat[6];
     int			autoroll = 0;
-    int			msstat = 0;/* Max autoroll w/ look for -SAC */
+    int			msstat = 0;
+    int			stat_idx = 0;
     char		inp[60];
 
 #endif
@@ -739,13 +742,13 @@ void player_birth()
     /* Prompt for it */
     put_str("Do you want to use automatic rolling? (? for Help) ", 20, 2);
 
-    do {   /* allow multiple key entry, so they can ask for help and
-            * still get back to this menu... -CFT */
-
+    /* Process help requests until a choice is made */
+    while (1) {
 	move_cursor(20, 52);
 	c = inkey();
 	if (c == '?') helpfile(ANGBAND_WELCOME);
-    } while ((c != 'y') && (c != 'Y') && (c != 'n') && (c != 'N'));
+	else if (strchr("ynYN", c)) break;
+    }
 
 
     /* Prepare the autoroller */
@@ -758,7 +761,6 @@ void player_birth()
 
 	/* Check the stats */
 	for (i = 0; i < 6; i++) {
-	    int                 stat_idx = 0;
 
 	    switch (i) {
 	      case 0:
@@ -805,7 +807,8 @@ void player_birth()
 		break;
 	    }
 
-	    do {
+	    while (1) {
+
 		inp[0] = '\000';
 		get_string(inp, 16 + i, 32, 3);
 		stat[stat_idx] = atoi(inp); /* have return give a stat of 3 */
@@ -817,8 +820,11 @@ void player_birth()
 		    stat[stat_idx] = (-stat[stat_idx]);
 		    if (stat[stat_idx] > msstat) msstat = stat[stat_idx];
 		}
-	    } while (stat[stat_idx] > msstat || stat[stat_idx] < 3);
-	} /* for i 0 - 5 */
+
+		/* Break on valid input */
+		if (stat[stat_idx] <= msstat && stat[stat_idx] >= 3) break;
+	    }
+	}
 	put_qio();
     }
 
@@ -880,16 +886,21 @@ void player_birth()
 #else
     );
 #endif				   /* character checks */
+
 #endif				   /* AUTOROLLER main looping section */
-       get_history();	           /* Common stuff */
-       get_ahw();
+
+	/* Calculate stuff */
+	get_history();
+	get_ahw();
 
 	calc_bonuses();
 	put_history();
 	put_misc1();
 	clear_from(20);
 
-	do {			   /* Input loop */
+	/* Input loop */
+	while (1) {
+
 	    if (previous_exists) {
 		put_str("Hit space: Reroll, ^P: Previous or ESC: Accept: ",
 			   20, 2);
@@ -898,7 +909,17 @@ void player_birth()
 		put_str("Hit space: Reroll, or ESC: Accept: ", 20, 2);
 		move_cursor(20, 37);
 	    }
+
+	    /* Prompt and get a command */
 	    c = inkey();
+
+	    /* Escape accepts the roll */
+	    if (c == ESCAPE) break;
+	    
+	    /* Space rerolls */
+	    if (c == ' ') break;
+
+	    /* Go back to last character with 'P' */
 	    if ((previous_exists) && (c == CTRL('P'))) {
 		previous_exists = FALSE;
 		if (load_prev_data()) {
@@ -910,16 +931,25 @@ void player_birth()
 		    put_stats();
 		    clear_from(20);
 		}
-	    } else if ((c != ' ') && (c != ESCAPE))	/* Prolly better way to do this */
-		bell();
-	} while ((c != ' ') && (c != ESCAPE));
+		continue;
+	    }
+
+	    /* Warning */
+	    bell();
+	}
 
 /* Not going to waste space w/ a check here. So ESC takes a little longer. -SAC */
+
+	/* Save this for the "previous" character */
 	save_prev_data();
 	set_prev_history();
 	set_prev_ahw();
+
+	/* Remember that he exists */
 	previous_exists = TRUE;
     } while (c == ' ');
+
+
     get_money();
     put_stats();
     put_misc2();
@@ -927,14 +957,6 @@ void player_birth()
     get_name();
     msg_print(NULL);
 
-/*
- * Pauses for user response before returning		-RAK-	 
- * NOTE: Delay is for players trying to roll up "perfect"	 
- * characters.  Make them wait a bit.			
- * This delay may be reduced, but is recommended to keep players
- * from continuously rolling up characters, which can be VERY
- * expensive CPU wise.
- */
     /* Prompt for it */    
     prt("[Press any key to continue, or Q to exit.]", 23, 10);
 
