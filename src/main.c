@@ -107,11 +107,9 @@ int main(int argc, char *argv[])
     char thishost[MAXHOSTNAMELEN+1];
     char discard[120];
 #endif
-
-    char string[80];
-    struct rlimit rlp;
     
 #if !defined(MSDOS) && !defined(HPUX)
+    struct rlimit rlp;
     /* Disable core dumps */
     getrlimit(RLIMIT_CORE,&rlp);
     rlp.rlim_cur=0;
@@ -122,8 +120,6 @@ int main(int argc, char *argv[])
     rogue_like_commands = ROGUE_LIKE;
     
     strcpy(p_ptr->name, "\0");
-    
-
 
 
     /* Save the "program name" */
@@ -256,42 +252,36 @@ int main(int argc, char *argv[])
 	  usage:
 
 	    /* Note -- the Term is NOT initialized */
+#ifdef MSDOS
+	    puts("Usage: angband [-nor] [-s<num>] <file>");
+#else
+	    puts("Usage: angband [-nor] [-s<num>] [-u<name>]");
+#endif
+	    puts("  n       Start a new character");
+	    puts("  o       Use original command set");
+	    puts("  r       Use the \"rogue-like\" command set");
+	    puts("  s<num>  Show high scores.  Show <num> scores, or first 10");
+#ifdef MSDOS
+	    puts(" <file>   Play with savefile named <file>");
+#else
+	    puts("  u<name> Play with character named <name>");
+#endif
+	    puts("Each option must be listed separately (ie '-r -n', not '-rn')");
+
+	    /* Extra wizard options */
 	    if (can_be_wizard) {
 #ifdef MSDOS
-		puts("Usage: angband [-afnorw] [-s<num>] [-d<num>] <file>");
+	    puts("Extra wizard options: [-afw] [-d<num>]");
 #else
-		puts("Usage: angband [-afnor] [-s<num>] [-u<name>] [-w<uid>] [-d<num>]");
+	    puts("Extra wizard options: [-af] [-w<uid>] [-d<num>]");
 #endif
 		puts("  a       Activate \"peek\" mode");
 		puts("  d<num>  Delete high score number <num>");
 		puts("  f       Enter \"fiddle\" mode");
-		puts("  n       Start a new character");
-		puts("  o       Use original command set");
-		puts("  r       Use the \"rogue-like\" command set");
-		puts("  s<num>  Show high scores.  Show <num> scores, or first 10");
 #ifdef MSDOS
 		puts("  w       Start in wizard mode");
-		puts(" <file>   Play with savefile named <file>");
 #else
 		puts("  w<num>  Start in wizard mode, as uid number <num>");
-		puts("  u<name> Play with character named <name>");
-#endif
-		puts("Each option must be listed separately (ie '-r -n', not '-rn')");
-	    }
-	    else {
-#ifdef MSDOS
-		puts("Usage: angband [-nor] [-s<num>] <file>");
-#else
-		puts("Usage: angband [-nor] [-s<num>] [-u<name>]");
-#endif
-		puts("  n       Start a new character");
-		puts("  o       Use original command set");
-		puts("  r       Use the \"rogue-like\" command set");
-		puts("  s<num>  Show high scores.  Show <num> scores, or first 10");
-#ifdef MSDOS
-		puts(" <file>   Play with savefile named <file>");
-#else
-		puts("  u<name> Play with character named <name>");
 #endif
 		puts("Each option must be listed separately (ie '-r -n', not '-rn')");
 	    }
@@ -348,20 +338,21 @@ static void player_outfit()
 {
     register int i, j;
     inven_type inven_init;
+    inven_type *i_ptr = &inven_init;
     
     /* this is needed for bash to work right, it can't hurt anyway */
     for (i = 0; i < INVEN_ARRAY_SIZE; i++)
 	invcopy(&inventory[i], OBJ_NOTHING);
 
-    for (i = 0; i < 5; i++)
-    {
+    /* Give the player five useful objects */
+    for (i = 0; i < 5; i++) {
 	j = player_init[p_ptr->pclass][i];
-	invcopy(&inven_init, j);
-	store_bought(&inven_init);
+	invcopy(i_ptr, j);
+	store_bought(i_ptr);
 	if (inven_init.tval == TV_SWORD || inven_init.tval == TV_HAFTED
 	    || inven_init.tval == TV_BOW)
 	    inven_init.ident |= ID_SHOW_HITDAM;
-	(void) inven_carry(&inven_init);
+	(void)inven_carry(i_ptr);
     }
 
     /* weird place for it, but why not? */
@@ -400,8 +391,7 @@ void play_game()
 
     result = load_player(&generate);
 
-    /* Enter wizard mode before showing the character display, but must wait
-       until after load_player in case it was just a "resurrection" */
+    /* Enter wizard mode AFTER "resurrection" (if any) is complete */
     if (to_be_wizard && !enter_wiz_mode()) exit_game();
 
 
@@ -411,7 +401,7 @@ void play_game()
 	/* Display character, allow name change */
 	change_name();
 
-	/* could be restoring a dead character after a signal or HANGUP */
+	/* Hack -- delayed death induced by certain signals */
 	if (p_ptr->chp < 0) death = TRUE;
     }
 
@@ -543,6 +533,9 @@ void play_game()
 	/* Roll up a new character */
 	player_birth();
 
+	/* Force "level generation" */
+	generate = TRUE;
+
 	/* if we're creating a new character, change the savefile name */
     (void) sprintf(savefile, "%s/%d%s", ANGBAND_DIR_SAVE, player_uid, p_ptr->name);
 
@@ -568,13 +561,6 @@ void play_game()
 	    calc_mana(A_WIS);
 	}
 
-	/* prevent ^c quit from entering score into scoreboard,
-	   and prevent signal from creating panic save until this point,
-	   all info needed for save file is now valid */
-	character_generated = 1;
-
-	/* Force "level generation" */
-	generate = TRUE;
     }
 
     /* Reset "rogue_like_commands" */
@@ -590,6 +576,9 @@ void play_game()
 
     /* Make a level */
     if (generate) generate_cave();
+
+    /* Character is now complete */
+    character_generated = 1;
 
 
     /* Loop till dead */
@@ -617,7 +606,7 @@ void play_game()
 	if (!death) generate_cave();
     }
 
-    /* Character gets buried. */
+    /* Display death, Save the game, and exit */
     exit_game();
 }
 
