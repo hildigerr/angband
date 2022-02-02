@@ -13,24 +13,6 @@
 #include "angband.h"
 
 
-static void change_stat(int, int);
-static int  monval(int);
-static void get_stats();
-static void save_prev_data();
-static int  load_prev_data();
-static void get_all_stats();
-static void put_auto_stats();
-static void choose_race();
-static void put_history();
-static void set_prev_history();
-static void get_prev_history();
-static void choose_sex();
-static void get_ahw();
-static void set_prev_ahw();
-static void get_prev_ahw();
-static void get_class();
-static void choose_class();
-static void get_money();
 
 /*
  * Hold the data from the previous "roll"
@@ -52,81 +34,6 @@ static struct {
 
 extern int peek;
 
-/* Generates character's stats			-JWT-	 */
-static void get_stats()
-{
-    register int i, tot;
-    int dice[18];
-
-    do {
-	tot = 0;
-	for (i = 0; i < 18; i++) {
-	    dice[i] = randint(3 + i % 3); /* Roll 3,4,5 sided dice once each */
-	    tot += dice[i];
-	}
-    }
-    while (tot <= 42 || tot >= 54);
-    
-    for (i = 0; i < 6; i++)
-	p_ptr->max_stat[i] = 5 + dice[3 * i] + dice[3 * i + 1] +
-	    dice[3 * i + 2];
-}
-
-
-/* Returns adjusted stat                                       -JK-  */
-/* Algorithm by ...                                            -JWT- */
-/* Used by change_stats and auto_roller
- * auto_roll is boolean and states maximum changes
- * should be used rather than random ones
- * to allow specification of higher values to wait for
- */
-
-static int adjust_stat(int stat_value, s16b amount, int auto_roll)
-{
-  register int i;
- 
-  if (amount < 0)
-    for (i = 0; i > amount; i--)
-      {
-/* OK so auto_roll conditions not needed for negative amounts since stat_value
- * is always 15 at least currently!  -JK
- */
-                
-             if (stat_value > 108)
-               stat_value--;
-             else if (stat_value > 88)
-                 stat_value -= ((auto_roll ? 6 : randint(6)) + 2);
-             else if (stat_value > 18)
-               {
-                 stat_value -= ((auto_roll ? 15 : randint(15)) + 5);
-                 if (stat_value < 18)
-                   stat_value = 18;
-               }
-             else if (stat_value > 3)
-               stat_value--;
-      }
-  else
-    for (i = 0; i < amount; i++)
-      {
-        if (stat_value < 18)
-          stat_value++;
-        else if (stat_value < 88)
-          stat_value += ((auto_roll ? 15 : randint(15)) + 5);
-        else if (stat_value < 108)
-          stat_value += ((auto_roll ? 6 : randint(6)) + 2);
-        else if (stat_value < 118)
-          stat_value++;
-      }
-  return stat_value;
-}
-
-
-/* Changes stats by given amount                                -JWT-   */
-static void change_stat(int stat, int amount)
-{
-  p_ptr->max_stat[stat] =
-        adjust_stat(p_ptr->max_stat[stat], (s16b) amount, FALSE);
-}
 
 
 /*
@@ -167,66 +74,48 @@ static int load_prev_data()
 }
 
 
+
+
+
+
+
+
+
 /*
- * generate all stats and modify for race. needed in a separate module so
- * looping of character selection would be allowed     -RGM- 
+ * Choose the character's sex				-JWT-	 
  */
-static void get_all_stats()
+static void choose_sex(void)
 {
-    register player_race *r_ptr;
-    register int        j;
+    register int        exit_flag = FALSE;
+    char        c;
 
-    r_ptr = &race[p_ptr->prace];
-    get_stats();
-    change_stat(A_STR, r_ptr->str_adj);
-    change_stat(A_INT, r_ptr->int_adj);
-    change_stat(A_WIS, r_ptr->wis_adj);
-    change_stat(A_DEX, r_ptr->dex_adj);
-    change_stat(A_CON, r_ptr->con_adj);
-    change_stat(A_CHR, r_ptr->chr_adj);
-    for (j = 0; j < 6; j++) {
-	p_ptr->cur_stat[j] = p_ptr->max_stat[j];
-	p_ptr->use_stat[j] = modify_stat(j, p_ptr->mod_stat[j]);
-    }
+    clear_from(20);
+    put_str("Choose a sex (? for Help):", 20, 2);
+    put_str("m) Male       f) Female", 21, 2);
 
-    p_ptr->srh = r_ptr->srh;
-    p_ptr->bth = r_ptr->bth;
-    p_ptr->bthb = r_ptr->bthb;
-    p_ptr->fos = r_ptr->fos;
-    p_ptr->stl = r_ptr->stl;
-    p_ptr->save = r_ptr->bsav;
-    p_ptr->hitdie = r_ptr->bhitdie;
-    p_ptr->lev = 1;
-    p_ptr->ptodam = todam_adj();
-    p_ptr->ptohit = tohit_adj();
-    p_ptr->ptoac = 0;
-    p_ptr->pac = toac_adj();
-    p_ptr->expfact = r_ptr->b_exp;
-    p_ptr->see_infra = r_ptr->infra;
-}
-
-/* copied from misc2.c, so the display loop would work nicely -cft */
-static const char *stat_names[] = {"STR: ", "INT: ", "WIS: ", "DEX: ", "CON: ", "CHR: "};
-
-
-#ifdef AUTOROLLER
-/* used for auto-roller.  Just put_stats(), w/o the extra info -CFT */
-static void put_auto_stats()
-{
-    register int i;
-    vtype        buf;
-
-    for (i = 0; i < 6; i++) {
-	cnv_stat(p_ptr->use_stat[i], buf);
-	put_str(stat_names[i], 2 + i, 61);
-	put_str(buf, 2 + i, 66);
-	if (p_ptr->max_stat[i] > p_ptr->cur_stat[i]) {
-	    cnv_stat(p_ptr->max_stat[i], buf);
-	    put_str(buf, 2 + i, 73);
+    while (!exit_flag) {
+	move_cursor(20, 29);
+    /* speed not important here */
+	c = inkey();
+	if (c == 'm' || c == 'M') {
+	    p_ptr->male = TRUE;
+	    put_str("Male", 4, 15);
+	    exit_flag = TRUE;
+	}
+	else if (c == 'f' || c == 'F') {
+	    p_ptr->male = FALSE;
+	    put_str("Female", 4, 15);
+	    exit_flag = TRUE;
+	}
+	else if (c == '?') {
+	    helpfile(ANGBAND_WELCOME);
+	}
+	else {
+	    bell();
 	}
     }
 }
-#endif
+
 
 /*
  * Allows player to select a race			-JWT-	 
@@ -280,6 +169,235 @@ static void choose_race(void)
     p_ptr->prace = j;
     put_str(r_ptr->trace, 3, 15);
 }
+
+
+
+/*
+ * Gets a character class				-JWT-	 
+ */
+static void choose_class()
+{
+    register int i;
+    int          j, k, l, m;
+    int          cl[MAX_CLASS], exit_flag;
+    player_class   *c_ptr;
+    char         tmp_str[80], s;
+    u32b       mask;
+
+    for (j = 0; j < MAX_CLASS; j++) cl[j] = 0;
+
+    i = p_ptr->prace;
+    j = 0;
+    k = 0;
+    l = 2;
+    m = 21;
+    mask = 0x1;
+    clear_from(20);
+    put_str("Choose a class (? for Help):", 20, 2);
+    do {
+	if (race[i].rtclass & mask) {
+	    (void)sprintf(tmp_str, "%c) %s", k + 'a', class[j].title);
+	    put_str(tmp_str, m, l);
+	    cl[k] = j;
+	    l += 15;
+	    if (l > 70) {
+		l = 2;
+		m++;
+	    }
+	    k++;
+	}
+	j++;
+	mask <<= 1;
+    }
+    while (j < MAX_CLASS);
+
+    p_ptr->pclass = 0;
+    exit_flag = FALSE;
+    do {
+	move_cursor(20, 31);
+	s = inkey();
+	j = s - 'a';
+	if ((j < k) && (j >= 0)) {
+	    p_ptr->pclass = cl[j];
+	    c_ptr = &class[p_ptr->pclass];
+	    exit_flag = TRUE;
+	    clear_from(20);
+	    put_str(c_ptr->title, 5, 15);
+	}
+	else if (s == '?') {
+	    helpfile(ANGBAND_WELCOME);
+	}
+	else {
+	    bell();
+	}
+    } while (!exit_flag);
+}
+
+
+
+
+
+/*
+ * Returns adjusted stat -JK-
+ * Algorithm by -JWT-
+ *
+ * Used by change_stats and auto_roller
+ *
+ * auto_roll is boolean and states maximum changes should be used rather
+ * than random ones to allow specification of higher values to wait for
+ */
+static int adjust_stat(int stat_value, s16b amount, int auto_roll)
+{
+    register int i;
+
+    /* Negative amounts (unused) */
+    if (amount < 0) {
+	for (i = 0; i > amount; i--) {
+/* OK so auto_roll conditions not needed for negative amounts since stat_value
+ * is always 15 at least currently!  -JK
+ */
+
+	    if (stat_value > 108) {
+		stat_value--;
+	    }
+	    else if (stat_value > 88) {
+		stat_value -= ((auto_roll ? 6 : randint(6)) + 2);
+	    }
+	    else if (stat_value > 18) {
+		stat_value -= ((auto_roll ? 15 : randint(15)) + 5);
+		if (stat_value < 18) stat_value = 18;
+	    }
+	    else if (stat_value > 3) {
+		stat_value--;
+	    }
+	}
+    }
+
+    /* Positive amounts */
+    else {
+	for (i = 0; i < amount; i++) {
+	    if (stat_value < 18) {
+		stat_value++;
+	    }
+	    else if (stat_value < 88) {
+		stat_value += ((auto_roll ? 15 : randint(15)) + 5);
+	    }
+	    else if (stat_value < 108) {
+		stat_value += ((auto_roll ? 6 : randint(6)) + 2);
+	    }
+	    else if (stat_value < 118) {
+		stat_value++;
+	    }
+	}
+    }
+
+    /* Return the result */
+    return stat_value;
+}
+
+
+/*
+ * Changes stats by given amount
+ */
+static void change_stat(int stat, int amount)
+{
+  p_ptr->max_stat[stat] =
+        adjust_stat(p_ptr->max_stat[stat], (s16b) amount, FALSE);
+}
+
+
+
+/* Generates character's stats			-JWT-	 */
+static void get_stats()
+{
+    register int i, tot;
+    int dice[18];
+
+    do {
+	tot = 0;
+	for (i = 0; i < 18; i++) {
+	    dice[i] = randint(3 + i % 3); /* Roll 3,4,5 sided dice once each */
+	    tot += dice[i];
+	}
+    }
+    while (tot <= 42 || tot >= 54);
+    
+    for (i = 0; i < 6; i++)
+	p_ptr->max_stat[i] = 5 + dice[3 * i] + dice[3 * i + 1] +
+	    dice[3 * i + 2];
+}
+
+
+/*
+ * Generate all stats and modify for race.
+ * Needed in a separate module so looping of character
+ * selection would be allowed     -RGM- 
+ */
+static void get_all_stats(void)
+{
+    register int        j;
+
+    player_race *r_ptr = &race[p_ptr->prace];
+
+
+    get_stats();
+
+    /* Modify the stats for "race" */
+    change_stat(A_STR, r_ptr->str_adj);
+    change_stat(A_INT, r_ptr->int_adj);
+    change_stat(A_WIS, r_ptr->wis_adj);
+    change_stat(A_DEX, r_ptr->dex_adj);
+    change_stat(A_CON, r_ptr->con_adj);
+    change_stat(A_CHR, r_ptr->chr_adj);
+
+    /* Analyze the stats */
+    for (j = 0; j < 6; j++) {
+	p_ptr->cur_stat[j] = p_ptr->max_stat[j];
+	p_ptr->use_stat[j] = modify_stat(j, p_ptr->mod_stat[j]);
+    }
+
+
+    p_ptr->srh = r_ptr->srh;
+    p_ptr->bth = r_ptr->bth;
+    p_ptr->bthb = r_ptr->bthb;
+    p_ptr->fos = r_ptr->fos;
+    p_ptr->stl = r_ptr->stl;
+    p_ptr->save = r_ptr->bsav;
+    p_ptr->hitdie = r_ptr->bhitdie;
+    p_ptr->lev = 1;
+    p_ptr->ptodam = todam_adj();
+    p_ptr->ptohit = tohit_adj();
+    p_ptr->ptoac = 0;
+    p_ptr->pac = toac_adj();
+    p_ptr->expfact = r_ptr->b_exp;
+    p_ptr->see_infra = r_ptr->infra;
+}
+
+
+
+/* copied from misc2.c, so the display loop would work nicely -cft */
+static const char *stat_names[] = {"STR: ", "INT: ", "WIS: ", "DEX: ", "CON: ", "CHR: "};
+
+
+#ifdef AUTOROLLER
+/* used for auto-roller.  Just put_stats(), w/o the extra info -CFT */
+static void put_auto_stats()
+{
+    register int i;
+    vtype        buf;
+
+    for (i = 0; i < 6; i++) {
+	cnv_stat(p_ptr->use_stat[i], buf);
+	put_str(stat_names[i], 2 + i, 61);
+	put_str(buf, 2 + i, 66);
+	if (p_ptr->max_stat[i] > p_ptr->cur_stat[i]) {
+	    cnv_stat(p_ptr->max_stat[i], buf);
+	    put_str(buf, 2 + i, 73);
+	}
+    }
+}
+#endif
+
 
 
 /* Will print the history of a character			-JWT-	 */
@@ -424,36 +542,6 @@ static void get_history(void)
 }
 
 
-/* Gets the character's sex				-JWT-	 */
-static void choose_sex()
-{
-    register int        exit_flag;
-    char                c;
-
-    exit_flag = FALSE;
-    clear_from(20);
-    put_str("Choose a sex (? for Help):", 20, 2);
-    put_str("m) Male       f) Female", 21, 2);
-    do {
-	move_cursor(20, 29);
-    /* speed not important here */
-	c = inkey();
-	if (c == 'f' || c == 'F') {
-	    p_ptr->male = FALSE;
-	    put_str("Female", 4, 15);
-	    exit_flag = TRUE;
-	} else if (c == 'm' || c == 'M') {
-	    p_ptr->male = TRUE;
-	    put_str("Male", 4, 15);
-	    exit_flag = TRUE;
-	} else if (c == '?')
-	    helpfile(ANGBAND_WELCOME);
-	else
-	    bell();
-    }
-    while (!exit_flag);
-}
-
 
 /* Computes character's age, height, and weight		-JWT-	 */
 static void get_ahw()
@@ -594,60 +682,6 @@ void rerate()
     msg_print(buf);
 }
 
-/* Gets a character class				-JWT-	 */
-static void choose_class()
-{
-    register int i, j;
-    int          k, l, m;
-    int          cl[MAX_CLASS], exit_flag;
-    player_class   *c_ptr;
-    char         tmp_str[80], s;
-    u32b       mask;
-
-    for (j = 0; j < MAX_CLASS; j++)
-	cl[j] = 0;
-    i = p_ptr->prace;
-    j = 0;
-    k = 0;
-    l = 2;
-    m = 21;
-    mask = 0x1;
-    clear_from(20);
-    put_str("Choose a class (? for Help):", 20, 2);
-    do {
-	if (race[i].rtclass & mask) {
-	    (void)sprintf(tmp_str, "%c) %s", k + 'a', class[j].title);
-	    put_str(tmp_str, m, l);
-	    cl[k] = j;
-	    l += 15;
-	    if (l > 70) {
-		l = 2;
-		m++;
-	    }
-	    k++;
-	}
-	j++;
-	mask <<= 1;
-    }
-    while (j < MAX_CLASS);
-    p_ptr->pclass = 0;
-    exit_flag = FALSE;
-    do {
-	move_cursor(20, 31);
-	s = inkey();
-	j = s - 'a';
-	if ((j < k) && (j >= 0)) {
-	    p_ptr->pclass = cl[j];
-	    c_ptr = &class[p_ptr->pclass];
-	    exit_flag = TRUE;
-	    clear_from(20);
-	    put_str(c_ptr->title, 5, 15);
-	} else if (s == '?')
-	    helpfile(ANGBAND_WELCOME);
-	else
-	    bell();
-    } while (!exit_flag);
-}
 
 
 /* Given a stat value, return a monetary value, which affects the amount of
