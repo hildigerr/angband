@@ -478,6 +478,49 @@ void map_area(void)
 
 
 
+/*
+ * Light up the dungeon.
+ */
+void wiz_lite(int light)
+{
+    register cave_type *c_ptr;
+    register int        k, l, i, j;
+    int                 flag;
+
+    if (!light) {
+	if (cave[char_row][char_col].pl) flag = FALSE;
+	else flag = TRUE;
+    } else {
+	flag = (light > 0) ? 1 : 0;
+    }
+
+    /* Perma-light all open space and adjacent walls */
+    for (i = 0; i < cur_height; i++) {
+	for (j = 0; j < cur_width; j++) {
+
+	    /* Process all non-walls */
+	    if (cave[i][j].fval <= MAX_CAVE_FLOOR) {
+
+		/* Perma-lite all grids touching those grids */
+		for (k = i - 1; k <= i + 1; k++) {
+		    for (l = j - 1; l <= j + 1; l++) {
+
+			/* Get the grid */
+			c_ptr = &cave[k][l];
+
+			/* Perma-lite all the grid */
+			c_ptr->pl = flag;
+
+			if (!flag) c_ptr->fm = FALSE;
+		    }
+		}
+	    }
+	}
+    }
+
+    /* Redraw the map */    
+    prt_map();
+}
 
 
 

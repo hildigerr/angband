@@ -921,6 +921,7 @@ void self_knowledge(void);
 int probing(void);
 int detection(void);
 void starball(int,int);
+void wiz_lite(int);
 int lose_all_info(void);
 void tele_level(void);
 void identify_pack(void);
@@ -955,7 +956,6 @@ FILE *my_tfopen(cptr, cptr);
 
 
 /* wizard.c */
-void wiz_lite(int);
 void change_character(void);
 void wizard_create(void);
 void artifact_check(void);

@@ -260,34 +260,6 @@ void artifact_check()
 	prt("File could not be opened.", 0, 0);
 }
 
-/* Light up the dungeon					-RAK-	 */
-void wiz_lite(int light)
-{
-    register cave_type *c_ptr;
-    register int        k, l, i, j;
-    int                 flag;
-
-    if (!light) {
-	if (cave[char_row][char_col].pl)
-	    flag = FALSE;
-	else
-	    flag = TRUE;
-    } else {
-	flag = (light > 0) ? 1 : 0;
-    }
-    for (i = 0; i < cur_height; i++)
-	for (j = 0; j < cur_width; j++)
-	    if (cave[i][j].fval <= MAX_CAVE_FLOOR)
-		for (k = i - 1; k <= i + 1; k++)
-		    for (l = j - 1; l <= j + 1; l++) {
-			c_ptr = &cave[k][l];
-			c_ptr->pl = flag;
-			if (!flag)
-			    c_ptr->fm = FALSE;
-		    }
-    prt_map();
-}
-
 
 
 /*
