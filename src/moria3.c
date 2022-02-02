@@ -1799,7 +1799,7 @@ void scribe_object(void)
  */
 void do_cmd_check_uniques()
 {
-    int      i, j, k;
+    int      i, j, k, t;
     bigvtype msg;
 
     save_screen();
@@ -1825,11 +1825,25 @@ void do_cmd_check_uniques()
 			(u_list[k].dead) ? "dead" : "alive");            
 		prt(msg, i++, j);
 
-		unique_screen_full(&i, j);
+		/* is screen full? */
+		if (i == 22) {
+		    prt("-- more --", i, j);
+		    inkey();
+		    for (t = 2; t < 23; t++) erase_line(t, j);
+		    prt("Uniques: (continued)", 1, j + 5);
+		    i = 2;
+		}
 	    } else if (u_list[k].dead) {
 		sprintf(msg, "%s is dead.", r_list[k].name);
 		prt(msg, i++, j);
-		unique_screen_full(&i, j);
+		/* is screen full? */
+		if (i == 22) {
+		    prt("-- more --", i, j);
+		    inkey();
+		    for (t = 2; t < 23; t++) erase_line(t, j);
+		    prt("Uniques: (continued)", 1, j + 5);
+		    i = 2;
+		}
 	    }
 	}
     }

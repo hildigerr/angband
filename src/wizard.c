@@ -1795,21 +1795,3 @@ void artifact_check_no_file()
 }
 
 
-/* print out the status of uniques - cba */
-
-void unique_screen_full(int *i, int j)
-{
-    int t;
-
-/* is screen full? */
-    if (*i == 22) {
-	prt("-- more --", *i, j);
-	inkey();
-	for (t = 2; t < 23; t++)
-	    erase_line(t, j);	   /* don't forget to erase extra */
-	prt("Uniques: (continued)", 1, j + 5);
-	*i = 2;
-    }
-}
-
-
