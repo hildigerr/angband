@@ -1795,3 +1795,36 @@ void artifact_check_no_file()
 }
 
 
+
+/*
+ * Hack -- Rerate Hitpoints
+ */
+void do_cmd_rerate()
+{
+    int         min_value, max_value, i, percent;
+    char        buf[50];
+
+    min_value = (MAX_PLAYER_LEVEL * 3 * (p_ptr->hitdie - 1)) / 8 +
+	MAX_PLAYER_LEVEL;
+    max_value = (MAX_PLAYER_LEVEL * 5 * (p_ptr->hitdie - 1)) / 8 +
+	MAX_PLAYER_LEVEL;
+    player_hp[0] = p_ptr->hitdie;
+    do {
+	for (i = 1; i < MAX_PLAYER_LEVEL; i++) {
+	    player_hp[i] = randint((int)p_ptr->hitdie);
+	    player_hp[i] += player_hp[i - 1];
+	}
+    }
+    while ((player_hp[MAX_PLAYER_LEVEL - 1] < min_value) ||
+	   (player_hp[MAX_PLAYER_LEVEL - 1] > max_value));
+
+    percent = (int)(((long)player_hp[MAX_PLAYER_LEVEL - 1] * 200L) /
+		(p_ptr->hitdie + ((MAX_PLAYER_LEVEL - 1) * p_ptr->hitdie)));
+
+    sprintf(buf, "%d%% Life Rating", percent);
+    calc_hitpoints();
+    prt_stat_block();
+    msg_print(buf);
+}
+
+

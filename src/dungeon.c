@@ -1892,7 +1892,7 @@ static void do_command(char com_val)
 	    msg_print("Sorry, inferior shells are not allowed from ANGBAND.");
 #endif
 	else
-	    rerate();
+	    do_cmd_rerate();
 	free_turn_flag = TRUE;
 	break;
       case ESCAPE:		/* (ESC)   do nothing. */

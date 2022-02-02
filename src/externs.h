@@ -515,7 +515,7 @@ void do_cmd_options(void);
 /* dungeon.c */
 void dungeon(void);
 int special_check(inven_type *);
-void rerate(void);
+void do_cmd_rerate(void);
 int ruin_stat(int);
 
 /* effects.c */
