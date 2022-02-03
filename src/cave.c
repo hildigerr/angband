@@ -484,7 +484,7 @@ void map_area(void)
 void wiz_lite(int light)
 {
     register cave_type *c_ptr;
-    register int        k, l, i, j;
+    register int        yy, xx, y, x;
     int                 flag;
 
     if (!light) {
@@ -495,18 +495,18 @@ void wiz_lite(int light)
     }
 
     /* Perma-light all open space and adjacent walls */
-    for (i = 0; i < cur_height; i++) {
-	for (j = 0; j < cur_width; j++) {
+    for (y = 0; y < cur_height; y++) {
+	for (x = 0; x < cur_width; x++) {
 
 	    /* Process all non-walls */
-	    if (cave[i][j].fval <= MAX_CAVE_FLOOR) {
+	    if (cave[y][x].fval <= MAX_CAVE_FLOOR) {
 
 		/* Perma-lite all grids touching those grids */
-		for (k = i - 1; k <= i + 1; k++) {
-		    for (l = j - 1; l <= j + 1; l++) {
+		for (yy = y - 1; yy <= y + 1; yy++) {
+		    for (xx = x - 1; xx <= x + 1; xx++) {
 
 			/* Get the grid */
-			c_ptr = &cave[k][l];
+			c_ptr = &cave[yy][xx];
 
 			/* Perma-lite all the grid */
 			c_ptr->pl = flag;
