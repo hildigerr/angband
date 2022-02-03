@@ -899,10 +899,14 @@ int save_player()
     return TRUE;
 }
 
+
+/*
+ * Medium level player saver
+ */
 int _save_player(char *fnam)
 {
-    vtype temp;
     int   ok, fd;
+    vtype temp;
     byte char_tmp;
 
     /* Forbid suspend */
@@ -918,9 +922,13 @@ int _save_player(char *fnam)
 
     /* Assume failure */
     ok = FALSE;
-#ifndef ATARIST_MWC
+
+#ifdef ATARIST_MWC
+#else /* ATARIST_MWC */
+
     fd = (-1);
     fff = NULL;		   /* Do not assume it has been init'ed */
+
 #ifdef SET_UID
     fd = my_topen(fnam, O_RDWR | O_CREAT | O_EXCL, 0600);
 #else
@@ -958,10 +966,14 @@ int _save_player(char *fnam)
     }
 
 #endif
-    if (fff != NULL) {
+
+    /* Successful open */
+    if (fff) {
+
 #ifdef MSDOS
 	(void)setmode(fileno(fff), O_BINARY);
 #endif
+
 	xor_byte = 0;
 	wr_byte((byte) CUR_VERSION_MAJ);
 	xor_byte = 0;
@@ -994,7 +1006,7 @@ int _save_player(char *fnam)
 	else (void)sprintf(temp, "Can't create new savefile");
 	msg_print(temp);
 	return FALSE;
-    } else
+    }
 
     /* Successful save */
     character_saved = 1;
@@ -1009,7 +1021,16 @@ int _save_player(char *fnam)
 }
 
 
-/* Certain checks are ommitted for the wizard. -CJS- */
+/*
+ * Note that versions "5.2.x" can never be made.
+ * This boneheadedness is a direct result of the fact that Angband 2.4
+ * had version constants of 5.2, not 2.4.  2.5 inherited this.  2.6 fixes
+ * the problem.  Note that there must never be a 5.2.x version of Angband,
+ * or else this code will get confused. -CWS
+ *
+ * Actually, this is not true, since by the time version 5.2 comes around,
+ * anybody trying to use a version 2.5 savefile deserves what they get!
+ */
 
 int load_player(int *generate)
 {
@@ -1023,9 +1044,22 @@ int load_player(int *generate)
     byte char_tmp, ychar, xchar, count;
 
     free_turn_flag = TRUE;	   /* So a feeling isn't generated upon reloading -DGK */
+
+    /* Forbid suspend */
     signals_ignore_tstp();
+
+    /* Assume a cave must be generated */
     *generate = TRUE;
+
+    /* Assume no file (used to catch errors below) */
     fd = (-1);
+
+
+    /* Hack -- Cannot restore a game while still playing */
+    if (turn > 0) {
+	msg_print("IMPOSSIBLE! Attempt to restore while still alive!");
+	return (FALSE);
+    }
 
     if (access(savefile, 0) < 0) {
 
@@ -1044,41 +1078,41 @@ int load_player(int *generate)
     /* Hack -- let the message get read */
     sleep(1);
 
-    if (turn >= 0)
-	msg_print("IMPOSSIBLE! Attempt to restore while still alive!");
-
     /* Allow restoring a file belonging to someone else, */
     /* but only if we can delete it. */
     /* Hence first try to read without doing a chmod. */
 
-    else if ((fd = my_topen(savefile, O_RDONLY, 0)) < 0) {
+    /* Open the savefile */
+    fd = my_topen(savefile, O_RDONLY, 0);
+
+    if (fd < 0) {
 	msg_print("Can't open file for reading.");
     }
 
     else {
-#ifndef SET_UID
-	struct stat         statbuf;
 
+#if !defined(SET_UID)
+	struct stat         statbuf;
 #endif
 
 	turn = (-1);
 
 	ok = TRUE;
 
-#ifndef SET_UID
+#if !defined(SET_UID)
 	(void)fstat(fd, &statbuf);
 #endif
 
 	(void)close(fd);
 
-    /* GCC for atari st defines atarist */
+
+	/* GCC for atari st defines atarist */
 #if defined(__MINT__) || defined(atarist) || defined(ATARIST_MWC) || defined(MSDOS)
 	fff = my_tfopen(savefile, "rb");
 #else
 	fff = my_tfopen(savefile, "r");
 #endif
-	if (fff == NULL)
-	    goto error;
+	if (!fff) goto error;
 
 	prt("Restoring Memory...", 0, 0);
 	put_qio();
@@ -1092,11 +1126,6 @@ int load_player(int *generate)
 	xor_byte = 0;
 	rd_byte(&xor_byte);
 
-/* This boneheadedness is a direct result of the fact that Angband 2.4
- * had version constants of 5.2, not 2.4.  2.5 inherited this.  2.6 fixes
- * the problem.  Note that there must never be a 5.2.x version of Angband,
- * or else this code will get confused. -CWS
- */
 	if ((version_maj == 5) && (version_min == 2)) {
 	  version_maj = 2;
 	  version_min = 5;
@@ -1601,21 +1630,32 @@ int load_player(int *generate)
 		/* Set character_generated */
 		character_generated = 1;
 
-		/* set noscore to indicate a resurrection, and don't enter wizard mode */
-		to_be_wizard = FALSE;
+		/* set noscore to indicate a resurrection */
 		noscore |= 0x1;
-	    } else {
+
+		/* XXX Don't enter wizard mode */
+		to_be_wizard = FALSE;
+
+	    }
+
+	    /* Normal "restoration" */
+	    else {
+
 		prt("Restoring Memory of a departed spirit...", 0, 0);
-		turn = (-1);
-		old_turn = (-1);
+
+		/* Forget the turn, and old_turn */
+		turn = old_turn = (-1);
+
 	    }
 	    put_qio();
 	    goto closefiles;
 	}
+
 	if (ungetc(c, fff) == EOF) {
 	    prt("ERROR in ungetc", 11, 0);
 	    goto error;
 	}
+
 	prt("Restoring Character...", 0, 0);
 	put_qio();
 
