@@ -141,10 +141,13 @@ static void rd_string(char *str)
 
 
 /*
- * Read an item
+ * Read an old-version "item" structure
  */
-static void rd_item(inven_type *i_ptr)
+static errr rd_item_old(inven_type *i_ptr)
 {
+    byte tmp8u;
+    u16b tmp16u;
+
     rd_u16b(&i_ptr->index);
     rd_byte(&i_ptr->name2);
     rd_string(i_ptr->inscrip);
@@ -155,17 +158,32 @@ static void rd_item(inven_type *i_ptr)
     rd_s32b(&i_ptr->cost);
     rd_byte(&i_ptr->sval);
     rd_byte(&i_ptr->number);
-    rd_u16b(&i_ptr->weight);
+
+    rd_u16b(&tmp16u);
+    i_ptr->weight = tmp16u;
+
     rd_s16b(&i_ptr->tohit);
     rd_s16b(&i_ptr->todam);
     rd_s16b(&i_ptr->ac);
     rd_s16b(&i_ptr->toac);
     rd_byte(&i_ptr->damage[0]);
     rd_byte(&i_ptr->damage[1]);
-    rd_byte(&i_ptr->level);
+
+    /* Forget old "level" */
+    rd_byte(&tmp8u);
+
     rd_byte(&i_ptr->ident);
     rd_u32b(&i_ptr->flags2);
-    rd_u16b(&i_ptr->timeout);
+
+    /* Read and forget the old timeout */    
+    rd_u16b(&tmp16u);
+
+    /* Clear the timeout */
+    i_ptr->timeout = 0;
+
+
+    /* Success */
+    return (0);
 }
 
 
@@ -173,29 +191,46 @@ static void rd_item(inven_type *i_ptr)
  * Read and Write monsters
  */
 
-static void rd_monster(monster_type *m_ptr)
+static void rd_monster_old(monster_type *m_ptr)
 {
+    byte	tmp8u;
+    u16b	tmp16u;
+    
+    /* Read the current hitpoints */
     rd_s16b(&m_ptr->hp);
-    if ((version_maj >= 2) && (version_min >= 6))
+
+    if ((version_maj >= 2) && (version_min >= 6)) {
+	/* Read the maximal hitpoints */
 	rd_s16b(&m_ptr->maxhp);
+    }
     else {
 	/* let's fix the infamous monster heal bug -CWS */
 	m_ptr->maxhp = m_ptr->hp;
     }
 
     rd_s16b(&m_ptr->csleep);
-    rd_s16b(&m_ptr->mspeed);
+
+    rd_u16b(&tmp16u);	/* Old speed */
+
     rd_u16b(&m_ptr->r_idx);
+
     rd_byte(&m_ptr->fy);
     rd_byte(&m_ptr->fx);
-    rd_byte(&m_ptr->cdis);
-    rd_byte(&m_ptr->ml);
+
+    rd_byte(&tmp8u); /* ignore saved "m_ptr->cdis" */
+    rd_byte(&tmp8u); /* ignore saved "m_ptr->ml" */
+
     rd_byte(&m_ptr->stunned);
     rd_byte(&m_ptr->confused);
-    if ((version_maj >= 2) && (version_min >= 6))
+
+    if ((version_maj >= 2) && (version_min >= 6)){
+	/* Read the monster fear */
 	rd_byte(&m_ptr->monfear);
-    else
-	m_ptr->monfear = 0; /* this is not saved either -CWS */
+    }
+    else{
+	/* Clear the monster fear value */
+	m_ptr->monfear = 0;
+    }
 }
 
 

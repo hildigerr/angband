@@ -223,57 +223,71 @@ static void rd_string(char *str)
 
 
 /*
- * Read an item
+ * Read an item (2.7.0 or later)
  */
 static void rd_item(inven_type *i_ptr)
 {
+    /* Get the kind */
     rd_u16b(&i_ptr->index);
-    rd_byte(&i_ptr->name2);
-    rd_string(i_ptr->inscrip);
-    rd_u32b(&i_ptr->flags1);
+
     rd_byte(&i_ptr->tval);
-    rd_byte(&i_ptr->tchar);
-    rd_s16b(&i_ptr->pval);
-    rd_s32b(&i_ptr->cost);
     rd_byte(&i_ptr->sval);
+    rd_s16b(&i_ptr->pval);
+
+    rd_byte(&i_ptr->name2);
+    rd_byte(&i_ptr->ident);
     rd_byte(&i_ptr->number);
     rd_u16b(&i_ptr->weight);
+    rd_u16b(&i_ptr->timeout);
+
     rd_s16b(&i_ptr->tohit);
     rd_s16b(&i_ptr->todam);
-    rd_s16b(&i_ptr->ac);
     rd_s16b(&i_ptr->toac);
+    rd_s16b(&i_ptr->ac);
     rd_byte(&i_ptr->damage[0]);
     rd_byte(&i_ptr->damage[1]);
     rd_byte(&i_ptr->level);
-    rd_byte(&i_ptr->ident);
+    rd_byte(&i_ptr->tchar);
+
+    rd_s32b(&i_ptr->cost);
+
+    rd_u32b(&i_ptr->flags1);
     rd_u32b(&i_ptr->flags2);
-    rd_u16b(&i_ptr->timeout);
+
+    rd_string(i_ptr->inscrip);
 }
 
 
 static void wr_item(inven_type *i_ptr)
 {
     wr_u16b(i_ptr->index);
-    wr_byte(i_ptr->name2);
-    wr_string(i_ptr->inscrip);
-    wr_u32b(i_ptr->flags1);
+
     wr_byte(i_ptr->tval);
-    wr_byte(i_ptr->tchar);
-    wr_s16b(i_ptr->pval);
-    wr_s32b(i_ptr->cost);
     wr_byte(i_ptr->sval);
+    wr_s16b(i_ptr->pval);
+
+    wr_byte(i_ptr->name2);
+    wr_byte(i_ptr->ident);
     wr_byte(i_ptr->number);
     wr_u16b(i_ptr->weight);
+    wr_u16b(i_ptr->timeout);
+
     wr_s16b(i_ptr->tohit);
     wr_s16b(i_ptr->todam);
-    wr_s16b(i_ptr->ac);
     wr_s16b(i_ptr->toac);
+    wr_s16b(i_ptr->ac);
     wr_byte(i_ptr->damage[0]);
     wr_byte(i_ptr->damage[1]);
     wr_byte(i_ptr->level);
-    wr_byte(i_ptr->ident);
+    wr_byte(i_ptr->tchar);
+
+    wr_s32b(i_ptr->cost);
+
+    wr_u32b(i_ptr->flags1);
     wr_u32b(i_ptr->flags2);
-    wr_u16b(i_ptr->timeout);
+
+
+    wr_string(i_ptr->inscrip);
 }
 
 
@@ -285,43 +299,34 @@ static void wr_item(inven_type *i_ptr)
 
 static void rd_monster(monster_type *m_ptr)
 {
-    rd_s16b(&m_ptr->hp);
-    if ((version_maj >= 2) && (version_min >= 6))
-	rd_s16b(&m_ptr->maxhp);
-    else {
-	/* let's fix the infamous monster heal bug -CWS */
-	m_ptr->maxhp = m_ptr->hp;
-    }
-
-    rd_s16b(&m_ptr->csleep);
-    rd_s16b(&m_ptr->mspeed);
     rd_u16b(&m_ptr->r_idx);
     rd_byte(&m_ptr->fy);
     rd_byte(&m_ptr->fx);
-    rd_byte(&m_ptr->cdis);
-    rd_byte(&m_ptr->ml);
+    rd_s16b(&m_ptr->hp);
+    rd_s16b(&m_ptr->maxhp);
+    rd_s16b(&m_ptr->csleep);
+    rd_s16b(&m_ptr->mspeed);
     rd_byte(&m_ptr->stunned);
     rd_byte(&m_ptr->confused);
-    if ((version_maj >= 2) && (version_min >= 6))
-	rd_byte(&m_ptr->monfear);
-    else
-	m_ptr->monfear = 0; /* this is not saved either -CWS */
+    rd_byte(&m_ptr->monfear);
+    rd_byte(&m_ptr->cdis);
+    rd_byte(&m_ptr->ml);
 }
 
 static void wr_monster(monster_type *m_ptr)
 {
-    wr_s16b(m_ptr->hp);
-    wr_s16b(m_ptr->maxhp); /* added -CWS */
-    wr_s16b(m_ptr->csleep);
-    wr_s16b(m_ptr->mspeed);
     wr_u16b(m_ptr->r_idx);
     wr_byte(m_ptr->fy);
     wr_byte(m_ptr->fx);
-    wr_byte(m_ptr->cdis);
-    wr_byte(m_ptr->ml);
+    wr_s16b(m_ptr->hp);
+    wr_s16b(m_ptr->maxhp);
+    wr_s16b(m_ptr->csleep);
+    wr_s16b(m_ptr->mspeed);
     wr_byte(m_ptr->stunned);
     wr_byte(m_ptr->confused);
-    wr_byte(m_ptr->monfear);	/* added -CWS */
+    wr_byte(m_ptr->monfear);
+    wr_byte(m_ptr->cdis);
+    wr_byte(m_ptr->ml);
 }
 
 
