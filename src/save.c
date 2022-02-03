@@ -121,6 +121,17 @@ static void rd_byte(byte *ip)
 }
 
 
+static void wr_char(char v)
+{
+    wr_byte((byte)v);
+}
+
+static void rd_char(char *ip)
+{
+    rd_byte((byte*)ip);
+}
+
+
 /*
  * Write/Read various "short" objects
  */
@@ -135,6 +146,17 @@ static void rd_u16b(u16b *ip)
 {
     (*ip) = sf_get();
     (*ip) |= ((u16b)(sf_get()) << 8);
+}
+
+
+static void wr_s16b(s16b v)
+{
+    wr_u16b((u16b)v);
+}
+
+static void rd_s16b(s16b *ip)
+{
+    rd_u16b((u16b*)ip);
 }
 
 
@@ -157,6 +179,17 @@ static void rd_u32b(u32b *ip)
     (*ip) |= ((u32b)(sf_get()) << 8);
     (*ip) |= ((u32b)(sf_get()) << 16);
     (*ip) |= ((u32b)(sf_get()) << 24);
+}
+
+
+static void wr_s32b(s32b v)
+{
+    wr_u32b((u32b)v);
+}
+
+static void rd_s32b(s32b *ip)
+{
+    rd_u32b((u32b*)ip);
 }
 
 
@@ -200,15 +233,15 @@ static void rd_item(inven_type *i_ptr)
     rd_u32b(&i_ptr->flags1);
     rd_byte(&i_ptr->tval);
     rd_byte(&i_ptr->tchar);
-    rd_u16b(&i_ptr->pval);
-    rd_u32b(&i_ptr->cost);
+    rd_s16b(&i_ptr->pval);
+    rd_s32b(&i_ptr->cost);
     rd_byte(&i_ptr->sval);
     rd_byte(&i_ptr->number);
     rd_u16b(&i_ptr->weight);
-    rd_u16b(&i_ptr->tohit);
-    rd_u16b(&i_ptr->todam);
-    rd_u16b(&i_ptr->ac);
-    rd_u16b(&i_ptr->toac);
+    rd_s16b(&i_ptr->tohit);
+    rd_s16b(&i_ptr->todam);
+    rd_s16b(&i_ptr->ac);
+    rd_s16b(&i_ptr->toac);
     rd_bytes(i_ptr->damage, 2);
     rd_byte(&i_ptr->level);
     rd_byte(&i_ptr->ident);
@@ -225,15 +258,15 @@ static void wr_item(inven_type *i_ptr)
     wr_u32b(i_ptr->flags1);
     wr_byte(i_ptr->tval);
     wr_byte(i_ptr->tchar);
-    wr_u16b(i_ptr->pval);
-    wr_u32b(i_ptr->cost);
+    wr_s16b(i_ptr->pval);
+    wr_s32b(i_ptr->cost);
     wr_byte(i_ptr->sval);
     wr_byte(i_ptr->number);
     wr_u16b(i_ptr->weight);
-    wr_u16b(i_ptr->tohit);
-    wr_u16b(i_ptr->todam);
-    wr_u16b(i_ptr->ac);
-    wr_u16b(i_ptr->toac);
+    wr_s16b(i_ptr->tohit);
+    wr_s16b(i_ptr->todam);
+    wr_s16b(i_ptr->ac);
+    wr_s16b(i_ptr->toac);
     wr_bytes(i_ptr->damage, 2);
     wr_byte(i_ptr->level);
     wr_byte(i_ptr->ident);
@@ -250,16 +283,16 @@ static void wr_item(inven_type *i_ptr)
 
 static void rd_monster(monster_type *m_ptr)
 {
-    rd_u16b(&m_ptr->hp);
+    rd_s16b(&m_ptr->hp);
     if ((version_maj >= 2) && (version_min >= 6))
-	rd_u16b(&m_ptr->maxhp);
+	rd_s16b(&m_ptr->maxhp);
     else {
 	/* let's fix the infamous monster heal bug -CWS */
 	m_ptr->maxhp = m_ptr->hp;
     }
 
-    rd_u16b(&m_ptr->csleep);
-    rd_u16b(&m_ptr->mspeed);
+    rd_s16b(&m_ptr->csleep);
+    rd_s16b(&m_ptr->mspeed);
     rd_u16b(&m_ptr->r_idx);
     rd_byte(&m_ptr->fy);
     rd_byte(&m_ptr->fx);
@@ -275,10 +308,10 @@ static void rd_monster(monster_type *m_ptr)
 
 static void wr_monster(monster_type *m_ptr)
 {
-    wr_u16b(m_ptr->hp);
-    wr_u16b(m_ptr->maxhp); /* added -CWS */
-    wr_u16b(m_ptr->csleep);
-    wr_u16b(m_ptr->mspeed);
+    wr_s16b(m_ptr->hp);
+    wr_s16b(m_ptr->maxhp); /* added -CWS */
+    wr_s16b(m_ptr->csleep);
+    wr_s16b(m_ptr->mspeed);
     wr_u16b(m_ptr->r_idx);
     wr_byte(m_ptr->fy);
     wr_byte(m_ptr->fx);
@@ -303,14 +336,14 @@ static char *basename(char *a)
 
 static void wr_unique(register struct unique_mon *item)
 {
-    wr_u32b(item->exist);
-    wr_u32b(item->dead);
+    wr_s32b(item->exist);
+    wr_s32b(item->dead);
 }
 
 static void rd_unique(register struct unique_mon *item)
 {
-    rd_u32b(&item->exist);
-    rd_u32b(&item->dead);
+    rd_s32b(&item->exist);
+    rd_s32b(&item->dead);
 }
 
 
@@ -530,40 +563,40 @@ static int sv_write()
 
     wr_string(p_ptr->name);
     wr_byte(p_ptr->male);
-    wr_u32b(p_ptr->au);
-    wr_u32b(p_ptr->max_exp);
-    wr_u32b(p_ptr->exp);
+    wr_s32b(p_ptr->au);
+    wr_s32b(p_ptr->max_exp);
+    wr_s32b(p_ptr->exp);
     wr_u16b(p_ptr->exp_frac);
     wr_u16b(p_ptr->age);
     wr_u16b(p_ptr->ht);
     wr_u16b(p_ptr->wt);
     wr_u16b(p_ptr->lev);
     wr_u16b(p_ptr->max_dlv);
-    wr_u16b(p_ptr->srh);
-    wr_u16b(p_ptr->fos);
-    wr_u16b(p_ptr->bth);
-    wr_u16b(p_ptr->bthb);
-    wr_u16b(p_ptr->mana);
-    wr_u16b(p_ptr->mhp);
-    wr_u16b(p_ptr->ptohit);
-    wr_u16b(p_ptr->ptodam);
-    wr_u16b(p_ptr->pac);
-    wr_u16b(p_ptr->ptoac);
-    wr_u16b(p_ptr->dis_th);
-    wr_u16b(p_ptr->dis_td);
-    wr_u16b(p_ptr->dis_ac);
-    wr_u16b(p_ptr->dis_tac);
-    wr_u16b(p_ptr->disarm);
-    wr_u16b(p_ptr->save);
-    wr_u16b(p_ptr->sc);
-    wr_u16b(p_ptr->stl);
+    wr_s16b(p_ptr->srh);
+    wr_s16b(p_ptr->fos);
+    wr_s16b(p_ptr->bth);
+    wr_s16b(p_ptr->bthb);
+    wr_s16b(p_ptr->mana);
+    wr_s16b(p_ptr->mhp);
+    wr_s16b(p_ptr->ptohit);
+    wr_s16b(p_ptr->ptodam);
+    wr_s16b(p_ptr->pac);
+    wr_s16b(p_ptr->ptoac);
+    wr_s16b(p_ptr->dis_th);
+    wr_s16b(p_ptr->dis_td);
+    wr_s16b(p_ptr->dis_ac);
+    wr_s16b(p_ptr->dis_tac);
+    wr_s16b(p_ptr->disarm);
+    wr_s16b(p_ptr->save);
+    wr_s16b(p_ptr->sc);
+    wr_s16b(p_ptr->stl);
     wr_byte(p_ptr->pclass);
     wr_byte(p_ptr->prace);
     wr_byte(p_ptr->hitdie);
     wr_byte(p_ptr->expfact);
-    wr_u16b(p_ptr->cmana);
+    wr_s16b(p_ptr->cmana);
     wr_u16b(p_ptr->cmana_frac);
-    wr_u16b(p_ptr->chp);
+    wr_s16b(p_ptr->chp);
     wr_u16b(p_ptr->chp_frac);
     for (i = 0; i < 4; i++)
 	wr_string(p_ptr->history[i]);
@@ -574,36 +607,36 @@ static int sv_write()
     wr_shorts(p_ptr->use_stat, 6);
 
     wr_u32b(p_ptr->status);
-    wr_u16b(p_ptr->rest);
-    wr_u16b(p_ptr->blind);
-    wr_u16b(p_ptr->paralysis);
-    wr_u16b(p_ptr->confused);
-    wr_u16b(p_ptr->food);
-    wr_u16b(p_ptr->food_digested);
-    wr_u16b(p_ptr->protection);
-    wr_u16b(p_ptr->speed);
-    wr_u16b(p_ptr->fast);
-    wr_u16b(p_ptr->slow);
-    wr_u16b(p_ptr->afraid);
-    wr_u16b(p_ptr->cut);
-    wr_u16b(p_ptr->stun);
-    wr_u16b(p_ptr->poisoned);
-    wr_u16b(p_ptr->image);
-    wr_u16b(p_ptr->protevil);
-    wr_u16b(p_ptr->invuln);
-    wr_u16b(p_ptr->hero);
-    wr_u16b(p_ptr->shero);
-    wr_u16b(p_ptr->shield);
-    wr_u16b(p_ptr->blessed);
-    wr_u16b(p_ptr->oppose_fire);
-    wr_u16b(p_ptr->oppose_cold);
-    wr_u16b(p_ptr->oppose_acid);
-    wr_u16b(p_ptr->oppose_elec);
-    wr_u16b(p_ptr->oppose_pois);
-    wr_u16b(p_ptr->detect_inv);
-    wr_u16b(p_ptr->word_recall);
-    wr_u16b(p_ptr->see_infra);
-    wr_u16b(p_ptr->tim_infra);
+    wr_s16b(p_ptr->rest);
+    wr_s16b(p_ptr->blind);
+    wr_s16b(p_ptr->paralysis);
+    wr_s16b(p_ptr->confused);
+    wr_s16b(p_ptr->food);
+    wr_s16b(p_ptr->food_digested);
+    wr_s16b(p_ptr->protection);
+    wr_s16b(p_ptr->speed);
+    wr_s16b(p_ptr->fast);
+    wr_s16b(p_ptr->slow);
+    wr_s16b(p_ptr->afraid);
+    wr_s16b(p_ptr->cut);
+    wr_s16b(p_ptr->stun);
+    wr_s16b(p_ptr->poisoned);
+    wr_s16b(p_ptr->image);
+    wr_s16b(p_ptr->protevil);
+    wr_s16b(p_ptr->invuln);
+    wr_s16b(p_ptr->hero);
+    wr_s16b(p_ptr->shero);
+    wr_s16b(p_ptr->shield);
+    wr_s16b(p_ptr->blessed);
+    wr_s16b(p_ptr->oppose_fire);
+    wr_s16b(p_ptr->oppose_cold);
+    wr_s16b(p_ptr->oppose_acid);
+    wr_s16b(p_ptr->oppose_elec);
+    wr_s16b(p_ptr->oppose_pois);
+    wr_s16b(p_ptr->detect_inv);
+    wr_s16b(p_ptr->word_recall);
+    wr_s16b(p_ptr->see_infra);
+    wr_s16b(p_ptr->tim_infra);
     wr_byte(p_ptr->see_inv);
     wr_byte(p_ptr->teleport);
     wr_byte(p_ptr->free_act);
@@ -677,15 +710,15 @@ static int sv_write()
 
     for (i = 0; i < MAX_STORES; i++) {
 	st_ptr = &store[i];
-	wr_u32b(st_ptr->store_open);
-	wr_u16b(st_ptr->insult_cur);
+	wr_s32b(st_ptr->store_open);
+	wr_s16b(st_ptr->insult_cur);
 	wr_byte(st_ptr->owner);
 	wr_byte(st_ptr->store_ctr);
 	wr_u16b(st_ptr->good_buy);
 	wr_u16b(st_ptr->bad_buy);
 
 	for (j = 0; j < st_ptr->store_ctr; j++) {
-	    wr_u32b(st_ptr->store_inven[j].scost);
+	    wr_s32b(st_ptr->store_inven[j].scost);
 	    wr_item(&st_ptr->store_inven[j].sitem);
 	}
     }
@@ -809,7 +842,7 @@ static int sv_write()
     }
     wr_u16b((byte) r_list[MAX_R_IDX - 1].sleep);
     wr_byte((byte) r_list[MAX_R_IDX - 1].aaf);
-    wr_u16b((byte) r_list[MAX_R_IDX - 1].ac);
+    wr_s16b(r_list[MAX_R_IDX - 1].ac);
     wr_byte((byte) r_list[MAX_R_IDX - 1].speed);
     wr_byte((byte) r_list[MAX_R_IDX - 1].r_char);
     wr_bytes(r_list[MAX_R_IDX - 1].hd, 2);
@@ -1305,40 +1338,40 @@ int load_player(int *generate)
 	if ((l & 0x80000000L) == 0) {
 	    rd_string(p_ptr->name);
 	    rd_byte(&p_ptr->male);
-	    rd_u32b(&p_ptr->au);
-	    rd_u32b(&p_ptr->max_exp);
-	    rd_u32b(&p_ptr->exp);
+	    rd_s32b(&p_ptr->au);
+	    rd_s32b(&p_ptr->max_exp);
+	    rd_s32b(&p_ptr->exp);
 	    rd_u16b(&p_ptr->exp_frac);
 	    rd_u16b(&p_ptr->age);
 	    rd_u16b(&p_ptr->ht);
 	    rd_u16b(&p_ptr->wt);
 	    rd_u16b(&p_ptr->lev);
 	    rd_u16b(&p_ptr->max_dlv);
-	    rd_u16b(&p_ptr->srh);
-	    rd_u16b(&p_ptr->fos);
-	    rd_u16b(&p_ptr->bth);
-	    rd_u16b(&p_ptr->bthb);
-	    rd_u16b(&p_ptr->mana);
-	    rd_u16b(&p_ptr->mhp);
-	    rd_u16b(&p_ptr->ptohit);
-	    rd_u16b(&p_ptr->ptodam);
-	    rd_u16b(&p_ptr->pac);
-	    rd_u16b(&p_ptr->ptoac);
-	    rd_u16b(&p_ptr->dis_th);
-	    rd_u16b(&p_ptr->dis_td);
-	    rd_u16b(&p_ptr->dis_ac);
-	    rd_u16b(&p_ptr->dis_tac);
-	    rd_u16b(&p_ptr->disarm);
-	    rd_u16b(&p_ptr->save);
-	    rd_u16b(&p_ptr->sc);
-	    rd_u16b(&p_ptr->stl);
+	    rd_s16b(&p_ptr->srh);
+	    rd_s16b(&p_ptr->fos);
+	    rd_s16b(&p_ptr->bth);
+	    rd_s16b(&p_ptr->bthb);
+	    rd_s16b(&p_ptr->mana);
+	    rd_s16b(&p_ptr->mhp);
+	    rd_s16b(&p_ptr->ptohit);
+	    rd_s16b(&p_ptr->ptodam);
+	    rd_s16b(&p_ptr->pac);
+	    rd_s16b(&p_ptr->ptoac);
+	    rd_s16b(&p_ptr->dis_th);
+	    rd_s16b(&p_ptr->dis_td);
+	    rd_s16b(&p_ptr->dis_ac);
+	    rd_s16b(&p_ptr->dis_tac);
+	    rd_s16b(&p_ptr->disarm);
+	    rd_s16b(&p_ptr->save);
+	    rd_s16b(&p_ptr->sc);
+	    rd_s16b(&p_ptr->stl);
 	    rd_byte(&p_ptr->pclass);
 	    rd_byte(&p_ptr->prace);
 	    rd_byte(&p_ptr->hitdie);
 	    rd_byte(&p_ptr->expfact);
-	    rd_u16b(&p_ptr->cmana);
+	    rd_s16b(&p_ptr->cmana);
 	    rd_u16b(&p_ptr->cmana_frac);
-	    rd_u16b(&p_ptr->chp);
+	    rd_s16b(&p_ptr->chp);
 	    rd_u16b(&p_ptr->chp_frac);
 	    for (i = 0; i < 4; i++)
 		rd_string(p_ptr->history[i]);
@@ -1352,36 +1385,36 @@ int load_player(int *generate)
 	    rd_shorts(p_ptr->use_stat, 6);
 
 	    rd_u32b(&p_ptr->status);
-	    rd_u16b(&p_ptr->rest);
-	    rd_u16b(&p_ptr->blind);
-	    rd_u16b(&p_ptr->paralysis);
-	    rd_u16b(&p_ptr->confused);
-	    rd_u16b(&p_ptr->food);
-	    rd_u16b(&p_ptr->food_digested);
-	    rd_u16b(&p_ptr->protection);
-	    rd_u16b(&p_ptr->speed);
-	    rd_u16b(&p_ptr->fast);
-	    rd_u16b(&p_ptr->slow);
-	    rd_u16b(&p_ptr->afraid);
-	    rd_u16b(&p_ptr->cut);
-	    rd_u16b(&p_ptr->stun);
-	    rd_u16b(&p_ptr->poisoned);
-	    rd_u16b(&p_ptr->image);
-	    rd_u16b(&p_ptr->protevil);
-	    rd_u16b(&p_ptr->invuln);
-	    rd_u16b(&p_ptr->hero);
-	    rd_u16b(&p_ptr->shero);
-	    rd_u16b(&p_ptr->shield);
-	    rd_u16b(&p_ptr->blessed);
-	    rd_u16b(&p_ptr->oppose_fire);
-	    rd_u16b(&p_ptr->oppose_cold);
-	    rd_u16b(&p_ptr->oppose_acid);
-	    rd_u16b(&p_ptr->oppose_elec);
-	    rd_u16b(&p_ptr->oppose_pois);
-	    rd_u16b(&p_ptr->detect_inv);
-	    rd_u16b(&p_ptr->word_recall);
-	    rd_u16b(&p_ptr->see_infra);
-	    rd_u16b(&p_ptr->tim_infra);
+	    rd_s16b(&p_ptr->rest);
+	    rd_s16b(&p_ptr->blind);
+	    rd_s16b(&p_ptr->paralysis);
+	    rd_s16b(&p_ptr->confused);
+	    rd_s16b(&p_ptr->food);
+	    rd_s16b(&p_ptr->food_digested);
+	    rd_s16b(&p_ptr->protection);
+	    rd_s16b(&p_ptr->speed);
+	    rd_s16b(&p_ptr->fast);
+	    rd_s16b(&p_ptr->slow);
+	    rd_s16b(&p_ptr->afraid);
+	    rd_s16b(&p_ptr->cut);
+	    rd_s16b(&p_ptr->stun);
+	    rd_s16b(&p_ptr->poisoned);
+	    rd_s16b(&p_ptr->image);
+	    rd_s16b(&p_ptr->protevil);
+	    rd_s16b(&p_ptr->invuln);
+	    rd_s16b(&p_ptr->hero);
+	    rd_s16b(&p_ptr->shero);
+	    rd_s16b(&p_ptr->shield);
+	    rd_s16b(&p_ptr->blessed);
+	    rd_s16b(&p_ptr->oppose_fire);
+	    rd_s16b(&p_ptr->oppose_cold);
+	    rd_s16b(&p_ptr->oppose_acid);
+	    rd_s16b(&p_ptr->oppose_elec);
+	    rd_s16b(&p_ptr->oppose_pois);
+	    rd_s16b(&p_ptr->detect_inv);
+	    rd_s16b(&p_ptr->word_recall);
+	    rd_s16b(&p_ptr->see_infra);
+	    rd_s16b(&p_ptr->tim_infra);
 	    rd_byte(&p_ptr->see_inv);
 	    rd_byte(&p_ptr->teleport);
 	    rd_byte(&p_ptr->free_act);
@@ -1464,8 +1497,8 @@ int load_player(int *generate)
 
 	    for (i = 0; i < MAX_STORES; i++) {
 	      st_ptr = &store[i];
-	      rd_u32b(&st_ptr->store_open);
-	      rd_u16b(&st_ptr->insult_cur);
+	      rd_s32b(&st_ptr->store_open);
+	      rd_s16b(&st_ptr->insult_cur);
 	      rd_byte(&st_ptr->owner);
 	      rd_byte(&st_ptr->store_ctr);
 	      rd_u16b(&st_ptr->good_buy);
@@ -1475,7 +1508,7 @@ int load_player(int *generate)
 		goto error;
 	      }
 	      for (j = 0; j < st_ptr->store_ctr; j++) {
-		rd_u32b(&st_ptr->store_inven[j].scost);
+		rd_s32b(&st_ptr->store_inven[j].scost);
 		rd_item(&st_ptr->store_inven[j].sitem);
 	      }
 	    }
@@ -1685,7 +1718,7 @@ int load_player(int *generate)
 	rd_byte(&(r_list[MAX_R_IDX - 1].aaf));
 
 	if ((version_maj >= 2) && (version_min >= 6))
-	    rd_u16b(&(r_list[MAX_R_IDX - 1].ac));
+	    rd_s16b(&(r_list[MAX_R_IDX - 1].ac));
 	else
 	    rd_byte(&(r_list[MAX_R_IDX - 1].ac));
 
@@ -1702,8 +1735,8 @@ int load_player(int *generate)
 	    || (version_min == 0))
 	    for (i = 0; i < MAX_STORES; i++) {
 		st_ptr = &store[i];
-		rd_u32b(&st_ptr->store_open);
-		rd_u16b(&st_ptr->insult_cur);
+		rd_s32b(&st_ptr->store_open);
+		rd_s16b(&st_ptr->insult_cur);
 		rd_byte(&st_ptr->owner);
 		rd_byte(&st_ptr->store_ctr);
 		rd_u16b(&st_ptr->good_buy);
@@ -1713,7 +1746,7 @@ int load_player(int *generate)
 		    goto error;
 		}
 		for (j = 0; j < st_ptr->store_ctr; j++) {
-		    rd_u32b(&st_ptr->store_inven[j].scost);
+		    rd_s32b(&st_ptr->store_inven[j].scost);
 		    rd_item(&st_ptr->store_inven[j].sitem);
 		}
 	    }
