@@ -19,6 +19,8 @@
  *
  * and has been completely rewritten again by	 -CJS-
  * and completely rewritten again! for portability by -JEW-
+ *
+ * And then was re-written again (for 2.7.0) cause it sucked.  -BEN-
  */
 
 
@@ -123,24 +125,16 @@ static void rd_byte(byte *ip)
  * Write/Read various "short" objects
  */
 
-static void wr_short(u16b s)
+static void wr_u16b(u16b v)
 {
-    xor_byte ^= (s & 0xFF);
-    (void)putc((int)xor_byte, fff);
-    xor_byte ^= ((s >> 8) & 0xFF);
-    (void)putc((int)xor_byte, fff);
+    sf_put(v & 0xFF);
+    sf_put((v >> 8) & 0xFF);
 }
 
-static void rd_short(u16b *ptr)
+static void rd_u16b(u16b *ip)
 {
-    byte  c;
-    u16b s;
-
-    c = (getc(fff) & 0xFF);
-    s = c ^ xor_byte;
-    xor_byte = (getc(fff) & 0xFF);
-    s |= (u16b) (c ^ xor_byte) << 8;
-    *ptr = s;
+    (*ip) = sf_get();
+    (*ip) |= ((u16b)(sf_get()) << 8);
 }
 
 
@@ -149,32 +143,20 @@ static void rd_short(u16b *ptr)
  * Write/Read various "long" objects
  */
 
-static void wr_long(u32b l)
+static void wr_u32b(u32b v)
 {
-    xor_byte ^= (l & 0xFF);
-    (void)putc((int)xor_byte, fff);
-    xor_byte ^= ((l >> 8) & 0xFF);
-    (void)putc((int)xor_byte, fff);
-    xor_byte ^= ((l >> 16) & 0xFF);
-    (void)putc((int)xor_byte, fff);
-    xor_byte ^= ((l >> 24) & 0xFF);
-    (void)putc((int)xor_byte, fff);
+    sf_put(v & 0xFF);
+    sf_put((v >> 8) & 0xFF);
+    sf_put((v >> 16) & 0xFF);
+    sf_put((v >> 24) & 0xFF);
 }
 
-static void rd_long(u32b *ptr)
+static void rd_u32b(u32b *ip)
 {
-    register u32b l;
-    register byte  c;
-
-    c = (getc(fff) & 0xFF);
-    l = c ^ xor_byte;
-    xor_byte = (getc(fff) & 0xFF);
-    l |= (u32b) (c ^ xor_byte) << 8;
-    c = (getc(fff) & 0xFF);
-    l |= (u32b) (c ^ xor_byte) << 16;
-    xor_byte = (getc(fff) & 0xFF);
-    l |= (u32b) (c ^ xor_byte) << 24;
-    *ptr = l;
+    (*ip) = sf_get();
+    (*ip) |= ((u32b)(sf_get()) << 8);
+    (*ip) |= ((u32b)(sf_get()) << 16);
+    (*ip) |= ((u32b)(sf_get()) << 24);
 }
 
 
@@ -186,24 +168,22 @@ static void rd_long(u32b *ptr)
 
 static void wr_string(cptr str)
 {
-    while (*str != '\0') {
-	xor_byte ^= *str++;
-	(void)putc((int)xor_byte, fff);
+    while (*str) {
+	wr_byte(*str);
+	str++;
     }
-    xor_byte ^= *str;
-    (void)putc((int)xor_byte, fff);
+    wr_byte(*str);
 }
 
 static void rd_string(char *str)
 {
-    register byte c;
-
-    do {
-	c = (getc(fff) & 0xFF);
-	*str = c ^ xor_byte;
-	xor_byte = c;
+    while (1) {
+	byte tmp;
+	rd_byte(&tmp);
+	*str = tmp;
+	if (!*str) break;
+	str++;
     }
-    while (*str++ != '\0');
 }
 
 
@@ -214,51 +194,51 @@ static void rd_string(char *str)
  */
 static void rd_item(inven_type *i_ptr)
 {
-    rd_short(&i_ptr->index);
+    rd_u16b(&i_ptr->index);
     rd_byte(&i_ptr->name2);
     rd_string(i_ptr->inscrip);
-    rd_long(&i_ptr->flags1);
+    rd_u32b(&i_ptr->flags1);
     rd_byte(&i_ptr->tval);
     rd_byte(&i_ptr->tchar);
-    rd_short((u16b *) & i_ptr->pval);
-    rd_long((u32b *) & i_ptr->cost);
+    rd_u16b(&i_ptr->pval);
+    rd_u32b(&i_ptr->cost);
     rd_byte(&i_ptr->sval);
     rd_byte(&i_ptr->number);
-    rd_short(&i_ptr->weight);
-    rd_short((u16b *) & i_ptr->tohit);
-    rd_short((u16b *) & i_ptr->todam);
-    rd_short((u16b *) & i_ptr->ac);
-    rd_short((u16b *) & i_ptr->toac);
+    rd_u16b(&i_ptr->weight);
+    rd_u16b(&i_ptr->tohit);
+    rd_u16b(&i_ptr->todam);
+    rd_u16b(&i_ptr->ac);
+    rd_u16b(&i_ptr->toac);
     rd_bytes(i_ptr->damage, 2);
     rd_byte(&i_ptr->level);
     rd_byte(&i_ptr->ident);
-    rd_long(&i_ptr->flags2);
-    rd_short((u16b *) & i_ptr->timeout);
+    rd_u32b(&i_ptr->flags2);
+    rd_u16b(&i_ptr->timeout);
 }
 
 
 static void wr_item(inven_type *i_ptr)
 {
-    wr_short(i_ptr->index);
+    wr_u16b(i_ptr->index);
     wr_byte(i_ptr->name2);
     wr_string(i_ptr->inscrip);
-    wr_long(i_ptr->flags1);
+    wr_u32b(i_ptr->flags1);
     wr_byte(i_ptr->tval);
     wr_byte(i_ptr->tchar);
-    wr_short((u16b) i_ptr->pval);
-    wr_long((u32b) i_ptr->cost);
+    wr_u16b(i_ptr->pval);
+    wr_u32b(i_ptr->cost);
     wr_byte(i_ptr->sval);
     wr_byte(i_ptr->number);
-    wr_short(i_ptr->weight);
-    wr_short((u16b) i_ptr->tohit);
-    wr_short((u16b) i_ptr->todam);
-    wr_short((u16b) i_ptr->ac);
-    wr_short((u16b) i_ptr->toac);
+    wr_u16b(i_ptr->weight);
+    wr_u16b(i_ptr->tohit);
+    wr_u16b(i_ptr->todam);
+    wr_u16b(i_ptr->ac);
+    wr_u16b(i_ptr->toac);
     wr_bytes(i_ptr->damage, 2);
     wr_byte(i_ptr->level);
     wr_byte(i_ptr->ident);
-    wr_long(i_ptr->flags2);
-    wr_short((u16b) i_ptr->timeout);
+    wr_u32b(i_ptr->flags2);
+    wr_u16b(i_ptr->timeout);
 }
 
 
@@ -270,17 +250,17 @@ static void wr_item(inven_type *i_ptr)
 
 static void rd_monster(monster_type *m_ptr)
 {
-    rd_short((u16b *) & m_ptr->hp);
+    rd_u16b(&m_ptr->hp);
     if ((version_maj >= 2) && (version_min >= 6))
-	rd_short((u16b *) & m_ptr->maxhp);
+	rd_u16b(&m_ptr->maxhp);
     else {
 	/* let's fix the infamous monster heal bug -CWS */
 	m_ptr->maxhp = m_ptr->hp;
     }
 
-    rd_short((u16b *) & m_ptr->csleep);
-    rd_short((u16b *) & m_ptr->mspeed);
-    rd_short(&m_ptr->r_idx);
+    rd_u16b(&m_ptr->csleep);
+    rd_u16b(&m_ptr->mspeed);
+    rd_u16b(&m_ptr->r_idx);
     rd_byte(&m_ptr->fy);
     rd_byte(&m_ptr->fx);
     rd_byte(&m_ptr->cdis);
@@ -288,18 +268,18 @@ static void rd_monster(monster_type *m_ptr)
     rd_byte(&m_ptr->stunned);
     rd_byte(&m_ptr->confused);
     if ((version_maj >= 2) && (version_min >= 6))
-	rd_byte((byte *) & m_ptr->monfear);
+	rd_byte(&m_ptr->monfear);
     else
 	m_ptr->monfear = 0; /* this is not saved either -CWS */
 }
 
 static void wr_monster(monster_type *m_ptr)
 {
-    wr_short((u16b) m_ptr->hp);
-    wr_short((u16b) m_ptr->maxhp); /* added -CWS */
-    wr_short((u16b) m_ptr->csleep);
-    wr_short((u16b) m_ptr->mspeed);
-    wr_short(m_ptr->r_idx);
+    wr_u16b(m_ptr->hp);
+    wr_u16b(m_ptr->maxhp); /* added -CWS */
+    wr_u16b(m_ptr->csleep);
+    wr_u16b(m_ptr->mspeed);
+    wr_u16b(m_ptr->r_idx);
     wr_byte(m_ptr->fy);
     wr_byte(m_ptr->fx);
     wr_byte(m_ptr->cdis);
@@ -323,14 +303,14 @@ static char *basename(char *a)
 
 static void wr_unique(register struct unique_mon *item)
 {
-    wr_long((u32b) item->exist);
-    wr_long((u32b) item->dead);
+    wr_u32b(item->exist);
+    wr_u32b(item->dead);
 }
 
 static void rd_unique(register struct unique_mon *item)
 {
-    rd_long((u32b *) & item->exist);
-    rd_long((u32b *) & item->dead);
+    rd_u32b(&item->exist);
+    rd_u32b(&item->dead);
 }
 
 
@@ -402,122 +382,122 @@ static int sv_write()
 	l |= 0x40000000L;
     if (death)
 	l |= 0x80000000L;	/* Sign bit */
-    wr_long(GROND);
-    wr_long(RINGIL);
-    wr_long(AEGLOS);
-    wr_long(ARUNRUTH);
-    wr_long(MORMEGIL);
-    wr_long(ANGRIST);
-    wr_long(GURTHANG);
-    wr_long(CALRIS);
-    wr_long(ANDURIL);
-    wr_long(STING);
-    wr_long(ORCRIST);
-    wr_long(GLAMDRING);
-    wr_long(DURIN);
-    wr_long(AULE);
-    wr_long(THUNDERFIST);
-    wr_long(BLOODSPIKE);
-    wr_long(DOOMCALLER);
-    wr_long(NARTHANC);
-    wr_long(NIMTHANC);
-    wr_long(DETHANC);
-    wr_long(GILETTAR);
-    wr_long(RILIA);
-    wr_long(BELANGIL);
-    wr_long(BALLI);
-    wr_long(LOTHARANG);
-    wr_long(FIRESTAR);
-    wr_long(ERIRIL);
-    wr_long(CUBRAGOL);
-    wr_long(BARD);
-    wr_long(COLLUIN);
-    wr_long(HOLCOLLETH);
-    wr_long(TOTILA);
-    wr_long(PAIN);
-    wr_long(ELVAGIL);
-    wr_long(AGLARANG);
-    wr_long(EORLINGAS);
-    wr_long(BARUKKHELED);
-    wr_long(WRATH);
-    wr_long(HARADEKKET);
-    wr_long(MUNDWINE);
-    wr_long(GONDRICAM);
-    wr_long(ZARCUTHRA);
-    wr_long(CARETH);
-    wr_long(FORASGIL);
-    wr_long(CRISDURIAN);
-    wr_long(COLANNON);
-    wr_long(HITHLOMIR);
-    wr_long(THALKETTOTH);
-    wr_long(ARVEDUI);
-    wr_long(THRANDUIL);
-    wr_long(THENGEL);
-    wr_long(HAMMERHAND);
-    wr_long(CELEGORM);
-    wr_long(THROR);
-    wr_long(MAEDHROS);
-    wr_long(OLORIN);
-    wr_long(ANGUIREL);
-    wr_long(OROME);
-    wr_long(EONWE);
-    wr_long(THEODEN);
-    wr_long(ULMO);
-    wr_long(OSONDIR);
-    wr_long(TURMIL);
-    wr_long(CASPANION);
-    wr_long(TIL);
-    wr_long(DEATHWREAKER);
-    wr_long(AVAVIR);
-    wr_long(TARATOL);
+    wr_u32b(GROND);
+    wr_u32b(RINGIL);
+    wr_u32b(AEGLOS);
+    wr_u32b(ARUNRUTH);
+    wr_u32b(MORMEGIL);
+    wr_u32b(ANGRIST);
+    wr_u32b(GURTHANG);
+    wr_u32b(CALRIS);
+    wr_u32b(ANDURIL);
+    wr_u32b(STING);
+    wr_u32b(ORCRIST);
+    wr_u32b(GLAMDRING);
+    wr_u32b(DURIN);
+    wr_u32b(AULE);
+    wr_u32b(THUNDERFIST);
+    wr_u32b(BLOODSPIKE);
+    wr_u32b(DOOMCALLER);
+    wr_u32b(NARTHANC);
+    wr_u32b(NIMTHANC);
+    wr_u32b(DETHANC);
+    wr_u32b(GILETTAR);
+    wr_u32b(RILIA);
+    wr_u32b(BELANGIL);
+    wr_u32b(BALLI);
+    wr_u32b(LOTHARANG);
+    wr_u32b(FIRESTAR);
+    wr_u32b(ERIRIL);
+    wr_u32b(CUBRAGOL);
+    wr_u32b(BARD);
+    wr_u32b(COLLUIN);
+    wr_u32b(HOLCOLLETH);
+    wr_u32b(TOTILA);
+    wr_u32b(PAIN);
+    wr_u32b(ELVAGIL);
+    wr_u32b(AGLARANG);
+    wr_u32b(EORLINGAS);
+    wr_u32b(BARUKKHELED);
+    wr_u32b(WRATH);
+    wr_u32b(HARADEKKET);
+    wr_u32b(MUNDWINE);
+    wr_u32b(GONDRICAM);
+    wr_u32b(ZARCUTHRA);
+    wr_u32b(CARETH);
+    wr_u32b(FORASGIL);
+    wr_u32b(CRISDURIAN);
+    wr_u32b(COLANNON);
+    wr_u32b(HITHLOMIR);
+    wr_u32b(THALKETTOTH);
+    wr_u32b(ARVEDUI);
+    wr_u32b(THRANDUIL);
+    wr_u32b(THENGEL);
+    wr_u32b(HAMMERHAND);
+    wr_u32b(CELEGORM);
+    wr_u32b(THROR);
+    wr_u32b(MAEDHROS);
+    wr_u32b(OLORIN);
+    wr_u32b(ANGUIREL);
+    wr_u32b(OROME);
+    wr_u32b(EONWE);
+    wr_u32b(THEODEN);
+    wr_u32b(ULMO);
+    wr_u32b(OSONDIR);
+    wr_u32b(TURMIL);
+    wr_u32b(CASPANION);
+    wr_u32b(TIL);
+    wr_u32b(DEATHWREAKER);
+    wr_u32b(AVAVIR);
+    wr_u32b(TARATOL);
 
-    wr_long(DOR_LOMIN);
-    wr_long(NENYA);
-    wr_long(NARYA);
-    wr_long(VILYA);
-    wr_long(BELEGENNON);
-    wr_long(FEANOR);
-    wr_long(ISILDUR);
-    wr_long(SOULKEEPER);
-    wr_long(FINGOLFIN);
-    wr_long(ANARION);
-    wr_long(POWER);
-    wr_long(PHIAL);
-    wr_long(BELEG);
-    wr_long(DAL);
-    wr_long(PAURHACH);
-    wr_long(PAURNIMMEN);
-    wr_long(PAURAEGEN);
-    wr_long(PAURNEN);
-    wr_long(CAMMITHRIM);
-    wr_long(CAMBELEG);
-    wr_long(INGWE);
-    wr_long(CARLAMMAS);
-    wr_long(HOLHENNETH);
-    wr_long(AEGLIN);
-    wr_long(CAMLOST);
-    wr_long(NIMLOTH);
-    wr_long(NAR);
-    wr_long(BERUTHIEL);
-    wr_long(GORLIM);
-    wr_long(ELENDIL);
-    wr_long(THORIN);
-    wr_long(CELEBORN);
-    wr_long(THRAIN);
-    wr_long(GONDOR);
-    wr_long(THINGOL);
-    wr_long(THORONGIL);
-    wr_long(LUTHIEN);
-    wr_long(TUOR);
-    wr_long(ROHAN);
-    wr_long(TULKAS);
-    wr_long(NECKLACE);
-    wr_long(BARAHIR);
-    wr_long(RAZORBACK);
-    wr_long(BLADETURNER);
+    wr_u32b(DOR_LOMIN);
+    wr_u32b(NENYA);
+    wr_u32b(NARYA);
+    wr_u32b(VILYA);
+    wr_u32b(BELEGENNON);
+    wr_u32b(FEANOR);
+    wr_u32b(ISILDUR);
+    wr_u32b(SOULKEEPER);
+    wr_u32b(FINGOLFIN);
+    wr_u32b(ANARION);
+    wr_u32b(POWER);
+    wr_u32b(PHIAL);
+    wr_u32b(BELEG);
+    wr_u32b(DAL);
+    wr_u32b(PAURHACH);
+    wr_u32b(PAURNIMMEN);
+    wr_u32b(PAURAEGEN);
+    wr_u32b(PAURNEN);
+    wr_u32b(CAMMITHRIM);
+    wr_u32b(CAMBELEG);
+    wr_u32b(INGWE);
+    wr_u32b(CARLAMMAS);
+    wr_u32b(HOLHENNETH);
+    wr_u32b(AEGLIN);
+    wr_u32b(CAMLOST);
+    wr_u32b(NIMLOTH);
+    wr_u32b(NAR);
+    wr_u32b(BERUTHIEL);
+    wr_u32b(GORLIM);
+    wr_u32b(ELENDIL);
+    wr_u32b(THORIN);
+    wr_u32b(CELEBORN);
+    wr_u32b(THRAIN);
+    wr_u32b(GONDOR);
+    wr_u32b(THINGOL);
+    wr_u32b(THORONGIL);
+    wr_u32b(LUTHIEN);
+    wr_u32b(TUOR);
+    wr_u32b(ROHAN);
+    wr_u32b(TULKAS);
+    wr_u32b(NECKLACE);
+    wr_u32b(BARAHIR);
+    wr_u32b(RAZORBACK);
+    wr_u32b(BLADETURNER);
 
     for (i = 0; i < MAX_QUESTS; i++)
-	wr_long(quests[i]);
+	wr_u32b(quests[i]);
 
     for (i = 0; i < MAX_R_IDX; i++)
 	wr_unique(&u_list[i]);
@@ -528,63 +508,63 @@ static int sv_write()
 	    r_ptr->r_spells2 || r_ptr->r_spells3 || r_ptr->r_spells1 ||
 	    r_ptr->r_deaths || r_ptr->r_attacks[0] || r_ptr->r_attacks[1] ||
 	    r_ptr->r_attacks[2] || r_ptr->r_attacks[3]) {
-	    wr_short((u16b) i);
-	    wr_long(r_ptr->r_cflags1);
-	    wr_long(r_ptr->r_spells1);
-	    wr_long(r_ptr->r_spells2);
-	    wr_long(r_ptr->r_spells3);
-	    wr_short(r_ptr->r_kills);
-	    wr_short(r_ptr->r_deaths);
-	    wr_long(r_ptr->r_cflags2);
+	    wr_u16b(i);
+	    wr_u32b(r_ptr->r_cflags1);
+	    wr_u32b(r_ptr->r_spells1);
+	    wr_u32b(r_ptr->r_spells2);
+	    wr_u32b(r_ptr->r_spells3);
+	    wr_u16b(r_ptr->r_kills);
+	    wr_u16b(r_ptr->r_deaths);
+	    wr_u32b(r_ptr->r_cflags2);
 	    wr_byte(r_ptr->r_wake);
 	    wr_byte(r_ptr->r_ignore);
 	    wr_bytes(r_ptr->r_attacks, MAX_MON_NATTACK);
 	}
     }
-    wr_short((u16b) 0xFFFF);	   /* sentinel to indicate no more monster info */
+    wr_u16b(0xFFFF);	   /* sentinel to indicate no more monster info */
 
-    wr_long(l);
-    wr_long(l);	/* added some duplicates, for future flags expansion -CWS */
-    wr_long(l);
-    wr_long(l);
+    wr_u32b(l);
+    wr_u32b(l);	/* added some duplicates, for future flags expansion -CWS */
+    wr_u32b(l);
+    wr_u32b(l);
 
     wr_string(p_ptr->name);
     wr_byte(p_ptr->male);
-    wr_long((u32b) p_ptr->au);
-    wr_long((u32b) p_ptr->max_exp);
-    wr_long((u32b) p_ptr->exp);
-    wr_short(p_ptr->exp_frac);
-    wr_short(p_ptr->age);
-    wr_short(p_ptr->ht);
-    wr_short(p_ptr->wt);
-    wr_short(p_ptr->lev);
-    wr_short(p_ptr->max_dlv);
-    wr_short((u16b) p_ptr->srh);
-    wr_short((u16b) p_ptr->fos);
-    wr_short((u16b) p_ptr->bth);
-    wr_short((u16b) p_ptr->bthb);
-    wr_short((u16b) p_ptr->mana);
-    wr_short((u16b) p_ptr->mhp);
-    wr_short((u16b) p_ptr->ptohit);
-    wr_short((u16b) p_ptr->ptodam);
-    wr_short((u16b) p_ptr->pac);
-    wr_short((u16b) p_ptr->ptoac);
-    wr_short((u16b) p_ptr->dis_th);
-    wr_short((u16b) p_ptr->dis_td);
-    wr_short((u16b) p_ptr->dis_ac);
-    wr_short((u16b) p_ptr->dis_tac);
-    wr_short((u16b) p_ptr->disarm);
-    wr_short((u16b) p_ptr->save);
-    wr_short((u16b) p_ptr->sc);
-    wr_short((u16b) p_ptr->stl);
+    wr_u32b(p_ptr->au);
+    wr_u32b(p_ptr->max_exp);
+    wr_u32b(p_ptr->exp);
+    wr_u16b(p_ptr->exp_frac);
+    wr_u16b(p_ptr->age);
+    wr_u16b(p_ptr->ht);
+    wr_u16b(p_ptr->wt);
+    wr_u16b(p_ptr->lev);
+    wr_u16b(p_ptr->max_dlv);
+    wr_u16b(p_ptr->srh);
+    wr_u16b(p_ptr->fos);
+    wr_u16b(p_ptr->bth);
+    wr_u16b(p_ptr->bthb);
+    wr_u16b(p_ptr->mana);
+    wr_u16b(p_ptr->mhp);
+    wr_u16b(p_ptr->ptohit);
+    wr_u16b(p_ptr->ptodam);
+    wr_u16b(p_ptr->pac);
+    wr_u16b(p_ptr->ptoac);
+    wr_u16b(p_ptr->dis_th);
+    wr_u16b(p_ptr->dis_td);
+    wr_u16b(p_ptr->dis_ac);
+    wr_u16b(p_ptr->dis_tac);
+    wr_u16b(p_ptr->disarm);
+    wr_u16b(p_ptr->save);
+    wr_u16b(p_ptr->sc);
+    wr_u16b(p_ptr->stl);
     wr_byte(p_ptr->pclass);
     wr_byte(p_ptr->prace);
     wr_byte(p_ptr->hitdie);
     wr_byte(p_ptr->expfact);
-    wr_short((u16b) p_ptr->cmana);
-    wr_short(p_ptr->cmana_frac);
-    wr_short((u16b) p_ptr->chp);
-    wr_short(p_ptr->chp_frac);
+    wr_u16b(p_ptr->cmana);
+    wr_u16b(p_ptr->cmana_frac);
+    wr_u16b(p_ptr->chp);
+    wr_u16b(p_ptr->chp_frac);
     for (i = 0; i < 4; i++)
 	wr_string(p_ptr->history[i]);
 
@@ -593,37 +573,37 @@ static int sv_write()
     wr_shorts((u16b *) p_ptr->mod_stat, 6);
     wr_shorts(p_ptr->use_stat, 6);
 
-    wr_long(p_ptr->status);
-    wr_short((u16b) p_ptr->rest);
-    wr_short((u16b) p_ptr->blind);
-    wr_short((u16b) p_ptr->paralysis);
-    wr_short((u16b) p_ptr->confused);
-    wr_short((u16b) p_ptr->food);
-    wr_short((u16b) p_ptr->food_digested);
-    wr_short((u16b) p_ptr->protection);
-    wr_short((u16b) p_ptr->speed);
-    wr_short((u16b) p_ptr->fast);
-    wr_short((u16b) p_ptr->slow);
-    wr_short((u16b) p_ptr->afraid);
-    wr_short((u16b) p_ptr->cut);
-    wr_short((u16b) p_ptr->stun);
-    wr_short((u16b) p_ptr->poisoned);
-    wr_short((u16b) p_ptr->image);
-    wr_short((u16b) p_ptr->protevil);
-    wr_short((u16b) p_ptr->invuln);
-    wr_short((u16b) p_ptr->hero);
-    wr_short((u16b) p_ptr->shero);
-    wr_short((u16b) p_ptr->shield);
-    wr_short((u16b) p_ptr->blessed);
-    wr_short((u16b) p_ptr->oppose_fire);
-    wr_short((u16b) p_ptr->oppose_cold);
-    wr_short((u16b) p_ptr->oppose_acid);
-    wr_short((u16b) p_ptr->oppose_elec);
-    wr_short((u16b) p_ptr->oppose_pois);
-    wr_short((u16b) p_ptr->detect_inv);
-    wr_short((u16b) p_ptr->word_recall);
-    wr_short((u16b) p_ptr->see_infra);
-    wr_short((u16b) p_ptr->tim_infra);
+    wr_u32b(p_ptr->status);
+    wr_u16b(p_ptr->rest);
+    wr_u16b(p_ptr->blind);
+    wr_u16b(p_ptr->paralysis);
+    wr_u16b(p_ptr->confused);
+    wr_u16b(p_ptr->food);
+    wr_u16b(p_ptr->food_digested);
+    wr_u16b(p_ptr->protection);
+    wr_u16b(p_ptr->speed);
+    wr_u16b(p_ptr->fast);
+    wr_u16b(p_ptr->slow);
+    wr_u16b(p_ptr->afraid);
+    wr_u16b(p_ptr->cut);
+    wr_u16b(p_ptr->stun);
+    wr_u16b(p_ptr->poisoned);
+    wr_u16b(p_ptr->image);
+    wr_u16b(p_ptr->protevil);
+    wr_u16b(p_ptr->invuln);
+    wr_u16b(p_ptr->hero);
+    wr_u16b(p_ptr->shero);
+    wr_u16b(p_ptr->shield);
+    wr_u16b(p_ptr->blessed);
+    wr_u16b(p_ptr->oppose_fire);
+    wr_u16b(p_ptr->oppose_cold);
+    wr_u16b(p_ptr->oppose_acid);
+    wr_u16b(p_ptr->oppose_elec);
+    wr_u16b(p_ptr->oppose_pois);
+    wr_u16b(p_ptr->detect_inv);
+    wr_u16b(p_ptr->word_recall);
+    wr_u16b(p_ptr->see_infra);
+    wr_u16b(p_ptr->tim_infra);
     wr_byte(p_ptr->see_inv);
     wr_byte(p_ptr->teleport);
     wr_byte(p_ptr->free_act);
@@ -664,48 +644,48 @@ static int sv_write()
     wr_byte(p_ptr->resist_nether);
     wr_byte(p_ptr->resist_fear); /* added -CWS */
 
-    wr_short((u16b) missile_ctr);
-    wr_long((u32b) turn);
-    wr_long((u32b) old_turn);	/* added -CWS */
-    wr_short((u16b) inven_ctr);
+    wr_u16b(missile_ctr);
+    wr_u32b(turn);
+    wr_u32b(old_turn);	/* added -CWS */
+    wr_u16b(inven_ctr);
     for (i = 0; i < inven_ctr; i++)
 	wr_item(&inventory[i]);
     for (i = INVEN_WIELD; i < INVEN_ARRAY_SIZE; i++)
 	wr_item(&inventory[i]);
-    wr_short((u16b) inven_weight);
-    wr_short((u16b) equip_ctr);
-    wr_long(spell_learned);
-    wr_long(spell_worked);
-    wr_long(spell_forgotten);
-    wr_long(spell_learned2);
-    wr_long(spell_worked2);
-    wr_long(spell_forgotten2);
+    wr_u16b(inven_weight);
+    wr_u16b(equip_ctr);
+    wr_u32b(spell_learned);
+    wr_u32b(spell_worked);
+    wr_u32b(spell_forgotten);
+    wr_u32b(spell_learned2);
+    wr_u32b(spell_worked2);
+    wr_u32b(spell_forgotten2);
     wr_bytes(spell_order, 64);
     wr_bytes(object_ident, OBJECT_IDENT_SIZE);
-    wr_long(randes_seed);
-    wr_long(town_seed);
-    wr_short((u16b) last_msg);
+    wr_u32b(randes_seed);
+    wr_u32b(town_seed);
+    wr_u16b(last_msg);
     for (i = 0; i < MAX_SAVE_MSG; i++)
 	wr_string(old_msg[i]);
 
 /* this indicates 'cheating' if it is a one */
-    wr_short((u16b) panic_save);
-    wr_short((u16b) total_winner);
-    wr_short((u16b) noscore);
+    wr_u16b(panic_save);
+    wr_u16b(total_winner);
+    wr_u16b(noscore);
     wr_shorts(player_hp, MAX_PLAYER_LEVEL);
 
 
     for (i = 0; i < MAX_STORES; i++) {
 	st_ptr = &store[i];
-	wr_long((u32b) st_ptr->store_open);
-	wr_short((u16b) st_ptr->insult_cur);
+	wr_u32b(st_ptr->store_open);
+	wr_u16b(st_ptr->insult_cur);
 	wr_byte(st_ptr->owner);
 	wr_byte(st_ptr->store_ctr);
-	wr_short(st_ptr->good_buy);
-	wr_short(st_ptr->bad_buy);
+	wr_u16b(st_ptr->good_buy);
+	wr_u16b(st_ptr->bad_buy);
 
 	for (j = 0; j < st_ptr->store_ctr; j++) {
-	    wr_long((u32b) st_ptr->store_inven[j].scost);
+	    wr_u32b(st_ptr->store_inven[j].scost);
 	    wr_item(&st_ptr->store_inven[j].sitem);
 	}
     }
@@ -716,7 +696,7 @@ static int sv_write()
 /* if (l < start_time) { someone is messing with the clock!, assume that we
  * have been playing for 1 day l = start_time + 86400L; } 
  */
-    wr_long(l);
+    wr_u32b(l);
 
 /* starting with 5.2, put died_from string in savefile */
     wr_string(died_from);
@@ -729,14 +709,14 @@ static int sv_write()
 	    return FALSE;
 	return TRUE;
     }
-    wr_short((u16b) dun_level);
-    wr_short((u16b) char_row);
-    wr_short((u16b) char_col);
-    wr_short((u16b) mon_tot_mult);
-    wr_short((u16b) cur_height);
-    wr_short((u16b) cur_width);
-    wr_short((u16b) max_panel_rows);
-    wr_short((u16b) max_panel_cols);
+    wr_u16b(dun_level);
+    wr_u16b(char_row);
+    wr_u16b(char_col);
+    wr_u16b(mon_tot_mult);
+    wr_u16b(cur_height);
+    wr_u16b(cur_width);
+    wr_u16b(max_panel_rows);
+    wr_u16b(max_panel_cols);
 
     for (i = 0; i < MAX_HEIGHT; i++)
 	for (j = 0; j < MAX_WIDTH; j++) {
@@ -744,7 +724,7 @@ static int sv_write()
 	    if (c_ptr->m_idx != 0) {
 		wr_byte((byte) i);
 		wr_byte((byte) j);
-		wr_short((u16b) c_ptr->m_idx); /* was wr_byte -CWS */
+		wr_u16b(c_ptr->m_idx); /* was wr_byte -CWS */
 	    }
 	}
     wr_byte((byte) 0xFF);	   /* marks end of m_idx info */
@@ -754,7 +734,7 @@ static int sv_write()
 	    if (c_ptr->i_idx != 0) {
 		wr_byte((byte) i);
 		wr_byte((byte) j);
-		wr_short((u16b) c_ptr->i_idx);
+		wr_u16b(c_ptr->i_idx);
 	    }
 	}
     wr_byte(0xFF);		   /* marks end of i_idx info */
@@ -794,10 +774,10 @@ static int sv_write()
 	t_ptr--;
     }
 #endif
-    wr_short((u16b) i_max);
+    wr_u16b(i_max);
     for (i = MIN_I_IDX; i < i_max; i++)
 	wr_item(&i_list[i]);
-    wr_short((u16b) m_max);
+    wr_u16b(m_max);
     for (i = MIN_M_IDX; i < m_max; i++)
 	wr_monster(&m_list[i]);
 
@@ -808,9 +788,9 @@ static int sv_write()
 	 C_WIPE(r_list[MAX_R_IDX - 1].name, 101, char);
      }
     wr_bytes(r_list[MAX_R_IDX - 1].name, 100);
-    wr_long((u32b) r_list[MAX_R_IDX - 1].cflags1);
-    wr_long((u32b) r_list[MAX_R_IDX - 1].spells1);
-    wr_long((u32b) r_list[MAX_R_IDX - 1].cflags2);
+    wr_u32b(r_list[MAX_R_IDX - 1].cflags1);
+    wr_u32b(r_list[MAX_R_IDX - 1].spells1);
+    wr_u32b(r_list[MAX_R_IDX - 1].cflags2);
     {
 	u16b temp;
 /* fix player ghost's exp bug.  The mexp field is really an u32b, but the
@@ -821,20 +801,20 @@ static int sv_write()
  * perfectly with a similar fix when* loading a character. -CFT
  */
 
-	if (r_list[MAX_R_IDX - 1].mexp > (u32b) 0xff00)
-	    temp = (u16b) 0xff00;
+	if (r_list[MAX_R_IDX - 1].mexp > 0xff00)
+	    temp = 0xff00;
 	else
-	    temp = (u16b) r_list[MAX_R_IDX - 1].mexp;
-	wr_short((u16b) temp);
+	    temp = r_list[MAX_R_IDX - 1].mexp;
+	wr_u16b(temp);
     }
-    wr_short((byte) r_list[MAX_R_IDX - 1].sleep);
+    wr_u16b((byte) r_list[MAX_R_IDX - 1].sleep);
     wr_byte((byte) r_list[MAX_R_IDX - 1].aaf);
-    wr_short((byte) r_list[MAX_R_IDX - 1].ac);
+    wr_u16b((byte) r_list[MAX_R_IDX - 1].ac);
     wr_byte((byte) r_list[MAX_R_IDX - 1].speed);
     wr_byte((byte) r_list[MAX_R_IDX - 1].r_char);
     wr_bytes(r_list[MAX_R_IDX - 1].hd, 2);
     wr_bytes(r_list[MAX_R_IDX - 1].damage, sizeof(u16b) * 4);
-    wr_short((u16b) r_list[MAX_R_IDX - 1].level);
+    wr_u16b(r_list[MAX_R_IDX - 1].level);
 
     if (ferror(fff) || (fflush(fff) == EOF))
 	return FALSE;
@@ -1077,129 +1057,129 @@ int load_player(int *generate)
 	    goto error;
 	}
 	put_qio();
-	rd_long(&GROND);
-	rd_long(&RINGIL);
-	rd_long(&AEGLOS);
-	rd_long(&ARUNRUTH);
-	rd_long(&MORMEGIL);
-	rd_long(&ANGRIST);
-	rd_long(&GURTHANG);
-	rd_long(&CALRIS);
-	rd_long(&ANDURIL);
-	rd_long(&STING);
-	rd_long(&ORCRIST);
-	rd_long(&GLAMDRING);
-	rd_long(&DURIN);
-	rd_long(&AULE);
-	rd_long(&THUNDERFIST);
-	rd_long(&BLOODSPIKE);
-	rd_long(&DOOMCALLER);
-	rd_long(&NARTHANC);
-	rd_long(&NIMTHANC);
-	rd_long(&DETHANC);
-	rd_long(&GILETTAR);
-	rd_long(&RILIA);
-	rd_long(&BELANGIL);
-	rd_long(&BALLI);
-	rd_long(&LOTHARANG);
-	rd_long(&FIRESTAR);
-	rd_long(&ERIRIL);
-	rd_long(&CUBRAGOL);
-	rd_long(&BARD);
-	rd_long(&COLLUIN);
-	rd_long(&HOLCOLLETH);
-	rd_long(&TOTILA);
-	rd_long(&PAIN);
-	rd_long(&ELVAGIL);
-	rd_long(&AGLARANG);
-	rd_long(&EORLINGAS);
-	rd_long(&BARUKKHELED);
-	rd_long(&WRATH);
-	rd_long(&HARADEKKET);
-	rd_long(&MUNDWINE);
-	rd_long(&GONDRICAM);
-	rd_long(&ZARCUTHRA);
-	rd_long(&CARETH);
-	rd_long(&FORASGIL);
-	rd_long(&CRISDURIAN);
-	rd_long(&COLANNON);
-	rd_long(&HITHLOMIR);
-	rd_long(&THALKETTOTH);
-	rd_long(&ARVEDUI);
-	rd_long(&THRANDUIL);
-	rd_long(&THENGEL);
-	rd_long(&HAMMERHAND);
-	rd_long(&CELEGORM);
-	rd_long(&THROR);
-	rd_long(&MAEDHROS);
-	rd_long(&OLORIN);
-	rd_long(&ANGUIREL);
-	rd_long(&OROME);
-	rd_long(&EONWE);
-	rd_long(&THEODEN);
-	rd_long(&ULMO);
-	rd_long(&OSONDIR);
-	rd_long(&TURMIL);
-	rd_long(&CASPANION);
-	rd_long(&TIL);
-	rd_long(&DEATHWREAKER);
-	rd_long(&AVAVIR);
-	rd_long(&TARATOL);
+	rd_u32b(&GROND);
+	rd_u32b(&RINGIL);
+	rd_u32b(&AEGLOS);
+	rd_u32b(&ARUNRUTH);
+	rd_u32b(&MORMEGIL);
+	rd_u32b(&ANGRIST);
+	rd_u32b(&GURTHANG);
+	rd_u32b(&CALRIS);
+	rd_u32b(&ANDURIL);
+	rd_u32b(&STING);
+	rd_u32b(&ORCRIST);
+	rd_u32b(&GLAMDRING);
+	rd_u32b(&DURIN);
+	rd_u32b(&AULE);
+	rd_u32b(&THUNDERFIST);
+	rd_u32b(&BLOODSPIKE);
+	rd_u32b(&DOOMCALLER);
+	rd_u32b(&NARTHANC);
+	rd_u32b(&NIMTHANC);
+	rd_u32b(&DETHANC);
+	rd_u32b(&GILETTAR);
+	rd_u32b(&RILIA);
+	rd_u32b(&BELANGIL);
+	rd_u32b(&BALLI);
+	rd_u32b(&LOTHARANG);
+	rd_u32b(&FIRESTAR);
+	rd_u32b(&ERIRIL);
+	rd_u32b(&CUBRAGOL);
+	rd_u32b(&BARD);
+	rd_u32b(&COLLUIN);
+	rd_u32b(&HOLCOLLETH);
+	rd_u32b(&TOTILA);
+	rd_u32b(&PAIN);
+	rd_u32b(&ELVAGIL);
+	rd_u32b(&AGLARANG);
+	rd_u32b(&EORLINGAS);
+	rd_u32b(&BARUKKHELED);
+	rd_u32b(&WRATH);
+	rd_u32b(&HARADEKKET);
+	rd_u32b(&MUNDWINE);
+	rd_u32b(&GONDRICAM);
+	rd_u32b(&ZARCUTHRA);
+	rd_u32b(&CARETH);
+	rd_u32b(&FORASGIL);
+	rd_u32b(&CRISDURIAN);
+	rd_u32b(&COLANNON);
+	rd_u32b(&HITHLOMIR);
+	rd_u32b(&THALKETTOTH);
+	rd_u32b(&ARVEDUI);
+	rd_u32b(&THRANDUIL);
+	rd_u32b(&THENGEL);
+	rd_u32b(&HAMMERHAND);
+	rd_u32b(&CELEGORM);
+	rd_u32b(&THROR);
+	rd_u32b(&MAEDHROS);
+	rd_u32b(&OLORIN);
+	rd_u32b(&ANGUIREL);
+	rd_u32b(&OROME);
+	rd_u32b(&EONWE);
+	rd_u32b(&THEODEN);
+	rd_u32b(&ULMO);
+	rd_u32b(&OSONDIR);
+	rd_u32b(&TURMIL);
+	rd_u32b(&CASPANION);
+	rd_u32b(&TIL);
+	rd_u32b(&DEATHWREAKER);
+	rd_u32b(&AVAVIR);
+	rd_u32b(&TARATOL);
 	if (to_be_wizard)
 	    prt("Loaded Weapon Artifacts", 2, 0);
 	put_qio();
 
 
-	rd_long(&DOR_LOMIN);
-	rd_long(&NENYA);
-	rd_long(&NARYA);
-	rd_long(&VILYA);
-	rd_long(&BELEGENNON);
-	rd_long(&FEANOR);
-	rd_long(&ISILDUR);
-	rd_long(&SOULKEEPER);
-	rd_long(&FINGOLFIN);
-	rd_long(&ANARION);
-	rd_long(&POWER);
-	rd_long(&PHIAL);
-	rd_long(&BELEG);
-	rd_long(&DAL);
-	rd_long(&PAURHACH);
-	rd_long(&PAURNIMMEN);
-	rd_long(&PAURAEGEN);
-	rd_long(&PAURNEN);
-	rd_long(&CAMMITHRIM);
-	rd_long(&CAMBELEG);
-	rd_long(&INGWE);
-	rd_long(&CARLAMMAS);
-	rd_long(&HOLHENNETH);
-	rd_long(&AEGLIN);
-	rd_long(&CAMLOST);
-	rd_long(&NIMLOTH);
-	rd_long(&NAR);
-	rd_long(&BERUTHIEL);
-	rd_long(&GORLIM);
-	rd_long(&ELENDIL);
-	rd_long(&THORIN);
-	rd_long(&CELEBORN);
-	rd_long(&THRAIN);
-	rd_long(&GONDOR);
-	rd_long(&THINGOL);
-	rd_long(&THORONGIL);
-	rd_long(&LUTHIEN);
-	rd_long(&TUOR);
-	rd_long(&ROHAN);
-	rd_long(&TULKAS);
-	rd_long(&NECKLACE);
-	rd_long(&BARAHIR);
-	rd_long(&RAZORBACK);
-	rd_long(&BLADETURNER);
+	rd_u32b(&DOR_LOMIN);
+	rd_u32b(&NENYA);
+	rd_u32b(&NARYA);
+	rd_u32b(&VILYA);
+	rd_u32b(&BELEGENNON);
+	rd_u32b(&FEANOR);
+	rd_u32b(&ISILDUR);
+	rd_u32b(&SOULKEEPER);
+	rd_u32b(&FINGOLFIN);
+	rd_u32b(&ANARION);
+	rd_u32b(&POWER);
+	rd_u32b(&PHIAL);
+	rd_u32b(&BELEG);
+	rd_u32b(&DAL);
+	rd_u32b(&PAURHACH);
+	rd_u32b(&PAURNIMMEN);
+	rd_u32b(&PAURAEGEN);
+	rd_u32b(&PAURNEN);
+	rd_u32b(&CAMMITHRIM);
+	rd_u32b(&CAMBELEG);
+	rd_u32b(&INGWE);
+	rd_u32b(&CARLAMMAS);
+	rd_u32b(&HOLHENNETH);
+	rd_u32b(&AEGLIN);
+	rd_u32b(&CAMLOST);
+	rd_u32b(&NIMLOTH);
+	rd_u32b(&NAR);
+	rd_u32b(&BERUTHIEL);
+	rd_u32b(&GORLIM);
+	rd_u32b(&ELENDIL);
+	rd_u32b(&THORIN);
+	rd_u32b(&CELEBORN);
+	rd_u32b(&THRAIN);
+	rd_u32b(&GONDOR);
+	rd_u32b(&THINGOL);
+	rd_u32b(&THORONGIL);
+	rd_u32b(&LUTHIEN);
+	rd_u32b(&TUOR);
+	rd_u32b(&ROHAN);
+	rd_u32b(&TULKAS);
+	rd_u32b(&NECKLACE);
+	rd_u32b(&BARAHIR);
+	rd_u32b(&RAZORBACK);
+	rd_u32b(&BLADETURNER);
 	if (to_be_wizard)
 	    prt("Loaded Armour Artifacts", 3, 0);
 	put_qio();
 
 	for (i = 0; i < MAX_QUESTS; i++)
-	    rd_long(&quests[i]);
+	    rd_u32b(&quests[i]);
 	if (to_be_wizard)
 	    prt("Loaded Quests", 4, 0);
 
@@ -1209,31 +1189,31 @@ int load_player(int *generate)
 	    prt("Loaded Unique Beasts", 5, 0);
 	put_qio();
 
-	rd_short(&u16b_tmp);
+	rd_u16b(&u16b_tmp);
 	while (u16b_tmp != 0xFFFF) {
 	    if (u16b_tmp >= MAX_R_IDX)
 		goto error;
 	    r_ptr = &l_list[u16b_tmp];
-	    rd_long(&r_ptr->r_cflags1);
-	    rd_long(&r_ptr->r_spells1);
-	    rd_long(&r_ptr->r_spells2);
-	    rd_long(&r_ptr->r_spells3);
-	    rd_short(&r_ptr->r_kills);
-	    rd_short(&r_ptr->r_deaths);
-	    rd_long(&r_ptr->r_cflags2);
+	    rd_u32b(&r_ptr->r_cflags1);
+	    rd_u32b(&r_ptr->r_spells1);
+	    rd_u32b(&r_ptr->r_spells2);
+	    rd_u32b(&r_ptr->r_spells3);
+	    rd_u16b(&r_ptr->r_kills);
+	    rd_u16b(&r_ptr->r_deaths);
+	    rd_u32b(&r_ptr->r_cflags2);
 	    rd_byte(&r_ptr->r_wake);
 	    rd_byte(&r_ptr->r_ignore);
 	    rd_bytes(r_ptr->r_attacks, MAX_MON_NATTACK);
-	    rd_short(&u16b_tmp);
+	    rd_u16b(&u16b_tmp);
 	}
 	if (to_be_wizard)
 	    prt("Loaded Recall Memory", 6, 0);
 	put_qio();
-        rd_long(&l);
+        rd_u32b(&l);
 	if ((version_maj >= 2) && (version_min >= 6)) {
-	  rd_long(&l);
-	  rd_long(&l);
-	  rd_long(&l);
+	  rd_u32b(&l);
+	  rd_u32b(&l);
+	  rd_u32b(&l);
 	}
 
 	if (to_be_wizard)
@@ -1325,41 +1305,41 @@ int load_player(int *generate)
 	if ((l & 0x80000000L) == 0) {
 	    rd_string(p_ptr->name);
 	    rd_byte(&p_ptr->male);
-	    rd_long((u32b *) & p_ptr->au);
-	    rd_long((u32b *) & p_ptr->max_exp);
-	    rd_long((u32b *) & p_ptr->exp);
-	    rd_short(&p_ptr->exp_frac);
-	    rd_short(&p_ptr->age);
-	    rd_short(&p_ptr->ht);
-	    rd_short(&p_ptr->wt);
-	    rd_short(&p_ptr->lev);
-	    rd_short(&p_ptr->max_dlv);
-	    rd_short((u16b *) & p_ptr->srh);
-	    rd_short((u16b *) & p_ptr->fos);
-	    rd_short((u16b *) & p_ptr->bth);
-	    rd_short((u16b *) & p_ptr->bthb);
-	    rd_short((u16b *) & p_ptr->mana);
-	    rd_short((u16b *) & p_ptr->mhp);
-	    rd_short((u16b *) & p_ptr->ptohit);
-	    rd_short((u16b *) & p_ptr->ptodam);
-	    rd_short((u16b *) & p_ptr->pac);
-	    rd_short((u16b *) & p_ptr->ptoac);
-	    rd_short((u16b *) & p_ptr->dis_th);
-	    rd_short((u16b *) & p_ptr->dis_td);
-	    rd_short((u16b *) & p_ptr->dis_ac);
-	    rd_short((u16b *) & p_ptr->dis_tac);
-	    rd_short((u16b *) & p_ptr->disarm);
-	    rd_short((u16b *) & p_ptr->save);
-	    rd_short((u16b *) & p_ptr->sc);
-	    rd_short((u16b *) & p_ptr->stl);
+	    rd_u32b(&p_ptr->au);
+	    rd_u32b(&p_ptr->max_exp);
+	    rd_u32b(&p_ptr->exp);
+	    rd_u16b(&p_ptr->exp_frac);
+	    rd_u16b(&p_ptr->age);
+	    rd_u16b(&p_ptr->ht);
+	    rd_u16b(&p_ptr->wt);
+	    rd_u16b(&p_ptr->lev);
+	    rd_u16b(&p_ptr->max_dlv);
+	    rd_u16b(&p_ptr->srh);
+	    rd_u16b(&p_ptr->fos);
+	    rd_u16b(&p_ptr->bth);
+	    rd_u16b(&p_ptr->bthb);
+	    rd_u16b(&p_ptr->mana);
+	    rd_u16b(&p_ptr->mhp);
+	    rd_u16b(&p_ptr->ptohit);
+	    rd_u16b(&p_ptr->ptodam);
+	    rd_u16b(&p_ptr->pac);
+	    rd_u16b(&p_ptr->ptoac);
+	    rd_u16b(&p_ptr->dis_th);
+	    rd_u16b(&p_ptr->dis_td);
+	    rd_u16b(&p_ptr->dis_ac);
+	    rd_u16b(&p_ptr->dis_tac);
+	    rd_u16b(&p_ptr->disarm);
+	    rd_u16b(&p_ptr->save);
+	    rd_u16b(&p_ptr->sc);
+	    rd_u16b(&p_ptr->stl);
 	    rd_byte(&p_ptr->pclass);
 	    rd_byte(&p_ptr->prace);
 	    rd_byte(&p_ptr->hitdie);
 	    rd_byte(&p_ptr->expfact);
-	    rd_short((u16b *) & p_ptr->cmana);
-	    rd_short(&p_ptr->cmana_frac);
-	    rd_short((u16b *) & p_ptr->chp);
-	    rd_short(&p_ptr->chp_frac);
+	    rd_u16b(&p_ptr->cmana);
+	    rd_u16b(&p_ptr->cmana_frac);
+	    rd_u16b(&p_ptr->chp);
+	    rd_u16b(&p_ptr->chp_frac);
 	    for (i = 0; i < 4; i++)
 		rd_string(p_ptr->history[i]);
 
@@ -1371,37 +1351,37 @@ int load_player(int *generate)
 	    rd_shorts((u16b *) p_ptr->mod_stat, 6);
 	    rd_shorts(p_ptr->use_stat, 6);
 
-	    rd_long(&p_ptr->status);
-	    rd_short((u16b *) & p_ptr->rest);
-	    rd_short((u16b *) & p_ptr->blind);
-	    rd_short((u16b *) & p_ptr->paralysis);
-	    rd_short((u16b *) & p_ptr->confused);
-	    rd_short((u16b *) & p_ptr->food);
-	    rd_short((u16b *) & p_ptr->food_digested);
-	    rd_short((u16b *) & p_ptr->protection);
-	    rd_short((u16b *) & p_ptr->speed);
-	    rd_short((u16b *) & p_ptr->fast);
-	    rd_short((u16b *) & p_ptr->slow);
-	    rd_short((u16b *) & p_ptr->afraid);
-	    rd_short((u16b *) & p_ptr->cut);
-	    rd_short((u16b *) & p_ptr->stun);
-	    rd_short((u16b *) & p_ptr->poisoned);
-	    rd_short((u16b *) & p_ptr->image);
-	    rd_short((u16b *) & p_ptr->protevil);
-	    rd_short((u16b *) & p_ptr->invuln);
-	    rd_short((u16b *) & p_ptr->hero);
-	    rd_short((u16b *) & p_ptr->shero);
-	    rd_short((u16b *) & p_ptr->shield);
-	    rd_short((u16b *) & p_ptr->blessed);
-	    rd_short((u16b *) & p_ptr->oppose_fire);
-	    rd_short((u16b *) & p_ptr->oppose_cold);
-	    rd_short((u16b *) & p_ptr->oppose_acid);
-	    rd_short((u16b *) & p_ptr->oppose_elec);
-	    rd_short((u16b *) & p_ptr->oppose_pois);
-	    rd_short((u16b *) & p_ptr->detect_inv);
-	    rd_short((u16b *) & p_ptr->word_recall);
-	    rd_short((u16b *) & p_ptr->see_infra);
-	    rd_short((u16b *) & p_ptr->tim_infra);
+	    rd_u32b(&p_ptr->status);
+	    rd_u16b(&p_ptr->rest);
+	    rd_u16b(&p_ptr->blind);
+	    rd_u16b(&p_ptr->paralysis);
+	    rd_u16b(&p_ptr->confused);
+	    rd_u16b(&p_ptr->food);
+	    rd_u16b(&p_ptr->food_digested);
+	    rd_u16b(&p_ptr->protection);
+	    rd_u16b(&p_ptr->speed);
+	    rd_u16b(&p_ptr->fast);
+	    rd_u16b(&p_ptr->slow);
+	    rd_u16b(&p_ptr->afraid);
+	    rd_u16b(&p_ptr->cut);
+	    rd_u16b(&p_ptr->stun);
+	    rd_u16b(&p_ptr->poisoned);
+	    rd_u16b(&p_ptr->image);
+	    rd_u16b(&p_ptr->protevil);
+	    rd_u16b(&p_ptr->invuln);
+	    rd_u16b(&p_ptr->hero);
+	    rd_u16b(&p_ptr->shero);
+	    rd_u16b(&p_ptr->shield);
+	    rd_u16b(&p_ptr->blessed);
+	    rd_u16b(&p_ptr->oppose_fire);
+	    rd_u16b(&p_ptr->oppose_cold);
+	    rd_u16b(&p_ptr->oppose_acid);
+	    rd_u16b(&p_ptr->oppose_elec);
+	    rd_u16b(&p_ptr->oppose_pois);
+	    rd_u16b(&p_ptr->detect_inv);
+	    rd_u16b(&p_ptr->word_recall);
+	    rd_u16b(&p_ptr->see_infra);
+	    rd_u16b(&p_ptr->tim_infra);
 	    rd_byte(&p_ptr->see_inv);
 	    rd_byte(&p_ptr->teleport);
 	    rd_byte(&p_ptr->free_act);
@@ -1445,14 +1425,14 @@ int load_player(int *generate)
 	    else
 		p_ptr->resist_fear = 0;	/* sigh */
 
-	    rd_short((u16b *) & missile_ctr);
-	    rd_long((u32b *) & turn);
+	    rd_u16b(&missile_ctr);
+	    rd_u32b(&turn);
 	    if ((version_maj >= 2) && (version_min >= 6))
-	      rd_long((u32b *) & old_turn);
+	      rd_u32b(&old_turn);
 	    else
 	      old_turn = turn;	/* best we can do... -CWS */
 
-	    rd_short((u16b *) & inven_ctr);
+	    rd_u16b(&inven_ctr);
 	    if (inven_ctr > INVEN_WIELD) {
 		prt("ERROR in inven_ctr", 8, 0);
 		goto error;
@@ -1461,46 +1441,46 @@ int load_player(int *generate)
 		rd_item(&inventory[i]);
 	    for (i = INVEN_WIELD; i < INVEN_ARRAY_SIZE; i++)
 		rd_item(&inventory[i]);
-	    rd_short((u16b *) & inven_weight);
-	    rd_short((u16b *) & equip_ctr);
-	    rd_long(&spell_learned);
-	    rd_long(&spell_worked);
-	    rd_long(&spell_forgotten);
-	    rd_long(&spell_learned2);
-	    rd_long(&spell_worked2);
-	    rd_long(&spell_forgotten2);
+	    rd_u16b(&inven_weight);
+	    rd_u16b(&equip_ctr);
+	    rd_u32b(&spell_learned);
+	    rd_u32b(&spell_worked);
+	    rd_u32b(&spell_forgotten);
+	    rd_u32b(&spell_learned2);
+	    rd_u32b(&spell_worked2);
+	    rd_u32b(&spell_forgotten2);
 	    rd_bytes(spell_order, 64);
 	    rd_bytes(object_ident, OBJECT_IDENT_SIZE);
-	    rd_long(&randes_seed);
-	    rd_long(&town_seed);
-	    rd_short((u16b *) & last_msg);
+	    rd_u32b(&randes_seed);
+	    rd_u32b(&town_seed);
+	    rd_u16b(&last_msg);
 	    for (i = 0; i < MAX_SAVE_MSG; i++)
 		rd_string(old_msg[i]);
 
-	    rd_short((u16b *) & panic_save);
-	    rd_short((u16b *) & total_winner);
-	    rd_short((u16b *) & noscore);
+	    rd_u16b(&panic_save);
+	    rd_u16b(&total_winner);
+	    rd_u16b(&noscore);
 	    rd_shorts(player_hp, MAX_PLAYER_LEVEL);
 
 	    for (i = 0; i < MAX_STORES; i++) {
 	      st_ptr = &store[i];
-	      rd_long((u32b *) & st_ptr->store_open);
-	      rd_short((u16b *) & st_ptr->insult_cur);
+	      rd_u32b(&st_ptr->store_open);
+	      rd_u16b(&st_ptr->insult_cur);
 	      rd_byte(&st_ptr->owner);
 	      rd_byte(&st_ptr->store_ctr);
-	      rd_short(&st_ptr->good_buy);
-	      rd_short(&st_ptr->bad_buy);
+	      rd_u16b(&st_ptr->good_buy);
+	      rd_u16b(&st_ptr->bad_buy);
 	      if (st_ptr->store_ctr > STORE_INVEN_MAX) {
 		prt("ERROR in store_ctr", 9, 0);
 		goto error;
 	      }
 	      for (j = 0; j < st_ptr->store_ctr; j++) {
-		rd_long((u32b *) & st_ptr->store_inven[j].scost);
+		rd_u32b(&st_ptr->store_inven[j].scost);
 		rd_item(&st_ptr->store_inven[j].sitem);
 	      }
 	    }
 
-	    rd_long(&time_saved);
+	    rd_u32b(&time_saved);
 #ifndef SET_UID
 #ifndef ALLOW_FIDDLING
 		if (!to_be_wizard) {
@@ -1578,14 +1558,14 @@ int load_player(int *generate)
 
     /* only level specific info should follow, not present for dead characters */
 
-	rd_short((u16b *) & dun_level);
-	rd_short((u16b *) & char_row);
-	rd_short((u16b *) & char_col);
-	rd_short((u16b *) & mon_tot_mult);
-	rd_short((u16b *) & cur_height);
-	rd_short((u16b *) & cur_width);
-	rd_short((u16b *) & max_panel_rows);
-	rd_short((u16b *) & max_panel_cols);
+	rd_u16b(&dun_level);
+	rd_u16b(&char_row);
+	rd_u16b(&char_col);
+	rd_u16b(&mon_tot_mult);
+	rd_u16b(&cur_height);
+	rd_u16b(&cur_width);
+	rd_u16b(&max_panel_rows);
+	rd_u16b(&max_panel_cols);
 
     /* read in the creature ptr info */
 	rd_byte(&char_tmp);
@@ -1595,10 +1575,10 @@ int load_player(int *generate)
 
     /* let's correctly fix the invisible monster bug  -CWS */
 	    if ((version_maj >= 2) && (version_min >= 6)) {
-		rd_short((u16b *) & u16b_tmp);
+		rd_u16b(&u16b_tmp);
 		cave[ychar][xchar].m_idx = u16b_tmp;
 	    } else {
-		rd_byte((byte *) & char_tmp);
+		rd_byte(&char_tmp);
 		cave[ychar][xchar].m_idx = char_tmp;
 	    }
 	    if (xchar > MAX_WIDTH || ychar > MAX_HEIGHT) {
@@ -1616,7 +1596,7 @@ int load_player(int *generate)
 	while (char_tmp != 0xFF) {
 	    ychar = char_tmp;
 	    rd_byte(&xchar);
-	    rd_short((u16b *) & u16b_tmp);
+	    rd_u16b(&u16b_tmp);
 	    if (xchar > MAX_WIDTH || ychar > MAX_HEIGHT) {
 		prt("Error in treasure pointer info", 12, 0);
 		goto error;
@@ -1647,14 +1627,14 @@ int load_player(int *generate)
 	    total_count += count;
 	}
 
-	rd_short((u16b *) & i_max);
+	rd_u16b(&i_max);
 	if (i_max > MAX_I_IDX) {
 	    prt("ERROR in MAX_I_IDX", 14, 0);
 	    goto error;
 	}
 	for (i = MIN_I_IDX; i < i_max; i++)
 	    rd_item(&i_list[i]);
-	rd_short((u16b *) & m_max);
+	rd_u16b(&m_max);
 	if (m_max > MAX_M_IDX) {
 	    prt("ERROR in MAX_M_IDX", 15, 0);
 	    goto error;
@@ -1678,9 +1658,9 @@ int load_player(int *generate)
 	C_WIPE(r_list[MAX_R_IDX - 1].name, 101, char);
 	*((char *) r_list[MAX_R_IDX - 1].name) = 'A';
 	rd_bytes((byte *) (r_list[MAX_R_IDX - 1].name), 100);
-	rd_long((u32b *) & (r_list[MAX_R_IDX - 1].cflags1));
-	rd_long((u32b *) & (r_list[MAX_R_IDX - 1].spells1));
-	rd_long((u32b *) & (r_list[MAX_R_IDX - 1].cflags2));
+	rd_u32b(&(r_list[MAX_R_IDX - 1].cflags1));
+	rd_u32b(&(r_list[MAX_R_IDX - 1].spells1));
+	rd_u32b(&(r_list[MAX_R_IDX - 1].cflags2));
 	{
 	    u16b t1;
 /* fix player ghost's exp bug.  The mexp field is really an u32b, but the
@@ -1690,56 +1670,56 @@ int load_player(int *generate)
  * player ghost are worth millions of exp. -CFT
  */
 
-	    rd_short((u16b *) & t1);
-	    r_list[MAX_R_IDX - 1].mexp = (u32b) t1;
+	    rd_u16b(&t1);
+	    r_list[MAX_R_IDX - 1].mexp = t1;
 	}
 
 /* more stupid size bugs that would've never been needed if these variables
  * had been given enough space in the first place -CWS
  */
 	if ((version_maj >= 2) && (version_min >= 6))
-	    rd_short((u16b *) & (r_list[MAX_R_IDX - 1].sleep));
+	    rd_u16b(&(r_list[MAX_R_IDX - 1].sleep));
 	else
-	    rd_byte((byte *) & (r_list[MAX_R_IDX - 1].sleep));
+	    rd_byte(&(r_list[MAX_R_IDX - 1].sleep));
 
-	rd_byte((byte *) & (r_list[MAX_R_IDX - 1].aaf));
+	rd_byte(&(r_list[MAX_R_IDX - 1].aaf));
 
 	if ((version_maj >= 2) && (version_min >= 6))
-	    rd_short((u16b *) & (r_list[MAX_R_IDX - 1].ac));
+	    rd_u16b(&(r_list[MAX_R_IDX - 1].ac));
 	else
-	    rd_byte((byte *) & (r_list[MAX_R_IDX - 1].ac));
+	    rd_byte(&(r_list[MAX_R_IDX - 1].ac));
 
-	rd_byte((byte *) & (r_list[MAX_R_IDX - 1].speed));
-	rd_byte((byte *) & (r_list[MAX_R_IDX - 1].r_char));
+	rd_byte(&(r_list[MAX_R_IDX - 1].speed));
+	rd_byte(&(r_list[MAX_R_IDX - 1].r_char));
 
 	rd_bytes((byte *) (r_list[MAX_R_IDX - 1].hd), 2);
 
 	rd_bytes((byte *) (r_list[MAX_R_IDX - 1].damage), sizeof(u16b) * 4);
-	rd_short((u16b *) & (r_list[MAX_R_IDX - 1].level));
+	rd_u16b(&(r_list[MAX_R_IDX - 1].level));
 	*generate = FALSE;	   /* We have restored a cave - no need to generate. */
 
 	if ((version_min == 1 && patch_level < 3)
 	    || (version_min == 0))
 	    for (i = 0; i < MAX_STORES; i++) {
 		st_ptr = &store[i];
-		rd_long((u32b *) & st_ptr->store_open);
-		rd_short((u16b *) & st_ptr->insult_cur);
+		rd_u32b(&st_ptr->store_open);
+		rd_u16b(&st_ptr->insult_cur);
 		rd_byte(&st_ptr->owner);
 		rd_byte(&st_ptr->store_ctr);
-		rd_short(&st_ptr->good_buy);
-		rd_short(&st_ptr->bad_buy);
+		rd_u16b(&st_ptr->good_buy);
+		rd_u16b(&st_ptr->bad_buy);
 		if (st_ptr->store_ctr > STORE_INVEN_MAX) {
 		    prt("ERROR in STORE_INVEN_MAX", 16, 0);
 		    goto error;
 		}
 		for (j = 0; j < st_ptr->store_ctr; j++) {
-		    rd_long((u32b *) & st_ptr->store_inven[j].scost);
+		    rd_u32b(&st_ptr->store_inven[j].scost);
 		    rd_item(&st_ptr->store_inven[j].sitem);
 		}
 	    }
 
     /* read the time that the file was saved */
-	rd_long(&time_saved);
+	rd_u32b(&time_saved);
 
 	if (ferror(fff)) {
 	    prt("FILE ERROR", 17, 0);
