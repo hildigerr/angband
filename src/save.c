@@ -79,7 +79,7 @@ char *malloc();
  * procedure 
  */
 
-static FILE *fileptr;
+static FILE	*fff;		/* Current save "file" */
 
 static byte	xor_byte;	/* Simple encryption */
 
@@ -506,7 +506,7 @@ static int sv_write()
  * resurrected, the dungeon level info is not needed for a resurrection 
  */
     if (death) {
-	if (ferror(fileptr) || fflush(fileptr) == EOF)
+	if (ferror(fff) || fflush(fff) == EOF)
 	    return FALSE;
 	return TRUE;
     }
@@ -617,7 +617,7 @@ static int sv_write()
     wr_bytes(r_list[MAX_R_IDX - 1].damage, sizeof(u16b) * 4);
     wr_short((u16b) r_list[MAX_R_IDX - 1].level);
 
-    if (ferror(fileptr) || (fflush(fileptr) == EOF))
+    if (ferror(fff) || (fflush(fff) == EOF))
 	return FALSE;
     return TRUE;
 }
@@ -668,7 +668,7 @@ int _save_player(char *fnam)
     ok = FALSE;
 #ifndef ATARIST_MWC
     fd = (-1);
-    fileptr = NULL;		   /* Do not assume it has been init'ed */
+    fff = NULL;		   /* Do not assume it has been init'ed */
 #ifdef SET_UID
     fd = my_topen(fnam, O_RDWR | O_CREAT | O_EXCL, 0600);
 #else
@@ -698,17 +698,17 @@ int _save_player(char *fnam)
 #endif				   /* !ATARIST_MWC */
     /* GCC for atari st defines atarist */
 #if defined(atarist) || defined(ATARIST_MWC) || defined(MSDOS) || defined(__MINT__)
-	fileptr = my_tfopen(savefile, "wb");
+	fff = my_tfopen(savefile, "wb");
 #else
-	fileptr = my_tfopen(savefile, "w");
+	fff = my_tfopen(savefile, "w");
 #endif
 #ifndef ATARIST_MWC
     }
 
 #endif
-    if (fileptr != NULL) {
+    if (fff != NULL) {
 #ifdef MSDOS
-	(void)setmode(fileno(fileptr), O_BINARY);
+	(void)setmode(fileno(fff), O_BINARY);
 #endif
 	xor_byte = 0;
 	wr_byte((byte) CUR_VERSION_MAJ);
@@ -725,7 +725,7 @@ int _save_player(char *fnam)
 	ok = sv_write();
 
 	/* Attempt to close it */
-	if (fclose(fileptr) == EOF) ok = FALSE;
+	if (fclose(fff) == EOF) ok = FALSE;
     }
 
 
@@ -821,11 +821,11 @@ int load_player(int *generate)
 
     /* GCC for atari st defines atarist */
 #if defined(__MINT__) || defined(atarist) || defined(ATARIST_MWC) || defined(MSDOS)
-	fileptr = my_tfopen(savefile, "rb");
+	fff = my_tfopen(savefile, "rb");
 #else
-	fileptr = my_tfopen(savefile, "r");
+	fff = my_tfopen(savefile, "r");
 #endif
-	if (fileptr == NULL)
+	if (fff == NULL)
 	    goto error;
 
 	prt("Restoring Memory...", 0, 0);
@@ -1295,7 +1295,7 @@ int load_player(int *generate)
 #endif
 	    rd_string(died_from);
 	}
-	if ((c = getc(fileptr)) == EOF || (l & 0x80000000L)) {
+	if ((c = getc(fff)) == EOF || (l & 0x80000000L)) {
 	    if ((l & 0x80000000L) == 0) {
 		if (!to_be_wizard || turn < 0) {
 		    prt("ERROR in to_be_wizard", 10, 0);
@@ -1350,7 +1350,7 @@ int load_player(int *generate)
 	    put_qio();
 	    goto closefiles;
 	}
-	if (ungetc(c, fileptr) == EOF) {
+	if (ungetc(c, fff) == EOF) {
 	    prt("ERROR in ungetc", 11, 0);
 	    goto error;
 	}
@@ -1522,7 +1522,7 @@ int load_player(int *generate)
     /* read the time that the file was saved */
 	rd_long(&time_saved);
 
-	if (ferror(fileptr)) {
+	if (ferror(fff)) {
 	    prt("FILE ERROR", 17, 0);
 	    goto error;
 	}
@@ -1539,8 +1539,8 @@ int load_player(int *generate)
 
 closefiles:
 
-	if (fileptr != NULL) {
-	    if (fclose(fileptr) < 0)
+	if (fff != NULL) {
+	    if (fclose(fff) < 0)
 		ok = FALSE;
 	}
 	if (fd >= 0)
@@ -1618,27 +1618,27 @@ closefiles:
 static void wr_byte(byte c)
 {
     xor_byte ^= c;
-    (void)putc((int)xor_byte, fileptr);
+    (void)putc((int)xor_byte, fff);
 }
 
 static void wr_short(u16b s)
 {
     xor_byte ^= (s & 0xFF);
-    (void)putc((int)xor_byte, fileptr);
+    (void)putc((int)xor_byte, fff);
     xor_byte ^= ((s >> 8) & 0xFF);
-    (void)putc((int)xor_byte, fileptr);
+    (void)putc((int)xor_byte, fff);
 }
 
 static void wr_long(register u32b l)
 {
     xor_byte ^= (l & 0xFF);
-    (void)putc((int)xor_byte, fileptr);
+    (void)putc((int)xor_byte, fff);
     xor_byte ^= ((l >> 8) & 0xFF);
-    (void)putc((int)xor_byte, fileptr);
+    (void)putc((int)xor_byte, fff);
     xor_byte ^= ((l >> 16) & 0xFF);
-    (void)putc((int)xor_byte, fileptr);
+    (void)putc((int)xor_byte, fff);
     xor_byte ^= ((l >> 24) & 0xFF);
-    (void)putc((int)xor_byte, fileptr);
+    (void)putc((int)xor_byte, fff);
 }
 
 static void wr_bytes(byte *c, register int count)
@@ -1649,7 +1649,7 @@ static void wr_bytes(byte *c, register int count)
     ptr = c;
     for (i = 0; i < count; i++) {
 	xor_byte ^= *ptr++;
-	(void)putc((int)xor_byte, fileptr);
+	(void)putc((int)xor_byte, fff);
     }
 }
 
@@ -1657,10 +1657,10 @@ static void wr_string(register char *str)
 {
     while (*str != '\0') {
 	xor_byte ^= *str++;
-	(void)putc((int)xor_byte, fileptr);
+	(void)putc((int)xor_byte, fff);
     }
     xor_byte ^= *str;
-    (void)putc((int)xor_byte, fileptr);
+    (void)putc((int)xor_byte, fff);
 }
 
 static void wr_shorts(u16b *s, register int count)
@@ -1671,9 +1671,9 @@ static void wr_shorts(u16b *s, register int count)
     sptr = s;
     for (i = 0; i < count; i++) {
 	xor_byte ^= (*sptr & 0xFF);
-	(void)putc((int)xor_byte, fileptr);
+	(void)putc((int)xor_byte, fff);
 	xor_byte ^= ((*sptr++ >> 8) & 0xFF);
-	(void)putc((int)xor_byte, fileptr);
+	(void)putc((int)xor_byte, fff);
     }
 }
 
@@ -1721,7 +1721,7 @@ static void rd_byte(byte *ptr)
 {
     byte c;
 
-    c = getc(fileptr) & 0xFF;
+    c = getc(fff) & 0xFF;
     *ptr = c ^ xor_byte;
     xor_byte = c;
 }
@@ -1731,9 +1731,9 @@ static void rd_short(u16b *ptr)
     byte  c;
     u16b s;
 
-    c = (getc(fileptr) & 0xFF);
+    c = (getc(fff) & 0xFF);
     s = c ^ xor_byte;
-    xor_byte = (getc(fileptr) & 0xFF);
+    xor_byte = (getc(fff) & 0xFF);
     s |= (u16b) (c ^ xor_byte) << 8;
     *ptr = s;
 }
@@ -1743,13 +1743,13 @@ static void rd_long(u32b *ptr)
     register u32b l;
     register byte  c;
 
-    c = (getc(fileptr) & 0xFF);
+    c = (getc(fff) & 0xFF);
     l = c ^ xor_byte;
-    xor_byte = (getc(fileptr) & 0xFF);
+    xor_byte = (getc(fff) & 0xFF);
     l |= (u32b) (c ^ xor_byte) << 8;
-    c = (getc(fileptr) & 0xFF);
+    c = (getc(fff) & 0xFF);
     l |= (u32b) (c ^ xor_byte) << 16;
-    xor_byte = (getc(fileptr) & 0xFF);
+    xor_byte = (getc(fff) & 0xFF);
     l |= (u32b) (c ^ xor_byte) << 24;
     *ptr = l;
 }
@@ -1760,7 +1760,7 @@ static void rd_bytes(byte *ptr, int count)
     byte c, nc;
 
     for (i = 0; i < count; i++) {
-	c = (getc(fileptr) & 0xFF);
+	c = (getc(fff) & 0xFF);
 	nc = c ^ xor_byte;
 	*ptr = nc;
 	ptr++;
@@ -1773,7 +1773,7 @@ static void rd_string(char *str)
     register byte c;
 
     do {
-	c = (getc(fileptr) & 0xFF);
+	c = (getc(fff) & 0xFF);
 	*str = c ^ xor_byte;
 	xor_byte = c;
     }
@@ -1789,9 +1789,9 @@ static void rd_shorts(u16b *ptr, register int count)
 
     sptr = ptr;
     for (i = 0; i < count; i++) {
-	c = (getc(fileptr) & 0xFF);
+	c = (getc(fff) & 0xFF);
 	s = c ^ xor_byte;
-	xor_byte = (getc(fileptr) & 0xFF);
+	xor_byte = (getc(fff) & 0xFF);
 	s |= (u16b) (c ^ xor_byte) << 8;
 	*sptr++ = s;
     }
