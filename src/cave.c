@@ -111,14 +111,14 @@ int los(int fromY, int fromX, int toY, int toX)
 	/* South -- check for walls */
 	if (d_y > 0) {
 	    for (p_y = fromY + 1; p_y < toY; p_y++) {
-		if (cave[p_y][fromX].fval >= MIN_CLOSED_SPACE) return FALSE;
+		if (!floor_grid_bold(p_y,fromX)) return FALSE;
 	    }
 	}
 	
 	/* North -- check for walls */
 	else {
 	    for (p_y = fromY - 1; p_y > toY; p_y--) {
-		if (cave[p_y][fromX].fval >= MIN_CLOSED_SPACE) return FALSE;
+		if (!floor_grid_bold(p_y,fromX)) return FALSE;
 	    }
 	}
 	
@@ -134,14 +134,14 @@ int los(int fromY, int fromX, int toY, int toX)
 	/* East -- check for walls */
 	if (d_x > 0) {
 	    for (p_x = fromX + 1; p_x < toX; p_x++) {
-		if (cave[fromY][p_x].fval >= MIN_CLOSED_SPACE) return FALSE;
+		if (!floor_grid_bold(fromY,p_x)) return FALSE;
 	    }
 	}
 
 	/* West -- check for walls */
 	else {
 	    for (p_x = fromX - 1; p_x > toX; p_x--) {
-		if (cave[fromY][p_x].fval >= MIN_CLOSED_SPACE) return FALSE;
+		if (!floor_grid_bold(fromY,p_x)) return FALSE;
 	    }
 	}
 		
@@ -220,14 +220,14 @@ int los(int fromY, int fromX, int toY, int toX)
 	    /* Note (below) the case (dy == scale2), where */
 	    /* the LOS exactly meets the corner of a tile. */
 	    while (toX - p_x) {
-		if (cave[p_y][p_x].fval >= MIN_CLOSED_SPACE) return FALSE;
+		if (!floor_grid_bold(p_y,p_x)) return FALSE;
 		dy += m;
 		if (dy < scale2) {
 		    p_x += xSign;
 		}
 		else if (dy > scale2) {
 		    p_y += ySign;
-		    if (cave[p_y][p_x].fval >= MIN_CLOSED_SPACE) return FALSE;
+		    if (!floor_grid_bold(p_y,p_x)) return FALSE;
 		    dy -= scale;
 		    p_x += xSign;
 		}
@@ -259,14 +259,14 @@ int los(int fromY, int fromX, int toY, int toX)
 	    /* Note (below) the case (dx == scale2), where */
 	    /* the LOS exactly meets the corner of a tile. */
 	    while (toY - p_y) {
-		if (cave[p_y][p_x].fval >= MIN_CLOSED_SPACE) return FALSE;
+		if (!floor_grid_bold(p_y,p_x)) return FALSE;
 		dx += m;
 		if (dx < scale2) {
 		    p_y += ySign;
 		}
 		else if (dx > scale2) {
 		    p_x += xSign;
-		    if (cave[p_y][p_x].fval >= MIN_CLOSED_SPACE) return FALSE;
+		    if (!floor_grid_bold(p_y,p_x)) return FALSE;
 		    dx -= scale;
 		    p_y += ySign;
 		}
