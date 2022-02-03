@@ -31,24 +31,6 @@
 # include <stat.h>		/* chmod() */
 #endif
 
-static int sv_write();
-static void wr_byte();
-static void wr_short();
-static void wr_long();
-static void wr_bytes();
-static void wr_string();
-static void wr_shorts();
-static void wr_item();
-static void wr_monster();
-static void rd_byte();
-static void rd_short();
-static void rd_long();
-static void rd_bytes();
-static void rd_string();
-static void rd_shorts();
-static void rd_item();
-static void rd_monster();
-
 #if !defined(ATARIST_MWC)
 #ifdef MAC
 #else
@@ -90,6 +72,220 @@ static byte	patch_level;	/* Patch level */
 static int	from_savefile;	/* can overwrite old savefile when save */
 
 static u32b       start_time;	   /* time that play started */
+
+
+
+
+/*
+ * Write/Read various "byte sized" objects
+ */
+
+static void wr_byte(byte c)
+{
+    xor_byte ^= c;
+    (void)putc((int)xor_byte, fff);
+}
+
+static void rd_byte(byte *ptr)
+{
+    byte c;
+
+    c = getc(fff) & 0xFF;
+    *ptr = c ^ xor_byte;
+    xor_byte = c;
+}
+
+
+/*
+ * Write/Read various "short" objects
+ */
+
+static void wr_short(u16b s)
+{
+    xor_byte ^= (s & 0xFF);
+    (void)putc((int)xor_byte, fff);
+    xor_byte ^= ((s >> 8) & 0xFF);
+    (void)putc((int)xor_byte, fff);
+}
+
+static void rd_short(u16b *ptr)
+{
+    byte  c;
+    u16b s;
+
+    c = (getc(fff) & 0xFF);
+    s = c ^ xor_byte;
+    xor_byte = (getc(fff) & 0xFF);
+    s |= (u16b) (c ^ xor_byte) << 8;
+    *ptr = s;
+}
+
+
+
+/*
+ * Write/Read various "long" objects
+ */
+
+static void wr_long(u32b l)
+{
+    xor_byte ^= (l & 0xFF);
+    (void)putc((int)xor_byte, fff);
+    xor_byte ^= ((l >> 8) & 0xFF);
+    (void)putc((int)xor_byte, fff);
+    xor_byte ^= ((l >> 16) & 0xFF);
+    (void)putc((int)xor_byte, fff);
+    xor_byte ^= ((l >> 24) & 0xFF);
+    (void)putc((int)xor_byte, fff);
+}
+
+static void rd_long(u32b *ptr)
+{
+    register u32b l;
+    register byte  c;
+
+    c = (getc(fff) & 0xFF);
+    l = c ^ xor_byte;
+    xor_byte = (getc(fff) & 0xFF);
+    l |= (u32b) (c ^ xor_byte) << 8;
+    c = (getc(fff) & 0xFF);
+    l |= (u32b) (c ^ xor_byte) << 16;
+    xor_byte = (getc(fff) & 0xFF);
+    l |= (u32b) (c ^ xor_byte) << 24;
+    *ptr = l;
+}
+
+
+
+
+/*
+ * Strings
+ */
+
+static void wr_string(cptr str)
+{
+    while (*str != '\0') {
+	xor_byte ^= *str++;
+	(void)putc((int)xor_byte, fff);
+    }
+    xor_byte ^= *str;
+    (void)putc((int)xor_byte, fff);
+}
+
+static void rd_string(char *str)
+{
+    register byte c;
+
+    do {
+	c = (getc(fff) & 0xFF);
+	*str = c ^ xor_byte;
+	xor_byte = c;
+    }
+    while (*str++ != '\0');
+}
+
+
+
+
+/*
+ * Read an item
+ */
+static void rd_item(inven_type *i_ptr)
+{
+    rd_short(&i_ptr->index);
+    rd_byte(&i_ptr->name2);
+    rd_string(i_ptr->inscrip);
+    rd_long(&i_ptr->flags1);
+    rd_byte(&i_ptr->tval);
+    rd_byte(&i_ptr->tchar);
+    rd_short((u16b *) & i_ptr->pval);
+    rd_long((u32b *) & i_ptr->cost);
+    rd_byte(&i_ptr->sval);
+    rd_byte(&i_ptr->number);
+    rd_short(&i_ptr->weight);
+    rd_short((u16b *) & i_ptr->tohit);
+    rd_short((u16b *) & i_ptr->todam);
+    rd_short((u16b *) & i_ptr->ac);
+    rd_short((u16b *) & i_ptr->toac);
+    rd_bytes(i_ptr->damage, 2);
+    rd_byte(&i_ptr->level);
+    rd_byte(&i_ptr->ident);
+    rd_long(&i_ptr->flags2);
+    rd_short((u16b *) & i_ptr->timeout);
+}
+
+
+static void wr_item(inven_type *i_ptr)
+{
+    wr_short(i_ptr->index);
+    wr_byte(i_ptr->name2);
+    wr_string(i_ptr->inscrip);
+    wr_long(i_ptr->flags1);
+    wr_byte(i_ptr->tval);
+    wr_byte(i_ptr->tchar);
+    wr_short((u16b) i_ptr->pval);
+    wr_long((u32b) i_ptr->cost);
+    wr_byte(i_ptr->sval);
+    wr_byte(i_ptr->number);
+    wr_short(i_ptr->weight);
+    wr_short((u16b) i_ptr->tohit);
+    wr_short((u16b) i_ptr->todam);
+    wr_short((u16b) i_ptr->ac);
+    wr_short((u16b) i_ptr->toac);
+    wr_bytes(i_ptr->damage, 2);
+    wr_byte(i_ptr->level);
+    wr_byte(i_ptr->ident);
+    wr_long(i_ptr->flags2);
+    wr_short((u16b) i_ptr->timeout);
+}
+
+
+
+/*
+ * Read and Write monsters
+ */
+
+
+static void rd_monster(monster_type *m_ptr)
+{
+    rd_short((u16b *) & m_ptr->hp);
+    if ((version_maj >= 2) && (version_min >= 6))
+	rd_short((u16b *) & m_ptr->maxhp);
+    else {
+	/* let's fix the infamous monster heal bug -CWS */
+	m_ptr->maxhp = m_ptr->hp;
+    }
+
+    rd_short((u16b *) & m_ptr->csleep);
+    rd_short((u16b *) & m_ptr->mspeed);
+    rd_short(&m_ptr->r_idx);
+    rd_byte(&m_ptr->fy);
+    rd_byte(&m_ptr->fx);
+    rd_byte(&m_ptr->cdis);
+    rd_byte(&m_ptr->ml);
+    rd_byte(&m_ptr->stunned);
+    rd_byte(&m_ptr->confused);
+    if ((version_maj >= 2) && (version_min >= 6))
+	rd_byte((byte *) & m_ptr->monfear);
+    else
+	m_ptr->monfear = 0; /* this is not saved either -CWS */
+}
+
+static void wr_monster(monster_type *m_ptr)
+{
+    wr_short((u16b) m_ptr->hp);
+    wr_short((u16b) m_ptr->maxhp); /* added -CWS */
+    wr_short((u16b) m_ptr->csleep);
+    wr_short((u16b) m_ptr->mspeed);
+    wr_short(m_ptr->r_idx);
+    wr_byte(m_ptr->fy);
+    wr_byte(m_ptr->fx);
+    wr_byte(m_ptr->cdis);
+    wr_byte(m_ptr->ml);
+    wr_byte(m_ptr->stunned);
+    wr_byte(m_ptr->confused);
+    wr_byte(m_ptr->monfear);	/* added -CWS */
+}
+
 
 
 static char *basename(char *a)
@@ -1615,31 +1811,6 @@ closefiles:
     return FALSE;		   /* not reached, unless on mac */
 }
 
-static void wr_byte(byte c)
-{
-    xor_byte ^= c;
-    (void)putc((int)xor_byte, fff);
-}
-
-static void wr_short(u16b s)
-{
-    xor_byte ^= (s & 0xFF);
-    (void)putc((int)xor_byte, fff);
-    xor_byte ^= ((s >> 8) & 0xFF);
-    (void)putc((int)xor_byte, fff);
-}
-
-static void wr_long(register u32b l)
-{
-    xor_byte ^= (l & 0xFF);
-    (void)putc((int)xor_byte, fff);
-    xor_byte ^= ((l >> 8) & 0xFF);
-    (void)putc((int)xor_byte, fff);
-    xor_byte ^= ((l >> 16) & 0xFF);
-    (void)putc((int)xor_byte, fff);
-    xor_byte ^= ((l >> 24) & 0xFF);
-    (void)putc((int)xor_byte, fff);
-}
 
 static void wr_bytes(byte *c, register int count)
 {
@@ -1651,16 +1822,6 @@ static void wr_bytes(byte *c, register int count)
 	xor_byte ^= *ptr++;
 	(void)putc((int)xor_byte, fff);
     }
-}
-
-static void wr_string(register char *str)
-{
-    while (*str != '\0') {
-	xor_byte ^= *str++;
-	(void)putc((int)xor_byte, fff);
-    }
-    xor_byte ^= *str;
-    (void)putc((int)xor_byte, fff);
 }
 
 static void wr_shorts(u16b *s, register int count)
@@ -1677,82 +1838,6 @@ static void wr_shorts(u16b *s, register int count)
     }
 }
 
-static void wr_item(register inven_type *item)
-{
-    wr_short(item->index);
-    wr_byte(item->name2);
-    wr_string(item->inscrip);
-    wr_long(item->flags1);
-    wr_byte(item->tval);
-    wr_byte(item->tchar);
-    wr_short((u16b) item->pval);
-    wr_long((u32b) item->cost);
-    wr_byte(item->sval);
-    wr_byte(item->number);
-    wr_short(item->weight);
-    wr_short((u16b) item->tohit);
-    wr_short((u16b) item->todam);
-    wr_short((u16b) item->ac);
-    wr_short((u16b) item->toac);
-    wr_bytes(item->damage, 2);
-    wr_byte(item->level);
-    wr_byte(item->ident);
-    wr_long(item->flags2);
-    wr_short((u16b) item->timeout);
-}
-
-static void wr_monster(register monster_type *mon)
-{
-    wr_short((u16b) mon->hp);
-    wr_short((u16b) mon->maxhp); /* added -CWS */
-    wr_short((u16b) mon->csleep);
-    wr_short((u16b) mon->mspeed);
-    wr_short(mon->r_idx);
-    wr_byte(mon->fy);
-    wr_byte(mon->fx);
-    wr_byte(mon->cdis);
-    wr_byte(mon->ml);
-    wr_byte(mon->stunned);
-    wr_byte(mon->confused);
-    wr_byte(mon->monfear);	/* added -CWS */
-}
-
-static void rd_byte(byte *ptr)
-{
-    byte c;
-
-    c = getc(fff) & 0xFF;
-    *ptr = c ^ xor_byte;
-    xor_byte = c;
-}
-
-static void rd_short(u16b *ptr)
-{
-    byte  c;
-    u16b s;
-
-    c = (getc(fff) & 0xFF);
-    s = c ^ xor_byte;
-    xor_byte = (getc(fff) & 0xFF);
-    s |= (u16b) (c ^ xor_byte) << 8;
-    *ptr = s;
-}
-
-static void rd_long(u32b *ptr)
-{
-    register u32b l;
-    register byte  c;
-
-    c = (getc(fff) & 0xFF);
-    l = c ^ xor_byte;
-    xor_byte = (getc(fff) & 0xFF);
-    l |= (u32b) (c ^ xor_byte) << 8;
-    c = (getc(fff) & 0xFF);
-    l |= (u32b) (c ^ xor_byte) << 16;
-    xor_byte = (getc(fff) & 0xFF);
-    l |= (u32b) (c ^ xor_byte) << 24;
-    *ptr = l;
-}
 
 static void rd_bytes(byte *ptr, int count)
 {
@@ -1766,18 +1851,6 @@ static void rd_bytes(byte *ptr, int count)
 	ptr++;
 	xor_byte = c;
     }
-}
-
-static void rd_string(char *str)
-{
-    register byte c;
-
-    do {
-	c = (getc(fff) & 0xFF);
-	*str = c ^ xor_byte;
-	xor_byte = c;
-    }
-    while (*str++ != '\0');
 }
 
 static void rd_shorts(u16b *ptr, register int count)
@@ -1797,52 +1870,4 @@ static void rd_shorts(u16b *ptr, register int count)
     }
 }
 
-static void rd_item(register inven_type *item)
-{
-    rd_short(&item->index);
-    rd_byte(&item->name2);
-    rd_string(item->inscrip);
-    rd_long(&item->flags1);
-    rd_byte(&item->tval);
-    rd_byte(&item->tchar);
-    rd_short((u16b *) & item->pval);
-    rd_long((u32b *) & item->cost);
-    rd_byte(&item->sval);
-    rd_byte(&item->number);
-    rd_short(&item->weight);
-    rd_short((u16b *) & item->tohit);
-    rd_short((u16b *) & item->todam);
-    rd_short((u16b *) & item->ac);
-    rd_short((u16b *) & item->toac);
-    rd_bytes(item->damage, 2);
-    rd_byte(&item->level);
-    rd_byte(&item->ident);
-    rd_long(&item->flags2);
-    rd_short((u16b *) & item->timeout);
-}
-
-static void rd_monster(register monster_type *mon)
-{
-    rd_short((u16b *) & mon->hp);
-    if ((version_maj >= 2) && (version_min >= 6))
-	rd_short((u16b *) & mon->maxhp);
-    else {
-	/* let's fix the infamous monster heal bug -CWS */
-	mon->maxhp = mon->hp;
-    }
-
-    rd_short((u16b *) & mon->csleep);
-    rd_short((u16b *) & mon->mspeed);
-    rd_short(&mon->r_idx);
-    rd_byte(&mon->fy);
-    rd_byte(&mon->fx);
-    rd_byte(&mon->cdis);
-    rd_byte(&mon->ml);
-    rd_byte(&mon->stunned);
-    rd_byte(&mon->confused);
-    if ((version_maj >= 2) && (version_min >= 6))
-	rd_byte((byte *) & mon->monfear);
-    else
-	mon->monfear = 0; /* this is not saved either -CWS */
-}
 
