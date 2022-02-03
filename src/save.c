@@ -77,22 +77,45 @@ static u32b       start_time;	   /* time that play started */
 
 
 /*
- * Write/Read various "byte sized" objects
+ * The basic I/O functions for savefiles
+ * All information is written/read one byte at a time
  */
 
-static void wr_byte(byte c)
+static void sf_put(byte v)
 {
-    xor_byte ^= c;
+    /* Encode the value, write a character */
+    xor_byte ^= v;
     (void)putc((int)xor_byte, fff);
 }
 
-static void rd_byte(byte *ptr)
+static byte sf_get(void)
 {
-    byte c;
+    register byte c, v;
 
+    /* Get a character, decode the value */
     c = getc(fff) & 0xFF;
-    *ptr = c ^ xor_byte;
+    v = c ^ xor_byte;
     xor_byte = c;
+
+    /* Return the value */    
+    return (v);
+}
+
+
+
+
+/*
+ * Write/Read various "byte sized" objects
+ */
+
+static void wr_byte(byte v)
+{
+    sf_put(v);
+}
+
+static void rd_byte(byte *ip)
+{
+    *ip = sf_get();
 }
 
 
