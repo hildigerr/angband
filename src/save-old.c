@@ -1,6 +1,6 @@
-/* File: save.c */
+/* File: save-old.c */
 
-/* Purpose: save and restore games and monster memory info */
+/* Purpose: support for loading pre-2.7.0 savefiles */
 
 /*
  * Copyright (c) 1989 James E. Wilson, Robert A. Koeneke 
@@ -20,42 +20,9 @@
  * and has been completely rewritten again by	 -CJS-
  * and completely rewritten again! for portability by -JEW-
  *
- * And then was re-written again (for 2.7.0) cause it sucked.  -BEN-
+ * This file is only used to parse pre-2.7.0 savefiles.
+ * See the file "save.c" for more recent methods.
  */
-
-
-#ifndef USG
-# include <sys/file.h>
-# include <sys/param.h>
-#endif
-
-#ifdef __MINT__
-# include <stat.h>		/* chmod() */
-#endif
-
-#if !defined(ATARIST_MWC)
-#ifdef MAC
-#else
-long time();
-
-#endif
-#else
-char *malloc();
-
-#endif
-
-#if !defined(SET_UID)
-# if defined(__EMX__)
-#  include <sys/stat.h>
-# else
-#  include <stat.h>
-# endif
-#endif
-
-#ifdef linux
-# include <sys/stat.h>
-#endif
-
 
 
 /*
@@ -79,16 +46,10 @@ static u32b       start_time;	   /* time that play started */
 
 
 /*
- * The basic I/O functions for savefiles
- * All information is written/read one byte at a time
+ * The basic Input function for old savefiles
+ * All information is read one byte at a time
+ * Note that this was stolen from "save.c"
  */
-
-static void sf_put(byte v)
-{
-    /* Encode the value, write a character */
-    xor_byte ^= v;
-    (void)putc((int)xor_byte, fff);
-}
 
 static byte sf_get(void)
 {
@@ -110,21 +71,11 @@ static byte sf_get(void)
  * Write/Read various "byte sized" objects
  */
 
-static void wr_byte(byte v)
-{
-    sf_put(v);
-}
-
 static void rd_byte(byte *ip)
 {
     *ip = sf_get();
 }
 
-
-static void wr_char(char v)
-{
-    wr_byte((byte)v);
-}
 
 static void rd_char(char *ip)
 {
@@ -136,23 +87,12 @@ static void rd_char(char *ip)
  * Write/Read various "short" objects
  */
 
-static void wr_u16b(u16b v)
-{
-    sf_put(v & 0xFF);
-    sf_put((v >> 8) & 0xFF);
-}
-
 static void rd_u16b(u16b *ip)
 {
     (*ip) = sf_get();
     (*ip) |= ((u16b)(sf_get()) << 8);
 }
 
-
-static void wr_s16b(s16b v)
-{
-    wr_u16b((u16b)v);
-}
 
 static void rd_s16b(s16b *ip)
 {
@@ -165,14 +105,6 @@ static void rd_s16b(s16b *ip)
  * Write/Read various "long" objects
  */
 
-static void wr_u32b(u32b v)
-{
-    sf_put(v & 0xFF);
-    sf_put((v >> 8) & 0xFF);
-    sf_put((v >> 16) & 0xFF);
-    sf_put((v >> 24) & 0xFF);
-}
-
 static void rd_u32b(u32b *ip)
 {
     (*ip) = sf_get();
@@ -181,11 +113,6 @@ static void rd_u32b(u32b *ip)
     (*ip) |= ((u32b)(sf_get()) << 24);
 }
 
-
-static void wr_s32b(s32b v)
-{
-    wr_u32b((u32b)v);
-}
 
 static void rd_s32b(s32b *ip)
 {
@@ -198,15 +125,6 @@ static void rd_s32b(s32b *ip)
 /*
  * Strings
  */
-
-static void wr_string(cptr str)
-{
-    while (*str) {
-	wr_byte(*str);
-	str++;
-    }
-    wr_byte(*str);
-}
 
 static void rd_string(char *str)
 {
@@ -251,37 +169,9 @@ static void rd_item(inven_type *i_ptr)
 }
 
 
-static void wr_item(inven_type *i_ptr)
-{
-    wr_u16b(i_ptr->index);
-    wr_byte(i_ptr->name2);
-    wr_string(i_ptr->inscrip);
-    wr_u32b(i_ptr->flags1);
-    wr_byte(i_ptr->tval);
-    wr_byte(i_ptr->tchar);
-    wr_s16b(i_ptr->pval);
-    wr_s32b(i_ptr->cost);
-    wr_byte(i_ptr->sval);
-    wr_byte(i_ptr->number);
-    wr_u16b(i_ptr->weight);
-    wr_s16b(i_ptr->tohit);
-    wr_s16b(i_ptr->todam);
-    wr_s16b(i_ptr->ac);
-    wr_s16b(i_ptr->toac);
-    wr_byte(i_ptr->damage[0]);
-    wr_byte(i_ptr->damage[1]);
-    wr_byte(i_ptr->level);
-    wr_byte(i_ptr->ident);
-    wr_u32b(i_ptr->flags2);
-    wr_u16b(i_ptr->timeout);
-}
-
-
-
 /*
  * Read and Write monsters
  */
-
 
 static void rd_monster(monster_type *m_ptr)
 {
@@ -308,22 +198,6 @@ static void rd_monster(monster_type *m_ptr)
 	m_ptr->monfear = 0; /* this is not saved either -CWS */
 }
 
-static void wr_monster(monster_type *m_ptr)
-{
-    wr_s16b(m_ptr->hp);
-    wr_s16b(m_ptr->maxhp); /* added -CWS */
-    wr_s16b(m_ptr->csleep);
-    wr_s16b(m_ptr->mspeed);
-    wr_u16b(m_ptr->r_idx);
-    wr_byte(m_ptr->fy);
-    wr_byte(m_ptr->fx);
-    wr_byte(m_ptr->cdis);
-    wr_byte(m_ptr->ml);
-    wr_byte(m_ptr->stunned);
-    wr_byte(m_ptr->confused);
-    wr_byte(m_ptr->monfear);	/* added -CWS */
-}
-
 
 
 static char *basename(char *a)
@@ -336,11 +210,6 @@ static char *basename(char *a)
     return b;
 }
 
-static void wr_unique(register struct unique_mon *item)
-{
-    wr_s32b(item->exist);
-    wr_s32b(item->dead);
-}
 
 static void rd_unique(register struct unique_mon *item)
 {
@@ -349,676 +218,6 @@ static void rd_unique(register struct unique_mon *item)
 }
 
 
-static int sv_write()
-{
-    u32b              l;
-    register int        i, j;
-    int                 count;
-    byte               char_tmp, prev_char;
-    register cave_type   *c_ptr;
-    register monster_lore *r_ptr;
-
-#ifdef MSDOS
-    inven_type           *t_ptr;
-
-#endif
-    store_type  *st_ptr;
-
-/* clear the death flag when creating a HANGUP save file, so that player can
- * see tombstone when restart 
- */
-
-    if (eof_flag)
-	death = FALSE;
-
-    l = 0;
-    if (find_cut)
-	l |= 1;
-    if (find_examine)
-	l |= 2;
-    if (find_prself)
-	l |= 4;
-    if (find_bound)
-	l |= 8;
-    if (prompt_carry_flag)
-	l |= 16;
-    if (rogue_like_commands)
-	l |= 32;
-    if (show_inven_weight)
-	l |= 64;
-    if (notice_seams)
-	l |= 128;
-    if (find_ignore_doors)
-	l |= 0x100L;
-    if (no_haggle_flag)
-	l |= 0x200L; 
-    if (!carry_query_flag)
-	l |= 0x400L;
-    if (unfelt)
-	l |= 0x0001000L;
-    if (delay_spd > 10)
-	delay_spd = 10;		/* bounds for delay_speed -CWS */
-    if (delay_spd < 0)
-	delay_spd = 0;
-    l |= ((delay_spd & 0xf) << 13);
-    l |= ((hitpoint_warn & 0xf) << 17);
-    if (plain_descriptions)	/* don't do "black Mushroom of Curing" -CWS */
-	l |= 0x00400000L;
-    if (show_equip_weight)
-	l |= 0x00800000L;
-    if (feeling > 10)
-	feeling = 0;		/* bounds for level feelings -CWS */
-    if (feeling < 0)
-	feeling = 0;
-    l |= ((feeling & 0xf) << 24);
-    if (equippy_chars)		/* equippy chars option -CWS */
-	l |= 0x20000000L;
-    if (quick_messages)		/* quick messages option -CWS */
-	l |= 0x40000000L;
-    if (death)
-	l |= 0x80000000L;	/* Sign bit */
-    wr_u32b(GROND);
-    wr_u32b(RINGIL);
-    wr_u32b(AEGLOS);
-    wr_u32b(ARUNRUTH);
-    wr_u32b(MORMEGIL);
-    wr_u32b(ANGRIST);
-    wr_u32b(GURTHANG);
-    wr_u32b(CALRIS);
-    wr_u32b(ANDURIL);
-    wr_u32b(STING);
-    wr_u32b(ORCRIST);
-    wr_u32b(GLAMDRING);
-    wr_u32b(DURIN);
-    wr_u32b(AULE);
-    wr_u32b(THUNDERFIST);
-    wr_u32b(BLOODSPIKE);
-    wr_u32b(DOOMCALLER);
-    wr_u32b(NARTHANC);
-    wr_u32b(NIMTHANC);
-    wr_u32b(DETHANC);
-    wr_u32b(GILETTAR);
-    wr_u32b(RILIA);
-    wr_u32b(BELANGIL);
-    wr_u32b(BALLI);
-    wr_u32b(LOTHARANG);
-    wr_u32b(FIRESTAR);
-    wr_u32b(ERIRIL);
-    wr_u32b(CUBRAGOL);
-    wr_u32b(BARD);
-    wr_u32b(COLLUIN);
-    wr_u32b(HOLCOLLETH);
-    wr_u32b(TOTILA);
-    wr_u32b(PAIN);
-    wr_u32b(ELVAGIL);
-    wr_u32b(AGLARANG);
-    wr_u32b(EORLINGAS);
-    wr_u32b(BARUKKHELED);
-    wr_u32b(WRATH);
-    wr_u32b(HARADEKKET);
-    wr_u32b(MUNDWINE);
-    wr_u32b(GONDRICAM);
-    wr_u32b(ZARCUTHRA);
-    wr_u32b(CARETH);
-    wr_u32b(FORASGIL);
-    wr_u32b(CRISDURIAN);
-    wr_u32b(COLANNON);
-    wr_u32b(HITHLOMIR);
-    wr_u32b(THALKETTOTH);
-    wr_u32b(ARVEDUI);
-    wr_u32b(THRANDUIL);
-    wr_u32b(THENGEL);
-    wr_u32b(HAMMERHAND);
-    wr_u32b(CELEGORM);
-    wr_u32b(THROR);
-    wr_u32b(MAEDHROS);
-    wr_u32b(OLORIN);
-    wr_u32b(ANGUIREL);
-    wr_u32b(OROME);
-    wr_u32b(EONWE);
-    wr_u32b(THEODEN);
-    wr_u32b(ULMO);
-    wr_u32b(OSONDIR);
-    wr_u32b(TURMIL);
-    wr_u32b(CASPANION);
-    wr_u32b(TIL);
-    wr_u32b(DEATHWREAKER);
-    wr_u32b(AVAVIR);
-    wr_u32b(TARATOL);
-
-    wr_u32b(DOR_LOMIN);
-    wr_u32b(NENYA);
-    wr_u32b(NARYA);
-    wr_u32b(VILYA);
-    wr_u32b(BELEGENNON);
-    wr_u32b(FEANOR);
-    wr_u32b(ISILDUR);
-    wr_u32b(SOULKEEPER);
-    wr_u32b(FINGOLFIN);
-    wr_u32b(ANARION);
-    wr_u32b(POWER);
-    wr_u32b(PHIAL);
-    wr_u32b(BELEG);
-    wr_u32b(DAL);
-    wr_u32b(PAURHACH);
-    wr_u32b(PAURNIMMEN);
-    wr_u32b(PAURAEGEN);
-    wr_u32b(PAURNEN);
-    wr_u32b(CAMMITHRIM);
-    wr_u32b(CAMBELEG);
-    wr_u32b(INGWE);
-    wr_u32b(CARLAMMAS);
-    wr_u32b(HOLHENNETH);
-    wr_u32b(AEGLIN);
-    wr_u32b(CAMLOST);
-    wr_u32b(NIMLOTH);
-    wr_u32b(NAR);
-    wr_u32b(BERUTHIEL);
-    wr_u32b(GORLIM);
-    wr_u32b(ELENDIL);
-    wr_u32b(THORIN);
-    wr_u32b(CELEBORN);
-    wr_u32b(THRAIN);
-    wr_u32b(GONDOR);
-    wr_u32b(THINGOL);
-    wr_u32b(THORONGIL);
-    wr_u32b(LUTHIEN);
-    wr_u32b(TUOR);
-    wr_u32b(ROHAN);
-    wr_u32b(TULKAS);
-    wr_u32b(NECKLACE);
-    wr_u32b(BARAHIR);
-    wr_u32b(RAZORBACK);
-    wr_u32b(BLADETURNER);
-
-    for (i = 0; i < MAX_QUESTS; i++)
-	wr_u32b(quests[i]);
-
-    for (i = 0; i < MAX_R_IDX; i++)
-	wr_unique(&u_list[i]);
-
-    for (i = 0; i < MAX_R_IDX; i++) {
-	r_ptr = &l_list[i];
-	if (r_ptr->r_cflags1 || r_ptr->r_cflags2 || r_ptr->r_kills ||
-	    r_ptr->r_spells2 || r_ptr->r_spells3 || r_ptr->r_spells1 ||
-	    r_ptr->r_deaths || r_ptr->r_attacks[0] || r_ptr->r_attacks[1] ||
-	    r_ptr->r_attacks[2] || r_ptr->r_attacks[3]) {
-	    wr_u16b(i);
-	    wr_u32b(r_ptr->r_cflags1);
-	    wr_u32b(r_ptr->r_spells1);
-	    wr_u32b(r_ptr->r_spells2);
-	    wr_u32b(r_ptr->r_spells3);
-	    wr_u16b(r_ptr->r_kills);
-	    wr_u16b(r_ptr->r_deaths);
-	    wr_u32b(r_ptr->r_cflags2);
-	    wr_byte(r_ptr->r_wake);
-	    wr_byte(r_ptr->r_ignore);
-	    for (i = 0; i < MAX_MON_NATTACK; i++)
-	    wr_byte(r_ptr->r_attacks[i]);
-	}
-    }
-    wr_u16b(0xFFFF);	   /* sentinel to indicate no more monster info */
-
-    wr_u32b(l);
-    wr_u32b(l);	/* added some duplicates, for future flags expansion -CWS */
-    wr_u32b(l);
-    wr_u32b(l);
-
-    wr_string(p_ptr->name);
-    wr_byte(p_ptr->male);
-    wr_s32b(p_ptr->au);
-    wr_s32b(p_ptr->max_exp);
-    wr_s32b(p_ptr->exp);
-    wr_u16b(p_ptr->exp_frac);
-    wr_u16b(p_ptr->age);
-    wr_u16b(p_ptr->ht);
-    wr_u16b(p_ptr->wt);
-    wr_u16b(p_ptr->lev);
-    wr_u16b(p_ptr->max_dlv);
-    wr_s16b(p_ptr->srh);
-    wr_s16b(p_ptr->fos);
-    wr_s16b(p_ptr->bth);
-    wr_s16b(p_ptr->bthb);
-    wr_s16b(p_ptr->mana);
-    wr_s16b(p_ptr->mhp);
-    wr_s16b(p_ptr->ptohit);
-    wr_s16b(p_ptr->ptodam);
-    wr_s16b(p_ptr->pac);
-    wr_s16b(p_ptr->ptoac);
-    wr_s16b(p_ptr->dis_th);
-    wr_s16b(p_ptr->dis_td);
-    wr_s16b(p_ptr->dis_ac);
-    wr_s16b(p_ptr->dis_tac);
-    wr_s16b(p_ptr->disarm);
-    wr_s16b(p_ptr->save);
-    wr_s16b(p_ptr->sc);
-    wr_s16b(p_ptr->stl);
-    wr_byte(p_ptr->pclass);
-    wr_byte(p_ptr->prace);
-    wr_byte(p_ptr->hitdie);
-    wr_byte(p_ptr->expfact);
-    wr_s16b(p_ptr->cmana);
-    wr_u16b(p_ptr->cmana_frac);
-    wr_s16b(p_ptr->chp);
-    wr_u16b(p_ptr->chp_frac);
-    for (i = 0; i < 4; i++)
-	wr_string(p_ptr->history[i]);
-
-    /* Dump the stats */
-    for (i = 0; i < 6; ++i) wr_s16b(p_ptr->max_stat[i]);
-    for (i = 0; i < 6; ++i) wr_s16b(p_ptr->cur_stat[i]);
-    for (i = 0; i < 6; ++i) wr_s16b(p_ptr->mod_stat[i]);
-    for (i = 0; i < 6; ++i) wr_s16b(p_ptr->use_stat[i]);
-
-    wr_u32b(p_ptr->status);
-    wr_s16b(p_ptr->rest);
-    wr_s16b(p_ptr->blind);
-    wr_s16b(p_ptr->paralysis);
-    wr_s16b(p_ptr->confused);
-    wr_s16b(p_ptr->food);
-    wr_s16b(p_ptr->food_digested);
-    wr_s16b(p_ptr->protection);
-    wr_s16b(p_ptr->speed);
-    wr_s16b(p_ptr->fast);
-    wr_s16b(p_ptr->slow);
-    wr_s16b(p_ptr->afraid);
-    wr_s16b(p_ptr->cut);
-    wr_s16b(p_ptr->stun);
-    wr_s16b(p_ptr->poisoned);
-    wr_s16b(p_ptr->image);
-    wr_s16b(p_ptr->protevil);
-    wr_s16b(p_ptr->invuln);
-    wr_s16b(p_ptr->hero);
-    wr_s16b(p_ptr->shero);
-    wr_s16b(p_ptr->shield);
-    wr_s16b(p_ptr->blessed);
-    wr_s16b(p_ptr->oppose_fire);
-    wr_s16b(p_ptr->oppose_cold);
-    wr_s16b(p_ptr->oppose_acid);
-    wr_s16b(p_ptr->oppose_elec);
-    wr_s16b(p_ptr->oppose_pois);
-    wr_s16b(p_ptr->detect_inv);
-    wr_s16b(p_ptr->word_recall);
-    wr_s16b(p_ptr->see_infra);
-    wr_s16b(p_ptr->tim_infra);
-    wr_byte(p_ptr->see_inv);
-    wr_byte(p_ptr->teleport);
-    wr_byte(p_ptr->free_act);
-    wr_byte(p_ptr->slow_digest);
-    wr_byte(p_ptr->aggravate);
-    wr_byte(p_ptr->resist_fire);
-    wr_byte(p_ptr->resist_cold);
-    wr_byte(p_ptr->resist_acid);
-    wr_byte(p_ptr->regenerate);
-    wr_byte(p_ptr->resist_elec);
-    wr_byte(p_ptr->ffall);
-    wr_byte(p_ptr->sustain_str);
-    wr_byte(p_ptr->sustain_int);
-    wr_byte(p_ptr->sustain_wis);
-    wr_byte(p_ptr->sustain_con);
-    wr_byte(p_ptr->sustain_dex);
-    wr_byte(p_ptr->sustain_chr);
-    wr_byte(p_ptr->confuse_monster);
-    wr_byte(p_ptr->new_spells);
-    wr_byte(p_ptr->resist_pois);
-    wr_byte(p_ptr->hold_life);
-    wr_byte(p_ptr->telepathy);
-    wr_byte(p_ptr->immune_fire);
-    wr_byte(p_ptr->immune_acid);
-    wr_byte(p_ptr->immune_pois);
-    wr_byte(p_ptr->immune_cold);
-    wr_byte(p_ptr->immune_elec);
-    wr_byte(p_ptr->light);
-    wr_byte(p_ptr->resist_conf);
-    wr_byte(p_ptr->resist_sound);
-    wr_byte(p_ptr->resist_lite);
-    wr_byte(p_ptr->resist_dark);
-    wr_byte(p_ptr->resist_chaos);
-    wr_byte(p_ptr->resist_disen);
-    wr_byte(p_ptr->resist_shards);
-    wr_byte(p_ptr->resist_nexus);
-    wr_byte(p_ptr->resist_blind);
-    wr_byte(p_ptr->resist_nether);
-    wr_byte(p_ptr->resist_fear); /* added -CWS */
-
-    wr_u16b(missile_ctr);
-    wr_u32b(turn);
-    wr_u32b(old_turn);	/* added -CWS */
-    wr_u16b(inven_ctr);
-    for (i = 0; i < inven_ctr; i++)
-	wr_item(&inventory[i]);
-    for (i = INVEN_WIELD; i < INVEN_ARRAY_SIZE; i++)
-	wr_item(&inventory[i]);
-    wr_u16b(inven_weight);
-    wr_u16b(equip_ctr);
-    wr_u32b(spell_learned);
-    wr_u32b(spell_worked);
-    wr_u32b(spell_forgotten);
-    wr_u32b(spell_learned2);
-    wr_u32b(spell_worked2);
-    wr_u32b(spell_forgotten2);
-
-    for (i = 0; i < 64; i++) {
-    wr_byte(spell_order[i]);
-    }
-
-    for (i = 0; i < OBJECT_IDENT_SIZE; i++)
-    wr_byte(object_ident[i]);
-    wr_u32b(randes_seed);
-    wr_u32b(town_seed);
-    wr_u16b(last_msg);
-    for (i = 0; i < MAX_SAVE_MSG; i++)
-	wr_string(old_msg[i]);
-
-/* this indicates 'cheating' if it is a one */
-    wr_u16b(panic_save);
-    wr_u16b(total_winner);
-    wr_u16b(noscore);
-
-    /* Dump the "player hp" entries */
-    for (i = 0; i < MAX_PLAYER_LEVEL; i++) {
-    wr_u16b(player_hp[i]);
-    }
-
-
-    for (i = 0; i < MAX_STORES; i++) {
-	st_ptr = &store[i];
-	wr_s32b(st_ptr->store_open);
-	wr_s16b(st_ptr->insult_cur);
-	wr_byte(st_ptr->owner);
-	wr_byte(st_ptr->store_ctr);
-	wr_u16b(st_ptr->good_buy);
-	wr_u16b(st_ptr->bad_buy);
-
-	for (j = 0; j < st_ptr->store_ctr; j++) {
-	    wr_s32b(st_ptr->store_inven[j].scost);
-	    wr_item(&st_ptr->store_inven[j].sitem);
-	}
-    }
-
-/* save the current time in the savefile */
-    l = time((long *)0);
-
-/* if (l < start_time) { someone is messing with the clock!, assume that we
- * have been playing for 1 day l = start_time + 86400L; } 
- */
-    wr_u32b(l);
-
-/* starting with 5.2, put died_from string in savefile */
-    wr_string(died_from);
-
-/* only level specific info follows, this allows characters to be
- * resurrected, the dungeon level info is not needed for a resurrection 
- */
-    if (death) {
-	if (ferror(fff) || fflush(fff) == EOF)
-	    return FALSE;
-	return TRUE;
-    }
-    wr_u16b(dun_level);
-    wr_u16b(char_row);
-    wr_u16b(char_col);
-    wr_u16b(mon_tot_mult);
-    wr_u16b(cur_height);
-    wr_u16b(cur_width);
-    wr_u16b(max_panel_rows);
-    wr_u16b(max_panel_cols);
-
-    for (i = 0; i < MAX_HEIGHT; i++)
-	for (j = 0; j < MAX_WIDTH; j++) {
-	    c_ptr = &cave[i][j];
-	    if (c_ptr->m_idx != 0) {
-		wr_byte((byte) i);
-		wr_byte((byte) j);
-		wr_u16b(c_ptr->m_idx); /* was wr_byte -CWS */
-	    }
-	}
-    wr_byte((byte) 0xFF);	   /* marks end of m_idx info */
-    for (i = 0; i < MAX_HEIGHT; i++)
-	for (j = 0; j < MAX_WIDTH; j++) {
-	    c_ptr = &cave[i][j];
-	    if (c_ptr->i_idx != 0) {
-		wr_byte((byte) i);
-		wr_byte((byte) j);
-		wr_u16b(c_ptr->i_idx);
-	    }
-	}
-    wr_byte(0xFF);		   /* marks end of i_idx info */
-
-/* must set counter to zero, note that code may write out two bytes
- * unnecessarily 
- */
-    count = 0;
-    prev_char = 0;
-    for (i = 0; i < MAX_HEIGHT; i++)
-	for (j = 0; j < MAX_WIDTH; j++) {
-	    c_ptr = &cave[i][j];
-	    char_tmp = c_ptr->fval | (c_ptr->lr << 4) | (c_ptr->fm << 5) |
-		(c_ptr->pl << 6) | (c_ptr->tl << 7);
-	    if (char_tmp != prev_char || count == MAX_UCHAR) {
-		wr_byte((byte) count);
-		wr_byte(prev_char);
-		prev_char = char_tmp;
-		count = 1;
-	    } else
-		count++;
-	}
-/* save last entry */
-    wr_byte((byte) count);
-    wr_byte(prev_char);
-
-#ifdef MSDOS
-
-/* must change graphics symbols for walls and floors back to default chars,
- * this is necessary so that if the user changes the graphics line, the
- * program will be able change all existing walls/floors to the new symbol 
- */
-    t_ptr = &i_list[i_max - 1];
-    for (i = i_max - 1; i >= MIN_I_IDX; i--) {
-	if (t_ptr->tchar == wallsym)
-	    t_ptr->tchar = '#';
-	t_ptr--;
-    }
-#endif
-    wr_u16b(i_max);
-    for (i = MIN_I_IDX; i < i_max; i++)
-	wr_item(&i_list[i]);
-    wr_u16b(m_max);
-    for (i = MIN_M_IDX; i < m_max; i++)
-	wr_monster(&m_list[i]);
-
-/* Save ghost names & stats etc... */
-     if (!r_list[MAX_R_IDX - 1].name) {
-                                  /* Can't dereference NULL! */
-	 r_list[MAX_R_IDX - 1].name = (char*)malloc(101);
-	 C_WIPE(r_list[MAX_R_IDX - 1].name, 101, char);
-     }
-    for (i = 0; i < 100; i++)
-    wr_byte(r_list[MAX_R_IDX - 1].name[i]);
-    wr_u32b(r_list[MAX_R_IDX - 1].cflags1);
-    wr_u32b(r_list[MAX_R_IDX - 1].spells1);
-    wr_u32b(r_list[MAX_R_IDX - 1].cflags2);
-    {
-	u16b temp;
-/* fix player ghost's exp bug.  The mexp field is really an u32b, but the
- * savefile was writing/reading an u16b.  Since I don't want to change
- * the savefile format, this insures that the low bits of mexp are written (No
- * ghost should be worth more than 64K (Melkor is only worth 60k!), but we
- * check anyway).  Using temp insures that the low bits are all written, and works
- * perfectly with a similar fix when* loading a character. -CFT
- */
-
-	if (r_list[MAX_R_IDX - 1].mexp > 0xff00)
-	    temp = 0xff00;
-	else
-	    temp = r_list[MAX_R_IDX - 1].mexp;
-	wr_u16b(temp);
-    }
-    wr_u16b((byte) r_list[MAX_R_IDX - 1].sleep);
-    wr_byte((byte) r_list[MAX_R_IDX - 1].aaf);
-    wr_s16b(r_list[MAX_R_IDX - 1].ac);
-    wr_byte((byte) r_list[MAX_R_IDX - 1].speed);
-    wr_byte((byte) r_list[MAX_R_IDX - 1].r_char);
-    wr_byte(r_list[MAX_R_IDX - 1].hd[0]);
-    wr_byte(r_list[MAX_R_IDX - 1].hd[1]);
-
-    wr_u16b(r_ptr->damage[0]);
-    wr_u16b(r_ptr->damage[1]);
-    wr_u16b(r_ptr->damage[2]);
-    wr_u16b(r_ptr->damage[3]);
-
-    wr_u16b(r_list[MAX_R_IDX - 1].level);
-
-    if (ferror(fff) || (fflush(fff) == EOF))
-	return FALSE;
-    return TRUE;
-}
-
-int save_player()
-{
-    vtype temp;
-    char *tmp2;
-
-#ifdef SECURE
-    beGames();
-#endif
-
-    if (_save_player(savefile)) {
-
-	tmp2 = basename(savefile);
-
-	(void)sprintf(temp, "%s/p.%s", ANGBAND_DIR_SAVE, (tmp2 + 1));
-
-	unlink(temp);
-    } else {
-	return FALSE;
-    }
-#ifdef SECURE
-    bePlayer();
-#endif
-    return TRUE;
-}
-
-
-/*
- * Medium level player saver
- */
-int _save_player(char *fnam)
-{
-    int   ok, fd;
-    vtype temp;
-    byte char_tmp;
-
-    /* Forbid suspend */
-    signals_ignore_tstp();
-
-    put_qio();
-    disturb(1, 0);		   /* Turn off resting and searching. */
-
-    /* Fix the speed */
-    p_ptr->speed -= pack_heavy;
-    p_ptr->status |= PY_SPEED;
-    pack_heavy = 0;
-
-    /* Assume failure */
-    ok = FALSE;
-
-#ifdef ATARIST_MWC
-#else /* ATARIST_MWC */
-
-    fd = (-1);
-    fff = NULL;		   /* Do not assume it has been init'ed */
-
-#ifdef SET_UID
-    fd = my_topen(fnam, O_RDWR | O_CREAT | O_EXCL, 0600);
-#else
-    fd = my_topen(fnam, O_RDWR | O_CREAT | O_EXCL, 0666);
-#endif
-
-    /* This might not work... */
-    if ((fd < 0) && (access(fnam, 0) >= 0) &&
-	(from_savefile ||
-	 (wizard && get_check("Can't make new savefile. Overwrite old?")))) {
-
-#ifdef SET_UID
-	(void)chmod(fnam, 0600);
-	fd = my_topen(fnam, O_RDWR | O_TRUNC, 0600);
-#else
-	(void)chmod(fnam, 0666);
-	fd = my_topen(fnam, O_RDWR | O_TRUNC, 0666);
-#endif
-
-    }
-
-    if (fd >= 0) {
-
-	/* Close the "fd" */
-	(void)close(fd);
-
-#endif				   /* !ATARIST_MWC */
-    /* GCC for atari st defines atarist */
-#if defined(atarist) || defined(ATARIST_MWC) || defined(MSDOS) || defined(__MINT__)
-	fff = my_tfopen(savefile, "wb");
-#else
-	fff = my_tfopen(savefile, "w");
-#endif
-#ifndef ATARIST_MWC
-    }
-
-#endif
-
-    /* Successful open */
-    if (fff) {
-
-#ifdef MSDOS
-	(void)setmode(fileno(fff), O_BINARY);
-#endif
-
-	xor_byte = 0;
-	wr_byte((byte) CUR_VERSION_MAJ);
-	xor_byte = 0;
-	wr_byte((byte) CUR_VERSION_MIN);
-	xor_byte = 0;
-	wr_byte((byte) PATCH_LEVEL);
-	xor_byte = 0;
-	char_tmp = randint(256) - 1;
-	wr_byte(char_tmp);
-    /* Note that xor_byte is now equal to char_tmp */
-
-	/* Write the savefile */
-	ok = sv_write();
-
-	/* Attempt to close it */
-	if (fclose(fff) == EOF) ok = FALSE;
-    }
-
-
-    /* Error */
-    if (!ok) {
-
-	if (fd >= 0) (void)unlink(fnam);
-
-	/* Allow suspend again */
-	signals();
-
-	/* Oops */
-	if (fd >= 0) (void)sprintf(temp, "Error writing to savefile");
-	else (void)sprintf(temp, "Can't create new savefile");
-	msg_print(temp);
-	return FALSE;
-    }
-
-    /* Successful save */
-    character_saved = 1;
-
-    turn = (-1);
-
-    /* Allow suspend again */
-    signals();
-
-    /* Successful save */
-    return TRUE;
-}
 
 
 /*
