@@ -89,6 +89,12 @@
   ((((y) >= panel_row_min) && ((y) <= panel_row_max) && \
     ((x) >= panel_col_min) && ((x) <= panel_col_max)) ? (TRUE) : (FALSE))
 
+/*
+ * Artifacts
+ */
+#define artifact_p(T) \
+	((!(T->tval < TV_MIN_WEAR) && !(T->tval > TV_MIN_WEAR) && (T->flags2 & TR_ARTIFACT)) ? TRUE : FALSE)
+
 
 
 /**** Available macros ****/

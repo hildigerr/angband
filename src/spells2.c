@@ -1158,7 +1158,7 @@ int enchant(inven_type *i_ptr, int n, byte eflag)
 			   500, 700, 950, 990, 992, 995, 997 };
 
     /* Artifacts resist enchantment */
-    int a = i_ptr->flags2 & TR_ARTIFACT;
+    int a = artifact_p(i_ptr);
 
     /* Try "n" times */
     for (i=0; i<n; i++) {
@@ -1984,7 +1984,7 @@ int detect_magic()
 	    /* Is it otherwise magical? */
 	    if (((tv > 9) && (tv < 39)) &&
 		(((i_ptr->tohit > 0) || (i_ptr->todam) || (i_ptr->toac) ||
-		(i_ptr->flags2 & TR_ARTIFACT)) ||
+		artifact_p(i_ptr)) ||
 		((tv > 39) && (tv < 77)))) {
 
 		c_ptr->fm = TRUE;

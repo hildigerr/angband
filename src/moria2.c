@@ -1232,8 +1232,7 @@ static void drop_throw(int y, int x, inven_type *t_ptr)
 	}
 	while ((!flag) && (k <= 9));
     }
-    if (!flag && (t_ptr->tval >= TV_MIN_WEAR) &&
-	(t_ptr->tval <= TV_MAX_WEAR) && (t_ptr->flags2 & TR_ARTIFACT)) {
+    if (!flag && artifact_p(t_ptr)) {
 	k = 0;  i = y;  j = x;
 	do {		/* pick place w/o an object, unless doesn't seem to be one */
 	    y = i;  x = j;
@@ -1274,8 +1273,7 @@ static void drop_throw(int y, int x, inven_type *t_ptr)
    stay around (like Artifacts!) -CFT */
 static int stays_when_throw(inven_type *i_ptr)
 {
-  if ((i_ptr->tval >= TV_MIN_WEAR) && (i_ptr->tval <= TV_MAX_WEAR) &&
-      (i_ptr->flags2 & TR_ARTIFACT))
+  if (artifact_p(i_ptr))
     return TRUE;
 
   /* for non-artifacts, drop_throw() still loses 20% of them... */

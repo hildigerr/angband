@@ -525,8 +525,9 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	  default:        /* just in case... */
 	    strcpy(damstr, " (unknown mult.)");
 	}
-	if (i_ptr->flags2 & TR_ARTIFACT)	/* only show pval for artifacts... */
+	if (artifact_p(i_ptr)) {	/* only show pval for artifacts... */
 	    pval_use = FLAGS;
+	}
 	break;
 
       /* Weapons have a damage string, and flags */
@@ -821,7 +822,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	}
 
 	if (pval_use == IGNORED);
-	else if ((pval_use == LIGHT) && !(i_ptr->flags2 & TR_ARTIFACT))
+	else if ((pval_use == LIGHT) && !artifact_p(i_ptr))
 	    (void)sprintf(tmp_str, " with %d turns of light", i_ptr->pval);
 
 	else if (known2_p(i_ptr)) {
@@ -883,9 +884,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 		(void)sprintf(out_val, "%d%s", (int)i_ptr->number, &tmp_val[1]);
 	    else if (i_ptr->number < 1)
 		(void)sprintf(out_val, "%s%s", "no more", &tmp_val[1]);
-	    else if (known2_p(i_ptr) && (i_ptr->tval >= TV_MIN_WEAR)
-		     && (i_ptr->tval <= TV_MAX_WEAR) &&
-		     (i_ptr->flags2 & TR_ARTIFACT))
+	    else if (known2_p(i_ptr) && artifact_p(i_ptr))
 		(void)sprintf(out_val, "The%s", &tmp_val[1]);
 	    else if (is_a_vowel(tmp_val[2]))
 		(void)sprintf(out_val, "an%s", &tmp_val[1]);

@@ -49,7 +49,7 @@ bool valid_grid(int y, int x)
     if (i_ptr->tval == TV_UP_STAIR) return (FALSE);
 
     /* Artifacts are really important */
-    if (!(i_ptr->tval < TV_MIN_WEAR) && !(i_ptr->tval > TV_MIN_WEAR) && (i_ptr->flags2 & TR_ARTIFACT)) return (FALSE);
+    if (artifact_p(i_ptr)) return (FALSE);
 
     /* Normal object may be destroyed */
     return (TRUE);

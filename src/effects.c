@@ -1231,7 +1231,7 @@ void do_cmd_read_scroll(void)
 	    
 	    if (i_ptr->tval != TV_NOTHING) {
 		objdes(tmp_str, i_ptr, FALSE);
-		if ((i_ptr->flags2 & TR_ARTIFACT) && (randint(7) < 4)) {
+		if (artifact_p(i_ptr) && (randint(7) < 4)) {
 		    msg_print("A terrible black aura tries to surround your weapon,");
 		    sprintf(out_val, "but your %s resists the effects!", tmp_str);
 		    msg_print(out_val);
@@ -1323,7 +1323,7 @@ void do_cmd_read_scroll(void)
 	    objdes(tmp_str, i_ptr, FALSE);
 
 	    /* Attempt a saving throw for artifacts */
-	    if ((i_ptr->flags2 & TR_ARTIFACT) && (randint(7) < 4)) {
+	    if (artifact_p(i_pt) && (randint(7) < 4)) {
 		msg_print("A terrible black aura tries to surround your");
 		sprintf(out_val, "%s, but it resists the effects!", tmp_str);
 		msg_print(out_val);

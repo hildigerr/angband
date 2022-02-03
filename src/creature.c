@@ -1348,24 +1348,24 @@ static void make_attack(int m_idx)
 		    /* Steal a single item from the pack */
 		    i = rand_int(inven_ctr);
 
+		    /* Get the item */
+		    i_ptr = &inventory[i];
+
 		    /* Don't steal artifacts  -CFT */
-		    if ((inventory[i].tval >= TV_MIN_WEAR) &&
-			(inventory[i].tval <= TV_MAX_WEAR) &&
-			(inventory[i].flags2 & TR_ARTIFACT))
-			break;
+		    if (artifact_p(i_ptr)) break;
 
 		    /* Get a description */
-		    objdes(t1, &inventory[i], FALSE);
+		    objdes(t1, i_ptr, FALSE);
 
 		    /* stacked single items */
 		    sprintf(t2, "%sour %s (%c) %s stolen!",
-			  ((inventory[i].sval <= ITEM_SINGLE_STACK_MAX) &&
-			   (inventory[i].number > 1))
+			  ((i_ptr->sval <= ITEM_SINGLE_STACK_MAX) &&
+			   (i_ptr->number > 1))
 			    ? "One of y" : "Y",
 			    t1, i + 'a',
 		    /* stacked group items */
-			    ((inventory[i].sval > ITEM_SINGLE_STACK_MAX) &&
-			     (inventory[i].number > 1))
+			    ((i_ptr->sval > ITEM_SINGLE_STACK_MAX) &&
+			     (i_ptr->number > 1))
 			    ? "were" : "was");
 		    msg_print(t2);
 
@@ -1557,7 +1557,7 @@ static void make_attack(int m_idx)
 	      /* Eat light */
 	      case 23:
 		i_ptr = &inventory[INVEN_LIGHT];
-		if ((i_ptr->pval > 0) && ((i_ptr->flags2 & TR_ARTIFACT) == 0)) {
+		if ((i_ptr->pval > 0) && (!artifact_p(i_ptr))) {
 		    i_ptr->pval -= (250 + randint(250));
 		    if (i_ptr->pval < 1) i_ptr->pval = 1;
 		    if (p_ptr->blind < 1) {
@@ -2074,11 +2074,8 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
 			if (i_ptr->flags2 & TR1_SLAY_GIANT) flg |= MF2_GIANT;
 			if (i_ptr->flags2 & TR1_SLAY_ORC) flg |= MF2_ORC;
 
-		    /* if artifact, or wearable & hurts this monster -CWS */
-		    if ((i_ptr->flags2 & TR_ARTIFACT) ||
-			    ( (i_ptr->tval >= TV_MIN_WEAR) &&
-			      (i_ptr->tval <= TV_MAX_WEAR) &&
-			      (r_ptr->cflags2 & flg) )) {
+		    /* The object cannot be picked up by the monster */
+		    if (artifact_p(i_ptr) || (r_ptr->cflags2 & flg)) {
 
 /* FIXME: should use new line-splitting code */
 
