@@ -242,7 +242,8 @@ static void rd_item(inven_type *i_ptr)
     rd_s16b(&i_ptr->todam);
     rd_s16b(&i_ptr->ac);
     rd_s16b(&i_ptr->toac);
-    rd_bytes(i_ptr->damage, 2);
+    rd_byte(&i_ptr->damage[0]);
+    rd_byte(&i_ptr->damage[1]);
     rd_byte(&i_ptr->level);
     rd_byte(&i_ptr->ident);
     rd_u32b(&i_ptr->flags2);
@@ -267,7 +268,8 @@ static void wr_item(inven_type *i_ptr)
     wr_s16b(i_ptr->todam);
     wr_s16b(i_ptr->ac);
     wr_s16b(i_ptr->toac);
-    wr_bytes(i_ptr->damage, 2);
+    wr_byte(i_ptr->damage[0]);
+    wr_byte(i_ptr->damage[1]);
     wr_byte(i_ptr->level);
     wr_byte(i_ptr->ident);
     wr_u32b(i_ptr->flags2);
@@ -551,7 +553,8 @@ static int sv_write()
 	    wr_u32b(r_ptr->r_cflags2);
 	    wr_byte(r_ptr->r_wake);
 	    wr_byte(r_ptr->r_ignore);
-	    wr_bytes(r_ptr->r_attacks, MAX_MON_NATTACK);
+	    for (i = 0; i < MAX_MON_NATTACK; i++)
+	    wr_byte(r_ptr->r_attacks[i]);
 	}
     }
     wr_u16b(0xFFFF);	   /* sentinel to indicate no more monster info */
@@ -601,10 +604,11 @@ static int sv_write()
     for (i = 0; i < 4; i++)
 	wr_string(p_ptr->history[i]);
 
-    wr_shorts(p_ptr->max_stat, 6);
-    wr_bytes(p_ptr->cur_stat, 6);               /* Was wr_shorts -TL */
-    wr_shorts((u16b *) p_ptr->mod_stat, 6);
-    wr_shorts(p_ptr->use_stat, 6);
+    /* Dump the stats */
+    for (i = 0; i < 6; ++i) wr_s16b(p_ptr->max_stat[i]);
+    for (i = 0; i < 6; ++i) wr_s16b(p_ptr->cur_stat[i]);
+    for (i = 0; i < 6; ++i) wr_s16b(p_ptr->mod_stat[i]);
+    for (i = 0; i < 6; ++i) wr_s16b(p_ptr->use_stat[i]);
 
     wr_u32b(p_ptr->status);
     wr_s16b(p_ptr->rest);
@@ -693,8 +697,13 @@ static int sv_write()
     wr_u32b(spell_learned2);
     wr_u32b(spell_worked2);
     wr_u32b(spell_forgotten2);
-    wr_bytes(spell_order, 64);
-    wr_bytes(object_ident, OBJECT_IDENT_SIZE);
+
+    for (i = 0; i < 64; i++) {
+    wr_byte(spell_order[i]);
+    }
+
+    for (i = 0; i < OBJECT_IDENT_SIZE; i++)
+    wr_byte(object_ident[i]);
     wr_u32b(randes_seed);
     wr_u32b(town_seed);
     wr_u16b(last_msg);
@@ -705,7 +714,11 @@ static int sv_write()
     wr_u16b(panic_save);
     wr_u16b(total_winner);
     wr_u16b(noscore);
-    wr_shorts(player_hp, MAX_PLAYER_LEVEL);
+
+    /* Dump the "player hp" entries */
+    for (i = 0; i < MAX_PLAYER_LEVEL; i++) {
+    wr_u16b(player_hp[i]);
+    }
 
 
     for (i = 0; i < MAX_STORES; i++) {
@@ -820,7 +833,8 @@ static int sv_write()
 	 r_list[MAX_R_IDX - 1].name = (char*)malloc(101);
 	 C_WIPE(r_list[MAX_R_IDX - 1].name, 101, char);
      }
-    wr_bytes(r_list[MAX_R_IDX - 1].name, 100);
+    for (i = 0; i < 100; i++)
+    wr_byte(r_list[MAX_R_IDX - 1].name[i]);
     wr_u32b(r_list[MAX_R_IDX - 1].cflags1);
     wr_u32b(r_list[MAX_R_IDX - 1].spells1);
     wr_u32b(r_list[MAX_R_IDX - 1].cflags2);
@@ -845,8 +859,14 @@ static int sv_write()
     wr_s16b(r_list[MAX_R_IDX - 1].ac);
     wr_byte((byte) r_list[MAX_R_IDX - 1].speed);
     wr_byte((byte) r_list[MAX_R_IDX - 1].r_char);
-    wr_bytes(r_list[MAX_R_IDX - 1].hd, 2);
-    wr_bytes(r_list[MAX_R_IDX - 1].damage, sizeof(u16b) * 4);
+    wr_byte(r_list[MAX_R_IDX - 1].hd[0]);
+    wr_byte(r_list[MAX_R_IDX - 1].hd[1]);
+
+    wr_u16b(r_ptr->damage[0]);
+    wr_u16b(r_ptr->damage[1]);
+    wr_u16b(r_ptr->damage[2]);
+    wr_u16b(r_ptr->damage[3]);
+
     wr_u16b(r_list[MAX_R_IDX - 1].level);
 
     if (ferror(fff) || (fflush(fff) == EOF))
@@ -1236,7 +1256,8 @@ int load_player(int *generate)
 	    rd_u32b(&r_ptr->r_cflags2);
 	    rd_byte(&r_ptr->r_wake);
 	    rd_byte(&r_ptr->r_ignore);
-	    rd_bytes(r_ptr->r_attacks, MAX_MON_NATTACK);
+	    for (i = 0; i < MAX_MON_NATTACK; i++)
+	    rd_byte(&r_ptr->r_attacks[i]);
 	    rd_u16b(&u16b_tmp);
 	}
 	if (to_be_wizard)
@@ -1376,13 +1397,13 @@ int load_player(int *generate)
 	    for (i = 0; i < 4; i++)
 		rd_string(p_ptr->history[i]);
 
-	    rd_shorts(p_ptr->max_stat, 6);
+	    for (i = 0; i < 6; i++) rd_s16b(&p_ptr->max_stat[i]);
 	    if (version_maj <= 2 && version_min <=5 && patch_level <= 6)
-		rd_shorts(p_ptr->cur_stat, 6);
+		for (i = 0; i < 6; i++) rd_s16b(&p_ptr->cur_stat[i]);
 	    else
-		rd_bytes(p_ptr->cur_stat, 6);                   /* -TL */
-	    rd_shorts((u16b *) p_ptr->mod_stat, 6);
-	    rd_shorts(p_ptr->use_stat, 6);
+		for (i = 0; i < 6; i++) rd_byte(&p_ptr->cur_stat[i]);
+	    for (i = 0; i < 6; i++) rd_s16b(&p_ptr->mod_stat[i]);
+	    for (i = 0; i < 6; i++) rd_s16b(&p_ptr->use_stat[i]);
 
 	    rd_u32b(&p_ptr->status);
 	    rd_s16b(&p_ptr->rest);
@@ -1482,8 +1503,13 @@ int load_player(int *generate)
 	    rd_u32b(&spell_learned2);
 	    rd_u32b(&spell_worked2);
 	    rd_u32b(&spell_forgotten2);
-	    rd_bytes(spell_order, 64);
-	    rd_bytes(object_ident, OBJECT_IDENT_SIZE);
+
+	    for (i = 0; i < 64; i++) {
+	    rd_byte(&spell_order[i]);
+	    }
+
+	    for (i = 0; i < OBJECT_IDENT_SIZE; i++)
+	    rd_byte(&object_ident[i]);
 	    rd_u32b(&randes_seed);
 	    rd_u32b(&town_seed);
 	    rd_u16b(&last_msg);
@@ -1493,7 +1519,11 @@ int load_player(int *generate)
 	    rd_u16b(&panic_save);
 	    rd_u16b(&total_winner);
 	    rd_u16b(&noscore);
-	    rd_shorts(player_hp, MAX_PLAYER_LEVEL);
+
+    /* Read the player_hp array */
+	    for (i = 0; i < MAX_PLAYER_LEVEL; i++) {
+	    rd_u16b(&player_hp[i]);
+	    }
 
 	    for (i = 0; i < MAX_STORES; i++) {
 	      st_ptr = &store[i];
@@ -1690,7 +1720,8 @@ int load_player(int *generate)
 	r_list[MAX_R_IDX - 1].name = (char*)malloc(101);
 	C_WIPE(r_list[MAX_R_IDX - 1].name, 101, char);
 	*((char *) r_list[MAX_R_IDX - 1].name) = 'A';
-	rd_bytes((byte *) (r_list[MAX_R_IDX - 1].name), 100);
+	for (i = 0; i < 100; i++)
+	rd_byte(&r_list[MAX_R_IDX - 1].name[i]);
 	rd_u32b(&(r_list[MAX_R_IDX - 1].cflags1));
 	rd_u32b(&(r_list[MAX_R_IDX - 1].spells1));
 	rd_u32b(&(r_list[MAX_R_IDX - 1].cflags2));
@@ -1725,9 +1756,14 @@ int load_player(int *generate)
 	rd_byte(&(r_list[MAX_R_IDX - 1].speed));
 	rd_byte(&(r_list[MAX_R_IDX - 1].r_char));
 
-	rd_bytes((byte *) (r_list[MAX_R_IDX - 1].hd), 2);
+	rd_byte(&r_list[MAX_R_IDX - 1].hd[0]);
+	rd_byte(&r_list[MAX_R_IDX - 1].hd[1]);
 
-	rd_bytes((byte *) (r_list[MAX_R_IDX - 1].damage), sizeof(u16b) * 4);
+    rd_u16b(&r_ptr->damage[0]);
+    rd_u16b(&r_ptr->damage[1]);
+    rd_u16b(&r_ptr->damage[2]);
+    rd_u16b(&r_ptr->damage[3]);
+
 	rd_u16b(&(r_list[MAX_R_IDX - 1].level));
 	*generate = FALSE;	   /* We have restored a cave - no need to generate. */
 
@@ -1848,62 +1884,5 @@ closefiles:
 }
 
 
-static void wr_bytes(byte *c, register int count)
-{
-    register int    i;
-    register byte *ptr;
-
-    ptr = c;
-    for (i = 0; i < count; i++) {
-	xor_byte ^= *ptr++;
-	(void)putc((int)xor_byte, fff);
-    }
-}
-
-static void wr_shorts(u16b *s, register int count)
-{
-    register int        i;
-    register u16b    *sptr;
-
-    sptr = s;
-    for (i = 0; i < count; i++) {
-	xor_byte ^= (*sptr & 0xFF);
-	(void)putc((int)xor_byte, fff);
-	xor_byte ^= ((*sptr++ >> 8) & 0xFF);
-	(void)putc((int)xor_byte, fff);
-    }
-}
-
-
-static void rd_bytes(byte *ptr, int count)
-{
-    int   i;
-    byte c, nc;
-
-    for (i = 0; i < count; i++) {
-	c = (getc(fff) & 0xFF);
-	nc = c ^ xor_byte;
-	*ptr = nc;
-	ptr++;
-	xor_byte = c;
-    }
-}
-
-static void rd_shorts(u16b *ptr, register int count)
-{
-    register int        i;
-    register u16b    *sptr;
-    register u16b     s;
-    byte               c;
-
-    sptr = ptr;
-    for (i = 0; i < count; i++) {
-	c = (getc(fff) & 0xFF);
-	s = c ^ xor_byte;
-	xor_byte = (getc(fff) & 0xFF);
-	s |= (u16b) (c ^ xor_byte) << 8;
-	*sptr++ = s;
-    }
-}
 
 
