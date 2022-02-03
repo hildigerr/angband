@@ -43,6 +43,29 @@ static int	from_savefile;	/* can overwrite old savefile when save */
 static u32b       start_time;	   /* time that play started */
 
 
+/*
+ * This function determines if the version of the savefile
+ * currently being read is older than version "x.y.z".
+ */
+static bool older_than(int x, int y, int z)
+{
+    /* Much older, or much more recent */
+    if (version_maj < x) return (TRUE);
+    if (version_maj > x) return (FALSE);
+
+    /* Distinctly older, or distinctly more recent */
+    if (version_min < y) return (TRUE);
+    if (version_min > y) return (FALSE);
+
+    /* Barely older, or barely more recent */
+    if (patch_level < z) return (TRUE);
+    if (patch_level > z) return (FALSE);
+
+    /* Identical versions */
+    return (FALSE);
+}
+
+
 
 
 /*
@@ -199,13 +222,13 @@ static void rd_monster_old(monster_type *m_ptr)
     /* Read the current hitpoints */
     rd_s16b(&m_ptr->hp);
 
-    if ((version_maj >= 2) && (version_min >= 6)) {
-	/* Read the maximal hitpoints */
-	rd_s16b(&m_ptr->maxhp);
+    if (older_than(2,6,0)) {
+	/* Hack -- see below as well */
+	m_ptr->maxhp = m_ptr->hp;
     }
     else {
-	/* let's fix the infamous monster heal bug -CWS */
-	m_ptr->maxhp = m_ptr->hp;
+	/* Read the maximal hitpoints */
+	rd_s16b(&m_ptr->maxhp);
     }
 
     rd_s16b(&m_ptr->csleep);
@@ -223,13 +246,13 @@ static void rd_monster_old(monster_type *m_ptr)
     rd_byte(&m_ptr->stunned);
     rd_byte(&m_ptr->confused);
 
-    if ((version_maj >= 2) && (version_min >= 6)){
-	/* Read the monster fear */
-	rd_byte(&m_ptr->monfear);
-    }
-    else{
+    if (older_than(2,6,0)) {
 	/* Clear the monster fear value */
 	m_ptr->monfear = 0;
+    }
+    else {
+	/* Read the monster fear */
+	rd_byte(&m_ptr->monfear);
     }
 }
 
@@ -527,7 +550,7 @@ int load_player(int *generate)
 	    prt("Loaded Recall Memory", 6, 0);
 	put_qio();
         rd_u32b(&l);
-	if ((version_maj >= 2) && (version_min >= 6)) {
+	if (!older_than(2,6,0)) {
 	  rd_u32b(&l);
 	  rd_u32b(&l);
 	  rd_u32b(&l);
@@ -660,9 +683,11 @@ int load_player(int *generate)
 	    for (i = 0; i < 4; i++)
 		rd_string(p_ptr->history[i]);
 
+    /* Read the stats */  
 	    for (i = 0; i < 6; i++) rd_s16b(&p_ptr->max_stat[i]);
-	    if (version_maj <= 2 && version_min <=5 && patch_level <= 6)
+		if (older_than(2,5,7)) {
 		for (i = 0; i < 6; i++) rd_s16b(&p_ptr->cur_stat[i]);
+		}
 	    else
 		for (i = 0; i < 6; i++) rd_byte(&p_ptr->cur_stat[i]);
 	    for (i = 0; i < 6; i++) rd_s16b(&p_ptr->mod_stat[i]);
@@ -737,17 +762,17 @@ int load_player(int *generate)
 	    rd_byte(&p_ptr->resist_nexus);
 	    rd_byte(&p_ptr->resist_blind);
 	    rd_byte(&p_ptr->resist_nether);
-	    if ((version_maj >= 2) && (version_min >= 6))
-		rd_byte(&p_ptr->resist_fear);
-	    else
+	    if (older_than(2,6,0))
 		p_ptr->resist_fear = 0;	/* sigh */
+	    else
+		rd_byte(&p_ptr->resist_fear);
 
 	    rd_u16b(&missile_ctr);
 	    rd_u32b(&turn);
-	    if ((version_maj >= 2) && (version_min >= 6))
-	      rd_u32b(&old_turn);
-	    else
+	    if (older_than(2,6,0))
 	      old_turn = turn;	/* best we can do... -CWS */
+	    else
+	      rd_u32b(&old_turn);
 
 	    rd_u16b(&inven_ctr);
 	    if (inven_ctr > INVEN_WIELD) {
@@ -911,12 +936,12 @@ int load_player(int *generate)
 	    rd_byte(&xchar);
 
     /* let's correctly fix the invisible monster bug  -CWS */
-	    if ((version_maj >= 2) && (version_min >= 6)) {
-		rd_u16b(&u16b_tmp);
-		cave[ychar][xchar].m_idx = u16b_tmp;
-	    } else {
+	    if (older_than(2,6,0)) {
 		rd_byte(&char_tmp);
 		cave[ychar][xchar].m_idx = char_tmp;
+	    } else {
+		rd_u16b(&u16b_tmp);
+		cave[ychar][xchar].m_idx = u16b_tmp;
 	    }
 	    if (xchar > MAX_WIDTH || ychar > MAX_HEIGHT) {
 		vtype               t1;
@@ -1015,17 +1040,17 @@ int load_player(int *generate)
 /* more stupid size bugs that would've never been needed if these variables
  * had been given enough space in the first place -CWS
  */
-	if ((version_maj >= 2) && (version_min >= 6))
-	    rd_u16b(&(r_list[MAX_R_IDX - 1].sleep));
-	else
+	if (older_than(2,6,0))
 	    rd_byte(&(r_list[MAX_R_IDX - 1].sleep));
+	else
+	    rd_u16b(&(r_list[MAX_R_IDX - 1].sleep));
 
 	rd_byte(&(r_list[MAX_R_IDX - 1].aaf));
 
-	if ((version_maj >= 2) && (version_min >= 6))
-	    rd_s16b(&(r_list[MAX_R_IDX - 1].ac));
-	else
+	if (older_than(2,6,0))
 	    rd_byte(&(r_list[MAX_R_IDX - 1].ac));
+	else
+	    rd_s16b(&(r_list[MAX_R_IDX - 1].ac));
 
 	rd_byte(&(r_list[MAX_R_IDX - 1].speed));
 	rd_byte(&(r_list[MAX_R_IDX - 1].r_char));
