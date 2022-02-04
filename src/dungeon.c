@@ -13,7 +13,6 @@
 #include "angband.h"
 
 static void do_command();
-static int  valid_countcommand();
 
 /* ANGBAND game module					-RAK-	 */
 /* The code in this section has gone through many revisions, and */
@@ -2094,102 +2093,6 @@ static void do_command(char com_val)
 	}
     }
     last_command = com_val;
-}
-
-/* Check whether this command will accept a count.     -CJS-  */
-static int valid_countcommand(char c)
-{
-    switch (c) {
-      case 'Q':
-      case CTRL('W'):
-      case CTRL('X'):
-      case '=':
-      case '{':
-      case '/':
-      case '<':
-      case '>':
-      case '?':
-      case 'A':
-      case 'C':
-      case 'E':
-      case 'F':
-      case 'G':
-      case '#':
-      case 'z':
-      case 'P':
-      case 'c':
-      case 'd':
-      case 'e':
-      case 't':
-      case 'i':
-      case 'x':
-      case 'm':
-      case 'p':
-      case 'q':
-      case 'r':
-      case 'T':
-      case 'Z':
-      case 'V':
-      case 'w':
-      case 'W':
-      case 'X':
-      case CTRL('A'):
-      case '\\':
-      case CTRL('I'):
-      case CTRL('^'):
-      case '$':
-      case '*':
-      case ':':
-      case CTRL('T'):
-      case CTRL('E'):
-      case CTRL('F'):
-      case CTRL('Z'):
-      case CTRL('S'):
-      case CTRL('Q'):
-      case CTRL('R'):
-	return FALSE;
-      case CTRL('P'):
-      case ESCAPE:
-      case ' ':
-      case '-':
-      case 'b':
-      case 'f':
-      case 'j':
-      case 'n':
-      case 'h':
-      case 'l':
-      case 'y':
-      case 'k':
-      case 'u':
-      case '.':
-      case 'B':
-      case 'J':
-      case 'N':
-      case 'H':
-      case 'L':
-      case 'Y':
-      case 'K':
-      case 'U':
-      case 'D':
-      case 'R':
-      case CTRL('Y'):
-      case CTRL('K'):
-      case CTRL('U'):
-      case CTRL('L'):
-      case CTRL('N'):
-      case CTRL('J'):
-      case CTRL('B'):
-      case CTRL('H'):
-      case 'S':
-      case 'o':
-      case 's':
-      case CTRL('D'):
-      case CTRL('G'):
-      case '+':
-	return TRUE;
-      default:
-	return FALSE;
-    }
 }
 
 
