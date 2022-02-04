@@ -1730,12 +1730,11 @@ static void do_command(char com_val)
       case 'A':			/* (A)ctivate		(A)ctivate */
 	do_cmd_activate();
 	break;
-      case 'C':			/* (C)haracter description */
-	save_screen();
-	change_name();
-	restore_screen();
-	free_turn_flag = TRUE;
-	break;
+
+	/* Character Description */
+	case 'C':
+	    do_cmd_change_name(); break;
+
       case 'D':			/* (D)isarm trap */
 	do_cmd_disarm();
 	break;

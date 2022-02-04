@@ -244,6 +244,19 @@ static void do_cmd_redraw(void)
 
 
 /*
+ * Hack -- change name
+ */
+static void do_cmd_change_name(void)
+{
+    free_turn_flag = TRUE;
+
+    save_screen();
+    change_name();
+    restore_screen();
+}
+
+
+/*
  * Refill the players lamp	-RAK-
  */
 static void do_cmd_refill_lamp()
