@@ -1722,13 +1722,12 @@ static void do_command(char com_val)
       case '>':			/* (>) go up a staircase */
 	do_cmd_go_down();
 	break;
-      case '?':			/* (?) help with commands */
-	if (rogue_like_commands)
-	    helpfile(ANGBAND_R_HELP);
-	else
-	    helpfile(ANGBAND_O_HELP);
-	free_turn_flag = TRUE;
+
+	/* Help */
+	case '?':
+	    do_cmd_help(NULL); break;
 	break;
+
 #ifdef ALLOW_SCORE
       case 'v':   /* score patch originally by Mike Welsh mikewe@acacia.cs.pdx.edu */
 	sprintf(prt1,"Your current score is: %ld", total_points());
@@ -1922,10 +1921,11 @@ static void do_command(char com_val)
       case 'Z':			/* (Z)ap a staff	(u)se a staff */
 	do_cmd_use_staff();
 	break;
-      case 'V':			/* (V)ersion of game */
-	helpfile(ANGBAND_VERSION);
-	free_turn_flag = TRUE;
-	break;
+
+	/* Game Version */
+	case 'V':
+	    do_cmd_help(ANGBAND_VERSION); break;
+
       case 'w':			/* (w)ear or wield */
 	inven_command('w');
 	break;

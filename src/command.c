@@ -15,6 +15,24 @@
 
 
 /*
+ * Give the player some help (files may be out of date)
+ */
+static void do_cmd_help(cptr fname)
+{	    
+    /* Help is always free */
+    free_turn_flag = TRUE;
+
+    /* Default help files */
+    if (!fname) fname = rogue_like_commands ? ANGBAND_R_HELP : ANGBAND_O_HELP;
+
+    /* Dump the help file file */
+    helpfile(fname);
+}
+
+
+
+
+/*
  * Examine a Book					-RAK-	
  */
 static void do_cmd_browse(void)
