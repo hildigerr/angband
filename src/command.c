@@ -202,6 +202,27 @@ static void do_cmd_go_down()
 
 
 /*
+ * Hack -- commit suicide
+ */
+static void do_cmd_suicide(void)
+{
+    free_turn_flag = TRUE;
+
+    flush();
+
+    if (total_winner) {
+	if (!get_check("Do you want to retire?")) return;
+    }
+    else {
+	if (!get_check("Do you really want to quit?")) return;
+    }
+
+    new_level_flag = TRUE;
+    death = TRUE;
+    (void)strcpy(died_from, "Quitting");
+}
+
+/*
  * Refill the players lamp	-RAK-
  */
 static void do_cmd_refill_lamp()
