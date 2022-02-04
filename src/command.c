@@ -446,7 +446,7 @@ static opt_desc options[] = {
 /*
  * Set or unset various boolean options.
  */
-void do_cmd_options()
+satic void do_cmd_options()
 {
     register int i, max, ch;
     vtype        string;
@@ -548,6 +548,642 @@ void do_cmd_options()
 	}
     }
 }
+
+
+void do_command(char com_val)
+{
+    int                    dir_val, do_pickup;
+    int                    y, x, i, j = 0;
+    vtype                  out_val, tmp_str;
+    char                   prt1[80];
+
+/* hack for move without pickup.  Map '-' to a movement command. */
+    if (com_val == '-') {
+	do_pickup = FALSE;
+	i = command_rep;
+#ifdef TARGET
+	{
+/* If in target_mode, player will not be given a chance to pick a direction.
+ * So we save it, force it off, and then ask for the direction -CFT
+ */
+	int temp = target_mode;
+	target_mode = FALSE;
+#endif
+	if (get_dir(NULL, &dir_val)) {
+	    command_rep = i;
+	    switch (dir_val) {
+	      case 1:
+		com_val = 'b';
+		break;
+	      case 2:
+		com_val = 'j';
+		break;
+	      case 3:
+		com_val = 'n';
+		break;
+	      case 4:
+		com_val = 'h';
+		break;
+	      case 6:
+		com_val = 'l';
+		break;
+	      case 7:
+		com_val = 'y';
+		break;
+	      case 8:
+		com_val = 'k';
+		break;
+	      case 9:
+		com_val = 'u';
+		break;
+	      default:
+		com_val = '(';
+		break;
+	    }
+	} else
+	    com_val = ' ';
+#ifdef TARGET
+	target_mode = temp;
+	}
+#endif
+    } else
+	do_pickup = TRUE;
+
+    switch (com_val) {
+
+	/* Commit Suicide and Quit */
+	case 'Q':
+	    do_cmd_suicide(); break;
+
+	/* Previous message(s). */
+	case CTRL('P'):
+	    do_cmd_messages(); break;
+
+	case CTRL('F'):		/* Repeat (^F)eeling */
+	    free_turn_flag = TRUE;
+	    do_cmd_feeling();
+	    break;
+
+	case CTRL('W'):		/* (^W)izard mode */
+	    if (wizard) {
+		wizard = FALSE;
+		msg_print("Wizard mode off.");
+	    }
+	    else if (enter_wiz_mode()) {
+		msg_print("Wizard mode on.");
+	    }
+	    prt_winner();
+	    free_turn_flag = TRUE;
+	    break;
+
+	case CTRL('X'):		/* e(^X)it and save */
+	    if (total_winner) {
+	    msg_print("You are a Total Winner,  your character must be retired.");
+	    if (rogue_like_commands)
+	    msg_print("Use 'Q' to when you are ready to retire.");
+	    else
+	    msg_print("Use <Control>-K when you are ready to retire.");
+	    } else {
+	    (void)strcpy(died_from, "(saved)");
+	    msg_print("Saving game...");
+	    if (save_player())
+	    exit_game();
+	    msg_print("Save failed...");
+	    (void)strcpy(died_from, "(alive and well)");
+	    }
+	    free_turn_flag = TRUE;
+	    break;
+
+	/* Redraw the screen */
+	case CTRL('R'):
+	    do_cmd_redraw(); break;
+
+#ifdef TARGET
+	/* Attempt to select a new target, if compiled */
+	case '*':
+	    do_cmd_target(); break;  			
+#endif
+
+	case '=':			/* (=) set options */
+	    save_screen();
+	    do_cmd_options();
+	    restore_screen();
+	    free_turn_flag = TRUE;
+	    break;
+
+	case '{':			/* ({) inscribe an object    */
+	    scribe_object();
+	    free_turn_flag = TRUE;
+	    break;
+
+	case '!':			/* (!) escape to the shell */
+	    if (!wizard)
+#ifdef MSDOS			/* Let's be a little more accurate... */
+	    msg_print("Sorry, Angband doesn't leave enough free memory for a subshell.");
+#else
+	    msg_print("Sorry, inferior shells are not allowed from ANGBAND.");
+#endif
+	    else
+	    do_cmd_rerate();
+	    free_turn_flag = TRUE;
+	    break;
+
+	case ESCAPE:		/* (ESC)   do nothing. */
+	case ' ':			/* (space) do nothing. */
+	    free_turn_flag = TRUE;
+	    break;
+
+	case 'b':			/* (b) down, left	(1) */
+	    move_player(1, do_pickup);
+	    break;
+
+	case 'j':			/* (j) down		(2) */
+	    move_player(2, do_pickup);
+	    break;
+
+	case 'n':			/* (n) down, right	(3) */
+	    move_player(3, do_pickup);
+	    break;
+
+	case 'h':			/* (h) left		(4) */
+	    move_player(4, do_pickup);
+	    break;
+
+	case 'l':			/* (l) right		(6) */
+	    move_player(6, do_pickup);
+	    break;
+
+	case 'y':			/* (y) up, left		(7) */
+	    move_player(7, do_pickup);
+	    break;
+
+	case 'k':			/* (k) up		(8) */
+	    move_player(8, do_pickup);
+	    break;
+
+	case 'u':			/* (u) up, right	(9) */
+	    move_player(9, do_pickup);
+	    break;
+
+	case 'B':			/* (B) run down, left	(. 1) */
+	    find_init(1);
+	    break;
+
+	case 'J':			/* (J) run down		(. 2) */
+	    find_init(2);
+	    break;
+
+	case 'N':			/* (N) run down, right	(. 3) */
+	    find_init(3);
+	    break;
+
+	case 'H':			/* (H) run left		(. 4) */
+	    find_init(4);
+	    break;
+
+	case 'L':			/* (L) run right	(. 6) */
+	    find_init(6);
+	    break;
+
+	case 'Y':			/* (Y) run up, left	(. 7) */
+	    find_init(7);
+	    break;
+
+	case 'K':			/* (K) run up		(. 8) */
+	    find_init(8);
+	    break;
+
+	case 'U':			/* (U) run up, right	(. 9) */
+	    find_init(9);
+	    break;
+
+	case '/':			/* (/) identify a symbol */
+	    ident_char();
+	    free_turn_flag = TRUE;
+	    break;
+
+	case '.':			/* (.) stay in one place (5) */
+	    move_player(5, do_pickup);
+	    if (command_rep > 1) {
+	    command_rep--;
+	    rest();
+	    }
+	    break;
+
+	case '<':			/* (<) go down a staircase */
+	    do_cmd_go_up();
+	    break;
+
+	case '>':			/* (>) go up a staircase */
+	    do_cmd_go_down();
+	    break;
+
+	/* Help */
+	case '?':
+	    do_cmd_help(NULL); break;
+	break;
+
+#ifdef ALLOW_SCORE
+	case 'v':   /* score patch originally by Mike Welsh mikewe@acacia.cs.pdx.edu */
+	sprintf(prt1,"Your current score is: %ld", total_points());
+	msg_print(prt1);
+	break;
+#endif
+
+	case 'f':			/* (f)orce		(B)ash */
+	    bash();
+	    break;
+
+	case 'A':			/* (A)ctivate		(A)ctivate */
+	    do_cmd_activate();
+	    break;
+
+	/* Character Description */
+	case 'C':
+	    do_cmd_change_name(); break;
+
+	case 'D':			/* (D)isarm trap */
+	    do_cmd_disarm();
+	    break;
+
+	case 'E':			/* (E)at food */
+	    do_cmd_eat_food();
+	    break;
+
+	case 'F':			/* (F)ill lamp */
+	    do_cmd_refill_lamp();
+	    break;
+
+	case 'G':			/* (G)ain magic spells */
+	    gain_spells();
+	    break;
+
+	/* Pick up an object */
+	case 'g':
+	    do_cmd_pick_up(); break;
+
+	case 'W':			/* (W)here are we on the map	(L)ocate on map */
+	    if ((p_ptr->blind > 0) || no_lite())
+	    msg_print("You can't see your map.");
+	    else {
+	    int                 cy, cx, p_y, p_x;
+#ifdef TARGET
+/* If in target_mode, player will not be given a chance to pick a direction.
+ * So we save it, force it off, and then ask for the direction -CFT
+ */
+	    int temp = target_mode;
+	    target_mode = FALSE;
+#endif
+
+	    y = char_row;
+	    x = char_col;
+	    if (get_panel(y, x, TRUE))
+		prt_map();
+	    cy = panel_row;
+	    cx = panel_col;
+	    for (;;) {
+		p_y = panel_row;
+		p_x = panel_col;
+		if (p_y == cy && p_x == cx)
+		    tmp_str[0] = '\0';
+		else
+		    (void)sprintf(tmp_str, "%s%s of",
+			     p_y < cy ? " North" : p_y > cy ? " South" : "",
+			      p_x < cx ? " West" : p_x > cx ? " East" : "");
+		(void)sprintf(out_val,
+      "Map sector [%d,%d], which is%s your sector. Look which direction?",
+			      p_y, p_x, tmp_str);
+		if (!get_dir(out_val, &dir_val))
+		    break;
+
+/* -CJS- Should really use the move function, but what the hell. This is nicer,
+ * as it moves exactly to the same place in another section. The direction
+ * calculation is not intuitive. Sorry.
+ */
+		for (;;) {
+		    x += ((dir_val - 1) % 3 - 1) * SCREEN_WIDTH / 2;
+		    y -= ((dir_val - 1) / 3 - 1) * SCREEN_HEIGHT / 2;
+		    if (x < 0 || y < 0 || x >= cur_width || y >= cur_width) {
+			msg_print("You've gone past the end of your map.");
+			x -= ((dir_val - 1) % 3 - 1) * SCREEN_WIDTH / 2;
+			y += ((dir_val - 1) / 3 - 1) * SCREEN_HEIGHT / 2;
+			break;
+		    }
+		    if (get_panel(y, x, TRUE)) {
+			prt_map();
+			break;
+		    }
+		}
+	    }
+	/* Move to a new panel - but only if really necessary. */
+	    if (get_panel(char_row, char_col, FALSE))
+		prt_map();
+#ifdef TARGET
+	    target_mode = temp; /* restore target mode... */
+#endif
+	    }
+	    free_turn_flag = TRUE;
+	    break;
+
+	case 'R':			/* (R)est a while */
+	    rest();
+	    break;
+
+
+	/* Toggle search status */
+	case '#':
+	    do_cmd_toggle_search(); break;
+
+	case CTRL('B'):		/* (^B) tunnel down left	(T 1) */
+	    tunnel(1);
+	    break;
+
+	case CTRL('M'):		/* cr must be treated same as lf. */
+	case CTRL('J'):		/* (^J) tunnel down		(T 2) */
+	    tunnel(2);
+	    break;
+
+	case CTRL('N'):		/* (^N) tunnel down right	(T 3) */
+	    tunnel(3);
+	    break;
+
+	case CTRL('H'):		/* (^H) tunnel left		(T 4) */
+	    tunnel(4);
+	    break;
+
+	case CTRL('L'):		/* (^L) tunnel right		(T 6) */
+	    tunnel(6);
+	    break;
+
+	case CTRL('Y'):		/* (^Y) tunnel up left		(T 7) */
+	    tunnel(7);
+	    break;
+
+	case CTRL('K'):		/* (^K) tunnel up		(T 8) */
+	    tunnel(8);
+	    break;
+
+	case CTRL('U'):		/* (^U) tunnel up right		(T 9) */
+	    tunnel(9);
+	    break;
+
+	case 'z':			/* (z)ap a wand		(a)im a wand */
+	    do_cmd_aim_wand();
+	    break;
+
+	case 'a':			/* (a)ctivate a rod	(z)ap a rod */
+	    do_cmd_zap_rod();
+	    break;
+
+	case 'M':
+	    screen_map();
+	    free_turn_flag = TRUE;
+	    break;
+
+	case 'P':			/* (P)eruse a book	(B)rowse in a book */
+	    do_cmd_browse();
+	    free_turn_flag = TRUE;
+	    break;
+
+	case 'c':			/* (c)lose an object */
+	    do_cmd_close();
+	    break;
+
+	case 'd':			/* (d)rop something */
+	    inven_command('d');
+	    break;
+
+	case 'e':			/* (e)quipment list */
+	    inven_command('e');
+	    break;
+
+	case 't':			/* (t)hrow something	(f)ire something */
+	    do_cmd_fire();
+	    break;
+
+	case 'i':			/* (i)nventory list */
+	    inven_command('i');
+	    break;
+
+	case 'S':			/* (S)pike a door	(j)am a door */
+	    do_cmd_spike();
+	    break;
+
+	case 'x':			/* e(x)amine surrounds	(l)ook about */
+	    do_cmd_look();
+	    free_turn_flag = TRUE;
+	    break;
+
+	case 'm':			/* (m)agic spells */
+	    cast();
+	    break;
+
+	case 'o':			/* (o)pen something */
+	    do_cmd_open();
+	    break;
+
+	case 'p':			/* (p)ray */
+	    pray();
+	    break;
+
+	case 'q':			/* (q)uaff */
+	    do_cmd_quaff_potion();
+	    break;
+
+	case 'r':			/* (r)ead */
+	    do_cmd_read_scroll();
+	    break;
+
+	case 's':			/* (s)earch for a turn */
+	    search(char_row, char_col, p_ptr->srh);
+	    break;
+
+	case 'T':			/* (T)ake off something	(t)ake off */
+	    inven_command('t');
+	    break;
+
+	case 'Z':			/* (Z)ap a staff	(u)se a staff */
+	    do_cmd_use_staff();
+	    break;
+
+	/* Game Version */
+	case 'V':
+	    do_cmd_help(ANGBAND_VERSION); break;
+
+	case 'w':			/* (w)ear or wield */
+	    inven_command('w');
+	    break;
+
+	case 'X':			/* e(X)change weapons	e(x)change */
+	    inven_command('x');
+	    break;
+
+#ifdef ALLOW_ARTIFACT_CHECK /* -CWS */
+	case '~':
+	if ((!wizard) && (dun_level != 0)) {
+	    msg_print("You need to be on the town level to check artifacts!");
+	    msg_print(NULL);		/* make sure can see the message -CWS */
+	} else
+	    artifact_check_no_file();
+	break;
+#endif
+
+#ifdef ALLOW_CHECK_UNIQUES /* -CWS */
+	case '|':
+	do_cmd_check_uniques();
+	break;
+#endif
+
+	default:
+	if (wizard) {
+	    free_turn_flag = TRUE; /* Wizard commands are free moves */
+	    switch (com_val) {
+	      case '\\':	   /* \ wizard help */
+		helpfile(ANGBAND_W_HELP);
+	      case CTRL('A'):	   /* ^A = Cure all */
+		(void)remove_all_curse();
+		(void)cure_blindness();
+		(void)cure_confusion();
+		(void)cure_poison();
+		(void)remove_fear();
+		(void)res_stat(A_STR);
+		(void)res_stat(A_INT);
+		(void)res_stat(A_WIS);
+		(void)res_stat(A_CON);
+		(void)res_stat(A_DEX);
+		(void)res_stat(A_CHR);
+		(void)restore_level();
+		(void)hp_player(2000);
+		p_ptr->food = PLAYER_FOOD_MAX;
+		if (p_ptr->slow > 1)
+		    p_ptr->slow = 1;
+		if (p_ptr->image > 1)
+		    p_ptr->image = 1;
+		if (p_ptr->cut > 1)
+		    p_ptr->cut = 1;
+		if (p_ptr->stun > 1)
+		    p_ptr->stun = 1;
+		break;
+	      case CTRL('D'):	/* ^D = up/down */
+		if (command_rep > 0) {
+		    if (command_rep > 99)
+			i = 0;
+		    else
+			i = command_rep;
+		    command_rep = 0;
+		} else {
+		    prt("Go to which level (0-10000) ? ", 0, 0);
+		    i = (-1);
+		    if (get_string(tmp_str, 0, 27, 10))
+			i = atoi(tmp_str);
+		    if (i > 10000)
+			i = 10000;
+		}
+		if (i > -1) {
+		    dun_level = i;
+		    if (dun_level > 10000)
+			dun_level = 10000;
+		    new_level_flag = TRUE;
+		} else
+		    erase_line(MSG_LINE, 0);
+		break;
+	      case CTRL('E'):	/* ^E = wizchar */
+		change_character();
+		erase_line(MSG_LINE, 0); /* from um55 -CFT */
+		break;
+	      case CTRL('G'):	/* ^G = treasure */
+		if (command_rep > 0) {
+		    i = command_rep;
+		    command_rep = 0;
+		} else
+		    i = 1;
+		random_object(char_row, char_col, i);
+		prt_map();
+		break;
+	      case CTRL('I'):	/* ^I = identify */
+		(void)ident_spell();
+		break;
+	      case CTRL('T'):	/* ^T = teleport */
+		teleport(100);
+		break;
+	      case CTRL('V'):	/* ^V special treasure */
+		if (command_rep > 0) {
+		    i = command_rep;
+		    command_rep = 0;
+		} else
+		    i = 1;
+		special_random_object(char_row, char_col, i);
+		prt_map();
+		break;
+	      case CTRL('Z'):	/* ^Z = genocide */
+		(void)mass_genocide(FALSE);
+		break;
+	      case ':':
+		map_area();
+		break;
+	      case '~':
+		artifact_check_no_file();
+		break;
+	      case '|':
+		do_cmd_check_uniques();
+		break;
+	      case '@':
+		wizard_create();
+		break;
+	      case '$':	   /* $ = wiz light */
+		wiz_lite(TRUE);
+		break;
+	      case '%':	   /* self-knowledge */
+		self_knowledge();
+		break;
+	      case '&':	   /* & = summon  */
+		y = char_row;
+		x = char_col;
+		(void)summon_monster(&y, &x, TRUE);
+		update_monsters();
+		break;
+	      case '*':		/* '*' = identify all up to a level */
+		prt("Identify objects upto which level (0-200) ? ", 0, 0);
+		i = (-1);
+		if (get_string(tmp_str, 0, 47, 10))
+		    i = atoi(tmp_str);
+		if (i > 200)
+		    i = 200;
+		if (i > -1) {
+		    int                 temp;
+		    inven_type          inv;
+
+		    for (temp = 0; temp < MAX_DUNGEON_OBJ; temp++) {
+			if (k_list[temp].level <= i) {
+			    invcopy(&inv, temp);
+			    known1(&inv);
+			}
+		    }
+		}
+		erase_line(MSG_LINE, 0);
+		break;
+	      case '+':
+		if (command_rep > 0) {
+		    p_ptr->exp = command_rep;
+		    command_rep = 0;
+		} else if (p_ptr->exp == 0)
+		    p_ptr->exp = 1;
+		else
+		    p_ptr->exp = p_ptr->exp * 2;
+		prt_experience();
+		break;
+	      default:
+		prt("Type '?' or '\\' for help.", 0, 0);
+	    }
+	} else {
+	    prt("Type '?' for help.", 0, 0);
+	    free_turn_flag = TRUE;
+	}
+    }
+    last_command = com_val;
+}
+
+
 
 
 /*

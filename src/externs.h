@@ -516,7 +516,7 @@ void inven_item_describe(int);
 s16b flavor_p(inven_type *);
 
 /* command.c */
-void do_cmd_options(void);
+void do_command();
 
 /* dungeon.c */
 void dungeon(void);
