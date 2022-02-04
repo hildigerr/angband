@@ -1599,16 +1599,11 @@ static void do_command(char com_val)
 	}
 	free_turn_flag = TRUE;
 	break;
-      case CTRL('R'):
-	if (p_ptr->image > 0)
-	    msg_print("You cannot be sure what is real and what is not!");
-	else {
-	    draw_cave();
-	    update_monsters();	  /* draw monsters */
-	    prt_equippy_chars();  /* redraw equippy chars */
-	}
-	free_turn_flag = TRUE;
-	break;
+
+	/* Redraw the screen */
+	case CTRL('R'):
+	    do_cmd_redraw(); break;
+
 #ifdef TARGET
 /* select a target (sorry, no intuitive letter keys were left: a/A for aim,
  * t/T for target, f/F for focus, s/S for select, c/C for choose and p/P for pick

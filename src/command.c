@@ -222,6 +222,27 @@ static void do_cmd_suicide(void)
     (void)strcpy(died_from, "Quitting");
 }
 
+
+/*
+ * Hack -- redraw the screen
+ */
+static void do_cmd_redraw(void)
+{
+    free_turn_flag = TRUE;
+
+    if (p_ptr->image > 0) {
+	msg_print("You cannot be sure what is real and what is not!");
+    }
+
+    else {
+    /* Redraw the screen */
+    draw_cave();
+    update_monsters();	  /* draw monsters */
+    prt_equippy_chars();  /* redraw equippy chars */
+    }
+}
+
+
 /*
  * Refill the players lamp	-RAK-
  */
