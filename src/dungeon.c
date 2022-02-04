@@ -1577,23 +1577,11 @@ static void do_command(char com_val)
 	    do_cmd_redraw(); break;
 
 #ifdef TARGET
-/* select a target (sorry, no intuitive letter keys were left: a/A for aim,
- * t/T for target, f/F for focus, s/S for select, c/C for choose and p/P for pick
- *  were all already taken.  Wiz light command moved to '$', which was unused. -CFT
- */
-      case '*':
-    if (p_ptr->blind > 0) {
-	msg_print("You can't see anything to target!");
-    }
-    else if (!target_set()) {
-	msg_print("Aborting Target.");
-    }
-    else {
-	msg_print("Target selected.");
-    }
-	free_turn_flag = TRUE;
-	break;    			
+	/* Attempt to select a new target, if compiled */
+	case '*':
+	    do_cmd_target(); break;  			
 #endif
+
       case '=':			/* (=) set options */
 	save_screen();
 	do_cmd_options();

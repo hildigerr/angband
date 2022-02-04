@@ -383,6 +383,35 @@ static void do_cmd_messages(void)
 
 
 /*
+ * Target command
+ */
+static void do_cmd_target()
+{
+    /* Free move */
+    free_turn_flag = TRUE;
+
+#ifdef TARGET
+
+    /* Be sure we can see */
+    if (p_ptr->blind > 0) {
+	msg_print("You can't see anything to target!");
+    }
+    else if (!target_set()) {
+	msg_print("Aborting Target.");
+    }
+    else {
+	msg_print("Target selected.");
+    }
+
+#endif
+
+}
+
+
+
+
+
+/*
  * A simple structure to hold some options
  */
 typedef struct _opt_desc {
