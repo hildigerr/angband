@@ -127,4 +127,246 @@ void get_file_paths()
 }
 
 
+static char original_commands(char command)
+{
+    int dir_val;
+
+    /* Process the command */
+    switch (command) {
+
+	case CTRL('K'):		/* ^K = exit    */
+	    command = 'Q';
+	break;
+	case CTRL('J'):		/* not used */
+	case CTRL('M'):		/* not used */
+	    command = ' ';
+	    break;
+	case CTRL('F'):		/* ^F = repeat feeling */
+	case CTRL('R'):		/* ^R = redraw screen  */
+	case CTRL('P'):		/* ^P = repeat  */
+	case CTRL('W'):		/* ^W = enter wizard mode */
+	case CTRL('X'):		/* ^X = save    */
+	case ' ':
+	    break;
+	case '.': {
+#ifdef TARGET
+/* If in target_mode, player will not be given a chance to pick a direction.
+ * So we save it, force it off, and then ask for the direction -CFT */
+	    int temp = target_mode;
+	    target_mode = FALSE;
+#endif
+	    if (get_dir(NULL, &dir_val))
+	    switch (dir_val) {
+	    case 1:
+	    command = 'B';
+	    break;
+	    case 2:
+	    command = 'J';
+	    break;
+	    case 3:
+	    command = 'N';
+	    break;
+	    case 4:
+	    command = 'H';
+	    break;
+	    case 6:
+	    command = 'L';
+	    break;
+	    case 7:
+	    command = 'Y';
+	    break;
+	    case 8:
+	    command = 'K';
+	    break;
+	    case 9:
+	    command = 'U';
+	    break;
+	    default:
+	    command = ' ';
+	    break;
+	    }
+	    else
+	    command = ' ';
+#ifdef TARGET
+	    target_mode = temp; /* restore old target code ... -CFT */
+#endif
+	    }
+	    break;
+	case '/':
+	case '<':
+	case '>':
+	case '-':
+	case '=':
+	case '{':
+	case '?':
+	case 'A':
+	    break;
+	case '1':
+	    command = 'b';
+	    break;
+	case '2':
+	    command = 'j';
+	    break;
+	case '3':
+	    command = 'n';
+	    break;
+	case '4':
+	    command = 'h';
+	    break;
+	case '5':			/* Rest one turn */
+	    command = '.';
+	    break;
+	case '6':
+	    command = 'l';
+	    break;
+	case '7':
+	    command = 'y';
+	    break;
+	case '8':
+	    command = 'k';
+	    break;
+	case '9':
+	    command = 'u';
+	    break;
+	case 'B':
+	    command = 'f';
+	    break;
+	case 'C':
+	case 'D':
+	case 'E':
+	case 'F':
+	case 'G':
+	case 'g':
+	    break;
+	case 'L':
+	    command = 'W';
+	    break;
+	case 'M':
+	case 'R':
+	    break;
+	case 'S':
+	    command = '#';
+	    break;
+	case 'T': {
+#ifdef TARGET
+/* If in target_mode, player will not be given a chance to pick a direction.
+ * So we save it, force it off, and then ask for the direction -CFT
+ */
+	    int temp = target_mode;
+	    target_mode = FALSE;
+#endif
+	    if (get_dir(NULL, &dir_val))
+	    switch (dir_val) {
+	    case 1:
+	    command = CTRL('B');
+	    break;
+	    case 2:
+	    command = CTRL('J');
+	    break;
+	    case 3:
+	    command = CTRL('N');
+	    break;
+	    case 4:
+	    command = CTRL('H');
+	    break;
+	    case 6:
+	    command = CTRL('L');
+	    break;
+	    case 7:
+	    command = CTRL('Y');
+	    break;
+	    case 8:
+	    command = CTRL('K');
+	    break;
+	    case 9:
+	    command = CTRL('U');
+	    break;
+	    default:
+	    command = ' ';
+	    break;
+	    }
+	    else
+	    command = ' ';
+#ifdef TARGET
+	    target_mode = temp;
+#endif
+	    }
+	    break;
+	case 'a':
+	    command = 'z';
+	    break;
+	case 'b':
+	    command = 'P';
+	    break;
+	case 'c':
+	case 'd':
+	case 'e':
+	    break;
+	case 'f':
+	    command = 't';
+	    break;
+	case 'h':
+	    command = '?';
+	    break;
+	case 'i':
+	    break;
+	case 'j':
+	    command = 'S';
+	    break;
+	case 'l':
+	    command = 'x';
+	break;
+	case 'm':
+	case 'o':
+	case 'p':
+	case 'q':
+	case 'r':
+	case 's':
+	    break;
+	case 't':
+	    command = 'T';
+	    break;
+	case 'u':
+	    command = 'Z';
+	    break;
+	case 'z':
+	    command = 'a';
+	    break;
+	case 'v':
+	case 'V':
+	case 'w':
+	    break;
+	case 'x':
+	    command = 'X';
+	break;
+
+    /* wizard mode commands follow */
+	case '\\':		/* \ = wizard help */
+	case CTRL('A'):		/* ^A = cure all */
+	case CTRL('D'):		/* ^D = up/down */
+	case CTRL('E'):		/* ^E = wizchar */
+	case CTRL('G'):		/* ^G = treasure */
+	case CTRL('I'):		/* ^I = identify */
+	case CTRL('O'):		/* ^O = generate objects */
+	case CTRL('T'):		/* ^T = teleport */
+	case CTRL('V'):		/* ^V = treasure */
+	case CTRL('Z'):		/* ^Z = genocide */
+	case ':':			/* map area */
+	case '~':			/* artifact list to file */
+	case '!':			/* rerate hitpoints */
+	case '@':			/* create object */
+	case '$':			/* wiz. light */
+	case '%':			/* '%' == self knowledge */
+	case '&':			/* & = summon  */
+	case '*':			/* Indentify up to level */
+	case '+':			/* add experience */
+	case '|':			/* check uniques - cba */
+	    break;
+	default:
+	    command = '(';		/* Anything illegal. */
+	    break;
+    }
+    return com_val;
+}
+
 
