@@ -611,20 +611,16 @@ void do_command(char com_val)
 
     switch (com_val) {
 
-	/* Commit Suicide and Quit */
-	case 'Q':
-	    do_cmd_suicide(); break;
+	/* (ESC) do nothing. */
+	case ESCAPE:
+	    free_turn_flag = TRUE; break;
 
-	/* Previous message(s). */
-	case CTRL('P'):
-	    do_cmd_messages(); break;
-
-	case CTRL('F'):		/* Repeat (^F)eeling */
-	    free_turn_flag = TRUE;
-	    do_cmd_feeling();
-	    break;
-
-	case CTRL('W'):		/* (^W)izard mode */
+	/* (SPACE) do nothing */
+	case ' ':
+	    free_turn_flag = TRUE; break;
+	    
+	/* Toggle Wizard Mode */
+	case CTRL('W'):
 	    if (wizard) {
 		wizard = FALSE;
 		msg_print("Wizard mode off.");
@@ -636,45 +632,8 @@ void do_command(char com_val)
 	    free_turn_flag = TRUE;
 	    break;
 
-	case CTRL('X'):		/* e(^X)it and save */
-	    if (total_winner) {
-	    msg_print("You are a Total Winner,  your character must be retired.");
-	    if (rogue_like_commands)
-	    msg_print("Use 'Q' to when you are ready to retire.");
-	    else
-	    msg_print("Use <Control>-K when you are ready to retire.");
-	    } else {
-	    (void)strcpy(died_from, "(saved)");
-	    msg_print("Saving game...");
-	    if (save_player())
-	    exit_game();
-	    msg_print("Save failed...");
-	    (void)strcpy(died_from, "(alive and well)");
-	    }
-	    free_turn_flag = TRUE;
-	    break;
 
-	/* Redraw the screen */
-	case CTRL('R'):
-	    do_cmd_redraw(); break;
-
-#ifdef TARGET
-	/* Attempt to select a new target, if compiled */
-	case '*':
-	    do_cmd_target(); break;  			
-#endif
-
-	case '=':			/* (=) set options */
-	    save_screen();
-	    do_cmd_options();
-	    restore_screen();
-	    free_turn_flag = TRUE;
-	    break;
-
-	case '{':			/* ({) inscribe an object    */
-	    scribe_object();
-	    free_turn_flag = TRUE;
-	    break;
+	/*** Extra commands ***/
 
 	case '!':			/* (!) escape to the shell */
 	    if (!wizard)
@@ -688,81 +647,122 @@ void do_command(char com_val)
 	    free_turn_flag = TRUE;
 	    break;
 
-	case ESCAPE:		/* (ESC)   do nothing. */
-	case ' ':			/* (space) do nothing. */
-	    free_turn_flag = TRUE;
+
+	/*** Inventory Commands ***/
+
+	/* Wear or wield something */
+	case 'w':
+	    inven_command('w'); break;
+
+	/* Take something off */
+	case 'T':
+	    inven_command('t'); break;
+
+	/* Exchange primary and aux weapons */
+	case 'X':
+	    inven_command('x'); break;
+
+	/* Drop something */
+	case 'd':
+	    inven_command('d'); break;
+
+	/* Equipment list */
+	case 'e':
+	    inven_command('e'); break;
+
+	/* Inventory */
+	case 'i':
+	    inven_command('i'); break;
+
+
+	/*** Standard "Movement" Commands ***/
+
+	case CTRL('B'):		/* (^B) tunnel down left	(T 1) */
+	    tunnel(1);
+	    break;
+
+	case CTRL('M'):		/* cr must be treated same as lf. */
+	case CTRL('J'):		/* (^J) tunnel down		(T 2) */
+	    tunnel(2);
+	    break;
+
+	case CTRL('N'):		/* (^N) tunnel down right	(T 3) */
+	    tunnel(3);
+	    break;
+
+	case CTRL('H'):		/* (^H) tunnel left		(T 4) */
+	    tunnel(4);
+	    break;
+
+	case CTRL('L'):		/* (^L) tunnel right		(T 6) */
+	    tunnel(6);
+	    break;
+
+	case CTRL('Y'):		/* (^Y) tunnel up left		(T 7) */
+	    tunnel(7);
+	    break;
+
+	case CTRL('K'):		/* (^K) tunnel up		(T 8) */
+	    tunnel(8);
+	    break;
+
+	case CTRL('U'):		/* (^U) tunnel up right		(T 9) */
+	    tunnel(9);
 	    break;
 
 	case 'b':			/* (b) down, left	(1) */
-	    move_player(1, do_pickup);
-	    break;
+	    move_player(1, do_pickup); break;
 
 	case 'j':			/* (j) down		(2) */
-	    move_player(2, do_pickup);
-	    break;
+	    move_player(2, do_pickup); break;
 
 	case 'n':			/* (n) down, right	(3) */
-	    move_player(3, do_pickup);
-	    break;
+	    move_player(3, do_pickup); break;
 
 	case 'h':			/* (h) left		(4) */
-	    move_player(4, do_pickup);
-	    break;
+	    move_player(4, do_pickup); break;
 
 	case 'l':			/* (l) right		(6) */
-	    move_player(6, do_pickup);
-	    break;
+	    move_player(6, do_pickup); break;
 
 	case 'y':			/* (y) up, left		(7) */
-	    move_player(7, do_pickup);
-	    break;
+	    move_player(7, do_pickup); break;
 
 	case 'k':			/* (k) up		(8) */
-	    move_player(8, do_pickup);
-	    break;
+	    move_player(8, do_pickup); break;
 
 	case 'u':			/* (u) up, right	(9) */
-	    move_player(9, do_pickup);
-	    break;
+	    move_player(9, do_pickup); break;
 
 	case 'B':			/* (B) run down, left	(. 1) */
-	    find_init(1);
-	    break;
+	    find_init(1); break;
 
 	case 'J':			/* (J) run down		(. 2) */
-	    find_init(2);
-	    break;
+	    find_init(2); break;
 
 	case 'N':			/* (N) run down, right	(. 3) */
-	    find_init(3);
-	    break;
+	    find_init(3); break;
 
 	case 'H':			/* (H) run left		(. 4) */
-	    find_init(4);
-	    break;
+	    find_init(4); break;
 
 	case 'L':			/* (L) run right	(. 6) */
-	    find_init(6);
-	    break;
+	    find_init(6); break;
 
 	case 'Y':			/* (Y) run up, left	(. 7) */
-	    find_init(7);
-	    break;
+	    find_init(7); break;
 
 	case 'K':			/* (K) run up		(. 8) */
-	    find_init(8);
-	    break;
+	    find_init(8); break;
 
 	case 'U':			/* (U) run up, right	(. 9) */
-	    find_init(9);
-	    break;
+	    find_init(9); break;
 
-	case '/':			/* (/) identify a symbol */
-	    ident_char();
-	    free_turn_flag = TRUE;
-	    break;
 
-	case '.':			/* (.) stay in one place (5) */
+	/*** ***/
+
+	/* Stay in one place */
+	case '.':
 	    move_player(5, do_pickup);
 	    if (command_rep > 1) {
 	    command_rep--;
@@ -770,59 +770,131 @@ void do_command(char com_val)
 	    }
 	    break;
 
-	case '<':			/* (<) go down a staircase */
-	    do_cmd_go_up();
-	    break;
+	/* Rest a while */
+	case 'R':
+	    rest(); break;
 
-	case '>':			/* (>) go up a staircase */
-	    do_cmd_go_down();
-	    break;
 
-	/* Help */
-	case '?':
-	    do_cmd_help(NULL); break;
-	break;
 
-#ifdef ALLOW_SCORE
-	case 'v':   /* score patch originally by Mike Welsh mikewe@acacia.cs.pdx.edu */
-	sprintf(prt1,"Your current score is: %ld", total_points());
-	msg_print(prt1);
-	break;
-#endif
-
-	case 'f':			/* (f)orce		(B)ash */
-	    bash();
-	    break;
-
-	case 'A':			/* (A)ctivate		(A)ctivate */
-	    do_cmd_activate();
-	    break;
-
-	/* Character Description */
-	case 'C':
-	    do_cmd_change_name(); break;
-
-	case 'D':			/* (D)isarm trap */
-	    do_cmd_disarm();
-	    break;
-
-	case 'E':			/* (E)at food */
-	    do_cmd_eat_food();
-	    break;
-
-	case 'F':			/* (F)ill lamp */
-	    do_cmd_refill_lamp();
-	    break;
-
-	case 'G':			/* (G)ain magic spells */
-	    gain_spells();
-	    break;
+	/*** Searching, Resting ***/
 
 	/* Pick up an object */
 	case 'g':
 	    do_cmd_pick_up(); break;
 
-	case 'W':			/* (W)here are we on the map	(L)ocate on map */
+	/* Toggle search status */
+	case '#':
+	    do_cmd_toggle_search(); break;
+
+	/* Search the adjoining grids */
+	case 's':
+	    search(char_row, char_col, p_ptr->srh); break;
+
+
+	/*** Stairs and Doors and Chests and Traps ***/
+
+	/* Go up staircases */
+	case '<':
+	    do_cmd_go_up(); break;
+
+	/* Go down staircases */
+	case '>':
+	    do_cmd_go_down(); break;
+
+	/* Open something */
+	case 'o':
+	    do_cmd_open(); break;
+
+	/* Close something */
+	case 'c':
+	    do_cmd_close(); break;
+
+	/* Spike a door */
+	case 'S':
+	    do_cmd_spike(); break;
+
+	/* (f)orce		(B)ash */
+	case 'f':
+	    bash(); break;
+
+	/* Disarm a trap */
+	case 'D':
+	    do_cmd_disarm(); break;
+
+
+	/*** Magic and Prayers ***/
+
+	/* Peruse a Book */
+	case 'P':
+	    free_turn_flag = TRUE;
+	    do_cmd_browse(); break;
+
+	/* Gain some spells */
+	case 'G':
+	    gain_spells(); break;
+
+	/* Cast a magic spell */
+	case 'm':
+	    cast(); break;
+
+	/* Pray a prayer */
+	case 'p':
+	    pray(); break;
+
+
+	/*** Use various objects ***/
+
+	/* Inscribe an object */
+	case '{':
+	    free_turn_flag = TRUE;
+	    scribe_object(); break;
+
+	/* Activate an artifact */
+	case 'A':
+	    do_cmd_activate(); break;
+
+	/* Eat some food */
+	case 'E':
+	    do_cmd_eat_food(); break;
+
+	/* Fill the lamp */
+	case 'F':
+	    do_cmd_refill_lamp(); break;
+
+	/* Throw something */
+	case 't':
+	    do_cmd_fire(); break;
+
+	/* Zap a wand */
+	case 'z':
+	    do_cmd_aim_wand(); break;
+
+	/* Activate a rod */
+	case 'a':
+	    do_cmd_zap_rod(); break;
+
+	/* Quaff a potion */
+	case 'q':
+	    do_cmd_quaff_potion(); break;
+
+	/* Read a scroll */
+	case 'r':
+	    do_cmd_read_scroll(); break;
+
+	/* Zap a staff */
+	case 'Z':
+	    do_cmd_use_staff(); break;
+
+
+	/*** Looking at Things (nearby or on map) ***/
+
+	/* Full screen Map */
+	case 'M':
+	    free_turn_flag = TRUE;
+	    screen_map(); break;
+
+	/* Locate player on the map */	
+	case 'W':
 	    if ((p_ptr->blind > 0) || no_lite())
 	    msg_print("You can't see your map.");
 	    else {
@@ -885,152 +957,105 @@ void do_command(char com_val)
 	    free_turn_flag = TRUE;
 	    break;
 
-	case 'R':			/* (R)est a while */
-	    rest();
-	    break;
-
-
-	/* Toggle search status */
-	case '#':
-	    do_cmd_toggle_search(); break;
-
-	case CTRL('B'):		/* (^B) tunnel down left	(T 1) */
-	    tunnel(1);
-	    break;
-
-	case CTRL('M'):		/* cr must be treated same as lf. */
-	case CTRL('J'):		/* (^J) tunnel down		(T 2) */
-	    tunnel(2);
-	    break;
-
-	case CTRL('N'):		/* (^N) tunnel down right	(T 3) */
-	    tunnel(3);
-	    break;
-
-	case CTRL('H'):		/* (^H) tunnel left		(T 4) */
-	    tunnel(4);
-	    break;
-
-	case CTRL('L'):		/* (^L) tunnel right		(T 6) */
-	    tunnel(6);
-	    break;
-
-	case CTRL('Y'):		/* (^Y) tunnel up left		(T 7) */
-	    tunnel(7);
-	    break;
-
-	case CTRL('K'):		/* (^K) tunnel up		(T 8) */
-	    tunnel(8);
-	    break;
-
-	case CTRL('U'):		/* (^U) tunnel up right		(T 9) */
-	    tunnel(9);
-	    break;
-
-	case 'z':			/* (z)ap a wand		(a)im a wand */
-	    do_cmd_aim_wand();
-	    break;
-
-	case 'a':			/* (a)ctivate a rod	(z)ap a rod */
-	    do_cmd_zap_rod();
-	    break;
-
-	case 'M':
-	    screen_map();
+	/* Examine surroundings */
+	case 'x':
 	    free_turn_flag = TRUE;
-	    break;
+	    do_cmd_look(); break;
 
-	case 'P':			/* (P)eruse a book	(B)rowse in a book */
-	    do_cmd_browse();
+#ifdef TARGET
+	/* Attempt to select a new target, if compiled */
+	case '*':
+	    do_cmd_target(); break;
+#endif
+
+
+
+	/*** Help and Such ***/
+
+	/* Help */
+	case '?':
+	    do_cmd_help(NULL); break;
+
+	/* Identify Symbol */
+	case '/':
 	    free_turn_flag = TRUE;
-	    break;
+	    ident_char(); break;
 
-	case 'c':			/* (c)lose an object */
-	    do_cmd_close();
-	    break;
+	/* Character Description */
+	case 'C':
+	    do_cmd_change_name(); break;
 
-	case 'd':			/* (d)rop something */
-	    inven_command('d');
-	    break;
 
-	case 'e':			/* (e)quipment list */
-	    inven_command('e');
-	    break;
-
-	case 't':			/* (t)hrow something	(f)ire something */
-	    do_cmd_fire();
-	    break;
-
-	case 'i':			/* (i)nventory list */
-	    inven_command('i');
-	    break;
-
-	case 'S':			/* (S)pike a door	(j)am a door */
-	    do_cmd_spike();
-	    break;
-
-	case 'x':			/* e(x)amine surrounds	(l)ook about */
-	    do_cmd_look();
-	    free_turn_flag = TRUE;
-	    break;
-
-	case 'm':			/* (m)agic spells */
-	    cast();
-	    break;
-
-	case 'o':			/* (o)pen something */
-	    do_cmd_open();
-	    break;
-
-	case 'p':			/* (p)ray */
-	    pray();
-	    break;
-
-	case 'q':			/* (q)uaff */
-	    do_cmd_quaff_potion();
-	    break;
-
-	case 'r':			/* (r)ead */
-	    do_cmd_read_scroll();
-	    break;
-
-	case 's':			/* (s)earch for a turn */
-	    search(char_row, char_col, p_ptr->srh);
-	    break;
-
-	case 'T':			/* (T)ake off something	(t)ake off */
-	    inven_command('t');
-	    break;
-
-	case 'Z':			/* (Z)ap a staff	(u)se a staff */
-	    do_cmd_use_staff();
-	    break;
+	/*** System Commands ***/
 
 	/* Game Version */
 	case 'V':
 	    do_cmd_help(ANGBAND_VERSION); break;
 
-	case 'w':			/* (w)ear or wield */
-	    inven_command('w');
+	/* Repeat Feeling */
+	case CTRL('F'):
+	    free_turn_flag = TRUE;
+	    do_cmd_feeling(); break;
+
+	/* Previous message(s). */
+	case CTRL('P'):
+	    do_cmd_messages(); break;
+
+	/* Commit Suicide and Quit */
+	case 'Q':
+	    do_cmd_suicide(); break;
+
+	/* Save and Quit */
+	case CTRL('X'):
+	    if (total_winner) {
+	    msg_print("You are a Total Winner,  your character must be retired.");
+	    if (rogue_like_commands)
+	    msg_print("Use 'Q' to when you are ready to retire.");
+	    else
+	    msg_print("Use <Control>-K when you are ready to retire.");
+	    } else {
+	    (void)strcpy(died_from, "(saved)");
+	    msg_print("Saving game...");
+	    if (save_player())
+	    exit_game();
+	    msg_print("Save failed...");
+	    (void)strcpy(died_from, "(alive and well)");
+	    }
+	    free_turn_flag = TRUE;
 	    break;
 
-	case 'X':			/* e(X)change weapons	e(x)change */
-	    inven_command('x');
+	/* Redraw the screen */
+	case CTRL('R'):
+	    do_cmd_redraw(); break;
+
+	/* Set options */
+	case '=':
+	    save_screen();
+	    do_cmd_options();
+	    restore_screen();
+	    free_turn_flag = TRUE;
 	    break;
 
 #ifdef ALLOW_ARTIFACT_CHECK /* -CWS */
+	/* Check artifacts */
 	case '~':
 	if ((!wizard) && (dun_level != 0)) {
 	    msg_print("You need to be on the town level to check artifacts!");
 	    msg_print(NULL);		/* make sure can see the message -CWS */
 	} else
-	    artifact_check_no_file();
-	break;
+	    artifact_check_no_file(); break;
 #endif
 
 #ifdef ALLOW_CHECK_UNIQUES /* -CWS */
+	/* Check uniques */
 	case '|':
-	do_cmd_check_uniques();
+	    do_cmd_check_uniques(); break;
+#endif
+
+#ifdef ALLOW_SCORE
+	case 'v':   /* score patch originally by Mike Welsh mikewe@acacia.cs.pdx.edu */
+	sprintf(prt1,"Your current score is: %ld", total_points());
+	msg_print(prt1);
 	break;
 #endif
 
@@ -1176,10 +1201,13 @@ void do_command(char com_val)
 		prt("Type '?' or '\\' for help.", 0, 0);
 	    }
 	} else {
-	    prt("Type '?' for help.", 0, 0);
 	    free_turn_flag = TRUE;
+	    prt("Type '?' for help.", 0, 0);
 	}
     }
+
+
+    /* Save the command */
     last_command = com_val;
 }
 
