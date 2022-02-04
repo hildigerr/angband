@@ -1819,12 +1819,11 @@ static void do_command(char com_val)
       case 'R':			/* (R)est a while */
 	rest();
 	break;
-      case '#':			/* (#) search toggle	(S)earch toggle */
-	    search_off();
-	else
-	    search_on();
-	free_turn_flag = TRUE;
-	break;
+
+	/* Toggle search status */
+	case '#':
+	    do_cmd_toggle_search(); break;
+
       case CTRL('B'):		/* (^B) tunnel down left	(T 1) */
 	tunnel(1);
 	break;

@@ -257,6 +257,22 @@ static void do_cmd_change_name(void)
 
 
 /*
+ * Hack -- toggle search mode
+ */
+static void do_cmd_toggle_search(void)
+{
+    free_turn_flag = TRUE;
+
+    if (p_ptr->status & PY_SEARCH) {
+	search_off();
+    }
+    else {
+	search_on();
+    }
+}
+
+
+/*
  * Refill the players lamp	-RAK-
  */
 static void do_cmd_refill_lamp()
