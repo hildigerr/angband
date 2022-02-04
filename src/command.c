@@ -558,54 +558,6 @@ static int valid_countcommand(char c)
     /* Examine the command */
     switch (c) {
 
-	case 'Q':
-	case CTRL('W'):
-	case CTRL('X'):
-	case '=':
-	case '{':
-	case '/':
-	case '<':
-	case '>':
-	case '?':
-	case 'A':
-	case 'C':
-	case 'E':
-	case 'F':
-	case 'G':
-	case '#':
-	case 'z':
-	case 'P':
-	case 'c':
-	case 'd':
-	case 'e':
-	case 't':
-	case 'i':
-	case 'x':
-	case 'm':
-	case 'p':
-	case 'q':
-	case 'r':
-	case 'T':
-	case 'Z':
-	case 'V':
-	case 'w':
-	case 'W':
-	case 'X':
-	case CTRL('A'):
-	case '\\':
-	case CTRL('I'):
-	case CTRL('^'):
-	case '$':
-	case '*':
-	case ':':
-	case CTRL('T'):
-	case CTRL('E'):
-	case CTRL('F'):
-	case CTRL('Z'):
-	case CTRL('S'):
-	case CTRL('Q'):
-	case CTRL('R'):
-	    return FALSE;
 	case CTRL('P'):
 	case ESCAPE:
 	case ' ':
@@ -645,9 +597,10 @@ static int valid_countcommand(char c)
 	case CTRL('G'):
 	case '+':
 	    return TRUE;
-	default:
-	return FALSE;
     }
+
+    /* Assume no count allowed */
+    return (FALSE);
 }
 
 
