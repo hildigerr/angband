@@ -1747,13 +1747,11 @@ static void do_command(char com_val)
       case 'G':			/* (G)ain magic spells */
 	gain_spells();
 	break;
-      case 'g':			/* (g)et an object... */
-	if (prompt_carry_flag) {
-	    if (cave[char_row][char_col].i_idx != 0)	/* minor change -CFT */
-		carry(char_row, char_col, TRUE);
-	} else
-	    free_turn_flag = TRUE;
-	break;
+
+	/* Pick up an object */
+	case 'g':
+	    do_cmd_pick_up(); break;
+
       case 'W':			/* (W)here are we on the map	(L)ocate on map */
 	if ((p_ptr->blind > 0) || no_lite())
 	    msg_print("You can't see your map.");

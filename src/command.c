@@ -273,6 +273,19 @@ static void do_cmd_toggle_search(void)
 
 
 /*
+ * Hack -- pick up objects
+ */
+static void do_cmd_pick_up(void)
+{
+    if (prompt_carry_flag) {
+        if (cave[char_row][char_col].i_idx != 0)
+	    carry(char_row, char_col, TRUE);
+    } else
+        free_turn_flag = TRUE;
+}
+
+
+/*
  * Refill the players lamp	-RAK-
  */
 static void do_cmd_refill_lamp()
