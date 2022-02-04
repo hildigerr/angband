@@ -522,7 +522,6 @@ void do_cmd_options(void);
 void dungeon(void);
 int special_check(inven_type *);
 void do_cmd_rerate(void);
-int ruin_stat(int);
 
 /* effects.c */
 void do_cmd_eat_food(void);
@@ -753,6 +752,7 @@ void darken_player(int, int);
 
 /* moria2.c */
 int is_quest(int);
+int ruin_stat(int);
 void hit_trap(int, int);
 int cast_spell(cptr ,int, int *, int *);
 u32b monster_death(int, int, u32b, u32b, u32b);

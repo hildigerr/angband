@@ -2096,30 +2096,4 @@ static void do_command(char com_val)
 }
 
 
-int ruin_stat(int stat)
-{
-    register int tmp_stat;
-
-    tmp_stat = p_ptr->cur_stat[stat];
-    if (tmp_stat > 3) {
-	if (tmp_stat > 6) {
-	    if (tmp_stat < 19) {
-		tmp_stat -= 3;
-	    } else {
-		tmp_stat /= 2;
-		if (tmp_stat < 18)
-		    tmp_stat = 18;
-	    }
-	} else
-	    tmp_stat--;
-
-	p_ptr->cur_stat[stat] = tmp_stat;
-	p_ptr->max_stat[stat] = tmp_stat;
-	set_use_stat(stat);
-	prt_stat(stat);
-	return TRUE;
-    } else
-	return FALSE;
-}
-
 
