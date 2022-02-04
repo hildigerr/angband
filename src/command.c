@@ -331,6 +331,55 @@ static void do_cmd_refill_lamp()
 
 
 
+/*
+ * Support code for the "CTRL('P')" recall command
+ */
+
+static void do_cmd_messages(void)
+{
+    int i, j;
+
+    /* Free move */
+    free_turn_flag = TRUE;
+
+	if (command_rep > 0) {
+	    i = command_rep;
+	    if (i > MAX_SAVE_MSG)
+		i = MAX_SAVE_MSG;
+	    command_rep = 0;
+	} else if (last_command != 16)
+	    i = 1;
+	else
+	    i = MAX_SAVE_MSG;
+
+	j = last_msg;
+	if (i > 1) {
+
+    /* Save the screen */
+	    save_screen();
+
+	    x = i;
+
+	    while (i > 0) {
+
+		i--;
+		prt(old_msg[j], i, 0);
+		if (j == 0)
+		    j = MAX_SAVE_MSG - 1;
+		else
+		    j--;
+	    }
+
+	    erase_line(x, 0);
+	    pause_line(x);
+	    restore_screen();
+
+	} else {
+	/* Distinguish real and recovered messages with a '>'. -CJS- */
+	    put_str(">", 0, 0);
+	    prt(old_msg[j], 0, 1);
+	}
+}
 
 
 /*
