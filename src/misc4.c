@@ -1389,6 +1389,45 @@ void change_name()
 
 
 /*
+ * Describe number of remaining charges.		-RAK-	
+ */
+void inven_item_charges(int item_val)
+{
+    register int rem_num;
+    vtype        out_val;
+
+    if (known2_p(&inventory[item_val])) {
+	rem_num = inventory[item_val].pval;
+	(void)sprintf(out_val, "You have %d charges remaining.", rem_num);
+	msg_print(out_val);
+    }
+}
+
+
+/*
+ * Describe an inventory item, in terms of its "number"
+ */
+void inven_item_describe(int i_idx)
+{
+    inven_type *i_ptr;
+    bigvtype out_val, tmp_str;
+
+    i_ptr = &inventory[i_idx];
+
+    /* Get a description */
+    i_ptr->number--;
+    objdes(tmp_str, i_ptr, TRUE);
+    i_ptr->number++;
+
+    /* Print a message */
+    (void)sprintf(out_val, "You have %s.", tmp_str);
+    msg_print(out_val);
+}
+
+
+
+
+/*
  * Computes current weight limit.
  */
 int weight_limit(void)

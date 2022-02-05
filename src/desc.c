@@ -966,35 +966,6 @@ void invcopy(inven_type *to, int k_idx)
 }
 
 
-/* Describe number of remaining charges.		-RAK-	 */
-void desc_charges(int item_val)
-{
-    register int rem_num;
-    vtype        out_val;
-
-    if (known2_p(&inventory[item_val])) {
-	rem_num = inventory[item_val].pval;
-	(void)sprintf(out_val, "You have %d charges remaining.", rem_num);
-	msg_print(out_val);
-    }
-}
-
-
-/* Describe amount of item remaining.			-RAK-	 */
-void inven_item_describe(int item_val)
-{
-    bigvtype             out_val, tmp_str;
-    register inven_type *i_ptr;
-
-    i_ptr = &inventory[item_val];
-    i_ptr->number--;
-    objdes(tmp_str, i_ptr, TRUE);
-    i_ptr->number++;
-    (void)sprintf(out_val, "You have %s.", tmp_str);
-    msg_print(out_val);
-}
-
-
 
 
 

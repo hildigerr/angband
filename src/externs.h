@@ -511,7 +511,7 @@ void scribe_object(void);
 void add_inscribe(inven_type *, int);
 void inscribe(inven_type *, cptr);
 void invcopy(inven_type *, int);
-void desc_charges(int);
+void inven_item_charges(int);
 void inven_item_describe(int);
 s16b flavor_p(inven_type *);
 

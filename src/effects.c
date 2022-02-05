@@ -1712,7 +1712,7 @@ void do_cmd_aim_wand(void)
     }
 	} else if (!known1_p(i_ptr)) sample(i_ptr);
 
-	desc_charges(item_val);
+	inven_item_charges(item_val);
     }
 }
 
@@ -2002,7 +2002,7 @@ void do_cmd_use_staff(void)
 	}
     } else if (!known1_p(i_ptr)) sample(i_ptr);
 
-    desc_charges(item_val);
+    inven_item_charges(item_val);
 }
 
 
