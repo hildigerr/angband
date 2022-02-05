@@ -771,6 +771,7 @@ void do_cmd_disarm(void);
 void bash(void);
 void do_cmd_spike(void);
 void do_cmd_fire(void);
+void do_cmd_stay(int);
 void do_cmd_feeling(void);
 void do_cmd_check_uniques(void);
 

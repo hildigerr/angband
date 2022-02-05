@@ -763,7 +763,7 @@ void do_command(char com_val)
 
 	/* Stay in one place */
 	case '.':
-	    move_player(5, do_pickup);
+	    do_cmd_stay(do_pickup);
 	    if (command_rep > 1) {
 	    command_rep--;
 	    rest();

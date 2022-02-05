@@ -1829,6 +1829,17 @@ void do_cmd_fire()
 }
 
 
+/*
+ * Stay still (but check for treasure, traps, re-light, etc)
+ */
+
+void do_cmd_stay(int pickup)
+{
+    /* Actually "move" the character (overkill, but it works) */
+    move_player(5, pickup);
+}
+
+
 void do_cmd_feeling()
 {
     /* No useful feeling in town */
