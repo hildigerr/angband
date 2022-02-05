@@ -395,6 +395,62 @@ static void wr_lore(monster_lore *l_ptr)
     wr_byte(l_ptr->r_attacks[i]);
 }
 
+
+
+/*
+ * Write/Read a store
+ */
+static void wr_store(store_type *st_ptr)
+{
+    int j;
+
+    wr_s32b(st_ptr->store_open);
+    wr_s16b(st_ptr->insult_cur);
+    wr_byte(st_ptr->owner);
+    wr_byte(st_ptr->store_ctr);
+    wr_u16b(st_ptr->good_buy);
+    wr_u16b(st_ptr->bad_buy);
+
+    /* Write the items */
+    for (j = 0; j < st_ptr->store_ctr; j++) {
+	wr_s32b(st_ptr->store_inven[j].scost);
+	wr_item(&st_ptr->store_inven[j].sitem);
+    }
+}
+
+
+static errr rd_store(store_type *st_ptr)
+{
+    int j;
+
+    rd_s32b(&st_ptr->store_open);
+    rd_s16b(&st_ptr->insult_cur);
+    rd_byte(&st_ptr->owner);
+    rd_byte(&st_ptr->store_ctr);
+    rd_u16b(&st_ptr->good_buy);
+    rd_u16b(&st_ptr->bad_buy);
+
+    /* Too many items */    
+    if (st_ptr->store_ctr > STORE_INVEN_MAX) {
+	prt("ERROR in store_ctr", 9, 0);
+	return (10);
+    }
+
+    /* Read the items (and costs) */
+    for (j = 0; j < st_ptr->store_ctr; j++) {
+	rd_s32b(&st_ptr->store_inven[j].scost);
+	rd_item(&st_ptr->store_inven[j].sitem);
+    }
+
+    /* Success */
+    return (0);
+}
+
+
+
+
+
+
 static char *basename(char *a)
 {
     char *b;
@@ -780,21 +836,8 @@ static int sv_write()
     wr_u16b(player_hp[i]);
     }
 
-
-    for (i = 0; i < MAX_STORES; i++) {
-	st_ptr = &store[i];
-	wr_s32b(st_ptr->store_open);
-	wr_s16b(st_ptr->insult_cur);
-	wr_byte(st_ptr->owner);
-	wr_byte(st_ptr->store_ctr);
-	wr_u16b(st_ptr->good_buy);
-	wr_u16b(st_ptr->bad_buy);
-
-	for (j = 0; j < st_ptr->store_ctr; j++) {
-	    wr_s32b(st_ptr->store_inven[j].scost);
-	    wr_item(&st_ptr->store_inven[j].sitem);
-	}
-    }
+    /* Dump the stores */
+    for (i = 0; i < MAX_STORES; i++) wr_store(&store[i]);
 
 /* save the current time in the savefile */
     l = time((long *)0);
@@ -1607,22 +1650,9 @@ int load_player(int *generate)
 	    rd_u16b(&player_hp[i]);
 	    }
 
+    /* Read the stores */
 	    for (i = 0; i < MAX_STORES; i++) {
-	      st_ptr = &store[i];
-	      rd_s32b(&st_ptr->store_open);
-	      rd_s16b(&st_ptr->insult_cur);
-	      rd_byte(&st_ptr->owner);
-	      rd_byte(&st_ptr->store_ctr);
-	      rd_u16b(&st_ptr->good_buy);
-	      rd_u16b(&st_ptr->bad_buy);
-	      if (st_ptr->store_ctr > STORE_INVEN_MAX) {
-		prt("ERROR in store_ctr", 9, 0);
-		goto error;
-	      }
-	      for (j = 0; j < st_ptr->store_ctr; j++) {
-		rd_s32b(&st_ptr->store_inven[j].scost);
-		rd_item(&st_ptr->store_inven[j].sitem);
-	      }
+	      if (rd_store(&store[i])) goto error;
 	    }
 
 	    rd_u32b(&time_saved);
