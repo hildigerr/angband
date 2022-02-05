@@ -41,6 +41,384 @@ int is_a_vowel(int ch)
 }
 
 
+/*
+ * Return a string describing how a given item is carried. -CJS- 
+ */
+cptr describe_use(int i)
+{
+    register cptr p;
+
+    switch (i) {
+      case INVEN_WIELD: p = "wielding"; break;
+      case INVEN_AUX:   p = "holding ready by your side"; break;
+      case INVEN_LEFT:  p = "wearing on your left hand"; break;
+      case INVEN_RIGHT: p = "wearing on your right hand"; break;
+      case INVEN_NECK:  p = "wearing around your neck"; break;
+      case INVEN_LIGHT: p = "using to light the way"; break;
+      case INVEN_BODY:  p = "wearing on your body"; break;
+      case INVEN_OUTER: p = "wearing about your body"; break;
+      case INVEN_ARM:   p = "wearing on your arm"; break;
+      case INVEN_HEAD:  p = "wearing on your head"; break;
+      case INVEN_HANDS: p = "wearing on your hands"; break;
+      case INVEN_FEET:  p = "wearing on your feet"; break;
+      default:          p = "carrying in your pack"; break;
+    }
+
+    /* Return the result */
+    return p;
+}
+
+
+
+/*
+ * Displays inventory items from r1 to r2	-RAK-
+ *
+ * Designed to keep the display as far to the right as possible.  -CJS-
+ *
+ * The parameter col gives a column at which to start, but if the display does
+ * not fit, it may be moved left.  The return value is the left edge used. 
+ */
+int show_inven(int r1, int r2, int weight, int col, int (*test) ())
+{
+    register int i, j, k;
+    int          len, l, lim;
+    bigvtype     tmp_val;
+    vtype        out_val[23];
+
+    /* Default "max-length" */
+    len = 79 - col;
+
+    /* Maximum space allowed for descriptions */
+    if (weight) lim = 68; else lim = 76;
+
+    for (i = 0; i < 23; i++) out_val[i][0] = '\0';
+
+    for (k = 0, i = r1; i <= r2; i++) {
+
+	if (test) {
+	    if ((*test) (k_list[inventory[i].index].tval)) {
+
+	/* Describe the object, enforce max length */
+	objdes(tmp_val, &inventory[i], TRUE);
+	tmp_val[lim] = 0;  /* Truncate if too long. */
+
+	(void)sprintf(out_val[i], "  %c) %s", 'a' + i, tmp_val);
+
+	/* Find the predicted "line length" */
+	l = strlen(out_val[i]);
+
+	/* Be sure to account for the weight */
+	if (weight) l += 9;
+
+	/* Maintain the maximum length */
+	if (l > len) len = l;
+
+	/* Advance to next "line" */
+	k++;
+    }
+
+	} else {
+
+	    objdes(tmp_val, &inventory[i], TRUE);
+	    tmp_val[lim] = 0;	   /* Truncate if too long. */
+	    (void)sprintf(out_val[i], "  %c) %s", 'a' + i, tmp_val);
+	    l = strlen(out_val[i]);
+	    if (weight) l += 9;
+	    if (l > len) len = l;
+	    k++;
+	}
+    }
+
+    /* Find the column to start in */
+    col = 79 - len;
+    if (col < 0) col = 0;
+
+    for (j = 0, i = r1; (i <= r2) && k; i++) {
+
+	if (out_val[i][0]) {
+	    k--;
+	/* don't need first two spaces if in first column */
+	    if (col == 0) prt(&out_val[i][2], 1 + j, col);
+	    else prt(out_val[i], 1 + j, col);
+
+	/* Display the weight if needed */
+	if (weight) {
+	    int wgt = inventory[i].weight * inventory[i].number;
+	    (void)sprintf(tmp_val, "%3d.%d lb", wgt / 10, wgt % 10);
+	    prt(tmp_val, j + 1, 71);
+	}
+	j++;
+	}
+    }
+
+    /* Erase the final line */
+    erase_line(j + 1,col);
+
+    return col;
+}
+
+
+
+/*
+ * Displays (all) equipment items    -RAK-
+ * Keep display as far right as possible. -CJS-
+ */
+int show_equip(int weight, int col)
+{
+    register int         i, line = 0;
+    register inven_type *i_ptr;
+    int                  l, len, lim;
+    register const char *prt1;
+    bigvtype             prt2;
+
+    vtype                out_val[INVEN_ARRAY_SIZE - INVEN_WIELD];
+
+    len = 79 - col;
+    if (weight) lim = 52; else lim = 60;
+
+    for (i = INVEN_WIELD; i < INVEN_ARRAY_SIZE; i++) {
+
+	i_ptr = &inventory[i];
+
+	if (i_ptr->tval != TV_NOTHING) {
+
+	    switch (i) {
+
+	      case INVEN_WIELD:
+		if (p_ptr->use_stat[A_STR] * 15 < i_ptr->weight) prt1 = "Just lifting";
+		else prt1 = "Wielding";
+		break;
+
+	      case INVEN_HEAD: prt1 = "On head"; break;
+	      case INVEN_NECK: prt1 = "Around neck"; break;
+	      case INVEN_BODY: prt1 = "On body"; break;
+	      case INVEN_ARM: prt1 = "On arm"; break;
+	      case INVEN_HANDS: prt1 = "On hands"; break;
+	      case INVEN_RIGHT: prt1 = "On right hand"; break;
+	      case INVEN_LEFT: prt1 = "On left hand"; break;
+	      case INVEN_FEET: prt1 = "On feet"; break;
+	      case INVEN_OUTER: prt1 = "About body"; break;
+	      case INVEN_LIGHT: prt1 = "Light source"; break;
+	      case INVEN_AUX: prt1 = "Spare weapon"; break;
+	      default: prt1 = "Unknown value"; break;
+	    }
+
+	/* Build a truncated object description */
+	objdes(prt2, &inventory[i], TRUE);
+	prt2[lim] = 0;	   /* Truncate if necessary */
+
+	(void)sprintf(out_val[line], "  %c) %-14s: %s", line + 'a', prt1, prt2);
+
+	l = strlen(out_val[line]);
+	if (weight) l += 9;
+
+	/* Maintain the max-length */
+	if (l > len) len = l;
+
+	/* Advance the entry */
+	line++;
+	}
+    }
+
+    /* Find a column to start in */
+    col = 79 - len; if (col < 0) col = 0;
+
+    line = 0;
+    for (i = INVEN_WIELD; i < INVEN_ARRAY_SIZE; i++) {
+
+	/* Get the item */
+	i_ptr = &inventory[i];
+
+	if (i_ptr->tval != TV_NOTHING) {
+
+	/* don't need first two spaces when using whole screen */
+	    if (col == 0) prt(&out_val[line][2], line + 1, col);
+	    else prt(out_val[line], line + 1, col);
+
+	/* Display the weight if needed */
+	if (weight) {
+	    int wgt = i_ptr->weight * i_ptr->number;
+	    (void)sprintf(prt2, "%3d.%d lb", wgt / 10, wgt % 10);
+	    prt(prt2, line + 1, 71);
+	}
+	line++;
+	}
+    }
+    
+    /* Make a shadow below the list (if possible) */
+    erase_line(line+1, col);
+
+    return col;
+}
+
+
+
+
+
+
+/*
+ * Get the ID of an item and return the CTR value of it	-RAK-	 
+ */
+int get_item(int *com_val, cptr pmt, int i, int j, int (*test) ())
+{
+    vtype        out_val;
+    char         which;
+    register int test_flag, item;
+    int          full, i_scr, redraw;
+
+    int on_floor, ih;
+    cave_type *c_ptr;
+ 
+    /* check we're a) identifying and b) on the floor is an object
+     * and c) it is a object wich could be picked up
+     */
+
+    c_ptr = &cave[char_row][char_col];
+    ih = i_list[c_ptr->i_idx].tval;
+    on_floor = ( (strcmp("Item you wish identified?",pmt) == 0) &&
+		 !( (c_ptr->i_idx == 0) || ih == TV_NOTHING
+		    || ih > TV_MAX_PICK_UP) );
+
+    item = FALSE;
+    redraw = FALSE;
+    *com_val = 0;
+    i_scr = 1;
+    if (j > INVEN_WIELD) {
+	full = TRUE;
+	if (inven_ctr == 0) {
+	    i_scr = 0;
+	    j = equip_ctr - 1;
+	} else
+	    j = inven_ctr - 1;
+    } else
+	full = FALSE;
+
+    if (inven_ctr > 0 || (full && equip_ctr > 0)) {
+	do {
+	    if (redraw) {
+		if (i_scr > 0)
+		    (void)show_inven(i, j, FALSE, 80, test);
+		else
+		    (void)show_equip(FALSE, 80);
+	    }
+	    if (full)
+		(void)sprintf(out_val,
+			      "(%s: %c-%c,%s%s / for %s, or ESC) %s",
+			     (i_scr > 0 ? "Inven" : "Equip"), i + 'a', j + 'a',
+			      (on_floor ? " - floor," : ""),
+			      (redraw ? "" : " * to see,"),
+			      (i_scr > 0 ? "Equip" : "Inven"), pmt);
+	    else
+		(void)sprintf(out_val,
+			"(Items %c-%c,%s ESC to exit) %s", i + 'a', j + 'a',
+			      (redraw ? "" : " * for inventory list,"), pmt);
+	    test_flag = FALSE;
+	    prt(out_val, 0, 0);
+	    do {
+		which = inkey();
+		switch (which) {
+		  case ESCAPE:
+		    test_flag = TRUE;
+		    free_turn_flag = TRUE;
+		    i_scr = (-1);
+		    break;
+		  case '/':
+		    if (full) {
+			if (i_scr > 0) {
+			    if (equip_ctr == 0) {
+				prt("But you're not using anything -more-", 0, 0);
+				(void)inkey();
+			    } else {
+				i_scr = 0;
+				test_flag = TRUE;
+				if (redraw) {
+				    j = equip_ctr;
+				    while (j < inven_ctr) {
+					j++;
+					erase_line(j, 0);
+				    }
+				}
+				j = equip_ctr - 1;
+			    }
+			    prt(out_val, 0, 0);
+			} else {
+			    if (inven_ctr == 0) {
+				prt("But you're not carrying anything -more-", 0, 0);
+				(void)inkey();
+			    } else {
+				i_scr = 1;
+				test_flag = TRUE;
+				if (redraw) {
+				    j = inven_ctr;
+				    while (j < equip_ctr) {
+					j++;
+					erase_line(j, 0);
+				    }
+				}
+				j = inven_ctr - 1;
+			    }
+			}
+
+		    }
+		    break;
+		  case '*':
+		    if (!redraw) {
+			test_flag = TRUE;
+			save_screen();
+			redraw = TRUE;
+		    }
+		    break;
+		case '-':
+		/* not identified from INVEN or EQU but not aborted */
+		    if (on_floor) {
+			item = FUZZY;
+			test_flag = TRUE;
+			i_scr = -1;
+			break;
+		    }
+		  default:
+		    if (isupper((int)which))
+			*com_val = which - 'A';
+		    else
+			*com_val = which - 'a';
+		    if ((*com_val >= i) && (*com_val <= j)) {
+			if (i_scr == 0) {
+			    i = 21;
+			    j = *com_val;
+			    do {
+				while (inventory[++i].tval == TV_NOTHING);
+				j--;
+			    }
+			    while (j >= 0);
+			    *com_val = i;
+			}
+			if (isupper((int)which) && !verify("Try", *com_val)) {
+			    test_flag = TRUE;
+			    free_turn_flag = TRUE;
+			    i_scr = (-1);
+			    break;
+			}
+			test_flag = TRUE;
+			item = TRUE;
+			i_scr = (-1);
+		    } else
+			bell();
+		    break;
+		}
+	    }
+	    while (!test_flag);
+	}
+	while (i_scr >= 0);
+	if (redraw)
+	    restore_screen();
+	erase_line(MSG_LINE, 0);
+    } else
+	prt("You are not carrying anything.", 0, 0);
+    return (item);
+}
+
+
+
 /* Player bonuses					-RAK-	 */
 /* When an item is worn or taken off, this re-adjusts the player
  * bonuses.  Factor=1 : wear; Factor=-1 : removed  
@@ -340,233 +718,6 @@ void calc_bonuses()
 }
 
 
-/* Displays inventory items from r1 to r2	-RAK-	 */
-/*
- * Designed to keep the display as far to the right as possible.  The  -CJS-
- * parameter col gives a column at which to start, but if the display does
- * not fit, it may be moved left.  The return value is the left edge used. 
- */
-int show_inven(int r1, int r2, int weight, int col, int (*test) ())
-{
-    register int i, j, k;
-    int          total_weight, len, l, lim;
-    bigvtype     tmp_val;
-    vtype        out_val[23];
-
-    len = 79 - col;
-    if (weight)
-	lim = 68;
-    else
-	lim = 76;
-
-    for (i = 0; i < 23; i++)
-	out_val[i][0] = '\0';
-
-    k = 0;
-    for (i = r1; i <= r2; i++) {
-	if (test) {
-	    if ((*test) (k_list[inventory[i].index].tval)) {
-		objdes(tmp_val, &inventory[i], TRUE);
-		tmp_val[lim] = 0;  /* Truncate if too long. */
-		(void)sprintf(out_val[i], "  %c) %s", 'a' + i, tmp_val);
-		l = strlen(out_val[i]);
-		if (weight)
-		    l += 9;
-		if (l > len)
-		    len = l;
-		k++;
-	    }
-	} else {
-	    objdes(tmp_val, &inventory[i], TRUE);
-	    tmp_val[lim] = 0;	   /* Truncate if too long. */
-	    (void)sprintf(out_val[i], "  %c) %s", 'a' + i, tmp_val);
-	    l = strlen(out_val[i]);
-	    if (weight)
-		l += 9;
-	    if (l > len)
-		len = l;
-	    k++;
-	}
-    }
-
-    col = 79 - len;
-    if (col < 0)
-	col = 0;
-
-    j = 0;
-    for (i = r1; (i <= r2) && k; i++) {
-	if (out_val[i][0]) {
-	    k--;
-	/* don't need first two spaces if in first column */
-	    if (col == 0)
-		prt(&out_val[i][2], 1 + j, col);
-	    else
-		prt(out_val[i], 1 + j, col);
-	    if (weight) {
-		total_weight = inventory[i].weight * inventory[i].number;
-		(void)sprintf(tmp_val, "%3d.%d lb",
-			      (total_weight) / 10, (total_weight) % 10);
-		prt(tmp_val, 1 + j, 71);
-	    }
-	    j++;
-	}
-    }
-    erase_line(1+j,col);
-    return col;
-}
-
-
-/* Return a string describing how a given equipment item is carried. -CJS- */
-cptr describe_use(int i)
-{
-    register cptr p;
-
-    switch (i) {
-      case INVEN_WIELD:
-	p = "wielding";
-	break;
-      case INVEN_HEAD:
-	p = "wearing on your head";
-	break;
-      case INVEN_NECK:
-	p = "wearing around your neck";
-	break;
-      case INVEN_BODY:
-	p = "wearing on your body";
-	break;
-      case INVEN_ARM:
-	p = "wearing on your arm";
-	break;
-      case INVEN_HANDS:
-	p = "wearing on your hands";
-	break;
-      case INVEN_RIGHT:
-	p = "wearing on your right hand";
-	break;
-      case INVEN_LEFT:
-	p = "wearing on your left hand";
-	break;
-      case INVEN_FEET:
-	p = "wearing on your feet";
-	break;
-      case INVEN_OUTER:
-	p = "wearing about your body";
-	break;
-      case INVEN_LIGHT:
-	p = "using to light the way";
-	break;
-      case INVEN_AUX:
-	p = "holding ready by your side";
-	break;
-      default:
-	p = "carrying in your pack";
-	break;
-    }
-    return p;
-}
-
-
-/* Displays equipment items from r1 to end	-RAK-	 */
-/* Keep display as far right as possible. -CJS- */
-int show_equip(int weight, int col)
-{
-    register int         i, line;
-    int                  total_weight, l, len, lim;
-    register const char *prt1;
-    bigvtype             prt2;
-    vtype                out_val[INVEN_ARRAY_SIZE - INVEN_WIELD];
-    register inven_type *i_ptr;
-
-    line = 0;
-    len = 79 - col;
-    if (weight)
-	lim = 52;
-    else
-	lim = 60;
-    for (i = INVEN_WIELD; i < INVEN_ARRAY_SIZE; i++) {
-	i_ptr = &inventory[i];
-	if (i_ptr->tval != TV_NOTHING) {
-	    switch (i) {
-	      case INVEN_WIELD:
-		if (p_ptr->use_stat[A_STR] * 15 < i_ptr->weight)
-		    prt1 = "Just lifting";
-		else
-		    prt1 = "Wielding";
-		break;
-	      case INVEN_HEAD:
-		prt1 = "On head";
-		break;
-	      case INVEN_NECK:
-		prt1 = "Around neck";
-		break;
-	      case INVEN_BODY:
-		prt1 = "On body";
-		break;
-	      case INVEN_ARM:
-		prt1 = "On arm";
-		break;
-	      case INVEN_HANDS:
-		prt1 = "On hands";
-		break;
-	      case INVEN_RIGHT:
-		prt1 = "On right hand";
-		break;
-	      case INVEN_LEFT:
-		prt1 = "On left hand";
-		break;
-	      case INVEN_FEET:
-		prt1 = "On feet";
-		break;
-	      case INVEN_OUTER:
-		prt1 = "About body";
-		break;
-	      case INVEN_LIGHT:
-		prt1 = "Light source";
-		break;
-	      case INVEN_AUX:
-		prt1 = "Spare weapon";
-		break;
-	      default:
-		prt1 = "Unknown value";
-		break;
-	    }
-	    objdes(prt2, &inventory[i], TRUE);
-	    prt2[lim] = 0;	   /* Truncate if necessary */
-	    (void)sprintf(out_val[line], "  %c) %-14s: %s", line + 'a',
-			  prt1, prt2);
-	    l = strlen(out_val[line]);
-	    if (weight)
-		l += 9;
-	    if (l > len)
-		len = l;
-	    line++;
-	}
-    }
-    col = 79 - len;
-    if (col < 0)
-	col = 0;
-
-    line = 0;
-    for (i = INVEN_WIELD; i < INVEN_ARRAY_SIZE; i++) {
-	i_ptr = &inventory[i];
-	if (i_ptr->tval != TV_NOTHING) {
-	/* don't need first two spaces when using whole screen */
-	    if (col == 0)
-		prt(&out_val[line][2], line + 1, col);
-	    else
-		prt(out_val[line], line + 1, col);
-	    if (weight) {
-		total_weight = i_ptr->weight * i_ptr->number;
-		(void)sprintf(prt2, "%3d.%d lb",
-			      (total_weight) / 10, (total_weight) % 10);
-		prt(prt2, line + 1, 71);
-	    }
-	    line++;
-	}
-    }
-    erase_line(line + 1, col);
-    return col;
-}
 
 /*
  * Remove item from equipment list		-RAK-	
@@ -1305,170 +1456,6 @@ void inven_command(int command)
     if (!in_store_flag) 
 	prt_equippy_chars();
 }
-
-
-/* Get the ID of an item and return the CTR value of it	-RAK-	 */
-int get_item(int *com_val, cptr pmt, int i, int j, int (*test) ())
-{
-    vtype        out_val;
-    char         which;
-    register int test_flag, item;
-    int          full, i_scr, redraw;
-
-    int on_floor, ih;
-    cave_type *c_ptr;
- 
-    /* check we're a) identifying and b) on the floor is an object
-     * and c) it is a object wich could be picked up
-     */
-
-    c_ptr = &cave[char_row][char_col];
-    ih = i_list[c_ptr->i_idx].tval;
-    on_floor = ( (strcmp("Item you wish identified?",pmt) == 0) &&
-		 !( (c_ptr->i_idx == 0) || ih == TV_NOTHING
-		    || ih > TV_MAX_PICK_UP) );
-
-    item = FALSE;
-    redraw = FALSE;
-    *com_val = 0;
-    i_scr = 1;
-    if (j > INVEN_WIELD) {
-	full = TRUE;
-	if (inven_ctr == 0) {
-	    i_scr = 0;
-	    j = equip_ctr - 1;
-	} else
-	    j = inven_ctr - 1;
-    } else
-	full = FALSE;
-
-    if (inven_ctr > 0 || (full && equip_ctr > 0)) {
-	do {
-	    if (redraw) {
-		if (i_scr > 0)
-		    (void)show_inven(i, j, FALSE, 80, test);
-		else
-		    (void)show_equip(FALSE, 80);
-	    }
-	    if (full)
-		(void)sprintf(out_val,
-			      "(%s: %c-%c,%s%s / for %s, or ESC) %s",
-			     (i_scr > 0 ? "Inven" : "Equip"), i + 'a', j + 'a',
-			      (on_floor ? " - floor," : ""),
-			      (redraw ? "" : " * to see,"),
-			      (i_scr > 0 ? "Equip" : "Inven"), pmt);
-	    else
-		(void)sprintf(out_val,
-			"(Items %c-%c,%s ESC to exit) %s", i + 'a', j + 'a',
-			      (redraw ? "" : " * for inventory list,"), pmt);
-	    test_flag = FALSE;
-	    prt(out_val, 0, 0);
-	    do {
-		which = inkey();
-		switch (which) {
-		  case ESCAPE:
-		    test_flag = TRUE;
-		    free_turn_flag = TRUE;
-		    i_scr = (-1);
-		    break;
-		  case '/':
-		    if (full) {
-			if (i_scr > 0) {
-			    if (equip_ctr == 0) {
-				prt("But you're not using anything -more-", 0, 0);
-				(void)inkey();
-			    } else {
-				i_scr = 0;
-				test_flag = TRUE;
-				if (redraw) {
-				    j = equip_ctr;
-				    while (j < inven_ctr) {
-					j++;
-					erase_line(j, 0);
-				    }
-				}
-				j = equip_ctr - 1;
-			    }
-			    prt(out_val, 0, 0);
-			} else {
-			    if (inven_ctr == 0) {
-				prt("But you're not carrying anything -more-", 0, 0);
-				(void)inkey();
-			    } else {
-				i_scr = 1;
-				test_flag = TRUE;
-				if (redraw) {
-				    j = inven_ctr;
-				    while (j < equip_ctr) {
-					j++;
-					erase_line(j, 0);
-				    }
-				}
-				j = inven_ctr - 1;
-			    }
-			}
-
-		    }
-		    break;
-		  case '*':
-		    if (!redraw) {
-			test_flag = TRUE;
-			save_screen();
-			redraw = TRUE;
-		    }
-		    break;
-		case '-':
-		/* not identified from INVEN or EQU but not aborted */
-		    if (on_floor) {
-			item = FUZZY;
-			test_flag = TRUE;
-			i_scr = -1;
-			break;
-		    }
-		  default:
-		    if (isupper((int)which))
-			*com_val = which - 'A';
-		    else
-			*com_val = which - 'a';
-		    if ((*com_val >= i) && (*com_val <= j)) {
-			if (i_scr == 0) {
-			    i = 21;
-			    j = *com_val;
-			    do {
-				while (inventory[++i].tval == TV_NOTHING);
-				j--;
-			    }
-			    while (j >= 0);
-			    *com_val = i;
-			}
-			if (isupper((int)which) && !verify("Try", *com_val)) {
-			    test_flag = TRUE;
-			    free_turn_flag = TRUE;
-			    i_scr = (-1);
-			    break;
-			}
-			test_flag = TRUE;
-			item = TRUE;
-			i_scr = (-1);
-		    } else
-			bell();
-		    break;
-		}
-	    }
-	    while (!test_flag);
-	}
-	while (i_scr >= 0);
-	if (redraw)
-	    restore_screen();
-	erase_line(MSG_LINE, 0);
-    } else
-	prt("You are not carrying anything.", 0, 0);
-    return (item);
-}
-
-
-
-
 
 
 static void flood_light(int y, int x)
