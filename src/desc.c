@@ -938,31 +938,57 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
     }
 }
 
-void invcopy(inven_type *to, int k_idx)
-{
-    register inven_kind *from;
 
-    from = &k_list[k_idx];
-    to->k_idx = k_idx;
-    to->name2 = SN_NULL;
-    to->inscrip[0] = '\0';
-    to->flags1 = from->flags1;
-    to->flags2 = from->flags2;
-    to->tval = from->tval;
-    to->tchar = from->tchar;
-    to->pval = from->pval;
-    to->cost = from->cost;
-    to->sval = from->sval;
-    to->number = from->number;
-    to->weight = from->weight;
-    to->tohit = from->tohit;
-    to->todam = from->todam;
-    to->ac = from->ac;
-    to->toac = from->toac;
-    to->damage[0] = from->damage[0];
-    to->damage[1] = from->damage[1];
-    to->level = from->level;
-    to->ident = 0;
+
+
+/*
+ * Make "i_ptr" a "clean" copy of the given "kind" of object
+ */
+void invcopy(inven_type *i_ptr, int k_idx)
+{
+    register inven_kind *k_ptr;
+
+    /* Get the object template */
+    k_ptr = &k_list[k_idx];
+
+    /* Save the kind index */
+    i_ptr->k_idx = k_idx;
+
+    /* Quick access to tval/sval */
+    i_ptr->tval = k_ptr->tval;
+    i_ptr->sval = k_ptr->sval;
+
+    /* Save the default "pval" */
+    i_ptr->pval = k_ptr->pval;
+
+    /* Default number and weight */
+    i_ptr->number = k_ptr->number;
+    i_ptr->weight = k_ptr->weight;
+
+    /* Default magic */
+    i_ptr->tohit = k_ptr->tohit;
+    i_ptr->todam = k_ptr->todam;
+    i_ptr->toac = k_ptr->toac;
+    i_ptr->ac = k_ptr->ac;
+    i_ptr->damage[0] = k_ptr->damage[0];
+    i_ptr->damage[1] = k_ptr->damage[1];
+
+    /* Default cost and flags */
+    i_ptr->cost = k_ptr->cost;
+    i_ptr->flags1 = k_ptr->flags1;
+    i_ptr->flags2 = k_ptr->flags2;
+
+    /* Wipe the inscription */
+    i_ptr->inscrip[0] = '\0';
+
+    /* No special name */
+    i_ptr->name2 = SN_NULL;
+
+    /* No ident info yet */
+    i_ptr->ident = 0;
+
+    i_ptr->tchar = k_ptr->tchar;
+    i_ptr->level = k_ptr->level;
 }
 
 
