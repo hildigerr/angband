@@ -1395,3 +1395,75 @@ void py_bash(int y, int x)
 }
 
 
+
+
+/*
+ * Attacker's level and plusses,  defender's AC 
+ * Note: pth could be less than 0 if weapon is too heavy
+ * Always miss 1 out of 20, always hit 1 out of 20
+ */
+int test_hit(int bth, int level, int pth, int ac, int attack_type)
+{
+    register int i, die;
+
+    /* Hack -- disturb the player */
+    disturb(1, 0);
+
+    /* Calculate the "attack quality" */    
+    i = (bth + pth * BTH_PLUS_ADJ +
+	 (level * class_level_adj[p_ptr->pclass][attack_type]));
+
+    die = randint(20);
+    if ((die != 1) && ((die == 20) ||
+    /* Apply the "pth" against the "ac" */
+    ((i > 0) && (randint(i) > ((3 * ac) / 4))))) {
+	return TRUE;
+    }
+
+    /* Assume miss */    
+    return FALSE;
+}
+
+
+/*
+ * Decreases players hit points and sets death flag if necessary
+ */
+void take_hit(int damage, cptr hit_from)
+{
+    /* Hack -- Apply "invulnerability" */
+    if (p_ptr->invuln > 0 && damage < 9000) damage = 0;
+
+    /* Hurt the player */
+    p_ptr->chp -= damage;
+
+    /* Dead player */
+    if (p_ptr->chp < 0) {
+
+	/* Hack -- allow wizard to abort death */
+	if ((wizard) && !(get_check("Die?"))) {
+	    p_ptr->chp = p_ptr->mhp;
+	    death=FALSE;
+	    prt_chp();
+	    msg_print("OK, so you don't die.");
+	} else {
+
+	if (!death) {
+	    death = TRUE;
+	    (void)strcpy(died_from, hit_from);
+	    total_winner = FALSE;
+	}
+	    new_level_flag = TRUE;
+	}
+    } else
+
+    /* Display the hitpoints */
+    prt_chp();
+
+    /* Hack -- hitpoint warning */    
+    if (p_ptr->chp <= p_ptr->mhp * hitpoint_warn / 10) {
+	msg_print("*** LOW HITPOINT WARNING! ***");
+	msg_print(NULL);	/* make sure they see it -CWS */
+    }
+}
+
+
