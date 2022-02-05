@@ -354,6 +354,47 @@ static void wr_monster(monster_type *m_ptr)
 
 
 
+
+
+/*
+ * Write/Read the monster lore
+ */
+
+static void rd_lore(monster_lore *l_ptr)
+{
+	int i;
+
+	rd_u32b(&l_ptr->r_cflags1);
+	rd_u32b(&l_ptr->r_spells1);
+	rd_u32b(&l_ptr->r_spells2);
+	rd_u32b(&l_ptr->r_spells3);
+	rd_u16b(&l_ptr->r_kills);
+	rd_u16b(&l_ptr->r_deaths);
+	rd_u32b(&l_ptr->r_cflags2);
+	rd_byte(&l_ptr->r_wake);
+	rd_byte(&l_ptr->r_ignore);
+	for (i = 0; i < MAX_MON_NATTACK; i++)
+	rd_byte(&l_ptr->r_attacks[i]);
+}
+
+static void wr_lore(monster_lore *l_ptr)
+{
+	int i;
+
+    /* Write the info */
+    wr_u32b(l_ptr->r_cflags1);
+    wr_u32b(l_ptr->r_spells1);
+    wr_u32b(l_ptr->r_spells2);
+    wr_u32b(l_ptr->r_spells3);
+    wr_u16b(l_ptr->r_kills);
+    wr_u16b(l_ptr->r_deaths);
+    wr_u32b(l_ptr->r_cflags2);
+    wr_byte(l_ptr->r_wake);
+    wr_byte(l_ptr->r_ignore);
+    for (i = 0; i < MAX_MON_NATTACK; i++)
+    wr_byte(l_ptr->r_attacks[i]);
+}
+
 static char *basename(char *a)
 {
     char *b;
@@ -565,6 +606,7 @@ static int sv_write()
     for (i = 0; i < MAX_R_IDX; i++)
 	wr_unique(&u_list[i]);
 
+    /* Dump the monster lore */
     for (i = 0; i < MAX_R_IDX; i++) {
 	r_ptr = &l_list[i];
 	if (r_ptr->r_cflags1 || r_ptr->r_cflags2 || r_ptr->r_kills ||
@@ -572,17 +614,7 @@ static int sv_write()
 	    r_ptr->r_deaths || r_ptr->r_attacks[0] || r_ptr->r_attacks[1] ||
 	    r_ptr->r_attacks[2] || r_ptr->r_attacks[3]) {
 	    wr_u16b(i);
-	    wr_u32b(r_ptr->r_cflags1);
-	    wr_u32b(r_ptr->r_spells1);
-	    wr_u32b(r_ptr->r_spells2);
-	    wr_u32b(r_ptr->r_spells3);
-	    wr_u16b(r_ptr->r_kills);
-	    wr_u16b(r_ptr->r_deaths);
-	    wr_u32b(r_ptr->r_cflags2);
-	    wr_byte(r_ptr->r_wake);
-	    wr_byte(r_ptr->r_ignore);
-	    for (i = 0; i < MAX_MON_NATTACK; i++)
-	    wr_byte(r_ptr->r_attacks[i]);
+	    wr_lore(r_ptr);
 	}
     }
     wr_u16b(0xFFFF);	   /* sentinel to indicate no more monster info */
@@ -1299,26 +1331,17 @@ int load_player(int *generate)
 	    prt("Loaded Unique Beasts", 5, 0);
 	put_qio();
 
+    /* Monster Memory */
 	rd_u16b(&u16b_tmp);
 	while (u16b_tmp != 0xFFFF) {
 	    if (u16b_tmp >= MAX_R_IDX)
 		goto error;
-	    r_ptr = &l_list[u16b_tmp];
-	    rd_u32b(&r_ptr->r_cflags1);
-	    rd_u32b(&r_ptr->r_spells1);
-	    rd_u32b(&r_ptr->r_spells2);
-	    rd_u32b(&r_ptr->r_spells3);
-	    rd_u16b(&r_ptr->r_kills);
-	    rd_u16b(&r_ptr->r_deaths);
-	    rd_u32b(&r_ptr->r_cflags2);
-	    rd_byte(&r_ptr->r_wake);
-	    rd_byte(&r_ptr->r_ignore);
-	    for (i = 0; i < MAX_MON_NATTACK; i++)
-	    rd_byte(&r_ptr->r_attacks[i]);
+	    rd_lore(&l_list[u16b_tmp]);
 	    rd_u16b(&u16b_tmp);
 	}
 	if (to_be_wizard)
 	    prt("Loaded Recall Memory", 6, 0);
+
 	put_qio();
         rd_u32b(&l);
 	if (!older_than(2,6,0)) {

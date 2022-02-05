@@ -258,6 +258,28 @@ static void rd_monster_old(monster_type *m_ptr)
 
 
 
+/*
+ * Read the old lore
+ */
+static void rd_lore_old(monster_lore *l_ptr)
+{
+	int i;
+
+    rd_u32b(&l_ptr->r_cflags1);
+    rd_u32b(&l_ptr->r_spells1);
+    rd_u32b(&l_ptr->r_spells2);
+    rd_u32b(&l_ptr->r_spells3);
+    rd_u16b(&l_ptr->r_kills);
+    rd_u16b(&l_ptr->r_deaths);
+    rd_u32b(&l_ptr->r_cflags2);
+    rd_byte(&l_ptr->r_wake);
+    rd_byte(&l_ptr->r_ignore);
+    for (i = 0; i < MAX_MON_NATTACK; i++)
+    rd_byte(&l_ptr->r_attacks[i]);
+}
+
+
+
 static char *basename(char *a)
 {
     char *b;
@@ -528,26 +550,17 @@ int load_player(int *generate)
 	    prt("Loaded Unique Beasts", 5, 0);
 	put_qio();
 
+    /* Monster Memory */
 	rd_u16b(&u16b_tmp);
 	while (u16b_tmp != 0xFFFF) {
 	    if (u16b_tmp >= MAX_R_IDX)
 		goto error;
-	    r_ptr = &l_list[u16b_tmp];
-	    rd_u32b(&r_ptr->r_cflags1);
-	    rd_u32b(&r_ptr->r_spells1);
-	    rd_u32b(&r_ptr->r_spells2);
-	    rd_u32b(&r_ptr->r_spells3);
-	    rd_u16b(&r_ptr->r_kills);
-	    rd_u16b(&r_ptr->r_deaths);
-	    rd_u32b(&r_ptr->r_cflags2);
-	    rd_byte(&r_ptr->r_wake);
-	    rd_byte(&r_ptr->r_ignore);
-	    for (i = 0; i < MAX_MON_NATTACK; i++)
-	    rd_byte(&r_ptr->r_attacks[i]);
+	    rd_lore_old(&l_list[u16b_tmp]);
 	    rd_u16b(&u16b_tmp);
 	}
 	if (to_be_wizard)
 	    prt("Loaded Recall Memory", 6, 0);
+
 	put_qio();
         rd_u32b(&l);
 	if (!older_than(2,6,0)) {
