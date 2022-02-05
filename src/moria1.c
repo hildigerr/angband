@@ -41,6 +41,45 @@ int is_a_vowel(int ch)
 }
 
 
+
+/*
+ * Return a string mentioning how a given item is carried
+ */
+cptr mention_use(int i)
+{
+    register cptr p;
+
+    /* Examine the location */
+    switch (i) {
+      case INVEN_WIELD: p = "Wielding"; break;
+      case INVEN_AUX:   p = "Spare weapon"; break;
+      case INVEN_LEFT:  p = "On left hand"; break;
+      case INVEN_RIGHT: p = "On right hand"; break;
+      case INVEN_NECK:  p = "Around neck"; break;
+      case INVEN_LIGHT: p = "Light source"; break;
+      case INVEN_BODY:  p = "On body"; break;
+      case INVEN_OUTER: p = "About body"; break;
+      case INVEN_ARM:   p = "On arm"; break;
+      case INVEN_HEAD:  p = "On head"; break;
+      case INVEN_HANDS: p = "On hands"; break;
+      case INVEN_FEET:  p = "On feet"; break;
+      default:          p = "Unknown value"; break;
+    }
+
+    /* Hack -- Heavy weapon */
+    if (i == INVEN_WIELD) {
+	inven_type *i_ptr;
+	i_ptr = &inventory[i];
+	if (p_ptr->use_stat[A_STR] * 15 < i_ptr->weight) {
+	    p = "Just lifting";
+	}
+    }
+
+    /* Return the result */
+    return (p);
+}
+
+
 /*
  * Return a string describing how a given item is carried. -CJS- 
  */
@@ -182,26 +221,7 @@ int show_equip(int weight, int col)
 
 	if (i_ptr->tval != TV_NOTHING) {
 
-	    switch (i) {
-
-	      case INVEN_WIELD:
-		if (p_ptr->use_stat[A_STR] * 15 < i_ptr->weight) prt1 = "Just lifting";
-		else prt1 = "Wielding";
-		break;
-
-	      case INVEN_HEAD: prt1 = "On head"; break;
-	      case INVEN_NECK: prt1 = "Around neck"; break;
-	      case INVEN_BODY: prt1 = "On body"; break;
-	      case INVEN_ARM: prt1 = "On arm"; break;
-	      case INVEN_HANDS: prt1 = "On hands"; break;
-	      case INVEN_RIGHT: prt1 = "On right hand"; break;
-	      case INVEN_LEFT: prt1 = "On left hand"; break;
-	      case INVEN_FEET: prt1 = "On feet"; break;
-	      case INVEN_OUTER: prt1 = "About body"; break;
-	      case INVEN_LIGHT: prt1 = "Light source"; break;
-	      case INVEN_AUX: prt1 = "Spare weapon"; break;
-	      default: prt1 = "Unknown value"; break;
-	    }
+	prt1 = mention_use(i);
 
 	/* Build a truncated object description */
 	objdes(prt2, &inventory[i], TRUE);

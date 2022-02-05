@@ -382,48 +382,8 @@ int file_character(cptr filename1)
 	else {
 	    for (j = 0, i = INVEN_WIELD; i < INVEN_ARRAY_SIZE; i++) {
 		i_ptr = &inventory[i];
-		if (i_ptr->tval != TV_NOTHING) {
-		    switch (i) {
-		      case INVEN_WIELD:
-			p = "You are wielding";
-			break;
-		      case INVEN_HEAD:
-			p = "Worn on head";
-			break;
-		      case INVEN_NECK:
-			p = "Worn around neck";
-			break;
-		      case INVEN_BODY:
-			p = "Worn on body";
-			break;
-		      case INVEN_ARM:
-			p = "Worn on shield arm";
-			break;
-		      case INVEN_HANDS:
-			p = "Worn on hands";
-			break;
-		      case INVEN_RIGHT:
-			p = "Right ring finger";
-			break;
-		      case INVEN_LEFT:
-			p = "Left  ring finger";
-			break;
-		      case INVEN_FEET:
-			p = "Worn on feet";
-			break;
-		      case INVEN_OUTER:
-			p = "Worn about body";
-			break;
-		      case INVEN_LIGHT:
-			p = "Light source is";
-			break;
-		      case INVEN_AUX:
-			p = "Secondary weapon";
-			break;
-		      default:
-			p = "*Unknown value*";
-			break;
-		    }
+		if (i_ptr->tval) {
+		    p = mention_use(i);
 		    objdes(prt2, &inventory[i], TRUE);
 		    (void)fprintf(file1, "  %c) %-19s: %s\n", j + 'a', p, prt2);
 		    j++;

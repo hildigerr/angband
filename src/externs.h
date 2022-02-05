@@ -736,7 +736,6 @@ void move_rec(int, int, int, int);
 void py_bonuses(struct inven_type *, int);
 void calc_bonuses(void);
 int show_inven(int, int, int, int, int ());
-const char *describe_use(int);
 int show_equip(int, int);
 void inven_takeoff(int, int);
 int verify(cptr , int);
@@ -779,6 +778,8 @@ void do_cmd_check_uniques(void);
 
 /* moria4.c */
 int is_a_vowel(int);
+cptr describe_use(int);
+cptr mention_use(int);
 void monster_name(char *, struct monster_type *);
 int target_set(void); /* target fns stolen from Morgul -CFT */
 int target_at(int, int); /* target fns stolen from Morgul -CFT */
