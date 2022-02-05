@@ -551,6 +551,112 @@ void do_cmd_view_map()
 }
 
 
+
+/*
+ * Support code for the "Locate ourself on the Map" command
+ */
+
+void do_cmd_locate()
+{
+    int dir_val, temp;
+    int y, x;
+    vtype out_val;
+    vtype tmp_str;
+
+    int cy, cx, p_y, p_x;
+
+
+    /* Free move */
+    free_turn_flag = TRUE;
+
+    if ((p_ptr->blind > 0) || no_lite()) {
+	msg_print("You can't see your map.");
+	return;
+    }
+
+#ifdef TARGET
+/* If in target_mode, player will not be given a chance to pick a direction.
+ * So we save it, force it off, and then ask for the direction -CFT
+ */
+	    temp = target_mode;
+	    target_mode = FALSE;
+#endif
+
+    /* Save character location */
+    y = char_row;
+    x = char_col;
+
+	    if (get_panel(y, x, TRUE))
+		prt_map();
+
+    /* Extract (original) panel info */
+    cy = panel_row;
+    cx = panel_col;
+
+
+    /* Show panels until done */
+    while (1) {
+
+	p_y = panel_row;
+	p_x = panel_col;
+
+	/* Describe the location */
+	if ((p_y == cy) && (p_x == cx)) {
+	    tmp_str[0] = '\0';
+	}
+	else {
+	    (void)sprintf(tmp_str, "%s%s of",
+		(p_y < cy) ? " North" : (p_y > cy) ? " South" : "",
+		(p_x < cx) ? " West" : (p_x > cx) ? " East" : "");
+	}
+
+
+	/* Prepare to ask which way to look */
+	(void)sprintf(out_val,
+	    "Map sector [%d,%d], which is%s your sector. Look which direction?",
+	    p_y, p_x, tmp_str);
+
+	/* Get a direction (or Escape) */
+	if (!get_dir(out_val, &dir_val)) break;
+
+
+	/* Keep "moving" until the panel changes */
+/* -CJS- Should really use the move function, but what the hell. This is nicer,
+ * as it moves exactly to the same place in another section. The direction
+ * calculation is not intuitive. Sorry.
+ */
+	while (1) {
+
+	    /* Apply the direction */
+	    x += ((dir_val - 1) % 3 - 1) * SCREEN_WIDTH / 2;
+	    y -= ((dir_val - 1) / 3 - 1) * SCREEN_HEIGHT / 2;
+
+	    /* No motion off map */
+	    if (x < 0 || y < 0 || x >= cur_width || y >= cur_width) {
+		msg_print("You've gone past the end of your map.");
+		x -= ((dir_val - 1) % 3 - 1) * SCREEN_WIDTH / 2;
+		y += ((dir_val - 1) / 3 - 1) * SCREEN_HEIGHT / 2;
+		break;
+	    }
+
+	    if (get_panel(y, x, TRUE)) {
+		prt_map();
+		break;
+	    }
+	}
+    }
+
+
+    /* Move to a new panel - but only if really necessary. */
+    if (get_panel(char_row, char_col, FALSE))
+	prt_map();
+
+#ifdef TARGET
+    target_mode = temp; /* restore target mode... */
+#endif
+}
+
+
 /*
  * Chests have traps too.
  * Note: Chest traps are based on the FLAGS value

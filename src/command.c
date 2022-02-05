@@ -894,67 +894,7 @@ void do_command(char com_val)
 
 	/* Locate player on the map */	
 	case 'W':
-	    if ((p_ptr->blind > 0) || no_lite())
-	    msg_print("You can't see your map.");
-	    else {
-	    int                 cy, cx, p_y, p_x;
-#ifdef TARGET
-/* If in target_mode, player will not be given a chance to pick a direction.
- * So we save it, force it off, and then ask for the direction -CFT
- */
-	    int temp = target_mode;
-	    target_mode = FALSE;
-#endif
-
-	    y = char_row;
-	    x = char_col;
-	    if (get_panel(y, x, TRUE))
-		prt_map();
-	    cy = panel_row;
-	    cx = panel_col;
-	    for (;;) {
-		p_y = panel_row;
-		p_x = panel_col;
-		if (p_y == cy && p_x == cx)
-		    tmp_str[0] = '\0';
-		else
-		    (void)sprintf(tmp_str, "%s%s of",
-			     p_y < cy ? " North" : p_y > cy ? " South" : "",
-			      p_x < cx ? " West" : p_x > cx ? " East" : "");
-		(void)sprintf(out_val,
-      "Map sector [%d,%d], which is%s your sector. Look which direction?",
-			      p_y, p_x, tmp_str);
-		if (!get_dir(out_val, &dir_val))
-		    break;
-
-/* -CJS- Should really use the move function, but what the hell. This is nicer,
- * as it moves exactly to the same place in another section. The direction
- * calculation is not intuitive. Sorry.
- */
-		for (;;) {
-		    x += ((dir_val - 1) % 3 - 1) * SCREEN_WIDTH / 2;
-		    y -= ((dir_val - 1) / 3 - 1) * SCREEN_HEIGHT / 2;
-		    if (x < 0 || y < 0 || x >= cur_width || y >= cur_width) {
-			msg_print("You've gone past the end of your map.");
-			x -= ((dir_val - 1) % 3 - 1) * SCREEN_WIDTH / 2;
-			y += ((dir_val - 1) / 3 - 1) * SCREEN_HEIGHT / 2;
-			break;
-		    }
-		    if (get_panel(y, x, TRUE)) {
-			prt_map();
-			break;
-		    }
-		}
-	    }
-	/* Move to a new panel - but only if really necessary. */
-	    if (get_panel(char_row, char_col, FALSE))
-		prt_map();
-#ifdef TARGET
-	    target_mode = temp; /* restore target mode... */
-#endif
-	    }
-	    free_turn_flag = TRUE;
-	    break;
+	    do_cmd_locate(); break;
 
 	/* Examine surroundings */
 	case 'x':

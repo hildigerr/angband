@@ -761,6 +761,7 @@ int mon_take_hit(int, int, int);
 /* moria3.c */
 int twall(int, int, int, int);
 void do_cmd_look(void);
+void do_cmd_locate(void);
 void do_cmd_view_map(void);
 void do_cmd_view_map(void);
 void do_cmd_open(void);
