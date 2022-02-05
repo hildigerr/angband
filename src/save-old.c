@@ -171,7 +171,7 @@ static errr rd_item_old(inven_type *i_ptr)
     byte tmp8u;
     u16b tmp16u;
 
-    rd_u16b(&i_ptr->index);
+    rd_u16b(&i_ptr->k_idx);
     rd_byte(&i_ptr->name2);
     rd_string(i_ptr->inscrip);
     rd_u32b(&i_ptr->flags1);

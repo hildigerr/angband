@@ -55,7 +55,7 @@ static cptr value_check(inven_type *i_ptr)
 
     /* Hack -- "good" digging tools -CFT */
     if ((i_ptr->tval == TV_DIGGING) && (i_ptr->flags1 & TR1_TUNNEL) &&
-	(i_ptr->pval > k_list[i_ptr->index].pval)) {
+	(i_ptr->pval > k_list[i_ptr->k_idx].pval)) {
 	return "good";
     }
 
@@ -1086,7 +1086,7 @@ void dungeon(void)
 	    /* Let activatable objects recharge */
 	    if (i_ptr->timeout > 0) i_ptr->timeout--;
 
-	    if ((i_ptr->tval == TV_RING) && (!stricmp(k_list[i_ptr->index].name, "Power"))) {
+	    if ((i_ptr->tval == TV_RING) && (!stricmp(k_list[i_ptr->k_idx].name, "Power"))) {
 		if ((randint(20) == 1) && (p_ptr->exp > 0)) {
 		    p_ptr->exp--;
 		    p_ptr->max_exp--;
@@ -1212,7 +1212,7 @@ void dungeon(void)
 		    char                out_val[100], tmp[100], *ptr;
 		    int                 sp;
 
-		    (void)strcpy(tmp, k_list[i_ptr->index].name);
+		    (void)strcpy(tmp, k_list[i_ptr->k_idx].name);
 
 		    ptr = tmp;
 		    sp = 0;

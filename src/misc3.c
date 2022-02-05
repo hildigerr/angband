@@ -504,9 +504,9 @@ void apply_magic(inven_type *i_ptr, int level, int good, int not_unique)
       case TV_SOFT_ARMOR:
       case TV_SHIELD:
 
-	if ((i_ptr->index >= 389 && i_ptr->index <= 394)
-	    || (i_ptr->index >= 408 && i_ptr->index <= 409)
-	    || (i_ptr->index >= 415 && i_ptr->index <= 419)) {
+	if ((i_ptr->k_idx >= 389 && i_ptr->k_idx <= 394)
+	    || (i_ptr->k_idx >= 408 && i_ptr->k_idx <= 409)
+	    || (i_ptr->k_idx >= 415 && i_ptr->k_idx <= 419)) {
 
 	/* all DSM are enchanted, I guess -CFT */
 	    i_ptr->toac += randint(3) + m_bonus(0, 5, level);
@@ -539,7 +539,7 @@ void apply_magic(inven_type *i_ptr, int level, int good, int not_unique)
 	    /* Try for artifacts */
 	    if (great || magik(special)) {
 
-	    if (!stricmp(k_list[i_ptr->index].name, "& Robe") &&
+	    if (!stricmp(k_list[i_ptr->k_idx].name, "& Robe") &&
 		((magik(special) && randint(30) == 1))) {
 
 		    i_ptr->flags1 |= (TR2_RES_ELEC | TR2_RES_COLD | 
@@ -591,9 +591,9 @@ void apply_magic(inven_type *i_ptr, int level, int good, int not_unique)
 		    if ((great || randint(3) == 1) && !not_unique &&
 			unique_armour(i_ptr))
 			break;
-		    if (!strncmp(k_list[i_ptr->index].name,
+		    if (!strncmp(k_list[i_ptr->k_idx].name,
 				 "Mithril", 7) ||
-			!strncmp(k_list[i_ptr->index].name,
+			!strncmp(k_list[i_ptr->k_idx].name,
 				 "Adamantite", 10))
 			break;
 		    i_ptr->flags1 |= TR2_RES_ACID;
@@ -659,15 +659,15 @@ void apply_magic(inven_type *i_ptr, int level, int good, int not_unique)
 
 		/* Roll for artifact */
 	    if ((((randint(2) == 1) && magik(5 * special / 2)) || great) &&
-		!stricmp(k_list[i_ptr->index].name,
+		!stricmp(k_list[i_ptr->k_idx].name,
 			 "& Set of Leather Gloves") &&
 		!not_unique && unique_armour(i_ptr)) break;
 	    if ((((randint(4) == 1) && magik(special)) || great)
-		     && !stricmp(k_list[i_ptr->index].name,
+		     && !stricmp(k_list[i_ptr->k_idx].name,
 				 "& Set of Gauntlets") &&
 		     !not_unique && unique_armour(i_ptr)) break;
 	    if ((((randint(5) == 1) && magik(special)) || great)
-		     && !stricmp(k_list[i_ptr->index].name,
+		     && !stricmp(k_list[i_ptr->k_idx].name,
 				 "& Set of Cesti") &&
 		     !not_unique && unique_armour(i_ptr)) break;
 
@@ -780,7 +780,7 @@ void apply_magic(inven_type *i_ptr, int level, int good, int not_unique)
 		    if (wizard || peek) msg_print("Boots of Speed");
 		    }
 		} else if (stricmp("& Pair of Metal Shod Boots",
-				   k_list[i_ptr->index].name))	/* not metal */
+				   k_list[i_ptr->k_idx].name))	/* not metal */
 
 		  if (tmp > 6) {
 		    i_ptr->flags1 |= TR3_FEATHER;
@@ -1073,7 +1073,7 @@ void apply_magic(inven_type *i_ptr, int level, int good, int not_unique)
 
 		/* Roll for artifact */
 		if (!not_unique &&
-		    !stricmp(k_list[i_ptr->index].name, "& Cloak")
+		    !stricmp(k_list[i_ptr->k_idx].name, "& Cloak")
 		    && randint(10) == 1) {
 		    switch (randint(9)) {
 		      case 1:
@@ -1166,7 +1166,7 @@ void apply_magic(inven_type *i_ptr, int level, int good, int not_unique)
 		    }
 
 		} else if (!not_unique &&
-			   !stricmp(k_list[i_ptr->index].name,
+			   !stricmp(k_list[i_ptr->k_idx].name,
 				    "& Shadow Cloak")
 			   && randint(20) == 1) {
 		    switch (randint(2)) {
@@ -1323,7 +1323,7 @@ void apply_magic(inven_type *i_ptr, int level, int good, int not_unique)
 	    if (great || magik(special)) {
 
 		/* Hack -- Roll for whips of fire */
-		if (!stricmp("& Whip", k_list[i_ptr->index].name) &&
+		if (!stricmp("& Whip", k_list[i_ptr->k_idx].name) &&
 		    (randint(2) == 1)) {
 
 		    i_ptr->flags1 |= (TR1_BRAND_FIRE | TR2_RES_FIRE);
@@ -1616,7 +1616,7 @@ void apply_magic(inven_type *i_ptr, int level, int good, int not_unique)
 
 		  case 1: case 2: case 3:
 		if (((randint(3)==1)||(good==666)) && !not_unique &&
-		    !stricmp(k_list[i_ptr->index].name, "& Long Bow") &&
+		    !stricmp(k_list[i_ptr->k_idx].name, "& Long Bow") &&
 		    (((i=randint(2))==1 && !BELEG) || (i==2 && !BARD))) {
 		    switch (i) {
 		    case 1:
@@ -1658,7 +1658,7 @@ void apply_magic(inven_type *i_ptr, int level, int good, int not_unique)
 		    break;
 		}
 		if (((randint(5) == 1) || (good == 666)) && !not_unique &&
-		    !stricmp(k_list[i_ptr->index].name, "& Light Crossbow")
+		    !stricmp(k_list[i_ptr->k_idx].name, "& Light Crossbow")
 		    && !CUBRAGOL) {
 		    if (CUBRAGOL)
 			break;

@@ -228,7 +228,7 @@ typedef struct _inven_type inven_type;
 
 struct _inven_type {
 
-  u16b index;			/* Kind index (in k_list)	*/
+  u16b k_idx;			/* Kind index (in k_list)	*/
 
   byte tval;			/* Category number		*/
   byte sval;			/* Sub-category number		*/

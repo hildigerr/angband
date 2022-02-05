@@ -251,7 +251,7 @@ static void rd_string(char *str)
 static void rd_item(inven_type *i_ptr)
 {
     /* Get the kind */
-    rd_u16b(&i_ptr->index);
+    rd_u16b(&i_ptr->k_idx);
 
     rd_byte(&i_ptr->tval);
     rd_byte(&i_ptr->sval);
@@ -283,7 +283,7 @@ static void rd_item(inven_type *i_ptr)
 
 static void wr_item(inven_type *i_ptr)
 {
-    wr_u16b(i_ptr->index);
+    wr_u16b(i_ptr->k_idx);
 
     wr_byte(i_ptr->tval);
     wr_byte(i_ptr->sval);

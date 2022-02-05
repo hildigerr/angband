@@ -2429,7 +2429,7 @@ void do_cmd_activate(void)
 
     /* Are we smart enough? */
 	    if (p_ptr->use_stat[A_INT] < randint(18) &&
-	     randint(k_list[inventory[i].index].level) > p_ptr->lev) {
+	     randint(k_list[inventory[i].k_idx].level) > p_ptr->lev) {
 		msg_print("You fail to activate it properly.");
 		break;
 	    }
@@ -2437,7 +2437,7 @@ void do_cmd_activate(void)
     /* Wonder Twin Powers... Activate! */
     msg_print("You activate it...");
 
-	    switch (inventory[i].index) {
+	    switch (inventory[i].k_idx) {
 
 	    case (29):
 	    case (395):
@@ -3094,7 +3094,7 @@ void do_cmd_activate(void)
 
 	    default:
 		(void)sprintf(tmp2, "Inventory num %d, index %d", i,
-			      inventory[i].index);
+			      inventory[i].k_idx);
 		msg_print(tmp2);
 	    }
 	}

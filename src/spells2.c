@@ -1360,7 +1360,7 @@ int remove_curse()
 	    (i_ptr->name2 != EGO_MORGUL) &&
 	    (i_ptr->name2 != ART_CALRIS) &&
 	    (i_ptr->name2 != ART_MORMEGIL)) {
-	    if (!(!stricmp(k_list[i_ptr->index].name, "Power") &&
+	    if (!(!stricmp(k_list[i_ptr->k_idx].name, "Power") &&
 		  (i_ptr->tval == TV_RING))) {
 
 		i_ptr->flags1 &= ~TR3_CURSED;
@@ -1383,7 +1383,7 @@ int remove_all_curse()
     for (i = INVEN_WIELD; i <= INVEN_OUTER; i++) {
 	i_ptr = &inventory[i];
 	if (TR3_CURSED & i_ptr->flags1) {
-	    if (!(!stricmp(k_list[i_ptr->index].name, "Power") &&
+	    if (!(!stricmp(k_list[i_ptr->k_idx].name, "Power") &&
 		  (i_ptr->tval == TV_RING))) {
 		i_ptr->flags1 &= ~TR3_CURSED;
 		i_ptr->ident &= ~ID_DAMD;	/* DGK */
@@ -2197,7 +2197,7 @@ int detect_sdoor()
 	    if (i_ptr->tval == TV_SECRET_DOOR) {
 
 		/* Hack -- make a closed door */
-		i_ptr->index = OBJ_CLOSED_DOOR;
+		i_ptr->k_idx = OBJ_CLOSED_DOOR;
 		i_ptr->tval = k_list[OBJ_CLOSED_DOOR].tval;
 		i_ptr->tchar = k_list[OBJ_CLOSED_DOOR].tchar;
 
@@ -3179,7 +3179,7 @@ int disarm_all(int dir, int y, int x)
 		c_ptr->fm = TRUE;
 
 		/* change secret door to closed door */
-		i_list[c_ptr->i_idx].index = OBJ_CLOSED_DOOR;
+		i_list[c_ptr->i_idx].k_idx = OBJ_CLOSED_DOOR;
 		i_list[c_ptr->i_idx].tval = k_list[OBJ_CLOSED_DOOR].tval;
 		i_list[c_ptr->i_idx].tchar = k_list[OBJ_CLOSED_DOOR].tchar;
 		lite_spot(y, x);

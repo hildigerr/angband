@@ -1492,7 +1492,7 @@ void bash()
 	    else if (i_ptr->tval == TV_CHEST) {
 		if (randint(10) == 1) {
 		    msg_print("You have destroyed the chest and its contents!");
-		    i_ptr->index = OBJ_RUINED_CHEST;
+		    i_ptr->k_idx = OBJ_RUINED_CHEST;
 		    i_ptr->flags1 = 0;
 		}
 		else if ((CH_LOCKED & i_ptr->flags1) && (randint(10) == 1)) {
@@ -1656,7 +1656,7 @@ void do_cmd_fire()
 	else if ((t->tval >= TV_MIN_WEAR) && (t->tval <= TV_MAX_WEAR) &&
 		 (t->flags1 & TR3_CURSED) && known2_p(t))
 	    ok_throw = TRUE; /* if user wants to throw cursed, let him */
-	else if ((k_list[t->index].cost <= 0) && known1_p(t) &&
+	else if ((k_list[t->k_idx].cost <= 0) && known1_p(t) &&
 		 !(known2_p(t) && (t->cost > 0)))
 	    ok_throw = TRUE;
 	else if ((t->cost <= 0) && known2_p(t))

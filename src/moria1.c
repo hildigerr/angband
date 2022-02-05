@@ -135,7 +135,7 @@ int show_inven(int r1, int r2, int weight, int col, int (*test) ())
     for (k = 0, i = r1; i <= r2; i++) {
 
 	if (test) {
-	    if ((*test) (k_list[inventory[i].index].tval)) {
+	    if ((*test) (k_list[inventory[i].k_idx].tval)) {
 
 	/* Describe the object, enforce max length */
 	objdes(tmp_val, &inventory[i], TRUE);
@@ -468,15 +468,15 @@ void py_bonuses(inven_type *t_ptr, int factor)
     if (TR1_SPEED & t_ptr->flags1) {
 	if ((t_ptr->tval == TV_RING) &&
 	    !stricmp("Speed",
-		     k_list[t_ptr->index].name) &&
+		     k_list[t_ptr->k_idx].name) &&
 	    (t_ptr->pval > 0))
 	    if ((inventory[INVEN_RIGHT].tval == TV_RING) &&
 		!stricmp("Speed",
-			 k_list[inventory[INVEN_RIGHT].index].name) &&
+			 k_list[inventory[INVEN_RIGHT].k_idx].name) &&
 		(inventory[INVEN_RIGHT].pval > 0) &&
 		(inventory[INVEN_LEFT].tval == TV_RING) &&
 		!stricmp("Speed",
-			 k_list[inventory[INVEN_LEFT].index].name) &&
+			 k_list[inventory[INVEN_LEFT].k_idx].name) &&
 		(inventory[INVEN_RIGHT].pval > 0))
 		return;
 	p_ptr->speed -= amount;

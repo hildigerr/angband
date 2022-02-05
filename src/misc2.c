@@ -1728,7 +1728,7 @@ int unique_weapon(inven_type *t_ptr)
 {
     const char *name;
 
-    name = k_list[t_ptr->index].name;
+    name = k_list[t_ptr->k_idx].name;
     if (!stricmp("& Longsword", name)) {
 	switch (randint(15)) {
 	  case 1:
@@ -2827,7 +2827,7 @@ int unique_armour(inven_type *t_ptr)
 {
     const char *name;
 
-    name = k_list[t_ptr->index].name;
+    name = k_list[t_ptr->k_idx].name;
     if (!strncmp("Adamantite", name, 10)) {
 	if (SOULKEEPER)
 	    return 0;
