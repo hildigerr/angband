@@ -551,6 +551,22 @@ void do_cmd_view_map()
 }
 
 
+/*
+ * Given an row (y) and col (x), recenter the "panel".
+ * The map is reprinted if necessary, and "TRUE" is returned.
+ */
+static bool do_cmd_locate_aux(int y, int x)
+{
+    if (!get_panel(y, x, TRUE)) return (FALSE);
+
+    /* Redraw the map */
+    prt_map();
+
+    /* The map was redrawn */
+    return (TRUE);
+}
+
+
 
 /*
  * Support code for the "Locate ourself on the Map" command
@@ -586,8 +602,8 @@ void do_cmd_locate()
     y = char_row;
     x = char_col;
 
-	    if (get_panel(y, x, TRUE))
-		prt_map();
+    /* Move to a new panel */
+    (void)do_cmd_locate_aux(y, x);
 
     /* Extract (original) panel info */
     cy = panel_row;
@@ -639,10 +655,8 @@ void do_cmd_locate()
 		break;
 	    }
 
-	    if (get_panel(y, x, TRUE)) {
-		prt_map();
-		break;
-	    }
+	    /* Hack -- keep sliding until done (?) */
+	    if (do_cmd_locate_aux(y, x)) break;
 	}
     }
 
