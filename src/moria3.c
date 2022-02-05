@@ -539,6 +539,19 @@ void do_cmd_look()
 
 
 /*
+ * Support code for the "Locate ourself on the Map" command
+ */
+void do_cmd_view_map()
+{
+    /* Free move */
+    free_turn_flag = TRUE;
+
+    /* Look at the map */
+    screen_map();
+}
+
+
+/*
  * Chests have traps too.
  * Note: Chest traps are based on the FLAGS value
  */

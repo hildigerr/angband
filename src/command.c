@@ -890,8 +890,7 @@ void do_command(char com_val)
 
 	/* Full screen Map */
 	case 'M':
-	    free_turn_flag = TRUE;
-	    screen_map(); break;
+	    do_cmd_view_map(); break;
 
 	/* Locate player on the map */	
 	case 'W':
