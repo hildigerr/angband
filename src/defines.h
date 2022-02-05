@@ -309,7 +309,7 @@
 #define INVEN_LEFT      29
 #define INVEN_FEET      30
 #define INVEN_OUTER     31
-#define INVEN_LIGHT     32
+#define INVEN_LITE      32
 #define INVEN_AUX       33
 
 

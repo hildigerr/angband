@@ -56,7 +56,7 @@ cptr mention_use(int i)
       case INVEN_LEFT:  p = "On left hand"; break;
       case INVEN_RIGHT: p = "On right hand"; break;
       case INVEN_NECK:  p = "Around neck"; break;
-      case INVEN_LIGHT: p = "Light source"; break;
+      case INVEN_LITE:  p = "Light source"; break;
       case INVEN_BODY:  p = "On body"; break;
       case INVEN_OUTER: p = "About body"; break;
       case INVEN_ARM:   p = "On arm"; break;
@@ -93,7 +93,7 @@ cptr describe_use(int i)
       case INVEN_LEFT:  p = "wearing on your left hand"; break;
       case INVEN_RIGHT: p = "wearing on your right hand"; break;
       case INVEN_NECK:  p = "wearing around your neck"; break;
-      case INVEN_LIGHT: p = "using to light the way"; break;
+      case INVEN_LITE:  p = "using to light the way"; break;
       case INVEN_BODY:  p = "wearing on your body"; break;
       case INVEN_OUTER: p = "wearing about your body"; break;
       case INVEN_ARM:   p = "wearing on your arm"; break;
@@ -558,7 +558,7 @@ void calc_bonuses()
     p_ptr->dis_td = p_ptr->ptodam; /* Display To Dam	    */
     p_ptr->dis_ac = 0;		   /* Display AC		 */
     p_ptr->dis_tac = p_ptr->ptoac; /* Display To AC	    */
-    for (i = INVEN_WIELD; i <= INVEN_LIGHT; i++) {
+    for (i = INVEN_WIELD; i <= INVEN_LITE; i++) {
 	i_ptr = &inventory[i];
 	if (i_ptr->tval != TV_NOTHING) {
 	    if ((TR3_CURSED & i_ptr->flags1) == 0) {
@@ -646,13 +646,13 @@ void calc_bonuses()
 
     item_flags1 = 0L;
     i_ptr = &inventory[INVEN_WIELD];
-    for (i = INVEN_WIELD; i <= INVEN_LIGHT; i++) {
+    for (i = INVEN_WIELD; i <= INVEN_LITE; i++) {
 	item_flags1 |= i_ptr->flags1;
 	i_ptr++;
     }
     item_flags2 = 0L;
     i_ptr = &inventory[INVEN_WIELD];
-    for (i = INVEN_WIELD; i <= INVEN_LIGHT; i++) {
+    for (i = INVEN_WIELD; i <= INVEN_LITE; i++) {
 	item_flags2 |= i_ptr->flags2;
 	i_ptr++;
     }
@@ -690,7 +690,7 @@ void calc_bonuses()
     if (TR2_RES_FEAR & item_flags2) p_ptr->resist_fear = TRUE;
 
     i_ptr = &inventory[INVEN_WIELD];
-    for (i = INVEN_WIELD; i < INVEN_LIGHT; i++) {
+    for (i = INVEN_WIELD; i < INVEN_LITE; i++) {
 	if (TR_SUST_STAT & i_ptr->flags1)
 	    switch (i_ptr->pval) {
 	      case 1:
@@ -756,7 +756,7 @@ void inven_takeoff(int item_val, int posn)
 
     if (item_val == INVEN_WIELD || item_val == INVEN_AUX)
 	p = "Was wielding ";
-    else if (item_val == INVEN_LIGHT)
+    else if (item_val == INVEN_LITE)
 	p = "Light source was ";
     else
 	p = "Was wearing ";
@@ -1161,7 +1161,7 @@ void inven_command(int command)
 				item = (-1);
 			}
 			if (item >= 0)
-			    if (item == INVEN_LIGHT)
+			    if (item == INVEN_LITE)
 				light_chg = TRUE;
 			if (command == 'r') {
 			    inven_drop(item, TRUE);
@@ -1196,7 +1196,7 @@ void inven_command(int command)
 				slot = INVEN_WIELD;
 				break;
 			      case TV_LITE:
-				slot = INVEN_LIGHT;
+				slot = INVEN_LITE;
 				break;
 			      case TV_BOOTS:
 				slot = INVEN_FEET;
@@ -1282,7 +1282,7 @@ void inven_command(int command)
 			/* OK. Wear it. */
 			    free_turn_flag = FALSE;
 
-			    if (slot == INVEN_LIGHT)
+			    if (slot == INVEN_LITE)
 				light_chg = TRUE;
 
 			/* first remove new item from inventory */
@@ -1315,7 +1315,7 @@ void inven_command(int command)
 			    py_bonuses(i_ptr, 1);
 			    if (slot == INVEN_WIELD)
 				string = "You are wielding";
-			    else if (slot == INVEN_LIGHT)
+			    else if (slot == INVEN_LITE)
 				string = "Your light source is";
 			    else
 				string = "You are wearing";
@@ -1441,8 +1441,8 @@ void inven_command(int command)
 #endif
 	tmp2 = cur_lite;
 	print('@', char_row, char_col);
-	if (inventory[INVEN_LIGHT].tval == TV_LITE)
-	    tmp = inventory[INVEN_LIGHT].sval;
+	if (inventory[INVEN_LITE].tval == TV_LITE)
+	    tmp = inventory[INVEN_LITE].sval;
 	else
 	    tmp = 195;
 	cur_lite = 1 + (tmp < 190) + (tmp == 4 || tmp == 6);

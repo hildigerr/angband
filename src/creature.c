@@ -1556,7 +1556,7 @@ static void make_attack(int m_idx)
 
 	      /* Eat light */
 	      case 23:
-		i_ptr = &inventory[INVEN_LIGHT];
+		i_ptr = &inventory[INVEN_LITE];
 		if ((i_ptr->pval > 0) && (!artifact_p(i_ptr))) {
 		    i_ptr->pval -= (250 + randint(250));
 		    if (i_ptr->pval < 1) i_ptr->pval = 1;

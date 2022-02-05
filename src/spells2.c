@@ -1436,7 +1436,7 @@ void self_knowledge()
 
 
     /* Acquire item flags (from worn items) */
-    for (i = INVEN_WIELD; i <= INVEN_LIGHT; i++) {
+    for (i = INVEN_WIELD; i <= INVEN_LITE; i++) {
 
 	/* Only examine real items */   
 	if (inventory[i].tval != TV_NOTHING) {

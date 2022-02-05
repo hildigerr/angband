@@ -219,7 +219,7 @@ void dungeon(void)
 
     char                   command;      /* Last command           */
 
-    i_ptr = &inventory[INVEN_LIGHT];
+    i_ptr = &inventory[INVEN_LITE];
 
 /* Check light status for setup	   */
     if (i_ptr->pval > 0 || p_ptr->light)
@@ -381,7 +381,7 @@ void dungeon(void)
 	/*** Handle the Lights ***/
 
 	/* Check for light being wielded */
-	i_ptr = &inventory[INVEN_LIGHT];
+	i_ptr = &inventory[INVEN_LITE];
 
 	if (player_light)
 	    if (i_ptr->pval > 0) {
@@ -880,7 +880,7 @@ void dungeon(void)
 		    p_ptr->see_inv = TRUE;
 		else {
 		    p_ptr->see_inv = FALSE;	/* unless item grants it */
-		    for (i = INVEN_WIELD; i <= INVEN_LIGHT; i++)
+		    for (i = INVEN_WIELD; i <= INVEN_LITE; i++)
 			if (TR3_SEE_INVIS & inventory[i].flags1)
 			    p_ptr->see_inv = TRUE;
 		}

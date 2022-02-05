@@ -295,7 +295,7 @@ static void do_cmd_refill_lamp()
     register inven_type *i_ptr;
 
     free_turn_flag = TRUE;
-    k = inventory[INVEN_LIGHT].sval;
+    k = inventory[INVEN_LITE].sval;
     if (k != 0)
 	msg_print("But you are not using a lamp.");
     else if (!find_range(TV_FLASK, TV_NEVER, &i, &j)) {
@@ -305,7 +305,7 @@ static void do_cmd_refill_lamp()
     else {
 
 	free_turn_flag = FALSE;
-	i_ptr = &inventory[INVEN_LIGHT];
+	i_ptr = &inventory[INVEN_LITE];
 
 	i_ptr->pval += inventory[i].pval;
 
