@@ -1840,6 +1840,16 @@ void do_cmd_stay(int pickup)
 }
 
 
+/*
+ * Simple command to "search" for one turn
+ */
+void do_cmd_search(void)
+{
+    /* Use the current location, and ability */
+    search(char_row, char_col, p_ptr->srh);
+}
+
+
 void do_cmd_feeling()
 {
     /* No useful feeling in town */

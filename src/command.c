@@ -788,7 +788,7 @@ void do_command(char com_val)
 
 	/* Search the adjoining grids */
 	case 's':
-	    search(char_row, char_col, p_ptr->srh); break;
+	    do_cmd_search(); break;
 
 
 	/*** Stairs and Doors and Chests and Traps ***/
