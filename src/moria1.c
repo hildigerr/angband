@@ -1774,52 +1774,6 @@ void move_light(int y1, int x1, int y2, int x2)
 }
 
 
-
-/* Resting allows a player to safely restore his hp	-RAK-	 */
-void rest()
-{
-    int   rest_num;
-    vtype rest_str;
-
-    if (command_rep > 0) {
-	rest_num = command_rep;
-	command_rep = 0;
-    } else {
-	char                ch;
-
-	prt("Rest for how long? ('*' for HP/mana; '&' as needed) : ", 0, 0);
-	rest_num = 0;
-	if (get_string(rest_str, 0, 54, 5)) {
-	    if (sscanf(rest_str, "%c", &ch) == 1)
-		if (ch == '*')
-		    rest_num = (-1);
-		else if (ch == '&')
-		    rest_num = (-2);
-		else {
-		    if (atoi(rest_str) > 30000)
-			rest_num = 30000;
-		    else
-			rest_num = atoi(rest_str);
-		}
-	}
-    }
-    if (rest_num != 0) {
-	search_off();
-	p_ptr->rest = rest_num;
-	p_ptr->status |= PY_REST;
-	prt_state();
-	p_ptr->food_digested--;
-	prt("Press any key to stop resting...", 0, 0);
-	put_qio();
-    } else {
-	erase_line(MSG_LINE, 0);
-	free_turn_flag = TRUE;
-    }
-}
-
-
-
-
 /* Attacker's level and plusses,  defender's AC		-RAK-	 */
 int test_hit(int bth, int level, int pth, int ac, int attack_type)
 {

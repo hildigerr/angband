@@ -1850,6 +1850,66 @@ void do_cmd_search(void)
 }
 
 
+
+
+/*
+ * Resting allows a player to safely restore his hp	-RAK-	 
+ */
+void do_cmd_rest(void)
+{
+    int   rest_num;
+    vtype rest_str;
+    char ch;
+
+    if (command_rep > 0) {
+	rest_num = command_rep;
+	command_rep = 0;
+    } else {
+
+	/* Assume no rest */
+	rest_num = 0;
+
+	/* Ask the question (perhaps a "prompt" routine would be good) */
+	prt("Rest for how long? ('*' for HP/mana; '&' as needed) : ", 0, 0);
+	if (get_string(rest_str, 0, 54, 5)) {
+	    if (sscanf(rest_str, "%c", &ch) == 1) {
+		if (ch == '*') {
+		    rest_num = (-1);
+		}
+		else if (ch == '&') {
+		    rest_num = (-2);
+		}
+		else {
+			rest_num = atoi(rest_str);
+		    if (rest_num > 30000) rest_num = 30000;
+		}
+	    }
+	}
+    }
+
+    /* Induce Rest */
+    if (rest_num != 0) {
+
+	search_off();
+
+	p_ptr->rest = rest_num;
+	p_ptr->status |= PY_REST;
+	prt_state();
+	p_ptr->food_digested--;
+
+	prt("Press any key to stop resting...", 0, 0);
+	put_qio();
+    }
+
+    /* Rest was cancelled */    
+    else {
+	erase_line(MSG_LINE, 0);
+	free_turn_flag = TRUE;
+    }    
+}
+
+
+
 void do_cmd_feeling()
 {
     /* No useful feeling in town */

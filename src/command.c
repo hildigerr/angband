@@ -766,13 +766,13 @@ void do_command(char com_val)
 	    do_cmd_stay(do_pickup);
 	    if (command_rep > 1) {
 	    command_rep--;
-	    rest();
+	    do_cmd_rest();
 	    }
 	    break;
 
-	/* Rest a while */
+	/* Begin Resting */
 	case 'R':
-	    rest(); break;
+	    do_cmd_rest(); break;
 
 
 
