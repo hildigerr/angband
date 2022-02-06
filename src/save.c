@@ -484,10 +484,6 @@ static void rd_options(u32b l)
 
     /* Read "hitpoint_warn" */
     hitpoint_warn = ((l >> 17) & 0xf);
-
-    feeling = ((l >> 24) & 0xf);
-    if (feeling > 10)  feeling = 0;
-    if (feeling < 0) feeling = 0;
 }
 
 
@@ -529,10 +525,6 @@ static void wr_options(void)
 
     /* Write "hitpoint_warn" */
     l |= ((hitpoint_warn & 0xf) << 17);
-
-    if (feeling > 10) feeling = 0;
-    if (feeling < 0) feeling = 0;
-    l |= ((feeling & 0xf) << 24);
 
     if (death) l |= 0x80000000L;	/* Sign bit */
 }
@@ -699,6 +691,9 @@ static void rd_extra()
     rd_u16b(total_winner);
     rd_u16b(noscore);
 
+    /* Read "feeling" */
+    rd_byte(&tmp8u);
+    feeling = tmp8u;
 
     /* Turn of last "feeling" */
     rd_u32b(&old_turn);
@@ -857,6 +852,9 @@ static void wr_extra()
     wr_u16b(total_winner);
     wr_u16b(noscore);
 
+
+    /* Write feeling */
+    wr_byte(feeling);
 
     /* Turn of last "feeling" */
     wr_u32b(old_turn);
@@ -1380,7 +1378,6 @@ int load_player(int *generate)
     store_type            *st_ptr;
     byte char_tmp, ychar, xchar, count;
 
-    free_turn_flag = TRUE;	   /* So a feeling isn't generated upon reloading -DGK */
 
     /* Forbid suspend */
     signals_ignore_tstp();
