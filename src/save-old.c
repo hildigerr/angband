@@ -435,17 +435,6 @@ static void rd_artifacts_old()
 }
 
 
-static char *basename(char *a)
-{
-    char *b;
-    char *strrchr();
-
-    if ((b = strrchr(a, (int)'/')) == (char *)0)
-	return a;
-    return b;
-}
-
-
 static void rd_unique(register struct unique_mon *item)
 {
     rd_s32b(&item->exist);
@@ -1200,7 +1189,8 @@ closefiles:
 	    if (turn >= 0) {
 		char               *tmp2;
 
-		tmp2 = basename(savefile);
+		tmp2 = strrchr(savefile, (int)'/');
+		if (tmp2 == (char *)0) tmp2 = savefile;
 
 		(void)sprintf(temp, "%s/p.%s", ANGBAND_DIR_SAVE, (tmp2 + 1));
 

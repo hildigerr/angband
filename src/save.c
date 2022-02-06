@@ -451,16 +451,6 @@ static errr rd_store(store_type *st_ptr)
 
 
 
-static char *basename(char *a)
-{
-    char *b;
-    char *strrchr();
-
-    if ((b = strrchr(a, (int)'/')) == (char *)0)
-	return a;
-    return b;
-}
-
 static void wr_unique(register struct unique_mon *item)
 {
     wr_s32b(item->exist);
@@ -988,7 +978,8 @@ int save_player()
 
     if (_save_player(savefile)) {
 
-	tmp2 = basename(savefile);
+	tmp2 = strrchr(savefile, (int)'/');
+	if (tmp2 == (char *)0) tmp2 = savefile;
 
 	(void)sprintf(temp, "%s/p.%s", ANGBAND_DIR_SAVE, (tmp2 + 1));
 
@@ -1982,7 +1973,8 @@ closefiles:
 	    if (turn >= 0) {
 		char               *tmp2;
 
-		tmp2 = basename(savefile);
+		tmp2 = strrchr(savefile, (int)'/');
+		if (tmp2 == (char *)0) tmp2 = savefile;
 
 		(void)sprintf(temp, "%s/p.%s", ANGBAND_DIR_SAVE, (tmp2 + 1));
 
