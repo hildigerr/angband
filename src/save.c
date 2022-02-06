@@ -550,60 +550,70 @@ static void rd_extra()
     byte tmp8u;
 
     rd_string(p_ptr->name);
-    rd_byte(&p_ptr->male);
-    rd_s32b(&p_ptr->au);
-    rd_s32b(&p_ptr->max_exp);
-    rd_s32b(&p_ptr->exp);
-    rd_u16b(&p_ptr->exp_frac);
-    rd_u16b(&p_ptr->age);
-    rd_u16b(&p_ptr->ht);
-    rd_u16b(&p_ptr->wt);
-    rd_u16b(&p_ptr->lev);
-    rd_u16b(&p_ptr->max_dlv);
-    rd_s16b(&p_ptr->srh);
-    rd_s16b(&p_ptr->fos);
-    rd_s16b(&p_ptr->bth);
-    rd_s16b(&p_ptr->bthb);
-    rd_s16b(&p_ptr->mana);
-    rd_s16b(&p_ptr->mhp);
-    rd_s16b(&p_ptr->ptohit);
-    rd_s16b(&p_ptr->ptodam);
-    rd_s16b(&p_ptr->pac);
-    rd_s16b(&p_ptr->ptoac);
-    rd_s16b(&p_ptr->dis_th);
-    rd_s16b(&p_ptr->dis_td);
-    rd_s16b(&p_ptr->dis_ac);
-    rd_s16b(&p_ptr->dis_tac);
-    rd_s16b(&p_ptr->disarm);
-    rd_s16b(&p_ptr->save);
-    rd_s16b(&p_ptr->sc);
-    rd_s16b(&p_ptr->stl);
-    rd_byte(&p_ptr->pclass);
-    rd_byte(&p_ptr->prace);
-    rd_byte(&p_ptr->hitdie);
-    rd_byte(&p_ptr->expfact);
-    rd_s16b(&p_ptr->cmana);
-    rd_u16b(&p_ptr->cmana_frac);
-    rd_s16b(&p_ptr->chp);
-    rd_u16b(&p_ptr->chp_frac);
 
     for (i = 0; i < 4; i++) {
 	rd_string(p_ptr->history[i]);
     }
 
-    /* Read the stats */    
+    /* Class/Race/Gender/Spells */
+    rd_byte(&p_ptr->prace);
+    rd_byte(&p_ptr->pclass);
+    rd_byte(&p_ptr->male);
+    rd_byte(&p_ptr->new_spells);
+
+    /* Special Race/Class info */
+    rd_byte(&p_ptr->hitdie);
+    rd_byte(&p_ptr->expfact);
+
+    /* Age/Height/Weight */
+    rd_u16b(&p_ptr->age);
+    rd_u16b(&p_ptr->ht);
+    rd_u16b(&p_ptr->wt);
+
+    /* Read the stats, Keep it simple */    
     for (i = 0; i < 6; i++) rd_s16b(&p_ptr->max_stat[i]);
-    if (older_than(2,5,7)) {
-	for (i = 0; i < 6; i++) rd_s16b(&p_ptr->cur_stat[i]);
-    }
-    else {
-	for (i = 0; i < 6; i++) {
-	    rd_byte(&tmp8u);
-	    p_ptr->cur_stat[i] = tmp8u;
-	}
-    }
+    for (i = 0; i < 6; i++) rd_s16b(&p_ptr->cur_stat[i]);
     for (i = 0; i < 6; i++) rd_s16b(&p_ptr->mod_stat[i]);
     for (i = 0; i < 6; i++) rd_s16b(&p_ptr->use_stat[i]);
+
+    rd_s32b(&p_ptr->au);
+
+    rd_s32b(&p_ptr->max_exp);
+    rd_s32b(&p_ptr->exp);
+    rd_u16b(&p_ptr->exp_frac);
+
+    rd_u16b(&p_ptr->lev);
+
+    rd_s16b(&p_ptr->mhp);
+    rd_s16b(&p_ptr->chp);
+    rd_u16b(&p_ptr->chp_frac);
+
+    rd_s16b(&p_ptr->mana);
+    rd_s16b(&p_ptr->cmana);
+    rd_u16b(&p_ptr->cmana_frac);
+
+    rd_u16b(&p_ptr->max_dlv);
+
+    /* More info */
+    rd_s16b(&p_ptr->srh);
+    rd_s16b(&p_ptr->fos);
+    rd_s16b(&p_ptr->disarm);
+    rd_s16b(&p_ptr->save);
+    rd_s16b(&p_ptr->sc);
+    rd_s16b(&p_ptr->stl);
+    rd_s16b(&p_ptr->bth);
+    rd_s16b(&p_ptr->bthb);
+
+    rd_s16b(&p_ptr->ptohit);
+    rd_s16b(&p_ptr->ptodam);
+    rd_s16b(&p_ptr->pac);
+    rd_s16b(&p_ptr->ptoac);
+
+    rd_s16b(&p_ptr->dis_th);
+    rd_s16b(&p_ptr->dis_td);
+    rd_s16b(&p_ptr->dis_ac);
+    rd_s16b(&p_ptr->dis_tac);
+
 
     /* Read the flags */
     rd_u32b(&p_ptr->status);
@@ -628,43 +638,25 @@ static void rd_extra()
     rd_s16b(&p_ptr->shero);
     rd_s16b(&p_ptr->shield);
     rd_s16b(&p_ptr->blessed);
+    rd_s16b(&p_ptr->detect_inv);
+    rd_s16b(&p_ptr->word_recall);
+    rd_s16b(&p_ptr->see_infra);
+    rd_s16b(&p_ptr->tim_infra);
     rd_s16b(&p_ptr->oppose_fire);
     rd_s16b(&p_ptr->oppose_cold);
     rd_s16b(&p_ptr->oppose_acid);
     rd_s16b(&p_ptr->oppose_elec);
     rd_s16b(&p_ptr->oppose_pois);
-    rd_s16b(&p_ptr->detect_inv);
-    rd_s16b(&p_ptr->word_recall);
-    rd_s16b(&p_ptr->see_infra);
-    rd_s16b(&p_ptr->tim_infra);
-    rd_byte(&p_ptr->see_inv);
-    rd_byte(&p_ptr->teleport);
-    rd_byte(&p_ptr->free_act);
-    rd_byte(&p_ptr->slow_digest);
-    rd_byte(&p_ptr->aggravate);
+    rd_byte(&p_ptr->immune_acid);
+    rd_byte(&p_ptr->immune_elec);
+    rd_byte(&p_ptr->immune_fire);
+    rd_byte(&p_ptr->immune_cold);
+    rd_byte(&p_ptr->immune_pois);
+    rd_byte(&p_ptr->resist_acid);
+    rd_byte(&p_ptr->resist_elec);
     rd_byte(&p_ptr->resist_fire);
     rd_byte(&p_ptr->resist_cold);
-    rd_byte(&p_ptr->resist_acid);
-    rd_byte(&p_ptr->regenerate);
-    rd_byte(&p_ptr->resist_elec);
-    rd_byte(&p_ptr->ffall);
-    rd_byte(&p_ptr->sustain_str);
-    rd_byte(&p_ptr->sustain_int);
-    rd_byte(&p_ptr->sustain_wis);
-    rd_byte(&p_ptr->sustain_con);
-    rd_byte(&p_ptr->sustain_dex);
-    rd_byte(&p_ptr->sustain_chr);
-    rd_byte(&p_ptr->confuse_monster);
-    rd_byte(&p_ptr->new_spells);
     rd_byte(&p_ptr->resist_pois);
-    rd_byte(&p_ptr->hold_life);
-    rd_byte(&p_ptr->telepathy);
-    rd_byte(&p_ptr->immune_fire);
-    rd_byte(&p_ptr->immune_acid);
-    rd_byte(&p_ptr->immune_pois);
-    rd_byte(&p_ptr->immune_cold);
-    rd_byte(&p_ptr->immune_elec);
-    rd_byte(&p_ptr->light);
     rd_byte(&p_ptr->resist_conf);
     rd_byte(&p_ptr->resist_sound);
     rd_byte(&p_ptr->resist_lite);
@@ -675,26 +667,32 @@ static void rd_extra()
     rd_byte(&p_ptr->resist_nexus);
     rd_byte(&p_ptr->resist_blind);
     rd_byte(&p_ptr->resist_nether);
-
-    if (older_than(2,6,0)) {
-	p_ptr->resist_fear = 0;	/* sigh */
-    }
-    else {
-	rd_byte(&p_ptr->resist_fear);
-    }
+    rd_byte(&p_ptr->resist_fear);
+    rd_byte(&p_ptr->see_inv);
+    rd_byte(&p_ptr->teleport);
+    rd_byte(&p_ptr->free_act);
+    rd_byte(&p_ptr->slow_digest);
+    rd_byte(&p_ptr->aggravate);
+    rd_byte(&p_ptr->regenerate);
+    rd_byte(&p_ptr->ffall);
+    rd_byte(&p_ptr->sustain_str);
+    rd_byte(&p_ptr->sustain_int);
+    rd_byte(&p_ptr->sustain_wis);
+    rd_byte(&p_ptr->sustain_con);
+    rd_byte(&p_ptr->sustain_dex);
+    rd_byte(&p_ptr->sustain_chr);
+    rd_byte(&p_ptr->confuse_monster);
+    rd_byte(&p_ptr->hold_life);
+    rd_byte(&p_ptr->telepathy);
+    rd_byte(&p_ptr->light);
 
     rd_u16b(&missile_ctr);
 
+    /* Turn of last "feeling" */
+    rd_u32b(&old_turn);
+
     /* Current turn */
     rd_u32b(&turn);
-
-    /* Last turn */
-    if (older_than(2,6,0)) {
-	old_turn = turn;
-    }
-    else {
-	rd_u32b(&old_turn);
-    }
 }
 
 static void wr_extra()
@@ -702,50 +700,67 @@ static void wr_extra()
     int i;
 
     wr_string(p_ptr->name);
+
+    for (i = 0; i < 4; i++) {
+	wr_string(p_ptr->history[i]);
+    }
+
+    /* Race/Class/Gender/Spells */
+    wr_byte(p_ptr->prace);
+    wr_byte(p_ptr->pclass);
     wr_byte(p_ptr->male);
-    wr_s32b(p_ptr->au);
-    wr_s32b(p_ptr->max_exp);
-    wr_s32b(p_ptr->exp);
-    wr_u16b(p_ptr->exp_frac);
+    wr_byte(p_ptr->new_spells);
+
+    wr_byte(p_ptr->hitdie);
+    wr_byte(p_ptr->expfact);
+
     wr_u16b(p_ptr->age);
     wr_u16b(p_ptr->ht);
     wr_u16b(p_ptr->wt);
-    wr_u16b(p_ptr->lev);
-    wr_u16b(p_ptr->max_dlv);
-    wr_s16b(p_ptr->srh);
-    wr_s16b(p_ptr->fos);
-    wr_s16b(p_ptr->bth);
-    wr_s16b(p_ptr->bthb);
-    wr_s16b(p_ptr->mana);
-    wr_s16b(p_ptr->mhp);
-    wr_s16b(p_ptr->ptohit);
-    wr_s16b(p_ptr->ptodam);
-    wr_s16b(p_ptr->pac);
-    wr_s16b(p_ptr->ptoac);
-    wr_s16b(p_ptr->dis_th);
-    wr_s16b(p_ptr->dis_td);
-    wr_s16b(p_ptr->dis_ac);
-    wr_s16b(p_ptr->dis_tac);
-    wr_s16b(p_ptr->disarm);
-    wr_s16b(p_ptr->save);
-    wr_s16b(p_ptr->sc);
-    wr_s16b(p_ptr->stl);
-    wr_byte(p_ptr->pclass);
-    wr_byte(p_ptr->prace);
-    wr_byte(p_ptr->hitdie);
-    wr_byte(p_ptr->expfact);
-    wr_s16b(p_ptr->cmana);
-    wr_u16b(p_ptr->cmana_frac);
-    wr_s16b(p_ptr->chp);
-    wr_u16b(p_ptr->chp_frac);
-    for (i = 0; i < 4; i++)
-	wr_string(p_ptr->history[i]);
 
     /* Dump the stats */
     for (i = 0; i < 6; ++i) wr_s16b(p_ptr->max_stat[i]);
     for (i = 0; i < 6; ++i) wr_s16b(p_ptr->cur_stat[i]);
     for (i = 0; i < 6; ++i) wr_s16b(p_ptr->mod_stat[i]);
     for (i = 0; i < 6; ++i) wr_s16b(p_ptr->use_stat[i]);
+
+    wr_s32b(p_ptr->au);
+
+    wr_s32b(p_ptr->max_exp);
+    wr_s32b(p_ptr->exp);
+    wr_u16b(p_ptr->exp_frac);
+    wr_u16b(p_ptr->lev);
+
+    wr_s16b(p_ptr->mhp);
+    wr_s16b(p_ptr->chp);
+    wr_u16b(p_ptr->chp_frac);
+
+    wr_s16b(p_ptr->mana);
+    wr_s16b(p_ptr->cmana);
+    wr_u16b(p_ptr->cmana_frac);
+
+    /* Max Player and Dungeon Levels */
+    wr_u16b(p_ptr->max_dlv);
+
+    /* More info */
+    wr_s16b(p_ptr->srh);
+    wr_s16b(p_ptr->fos);
+    wr_s16b(p_ptr->disarm);
+    wr_s16b(p_ptr->save);
+    wr_s16b(p_ptr->sc);
+    wr_s16b(p_ptr->stl);
+    wr_s16b(p_ptr->bth);
+    wr_s16b(p_ptr->bthb);
+    
+    wr_s16b(p_ptr->ptohit);
+    wr_s16b(p_ptr->ptodam);
+    wr_s16b(p_ptr->pac);
+    wr_s16b(p_ptr->ptoac);
+
+    wr_s16b(p_ptr->dis_th);
+    wr_s16b(p_ptr->dis_td);
+    wr_s16b(p_ptr->dis_ac);
+    wr_s16b(p_ptr->dis_tac);
 
     wr_u32b(p_ptr->status);
     wr_s16b(p_ptr->rest);
@@ -769,43 +784,25 @@ static void wr_extra()
     wr_s16b(p_ptr->shero);
     wr_s16b(p_ptr->shield);
     wr_s16b(p_ptr->blessed);
+    wr_s16b(p_ptr->detect_inv);
+    wr_s16b(p_ptr->word_recall);
+    wr_s16b(p_ptr->see_infra);
+    wr_s16b(p_ptr->tim_infra);
     wr_s16b(p_ptr->oppose_fire);
     wr_s16b(p_ptr->oppose_cold);
     wr_s16b(p_ptr->oppose_acid);
     wr_s16b(p_ptr->oppose_elec);
     wr_s16b(p_ptr->oppose_pois);
-    wr_s16b(p_ptr->detect_inv);
-    wr_s16b(p_ptr->word_recall);
-    wr_s16b(p_ptr->see_infra);
-    wr_s16b(p_ptr->tim_infra);
-    wr_byte(p_ptr->see_inv);
-    wr_byte(p_ptr->teleport);
-    wr_byte(p_ptr->free_act);
-    wr_byte(p_ptr->slow_digest);
-    wr_byte(p_ptr->aggravate);
+    wr_byte(p_ptr->immune_acid);
+    wr_byte(p_ptr->immune_elec);
+    wr_byte(p_ptr->immune_fire);
+    wr_byte(p_ptr->immune_cold);
+    wr_byte(p_ptr->immune_pois);
+    wr_byte(p_ptr->resist_acid);
+    wr_byte(p_ptr->resist_elec);
     wr_byte(p_ptr->resist_fire);
     wr_byte(p_ptr->resist_cold);
-    wr_byte(p_ptr->resist_acid);
-    wr_byte(p_ptr->regenerate);
-    wr_byte(p_ptr->resist_elec);
-    wr_byte(p_ptr->ffall);
-    wr_byte(p_ptr->sustain_str);
-    wr_byte(p_ptr->sustain_int);
-    wr_byte(p_ptr->sustain_wis);
-    wr_byte(p_ptr->sustain_con);
-    wr_byte(p_ptr->sustain_dex);
-    wr_byte(p_ptr->sustain_chr);
-    wr_byte(p_ptr->confuse_monster);
-    wr_byte(p_ptr->new_spells);
     wr_byte(p_ptr->resist_pois);
-    wr_byte(p_ptr->hold_life);
-    wr_byte(p_ptr->telepathy);
-    wr_byte(p_ptr->immune_fire);
-    wr_byte(p_ptr->immune_acid);
-    wr_byte(p_ptr->immune_pois);
-    wr_byte(p_ptr->immune_cold);
-    wr_byte(p_ptr->immune_elec);
-    wr_byte(p_ptr->light);
     wr_byte(p_ptr->resist_conf);
     wr_byte(p_ptr->resist_sound);
     wr_byte(p_ptr->resist_lite);
@@ -816,11 +813,32 @@ static void wr_extra()
     wr_byte(p_ptr->resist_nexus);
     wr_byte(p_ptr->resist_blind);
     wr_byte(p_ptr->resist_nether);
-    wr_byte(p_ptr->resist_fear); /* added -CWS */
+    wr_byte(p_ptr->resist_fear);
+    wr_byte(p_ptr->see_inv);
+    wr_byte(p_ptr->teleport);
+    wr_byte(p_ptr->free_act);
+    wr_byte(p_ptr->slow_digest);
+    wr_byte(p_ptr->aggravate);
+    wr_byte(p_ptr->regenerate);
+    wr_byte(p_ptr->ffall);
+    wr_byte(p_ptr->sustain_str);
+    wr_byte(p_ptr->sustain_int);
+    wr_byte(p_ptr->sustain_wis);
+    wr_byte(p_ptr->sustain_con);
+    wr_byte(p_ptr->sustain_dex);
+    wr_byte(p_ptr->sustain_chr);
+    wr_byte(p_ptr->confuse_monster);
+    wr_byte(p_ptr->hold_life);
+    wr_byte(p_ptr->telepathy);
+    wr_byte(p_ptr->light);
 
     wr_u16b(missile_ctr);
+
+    /* Turn of last "feeling" */
+    wr_u32b(old_turn);
+
+    /* Current turn */
     wr_u32b(turn);
-    wr_u32b(old_turn);	/* added -CWS */
 }
 
 
