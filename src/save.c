@@ -541,19 +541,6 @@ static void wr_options(void)
 
 
 
-static void wr_unique(register struct unique_mon *item)
-{
-    wr_s32b(item->exist);
-    wr_s32b(item->dead);
-}
-
-static void rd_unique(register struct unique_mon *item)
-{
-    rd_s32b(&item->exist);
-    rd_s32b(&item->dead);
-}
-
-
 static int sv_write()
 {
     u32b              l;
@@ -695,8 +682,10 @@ static int sv_write()
     for (i = 0; i < MAX_QUESTS; i++)
 	wr_u32b(quests[i]);
 
-    for (i = 0; i < MAX_R_IDX; i++)
-	wr_unique(&u_list[i]);
+    for (i = 0; i < MAX_R_IDX; i++) {
+	wr_s32b(u_list[i].exist);
+	wr_s32b(u_list[i].dead);
+    }
 
     /* Dump the monster lore */
     for (i = 0; i < MAX_R_IDX; i++) {
@@ -1405,8 +1394,10 @@ int load_player(int *generate)
 	if (to_be_wizard)
 	    prt("Loaded Quests", 4, 0);
 
-	for (i = 0; i < MAX_R_IDX; i++)
-	    rd_unique(&u_list[i]);
+	for (i = 0; i < MAX_R_IDX; i++) {
+	    rd_s32b(&u_list[i].exist);
+	    rd_s32b(&u_list[i].dead);
+	}
 	if (to_be_wizard)
 	    prt("Loaded Unique Beasts", 5, 0);
 	put_qio();
