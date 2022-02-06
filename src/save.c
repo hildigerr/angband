@@ -688,6 +688,18 @@ static void rd_extra()
 
     rd_u16b(&missile_ctr);
 
+
+    /* Hack -- the two "special seeds" */            
+    rd_u32b(&randes_seed);
+    rd_u32b(&town_seed);
+
+
+    /* Special stuff */
+    rd_u16b(panic_save);
+    rd_u16b(total_winner);
+    rd_u16b(noscore);
+
+
     /* Turn of last "feeling" */
     rd_u32b(&old_turn);
 
@@ -833,6 +845,18 @@ static void wr_extra()
     wr_byte(p_ptr->light);
 
     wr_u16b(missile_ctr);
+
+
+    /* Write the "object seeds" */
+    wr_u32b(randes_seed);
+    wr_u32b(town_seed);
+
+
+    /* Special stuff */
+    wr_u16b(panic_save);
+    wr_u16b(total_winner);
+    wr_u16b(noscore);
+
 
     /* Turn of last "feeling" */
     wr_u32b(old_turn);
@@ -1034,16 +1058,11 @@ static int sv_write()
 
     for (i = 0; i < OBJECT_IDENT_SIZE; i++)
     wr_byte(object_ident[i]);
-    wr_u32b(randes_seed);
-    wr_u32b(town_seed);
+
     wr_u16b(last_msg);
     for (i = 0; i < MAX_SAVE_MSG; i++)
 	wr_string(old_msg[i]);
 
-/* this indicates 'cheating' if it is a one */
-    wr_u16b(panic_save);
-    wr_u16b(total_winner);
-    wr_u16b(noscore);
 
     /* Dump the "player hp" entries */
     for (i = 0; i < MAX_PLAYER_LEVEL; i++) {
@@ -1648,15 +1667,11 @@ int load_player(int *generate)
 
 	    for (i = 0; i < OBJECT_IDENT_SIZE; i++)
 	    rd_byte(&object_ident[i]);
-	    rd_u32b(&randes_seed);
-	    rd_u32b(&town_seed);
+
 	    rd_u16b(&last_msg);
 	    for (i = 0; i < MAX_SAVE_MSG; i++)
 		rd_string(old_msg[i]);
 
-	    rd_u16b(&panic_save);
-	    rd_u16b(&total_winner);
-	    rd_u16b(&noscore);
 
     /* Read the player_hp array */
 	    for (i = 0; i < MAX_PLAYER_LEVEL; i++) {
