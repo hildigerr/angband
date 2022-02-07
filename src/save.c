@@ -908,6 +908,114 @@ static errr rd_inventory()
 
 static void wr_dungeon()
 {
+    int i, j;
+    byte count, prev_char;
+    byte tmp8u;
+    cave_type *c_ptr;
+    inven_type *t_ptr;
+
+    /* Dungeon specific info follows */
+    wr_u16b(dun_level);
+    wr_u16b(char_row);
+    wr_u16b(char_col);
+    wr_u16b(mon_tot_mult);
+    wr_u16b(cur_height);
+    wr_u16b(cur_width);
+    wr_u16b(max_panel_rows);
+    wr_u16b(max_panel_cols);
+
+    /* Note that this will induce two wasted bytes */
+    count = 0;
+    prev_char = 0;
+
+    /* Dump the m_idx info */
+    for (i = 0; i < MAX_HEIGHT; i++) {
+	for (j = 0; j < MAX_WIDTH; j++) {
+
+	    /* Get the cave */
+	    c_ptr = &cave[i][j];
+
+	    if (c_ptr->m_idx != 0) {
+		wr_byte((byte) i);
+		wr_byte((byte) j);
+		wr_u16b(c_ptr->m_idx); /* was wr_byte -CWS */
+	    }
+	}
+    }
+    wr_byte((byte) 0xFF);	   /* marks end of m_idx info */
+
+    /* Dump the i_idx info */
+    for (i = 0; i < MAX_HEIGHT; i++) {
+	for (j = 0; j < MAX_WIDTH; j++) {
+
+	    /* Get the cave */
+	    c_ptr = &cave[i][j];
+
+	    if (c_ptr->i_idx != 0) {
+		wr_byte((byte) i);
+		wr_byte((byte) j);
+		wr_u16b(c_ptr->i_idx);
+	    }
+	}
+    }
+    wr_byte(0xFF);		   /* marks end of i_idx info */
+
+    /* Dump the info */
+    for (i = 0; i < MAX_HEIGHT; i++) {
+	for (j = 0; j < MAX_WIDTH; j++) {
+
+	    /* Get the cave */
+	    c_ptr = &cave[i][j];
+
+	    /* Create an encoded byte of info */            
+	    tmp8u = (c_ptr->fval);
+	    tmp8u |= (c_ptr->lr << 4) | (c_ptr->fm << 5) | (c_ptr->pl << 6) | (c_ptr->tl << 7);
+
+	    /* If the run is broken, or too full, flush it */
+	    if (tmp8u != prev_char || count == MAX_UCHAR) {
+		wr_byte((byte) count);
+		wr_byte(prev_char);
+		prev_char = tmp8u;
+		count = 1;
+	    }
+
+	    /* Continue the run */
+	    else {
+		count++;
+	    }
+	}
+    }
+
+    /* save last entry */
+	wr_byte((byte) count);
+	wr_byte(prev_char);
+
+#ifdef MSDOS
+/* must change graphics symbols for walls and floors back to default chars,
+ * this is necessary so that if the user changes the graphics line, the
+ * program will be able change all existing walls/floors to the new symbol 
+ */
+    t_ptr = &i_list[i_max - 1];
+    for (i = i_max - 1; i >= MIN_I_IDX; i--) {
+	if (t_ptr->tchar == wallsym)
+	    t_ptr->tchar = '#';
+	t_ptr--;
+    }
+#endif
+
+
+    /* Dump the items (note: starting at #1) */
+    wr_u16b(i_max);
+    for (i = MIN_I_IDX; i < i_max; i++) {
+	wr_item(&i_list[i]);
+    }
+
+
+    /* Dump the monsters (note: starting at #2) */    
+    wr_u16b(m_max);
+    for (i = MIN_M_IDX; i < m_max; i++) {
+	wr_monster(&m_list[i]);
+    }
 }
 
 
@@ -1063,11 +1171,6 @@ static int sv_write()
     byte               char_tmp, prev_char;
     register cave_type   *c_ptr;
     register monster_lore *r_ptr;
-
-#ifdef MSDOS
-    inven_type           *t_ptr;
-
-#endif
     store_type  *st_ptr;
 
 /* clear the death flag when creating a HANGUP save file, so that player can
@@ -1278,77 +1381,9 @@ static int sv_write()
 	    return FALSE;
 	return TRUE;
     }
-    wr_u16b(dun_level);
-    wr_u16b(char_row);
-    wr_u16b(char_col);
-    wr_u16b(mon_tot_mult);
-    wr_u16b(cur_height);
-    wr_u16b(cur_width);
-    wr_u16b(max_panel_rows);
-    wr_u16b(max_panel_cols);
 
-    for (i = 0; i < MAX_HEIGHT; i++)
-	for (j = 0; j < MAX_WIDTH; j++) {
-	    c_ptr = &cave[i][j];
-	    if (c_ptr->m_idx != 0) {
-		wr_byte((byte) i);
-		wr_byte((byte) j);
-		wr_u16b(c_ptr->m_idx); /* was wr_byte -CWS */
-	    }
-	}
-    wr_byte((byte) 0xFF);	   /* marks end of m_idx info */
-    for (i = 0; i < MAX_HEIGHT; i++)
-	for (j = 0; j < MAX_WIDTH; j++) {
-	    c_ptr = &cave[i][j];
-	    if (c_ptr->i_idx != 0) {
-		wr_byte((byte) i);
-		wr_byte((byte) j);
-		wr_u16b(c_ptr->i_idx);
-	    }
-	}
-    wr_byte(0xFF);		   /* marks end of i_idx info */
-
-/* must set counter to zero, note that code may write out two bytes
- * unnecessarily 
- */
-    count = 0;
-    prev_char = 0;
-    for (i = 0; i < MAX_HEIGHT; i++)
-	for (j = 0; j < MAX_WIDTH; j++) {
-	    c_ptr = &cave[i][j];
-	    char_tmp = c_ptr->fval | (c_ptr->lr << 4) | (c_ptr->fm << 5) |
-		(c_ptr->pl << 6) | (c_ptr->tl << 7);
-	    if (char_tmp != prev_char || count == MAX_UCHAR) {
-		wr_byte((byte) count);
-		wr_byte(prev_char);
-		prev_char = char_tmp;
-		count = 1;
-	    } else
-		count++;
-	}
-/* save last entry */
-    wr_byte((byte) count);
-    wr_byte(prev_char);
-
-#ifdef MSDOS
-
-/* must change graphics symbols for walls and floors back to default chars,
- * this is necessary so that if the user changes the graphics line, the
- * program will be able change all existing walls/floors to the new symbol 
- */
-    t_ptr = &i_list[i_max - 1];
-    for (i = i_max - 1; i >= MIN_I_IDX; i--) {
-	if (t_ptr->tchar == wallsym)
-	    t_ptr->tchar = '#';
-	t_ptr--;
-    }
-#endif
-    wr_u16b(i_max);
-    for (i = MIN_I_IDX; i < i_max; i++)
-	wr_item(&i_list[i]);
-    wr_u16b(m_max);
-    for (i = MIN_M_IDX; i < m_max; i++)
-	wr_monster(&m_list[i]);
+	/* Dump the dungeon */
+	wr_dungeon();
 
 /* Save ghost names & stats etc... */
      if (!r_list[MAX_R_IDX - 1].name) {
