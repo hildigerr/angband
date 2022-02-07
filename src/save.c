@@ -1301,15 +1301,15 @@ static errr rd_dungeon()
 
 
 
-static int sv_write()
+/*
+ * Actually write a save-file
+ */
+
+static int wr_savefile()
 {
     u32b              l;
-    register int        i, j;
-    int                 count;
-    byte               char_tmp, prev_char;
-    register cave_type   *c_ptr;
+    register int        i;
     register monster_lore *r_ptr;
-    store_type  *st_ptr;
 
 /* clear the death flag when creating a HANGUP save file, so that player can
  * see tombstone when restart 
@@ -1644,7 +1644,7 @@ int _save_player(char *fnam)
     /* Note that xor_byte is now equal to char_tmp */
 
 	/* Write the savefile */
-	ok = sv_write();
+	ok = wr_savefile();
 
 	/* Attempt to close it */
 	if (fclose(fff) == EOF) ok = FALSE;
