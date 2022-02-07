@@ -594,6 +594,157 @@ static void rd_extra_old()
 }
 
 
+
+
+
+/*
+ * Old method
+ */
+static errr rd_dungeon_old()
+{
+    int i;
+    byte count;
+    byte ychar, xchar;
+    byte tmp8u;
+    u16b tmp16u;
+    int total_count;
+    cave_type *c_ptr;
+
+
+    /* Header info */            
+    rd_u16b(&dun_level);
+    rd_u16b(&char_row);
+    rd_u16b(&char_col);
+    rd_u16b(&mon_tot_mult);
+    rd_u16b(&cur_height);
+    rd_u16b(&cur_width);
+    rd_u16b(&max_panel_rows);
+    rd_u16b(&max_panel_cols);
+
+
+    /* read in the creature ptr info */
+    while (1) {
+
+	rd_byte(&tmp8u);
+	if (tmp8u == 0xFF) break;
+
+	ychar = tmp8u;
+	rd_byte(&xchar);
+
+	/* Invalid cave location */
+	if (xchar > MAX_WIDTH || ychar > MAX_HEIGHT) return (71);
+
+	/* let's correctly fix the invisible monster bug  -CWS */
+	if (older_than(2,6,0)) {
+	    rd_byte(&tmp8u);
+	    cave[ychar][xchar].m_idx = tmp8u;
+	}
+	else {
+	    rd_u16b(&tmp16u);
+	    cave[ychar][xchar].m_idx = tmp16u;
+	}
+    }
+
+    /* read in the treasure ptr info */
+    while (1) { 
+	rd_byte(&tmp8u);
+	if (tmp8u == 0xFF) break;
+	ychar = tmp8u;
+	rd_byte(&xchar);
+	rd_u16b(&tmp16u);
+	if (xchar > MAX_WIDTH || ychar > MAX_HEIGHT) return (72);
+	cave[ychar][xchar].i_idx = tmp16u;
+    }
+
+
+    /* Read in the actual "cave" data */
+	c_ptr = &cave[0][0];
+    total_count = 0;
+
+    /* Read until done */
+    while (total_count != MAX_HEIGHT * MAX_WIDTH) {
+
+	/* Extract some RLE info */
+	rd_byte(&count);
+	rd_byte(&tmp8u);
+
+	/* Apply the RLE info */
+	for (i = count; i > 0; i--) {
+
+#ifndef ATARIST_MWC
+	    /* Prevent over-run */
+	    if (c_ptr >= &cave[MAX_HEIGHT][0]) {
+		prt("ERROR in cave size", 13, 0);
+		return (81);
+	    }
+#endif
+
+	    /* Extract the "wall data" */
+	    c_ptr->fval = tmp8u & 0xF;
+
+	    /* Extract the "info" */
+	    c_ptr->lr = (tmp8u >> 4) & 0x1;
+	    c_ptr->fm = (tmp8u >> 5) & 0x1;
+	    c_ptr->pl = (tmp8u >> 6) & 0x1;
+	    c_ptr->tl = (tmp8u >> 7) & 0x1;
+
+	    /* Advance the cave pointers */
+	    c_ptr++;
+	}
+
+	total_count += count;
+    }
+
+
+    /* Read the item count */
+    rd_u16b(&i_max);
+    if (i_max > MAX_I_IDX) {
+	prt("ERROR in MAX_I_IDX", 14, 0);
+	return (92);
+    }
+
+    /* Read the dungeon items */
+    for (i = MIN_I_IDX; i < i_max; i++) {
+	inven_type *i_ptr = &i_list[i];
+
+	/* Read the item */
+	rd_item_old(i_ptr);
+    }
+
+
+    /* Read the monster count */        
+    rd_u16b(&m_max);
+    if (m_max > MAX_M_IDX) {
+	prt("ERROR in MAX_M_IDX", 15, 0);
+	return (93);
+    }
+
+    /* Read the monsters */
+    for (i = MIN_M_IDX; i < m_max; i++) {
+	monster_type *m_ptr = &m_list[i];
+	rd_monster_old(m_ptr);
+    }
+
+#ifdef MSDOS
+    /* change walls and floors to graphic symbols */
+	t_ptr = &i_list[i_max - 1];
+	for (i = i_max - 1; i >= MIN_I_IDX; i--) {
+	    if (t_ptr->tchar == '#')
+		t_ptr->tchar = wallsym;
+	    t_ptr--;
+	}
+#endif
+
+    /* Success */
+    return (0);
+}
+
+
+
+
+
+
+
 static errr rd_inventory_old()
 {
     int i;
@@ -1005,101 +1156,12 @@ int load_player(int *generate)
 	prt("Restoring Character...", 0, 0);
 	put_qio();
 
-    /* only level specific info should follow, not present for dead characters */
-
-	rd_u16b(&dun_level);
-	rd_u16b(&char_row);
-	rd_u16b(&char_col);
-	rd_u16b(&mon_tot_mult);
-	rd_u16b(&cur_height);
-	rd_u16b(&cur_width);
-	rd_u16b(&max_panel_rows);
-	rd_u16b(&max_panel_cols);
-
-    /* read in the creature ptr info */
-	rd_byte(&char_tmp);
-	while (char_tmp != 0xFF) {
-	    ychar = char_tmp;
-	    rd_byte(&xchar);
-
-    /* let's correctly fix the invisible monster bug  -CWS */
-	    if (older_than(2,6,0)) {
-		rd_byte(&char_tmp);
-		cave[ychar][xchar].m_idx = char_tmp;
-	    } else {
-		rd_u16b(&u16b_tmp);
-		cave[ychar][xchar].m_idx = u16b_tmp;
-	    }
-	    if (xchar > MAX_WIDTH || ychar > MAX_HEIGHT) {
-		vtype               t1;
-
-		sprintf(t1,
-		      "Error in creature ptr info: x=%x, y=%x, char_tmp=%x",
-			(unsigned) xchar, (unsigned) ychar, (unsigned) char_tmp);
-		prt(t1, 11, 0);
-	    }
-	    rd_byte(&char_tmp);
-	}
-    /* read in the treasure ptr info */
-	rd_byte(&char_tmp);
-	while (char_tmp != 0xFF) {
-	    ychar = char_tmp;
-	    rd_byte(&xchar);
-	    rd_u16b(&u16b_tmp);
-	    if (xchar > MAX_WIDTH || ychar > MAX_HEIGHT) {
-		prt("Error in treasure pointer info", 12, 0);
+	/* Dead players have no dungeon */
+	prt("Restoring Dungeon...", 0, 0);
+	if (rd_dungeon_old()) {
+	prt("Error reading dungeon data", 12, 0);
 		goto error;
-	    }
-	    cave[ychar][xchar].i_idx = u16b_tmp;
-	    rd_byte(&char_tmp);
 	}
-    /* read in the rest of the cave info */
-	c_ptr = &cave[0][0];
-	total_count = 0;
-	while (total_count != MAX_HEIGHT * MAX_WIDTH) {
-	    rd_byte(&count);
-	    rd_byte(&char_tmp);
-	    for (i = count; i > 0; i--) {
-#ifndef ATARIST_MWC
-		if (c_ptr >= &cave[MAX_HEIGHT][0]) {
-		    prt("ERROR in cave size", 13, 0);
-		    goto error;
-		}
-#endif
-		c_ptr->fval = char_tmp & 0xF;
-		c_ptr->lr = (char_tmp >> 4) & 0x1;
-		c_ptr->fm = (char_tmp >> 5) & 0x1;
-		c_ptr->pl = (char_tmp >> 6) & 0x1;
-		c_ptr->tl = (char_tmp >> 7) & 0x1;
-		c_ptr++;
-	    }
-	    total_count += count;
-	}
-
-	rd_u16b(&i_max);
-	if (i_max > MAX_I_IDX) {
-	    prt("ERROR in MAX_I_IDX", 14, 0);
-	    goto error;
-	}
-	for (i = MIN_I_IDX; i < i_max; i++)
-	    rd_item(&i_list[i]);
-	rd_u16b(&m_max);
-	if (m_max > MAX_M_IDX) {
-	    prt("ERROR in MAX_M_IDX", 15, 0);
-	    goto error;
-	}
-	for (i = MIN_M_IDX; i < m_max; i++) {
-	    rd_monster(&m_list[i]);
-	}
-#ifdef MSDOS
-    /* change walls and floors to graphic symbols */
-	t_ptr = &i_list[i_max - 1];
-	for (i = i_max - 1; i >= MIN_I_IDX; i--) {
-	    if (t_ptr->tchar == '#')
-		t_ptr->tchar = wallsym;
-	    t_ptr--;
-	}
-#endif
 
 				/* Restore ghost names & stats etc... */
 				/* Allocate storage for name */
