@@ -437,6 +437,104 @@ static void rd_artifacts_old()
 
 
 
+
+/*
+ * Read/Write the "ghost" information
+ *
+ * Note -- old savefiles do this VERY badly...
+ */
+
+static void rd_ghost_old()
+{
+    monster_race *r_ptr = &r_list[MAX_R_IDX-1];
+
+    int i;
+    byte tmp8u;
+    u16b tmp16u;
+    u32b tmp32u;
+
+
+    /* A buffer for the ghost name */
+    char gname[128];
+
+    /* Allocate storage for name */
+	r_ptr->name = (char*)malloc(101);
+	C_WIPE(r_ptr->name, 101, char);
+
+    /* Hack -- read the name as bytes */
+    for (i = 0; i < 100; i++) rd_char(&gname[i]);
+    strcpy(r_ptr->name, gname);
+
+    /* Restore ghost names & stats etc... */
+
+    rd_u32b(&tmp32u);
+    r_ptr->cflags1 = tmp32u;
+
+    rd_u32b(&tmp32u);
+    r_ptr->spells1 = tmp32u;
+
+    rd_u32b(&tmp32u);
+    r_ptr->cflags2 = tmp32u;
+
+
+/*
+ * fix player ghost's exp bug.  The mexp field is really an u32b, but the
+ * savefile was writing/ reading an u16b.  Since I don't want to change
+ * the savefile format, this insures that the mexp field is loaded, and that
+ * the "high bits" of mexp do not contain garbage values which could mean that
+ * player ghost are worth millions of exp. -CFT
+ */
+
+    rd_u16b(&tmp16u);
+    r_ptr->mexp = (u32b)(tmp16u);
+
+/*
+ * more stupid size bugs that would've never been needed if these variables
+ * had been given enough space in the first place -CWS
+ */
+
+    if (older_than(2,6,0)) {
+	rd_byte(&tmp8u);
+	r_ptr->sleep = tmp8u;
+    }
+    else {
+	rd_u16b(&tmp16u);
+	r_ptr->sleep = tmp16u;
+    }
+
+    rd_byte(&tmp8u);
+    r_ptr->aaf = tmp8u;
+
+    if (older_than(2,6,0)) {
+	rd_byte(&tmp8u);
+	r_ptr->ac = tmp8u;
+    }
+    else {
+	rd_u16b(&tmp16u);
+	r_ptr->ac = tmp16u;
+    }
+
+    /* Read the speed */
+    rd_byte(&tmp8u);
+    r_ptr->speed = tmp8u;
+
+    rd_byte(&tmp8u);
+    r_ptr->r_char = tmp8u;
+
+    rd_byte(&r_ptr->hd[0]);
+    rd_byte(&r_ptr->hd[1]);
+
+    /* Hack -- read the attacks */
+    for (i = 0; i < 4; i++) {
+	rd_u16b(&r_ptr->damage[i]);
+    }
+
+    rd_u16b(&tmp16u);
+    r_ptr->level = tmp16u;
+}
+
+
+
 /*
  * Read the OLD extra information
  */
@@ -1163,56 +1261,9 @@ int load_player(int *generate)
 		goto error;
 	}
 
-				/* Restore ghost names & stats etc... */
-				/* Allocate storage for name */
-	r_list[MAX_R_IDX - 1].name = (char*)malloc(101);
-	C_WIPE(r_list[MAX_R_IDX - 1].name, 101, char);
-	*((char *) r_list[MAX_R_IDX - 1].name) = 'A';
-	for (i = 0; i < 100; i++)
-	rd_byte(&r_list[MAX_R_IDX - 1].name[i]);
-	rd_u32b(&(r_list[MAX_R_IDX - 1].cflags1));
-	rd_u32b(&(r_list[MAX_R_IDX - 1].spells1));
-	rd_u32b(&(r_list[MAX_R_IDX - 1].cflags2));
-	{
-	    u16b t1;
-/* fix player ghost's exp bug.  The mexp field is really an u32b, but the
- * savefile was writing/ reading an u16b.  Since I don't want to change
- * the savefile format, this insures that the mexp field is loaded, and that
- * the "high bits" of mexp do not contain garbage values which could mean that
- * player ghost are worth millions of exp. -CFT
- */
+	/* Read the ghost info */
+	rd_ghost_old();
 
-	    rd_u16b(&t1);
-	    r_list[MAX_R_IDX - 1].mexp = t1;
-	}
-
-/* more stupid size bugs that would've never been needed if these variables
- * had been given enough space in the first place -CWS
- */
-	if (older_than(2,6,0))
-	    rd_byte(&(r_list[MAX_R_IDX - 1].sleep));
-	else
-	    rd_u16b(&(r_list[MAX_R_IDX - 1].sleep));
-
-	rd_byte(&(r_list[MAX_R_IDX - 1].aaf));
-
-	if (older_than(2,6,0))
-	    rd_byte(&(r_list[MAX_R_IDX - 1].ac));
-	else
-	    rd_s16b(&(r_list[MAX_R_IDX - 1].ac));
-
-	rd_byte(&(r_list[MAX_R_IDX - 1].speed));
-	rd_byte(&(r_list[MAX_R_IDX - 1].r_char));
-
-	rd_byte(&r_list[MAX_R_IDX - 1].hd[0]);
-	rd_byte(&r_list[MAX_R_IDX - 1].hd[1]);
-
-    rd_u16b(&r_ptr->damage[0]);
-    rd_u16b(&r_ptr->damage[1]);
-    rd_u16b(&r_ptr->damage[2]);
-    rd_u16b(&r_ptr->damage[3]);
-
-	rd_u16b(&(r_list[MAX_R_IDX - 1].level));
 	*generate = FALSE;	   /* We have restored a cave - no need to generate. */
 
 	if ((version_min == 1 && patch_level < 3)

@@ -532,6 +532,144 @@ static void wr_options(void)
 
 
 
+
+static void rd_ghost()
+{
+    monster_race *r_ptr = &r_list[MAX_R_IDX-1];
+
+    int i;
+    byte tmp8u;
+    u16b tmp16u;
+    u32b tmp32u;
+
+
+    /* A buffer for the ghost name */
+    char gname[128];
+
+    /* Allocate storage for name */
+	r_ptr->name = (char*)malloc(101);
+	C_WIPE(r_ptr->name, 101, char);
+
+    /* Hack -- read the name as bytes */
+    for (i = 0; i < 100; i++) rd_char(&gname[i]);
+    strcpy(r_ptr->name, gname);
+
+
+    rd_u32b(&tmp32u);
+    r_ptr->cflags1 = tmp32u;
+
+    rd_u32b(&tmp32u);
+    r_ptr->spells1 = tmp32u;
+
+    rd_u32b(&tmp32u);
+    r_ptr->cflags2 = tmp32u;
+
+
+/*
+ * fix player ghost's exp bug.  The mexp field is really an u32b, but the
+ * savefile was writing/ reading an u16b.  Since I don't want to change
+ * the savefile format, this insures that the mexp field is loaded, and that
+ * the "high bits" of mexp do not contain garbage values which could mean that
+ * player ghost are worth millions of exp. -CFT
+ */
+
+    rd_u16b(&tmp16u);
+    r_ptr->mexp = (u32b)(tmp16u);
+
+/*
+ * more stupid size bugs that would've never been needed if these variables
+ * had been given enough space in the first place -CWS
+ */
+
+    if (older_than(2,6,0)) {
+	rd_byte(&tmp8u);
+	r_ptr->sleep = tmp8u;
+    }
+    else {
+	rd_u16b(&tmp16u);
+	r_ptr->sleep = tmp16u;
+    }
+
+    rd_byte(&tmp8u);
+    r_ptr->aaf = tmp8u;
+
+    if (older_than(2,6,0)) {
+	rd_byte(&tmp8u);
+	r_ptr->ac = tmp8u;
+    }
+    else {
+	rd_u16b(&tmp16u);
+	r_ptr->ac = tmp16u;
+    }
+
+    /* Read the speed */
+    rd_byte(&tmp8u);
+    r_ptr->speed = tmp8u;
+
+    rd_byte(&tmp8u);
+    r_ptr->r_char = tmp8u;
+
+    rd_byte(&r_ptr->hd[0]);
+    rd_byte(&r_ptr->hd[1]);
+
+    /* Hack -- read the attacks */
+    for (i = 0; i < 4; i++) {
+	rd_u16b(&r_ptr->damage[i]);
+    }
+
+    rd_u16b(&tmp16u);
+    r_ptr->level = tmp16u;
+}
+
+static void wr_ghost()
+{
+    monster_race *r_ptr = &r_list[MAX_R_IDX-1];
+	u16b temp;
+
+     if (!r_ptr->name) {
+	 r_ptr->name = (char*)malloc(101);
+	 C_WIPE(r_ptr->name, 101, char);
+     }
+
+    for (i = 0; i < 100; i++)
+    wr_byte(r_ptr->name[i]);
+
+    wr_u32b(r_ptr->cflags1);
+    wr_u32b(r_ptr->spells1);
+    wr_u32b(r_ptr->cflags2);
+
+/* fix player ghost's exp bug.  The mexp field is really an u32b, but the
+ * savefile was writing/reading an u16b.  Since I don't want to change
+ * the savefile format, this insures that the low bits of mexp are written (No
+ * ghost should be worth more than 64K (Melkor is only worth 60k!), but we
+ * check anyway).  Using temp insures that the low bits are all written, and works
+ * perfectly with a similar fix when* loading a character. -CFT
+ */
+
+	if (r_ptr->mexp > 0xff00) temp = 0xff00;
+	else  temp = r_ptr->mexp;
+	wr_u16b(temp);
+
+    wr_u16b((byte) r_ptr->sleep);
+    wr_byte((byte) r_ptr->aaf);
+    wr_s16b(r_ptr->ac);
+    wr_byte((byte) r_ptr->speed);
+    wr_byte((byte) r_ptr->r_char);
+
+    wr_byte(r_ptr->hd[0]);
+    wr_byte(r_ptr->hd[1]);
+
+    wr_u16b(r_ptr->damage[0]);
+    wr_u16b(r_ptr->damage[1]);
+    wr_u16b(r_ptr->damage[2]);
+    wr_u16b(r_ptr->damage[3]);
+
+    wr_u16b(r_ptr->level);
+}
+
+
+
+
 /*
  * Read/Write the "extra" information
  */
@@ -1385,47 +1523,8 @@ static int sv_write()
 	/* Dump the dungeon */
 	wr_dungeon();
 
-/* Save ghost names & stats etc... */
-     if (!r_list[MAX_R_IDX - 1].name) {
-                                  /* Can't dereference NULL! */
-	 r_list[MAX_R_IDX - 1].name = (char*)malloc(101);
-	 C_WIPE(r_list[MAX_R_IDX - 1].name, 101, char);
-     }
-    for (i = 0; i < 100; i++)
-    wr_byte(r_list[MAX_R_IDX - 1].name[i]);
-    wr_u32b(r_list[MAX_R_IDX - 1].cflags1);
-    wr_u32b(r_list[MAX_R_IDX - 1].spells1);
-    wr_u32b(r_list[MAX_R_IDX - 1].cflags2);
-    {
-	u16b temp;
-/* fix player ghost's exp bug.  The mexp field is really an u32b, but the
- * savefile was writing/reading an u16b.  Since I don't want to change
- * the savefile format, this insures that the low bits of mexp are written (No
- * ghost should be worth more than 64K (Melkor is only worth 60k!), but we
- * check anyway).  Using temp insures that the low bits are all written, and works
- * perfectly with a similar fix when* loading a character. -CFT
- */
-
-	if (r_list[MAX_R_IDX - 1].mexp > 0xff00)
-	    temp = 0xff00;
-	else
-	    temp = r_list[MAX_R_IDX - 1].mexp;
-	wr_u16b(temp);
-    }
-    wr_u16b((byte) r_list[MAX_R_IDX - 1].sleep);
-    wr_byte((byte) r_list[MAX_R_IDX - 1].aaf);
-    wr_s16b(r_list[MAX_R_IDX - 1].ac);
-    wr_byte((byte) r_list[MAX_R_IDX - 1].speed);
-    wr_byte((byte) r_list[MAX_R_IDX - 1].r_char);
-    wr_byte(r_list[MAX_R_IDX - 1].hd[0]);
-    wr_byte(r_list[MAX_R_IDX - 1].hd[1]);
-
-    wr_u16b(r_ptr->damage[0]);
-    wr_u16b(r_ptr->damage[1]);
-    wr_u16b(r_ptr->damage[2]);
-    wr_u16b(r_ptr->damage[3]);
-
-    wr_u16b(r_list[MAX_R_IDX - 1].level);
+	/* Dump the ghost */
+	wr_ghost();
 
     if (ferror(fff) || (fflush(fff) == EOF))
 	return FALSE;
@@ -1993,56 +2092,9 @@ int load_player(int *generate)
 		goto error;
 	}
 
-				/* Restore ghost names & stats etc... */
-				/* Allocate storage for name */
-	r_list[MAX_R_IDX - 1].name = (char*)malloc(101);
-	C_WIPE(r_list[MAX_R_IDX - 1].name, 101, char);
-	*((char *) r_list[MAX_R_IDX - 1].name) = 'A';
-	for (i = 0; i < 100; i++)
-	rd_byte(&r_list[MAX_R_IDX - 1].name[i]);
-	rd_u32b(&(r_list[MAX_R_IDX - 1].cflags1));
-	rd_u32b(&(r_list[MAX_R_IDX - 1].spells1));
-	rd_u32b(&(r_list[MAX_R_IDX - 1].cflags2));
-	{
-	    u16b t1;
-/* fix player ghost's exp bug.  The mexp field is really an u32b, but the
- * savefile was writing/ reading an u16b.  Since I don't want to change
- * the savefile format, this insures that the mexp field is loaded, and that
- * the "high bits" of mexp do not contain garbage values which could mean that
- * player ghost are worth millions of exp. -CFT
- */
+	/* Read the ghost info */
+	rd_ghost();
 
-	    rd_u16b(&t1);
-	    r_list[MAX_R_IDX - 1].mexp = t1;
-	}
-
-/* more stupid size bugs that would've never been needed if these variables
- * had been given enough space in the first place -CWS
- */
-	if (older_than(2,6,0))
-	    rd_byte(&(r_list[MAX_R_IDX - 1].sleep));
-	else
-	    rd_u16b(&(r_list[MAX_R_IDX - 1].sleep));
-
-	rd_byte(&(r_list[MAX_R_IDX - 1].aaf));
-
-	if (older_than(2,6,0))
-	    rd_byte(&(r_list[MAX_R_IDX - 1].ac));
-	else
-	    rd_s16b(&(r_list[MAX_R_IDX - 1].ac));
-
-	rd_byte(&(r_list[MAX_R_IDX - 1].speed));
-	rd_byte(&(r_list[MAX_R_IDX - 1].r_char));
-
-	rd_byte(&r_list[MAX_R_IDX - 1].hd[0]);
-	rd_byte(&r_list[MAX_R_IDX - 1].hd[1]);
-
-    rd_u16b(&r_ptr->damage[0]);
-    rd_u16b(&r_ptr->damage[1]);
-    rd_u16b(&r_ptr->damage[2]);
-    rd_u16b(&r_ptr->damage[3]);
-
-	rd_u16b(&(r_list[MAX_R_IDX - 1].level));
 	*generate = FALSE;	   /* We have restored a cave - no need to generate. */
 
 	if ((version_min == 1 && patch_level < 3)
