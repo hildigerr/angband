@@ -594,6 +594,44 @@ static void rd_extra_old()
 }
 
 
+static errr rd_inventory_old()
+{
+    int i;
+
+    /* Reset the counters */
+    inven_ctr = 0;
+    equip_ctr = 0;
+    inven_weight = 0;
+
+    /* Count the items */
+    rd_u16b(&inven_ctr);
+
+    /* Verify */
+    if (inven_ctr > INVEN_WIELD) {
+	prt("Unable to read inventory", 8, 0);
+	return (15);
+    }
+
+    /* Normal pack items */
+    for (i = 0; i < inven_ctr; i++) {
+
+	/* Read the item */
+	rd_item_old(&inventory[i]);
+    }
+
+    /* Old "normal" equipment */
+    for (i = INVEN_WIELD; i < INVEN_ARRAY_SIZE; i++) {
+
+	/* Read the item */
+	rd_item_old(&inventory[i]);
+    }
+
+	rd_u16b(&inven_weight);
+
+	rd_u16b(&equip_ctr);
+}
+
+
 
 /*
  * Note that versions "5.2.x" can never be made.
@@ -844,17 +882,9 @@ int load_player(int *generate)
     /* Read the extra stuff */
     rd_extra_old();
 
-	    rd_u16b(&inven_ctr);
-	    if (inven_ctr > INVEN_WIELD) {
-		prt("ERROR in inven_ctr", 8, 0);
-		goto error;
-	    }
-	    for (i = 0; i < inven_ctr; i++)
-		rd_item(&inventory[i]);
-	    for (i = INVEN_WIELD; i < INVEN_ARRAY_SIZE; i++)
-		rd_item(&inventory[i]);
-	    rd_u16b(&inven_weight);
-	    rd_u16b(&equip_ctr);
+    /* Read the inventory */
+    rd_inventory_old();
+
 	    rd_u32b(&spell_learned);
 	    rd_u32b(&spell_worked);
 	    rd_u32b(&spell_forgotten);
