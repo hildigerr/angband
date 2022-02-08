@@ -1019,16 +1019,64 @@ static errr rd_savefile_old()
     put_qio();
 
     /* Read the options */
+    rd_options_old();
+    if (to_be_wizard) prt("Loaded options", 7, 0);
+    put_qio();
+
     /* Read the extra stuff */
+    rd_extra_old();
+
     /* Read the inventory */
+    rd_inventory_old();
+
+
     /* Read spell info */
+    rd_u32b(&spell_learned);
+    rd_u32b(&spell_worked);
+    rd_u32b(&spell_forgotten);
+    rd_u32b(&spell_learned2);
+    rd_u32b(&spell_worked2);
+    rd_u32b(&spell_forgotten2);
+
+    for (i = 0; i < 64; i++) {
+	rd_byte(&spell_order[i]);
+    }
+
+    /* Hack -- analyze the "object_ident" array. */
+    for (i = 0; i < OBJECT_IDENT_SIZE; i++)  {            
+    rd_byte(&object_ident[i]);
+	}
+
     /* Old seeds */
+    rd_u32b(&randes_seed);
+    rd_u32b(&town_seed);
+
     /* Old messages */
+    rd_u16b(&last_msg);
+    for (i = 0; i < MAX_SAVE_MSG; i++)
+	rd_string(old_msg[i]);
+
     /* Some leftover info */
+    rd_u16b(&panic_save);
+    rd_u16b(&total_winner);
+    rd_u16b(&noscore);
+
     /* Read the player_hp array */
+    for (i = 0; i < MAX_PLAYER_LEVEL; i++) rd_u16b(&player_hp[i]);
+
     /* Read the stores */
+    for (i = 0; i < MAX_STORES; i++) {
+	if (rd_store_old(&store[i])) {
+	    return (32);
+	}
+    }
+
+
     /* Time at which file was saved */
+    rd_u32b(&time_saved);
+
     /* Read the cause of death, if any */
+    rd_string(died_from);
 
     /* Success */
     return (0);
@@ -1132,71 +1180,11 @@ int load_player(int *generate)
 	/* Actually read the savefile */
 	if (rd_savefile_old()) goto error;
 
-
-	rd_options_old();
-
-	if (to_be_wizard)
-	    prt("Loaded options", 7, 0);
-	put_qio();
-
 	/* Process "dead" players */
 	if (death) {
 
 	if (to_be_wizard
 	    && get_check("Resurrect a dead character?")) {
-
-    /* Read the extra stuff */
-    rd_extra_old();
-
-    /* Read the inventory */
-    rd_inventory_old();
-
-	    rd_u32b(&spell_learned);
-	    rd_u32b(&spell_worked);
-	    rd_u32b(&spell_forgotten);
-	    rd_u32b(&spell_learned2);
-	    rd_u32b(&spell_worked2);
-	    rd_u32b(&spell_forgotten2);
-
-	    for (i = 0; i < 64; i++) {
-	    rd_byte(&spell_order[i]);
-	    }
-
-	    for (i = 0; i < OBJECT_IDENT_SIZE; i++)
-	    rd_byte(&object_ident[i]);
-	    rd_u32b(&randes_seed);
-	    rd_u32b(&town_seed);
-	    rd_u16b(&last_msg);
-	    for (i = 0; i < MAX_SAVE_MSG; i++)
-		rd_string(old_msg[i]);
-
-	    rd_u16b(&panic_save);
-	    rd_u16b(&total_winner);
-	    rd_u16b(&noscore);
-
-    /* Read the player_hp array */
-	    for (i = 0; i < MAX_PLAYER_LEVEL; i++) {
-	    rd_u16b(&player_hp[i]);
-	    }
-
-    /* Read the stores */
-	    for (i = 0; i < MAX_STORES; i++) {
-	      if (rd_store(&store[i])) goto error;
-	    }
-
-	    rd_u32b(&time_saved);
-#ifndef SET_UID
-#ifndef ALLOW_FIDDLING
-		if (!to_be_wizard) {
-		    if (time_saved > (statbuf.st_ctime + 100) ||
-			time_saved < (statbuf.st_ctime - 100)) {
-			prt("Fiddled save file", 10, 0);
-			goto error;
-		    }
-		}
-#endif
-#endif
-	    rd_string(died_from);
 
 		/* Revive the player */
 		prt("Attempting a resurrection!", 0, 0);
