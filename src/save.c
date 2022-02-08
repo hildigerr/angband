@@ -525,8 +525,6 @@ static void wr_options(void)
 
     /* Write "hitpoint_warn" */
     l |= ((hitpoint_warn & 0xf) << 17);
-
-    if (death) l |= 0x80000000L;	/* Sign bit */
 }
 
 
@@ -829,6 +827,11 @@ static void rd_extra()
     rd_u16b(total_winner);
     rd_u16b(noscore);
 
+
+    /* Important -- Read "death" */
+    rd_byte(&tmp8u);
+    death = tmp8u;
+
     /* Read "feeling" */
     rd_byte(&tmp8u);
     feeling = tmp8u;
@@ -990,6 +993,9 @@ static void wr_extra()
     wr_u16b(total_winner);
     wr_u16b(noscore);
 
+
+    /* Write death */
+    wr_byte(death);
 
     /* Write feeling */
     wr_byte(feeling);
@@ -2007,7 +2013,7 @@ int load_player(int *generate)
 	rd_options(l);
 
 	/* Process "dead" players */
-	if (l & 0x80000000L) {
+	if (death) {
 
 	if (to_be_wizard
 	    && get_check("Resurrect a dead character?")) {
@@ -2108,7 +2114,7 @@ int load_player(int *generate)
 		to_be_wizard = FALSE;
 
 		/* Player is no longer "dead" */
-		l &= ~0x80000000L;
+		death = FALSE;
 	    }
 
 	    /* Normal "restoration" */

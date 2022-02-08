@@ -848,6 +848,10 @@ static errr rd_dungeon_old()
  */
 static void rd_options_old(u32b l)
 {
+
+    /* Hack -- Extract death */
+    death = (l & 0x80000000) ? TRUE : FALSE;
+
     rogue_like_commands =  (l & 32) ? TRUE : FALSE;
     prompt_carry_flag =    (l & 16) ? TRUE : FALSE;
     carry_query_flag =     (l & 0x400L) ? TRUE : FALSE;
@@ -1131,7 +1135,7 @@ int load_player(int *generate)
 	rd_options_old(l);
 
 	/* Process "dead" players */
-	if (l & 0x80000000L) {
+	if (death) {
 
 	if (to_be_wizard
 	    && get_check("Resurrect a dead character?")) {
@@ -1233,7 +1237,7 @@ int load_player(int *generate)
 		to_be_wizard = FALSE;
 
 		/* Player is no longer "dead" */
-		l &= ~0x80000000L;
+		death = FALSE;
 	    }
 
 	    /* Normal "restoration" */
