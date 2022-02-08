@@ -1299,6 +1299,223 @@ static errr rd_dungeon()
 }
 
 
+/*
+ * Actually read the savefile
+ */
+static errr rd_savefile()
+{
+    int i;
+
+    prt("Restoring Memory...", 0, 0);
+    put_qio();
+
+    /* Get the version info */
+    xor_byte = 0;
+    rd_byte(&version_maj);
+    xor_byte = 0;
+    rd_byte(&version_min);
+    xor_byte = 0;
+    rd_byte(&patch_level);
+    xor_byte = 0;
+    rd_byte(&xor_byte);
+
+    /* Handle stupidity from Angband 2.4 / 2.5 */
+    if ((version_maj == 5) && (version_min == 2)) {
+	version_maj = 2;
+	version_min = 5;
+    }
+
+
+    /* Verify the "major version" */
+    if (version_maj != CUR_VERSION_MAJ) {
+	prt("Sorry. This savefile is from a different version of Angband.", 2, 0);
+	put_qio();
+	return (11);
+    }
+
+
+    /* XXX Hack -- We cannot read savefiles more recent than we are */
+    if ((version_min > CUR_VERSION_MIN) ||
+	(version_min == CUR_VERSION_MIN && patch_level > PATCH_LEVEL)) {
+
+	prt("Sorry. This savefile is from a more recent version of Angband.", 2, 0);
+	put_qio();
+	return (12);
+    }
+
+    /* Read the artifacts */
+    rd_u32b(&GROND);
+    rd_u32b(&RINGIL);
+    rd_u32b(&AEGLOS);
+    rd_u32b(&ARUNRUTH);
+    rd_u32b(&MORMEGIL);
+    rd_u32b(&ANGRIST);
+    rd_u32b(&GURTHANG);
+    rd_u32b(&CALRIS);
+    rd_u32b(&ANDURIL);
+    rd_u32b(&STING);
+    rd_u32b(&ORCRIST);
+    rd_u32b(&GLAMDRING);
+    rd_u32b(&DURIN);
+    rd_u32b(&AULE);
+    rd_u32b(&THUNDERFIST);
+    rd_u32b(&BLOODSPIKE);
+    rd_u32b(&DOOMCALLER);
+    rd_u32b(&NARTHANC);
+    rd_u32b(&NIMTHANC);
+    rd_u32b(&DETHANC);
+    rd_u32b(&GILETTAR);
+    rd_u32b(&RILIA);
+    rd_u32b(&BELANGIL);
+    rd_u32b(&BALLI);
+    rd_u32b(&LOTHARANG);
+    rd_u32b(&FIRESTAR);
+    rd_u32b(&ERIRIL);
+    rd_u32b(&CUBRAGOL);
+    rd_u32b(&BARD);
+    rd_u32b(&COLLUIN);
+    rd_u32b(&HOLCOLLETH);
+    rd_u32b(&TOTILA);
+    rd_u32b(&PAIN);
+    rd_u32b(&ELVAGIL);
+    rd_u32b(&AGLARANG);
+    rd_u32b(&EORLINGAS);
+    rd_u32b(&BARUKKHELED);
+    rd_u32b(&WRATH);
+    rd_u32b(&HARADEKKET);
+    rd_u32b(&MUNDWINE);
+    rd_u32b(&GONDRICAM);
+    rd_u32b(&ZARCUTHRA);
+    rd_u32b(&CARETH);
+    rd_u32b(&FORASGIL);
+    rd_u32b(&CRISDURIAN);
+    rd_u32b(&COLANNON);
+    rd_u32b(&HITHLOMIR);
+    rd_u32b(&THALKETTOTH);
+    rd_u32b(&ARVEDUI);
+    rd_u32b(&THRANDUIL);
+    rd_u32b(&THENGEL);
+    rd_u32b(&HAMMERHAND);
+    rd_u32b(&CELEGORM);
+    rd_u32b(&THROR);
+    rd_u32b(&MAEDHROS);
+    rd_u32b(&OLORIN);
+    rd_u32b(&ANGUIREL);
+    rd_u32b(&OROME);
+    rd_u32b(&EONWE);
+    rd_u32b(&THEODEN);
+    rd_u32b(&ULMO);
+    rd_u32b(&OSONDIR);
+    rd_u32b(&TURMIL);
+    rd_u32b(&CASPANION);
+    rd_u32b(&TIL);
+    rd_u32b(&DEATHWREAKER);
+    rd_u32b(&AVAVIR);
+    rd_u32b(&TARATOL);
+    if (to_be_wizard) prt("Loaded Weapon Artifacts", 2, 0);
+    put_qio();
+
+    rd_u32b(&DOR_LOMIN);
+    rd_u32b(&NENYA);
+    rd_u32b(&NARYA);
+    rd_u32b(&VILYA);
+    rd_u32b(&BELEGENNON);
+    rd_u32b(&FEANOR);
+    rd_u32b(&ISILDUR);
+    rd_u32b(&SOULKEEPER);
+    rd_u32b(&FINGOLFIN);
+    rd_u32b(&ANARION);
+    rd_u32b(&POWER);
+    rd_u32b(&PHIAL);
+    rd_u32b(&BELEG);
+    rd_u32b(&DAL);
+    rd_u32b(&PAURHACH);
+    rd_u32b(&PAURNIMMEN);
+    rd_u32b(&PAURAEGEN);
+    rd_u32b(&PAURNEN);
+    rd_u32b(&CAMMITHRIM);
+    rd_u32b(&CAMBELEG);
+    rd_u32b(&INGWE);
+    rd_u32b(&CARLAMMAS);
+    rd_u32b(&HOLHENNETH);
+    rd_u32b(&AEGLIN);
+    rd_u32b(&CAMLOST);
+    rd_u32b(&NIMLOTH);
+    rd_u32b(&NAR);
+    rd_u32b(&BERUTHIEL);
+    rd_u32b(&GORLIM);
+    rd_u32b(&ELENDIL);
+    rd_u32b(&THORIN);
+    rd_u32b(&CELEBORN);
+    rd_u32b(&THRAIN);
+    rd_u32b(&GONDOR);
+    rd_u32b(&THINGOL);
+    rd_u32b(&THORONGIL);
+    rd_u32b(&LUTHIEN);
+    rd_u32b(&TUOR);
+    rd_u32b(&ROHAN);
+    rd_u32b(&TULKAS);
+    rd_u32b(&NECKLACE);
+    rd_u32b(&BARAHIR);
+    rd_u32b(&RAZORBACK);
+    rd_u32b(&BLADETURNER);
+    if (to_be_wizard) prt("Loaded Armour Artifacts", 3, 0);
+    put_qio();
+
+
+    /* Load the Quests */
+    for (i = 0; i < MAX_QUESTS; i++) {
+	rd_u32b(&quests[i]);
+    }
+    if (to_be_wizard) prt("Loaded Quests", 4, 0);
+    put_qio();
+
+
+    /* Load the old "Uniques" flags */
+    for (i = 0; i < MAX_R_IDX; i++) {
+
+	rd_s32b(&u_list[i].exist);
+	rd_s32b(&u_list[i].dead);
+    }
+    if (to_be_wizard) prt("Loaded Unique Beasts", 5, 0);
+    put_qio();
+
+
+    /* Monster Memory */
+    while (1) {
+
+	/* Read some info, check for sentinal */
+    rd_u16b(&u16b_tmp);
+    if (u16b_tmp == 0xFFFF) break;
+
+	/* Incompatible save files */
+	if (u16b_tmp >= MAX_R_IDX) {
+	    prt("Too many monsters!", 6, 0);
+	    put_qio();
+	    return (21);
+	}
+
+	/* Extract the monster lore */
+	rd_lore(&l_list[u16b_tmp]);
+    }
+    if (to_be_wizard) prt("Loaded Recall Memory", 6, 0);
+    put_qio();
+
+    /* Read the options */
+    /* Read the extra stuff */
+    /* Read the inventory */
+    /* Read spell info */
+    /* Old messages */
+    /* Read the player_hp array */
+    /* Read the stores */
+    /* Time at which file was saved */
+    /* Read the cause of death, if any */
+
+    /* Success */
+    return (0);
+}
+
+
 
 
 /*
@@ -1771,177 +1988,11 @@ int load_player(int *generate)
 #endif
 	if (!fff) goto error;
 
-	prt("Restoring Memory...", 0, 0);
-	put_qio();
 
-	xor_byte = 0;
-	rd_byte(&version_maj);
-	xor_byte = 0;
-	rd_byte(&version_min);
-	xor_byte = 0;
-	rd_byte(&patch_level);
-	xor_byte = 0;
-	rd_byte(&xor_byte);
-
-	if ((version_maj == 5) && (version_min == 2)) {
-	  version_maj = 2;
-	  version_min = 5;
-	}
-
-	if ((version_maj != CUR_VERSION_MAJ)
-	    || (version_min > CUR_VERSION_MIN)
-	    || (version_min == CUR_VERSION_MIN && patch_level > PATCH_LEVEL)) {
-	    prt("Sorry. This savefile is from a different version of Angband.",
-		2, 0);
-	    goto error;
-	}
-	put_qio();
-	rd_u32b(&GROND);
-	rd_u32b(&RINGIL);
-	rd_u32b(&AEGLOS);
-	rd_u32b(&ARUNRUTH);
-	rd_u32b(&MORMEGIL);
-	rd_u32b(&ANGRIST);
-	rd_u32b(&GURTHANG);
-	rd_u32b(&CALRIS);
-	rd_u32b(&ANDURIL);
-	rd_u32b(&STING);
-	rd_u32b(&ORCRIST);
-	rd_u32b(&GLAMDRING);
-	rd_u32b(&DURIN);
-	rd_u32b(&AULE);
-	rd_u32b(&THUNDERFIST);
-	rd_u32b(&BLOODSPIKE);
-	rd_u32b(&DOOMCALLER);
-	rd_u32b(&NARTHANC);
-	rd_u32b(&NIMTHANC);
-	rd_u32b(&DETHANC);
-	rd_u32b(&GILETTAR);
-	rd_u32b(&RILIA);
-	rd_u32b(&BELANGIL);
-	rd_u32b(&BALLI);
-	rd_u32b(&LOTHARANG);
-	rd_u32b(&FIRESTAR);
-	rd_u32b(&ERIRIL);
-	rd_u32b(&CUBRAGOL);
-	rd_u32b(&BARD);
-	rd_u32b(&COLLUIN);
-	rd_u32b(&HOLCOLLETH);
-	rd_u32b(&TOTILA);
-	rd_u32b(&PAIN);
-	rd_u32b(&ELVAGIL);
-	rd_u32b(&AGLARANG);
-	rd_u32b(&EORLINGAS);
-	rd_u32b(&BARUKKHELED);
-	rd_u32b(&WRATH);
-	rd_u32b(&HARADEKKET);
-	rd_u32b(&MUNDWINE);
-	rd_u32b(&GONDRICAM);
-	rd_u32b(&ZARCUTHRA);
-	rd_u32b(&CARETH);
-	rd_u32b(&FORASGIL);
-	rd_u32b(&CRISDURIAN);
-	rd_u32b(&COLANNON);
-	rd_u32b(&HITHLOMIR);
-	rd_u32b(&THALKETTOTH);
-	rd_u32b(&ARVEDUI);
-	rd_u32b(&THRANDUIL);
-	rd_u32b(&THENGEL);
-	rd_u32b(&HAMMERHAND);
-	rd_u32b(&CELEGORM);
-	rd_u32b(&THROR);
-	rd_u32b(&MAEDHROS);
-	rd_u32b(&OLORIN);
-	rd_u32b(&ANGUIREL);
-	rd_u32b(&OROME);
-	rd_u32b(&EONWE);
-	rd_u32b(&THEODEN);
-	rd_u32b(&ULMO);
-	rd_u32b(&OSONDIR);
-	rd_u32b(&TURMIL);
-	rd_u32b(&CASPANION);
-	rd_u32b(&TIL);
-	rd_u32b(&DEATHWREAKER);
-	rd_u32b(&AVAVIR);
-	rd_u32b(&TARATOL);
-	if (to_be_wizard)
-	    prt("Loaded Weapon Artifacts", 2, 0);
-	put_qio();
+	/* Actually read the savefile */
+	if (rd_savefile()) goto error;
 
 
-	rd_u32b(&DOR_LOMIN);
-	rd_u32b(&NENYA);
-	rd_u32b(&NARYA);
-	rd_u32b(&VILYA);
-	rd_u32b(&BELEGENNON);
-	rd_u32b(&FEANOR);
-	rd_u32b(&ISILDUR);
-	rd_u32b(&SOULKEEPER);
-	rd_u32b(&FINGOLFIN);
-	rd_u32b(&ANARION);
-	rd_u32b(&POWER);
-	rd_u32b(&PHIAL);
-	rd_u32b(&BELEG);
-	rd_u32b(&DAL);
-	rd_u32b(&PAURHACH);
-	rd_u32b(&PAURNIMMEN);
-	rd_u32b(&PAURAEGEN);
-	rd_u32b(&PAURNEN);
-	rd_u32b(&CAMMITHRIM);
-	rd_u32b(&CAMBELEG);
-	rd_u32b(&INGWE);
-	rd_u32b(&CARLAMMAS);
-	rd_u32b(&HOLHENNETH);
-	rd_u32b(&AEGLIN);
-	rd_u32b(&CAMLOST);
-	rd_u32b(&NIMLOTH);
-	rd_u32b(&NAR);
-	rd_u32b(&BERUTHIEL);
-	rd_u32b(&GORLIM);
-	rd_u32b(&ELENDIL);
-	rd_u32b(&THORIN);
-	rd_u32b(&CELEBORN);
-	rd_u32b(&THRAIN);
-	rd_u32b(&GONDOR);
-	rd_u32b(&THINGOL);
-	rd_u32b(&THORONGIL);
-	rd_u32b(&LUTHIEN);
-	rd_u32b(&TUOR);
-	rd_u32b(&ROHAN);
-	rd_u32b(&TULKAS);
-	rd_u32b(&NECKLACE);
-	rd_u32b(&BARAHIR);
-	rd_u32b(&RAZORBACK);
-	rd_u32b(&BLADETURNER);
-	if (to_be_wizard)
-	    prt("Loaded Armour Artifacts", 3, 0);
-	put_qio();
-
-	for (i = 0; i < MAX_QUESTS; i++)
-	    rd_u32b(&quests[i]);
-	if (to_be_wizard)
-	    prt("Loaded Quests", 4, 0);
-
-	for (i = 0; i < MAX_R_IDX; i++) {
-	    rd_s32b(&u_list[i].exist);
-	    rd_s32b(&u_list[i].dead);
-	}
-	if (to_be_wizard)
-	    prt("Loaded Unique Beasts", 5, 0);
-	put_qio();
-
-    /* Monster Memory */
-	rd_u16b(&u16b_tmp);
-	while (u16b_tmp != 0xFFFF) {
-	    if (u16b_tmp >= MAX_R_IDX)
-		goto error;
-	    rd_lore(&l_list[u16b_tmp]);
-	    rd_u16b(&u16b_tmp);
-	}
-	if (to_be_wizard)
-	    prt("Loaded Recall Memory", 6, 0);
-
-	put_qio();
         rd_u32b(&l);
 	if (!older_than(2,6,0)) {
 	  rd_u32b(&l);

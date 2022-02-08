@@ -881,6 +881,107 @@ static errr rd_inventory_old()
 }
 
 
+static errr rd_savefile_old()
+{
+    int i;
+
+    prt("Restoring Memory...", 0, 0);
+    put_qio();
+
+    /* Get the version info */
+    xor_byte = 0;
+    rd_byte(&version_maj);
+    xor_byte = 0;
+    rd_byte(&version_min);
+    xor_byte = 0;
+    rd_byte(&patch_level);
+    xor_byte = 0;
+    rd_byte(&xor_byte);
+
+    /* Handle stupidity from Angband 2.4 / 2.5 */
+    if ((version_maj == 5) && (version_min == 2)) {
+	version_maj = 2;
+	version_min = 5;
+    }
+
+
+    /* Verify the "major version" */
+    if (version_maj != CUR_VERSION_MAJ) {
+	prt("Sorry. This savefile is from a different version of Angband.", 2, 0);
+	put_qio();
+	return (11);
+    }
+
+
+    /* XXX Hack -- We cannot read savefiles more recent than we are */
+    if ((version_min > CUR_VERSION_MIN) ||
+	(version_min == CUR_VERSION_MIN && patch_level > PATCH_LEVEL)) {
+
+	prt("Sorry. This savefile is from a more recent version of Angband.", 2, 0);
+	put_qio();
+	return (12);
+    }
+
+    /* Read the artifacts */
+    rd_artifacts_old();
+    if (to_be_wizard) prt("Loaded Artifacts", 3, 0);
+    put_qio();
+
+
+    /* Load the Quests */
+    for (i = 0; i < MAX_QUESTS; i++) {
+	rd_u32b(&quests[i]);
+    }
+    if (to_be_wizard) prt("Loaded Quests", 4, 0);
+    put_qio();
+
+
+    /* Load the old "Uniques" flags */
+    for (i = 0; i < MAX_R_IDX; i++) {
+
+	rd_s32b(&u_list[i].exist);
+	rd_s32b(&u_list[i].dead);
+    }
+    if (to_be_wizard) prt("Loaded Unique Beasts", 5, 0);
+    put_qio();
+
+
+    /* Monster Memory */
+    while (1) {
+
+	/* Read some info, check for sentinal */
+	rd_u16b(&u16b_tmp);
+	if (u16b_tmp == 0xFFFF) break;
+
+	/* Incompatible save files */
+	if (u16b_tmp >= MAX_R_IDX) {
+	    prt("Too many monsters!", 6, 0);
+	    put_qio();
+	    return (21);
+	}
+
+	/* Extract the monster lore */
+	rd_lore_old(&l_list[u16b_tmp]);
+    }
+    if (to_be_wizard) prt("Loaded Recall Memory", 6, 0);
+    put_qio();
+
+    /* Read the options */
+    /* Read the extra stuff */
+    /* Read the inventory */
+    /* Read spell info */
+    /* Old seeds */
+    /* Old messages */
+    /* Some leftover info */
+    /* Read the player_hp array */
+    /* Read the stores */
+    /* Time at which file was saved */
+    /* Read the cause of death, if any */
+
+    /* Success */
+    return (0);
+}
+
 
 /*
  * Note that versions "5.2.x" can never be made.
@@ -975,64 +1076,10 @@ int load_player(int *generate)
 #endif
 	if (!fff) goto error;
 
-	prt("Restoring Memory...", 0, 0);
-	put_qio();
 
-	xor_byte = 0;
-	rd_byte(&version_maj);
-	xor_byte = 0;
-	rd_byte(&version_min);
-	xor_byte = 0;
-	rd_byte(&patch_level);
-	xor_byte = 0;
-	rd_byte(&xor_byte);
+	/* Actually read the savefile */
+	if (rd_savefile_old()) goto error;
 
-	if ((version_maj == 5) && (version_min == 2)) {
-	  version_maj = 2;
-	  version_min = 5;
-	}
-
-	if ((version_maj != CUR_VERSION_MAJ)
-	    || (version_min > CUR_VERSION_MIN)
-	    || (version_min == CUR_VERSION_MIN && patch_level > PATCH_LEVEL)) {
-	    prt("Sorry. This savefile is from a different version of Angband.",
-		2, 0);
-	    goto error;
-	}
-	put_qio();
-	rd_artifacts_old();
-	if (to_be_wizard)
-	    prt("Loaded Weapon Artifacts", 2, 0);
-	put_qio();
-	if (to_be_wizard)
-	    prt("Loaded Armour Artifacts", 3, 0);
-	put_qio();
-
-	for (i = 0; i < MAX_QUESTS; i++)
-	    rd_u32b(&quests[i]);
-	if (to_be_wizard)
-	    prt("Loaded Quests", 4, 0);
-
-	for (i = 0; i < MAX_R_IDX; i++) {
-	    rd_s32b(&u_list[i].exist);
-	    rd_s32b(&u_list[i].dead);
-	}
-	if (to_be_wizard)
-	    prt("Loaded Unique Beasts", 5, 0);
-	put_qio();
-
-    /* Monster Memory */
-	rd_u16b(&u16b_tmp);
-	while (u16b_tmp != 0xFFFF) {
-	    if (u16b_tmp >= MAX_R_IDX)
-		goto error;
-	    rd_lore_old(&l_list[u16b_tmp]);
-	    rd_u16b(&u16b_tmp);
-	}
-	if (to_be_wizard)
-	    prt("Loaded Recall Memory", 6, 0);
-
-	put_qio();
         rd_u32b(&l);
 	if (!older_than(2,6,0)) {
 	  rd_u32b(&l);
