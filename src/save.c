@@ -453,8 +453,18 @@ static errr rd_store(store_type *st_ptr)
 /*
  * Read options
  */
-static void rd_options(u32b l)
+static void rd_options(void)
 {
+    u32b l;
+
+
+    rd_u32b(&l);
+	if (!older_than(2,6,0)) {
+	  rd_u32b(&l);
+	  rd_u32b(&l);
+	  rd_u32b(&l);
+	}
+
     rogue_like_commands =  (l & 32) ? TRUE : FALSE;
     prompt_carry_flag =    (l & 16) ? TRUE : FALSE;
     carry_query_flag =     (l & 0x400L) ? TRUE : FALSE;
@@ -1999,18 +2009,11 @@ int load_player(int *generate)
 	if (rd_savefile()) goto error;
 
 
-        rd_u32b(&l);
-	if (!older_than(2,6,0)) {
-	  rd_u32b(&l);
-	  rd_u32b(&l);
-	  rd_u32b(&l);
-	}
+	rd_options();
 
 	if (to_be_wizard)
-	    prt("Loaded Options Memory", 7, 0);
+	    prt("Loaded Option Flags", 7, 0);
 	put_qio();
-
-	rd_options(l);
 
 	/* Process "dead" players */
 	if (death) {

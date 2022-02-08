@@ -846,8 +846,19 @@ static errr rd_dungeon_old()
 /*
  * Read options
  */
-static void rd_options_old(u32b l)
+
+static void rd_options_old()
 {
+    u32b l;
+
+    /* Standard options */
+    rd_u32b(&l);
+
+	if (!older_than(2,6,0)) {
+	  rd_u32b(&l);
+	  rd_u32b(&l);
+	  rd_u32b(&l);
+	}
 
     /* Hack -- Extract death */
     death = (l & 0x80000000) ? TRUE : FALSE;
@@ -1121,18 +1132,12 @@ int load_player(int *generate)
 	/* Actually read the savefile */
 	if (rd_savefile_old()) goto error;
 
-        rd_u32b(&l);
-	if (!older_than(2,6,0)) {
-	  rd_u32b(&l);
-	  rd_u32b(&l);
-	  rd_u32b(&l);
-	}
+
+	rd_options_old();
 
 	if (to_be_wizard)
-	    prt("Loaded Options Memory", 7, 0);
+	    prt("Loaded options", 7, 0);
 	put_qio();
-
-	rd_options_old(l);
 
 	/* Process "dead" players */
 	if (death) {
