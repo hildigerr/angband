@@ -2006,10 +2006,11 @@ int load_player(int *generate)
 
 	rd_options(l);
 
-	if (to_be_wizard && (l & 0x80000000L)
-	    && get_check("Resurrect a dead character?"))
-	    l &= ~0x80000000L;
-	if ((l & 0x80000000L) == 0) {
+	/* Process "dead" players */
+	if (l & 0x80000000L) {
+
+	if (to_be_wizard
+	    && get_check("Resurrect a dead character?")) {
 
     /* Read the extra stuff */
     rd_extra();
@@ -2062,13 +2063,6 @@ int load_player(int *generate)
 #endif
 #endif
 	    rd_string(died_from);
-	}
-	if ((c = getc(fff)) == EOF || (l & 0x80000000L)) {
-	    if ((l & 0x80000000L) == 0) {
-		if (!to_be_wizard || turn < 0) {
-		    prt("ERROR in to_be_wizard", 10, 0);
-		    goto error;
-		}
 
 		/* Revive the player */
 		prt("Attempting a resurrection!", 0, 0);
@@ -2113,6 +2107,8 @@ int load_player(int *generate)
 		/* XXX Don't enter wizard mode */
 		to_be_wizard = FALSE;
 
+		/* Player is no longer "dead" */
+		l &= ~0x80000000L;
 	    }
 
 	    /* Normal "restoration" */
