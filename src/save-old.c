@@ -843,6 +843,43 @@ static errr rd_dungeon_old()
 
 
 
+/*
+ * Read options
+ */
+static void rd_options_old(u32b l)
+{
+    rogue_like_commands =  (l & 32) ? TRUE : FALSE;
+    prompt_carry_flag =    (l & 16) ? TRUE : FALSE;
+    carry_query_flag =     (l & 0x400L) ? TRUE : FALSE;
+    quick_messages =       (l & 0x40000000L) ? TRUE : FALSE;
+
+    notice_seams =         (l & 128) ? TRUE : FALSE;
+    equippy_chars = (l & 0x20000000L) ? TRUE : FALSE;
+
+    find_cut =             (l & 1) ? TRUE : FALSE;
+    find_examine =         (l & 2) ? TRUE : FALSE;
+    find_prself =          (l & 4) ? TRUE : FALSE;
+    find_bound =           (l & 8) ? TRUE : FALSE;
+    find_ignore_doors =    (l & 0x100L) ? TRUE : FALSE;
+
+    no_haggle_flag =       (l & 0x200L) ? TRUE : FALSE;
+
+    show_inven_weight =    (l & 64) ? TRUE : FALSE;
+    show_equip_weight =		(l & 0x00800000L) ? TRUE : FALSE;
+    plain_descriptions =	(l & 0x00400000L) ? TRUE : FALSE;
+
+    unfelt = (l & 0x1000L) ? TRUE : FALSE;
+
+    /* Read "delay_spd" */
+    delay_spd = ((l >> 13) & 0xf);
+    if (delay_spd > 10) delay_spd = 10;
+    if (delay_spd < 0) delay_spd = 0;
+
+    /* Read "hitpoint_warn" */
+    hitpoint_warn = ((l >> 17) & 0xf);
+}
+
+
 static errr rd_inventory_old()
 {
     int i;
@@ -1091,84 +1128,7 @@ int load_player(int *generate)
 	    prt("Loaded Options Memory", 7, 0);
 	put_qio();
 
-	if (l & 1)
-	    find_cut = TRUE;
-	else
-	    find_cut = FALSE;
-	if (l & 2)
-	    find_examine = TRUE;
-	else
-	    find_examine = FALSE;
-	if (l & 4)
-	    find_prself = TRUE;
-	else
-	    find_prself = FALSE;
-	if (l & 8)
-	    find_bound = TRUE;
-	else
-	    find_bound = FALSE;
-	if (l & 16)
-	    prompt_carry_flag = TRUE;
-	else
-	    prompt_carry_flag = FALSE;
-	if (l & 32)
-	    rogue_like_commands = TRUE;
-	else
-	    rogue_like_commands = FALSE;
-	if (l & 64)
-	    show_inven_weight = TRUE;
-	else
-	    show_inven_weight = FALSE;
-	if (l & 128)
-	    notice_seams = TRUE;
-	else
-	    notice_seams = FALSE;
-	if (l & 0x100L)
-	    find_ignore_doors = TRUE;
-	else
-	    find_ignore_doors = FALSE;
-	
-	if (l & 0x200L)
-	    no_haggle_flag = TRUE;
-	else
-	    no_haggle_flag = FALSE; 
-	if (l & 0x400L)
-	    carry_query_flag = FALSE;
-	else
-	    carry_query_flag = TRUE;
-	if (l & 0x1000L)
-	    unfelt = TRUE;
-	else
-	    unfelt = FALSE;
-	delay_spd = ((l >> 13) & 0xf);
-	if (delay_spd > 10)
-	    delay_spd = 10;	   /* bounds check for delay_speed -CWS */
-	if (delay_spd < 0)
-	    delay_spd = 0;
-	hitpoint_warn = ((l >> 17) & 0xf);
-	if (l & 0x00400000L)	   /* don't do "black Mushroom of Curing" */
-	    plain_descriptions = TRUE;
-	else
-	    plain_descriptions = FALSE;
-	if (l & 0x00800000L)
-	    show_equip_weight = TRUE;
-	else
-	    show_equip_weight = FALSE;
-	feeling = ((l >> 24) & 0xf);
-	if (feeling > 10)
-	    feeling = 0;	    /* bounds for level feelings -CWS */
-	if (feeling < 0)
-	    feeling = 0;
-
-	if (l & 0x20000000L)
-	    equippy_chars = TRUE;   /* equippy chars option -CWS */
-	else
-	    equippy_chars = FALSE;
-
-	if (l & 0x40000000L)
-	    quick_messages = TRUE;  /* quick messages option -CWS */
-	else
-	    quick_messages = FALSE;
+	rd_options_old(l);
 
 	/* Process "dead" players */
 	if (l & 0x80000000L) {
