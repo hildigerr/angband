@@ -75,6 +75,8 @@ static int	from_savefile;	/* can overwrite old savefile when save */
 
 static u32b       start_time;	   /* time that play started */
 
+static bool	say = FALSE;	/* Show "extra" messages */
+
 
 /*
  * This function determines if the version of the savefile
@@ -1381,7 +1383,7 @@ static errr rd_savefile()
 
 
     /* Begin Wizard messages */
-    if (to_be_wizard) prt_note(-2,"Loading savefile...");
+    if (say) prt_note(-2,"Loading savefile...");
 
     /* Read the artifacts */
     rd_u32b(&GROND);
@@ -1496,14 +1498,14 @@ static errr rd_savefile()
     rd_u32b(&BARAHIR);
     rd_u32b(&RAZORBACK);
     rd_u32b(&BLADETURNER);
-    if (to_be_wizard) prt_note(-1,"Loaded Artifacts");
+    if (say) prt_note(-1,"Loaded Artifacts");
 
 
     /* Load the Quests */
     for (i = 0; i < MAX_QUESTS; i++) {
 	rd_u32b(&quests[i]);
     }
-    if (to_be_wizard) prt_note(-1,"Loaded Quests");
+    if (say) prt_note(-1,"Loaded Quests");
 
 
     /* Load the old "Uniques" flags */
@@ -1512,7 +1514,7 @@ static errr rd_savefile()
 	rd_s32b(&u_list[i].exist);
 	rd_s32b(&u_list[i].dead);
     }
-    if (to_be_wizard) prt_note(-1,"Loaded Unique Beasts");
+    if (say) prt_note(-1,"Loaded Unique Beasts");
 
 
     /* Monster Memory */
@@ -1531,15 +1533,15 @@ static errr rd_savefile()
 	/* Extract the monster lore */
 	rd_lore(&l_list[u16b_tmp]);
     }
-    if (to_be_wizard) prt_note(-1,"Loaded Monster Memory");
+    if (say) prt_note(-1,"Loaded Monster Memory");
 
     /* Read the options */
 	rd_options();
-	if (to_be_wizard) prt_note(-1,"Loaded Option Flags");
+	if (say) prt_note(-1,"Loaded Option Flags");
 
     /* Read the extra stuff */
     rd_extra();
-    if (to_be_wizard) prt_note(-1, "Loaded extra information");
+    if (say) prt_note(-1, "Loaded extra information");
 
     /* Read the inventory */
     if (rd_inventory()) {
@@ -1567,7 +1569,7 @@ static errr rd_savefile()
     rd_u16b(&last_msg);
     for (i = 0; i < MAX_SAVE_MSG; i++)
 	rd_string(old_msg[i]);
-    if (to_be_wizard) prt_note(-1,"Loaded Messages");
+    if (say) prt_note(-1,"Loaded Messages");
 
 
     /* Read the player_hp array */
@@ -1994,6 +1996,14 @@ int load_player(int *generate)
     byte char_tmp, ychar, xchar, count;
 
 
+    /* Hack -- allow "debugging" */
+    int wiz = to_be_wizard;
+
+
+    /* Set "say" as well */
+    if (wiz) say = TRUE;
+
+
     /* Forbid suspend */
     signals_ignore_tstp();
 
@@ -2069,7 +2079,7 @@ int load_player(int *generate)
 
 
 #if !defined(SET_UID) && !defined(ALLOW_FIDDLING)
-	if (!to_be_wizard) {
+	if (!wiz) {
 	    if (time_saved > (statbuf.st_ctime + 100) ||
 		time_saved < (statbuf.st_ctime - 100)) {
 		prt_note(-2,"Fiddled save file");
@@ -2090,9 +2100,8 @@ int load_player(int *generate)
 	/* Process "dead" players */
 	if (death) {
 
-	if (to_be_wizard
-	    && get_check("Resurrect a dead character?")) {
-
+	    /* Wizards can revive dead characters */
+	    if (wiz && get_check("Resurrect a dead character?")) {
 
 		/* Revive the player */
 		prt_note(0,"Attempting a resurrection!");

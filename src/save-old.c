@@ -38,6 +38,8 @@ static byte	version_maj;	/* Major version */
 static byte	version_min;	/* Minor version */
 static byte	patch_level;	/* Patch level */
 
+static bool say;		/* Debugging */
+
 
 /*
  * This function determines if the version of the savefile
@@ -972,14 +974,14 @@ static errr rd_savefile_old()
 
     /* Read the artifacts */
     rd_artifacts_old();
-    if (to_be_wizard) prt_note(-1,"Loaded Artifacts");
+    if (say) prt_note(-1,"Loaded Artifacts");
 
 
     /* Load the Quests */
     for (i = 0; i < MAX_QUESTS; i++) {
 	rd_u32b(&quests[i]);
     }
-    if (to_be_wizard) prt_note(-1,"Loaded Quests");
+    if (say) prt_note(-1,"Loaded Quests");
 
 
     /* Load the old "Uniques" flags */
@@ -988,7 +990,7 @@ static errr rd_savefile_old()
 	rd_s32b(&u_list[i].exist);
 	rd_s32b(&u_list[i].dead);
     }
-    if (to_be_wizard) prt_note(-1,"Loaded Unique Beasts");
+    if (say) prt_note(-1,"Loaded Unique Beasts");
 
 
     /* Monster Memory */
@@ -1007,15 +1009,15 @@ static errr rd_savefile_old()
 	/* Extract the monster lore */
 	rd_lore_old(&l_list[u16b_tmp]);
     }
-    if (to_be_wizard) prt_note(-1,"Loaded Monster Memory");
+    if (say) prt_note(-1,"Loaded Monster Memory");
 
     /* Read the options */
     rd_options_old();
-    if (to_be_wizard) prt_note(-1, "Loaded options");
+    if (say) prt_note(-1, "Loaded options");
 
     /* Read the extra stuff */
     rd_extra_old();
-    if (to_be_wizard) prt_note(-1, "Loaded extra information");
+    if (say) prt_note(-1, "Loaded extra information");
 
 
     /* Read the inventory */
@@ -1034,7 +1036,7 @@ static errr rd_savefile_old()
 	rd_byte(&spell_order[i]);
     }
 
-    if (to_be_wizard) prt_note(-1, "Read spell information");
+    if (say) prt_note(-1, "Read spell information");
 
 
     /* Hack -- analyze the "object_ident" array. */
@@ -1059,7 +1061,7 @@ static errr rd_savefile_old()
     /* Read the player_hp array */
     for (i = 0; i < MAX_PLAYER_LEVEL; i++) rd_u16b(&player_hp[i]);
 
-    if (to_be_wizard) prt_note(-1, "Read some more information.");
+    if (say) prt_note(-1, "Read some more information.");
 
 
     /* Read the stores */
@@ -1077,7 +1079,7 @@ static errr rd_savefile_old()
     /* Read the cause of death, if any */
     rd_string(died_from);
 
-    if (to_be_wizard) prt_note(-1, "All player info restored");
+    if (say) prt_note(-1, "All player info restored");
 
 
     /* I'm not dead yet... */
