@@ -1582,17 +1582,6 @@ static errr rd_savefile()
 
     /* Time at which file was saved */
     rd_u32b(&time_saved);
-#ifndef SET_UID
-#ifndef ALLOW_FIDDLING
-	if (!to_be_wizard) {
-	    if (time_saved > (statbuf.st_ctime + 100) ||
-		time_saved < (statbuf.st_ctime - 100)) {
-		prt_note(-2,"Fiddled save file");
-		goto error;
-	    }
-	}
-#endif
-#endif
 
     /* Read the cause of death, if any */
     rd_string(died_from);
@@ -2079,6 +2068,24 @@ int load_player(int *generate)
 	if (rd_savefile()) goto error;
 
 
+#if !defined(SET_UID) && !defined(ALLOW_FIDDLING)
+	if (!to_be_wizard) {
+	    if (time_saved > (statbuf.st_ctime + 100) ||
+		time_saved < (statbuf.st_ctime - 100)) {
+		prt_note(-2,"Fiddled save file");
+		goto error;
+	    }
+	}
+#endif
+
+
+
+	/* Check for errors */
+	if (ferror(fff)) {
+	    prt_note(-2,"FILE ERROR");
+	    goto error;
+	}
+
 
 	/* Process "dead" players */
 	if (death) {
@@ -2147,10 +2154,6 @@ int load_player(int *generate)
 	    goto closefiles;
 	}
 
-	if (ungetc(c, fff) == EOF) {
-	    prt_note(-2,"ERROR in ungetc");
-	    goto error;
-	}
 
 	prt_note(-1,"Restoring Character...");
 
@@ -2189,10 +2192,6 @@ int load_player(int *generate)
     /* read the time that the file was saved */
 	rd_u32b(&time_saved);
 
-	if (ferror(fff)) {
-	    prt_note(-2,"FILE ERROR");
-	    goto error;
-	}
 	if (turn < 0) {
 	    prt_note(-2,"Invalid turn");
     error:
