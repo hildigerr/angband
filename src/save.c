@@ -1351,6 +1351,8 @@ static errr rd_savefile()
 {
     int i;
 
+    u16b tmp16u;
+
     prt_note(0,"Restoring Memory...");
 
     /* Get the version info */
@@ -1533,17 +1535,17 @@ static errr rd_savefile()
     while (1) {
 
 	/* Read some info, check for sentinal */
-    rd_u16b(&u16b_tmp);
-    if (u16b_tmp == 0xFFFF) break;
+    rd_u16b(&tmp16u);
+    if (tmp16u == 0xFFFF) break;
 
 	/* Incompatible save files */
-	if (u16b_tmp >= MAX_R_IDX) {
+	if (tmp16u >= MAX_R_IDX) {
 	    prt_note(-2, "Too many monsters!");
 	    return (21);
 	}
 
 	/* Extract the monster lore */
-	rd_lore(&l_list[u16b_tmp]);
+	rd_lore(&l_list[tmp16u]);
     }
     if (say) prt_note(-1,"Loaded Monster Memory");
 
@@ -1986,6 +1988,10 @@ int _save_player(char *fnam)
 
 
 /*
+ * Version 2.7.0 uses an entirely different "savefile" format.
+ * It can still read the old files, though it may lose a little
+ * data in transfer, in particular, some of the "saved messages".
+ *
  * Note that versions "5.2.x" can never be made.
  * This boneheadedness is a direct result of the fact that Angband 2.4
  * had version constants of 5.2, not 2.4.  2.5 inherited this.  2.6 fixes
@@ -1998,14 +2004,10 @@ int _save_player(char *fnam)
 
 int load_player(int *generate)
 {
-    int                    i, j, fd, c, ok, total_count;
-    u32b                 l, age;
-    vtype                  temp;
-    u16b                 u16b_tmp;
-    register cave_type    *c_ptr;
-    register monster_lore  *r_ptr;
-    store_type            *st_ptr;
-    byte char_tmp, ychar, xchar, count;
+    int                    i, fd, ok;
+    u32b                 age;
+
+    vtype temp;
 
 
     /* Hack -- allow "debugging" */
