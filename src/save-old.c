@@ -962,14 +962,6 @@ static errr rd_savefile_old()
     int i;
 
     /* XXX Fake the system info */
-    xor_byte = 0;
-    rd_byte(&version_maj);
-    xor_byte = 0;
-    rd_byte(&version_min);
-    xor_byte = 0;
-    rd_byte(&patch_level);
-    xor_byte = 0;
-    rd_byte(&xor_byte);
 
 
     /* Read the artifacts */
@@ -1061,6 +1053,12 @@ static errr rd_savefile_old()
     /* Read the player_hp array */
     for (i = 0; i < MAX_PLAYER_LEVEL; i++) rd_u16b(&player_hp[i]);
 
+    /* Hack -- Version 2.6.2 did silly things */
+    if (!older_than(2,6,2)) {
+	u16b icky;
+	for (i = 50; i < 99; i++) rd_u16b(&icky);
+    }
+
     if (say) prt_note(-1, "Read some more information.");
 
 
@@ -1093,8 +1091,7 @@ static errr rd_savefile_old()
 	}
 
 	/* Really old version -- read stores again */
-	if ((version_min == 1 && patch_level < 3)
-	    || (version_min == 0)) {
+	if (older_than(2,1,3)) {
 
 	    /* Read the stores (again) */
 	    for (i = 0; i < MAX_STORES; i++) {
@@ -1114,6 +1111,29 @@ static errr rd_savefile_old()
 
     /* Assume success */
     return (0);
+}
+
+
+/*
+ * Hack -- forward declare
+ */
+extern errr rd_old_sf(FILE *fff1, int vmaj, int vmin, int vpat, int say1);
+
+/*
+ * Read an old savefile
+ */
+errr rd_old_sf(FILE *fff1, int vmaj, int vmin, int vpat, int say1)
+{
+    fff = fff1;
+    
+    version_maj = vmaj;
+    version_min = vmin;
+    patch_level = vpat;
+
+    say = say1;
+        
+    /* Read the old savefile */
+    return (rd_savefile_old());
 }
 
 

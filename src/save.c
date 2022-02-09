@@ -1340,6 +1340,11 @@ static errr rd_dungeon()
 
 
 /*
+ * Hack -- see "save-old.c"
+ */
+
+
+/*
  * Actually read the savefile
  */
 static errr rd_savefile()
@@ -1384,6 +1389,13 @@ static errr rd_savefile()
 
     /* Begin Wizard messages */
     if (say) prt_note(-2,"Loading savefile...");
+
+
+    /* Hack -- parse old savefiles */
+    if (older_than(2,7,0)) {
+	extern errr rd_old_sf(FILE *fff1, int vmaj, int vmin, int vpat, int say);
+	return (rd_old_sf(fff, version_maj, version_min, patch_level, say));
+    }
 
     /* Read the artifacts */
     rd_u32b(&GROND);
@@ -2178,25 +2190,6 @@ int load_player(int *generate)
 
 	*generate = FALSE;	   /* We have restored a cave - no need to generate. */
 
-	if ((version_min == 1 && patch_level < 3)
-	    || (version_min == 0))
-	    for (i = 0; i < MAX_STORES; i++) {
-		st_ptr = &store[i];
-		rd_s32b(&st_ptr->store_open);
-		rd_s16b(&st_ptr->insult_cur);
-		rd_byte(&st_ptr->owner);
-		rd_byte(&st_ptr->store_ctr);
-		rd_u16b(&st_ptr->good_buy);
-		rd_u16b(&st_ptr->bad_buy);
-		if (st_ptr->store_ctr > STORE_INVEN_MAX) {
-		    prt_note(0, "ERROR in STORE_INVEN_MAX");
-		    goto error;
-		}
-		for (j = 0; j < st_ptr->store_ctr; j++) {
-		    rd_s32b(&st_ptr->store_inven[j].scost);
-		    rd_item(&st_ptr->store_inven[j].sitem);
-		}
-	    }
 
     /* read the time that the file was saved */
 	rd_u32b(&sf_when);
