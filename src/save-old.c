@@ -855,6 +855,10 @@ static errr rd_dungeon_old()
 	}
 #endif
 
+    /* Read the ghost info */
+    rd_ghost_old();
+
+
     /* Success */
     return (0);
 }
@@ -1101,7 +1105,38 @@ static errr rd_savefile_old()
 
     if (to_be_wizard) prt_note(-1, "All player info restored");
 
-    /* Success */
+
+    /* I'm not dead yet... */
+    if (!death) {
+
+	/* Dead players have no dungeon */
+	prt_note(-1,"Restoring Dungeon...");
+	if (rd_dungeon_old()) {
+	    prt_note(-2, "Error reading dungeon data");
+	    return (25);
+	}
+
+	/* Really old version -- read stores again */
+	if ((version_min == 1 && patch_level < 3)
+	    || (version_min == 0)) {
+
+	    /* Read the stores (again) */
+	    for (i = 0; i < MAX_STORES; i++) {
+		if (rd_store_old(&store[i])) {
+		    prt_note(-2,"ERROR in STORE_INVEN_MAX");
+		    return (33);
+		}
+	    }
+	}
+
+
+	/* Time goes here, too */
+	rd_u32b(&time_saved);
+    }
+
+
+
+    /* Assume success */
     return (0);
 }
 
@@ -1276,40 +1311,7 @@ int load_player(int *generate)
 
 	prt_note(-1,"Restoring Character...");
 
-	/* Dead players have no dungeon */
-	prt_note(-1,"Restoring Dungeon...");
-	if (rd_dungeon_old()) {
-	    prt_note(-2, "Error reading dungeon data");
-		goto error;
-	}
-
-	/* Read the ghost info */
-	rd_ghost_old();
-
 	*generate = FALSE;	   /* We have restored a cave - no need to generate. */
-
-	if ((version_min == 1 && patch_level < 3)
-	    || (version_min == 0))
-	    for (i = 0; i < MAX_STORES; i++) {
-		st_ptr = &store[i];
-		rd_s32b(&st_ptr->store_open);
-		rd_s16b(&st_ptr->insult_cur);
-		rd_byte(&st_ptr->owner);
-		rd_byte(&st_ptr->store_ctr);
-		rd_u16b(&st_ptr->good_buy);
-		rd_u16b(&st_ptr->bad_buy);
-		if (st_ptr->store_ctr > STORE_INVEN_MAX) {
-		    prt_note(-2,"ERROR in STORE_INVEN_MAX");
-		    goto error;
-		}
-		for (j = 0; j < st_ptr->store_ctr; j++) {
-		    rd_s32b(&st_ptr->store_inven[j].scost);
-		    rd_item(&st_ptr->store_inven[j].sitem);
-		}
-	    }
-
-    /* read the time that the file was saved */
-	rd_u32b(&time_saved);
 
 	if (ferror(fff)) {
 	    prt_note(-2,"FILE ERROR");
