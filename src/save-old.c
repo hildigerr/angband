@@ -66,6 +66,28 @@ static bool older_than(int x, int y, int z)
 }
 
 
+/*
+ * Show information on the screen, one line at a time.
+ * If "where" is negative, advance "-where" lines from last location.
+ */
+static void prt_note(int where, cptr msg)
+{
+    static int y = 0;
+
+    /* Accept line number, Remember the line */
+    y = (where < 0) ? (y - where) : where;
+
+    /* Attempt to "wrap" if forced to */
+    if (y >= 24) y = 0;
+
+    /* Draw the message */
+    prt(msg, y, 0);
+
+    /* Flush it */
+    put_qio();
+}
+
+
 
 
 /*
@@ -294,7 +316,7 @@ static errr rd_store_old(store_type *st_ptr)
 
     /* Too many items */    
     if (st_ptr->store_ctr > STORE_INVEN_MAX) {
-	prt("ERROR in store_ctr", 9, 0);
+	prt_note(-2, "Too many items in store");
 	return (10);
     }
 
@@ -772,7 +794,7 @@ static errr rd_dungeon_old()
 #ifndef ATARIST_MWC
 	    /* Prevent over-run */
 	    if (c_ptr >= &cave[MAX_HEIGHT][0]) {
-		prt("ERROR in cave size", 13, 0);
+		prt_note(-2, "Dungeon too big!");
 		return (81);
 	    }
 #endif
@@ -797,7 +819,7 @@ static errr rd_dungeon_old()
     /* Read the item count */
     rd_u16b(&i_max);
     if (i_max > MAX_I_IDX) {
-	prt("ERROR in MAX_I_IDX", 14, 0);
+	prt_note(-2, "Too many objects");
 	return (92);
     }
 
@@ -813,7 +835,7 @@ static errr rd_dungeon_old()
     /* Read the monster count */        
     rd_u16b(&m_max);
     if (m_max > MAX_M_IDX) {
-	prt("ERROR in MAX_M_IDX", 15, 0);
+	prt_note(-2, "Too many monsters");
 	return (93);
     }
 
@@ -909,7 +931,7 @@ static errr rd_inventory_old()
 
     /* Verify */
     if (inven_ctr > INVEN_WIELD) {
-	prt("Unable to read inventory", 8, 0);
+	prt_note(-2, "Unable to read inventory");
 	return (15);
     }
 
@@ -937,9 +959,6 @@ static errr rd_savefile_old()
 {
     int i;
 
-    prt("Restoring Memory...", 0, 0);
-    put_qio();
-
     /* Get the version info */
     xor_byte = 0;
     rd_byte(&version_maj);
@@ -959,8 +978,8 @@ static errr rd_savefile_old()
 
     /* Verify the "major version" */
     if (version_maj != CUR_VERSION_MAJ) {
-	prt("Sorry. This savefile is from a different version of Angband.", 2, 0);
-	put_qio();
+
+	prt_note(-2,"This savefile is from a different version of Angband.");
 	return (11);
     }
 
@@ -969,23 +988,20 @@ static errr rd_savefile_old()
     if ((version_min > CUR_VERSION_MIN) ||
 	(version_min == CUR_VERSION_MIN && patch_level > PATCH_LEVEL)) {
 
-	prt("Sorry. This savefile is from a more recent version of Angband.", 2, 0);
-	put_qio();
+	prt_note(-2,"This savefile is from a more recent version of Angband.");
 	return (12);
     }
 
     /* Read the artifacts */
     rd_artifacts_old();
-    if (to_be_wizard) prt("Loaded Artifacts", 3, 0);
-    put_qio();
+    if (to_be_wizard) prt_note(-1,"Loaded Artifacts");
 
 
     /* Load the Quests */
     for (i = 0; i < MAX_QUESTS; i++) {
 	rd_u32b(&quests[i]);
     }
-    if (to_be_wizard) prt("Loaded Quests", 4, 0);
-    put_qio();
+    if (to_be_wizard) prt_note(-1,"Loaded Quests");
 
 
     /* Load the old "Uniques" flags */
@@ -994,8 +1010,7 @@ static errr rd_savefile_old()
 	rd_s32b(&u_list[i].exist);
 	rd_s32b(&u_list[i].dead);
     }
-    if (to_be_wizard) prt("Loaded Unique Beasts", 5, 0);
-    put_qio();
+    if (to_be_wizard) prt_note(-1,"Loaded Unique Beasts");
 
 
     /* Monster Memory */
@@ -1007,24 +1022,23 @@ static errr rd_savefile_old()
 
 	/* Incompatible save files */
 	if (u16b_tmp >= MAX_R_IDX) {
-	    prt("Too many monsters!", 6, 0);
-	    put_qio();
+	    prt_note(-2,"Too many monsters!");
 	    return (21);
 	}
 
 	/* Extract the monster lore */
 	rd_lore_old(&l_list[u16b_tmp]);
     }
-    if (to_be_wizard) prt("Loaded Recall Memory", 6, 0);
-    put_qio();
+    if (to_be_wizard) prt_note(-1,"Loaded Monster Memory");
 
     /* Read the options */
     rd_options_old();
-    if (to_be_wizard) prt("Loaded options", 7, 0);
-    put_qio();
+    if (to_be_wizard) prt_note(-1, "Loaded options");
 
     /* Read the extra stuff */
     rd_extra_old();
+    if (to_be_wizard) prt_note(-1, "Loaded extra information");
+
 
     /* Read the inventory */
     rd_inventory_old();
@@ -1041,6 +1055,9 @@ static errr rd_savefile_old()
     for (i = 0; i < 64; i++) {
 	rd_byte(&spell_order[i]);
     }
+
+    if (to_be_wizard) prt_note(-1, "Read spell information");
+
 
     /* Hack -- analyze the "object_ident" array. */
     for (i = 0; i < OBJECT_IDENT_SIZE; i++)  {            
@@ -1064,9 +1081,13 @@ static errr rd_savefile_old()
     /* Read the player_hp array */
     for (i = 0; i < MAX_PLAYER_LEVEL; i++) rd_u16b(&player_hp[i]);
 
+    if (to_be_wizard) prt_note(-1, "Read some more information.");
+
+
     /* Read the stores */
     for (i = 0; i < MAX_STORES; i++) {
 	if (rd_store_old(&store[i])) {
+	    prt_note(-2,"ERROR reading store");
 	    return (32);
 	}
     }
@@ -1077,6 +1098,8 @@ static errr rd_savefile_old()
 
     /* Read the cause of death, if any */
     rd_string(died_from);
+
+    if (to_be_wizard) prt_note(-1, "All player info restored");
 
     /* Success */
     return (0);
@@ -1187,7 +1210,7 @@ int load_player(int *generate)
 	    && get_check("Resurrect a dead character?")) {
 
 		/* Revive the player */
-		prt("Attempting a resurrection!", 0, 0);
+		prt_note(0,"Attempting a resurrection!");
 
 		/* Not quite dead */
 		if (p_ptr->chp < 0) {
@@ -1236,7 +1259,7 @@ int load_player(int *generate)
 	    /* Normal "restoration" */
 	    else {
 
-		prt("Restoring Memory of a departed spirit...", 0, 0);
+		prt_note(0,"Restoring Memory of a departed spirit...");
 
 		/* Forget the turn, and old_turn */
 		turn = old_turn = (-1);
@@ -1247,17 +1270,16 @@ int load_player(int *generate)
 	}
 
 	if (ungetc(c, fff) == EOF) {
-	    prt("ERROR in ungetc", 11, 0);
+	    prt_note(-2,"ERROR in ungetc");
 	    goto error;
 	}
 
-	prt("Restoring Character...", 0, 0);
-	put_qio();
+	prt_note(-1,"Restoring Character...");
 
 	/* Dead players have no dungeon */
-	prt("Restoring Dungeon...", 0, 0);
+	prt_note(-1,"Restoring Dungeon...");
 	if (rd_dungeon_old()) {
-	prt("Error reading dungeon data", 12, 0);
+	    prt_note(-2, "Error reading dungeon data");
 		goto error;
 	}
 
@@ -1277,7 +1299,7 @@ int load_player(int *generate)
 		rd_u16b(&st_ptr->good_buy);
 		rd_u16b(&st_ptr->bad_buy);
 		if (st_ptr->store_ctr > STORE_INVEN_MAX) {
-		    prt("ERROR in STORE_INVEN_MAX", 16, 0);
+		    prt_note(-2,"ERROR in STORE_INVEN_MAX");
 		    goto error;
 		}
 		for (j = 0; j < st_ptr->store_ctr; j++) {
@@ -1290,11 +1312,11 @@ int load_player(int *generate)
 	rd_u32b(&time_saved);
 
 	if (ferror(fff)) {
-	    prt("FILE ERROR", 17, 0);
+	    prt_note(-2,"FILE ERROR");
 	    goto error;
 	}
 	if (turn < 0) {
-	    prt("Error = turn < 0", 7, 0);
+	    prt_note(-2,"Invalid turn");
     error:
 	    ok = FALSE;		   /* Assume bad data. */
 	} else {
@@ -1372,7 +1394,7 @@ closefiles:
 	}
     }
     turn = (-1);
-    prt("Please try again without that savefile.", 1, 0);
+    prt_note(-2,"Please try again without that savefile.");
     signals();
 #ifdef MAC
     *exit_flag = TRUE;
