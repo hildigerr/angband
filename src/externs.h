@@ -133,6 +133,10 @@
 /*****************************************************************************/
 
 
+/*
+ * Savefile info 
+ */
+extern u32b sf_when;		/* Time when savefile created */
 
 
 /* many systems don't define these anywhere */

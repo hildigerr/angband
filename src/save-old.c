@@ -1074,7 +1074,7 @@ static errr rd_savefile_old()
 
 
     /* Time at which file was saved */
-    rd_u32b(&time_saved);
+    rd_u32b(&sf_when);
 
     /* Read the cause of death, if any */
     rd_string(died_from);
@@ -1107,7 +1107,7 @@ static errr rd_savefile_old()
 
 
 	/* Time goes here, too */
-	rd_u32b(&time_saved);
+	rd_u32b(&sf_when);
     }
 
 

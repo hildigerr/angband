@@ -75,6 +75,9 @@ int weapon_heavy = FALSE;
 int pack_heavy = FALSE;
 
 
+/* Basic savefile information */
+u32b sf_when = 0L;		/* Time when savefile created */
+
 s16b i_max;			/* Treasure heap size */
 s16b m_max;			/* Monster heap size */
 

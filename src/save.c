@@ -1583,7 +1583,7 @@ static errr rd_savefile()
     }
 
     /* Time at which file was saved */
-    rd_u32b(&time_saved);
+    rd_u32b(&sf_when);
 
     /* Read the cause of death, if any */
     rd_string(died_from);
@@ -1987,7 +1987,7 @@ int _save_player(char *fnam)
 int load_player(int *generate)
 {
     int                    i, j, fd, c, ok, total_count;
-    u32b                 l, age, time_saved;
+    u32b                 l, age;
     vtype                  temp;
     u16b                 u16b_tmp;
     register cave_type    *c_ptr;
@@ -2080,8 +2080,8 @@ int load_player(int *generate)
 
 #if !defined(SET_UID) && !defined(ALLOW_FIDDLING)
 	if (!wiz) {
-	    if (time_saved > (statbuf.st_ctime + 100) ||
-		time_saved < (statbuf.st_ctime - 100)) {
+	    if (sf_when > (statbuf.st_ctime + 100) ||
+		sf_when < (statbuf.st_ctime - 100)) {
 		prt_note(-2,"Fiddled save file");
 		goto error;
 	    }
@@ -2199,7 +2199,7 @@ int load_player(int *generate)
 	    }
 
     /* read the time that the file was saved */
-	rd_u32b(&time_saved);
+	rd_u32b(&sf_when);
 
 	if (turn < 0) {
 	    prt_note(-2,"Invalid turn");
@@ -2239,10 +2239,10 @@ closefiles:
 	    /* calculate age in seconds */
 		start_time = time((long *)0);
 	    /* check for reasonable values of time here ... */
-		if (start_time < time_saved)
+		if (start_time < sf_when)
 		    age = 0;
 		else
-		    age = start_time - time_saved;
+		    age = start_time - sf_when;
 
 		age = (age + 43200L) / 86400L;	/* age in days */
 		if (age > 10)
