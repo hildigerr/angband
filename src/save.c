@@ -73,8 +73,6 @@ static byte	patch_level;	/* Patch level */
 
 static int	from_savefile;	/* can overwrite old savefile when save */
 
-static u32b       start_time;	   /* time that play started */
-
 static bool	say = FALSE;	/* Show "extra" messages */
 
 
@@ -1399,6 +1397,9 @@ static errr rd_savefile()
 	return (rd_old_sf(fff, version_maj, version_min, patch_level, say));
     }
 
+    /* Time of savefile creation */
+    rd_u32b(&sf_when);
+
     /* Read the artifacts */
     rd_u32b(&GROND);
     rd_u32b(&RINGIL);
@@ -1596,8 +1597,6 @@ static errr rd_savefile()
 	if (rd_store(&store[i])) return (22);
     }
 
-    /* Time at which file was saved */
-    rd_u32b(&sf_when);
 
     /* Read the cause of death, if any */
     rd_string(died_from);
@@ -1615,9 +1614,26 @@ static errr rd_savefile()
 
 static int wr_savefile()
 {
-    u32b              l;
     register int        i;
     register monster_lore *r_ptr;
+    u32b              now;
+
+
+    /* Guess at the current time */
+    now = time((time_t *)0);
+
+#if 0
+    /* If someone is messing with the clock, assume one day of play time */
+    if (now < sf_when) now = sf_when + 86400L;
+#endif
+
+    /* Note when the file was saved */
+    sf_when = now;
+
+
+    /* Time file last saved */
+    wr_u32b(sf_when);
+
 
 /* clear the death flag when creating a HANGUP save file, so that player can
  * see tombstone when restart 
@@ -1763,11 +1779,6 @@ static int wr_savefile()
     }
     wr_u16b(0xFFFF);	   /* sentinel to indicate no more monster info */
 
-    wr_u32b(l);
-    wr_u32b(l);	/* added some duplicates, for future flags expansion -CWS */
-    wr_u32b(l);
-    wr_u32b(l);
-
 
 
     /* Write the "extra" information */
@@ -1808,13 +1819,6 @@ static int wr_savefile()
     /* Dump the stores */
     for (i = 0; i < MAX_STORES; i++) wr_store(&store[i]);
 
-/* save the current time in the savefile */
-    l = time((long *)0);
-
-/* if (l < start_time) { someone is messing with the clock!, assume that we
- * have been playing for 1 day l = start_time + 86400L; } 
- */
-    wr_u32b(l);
 
 /* starting with 5.2, put died_from string in savefile */
     wr_string(died_from);
@@ -2004,7 +2008,7 @@ int _save_player(char *fnam)
 
 int load_player(int *generate)
 {
-    int                    i, fd, ok;
+    int                    i, fd, ok, days;
     u32b                 age;
 
     vtype temp;
@@ -2192,10 +2196,6 @@ int load_player(int *generate)
 
 	*generate = FALSE;	   /* We have restored a cave - no need to generate. */
 
-
-    /* read the time that the file was saved */
-	rd_u32b(&sf_when);
-
 	if (turn < 0) {
 	    prt_note(-2,"Invalid turn");
     error:
@@ -2229,21 +2229,23 @@ closefiles:
 		pack_heavy = 0;
 		check_strength();
 
-	    /* rotate store inventory, depending on how old the save file */
-	    /* is foreach day old (rounded up), call store_maint */
-	    /* calculate age in seconds */
-		start_time = time((long *)0);
-	    /* check for reasonable values of time here ... */
-		if (start_time < sf_when)
-		    age = 0;
-		else
-		    age = start_time - sf_when;
+		/* rotate store inventory, based on time passed */
+		/* foreach day old (rounded up), call store_maint */
 
-		age = (age + 43200L) / 86400L;	/* age in days */
-		if (age > 10)
-		    age = 10;	   /* in case savefile is very old */
-		for (i = 0; i < age; i++)
-		    store_maint();
+		/* Get the current time */
+		age = time((time_t *)0);
+
+		/* Subtract the save-file time */
+		age = age - sf_when;
+
+		/* Convert age to "real time" in days */
+		days = age / 86400L;
+
+		/* Assume no more than 10 days old */
+		if (days > 10) days = 10;
+
+		/* Rotate the store inventories (once per day) */
+		for (i = 0; i < days; i++) store_maint();
 	    }
 
 /* if (noscore) msg_print("This save file cannot be used to get on the score board."); */
