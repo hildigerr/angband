@@ -144,6 +144,22 @@ static byte sf_get(void)
     v = c ^ xor_byte;
     xor_byte = c;
 
+#ifdef SAVEFILE_VOMIT
+    /* Hack -- debugging */
+    if (1) {
+	static int y = 15, x = 0;
+	char buf[3];
+	sprintf(buf, "%02x", v);
+	prt(buf, y, x*3);
+	x++;
+	if (x >= 25) {
+	    x = 0;
+	    y++;
+	    if (y >= 24) y = 15;
+	}
+    }
+#endif
+
     /* Return the value */    
     return (v);
 }
