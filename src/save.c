@@ -1873,32 +1873,6 @@ static int wr_savefile()
     return TRUE;
 }
 
-int save_player()
-{
-    vtype temp;
-    char *tmp2;
-
-#ifdef SECURE
-    beGames();
-#endif
-
-    if (_save_player(savefile)) {
-
-	tmp2 = strrchr(savefile, (int)'/');
-	if (tmp2 == (char *)0) tmp2 = savefile;
-
-	(void)sprintf(temp, "%s/p.%s", ANGBAND_DIR_SAVE, (tmp2 + 1));
-
-	unlink(temp);
-    } else {
-	return FALSE;
-    }
-#ifdef SECURE
-    bePlayer();
-#endif
-    return TRUE;
-}
-
 
 /*
  * Medium level player saver
@@ -2007,6 +1981,42 @@ int _save_player(char *fnam)
     /* Successful save */
     return TRUE;
 }
+
+
+
+/*
+ * Attempt to save the player in a savefile
+ */
+int save_player()
+{
+    vtype temp;
+    char *tmp2;
+
+#ifdef SECURE
+    beGames();
+#endif
+
+    if (_save_player(savefile)) {
+
+	tmp2 = strrchr(savefile, (int)'/');
+	if (tmp2 == (char *)0) tmp2 = savefile;
+
+	(void)sprintf(temp, "%s/p.%s", ANGBAND_DIR_SAVE, (tmp2 + 1));
+
+	unlink(temp);
+    } else {
+	return FALSE;
+    }
+#ifdef SECURE
+    bePlayer();
+#endif
+    return TRUE;
+}
+
+
+
+
+
 
 
 /*
