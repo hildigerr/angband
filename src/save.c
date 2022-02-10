@@ -1601,6 +1601,21 @@ static errr rd_savefile()
     /* Read the cause of death, if any */
     rd_string(died_from);
 
+
+    /* I'm not dead yet... */
+    if (!death) {
+
+	/* Dead players have no dungeon */
+	prt_note(-1,"Restoring Dungeon...");
+	if (rd_dungeon()) {
+	    prt_note(-2, "Error reading dungeon data");
+	    return (34);
+	}
+
+	/* Read the ghost info */
+	rd_ghost();
+    }
+
     /* Success */
     return (0);
 }
@@ -1618,6 +1633,7 @@ static int wr_savefile()
     register monster_lore *r_ptr;
     u32b              now;
 
+    byte		tmp8u;
 
     /* Guess at the current time */
     now = time((time_t *)0);
@@ -1629,6 +1645,20 @@ static int wr_savefile()
 
     /* Note when the file was saved */
     sf_when = now;
+
+
+    /*** Actually write the file ***/
+
+    /* Dump the file header */
+    xor_byte = 0;
+    wr_byte(CUR_VERSION_MAJ);
+    xor_byte = 0;
+    wr_byte(CUR_VERSION_MIN);
+    xor_byte = 0;
+    wr_byte(PATCH_LEVEL);
+    xor_byte = 0;
+    tmp8u = rand_int(256);
+    wr_byte(tmp8u);
 
 
     /* Time file last saved */
@@ -1877,7 +1907,6 @@ int _save_player(char *fnam)
 {
     int   ok, fd;
     vtype temp;
-    byte char_tmp;
 
     /* Forbid suspend */
     signals_ignore_tstp();
@@ -1943,17 +1972,6 @@ int _save_player(char *fnam)
 #ifdef MSDOS
 	(void)setmode(fileno(fff), O_BINARY);
 #endif
-
-	xor_byte = 0;
-	wr_byte((byte) CUR_VERSION_MAJ);
-	xor_byte = 0;
-	wr_byte((byte) CUR_VERSION_MIN);
-	xor_byte = 0;
-	wr_byte((byte) PATCH_LEVEL);
-	xor_byte = 0;
-	char_tmp = randint(256) - 1;
-	wr_byte(char_tmp);
-    /* Note that xor_byte is now equal to char_tmp */
 
 	/* Write the savefile */
 	ok = wr_savefile();
@@ -2180,19 +2198,6 @@ int load_player(int *generate)
 	    put_qio();
 	    goto closefiles;
 	}
-
-
-	prt_note(-1,"Restoring Character...");
-
-	/* Dead players have no dungeon */
-	prt_note(-1,"Restoring Dungeon...");
-	if (rd_dungeon()) {
-	prt_note(-2, "Error reading dungeon data");
-		goto error;
-	}
-
-	/* Read the ghost info */
-	rd_ghost();
 
 	*generate = FALSE;	   /* We have restored a cave - no need to generate. */
 
