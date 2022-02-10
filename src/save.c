@@ -1875,23 +1875,20 @@ static int wr_savefile()
 /* starting with 5.2, put died_from string in savefile */
     wr_string(died_from);
 
-/* only level specific info follows, this allows characters to be
- * resurrected, the dungeon level info is not needed for a resurrection 
- */
-    if (death) {
-	if (ferror(fff) || fflush(fff) == EOF)
-	    return FALSE;
-	return TRUE;
-    }
+    /* Player is not dead, write the dungeon */
+    if (!death) {
 
 	/* Dump the dungeon */
 	wr_dungeon();
 
 	/* Dump the ghost */
 	wr_ghost();
+    }
 
-    if (ferror(fff) || (fflush(fff) == EOF))
-	return FALSE;
+    /* Error in save */
+    if (ferror(fff) || (fflush(fff) == EOF)) return FALSE;
+
+    /* Successful save */
     return TRUE;
 }
 
