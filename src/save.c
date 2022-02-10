@@ -733,6 +733,8 @@ static void rd_extra()
 
     rd_string(p_ptr->name);
 
+    rd_string(died_from);
+
     for (i = 0; i < 4; i++) {
 	rd_string(p_ptr->history[i]);
     }
@@ -902,6 +904,8 @@ static void wr_extra()
     int i;
 
     wr_string(p_ptr->name);
+
+    wr_string(died_from);
 
     for (i = 0; i < 4; i++) {
 	wr_string(p_ptr->history[i]);
@@ -1620,10 +1624,6 @@ static errr rd_savefile()
     }
 
 
-    /* Read the cause of death, if any */
-    rd_string(died_from);
-
-
     /* I'm not dead yet... */
     if (!death) {
 
@@ -1871,9 +1871,6 @@ static int wr_savefile()
     /* Dump the stores */
     for (i = 0; i < MAX_STORES; i++) wr_store(&store[i]);
 
-
-/* starting with 5.2, put died_from string in savefile */
-    wr_string(died_from);
 
     /* Player is not dead, write the dungeon */
     if (!death) {
