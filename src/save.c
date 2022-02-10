@@ -2150,6 +2150,9 @@ int load_player(int *generate)
 	/* Actually read the savefile */
 	if (rd_savefile()) goto error;
 
+	/* Hack -- Alive, so no need to make a cave */
+	if (!death) *generate = FALSE;
+
 
 #if !defined(SET_UID) && !defined(ALLOW_FIDDLING)
 	if (!wiz) {
@@ -2231,11 +2234,11 @@ int load_player(int *generate)
 		/* Forget the turn, and old_turn */
 		turn = old_turn = (-1);
 
+		/* Hack -- skip file verification */
+		goto closefiles;
 	    }
-	    goto closefiles;
 	}        
 
-	*generate = FALSE;	   /* We have restored a cave - no need to generate. */
 
 	if (turn < 0) {
 
