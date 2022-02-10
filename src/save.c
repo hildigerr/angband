@@ -386,17 +386,20 @@ static void rd_lore(monster_lore *l_ptr)
 {
 	int i;
 
-	rd_u32b(&l_ptr->r_cflags1);
+	rd_u16b(&l_ptr->r_kills);
+	rd_u16b(&l_ptr->r_deaths);
+
 	rd_u32b(&l_ptr->r_spells1);
 	rd_u32b(&l_ptr->r_spells2);
 	rd_u32b(&l_ptr->r_spells3);
-	rd_u16b(&l_ptr->r_kills);
-	rd_u16b(&l_ptr->r_deaths);
+	rd_u32b(&l_ptr->r_cflags1);
 	rd_u32b(&l_ptr->r_cflags2);
-	rd_byte(&l_ptr->r_wake);
-	rd_byte(&l_ptr->r_ignore);
+
 	for (i = 0; i < MAX_MON_NATTACK; i++)
 	rd_byte(&l_ptr->r_attacks[i]);
+
+	rd_byte(&l_ptr->r_wake);
+	rd_byte(&l_ptr->r_ignore);
 }
 
 static void wr_lore(monster_lore *l_ptr)
@@ -404,17 +407,20 @@ static void wr_lore(monster_lore *l_ptr)
 	int i;
 
     /* Write the info */
-    wr_u32b(l_ptr->r_cflags1);
+    wr_u16b(l_ptr->r_kills);
+    wr_u16b(l_ptr->r_deaths);
+
     wr_u32b(l_ptr->r_spells1);
     wr_u32b(l_ptr->r_spells2);
     wr_u32b(l_ptr->r_spells3);
-    wr_u16b(l_ptr->r_kills);
-    wr_u16b(l_ptr->r_deaths);
+    wr_u32b(l_ptr->r_cflags1);
     wr_u32b(l_ptr->r_cflags2);
-    wr_byte(l_ptr->r_wake);
-    wr_byte(l_ptr->r_ignore);
+
     for (i = 0; i < MAX_MON_NATTACK; i++)
     wr_byte(l_ptr->r_attacks[i]);
+
+    wr_byte(l_ptr->r_wake);
+    wr_byte(l_ptr->r_ignore);
 }
 
 
