@@ -2195,41 +2195,55 @@ int load_player(int *generate)
 		turn = old_turn = (-1);
 
 	    }
-	    put_qio();
 	    goto closefiles;
-	}
+	}        
 
 	*generate = FALSE;	   /* We have restored a cave - no need to generate. */
 
 	if (turn < 0) {
+
 	    prt_note(-2,"Invalid turn");
-    error:
-	    ok = FALSE;		   /* Assume bad data. */
-	} else {
-	/* don't overwrite the killed by string if character is dead */
-	    if (p_ptr->chp >= 0)
+
+error:
+
+	    /* Assume bad data. */
+	    ok = FALSE;
+	}
+
+	else {
+
+	    /* don't overwrite the "killed by" string if character is dead */
+	    if (p_ptr->chp >= 0) {
 		(void)strcpy(died_from, "(alive and well)");
+	    }
+
 	    character_generated = 1;
 	}
 
 closefiles:
 
-	if (fff != NULL) {
-	    if (fclose(fff) < 0)
-		ok = FALSE;
+	if (fff) {
+	    if (fclose(fff) < 0) ok = FALSE;
 	}
-	if (fd >= 0)
-	    (void)close(fd);
 
-	if (!ok)
+	if (fd >= 0) (void)close(fd);
+
+	if (!ok) {
 	    msg_print("Error during reading of file.");
+	    msg_print(NULL);
+	}
+
 	else {
-	/* let the user overwrite the old savefile when save/quit */
+
+	    /* Hack -- Let the user overwrite the old savefile when save/quit */
 	    from_savefile = 1;
 
+	    /* Allow suspend again */
 	    signals();
 
-	    if (turn >= 0) {	   /* Only if a full restoration. */
+	    /* Only if a full restoration. */
+	    if (turn >= 0) {
+
 		weapon_heavy = FALSE;
 		pack_heavy = 0;
 		check_strength();
@@ -2253,10 +2267,16 @@ closefiles:
 		for (i = 0; i < days; i++) store_maint();
 	    }
 
-/* if (noscore) msg_print("This save file cannot be used to get on the score board."); */
+#if 0
+	    if (noscore) {
+		msg_print("This savefile cannot yield high scores.");
+	    }
+#endif
 
-	    if (version_maj != CUR_VERSION_MAJ
-		|| version_min != CUR_VERSION_MIN) {
+	    /* Give a warning */
+	    if (version_maj != CUR_VERSION_MAJ ||
+		version_min != CUR_VERSION_MIN) {
+
 		(void)sprintf(temp,
 			"Save file version %d.%d %s on game version %d.%d.",
 			      version_maj, version_min,
@@ -2265,10 +2285,10 @@ closefiles:
 			      CUR_VERSION_MAJ, CUR_VERSION_MIN);
 		msg_print(temp);
 	    }
-	    if (turn >= 0) {
-		char               *tmp2;
 
-		tmp2 = strrchr(savefile, (int)'/');
+	    if (turn >= 0) {
+
+		char *tmp2 = strrchr(savefile, (int)'/');
 		if (tmp2 == (char *)0) tmp2 = savefile;
 
 		(void)sprintf(temp, "%s/p.%s", ANGBAND_DIR_SAVE, (tmp2 + 1));
@@ -2281,18 +2301,25 @@ closefiles:
 	    }
 	}
     }
-    turn = (-1);
+
+
+    /* Oh well... */
     prt_note(-2,"Please try again without that savefile.");
+
+    /* No game in progress */
+    turn = (-1);
+
+    /* Allow suspend again */
     signals();
+
 #ifdef MAC
     *exit_flag = TRUE;
 #else
     exit_game();
 #endif
 
+    /* Compiler food */
     return FALSE;		   /* not reached, unless on mac */
 }
-
-
 
 
