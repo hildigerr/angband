@@ -1989,6 +1989,7 @@ int _save_player(char *fnam)
  */
 int save_player()
 {
+    int result = FALSE;
     vtype temp;
     char *tmp2;
 
@@ -2004,13 +2005,17 @@ int save_player()
 	(void)sprintf(temp, "%s/p.%s", ANGBAND_DIR_SAVE, (tmp2 + 1));
 
 	unlink(temp);
-    } else {
-	return FALSE;
+
+	/* Success */
+	result = TRUE;
     }
+
 #ifdef SECURE
     bePlayer();
 #endif
-    return TRUE;
+
+    /* Return the result */
+    return (result);
 }
 
 
