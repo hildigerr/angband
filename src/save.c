@@ -617,42 +617,13 @@ static void rd_ghost()
     r_ptr->cflags2 = tmp32u;
 
 
-/*
- * fix player ghost's exp bug.  The mexp field is really an u32b, but the
- * savefile was writing/ reading an u16b.  Since I don't want to change
- * the savefile format, this insures that the mexp field is loaded, and that
- * the "high bits" of mexp do not contain garbage values which could mean that
- * player ghost are worth millions of exp. -CFT
- */
-
-    rd_u16b(&tmp16u);
-    r_ptr->mexp = (u32b)(tmp16u);
-
-/*
- * more stupid size bugs that would've never been needed if these variables
- * had been given enough space in the first place -CWS
- */
-
-    if (older_than(2,6,0)) {
-	rd_byte(&tmp8u);
-	r_ptr->sleep = tmp8u;
-    }
-    else {
-	rd_u16b(&tmp16u);
-	r_ptr->sleep = tmp16u;
-    }
+    rd_u32b(&r_ptr->mexp);
+	rd_u16b(&r_ptr->sleep);
 
     rd_byte(&tmp8u);
     r_ptr->aaf = tmp8u;
 
-    if (older_than(2,6,0)) {
-	rd_byte(&tmp8u);
-	r_ptr->ac = tmp8u;
-    }
-    else {
-	rd_u16b(&tmp16u);
-	r_ptr->ac = tmp16u;
-    }
+	rd_u16b(&r_ptr->ac);
 
     /* Read the speed */
     rd_byte(&tmp8u);
@@ -690,17 +661,7 @@ static void wr_ghost()
     wr_u32b(r_ptr->spells1);
     wr_u32b(r_ptr->cflags2);
 
-/* fix player ghost's exp bug.  The mexp field is really an u32b, but the
- * savefile was writing/reading an u16b.  Since I don't want to change
- * the savefile format, this insures that the low bits of mexp are written (No
- * ghost should be worth more than 64K (Melkor is only worth 60k!), but we
- * check anyway).  Using temp insures that the low bits are all written, and works
- * perfectly with a similar fix when* loading a character. -CFT
- */
-
-	if (r_ptr->mexp > 0xff00) temp = 0xff00;
-	else  temp = r_ptr->mexp;
-	wr_u16b(temp);
+	wr_u32b(r_ptr->mexp);
 
     wr_u16b((byte) r_ptr->sleep);
     wr_byte((byte) r_ptr->aaf);
