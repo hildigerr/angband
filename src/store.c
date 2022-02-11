@@ -117,33 +117,31 @@ static cptr comment6[5] = {
 
 
 
-static void insert_lnum(char *object_str, cptr mtc_str, s32b number)
+static void insert_lnum(char *buf, cptr target, s32b number)
 {
-    int            mlen;
+    int            mlen = strlen(target);
     vtype          str1, str2;
-    register char *string, *tmp_str;
+    register char *string, *tmp_str = buf;
     int            flag;
 
     flag = 1;
-    mlen = strlen(mtc_str);
-    tmp_str = object_str;
     do {
-	string = (char *) index(tmp_str, mtc_str[0]);
+	string = (char *) index(tmp_str, target[0]);
 	if (string == 0)
 	    flag = 0;
 	else {
-	    flag = strncmp(string, mtc_str, mlen);
+	    flag = strncmp(string, target, mlen);
 	    if (flag)
 		tmp_str = string + 1;
 	}
     }
     while (flag);
     if (string) {
-	(void)strncpy(str1, object_str, (int)(string - object_str));
-	str1[(int)(string - object_str)] = '\0';
+	(void)strncpy(str1, buf, (int)(string - buf));
+	str1[(int)(string - buf)] = '\0';
 	(void)strcpy(str2, string + mlen);
 
-    (void)sprintf(object_str, "%s%ld%s", str1, (long)number, str2);
+    (void)sprintf(buf, "%s%ld%s", str1, (long)number, str2);
     }
 }
 
