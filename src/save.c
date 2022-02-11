@@ -1171,6 +1171,16 @@ static void wr_dungeon()
 
 
 
+
+
+
+
+
+
+/* 
+ * New Method
+ */
+
 static errr rd_dungeon()
 {
     int i;
@@ -1178,6 +1188,7 @@ static errr rd_dungeon()
     byte ychar, xchar;
     byte tmp8u;
     u16b tmp16u;
+    int ymax, xmax;
     int total_count;
     cave_type *c_ptr;
     inven_type *t_ptr;
@@ -1229,12 +1240,16 @@ static errr rd_dungeon()
     }
 
 
+    /* Only read as necessary */    
+    ymax = cur_height;
+    xmax = cur_width;
+
     /* Read in the actual "cave" data */
-	c_ptr = &cave[0][0];
     total_count = 0;
+    xchar = ychar = 0;
 
     /* Read until done */
-    while (total_count != MAX_HEIGHT * MAX_WIDTH) {
+    while (total_count < ymax * xmax) {
 
 	/* Extract some RLE info */
 	rd_byte(&count);
@@ -1243,15 +1258,16 @@ static errr rd_dungeon()
 	/* Apply the RLE info */
 	for (i = count; i > 0; i--) {
 
-#ifndef ATARIST_MWC
 	    /* Prevent over-run */
-	    if (c_ptr >= &cave[MAX_HEIGHT][0]) {
+	    if (ychar >= ymax) {
 		prt_note(-2, "Dungeon too big!");
 		return (81);
 	    }
-#endif
 
-	    /* Extract the "wall data" */
+	    /* Access the cave */
+	    c_ptr = &cave[ychar][xchar];
+
+	    /* Extract the floor type */
 	    c_ptr->fval = tmp8u & 0xF;
 
 	    /* Extract the "info" */
@@ -1261,7 +1277,13 @@ static errr rd_dungeon()
 	    c_ptr->tl = (tmp8u >> 7) & 0x1;
 
 	    /* Advance the cave pointers */
-	    c_ptr++;
+	    xchar++;
+
+	    /* Wrap to the next line */
+	    if (xchar >= xmax) {
+		xchar = 0;
+		ychar++;
+	    }
 	}
 
 	total_count += count;
