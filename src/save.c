@@ -1075,45 +1075,16 @@ static void wr_dungeon()
     wr_u16b(max_panel_rows);
     wr_u16b(max_panel_cols);
 
+
+    /*** Simple "Run-Length-Encoding" of cave ***/
+
     /* Note that this will induce two wasted bytes */
     count = 0;
     prev_char = 0;
 
-    /* Dump the m_idx info */
-    for (i = 0; i < MAX_HEIGHT; i++) {
-	for (j = 0; j < MAX_WIDTH; j++) {
-
-	    /* Get the cave */
-	    c_ptr = &cave[i][j];
-
-	    if (c_ptr->m_idx != 0) {
-		wr_byte((byte) i);
-		wr_byte((byte) j);
-		wr_u16b(c_ptr->m_idx); /* was wr_byte -CWS */
-	    }
-	}
-    }
-    wr_byte((byte) 0xFF);	   /* marks end of m_idx info */
-
-    /* Dump the i_idx info */
-    for (i = 0; i < MAX_HEIGHT; i++) {
-	for (j = 0; j < MAX_WIDTH; j++) {
-
-	    /* Get the cave */
-	    c_ptr = &cave[i][j];
-
-	    if (c_ptr->i_idx != 0) {
-		wr_byte((byte) i);
-		wr_byte((byte) j);
-		wr_u16b(c_ptr->i_idx);
-	    }
-	}
-    }
-    wr_byte(0xFF);		   /* marks end of i_idx info */
-
-    /* Dump the info */
-    for (i = 0; i < MAX_HEIGHT; i++) {
-	for (j = 0; j < MAX_WIDTH; j++) {
+    /* Dump the cave */
+    for (i = 0; i < cur_height; i++) {
+	for (j = 0; j < cur_width; j++) {
 
 	    /* Get the cave */
 	    c_ptr = &cave[i][j];
@@ -1204,42 +1175,6 @@ static errr rd_dungeon()
     rd_u16b(&max_panel_rows);
     rd_u16b(&max_panel_cols);
 
-
-    /* read in the creature ptr info */
-    while (1) {
-
-	rd_byte(&tmp8u);
-	if (tmp8u == 0xFF) break;
-
-	ychar = tmp8u;
-	rd_byte(&xchar);
-
-	/* Invalid cave location */
-	if (xchar > MAX_WIDTH || ychar > MAX_HEIGHT) return (71);
-
-	/* let's correctly fix the invisible monster bug  -CWS */
-	if (older_than(2,6,0)) {
-	    rd_byte(&tmp8u);
-	    cave[ychar][xchar].m_idx = tmp8u;
-	}
-	else {
-	    rd_u16b(&tmp16u);
-	    cave[ychar][xchar].m_idx = tmp16u;
-	}
-    }
-
-    /* read in the treasure ptr info */
-    while (1) { 
-	rd_byte(&tmp8u);
-	if (tmp8u == 0xFF) break;
-	ychar = tmp8u;
-	rd_byte(&xchar);
-	rd_u16b(&tmp16u);
-	if (xchar > MAX_WIDTH || ychar > MAX_HEIGHT) return (72);
-	cave[ychar][xchar].i_idx = tmp16u;
-    }
-
-
     /* Only read as necessary */    
     ymax = cur_height;
     xmax = cur_width;
@@ -1297,12 +1232,11 @@ static errr rd_dungeon()
 	return (92);
     }
 
-    /* Read the dungeon items */
+    /* Read the dungeon items, note locations in cave */
     for (i = MIN_I_IDX; i < i_max; i++) {
 	inven_type *i_ptr = &i_list[i];
-
-	/* Read the item */
 	rd_item(i_ptr);
+	cave[i_ptr->iy][i_ptr->ix].i_idx = i;
     }
 
 
@@ -1313,10 +1247,11 @@ static errr rd_dungeon()
 	return (93);
     }
 
-    /* Read the monsters */
+    /* Read the monsters, note locations in cave */
     for (i = MIN_M_IDX; i < m_max; i++) {
 	monster_type *m_ptr = &m_list[i];
 	rd_monster(m_ptr);
+	cave[m_ptr->fy][m_ptr->fx].m_idx = i;
     }
 
 #ifdef MSDOS
