@@ -71,6 +71,9 @@ static byte	version_maj;	/* Major version */
 static byte	version_min;	/* Minor version */
 static byte	patch_level;	/* Patch level */
 
+static u32b	v_check = 0L;	/* A simple "checksum" on the actual values */
+static u32b	x_check = 0L;	/* A simple "checksum" on the encoded bytes */
+
 static int	from_savefile;	/* can overwrite old savefile when save */
 
 static bool	say = FALSE;	/* Show "extra" messages */
@@ -133,6 +136,10 @@ static void sf_put(byte v)
     /* Encode the value, write a character */
     xor_byte ^= v;
     (void)putc((int)xor_byte, fff);
+
+    /* Maintain the checksum info */
+    v_check += v;
+    x_check += xor_byte;
 }
 
 static byte sf_get(void)
@@ -143,6 +150,10 @@ static byte sf_get(void)
     c = getc(fff) & 0xFF;
     v = c ^ xor_byte;
     xor_byte = c;
+
+    /* Maintain the checksum info */
+    v_check += v;
+    x_check += xor_byte;
 
 #ifdef SAVEFILE_VOMIT
     /* Hack -- debugging */
@@ -1303,6 +1314,12 @@ static errr rd_savefile()
 
     u16b tmp16u;
 
+#ifdef VERIFY_CHECKSUMS
+    u32b n_x_check, n_v_check;
+    u32b o_x_check, o_v_check;
+#endif
+
+
     prt_note(0,"Restoring Memory...");
 
     /* Get the version info */
@@ -1314,6 +1331,12 @@ static errr rd_savefile()
     rd_byte(&patch_level);
     xor_byte = 0;
     rd_byte(&xor_byte);
+
+
+    /* Clear the checksums */
+    v_check = 0L;
+    x_check = 0L;
+
 
     /* Handle stupidity from Angband 2.4 / 2.5 */
     if ((version_maj == 5) && (version_min == 2)) {
@@ -1582,6 +1605,38 @@ static errr rd_savefile()
 	rd_ghost();
     }
 
+
+#ifdef VERIFY_CHECKSUMS
+
+    /* Save the checksum */
+    n_v_check = v_check;
+
+    /* Read the old checksum */
+    rd_u32b(&o_v_check);
+
+    /* Verify */
+    if (o_v_check != n_v_check) {
+	prt_note(-2, "Invalid checksum");
+	return (11);
+    }
+
+
+    /* Save the encoded checksum */
+    n_x_check = x_check;
+
+    /* Read the checksum */
+    rd_u32b(&o_x_check);
+
+
+    /* Verify */
+    if (o_x_check != n_x_check) {
+	prt_note(-2, "Invalid encoded checksum");
+	return (11);
+    }
+
+#endif
+
+
     /* Success */
     return (0);
 }
@@ -1631,6 +1686,11 @@ static int wr_savefile()
     xor_byte = 0;
     tmp8u = rand_int(256);
     wr_byte(tmp8u);
+
+
+    /* Reset the checksum */
+    v_check = 0L;
+    x_check = 0L;
 
 
     /* Operating system */
@@ -1862,6 +1922,14 @@ static int wr_savefile()
 	/* Dump the ghost */
 	wr_ghost();
     }
+
+
+    /* Write the "value check-sum" */
+    wr_u32b(v_check);
+
+    /* Write the "encoded checksum" */    
+    wr_u32b(x_check);
+
 
     /* Error in save */
     if (ferror(fff) || (fflush(fff) == EOF)) return FALSE;
