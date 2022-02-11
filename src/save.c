@@ -390,9 +390,9 @@ static void wr_monster(monster_type *m_ptr)
     wr_u16b(m_ptr->r_idx);
     wr_byte(m_ptr->fy);
     wr_byte(m_ptr->fx);
-    wr_s16b(m_ptr->hp);
-    wr_s16b(m_ptr->maxhp);
-    wr_s16b(m_ptr->csleep);
+    wr_u16b(m_ptr->hp);
+    wr_u16b(m_ptr->maxhp);
+    wr_u16b(m_ptr->csleep);
     wr_s16b(m_ptr->mspeed);
     wr_byte(m_ptr->stunned);
     wr_byte(m_ptr->confused);
@@ -463,8 +463,8 @@ static void wr_store(store_type *st_ptr)
 {
     int j;
 
-    wr_s32b(st_ptr->store_open);
-    wr_s16b(st_ptr->insult_cur);
+    wr_u32b(st_ptr->store_open);
+    wr_u16b(st_ptr->insult_cur);
     wr_byte(st_ptr->owner);
     wr_byte(st_ptr->store_ctr);
     wr_u16b(st_ptr->good_buy);
@@ -665,7 +665,7 @@ static void wr_ghost()
 
     wr_byte(r_ptr->hd[0]);
     wr_byte(r_ptr->hd[1]);
-    wr_s16b(r_ptr->ac);
+    wr_u16b(r_ptr->ac);
     wr_u16b(r_ptr->sleep);
     wr_byte(r_ptr->aaf);
     wr_byte(r_ptr->speed);
@@ -843,9 +843,9 @@ static void rd_extra()
 
 
     /* Special stuff */
-    rd_u16b(panic_save);
-    rd_u16b(total_winner);
-    rd_u16b(noscore);
+    rd_s16b(panic_save);
+    rd_s16b(total_winner);
+    rd_s16b(noscore);
 
 
     /* Important -- Read "death" */
@@ -894,75 +894,76 @@ static void wr_extra()
     for (i = 0; i < 6; ++i) wr_s16b(p_ptr->mod_stat[i]);
     for (i = 0; i < 6; ++i) wr_s16b(p_ptr->use_stat[i]);
 
-    wr_s32b(p_ptr->au);
+    wr_u32b(p_ptr->au);
 
-    wr_s32b(p_ptr->max_exp);
-    wr_s32b(p_ptr->exp);
+    wr_u32b(p_ptr->max_exp);
+    wr_u32b(p_ptr->exp);
     wr_u16b(p_ptr->exp_frac);
-    wr_s16b(p_ptr->lev);
+    wr_u16b(p_ptr->lev);
 
-    wr_s16b(p_ptr->mhp);
-    wr_s16b(p_ptr->chp);
+    wr_u16b(p_ptr->mhp);
+    wr_u16b(p_ptr->chp);
     wr_u16b(p_ptr->chp_frac);
 
-    wr_s16b(p_ptr->mana);
-    wr_s16b(p_ptr->cmana);
+    wr_u16b(p_ptr->mana);
+    wr_u16b(p_ptr->cmana);
     wr_u16b(p_ptr->cmana_frac);
 
     /* Max Player and Dungeon Levels */
-    wr_s16b(p_ptr->max_dlv);
+    wr_u16b(p_ptr->max_dlv);
 
     /* More info */
-    wr_s16b(p_ptr->srh);
-    wr_s16b(p_ptr->fos);
-    wr_s16b(p_ptr->disarm);
-    wr_s16b(p_ptr->save);
-    wr_s16b(p_ptr->sc);
-    wr_s16b(p_ptr->stl);
-    wr_s16b(p_ptr->bth);
-    wr_s16b(p_ptr->bthb);
+    wr_u16b(p_ptr->srh);
+    wr_u16b(p_ptr->fos);
+    wr_u16b(p_ptr->disarm);
+    wr_u16b(p_ptr->save);
+    wr_u16b(p_ptr->sc);
+    wr_u16b(p_ptr->stl);
+    wr_u16b(p_ptr->bth);
+    wr_u16b(p_ptr->bthb);
     
-    wr_s16b(p_ptr->ptohit);
-    wr_s16b(p_ptr->ptodam);
-    wr_s16b(p_ptr->pac);
-    wr_s16b(p_ptr->ptoac);
+    wr_u16b(p_ptr->ptohit);
+    wr_u16b(p_ptr->ptodam);
+    wr_u16b(p_ptr->pac);
+    wr_u16b(p_ptr->ptoac);
 
-    wr_s16b(p_ptr->dis_th);
-    wr_s16b(p_ptr->dis_td);
-    wr_s16b(p_ptr->dis_ac);
-    wr_s16b(p_ptr->dis_tac);
+    wr_u16b(p_ptr->dis_th);
+    wr_u16b(p_ptr->dis_td);
+    wr_u16b(p_ptr->dis_ac);
+    wr_u16b(p_ptr->dis_tac);
 
+    /* XXX Warning -- some of these should be signed */
     wr_u32b(p_ptr->status);
-    wr_s16b(p_ptr->rest);
-    wr_s16b(p_ptr->blind);
-    wr_s16b(p_ptr->paralysis);
-    wr_s16b(p_ptr->confused);
-    wr_s16b(p_ptr->food);
-    wr_s16b(p_ptr->food_digested);
-    wr_s16b(p_ptr->protection);
-    wr_s16b(p_ptr->speed);
-    wr_s16b(p_ptr->fast);
-    wr_s16b(p_ptr->slow);
-    wr_s16b(p_ptr->afraid);
-    wr_s16b(p_ptr->cut);
-    wr_s16b(p_ptr->stun);
-    wr_s16b(p_ptr->poisoned);
-    wr_s16b(p_ptr->image);
-    wr_s16b(p_ptr->protevil);
-    wr_s16b(p_ptr->invuln);
-    wr_s16b(p_ptr->hero);
-    wr_s16b(p_ptr->shero);
-    wr_s16b(p_ptr->shield);
-    wr_s16b(p_ptr->blessed);
-    wr_s16b(p_ptr->detect_inv);
-    wr_s16b(p_ptr->word_recall);
-    wr_s16b(p_ptr->see_infra);
-    wr_s16b(p_ptr->tim_infra);
-    wr_s16b(p_ptr->oppose_fire);
-    wr_s16b(p_ptr->oppose_cold);
-    wr_s16b(p_ptr->oppose_acid);
-    wr_s16b(p_ptr->oppose_elec);
-    wr_s16b(p_ptr->oppose_pois);
+    wr_u16b(p_ptr->rest);
+    wr_u16b(p_ptr->blind);
+    wr_u16b(p_ptr->paralysis);
+    wr_u16b(p_ptr->confused);
+    wr_u16b(p_ptr->food);
+    wr_u16b(p_ptr->food_digested);
+    wr_u16b(p_ptr->protection);
+    wr_u16b(p_ptr->speed);
+    wr_u16b(p_ptr->fast);
+    wr_u16b(p_ptr->slow);
+    wr_u16b(p_ptr->afraid);
+    wr_u16b(p_ptr->cut);
+    wr_u16b(p_ptr->stun);
+    wr_u16b(p_ptr->poisoned);
+    wr_u16b(p_ptr->image);
+    wr_u16b(p_ptr->protevil);
+    wr_u16b(p_ptr->invuln);
+    wr_u16b(p_ptr->hero);
+    wr_u16b(p_ptr->shero);
+    wr_u16b(p_ptr->shield);
+    wr_u16b(p_ptr->blessed);
+    wr_u16b(p_ptr->detect_inv);
+    wr_u16b(p_ptr->word_recall);
+    wr_u16b(p_ptr->see_infra);
+    wr_u16b(p_ptr->tim_infra);
+    wr_u16b(p_ptr->oppose_fire);
+    wr_u16b(p_ptr->oppose_cold);
+    wr_u16b(p_ptr->oppose_acid);
+    wr_u16b(p_ptr->oppose_elec);
+    wr_u16b(p_ptr->oppose_pois);
     wr_byte(p_ptr->immune_acid);
     wr_byte(p_ptr->immune_elec);
     wr_byte(p_ptr->immune_fire);
@@ -1011,9 +1012,9 @@ static void wr_extra()
 
 
     /* Special stuff */
-    wr_u16b(panic_save);
-    wr_u16b(total_winner);
-    wr_u16b(noscore);
+    wr_s16b(panic_save);
+    wr_s16b(total_winner);
+    wr_s16b(noscore);
 
 
     /* Write death */
@@ -1201,14 +1202,14 @@ static errr rd_dungeon()
 
 
     /* Header info */            
-    rd_u16b(&dun_level);
-    rd_u16b(&mon_tot_mult);
-    rd_u16b(&char_row);
-    rd_u16b(&char_col);
-    rd_u16b(&cur_height);
-    rd_u16b(&cur_width);
-    rd_u16b(&max_panel_rows);
-    rd_u16b(&max_panel_cols);
+    rd_s16b(&dun_level);
+    rd_s16b(&mon_tot_mult);
+    rd_s16b(&char_row);
+    rd_s16b(&char_col);
+    rd_s16b(&cur_height);
+    rd_s16b(&cur_width);
+    rd_s16b(&max_panel_rows);
+    rd_s16b(&max_panel_cols);
 
     /* Only read as necessary */    
     ymax = cur_height;
@@ -1261,7 +1262,7 @@ static errr rd_dungeon()
 
 
     /* Read the item count */
-    rd_u16b(&i_max);
+    rd_s16b(&i_max);
     if (i_max > MAX_I_IDX) {
 	prt_note(-2, "Too many objects");
 	return (92);
@@ -1276,7 +1277,7 @@ static errr rd_dungeon()
 
 
     /* Read the monster count */        
-    rd_u16b(&m_max);
+    rd_s16b(&m_max);
     if (m_max > MAX_M_IDX) {
 	prt_note(-2, "Too many monsters");
 	return (93);
