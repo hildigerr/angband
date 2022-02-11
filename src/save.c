@@ -1067,9 +1067,9 @@ static void wr_dungeon()
 
     /* Dungeon specific info follows */
     wr_u16b(dun_level);
+    wr_u16b(mon_tot_mult);
     wr_u16b(char_row);
     wr_u16b(char_col);
-    wr_u16b(mon_tot_mult);
     wr_u16b(cur_height);
     wr_u16b(cur_width);
     wr_u16b(max_panel_rows);
@@ -1167,9 +1167,9 @@ static errr rd_dungeon()
 
     /* Header info */            
     rd_u16b(&dun_level);
+    rd_u16b(&mon_tot_mult);
     rd_u16b(&char_row);
     rd_u16b(&char_col);
-    rd_u16b(&mon_tot_mult);
     rd_u16b(&cur_height);
     rd_u16b(&cur_width);
     rd_u16b(&max_panel_rows);
