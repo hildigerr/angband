@@ -2,6 +2,7 @@
 
 Functions floor_grid(), clean_grid(), and valid_grid().
 Major rewrite of the "savefile" code, plus "parser" for old files.
+Addition of a generic method for "machine dependant savefile info".
 Rewrite of the "pathname constructor" code.
 Added floating point (yuck!) to "standard deviation" code.
 Redid the targetting code, and the direction code.

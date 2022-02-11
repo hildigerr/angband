@@ -1349,11 +1349,35 @@ static errr rd_savefile()
 	return (rd_old_sf(fff, version_maj, version_min, patch_level, say));
     }
 
+    /* Operating system info */
+    rd_u32b(&sf_xtra);
+
     /* Time of savefile creation */
     rd_u32b(&sf_when);
 
 
-    /* Read the options */
+    /* A "sized" chunk of "unused" space */
+    rd_u32b(&tmp32u);
+
+    /* Read (and forget) those bytes */
+    for (i = 0; i < tmp32u; i++) rd_byte(&tmp8u);
+
+
+    /* A "sized" list of "strings" */
+    rd_u32b(&tmp32u);
+
+    /* Read (and forget) those strings */
+    for (i = 0; i < tmp32u; i++) {
+
+	/* Read and forget a string */
+	while (1) {
+	    rd_byte(&tmp8u);
+	    if (!tmp8u) break;
+	}
+    }
+
+
+    /* Then the options */
     rd_options();
     if (say) prt_note(-1,"Loaded Option Flags");
 
@@ -1587,6 +1611,10 @@ static int wr_savefile()
     if (now < sf_when) now = sf_when + 86400L;
 #endif
 
+
+    /* Note the operating system */
+    sf_xtra = 0L;
+
     /* Note when the file was saved */
     sf_when = now;
 
@@ -1605,8 +1633,19 @@ static int wr_savefile()
     wr_byte(tmp8u);
 
 
+    /* Operating system */
+    wr_u32b(sf_xtra);
+
+
     /* Time file last saved */
     wr_u32b(sf_when);
+
+
+    /* No extra bytes for this operating system */
+    wr_u32b(0L);
+
+    /* No extra strings for this operating system */
+    wr_u32b(0L);
 
 
 /* clear the death flag when creating a HANGUP save file, so that player can
