@@ -1378,6 +1378,12 @@ static errr rd_savefile()
     /* Time of savefile creation */
     rd_u32b(&sf_when);
 
+    /* Number of resurrections */
+    rd_u16b(&sf_lives);
+
+    /* Number of times played */
+    rd_u16b(&sf_saves);
+
 
     /* A "sized" chunk of "unused" space */
     rd_u32b(&tmp32u);
@@ -1673,6 +1679,9 @@ static int wr_savefile()
     /* Note when the file was saved */
     sf_when = now;
 
+    /* Note the number of saves */
+    sf_saves++;
+
 
     /*** Actually write the file ***/
 
@@ -1699,6 +1708,12 @@ static int wr_savefile()
 
     /* Time file last saved */
     wr_u32b(sf_when);
+
+    /* Number of past lives */
+    wr_u16b(sf_lives);
+
+    /* Number of times saved */
+    wr_u16b(sf_saves);
 
 
     /* No extra bytes for this operating system */
@@ -2273,6 +2288,9 @@ int load_player(int *generate)
 	    else {
 
 		prt_note(0,"Restoring Memory of a departed spirit...");
+
+		/* Count the past lives */
+		sf_lives++;
 
 		/* Forget the turn, and old_turn */
 		turn = old_turn = (-1);
