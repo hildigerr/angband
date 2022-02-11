@@ -606,34 +606,29 @@ static void rd_ghost()
     for (i = 0; i < 100; i++) rd_char(&gname[i]);
     strcpy(r_ptr->name, gname);
 
-
-    rd_u32b(&r_ptr->cflags1);
-
-    rd_u32b(& r_ptr->spells1);
-
-    rd_u32b(&r_ptr->cflags2);
-
-
-    rd_u32b(&r_ptr->mexp);
-	rd_u16b(&r_ptr->sleep);
-
-    rd_byte(&r_ptr->aaf);
-
-	rd_u16b(&r_ptr->ac);
-
-    rd_byte(&r_ptr->speed);
+    rd_u16b(&r_ptr->level);
 
     rd_byte(&r_ptr->r_char);
 
     rd_byte(&r_ptr->hd[0]);
     rd_byte(&r_ptr->hd[1]);
+    rd_u16b(&r_ptr->ac);
+    rd_u16b(&r_ptr->sleep);
+    rd_byte(&r_ptr->aaf);
+    rd_byte(&r_ptr->speed);
+
+    rd_u32b(&r_ptr->mexp);
 
     /* Hack -- read the attacks */
     for (i = 0; i < 4; i++) {
 	rd_u16b(&r_ptr->damage[i]);
+
+    rd_u32b(&r_ptr->cflags1);
+    rd_u32b(&r_ptr->cflags2);
+
+    rd_u32b(&r_ptr->spells1);
     }
 
-    rd_u16b(&r_ptr->level);
 }
 
 static void wr_ghost()
@@ -649,27 +644,28 @@ static void wr_ghost()
     for (i = 0; i < 100; i++)
     wr_byte(r_ptr->name[i]);
 
-    wr_u32b(r_ptr->cflags1);
-    wr_u32b(r_ptr->spells1);
-    wr_u32b(r_ptr->cflags2);
+    wr_u16b(r_ptr->level);
 
-	wr_u32b(r_ptr->mexp);
-
-    wr_u16b((byte) r_ptr->sleep);
-    wr_byte((byte) r_ptr->aaf);
-    wr_s16b(r_ptr->ac);
-    wr_byte((byte) r_ptr->speed);
-    wr_byte((byte) r_ptr->r_char);
+    wr_byte(r_ptr->r_char);
 
     wr_byte(r_ptr->hd[0]);
     wr_byte(r_ptr->hd[1]);
+    wr_s16b(r_ptr->ac);
+    wr_u16b(r_ptr->sleep);
+    wr_byte(r_ptr->aaf);
+    wr_byte(r_ptr->speed);
+
+    wr_u32b(r_ptr->mexp);
 
     wr_u16b(r_ptr->damage[0]);
     wr_u16b(r_ptr->damage[1]);
     wr_u16b(r_ptr->damage[2]);
     wr_u16b(r_ptr->damage[3]);
 
-    wr_u16b(r_ptr->level);
+    wr_u32b(r_ptr->cflags1);
+    wr_u32b(r_ptr->cflags2);
+
+    wr_u32b(r_ptr->spells1);
 }
 
 
