@@ -76,10 +76,10 @@ typedef struct _monster_race monster_race;
 struct _monster_race {
   cptr name;			/* Descrip of creature    */
 
-  u16b level;			/* Level of creature		*/
+  byte level;			/* Level of creature		*/
   byte rarity;			/* Rarity of creature		*/
   char gender;			/* one of 'm','f','n','p' to genderize monsters -CWS */
-  byte r_char;			/* Racial "symbol"		*/
+  char r_char;			/* Racial "symbol"		*/
 
   byte hd[2];			/* Creatures hit die		*/
   u16b ac;			/* Armour Class			*/
@@ -199,7 +199,7 @@ struct _inven_kind {
   s16b toac;			/* Plusses to AC		*/
   s16b ac;			/* Normal AC			*/
   byte damage[2];			/* Damage when hits		*/
-  u16b weight;			/* Weight			*/
+  s16b weight;			/* Weight			*/
 
   s32b cost;			/* Object "base cost"		*/
 
@@ -234,11 +234,11 @@ struct _inven_type {
   byte sval;			/* Sub-category number		*/
   s16b pval;			/* Misc. use variable		*/
 
-  u16b timeout;		/* Timeout counter		*/
+  s16b timeout;		/* Timeout counter		*/
   byte name2;			/* Special type, if any		*/
   byte ident;			/* Identification info		*/
   byte number;			/* Number of items		*/
-  u16b weight;			/* Weight			*/
+  s16b weight;			/* Weight			*/
 
   s16b tohit;			/* Plusses to hit		*/
   s16b todam;			/* Plusses to damage		*/
@@ -289,8 +289,8 @@ typedef struct _cave_type cave_type;
 
 struct _cave_type {
 
-  u16b m_idx;		/* Monster index (in m_list) */
-  u16b i_idx;		/* Item index (in i_list) */
+  s16b m_idx;		/* Monster index (in m_list) */
+  s16b i_idx;		/* Item index (in i_list) */
 
   byte fval;		/* Grid type (0-15) */
 
@@ -470,7 +470,7 @@ struct _player_type {
   s32b exp;			/* Cur experience	*/
   u16b exp_frac;		/* Cur exp fraction * 2^16	*/
 
-  u16b lev;			/* Level		*/
+  s16b lev;			/* Level		*/
 
   s16b mana;			/* Mana points	*/
   s16b cmana;			/* Cur mana pts		*/
@@ -480,7 +480,7 @@ struct _player_type {
   s16b chp;			/* Cur hit pts		*/
   u16b chp_frac;		/* Cur hit fraction * 2^16	*/
 
-  u16b max_dlv;			/* Max level explored	*/
+  s16b max_dlv;			/* Max level explored	*/
 
   s16b sc;			/* Social Class	*/
   s16b stl;			/* Stealth factor	*/

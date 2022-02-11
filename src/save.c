@@ -309,8 +309,8 @@ static void rd_item(inven_type *i_ptr)
     rd_byte(&i_ptr->name2);
     rd_byte(&i_ptr->ident);
     rd_byte(&i_ptr->number);
-    rd_u16b(&i_ptr->weight);
-    rd_u16b(&i_ptr->timeout);
+    rd_s16b(&i_ptr->weight);
+    rd_s16b(&i_ptr->timeout);
 
     rd_s16b(&i_ptr->tohit);
     rd_s16b(&i_ptr->todam);
@@ -341,8 +341,8 @@ static void wr_item(inven_type *i_ptr)
     wr_byte(i_ptr->name2);
     wr_byte(i_ptr->ident);
     wr_byte(i_ptr->number);
-    wr_u16b(i_ptr->weight);
-    wr_u16b(i_ptr->timeout);
+    wr_s16b(i_ptr->weight);
+    wr_s16b(i_ptr->timeout);
 
     wr_s16b(i_ptr->tohit);
     wr_s16b(i_ptr->todam);
@@ -621,9 +621,9 @@ static void rd_ghost()
     for (i = 0; i < 100; i++) rd_char(&gname[i]);
     strcpy(r_ptr->name, gname);
 
-    rd_u16b(&r_ptr->level);
+    rd_byte(&r_ptr->level);
 
-    rd_byte(&r_ptr->r_char);
+    rd_char(&r_ptr->r_char);
 
     rd_byte(&r_ptr->hd[0]);
     rd_byte(&r_ptr->hd[1]);
@@ -659,9 +659,9 @@ static void wr_ghost()
     for (i = 0; i < 100; i++)
     wr_byte(r_ptr->name[i]);
 
-    wr_u16b(r_ptr->level);
+    wr_byte(r_ptr->level);
 
-    wr_byte(r_ptr->r_char);
+    wr_char(r_ptr->r_char);
 
     wr_byte(r_ptr->hd[0]);
     wr_byte(r_ptr->hd[1]);
@@ -730,7 +730,7 @@ static void rd_extra()
     rd_s32b(&p_ptr->exp);
     rd_u16b(&p_ptr->exp_frac);
 
-    rd_u16b(&p_ptr->lev);
+    rd_s16b(&p_ptr->lev);
 
     rd_s16b(&p_ptr->mhp);
     rd_s16b(&p_ptr->chp);
@@ -740,7 +740,7 @@ static void rd_extra()
     rd_s16b(&p_ptr->cmana);
     rd_u16b(&p_ptr->cmana_frac);
 
-    rd_u16b(&p_ptr->max_dlv);
+    rd_s16b(&p_ptr->max_dlv);
 
     /* More info */
     rd_s16b(&p_ptr->srh);
@@ -899,7 +899,7 @@ static void wr_extra()
     wr_s32b(p_ptr->max_exp);
     wr_s32b(p_ptr->exp);
     wr_u16b(p_ptr->exp_frac);
-    wr_u16b(p_ptr->lev);
+    wr_s16b(p_ptr->lev);
 
     wr_s16b(p_ptr->mhp);
     wr_s16b(p_ptr->chp);
@@ -910,7 +910,7 @@ static void wr_extra()
     wr_u16b(p_ptr->cmana_frac);
 
     /* Max Player and Dungeon Levels */
-    wr_u16b(p_ptr->max_dlv);
+    wr_s16b(p_ptr->max_dlv);
 
     /* More info */
     wr_s16b(p_ptr->srh);
