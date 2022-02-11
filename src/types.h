@@ -123,7 +123,7 @@ struct _monster_lore {
     u16b r_kills;		/* Count player killing monster */
     u16b r_deaths;		/* Count monster killing player */
 
-    byte r_attacks[MAX_MON_NATTACK];
+    byte r_attacks[4];
 
     byte r_wake;		/* Number of times woken up (?) */
     byte r_ignore;		/* Number of times ignored (?) */

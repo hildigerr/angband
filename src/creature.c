@@ -1732,7 +1732,8 @@ static void make_attack(int m_idx)
 	    }
 	}
 
-	if (attackn < MAX_MON_NATTACK - 1) {
+	/* Can we learn another attack */
+	if (attackn < 4 - 1) {
 	    attackn++;
 	}
 	else {

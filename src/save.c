@@ -422,8 +422,10 @@ static void rd_lore(monster_lore *l_ptr)
 	rd_u32b(&l_ptr->r_cflags1);
 	rd_u32b(&l_ptr->r_cflags2);
 
-	for (i = 0; i < MAX_MON_NATTACK; i++)
-	rd_byte(&l_ptr->r_attacks[i]);
+	rd_byte(&l_ptr->r_attacks[0]);
+	rd_byte(&l_ptr->r_attacks[1]);
+	rd_byte(&l_ptr->r_attacks[2]);
+	rd_byte(&l_ptr->r_attacks[3]);
 
 	rd_byte(&l_ptr->r_wake);
 	rd_byte(&l_ptr->r_ignore);
@@ -443,9 +445,11 @@ static void wr_lore(monster_lore *l_ptr)
     wr_u32b(l_ptr->r_cflags1);
     wr_u32b(l_ptr->r_cflags2);
 
-    for (i = 0; i < MAX_MON_NATTACK; i++)
-    wr_byte(l_ptr->r_attacks[i]);
-
+    /* Count attacks and other stuff */
+    wr_byte(l_ptr->r_attacks[0]);
+    wr_byte(l_ptr->r_attacks[1]);
+    wr_byte(l_ptr->r_attacks[2]);
+    wr_byte(l_ptr->r_attacks[3]);
     wr_byte(l_ptr->r_wake);
     wr_byte(l_ptr->r_ignore);
 }

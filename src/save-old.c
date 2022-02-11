@@ -294,8 +294,10 @@ static void rd_lore_old(monster_lore *l_ptr)
     rd_u32b(&l_ptr->r_cflags2);
     rd_byte(&l_ptr->r_wake);
     rd_byte(&l_ptr->r_ignore);
-    for (i = 0; i < MAX_MON_NATTACK; i++)
-    rd_byte(&l_ptr->r_attacks[i]);
+    rd_byte(&l_ptr->r_attacks[0]);
+    rd_byte(&l_ptr->r_attacks[1]);
+    rd_byte(&l_ptr->r_attacks[2]);
+    rd_byte(&l_ptr->r_attacks[3]);
 }
 
 
