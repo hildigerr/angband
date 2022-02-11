@@ -1053,6 +1053,26 @@ static errr rd_inventory()
 
 
 
+/*
+ * Read the saved messages
+ */
+static void rd_messages()
+{
+    int i;
+
+    /* Hack -- circular queue */
+    rd_u16b(&last_msg);
+
+    /* Read the messages */
+    for (i = 0; i < MAX_SAVE_MSG; i++) {
+
+	/* Read the message */
+	rd_string(old_msg[i]);
+    }
+}
+
+
+
 /* 
  * Write/Read the actual Dungeon
  */
@@ -1339,9 +1359,7 @@ static errr rd_savefile()
 
 
     /* Then the "messages" */
-    rd_u16b(&last_msg);
-    for (i = 0; i < MAX_SAVE_MSG; i++)
-	rd_string(old_msg[i]);
+    rd_messages();
     if (say) prt_note(-1,"Loaded Messages");
 
 
