@@ -117,32 +117,19 @@ static cptr comment6[5] = {
 
 
 
-static void insert_lnum(char *buf, cptr target, s32b number)
+/*
+ * Given a buffer, replace the first occurance of the string "target"
+ * with the textual form of the long integer "number"
+ */
+static bool insert_lnum(char *buf, cptr target, s32b number)
 {
-    int            mlen = strlen(target);
-    vtype          str1, str2;
-    register char *string, *tmp_str = buf;
-    int            flag;
+    char	   insert[32];
 
-    flag = 1;
-    do {
-	string = (char *) index(tmp_str, target[0]);
-	if (string == 0)
-	    flag = 0;
-	else {
-	    flag = strncmp(string, target, mlen);
-	    if (flag)
-		tmp_str = string + 1;
-	}
-    }
-    while (flag);
-    if (string) {
-	(void)strncpy(str1, buf, (int)(string - buf));
-	str1[(int)(string - buf)] = '\0';
-	(void)strcpy(str2, string + mlen);
+    /* Prepare a string to insert */
+    sprintf(insert, "%ld", (long)number);
 
-    (void)sprintf(buf, "%s%ld%s", str1, (long)number, str2);
-    }
+    /* Insert it */
+    return (insert_str(buf, target, insert));
 }
 
 
