@@ -678,7 +678,7 @@ static void rd_extra_old()
     rd_byte(&p_ptr->immune_pois);
     rd_byte(&p_ptr->immune_cold);
     rd_byte(&p_ptr->immune_elec);
-    rd_byte(&p_ptr->light);
+    rd_byte(&p_ptr->lite);
     rd_byte(&p_ptr->resist_conf);
     rd_byte(&p_ptr->resist_sound);
     rd_byte(&p_ptr->resist_lite);

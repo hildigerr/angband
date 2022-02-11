@@ -828,7 +828,7 @@ static void rd_extra()
     rd_byte(&p_ptr->confusing);
     rd_byte(&p_ptr->hold_life);
     rd_byte(&p_ptr->telepathy);
-    rd_byte(&p_ptr->light);
+    rd_byte(&p_ptr->lite);
 
     rd_u16b(&missile_ctr);
 
@@ -996,7 +996,7 @@ static void wr_extra()
     wr_byte(p_ptr->confusing);
     wr_byte(p_ptr->hold_life);
     wr_byte(p_ptr->telepathy);
-    wr_byte(p_ptr->light);
+    wr_byte(p_ptr->lite);
 
     wr_u16b(missile_ctr);
 

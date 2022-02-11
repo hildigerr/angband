@@ -533,7 +533,7 @@ void calc_bonuses()
     p_ptr->immune_pois = FALSE;
     p_ptr->immune_cold = FALSE;
     p_ptr->immune_elec = FALSE;
-    p_ptr->light = FALSE;
+    p_ptr->lite = FALSE;
     p_ptr->resist_conf = FALSE;
     p_ptr->resist_sound = FALSE;
     if (p_ptr->prace == 2) p_ptr->resist_lite = TRUE;
@@ -672,7 +672,7 @@ void calc_bonuses()
     if (TR2_IM_COLD & item_flags2) p_ptr->immune_cold = TRUE;
     if (TR2_IM_ELEC & item_flags2) p_ptr->immune_elec = TRUE;
     if (TR2_IM_POIS & item_flags2) p_ptr->immune_pois = TRUE;
-    if (TR3_LITE & item_flags2) p_ptr->light = TRUE;
+    if (TR3_LITE & item_flags2) p_ptr->lite = TRUE;
     if (TR2_FREE_ACT & item_flags1) p_ptr->free_act = TRUE;
     if (TR3_SEE_INVIS & item_flags1) p_ptr->see_inv = TRUE;
     if (TR2_RES_ELEC & item_flags1) p_ptr->resist_elec = TRUE;

@@ -1555,7 +1555,7 @@ void self_knowledge()
 	prt("You have a firm hold on your life force.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (p_ptr->light) {
+    if (p_ptr->lite) {
 	prt("You are carrying a permanent light.", i++, j);
 	pause_if_screen_full(&i, j);
     }

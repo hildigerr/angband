@@ -581,7 +581,7 @@ struct _player_type {
   byte teleport;		/* Random teleporting	*/
 
   byte ffall;			/* No damage falling	*/
-  byte light;			/* Permanent light	*/
+  byte lite;			/* Permanent light	*/
   byte free_act;		/* Never paralyzed	*/
   byte see_inv;			/* Can see invisible	*/
   byte regenerate;		/* Regenerate hit pts	*/

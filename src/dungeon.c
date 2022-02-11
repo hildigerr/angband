@@ -222,7 +222,7 @@ void dungeon(void)
     i_ptr = &inventory[INVEN_LITE];
 
 /* Check light status for setup	   */
-    if (i_ptr->pval > 0 || p_ptr->light)
+    if (i_ptr->pval > 0 || p_ptr->lite)
 	player_light = TRUE;
     else
 	player_light = FALSE;
@@ -406,14 +406,14 @@ void dungeon(void)
 		    msg_print("Your light is growing faint.");
 		}
 	    } else {
-		if (!p_ptr->light) {
+		if (!p_ptr->lite) {
 		    player_light = FALSE;
 		    disturb(0, 1);
 		/* unlight creatures */
 		    update_monsters();
 		}
 	    }
-	else if (i_ptr->pval > 0 || p_ptr->light) {
+	else if (i_ptr->pval > 0 || p_ptr->lite) {
 	    if (!(i_ptr->flags2 & TR3_LITE))
 		i_ptr->pval--;	   /* don't dec if perm light -CFT */
 	    player_light = TRUE;
