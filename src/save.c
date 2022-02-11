@@ -1332,7 +1332,58 @@ static errr rd_savefile()
     /* Time of savefile creation */
     rd_u32b(&sf_when);
 
-    /* Read the artifacts */
+
+    /* Read the options */
+    rd_options();
+    if (say) prt_note(-1,"Loaded Option Flags");
+
+
+    /* Then the "messages" */
+    rd_u16b(&last_msg);
+    for (i = 0; i < MAX_SAVE_MSG; i++)
+	rd_string(old_msg[i]);
+    if (say) prt_note(-1,"Loaded Messages");
+
+
+    /* Monster Memory */
+    while (1) {
+
+	/* Read some info, check for sentinal */
+    rd_u16b(&tmp16u);
+    if (tmp16u == 0xFFFF) break;
+
+	/* Incompatible save files */
+	if (tmp16u >= MAX_R_IDX) {
+	    prt_note(-2, "Too many monsters!");
+	    return (21);
+	}
+
+	/* Extract the monster lore */
+	rd_lore(&l_list[tmp16u]);
+    }
+    if (say) prt_note(-1,"Loaded Monster Memory");
+
+    /* Load the old "Uniques" flags */
+    for (i = 0; i < MAX_R_IDX; i++) {
+
+	rd_s32b(&u_list[i].exist);
+	rd_s32b(&u_list[i].dead);
+    }
+    if (say) prt_note(-1,"Loaded Unique Beasts");
+
+
+    for (i = 0; i < OBJECT_IDENT_SIZE; i++)
+    rd_byte(&object_ident[i]);
+
+
+    /* Load the Quests */
+    for (i = 0; i < MAX_QUESTS; i++) {
+	rd_u32b(&quests[i]);
+    }
+    if (say) prt_note(-1,"Loaded Quests");
+
+
+    /* Load the Artifacts */
     rd_u32b(&GROND);
     rd_u32b(&RINGIL);
     rd_u32b(&AEGLOS);
@@ -1448,47 +1499,29 @@ static errr rd_savefile()
     if (say) prt_note(-1,"Loaded Artifacts");
 
 
-    /* Load the Quests */
-    for (i = 0; i < MAX_QUESTS; i++) {
-	rd_u32b(&quests[i]);
-    }
-    if (say) prt_note(-1,"Loaded Quests");
-
-
-    /* Load the old "Uniques" flags */
-    for (i = 0; i < MAX_R_IDX; i++) {
-
-	rd_s32b(&u_list[i].exist);
-	rd_s32b(&u_list[i].dead);
-    }
-    if (say) prt_note(-1,"Loaded Unique Beasts");
-
-
-    /* Monster Memory */
-    while (1) {
-
-	/* Read some info, check for sentinal */
-    rd_u16b(&tmp16u);
-    if (tmp16u == 0xFFFF) break;
-
-	/* Incompatible save files */
-	if (tmp16u >= MAX_R_IDX) {
-	    prt_note(-2, "Too many monsters!");
-	    return (21);
-	}
-
-	/* Extract the monster lore */
-	rd_lore(&l_list[tmp16u]);
-    }
-    if (say) prt_note(-1,"Loaded Monster Memory");
-
-    /* Read the options */
-	rd_options();
-	if (say) prt_note(-1,"Loaded Option Flags");
-
     /* Read the extra stuff */
     rd_extra();
     if (say) prt_note(-1, "Loaded extra information");
+
+
+    /* Read the player_hp array */
+    for (i = 0; i < MAX_PLAYER_LEVEL; i++) {
+	rd_u16b(&player_hp[i]);
+    }
+
+
+    /* Read spell info */
+    rd_u32b(&spell_learned);
+    rd_u32b(&spell_learned2);
+    rd_u32b(&spell_worked);
+    rd_u32b(&spell_worked2);
+    rd_u32b(&spell_forgotten);
+    rd_u32b(&spell_forgotten2);
+
+    for (i = 0; i < 64; i++) {
+	rd_byte(&spell_order[i]);
+    }
+
 
     /* Read the inventory */
     if (rd_inventory()) {
@@ -1496,33 +1529,6 @@ static errr rd_savefile()
 	return (21);
     }
 
-
-    /* Read spell info */
-    rd_u32b(&spell_learned);
-    rd_u32b(&spell_worked);
-    rd_u32b(&spell_forgotten);
-    rd_u32b(&spell_learned2);
-    rd_u32b(&spell_worked2);
-    rd_u32b(&spell_forgotten2);
-
-    for (i = 0; i < 64; i++) {
-	rd_byte(&spell_order[i]);
-    }
-
-    for (i = 0; i < OBJECT_IDENT_SIZE; i++)
-    rd_byte(&object_ident[i]);
-
-    /* Old messages */
-    rd_u16b(&last_msg);
-    for (i = 0; i < MAX_SAVE_MSG; i++)
-	rd_string(old_msg[i]);
-    if (say) prt_note(-1,"Loaded Messages");
-
-
-    /* Read the player_hp array */
-    for (i = 0; i < MAX_PLAYER_LEVEL; i++) {
-    rd_u16b(&player_hp[i]);
-    }
 
     /* Read the stores */
     for (i = 0; i < MAX_STORES; i++) {
@@ -1596,12 +1602,50 @@ static int wr_savefile()
 /* clear the death flag when creating a HANGUP save file, so that player can
  * see tombstone when restart 
  */
-
     if (eof_flag)
 	death = FALSE;
 
+
+    /* Write the boolean "options" */
     wr_options();
 
+
+    /* Dump the messages */
+    wr_u16b(last_msg);
+    for (i = 0; i < MAX_SAVE_MSG; i++) {
+	wr_string(old_msg[i]);
+    }
+
+
+    /* Dump the monster lore */
+    for (i = 0; i < MAX_R_IDX; i++) {
+	r_ptr = &l_list[i];
+	if (r_ptr->r_cflags1 || r_ptr->r_cflags2 || r_ptr->r_kills ||
+	    r_ptr->r_spells2 || r_ptr->r_spells3 || r_ptr->r_spells1 ||
+	    r_ptr->r_deaths || r_ptr->r_attacks[0] || r_ptr->r_attacks[1] ||
+	    r_ptr->r_attacks[2] || r_ptr->r_attacks[3]) {
+	    wr_u16b(i);
+	    wr_lore(r_ptr);
+	}
+    }
+    wr_u16b(0xFFFF);	   /* sentinel to indicate no more monster info */
+
+    for (i = 0; i < MAX_R_IDX; i++) {
+	wr_s32b(u_list[i].exist);
+	wr_s32b(u_list[i].dead);
+    }
+
+
+    for (i = 0; i < OBJECT_IDENT_SIZE; i++)
+    wr_byte(object_ident[i]);
+
+
+    /* Hack -- Dump the quests */    
+    for (i = 0; i < MAX_QUESTS; i++) {
+	wr_u32b(quests[i]);
+    }
+
+    /* Hack -- Dump the artifacts */
     wr_u32b(GROND);
     wr_u32b(RINGIL);
     wr_u32b(AEGLOS);
@@ -1716,33 +1760,33 @@ static int wr_savefile()
     wr_u32b(RAZORBACK);
     wr_u32b(BLADETURNER);
 
-    for (i = 0; i < MAX_QUESTS; i++)
-	wr_u32b(quests[i]);
-
-    for (i = 0; i < MAX_R_IDX; i++) {
-	wr_s32b(u_list[i].exist);
-	wr_s32b(u_list[i].dead);
-    }
-
-    /* Dump the monster lore */
-    for (i = 0; i < MAX_R_IDX; i++) {
-	r_ptr = &l_list[i];
-	if (r_ptr->r_cflags1 || r_ptr->r_cflags2 || r_ptr->r_kills ||
-	    r_ptr->r_spells2 || r_ptr->r_spells3 || r_ptr->r_spells1 ||
-	    r_ptr->r_deaths || r_ptr->r_attacks[0] || r_ptr->r_attacks[1] ||
-	    r_ptr->r_attacks[2] || r_ptr->r_attacks[3]) {
-	    wr_u16b(i);
-	    wr_lore(r_ptr);
-	}
-    }
-    wr_u16b(0xFFFF);	   /* sentinel to indicate no more monster info */
-
 
 
     /* Write the "extra" information */
     wr_extra();
 
 
+    /* Dump the "player hp" entries */
+    for (i = 0; i < MAX_PLAYER_LEVEL; i++) {
+	wr_u16b(player_hp[i]);
+    }
+
+
+    /* Write spell data */
+    wr_u32b(spell_learned);
+    wr_u32b(spell_learned2);
+    wr_u32b(spell_worked);
+    wr_u32b(spell_worked2);
+    wr_u32b(spell_forgotten);
+    wr_u32b(spell_forgotten2);
+
+    /* Dump the ordered spells */
+    for (i = 0; i < 64; i++) {
+	wr_byte(spell_order[i]);
+    }
+
+
+    /* Write the inventory */
     wr_u16b(inven_ctr);
     for (i = 0; i < inven_ctr; i++)
 	wr_item(&inventory[i]);
@@ -1750,29 +1794,7 @@ static int wr_savefile()
 	wr_item(&inventory[i]);
     wr_u16b(inven_weight);
     wr_u16b(equip_ctr);
-    wr_u32b(spell_learned);
-    wr_u32b(spell_worked);
-    wr_u32b(spell_forgotten);
-    wr_u32b(spell_learned2);
-    wr_u32b(spell_worked2);
-    wr_u32b(spell_forgotten2);
 
-    for (i = 0; i < 64; i++) {
-    wr_byte(spell_order[i]);
-    }
-
-    for (i = 0; i < OBJECT_IDENT_SIZE; i++)
-    wr_byte(object_ident[i]);
-
-    wr_u16b(last_msg);
-    for (i = 0; i < MAX_SAVE_MSG; i++)
-	wr_string(old_msg[i]);
-
-
-    /* Dump the "player hp" entries */
-    for (i = 0; i < MAX_PLAYER_LEVEL; i++) {
-    wr_u16b(player_hp[i]);
-    }
 
     /* Dump the stores */
     for (i = 0; i < MAX_STORES; i++) wr_store(&store[i]);
