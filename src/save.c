@@ -1364,21 +1364,8 @@ static errr rd_savefile()
 
 
     /* Monster Memory */
-    while (1) {
-
-	/* Read some info, check for sentinal */
     rd_u16b(&tmp16u);
-    if (tmp16u == 0xFFFF) break;
-
-	/* Incompatible save files */
-	if (tmp16u >= MAX_R_IDX) {
-	    prt_note(-2, "Too many monsters!");
-	    return (21);
-	}
-
-	/* Extract the monster lore */
-	rd_lore(&l_list[tmp16u]);
-    }
+    for (i = 0; i < tmp16u; i++) rd_lore(&l_list[i]);
     if (say) prt_note(-1,"Loaded Monster Memory");
 
     /* Load the old "Uniques" flags */
@@ -1389,13 +1376,14 @@ static errr rd_savefile()
     }
     if (say) prt_note(-1,"Loaded Unique Beasts");
 
-
-    for (i = 0; i < OBJECT_IDENT_SIZE; i++)
-    rd_byte(&object_ident[i]);
+    /* Object Memory */
+    rd_u16b(&tmp16u);
+    for (i = 0; i < tmp16u; i++) rd_byte(&object_ident[i]);
 
 
     /* Load the Quests */
-    for (i = 0; i < MAX_QUESTS; i++) {
+    rd_u16b(&tmp16u);
+    for (i = 0; i < tmp16u; i++) {
 	rd_u32b(&quests[i]);
     }
     if (say) prt_note(-1,"Loaded Quests");
@@ -1523,7 +1511,8 @@ static errr rd_savefile()
 
 
     /* Read the player_hp array */
-    for (i = 0; i < MAX_PLAYER_LEVEL; i++) {
+    rd_u16b(&tmp16u);
+    for (i = 0; i < tmp16u; i++) {
 	rd_u16b(&player_hp[i]);
     }
 
@@ -1549,7 +1538,8 @@ static errr rd_savefile()
 
 
     /* Read the stores */
-    for (i = 0; i < MAX_STORES; i++) {
+    rd_u16b(&tmp16u);
+    for (i = 0; i < tmp16u; i++) {
 	if (rd_store(&store[i])) return (22);
     }
 
@@ -1586,6 +1576,8 @@ static int wr_savefile()
     u32b              now;
 
     byte		tmp8u;
+    u16b		tmp16u;
+
 
     /* Guess at the current time */
     now = time((time_t *)0);
@@ -1635,31 +1627,29 @@ static int wr_savefile()
     }
 
 
+    /* XXX This could probably be more "efficient" for "unseen" monsters */
+    /* XXX But note that "max_num" is stored here as well (always "set") */
+
     /* Dump the monster lore */
-    for (i = 0; i < MAX_R_IDX; i++) {
-	r_ptr = &l_list[i];
-	if (r_ptr->r_cflags1 || r_ptr->r_cflags2 || r_ptr->r_kills ||
-	    r_ptr->r_spells2 || r_ptr->r_spells3 || r_ptr->r_spells1 ||
-	    r_ptr->r_deaths || r_ptr->r_attacks[0] || r_ptr->r_attacks[1] ||
-	    r_ptr->r_attacks[2] || r_ptr->r_attacks[3]) {
-	    wr_u16b(i);
-	    wr_lore(r_ptr);
-	}
-    }
-    wr_u16b(0xFFFF);	   /* sentinel to indicate no more monster info */
+    tmp16u = MAX_R_IDX;
+    wr_u16b(tmp16u);
+    for (i = 0; i < tmp16u; i++) wr_lore(&l_list[i]);
 
     for (i = 0; i < MAX_R_IDX; i++) {
 	wr_s32b(u_list[i].exist);
 	wr_s32b(u_list[i].dead);
     }
 
-
-    for (i = 0; i < OBJECT_IDENT_SIZE; i++)
-    wr_byte(object_ident[i]);
+    /* Dump the object memory */
+    tmp16u = OBJECT_IDENT_SIZE;
+    wr_u16b(tmp16u);
+    for (i = 0; i < tmp16u; i++) wr_byte(object_ident[i]);
 
 
     /* Hack -- Dump the quests */    
-    for (i = 0; i < MAX_QUESTS; i++) {
+    tmp16u = QUEST_MAX;
+    wr_u16b(tmp16u);
+    for (i = 0; i < tmp16u; i++) {
 	wr_u32b(quests[i]);
     }
 
@@ -1785,7 +1775,9 @@ static int wr_savefile()
 
 
     /* Dump the "player hp" entries */
-    for (i = 0; i < MAX_PLAYER_LEVEL; i++) {
+    tmp16u = MAX_PLAYER_LEVEL;
+    wr_u16b(tmp16u);
+    for (i = 0; i < tmp16u; i++) {
 	wr_u16b(player_hp[i]);
     }
 
@@ -1814,8 +1806,12 @@ static int wr_savefile()
     wr_u16b(equip_ctr);
 
 
+    /* Note the stores */
+    tmp16u = MAX_STORES;
+    wr_u16b(tmp16u);
+
     /* Dump the stores */
-    for (i = 0; i < MAX_STORES; i++) wr_store(&store[i]);
+    for (i = 0; i < tmp16u; i++) wr_store(&store[i]);
 
 
     /* Player is not dead, write the dungeon */
