@@ -962,8 +962,8 @@ void py_attack(int y, int x)
 	    if (k < 0) k = 0;
 
 	    /* Confusion attack */
-	    if (p_ptr->confuse_monster) {
-		p_ptr->confuse_monster = FALSE;
+	    if (p_ptr->confusing) {
+		p_ptr->confusing = FALSE;
 		msg_print("Your hands stop glowing.");
 		if ((r_list[r_idx].cflags2 & MF2_CHARM_SLEEP) ||
 		    (randint(MAX_R_LEV) < r_list[r_idx].level)) {

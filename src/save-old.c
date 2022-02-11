@@ -668,7 +668,7 @@ static void rd_extra_old()
     rd_byte(&p_ptr->sustain_con);
     rd_byte(&p_ptr->sustain_dex);
     rd_byte(&p_ptr->sustain_chr);
-    rd_byte(&p_ptr->confuse_monster);
+    rd_byte(&p_ptr->confusing);
     rd_byte(&p_ptr->new_spells);
     rd_byte(&p_ptr->resist_pois);
     rd_byte(&p_ptr->hold_life);

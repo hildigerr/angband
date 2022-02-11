@@ -1688,9 +1688,9 @@ static void make_attack(int m_idx)
 	    /* monster is only confused if it actually hits */
 	    /* if no attacks, monster can't get confused -dbd */
 	    if (!attype) {
-		if (p_ptr->confuse_monster && p_ptr->protevil <= 0) {
+		if (p_ptr->confusing && p_ptr->protevil <= 0) {
 		    msg_print("Your hands stop glowing.");
-		    p_ptr->confuse_monster = FALSE;
+		    p_ptr->confusing = FALSE;
 		    if ((randint(MAX_R_LEV) < r_ptr->level) ||
 			(MF2_CHARM_SLEEP & r_ptr->cflags2)) {
 			(void)sprintf(tmp_str, "%sis unaffected.", cdesc);

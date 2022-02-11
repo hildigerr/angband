@@ -825,7 +825,7 @@ static void rd_extra()
     rd_byte(&p_ptr->sustain_con);
     rd_byte(&p_ptr->sustain_dex);
     rd_byte(&p_ptr->sustain_chr);
-    rd_byte(&p_ptr->confuse_monster);
+    rd_byte(&p_ptr->confusing);
     rd_byte(&p_ptr->hold_life);
     rd_byte(&p_ptr->telepathy);
     rd_byte(&p_ptr->light);
@@ -993,7 +993,7 @@ static void wr_extra()
     wr_byte(p_ptr->sustain_con);
     wr_byte(p_ptr->sustain_dex);
     wr_byte(p_ptr->sustain_chr);
-    wr_byte(p_ptr->confuse_monster);
+    wr_byte(p_ptr->confusing);
     wr_byte(p_ptr->hold_life);
     wr_byte(p_ptr->telepathy);
     wr_byte(p_ptr->light);

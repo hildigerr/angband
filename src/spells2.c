@@ -1507,7 +1507,7 @@ void self_knowledge()
     if (p_ptr->invuln > 0) {
 	prt("You are temporarily invulnerable.", i++, j);
     }
-    if (p_ptr->confuse_monster) {
+    if (p_ptr->confusing) {
 	prt("Your hands are glowing dull red.", i++, j);
     }
     if (p_ptr->new_spells > 0) {
