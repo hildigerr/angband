@@ -117,7 +117,7 @@ static cptr comment6[5] = {
 
 
 
-static void insert_lnum(char *object_str, cptr mtc_str, s32b number, int show_sign)
+static void insert_lnum(char *object_str, cptr mtc_str, s32b number)
 {
     int            mlen;
     vtype          str1, str2;
@@ -142,10 +142,8 @@ static void insert_lnum(char *object_str, cptr mtc_str, s32b number, int show_si
 	(void)strncpy(str1, object_str, (int)(string - object_str));
 	str1[(int)(string - object_str)] = '\0';
 	(void)strcpy(str2, string + mlen);
-	if ((number >= 0) && (show_sign))
-	    (void)sprintf(object_str, "%s+%ld%s", str1, (long)number, str2);
-	else
-	    (void)sprintf(object_str, "%s%ld%s", str1, (long)number, str2);
+
+    (void)sprintf(object_str, "%s%ld%s", str1, (long)number, str2);
     }
 }
 
@@ -173,8 +171,8 @@ static void prt_comment2(s32b offer, s32b asking, int final)
 	(void)strcpy(comment, comment2b[randint(16) - 1]);
     }
 
-    insert_lnum(comment, "%A1", offer, FALSE);
-    insert_lnum(comment, "%A2", asking, FALSE);
+    insert_lnum(comment, "%A1", offer);
+    insert_lnum(comment, "%A2", asking);
 
     msg_print(comment);
 }
@@ -194,8 +192,8 @@ static void prt_comment3(s32b offer, s32b asking, int final)
 	(void)strcpy(comment, comment3b[rand_int(15)]);
     }
 
-    insert_lnum(comment, "%A1", offer, FALSE);
-    insert_lnum(comment, "%A2", asking, FALSE);
+    insert_lnum(comment, "%A1", offer);
+    insert_lnum(comment, "%A2", asking);
 
     msg_print(comment);
 }
