@@ -607,30 +607,23 @@ static void rd_ghost()
     strcpy(r_ptr->name, gname);
 
 
-    rd_u32b(&tmp32u);
-    r_ptr->cflags1 = tmp32u;
+    rd_u32b(&r_ptr->cflags1);
 
-    rd_u32b(&tmp32u);
-    r_ptr->spells1 = tmp32u;
+    rd_u32b(& r_ptr->spells1);
 
-    rd_u32b(&tmp32u);
-    r_ptr->cflags2 = tmp32u;
+    rd_u32b(&r_ptr->cflags2);
 
 
     rd_u32b(&r_ptr->mexp);
 	rd_u16b(&r_ptr->sleep);
 
-    rd_byte(&tmp8u);
-    r_ptr->aaf = tmp8u;
+    rd_byte(&r_ptr->aaf);
 
 	rd_u16b(&r_ptr->ac);
 
-    /* Read the speed */
-    rd_byte(&tmp8u);
-    r_ptr->speed = tmp8u;
+    rd_byte(&r_ptr->speed);
 
-    rd_byte(&tmp8u);
-    r_ptr->r_char = tmp8u;
+    rd_byte(&r_ptr->r_char);
 
     rd_byte(&r_ptr->hd[0]);
     rd_byte(&r_ptr->hd[1]);
@@ -640,8 +633,7 @@ static void rd_ghost()
 	rd_u16b(&r_ptr->damage[i]);
     }
 
-    rd_u16b(&tmp16u);
-    r_ptr->level = tmp16u;
+    rd_u16b(&r_ptr->level);
 }
 
 static void wr_ghost()
