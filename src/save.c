@@ -322,6 +322,7 @@ static void rd_item(inven_type *i_ptr)
     rd_byte(&i_ptr->tchar);
 
     rd_s32b(&i_ptr->cost);
+    rd_s32b(&i_ptr->scost);
 
     rd_u32b(&i_ptr->flags1);
     rd_u32b(&i_ptr->flags2);
@@ -354,6 +355,7 @@ static void wr_item(inven_type *i_ptr)
     wr_byte(i_ptr->tchar);
 
     wr_s32b(i_ptr->cost);
+    wr_s32b(i_ptr->scost);
 
     wr_u32b(i_ptr->flags1);
     wr_u32b(i_ptr->flags2);
@@ -472,8 +474,7 @@ static void wr_store(store_type *st_ptr)
 
     /* Write the items */
     for (j = 0; j < st_ptr->store_ctr; j++) {
-	wr_s32b(st_ptr->store_inven[j].scost);
-	wr_item(&st_ptr->store_inven[j].sitem);
+	wr_item(&st_ptr->store_inven[j]);
     }
 }
 
@@ -497,8 +498,7 @@ static errr rd_store(store_type *st_ptr)
 
     /* Read the items (and costs) */
     for (j = 0; j < st_ptr->store_ctr; j++) {
-	rd_s32b(&st_ptr->store_inven[j].scost);
-	rd_item(&st_ptr->store_inven[j].sitem);
+	rd_item(&st_ptr->store_inven[j]);
     }
 
     /* Success */
@@ -1260,6 +1260,9 @@ static errr rd_dungeon()
 	total_count += count;
     }
 
+
+    /* XXX Note that "player inventory" and "store inventory" */
+    /* are NOT kept in the "i_list" array.  Only dungeon items. */
 
     /* Read the item count */
     rd_s16b(&i_max);

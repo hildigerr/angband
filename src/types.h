@@ -216,6 +216,15 @@ struct _inven_kind {
  *
  * extra fields x and y for location in dungeon would simplify pusht()
  *
+ * The "cost" field represents the item's "base value"
+ * The "scost" field represents how much a store owner would pay.
+ * This may or may not interact badly with the black market...
+ *
+ * Also, "scost" is set negative until the store owner has "fixed"
+ * his price at a certain value.  Currently, the "scost" field is
+ * cleared when an object leaves the store, but it could be used to
+ * track various conditions.
+ *
  * Making inscrip a pointer and mallocing space does not work, there are
  * too many places where inven_types are copied, which results in dangling
  * pointers, so we use a char array for them instead.  We could always
@@ -247,6 +256,7 @@ struct _inven_type {
   byte damage[2];		/* Damage when hits		*/
 
   s32b cost;			/* Cost of item			*/
+  s32b scost;			/* Store cost			*/
 
   u32b flags1;		/* Flags, set 1			*/
   u32b flags2;		/* Flags, set 2			*/
@@ -324,13 +334,6 @@ struct _owner_type {
 
 
 
-typedef struct inven_record
-{
-  s32b scost;
-  inven_type sitem;
-} inven_record;
-
-
 
 /*
  * A store.  Now holds some items, which themselves hold their store cost.
@@ -349,7 +352,7 @@ struct _store_type {
   u16b good_buy;
   u16b bad_buy;
 
-  inven_record store_inven[STORE_INVEN_MAX];
+  inven_type store_inven[STORE_INVEN_MAX];
 };
 
 
