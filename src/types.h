@@ -352,7 +352,7 @@ struct _store_type {
   u16b good_buy;
   u16b bad_buy;
 
-  inven_type store_inven[STORE_INVEN_MAX];
+  inven_type store_item[STORE_INVEN_MAX];
 };
 
 

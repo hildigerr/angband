@@ -413,7 +413,7 @@ int file_character(cptr filename1)
 	else {
 	    for (i = 0; i < store[MAX_STORES-1].store_ctr; i++) {
 		if (i == 12) fprintf(file1, "\n");  
-		objdes(prt2, &store[MAX_STORES-1].store_inven[i], TRUE);
+		objdes(prt2, &store[MAX_STORES-1].store_item[i], TRUE);
 		(void) fprintf(file1, "%c) %s\n", (i%12)+'a', prt2);
 	    }
 	}
@@ -672,9 +672,9 @@ static void print_tomb()
               sprintf(t2, "(page %d)", (ii==0?1:2));
               prt(t2, 1, 3);
               while ((ii<s_ptr->store_ctr) && (j<12)){
-                known1(&s_ptr->store_inven[ii]);
-                known2(&s_ptr->store_inven[ii]);
-                objdes(t1, &s_ptr->store_inven[ii], TRUE);
+                known1(&s_ptr->store_item[ii]);
+                known2(&s_ptr->store_item[ii]);
+                objdes(t1, &s_ptr->store_item[ii], TRUE);
                 sprintf(t2, "%c) %s", 'a'+j, t1);
                 prt(t2, j+2, 4); 
                 j++;

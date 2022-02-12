@@ -324,8 +324,8 @@ static errr rd_store_old(store_type *st_ptr)
     for (j = 0; j < st_ptr->store_ctr; j++) {
 	s32b scost;
 	rd_s32b(&scost);
-	rd_item_old(&st_ptr->store_inven[j]);
-	st_ptr->store_inven[j].scost = scost;
+	rd_item_old(&st_ptr->store_item[j]);
+	st_ptr->store_item[j].scost = scost;
     }
 
     /* Success */

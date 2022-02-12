@@ -474,7 +474,7 @@ static void wr_store(store_type *st_ptr)
 
     /* Write the items */
     for (j = 0; j < st_ptr->store_ctr; j++) {
-	wr_item(&st_ptr->store_inven[j]);
+	wr_item(&st_ptr->store_item[j]);
     }
 }
 
@@ -498,7 +498,7 @@ static errr rd_store(store_type *st_ptr)
 
     /* Read the items (and costs) */
     for (j = 0; j < st_ptr->store_ctr; j++) {
-	rd_item(&st_ptr->store_inven[j]);
+	rd_item(&st_ptr->store_item[j]);
     }
 
     /* Success */
