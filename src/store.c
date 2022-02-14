@@ -1761,6 +1761,13 @@ void enter_store(int which)
     register int         exit_flag;
 
 
+    /* Check the "locked doors" */
+    if (store[which].store_open >= turn) {
+	msg_print("The doors are locked.");
+	return;
+    }
+
+
     /* Save the store number */
     store_num = which;
 
@@ -1768,8 +1775,6 @@ void enter_store(int which)
     st_ptr = &store[store_num];
     ot_ptr = &owners[st_ptr->owner];
 
-    if (st_ptr->store_open < turn) {
-	exit_flag = FALSE;
 
     /* Start at the beginning */
     cur_top = 0;
@@ -1778,7 +1783,7 @@ void enter_store(int which)
     display_store(cur_top);
 
     /* Interact with player */
-    do {
+    for (exit_flag = FALSE; !exit_flag; ) {
 
 	    move_cursor(20, 9);
 
@@ -1791,16 +1796,12 @@ void enter_store(int which)
 	switch (command) {
 
 	    case 'b':
-		if (cur_top == 0)
-		if (st_ptr->store_ctr > 12) {
-		    cur_top = 12;
-		    display_inventory(cur_top);
-		}
-		else {
+		if (st_ptr->store_ctr <= 12) {
 		    msg_print("Entire inventory is shown.");
 		}
 		else {
-		    cur_top = 0;
+		    cur_top += 12;
+		    if (cur_top >= st_ptr->store_ctr) cur_top = 0;
 		    display_inventory(cur_top);
 		}
 		break;
@@ -1851,11 +1852,10 @@ void enter_store(int which)
 	    } else
 		exit_flag = TRUE;
 	}
-	while (!exit_flag);
+
     /* Can't save and restore the screen, because inven_command does that. */
 	draw_cave();
-    } else
-	msg_print("The doors are locked.");
+
 
     /* Forget the store number, etc */
     store_num = 0;
