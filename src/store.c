@@ -341,6 +341,13 @@ static byte rgold_adj[MAX_RACES][MAX_RACES] = {
 
 
 /*
+ * We store the current "store number" here so everyone can access it
+ */
+static int store_num = 0;
+
+
+
+/*
  * Returns the value for any given object -RAK-
  */
 s32b item_value(inven_type *i_ptr)
@@ -488,7 +495,7 @@ static void special_offer(inven_type *i_ptr)
 /*
  * Asking price for an item			-RAK-
  */
-static s32b sell_price(int store_num, s32b *max_sell, s32b *min_sell, inven_type *i_ptr)
+static s32b sell_price(s32b *max_sell, s32b *min_sell, inven_type *i_ptr)
 {
     register s32b      i;
     register store_type *st_ptr = &store[store_num];
@@ -529,7 +536,7 @@ static s32b sell_price(int store_num, s32b *max_sell, s32b *min_sell, inven_type
 /*
  * Check to see if the shop will be carrying too many objects	-RAK-	 
  */
-static int store_check_num(inven_type *i_ptr, int store_num)
+static int store_check_num(inven_type *i_ptr)
 {
     register int        store_check, i;
     register store_type *st_ptr;
@@ -576,7 +583,7 @@ static int store_check_num(inven_type *i_ptr, int store_num)
 /*
  * Add the item in INVEN_MAX to stores inventory.	-RAK-	 
  */
-static void store_carry(int store_num, int *ipos, inven_type *i_ptr)
+static void store_carry(int *ipos, inven_type *i_ptr)
 {
     int                 item_num, item_val, flag;
     register int        typ, subt;
@@ -586,7 +593,7 @@ static void store_carry(int store_num, int *ipos, inven_type *i_ptr)
     int stacked = FALSE; /* from inven_carry() -CFT */
 
     *ipos = -1;
-    if (sell_price(store_num, &icost, &dummy, i_ptr) > 0 || is_home)
+    if (sell_price(&icost, &dummy, i_ptr) > 0 || is_home)
     {
 	st_ptr = &store[store_num];
 	item_val = 0;
@@ -611,7 +618,7 @@ static void store_carry(int store_num, int *ipos, inven_type *i_ptr)
 			   must be recalculated for entire group */
 			if (subt > ITEM_GROUP_MIN)
 			{
-			    (void) sell_price (store_num, &icost, &dummy, j_ptr);
+			    (void) sell_price (&icost, &dummy, j_ptr);
 			    st_ptr->store_item[item_val].scost = -icost;
 			}
 			/* must let group objects (except torches) stack over 24
@@ -634,7 +641,7 @@ static void store_carry(int store_num, int *ipos, inven_type *i_ptr)
 		      ((i_ptr->level == j_ptr->level) &&
 		       (subt < j_ptr->sval))))) /* and finally by inc sval -CFT */
 		{		/* Insert into list             */
-		    insert_store(store_num, item_val, icost, i_ptr);
+		    insert_store(item_val, icost, i_ptr);
 		    flag = TRUE;
 		    *ipos = item_val;
 		}
@@ -643,7 +650,7 @@ static void store_carry(int store_num, int *ipos, inven_type *i_ptr)
 	} /* if didn't already stack it... */
 	if (!flag)		/* Becomes last item in list    */
 	{
-	    insert_store(store_num, (int)st_ptr->store_ctr, icost, i_ptr);
+	    insert_store((int)st_ptr->store_ctr, icost, i_ptr);
 	    *ipos = st_ptr->store_ctr - 1;
 	}
     }
@@ -653,7 +660,7 @@ static void store_carry(int store_num, int *ipos, inven_type *i_ptr)
 /*
  * Insert INVEN_MAX at given location	
  */
-static void insert_store(int store_num, int pos, s32b icost, inven_type *i_ptr)
+static void insert_store(int pos, s32b icost, inven_type *i_ptr)
 {
     register int        i;
     register store_type *st_ptr;
@@ -671,7 +678,7 @@ static void insert_store(int store_num, int pos, s32b icost, inven_type *i_ptr)
  * Destroy an item in the stores inventory.  Note that if
  * "one_of" is false, an entire slot is destroyed	-RAK-	
  */
-void store_destroy(int store_num, int item_val, int one_of)
+void store_destroy(int item_val, int one_of)
 {
     register int         j, number;
     register store_type *st_ptr;
@@ -708,7 +715,7 @@ void store_destroy(int store_num, int item_val, int one_of)
 /*
  * Creates a random item and gives it to a store
  */
-static void store_create(int store_num)
+static void store_create(void)
 {
     int			i, tries;
     int                  cur_pos, dummy;
@@ -725,14 +732,14 @@ static void store_create(int store_num)
 	    invcopy(&i_list[cur_pos], i);
 	    apply_magic(&i_list[cur_pos], OBJ_TOWN_LEVEL, FALSE, TRUE);
 	    i_ptr = &i_list[cur_pos];
-	    if (store_check_num(i_ptr, store_num)) {
+	    if (store_check_num(i_ptr)) {
 		if ((i_ptr->cost > 0) &&	/* Item must be good	 */
 		    (i_ptr->cost < owners[st_ptr->owner].max_cost)) {
 
 /* equivalent to calling ident_spell(), except will not change the object_ident array */
 		    store_bought(i_ptr);
 		    special_offer(i_ptr);
-		    store_carry(store_num, &dummy, i_ptr);
+		    store_carry(&dummy, i_ptr);
 		    tries = 10;
 		}
 	    }
@@ -742,7 +749,7 @@ static void store_create(int store_num)
 	    invcopy(&i_list[cur_pos], i);
 	    apply_magic(&i_list[cur_pos], 40, FALSE, TRUE);
 	    i_ptr = &i_list[cur_pos];
-	    if (store_check_num(i_ptr, store_num)) {
+	    if (store_check_num(i_ptr)) {
 		if (i_ptr->cost > 0) {	/* Item must be good	 */
 		/*
 		 * equivalent to calling ident_spell(), except will not
@@ -750,7 +757,7 @@ static void store_create(int store_num)
 		 */
 		    store_bought(i_ptr);
 		    special_offer(i_ptr);
-		    store_carry(store_num, &dummy, i_ptr);
+		    store_carry(&dummy, i_ptr);
 		    tries = 10;
 		}
 	    }
@@ -766,7 +773,7 @@ static void store_create(int store_num)
 /*
  * eliminate need to bargain if player has haggled well in the past
  */
-static int noneedtobargain(int store_num, s32b minprice)
+static int noneedtobargain(s32b minprice)
 {
     register int         flagnoneed;
     register store_type *st_ptr = &store[store_num];
@@ -783,7 +790,7 @@ static int noneedtobargain(int store_num, s32b minprice)
 /*
  * update the bargain info					-DJB- 
  */
-static void updatebargain(int store_num, s32b price, s32b minprice)
+static void updatebargain(s32b price, s32b minprice)
 {
     register store_type *st_ptr = &store[store_num];
 
@@ -849,7 +856,7 @@ static void haggle_commands(int typ)
 /*
  * Displays a store's inventory			-RAK-	
  */
-static void display_inventory(int store_num, int start)
+static void display_inventory(int start)
 {
     register store_type *st_ptr;
     register inven_type *i_ptr;
@@ -902,7 +909,7 @@ static void display_inventory(int store_num, int start)
 
 
 /* Re-displays only a single cost			-RAK-	 */
-static void display_cost(int store_num, int pos)
+static void display_cost(int pos)
 {
     register int         i;
     register s32b       j;
@@ -937,7 +944,7 @@ static void store_prt_gold(void)
 /*
  * Displays store (after clearing screen)		-RAK-	 
  */
-static void display_store(int store_num, int cur_top)
+static void display_store(int cur_top)
 {
     register store_type *st_ptr = &store[store_num];
 
@@ -952,7 +959,7 @@ static void display_store(int store_num, int cur_top)
 	store_prt_gold();
     }
     display_commands();
-    display_inventory(store_num, cur_top);
+    display_inventory(cur_top);
 }
 
 
@@ -996,7 +1003,7 @@ static int get_store_item(int *com_val, cptr pmt, int i, int j)
 /*
  * Increase the insult counter and get angry if too many -RAK-	 
  */
-static int increase_insults(int store_num)
+static int increase_insults(void)
 {
     register store_type *st_ptr = &store[store_num];
 
@@ -1018,7 +1025,7 @@ static int increase_insults(int store_num)
 /*
  * Decrease insults					-RAK-	 
  */
-static void decrease_insults(int store_num)
+static void decrease_insults(void)
 {
     register store_type *st_ptr = &store[store_num];
 
@@ -1029,10 +1036,10 @@ static void decrease_insults(int store_num)
 /*
  * Have insulted while haggling				-RAK-	 
  */
-static int haggle_insults(int store_num)
+static int haggle_insults(void)
 {
     /* Increase insults */
-    if (increase_insults(store_num)) return (TRUE);
+    if (increase_insults()) return (TRUE);
 
     /* Display and flush insult */
     prt_comment5();
@@ -1103,7 +1110,7 @@ static int get_haggle(cptr comment, s32b *new_offer,
 /*
  * Receive an offer (from the player)
  */
-static int receive_offer(int store_num, cptr comment, s32b *new_offer,
+static int receive_offer(cptr comment, s32b *new_offer,
 			 s32b last_offer, int num_offer, int factor,
 			 s32b price, int final)
 {
@@ -1116,7 +1123,7 @@ static int receive_offer(int store_num, cptr comment, s32b *new_offer,
 	    if (*new_offer * factor >= last_offer * factor) {
 		flag = TRUE;
 	    }
-	    else if (haggle_insults(store_num)) {
+	    else if (haggle_insults()) {
 		receive = 2;
 		flag = TRUE;
 	    }
@@ -1139,7 +1146,7 @@ static int receive_offer(int store_num, cptr comment, s32b *new_offer,
 /*
  * Haggling routine					-RAK-	 
  */
-static int purchase_haggle(int store_num, s32b *price, inven_type *i_ptr)
+static int purchase_haggle(s32b *price, inven_type *i_ptr)
 {
     s32b               max_sell, min_sell, max_buy;
     s32b               cost, cur_ask, final_ask, min_offer;
@@ -1161,7 +1168,7 @@ static int purchase_haggle(int store_num, s32b *price, inven_type *i_ptr)
     ot_ptr = &owners[st_ptr->owner];
 
     /* Determine the cost of the group of items */
-    cost = sell_price(store_num, &max_sell, &min_sell, i_ptr);
+    cost = sell_price(&max_sell, &min_sell, i_ptr);
 
     max_sell = max_sell * chr_adj() / 100;
     if (max_sell <= 0) max_sell = 1;
@@ -1190,7 +1197,7 @@ static int purchase_haggle(int store_num, s32b *price, inven_type *i_ptr)
     comment = "Asking";
 
     /* Go right to final price if player has bargained well */
-    if (noneedtobargain(store_num, final_ask)) {
+    if (noneedtobargain(final_ask)) {
 
 	msg_print("After a long bargaining session, you agree upon the price.");
 	msg_print(NULL);
@@ -1208,7 +1215,7 @@ static int purchase_haggle(int store_num, s32b *price, inven_type *i_ptr)
 	    loop_flag = TRUE;
 	    (void)sprintf(out_val, "%s :  %ld", comment, (long)cur_ask);
 	    put_str(out_val, 1, 0);
-	    purchase = receive_offer(store_num, "What do you offer? ",
+	    purchase = receive_offer("What do you offer? ",
 				     &new_offer, last_offer, num_offer,
 				     1, cur_ask, final);
 	    if (purchase != 0) {
@@ -1234,7 +1241,7 @@ static int purchase_haggle(int store_num, s32b *price, inven_type *i_ptr)
 	if (!flag) {
 	    x1 = (new_offer - last_offer) * 100 / (cur_ask - last_offer);
 	    if (x1 < min_per) {
-		flag = haggle_insults(store_num);
+		flag = haggle_insults();
 		if (flag) purchase = 2;
 	    }
 	    else if (x1 > max_per) {
@@ -1253,7 +1260,7 @@ static int purchase_haggle(int store_num, s32b *price, inven_type *i_ptr)
 		comment = "Final Offer";
 		final_flag++;
 		if (final_flag > 3) {
-		    if (increase_insults(store_num)) purchase = 2;
+		    if (increase_insults()) purchase = 2;
 		    else purchase = 1;
 		    flag = TRUE;
 		}
@@ -1276,7 +1283,7 @@ static int purchase_haggle(int store_num, s32b *price, inven_type *i_ptr)
     while (!flag);
 
     /* update bargaining info */
-    if (purchase == 0) updatebargain(store_num, *price, final_ask);
+    if (purchase == 0) updatebargain(*price, final_ask);
 
     return (purchase);
 }
@@ -1285,7 +1292,7 @@ static int purchase_haggle(int store_num, s32b *price, inven_type *i_ptr)
 /*
  * Haggling routine					-RAK-	 
  */
-static int sell_haggle(int store_num, s32b *price, inven_type *i_ptr)
+static int sell_haggle(s32b *price, inven_type *i_ptr)
 {
     s32b               max_sell = 0, max_buy = 0, min_buy = 0;
     s32b               cost = 0, cur_ask = 0, final_ask = 0, min_offer = 0;
@@ -1348,7 +1355,7 @@ static int sell_haggle(int store_num, s32b *price, inven_type *i_ptr)
 	comment = "Offer";
 
 	/* go right to final price if player has bargained well */
-	if (noneedtobargain(store_num, final_ask)) {
+	if (noneedtobargain(final_ask)) {
 
 	    msg_print("After a long bargaining session, you agree upon the price.");
 	    msg_print(NULL);
@@ -1378,7 +1385,7 @@ static int sell_haggle(int store_num, s32b *price, inven_type *i_ptr)
 	    loop_flag = TRUE;
 	    (void)sprintf(out_val, "%s :  %ld", comment, (long)cur_ask);
 	    put_str(out_val, 1, 0);
-	    sell = receive_offer(store_num, "What price do you ask? ",
+	    sell = receive_offer("What price do you ask? ",
 				 &new_offer, last_offer, num_offer,
 				 -1, cur_ask, final);
 	    if (sell != 0) {
@@ -1404,7 +1411,7 @@ static int sell_haggle(int store_num, s32b *price, inven_type *i_ptr)
 	if (!flag) {
 	    x1 = (last_offer - new_offer) * 100 / (last_offer - cur_ask);
 	    if (x1 < min_per) {
-		flag = haggle_insults(store_num);
+		flag = haggle_insults();
 		if (flag) sell = 2;
 	    }
 	    else if (x1 > max_per) {
@@ -1422,7 +1429,7 @@ static int sell_haggle(int store_num, s32b *price, inven_type *i_ptr)
 		comment = "Final Offer";
 		final_flag++;
 		if (final_flag > 3) {
-		if (increase_insults(store_num)) sell = 2;
+		if (increase_insults()) sell = 2;
 			else sell = 1;
 			flag = TRUE;
 		}
@@ -1446,7 +1453,7 @@ static int sell_haggle(int store_num, s32b *price, inven_type *i_ptr)
     }
 
     /* update bargaining info */
-    if (sell == 0) updatebargain(store_num, *price, final_ask);
+    if (sell == 0) updatebargain(*price, final_ask);
 
     return (sell);
 }
@@ -1458,7 +1465,7 @@ static int sell_haggle(int store_num, s32b *price, inven_type *i_ptr)
 /*
  * Buy an item from a store				-RAK-	 
  */
-static int store_purchase(int store_num, int *cur_top)
+static int store_purchase(int *cur_top)
 {
     s32b               price;
     register int        i, choice;
@@ -1495,15 +1502,15 @@ static int store_purchase(int store_num, int *cur_top)
 		    price = st_ptr->store_item[item_val].scost;
 		    choice = 0;
 		} else
-		    choice = purchase_haggle(store_num, &price, &sell_obj);
+		    choice = purchase_haggle(&price, &sell_obj);
 		if (choice == 0) {
 		    if (p_ptr->au >= price) {
 			prt_comment1();
-			decrease_insults(store_num);
+			decrease_insults();
 			p_ptr->au -= price;
 			item_new = inven_carry(&sell_obj);
 			i = st_ptr->store_ctr;
-			store_destroy(store_num, item_val, TRUE);
+			store_destroy(item_val, TRUE);
 			inventory[item_new].inscrip[0] = 0;
 			objdes(tmp_str, &inventory[item_new], TRUE);
 			(void)sprintf(out_val, "You have %s (%c)",
@@ -1512,20 +1519,20 @@ static int store_purchase(int store_num, int *cur_top)
 			check_strength();
 			if (*cur_top >= st_ptr->store_ctr) {
 			    *cur_top = 0;
-			    display_inventory(store_num, *cur_top);
+			    display_inventory(*cur_top);
 			} else {
 			    r_ptr = &st_ptr->store_item[item_val];
 			    if (i == st_ptr->store_ctr) {
 				if (r_ptr->scost < 0) {
 				    r_ptr->scost = price;
-				    display_cost(store_num, item_val);
+				    display_cost(item_val);
 				}
 			    } else
-				display_inventory(store_num, item_val);
+				display_inventory(item_val);
 			    store_prt_gold();
 			}
 		    } else {
-			if (increase_insults(store_num))
+			if (increase_insults())
 			    purchase = TRUE;
 			else {
 			    prt_comment1();
@@ -1537,7 +1544,7 @@ static int store_purchase(int store_num, int *cur_top)
 	    } else {		   /* is_home... */
 		item_new = inven_carry(&sell_obj);
 		i = st_ptr->store_ctr;
-		store_destroy(store_num, item_val, TRUE);
+		store_destroy(item_val, TRUE);
 		objdes(tmp_str, &inventory[item_new], TRUE);
 		(void)sprintf(out_val, "You have %s (%c)",
 			      tmp_str, item_new + 'a');
@@ -1545,7 +1552,7 @@ static int store_purchase(int store_num, int *cur_top)
 		check_strength();
 		if (*cur_top >= st_ptr->store_ctr) {
 		    *cur_top = 0;
-		    display_inventory(store_num, *cur_top);
+		    display_inventory(*cur_top);
 		} else {
 		    r_ptr = &st_ptr->store_item[item_val];
 
@@ -1553,11 +1560,11 @@ static int store_purchase(int store_num, int *cur_top)
 			if (i == st_ptr->store_ctr) {
 				if (r_ptr->scost < 0) {
 					r_ptr->scost = price;
-					display_cost(store_num, item_val);
+					display_cost(item_val);
 				}
 			} else 
 #endif
-		    display_inventory(store_num, item_val);
+		    display_inventory(item_val);
 		}
 	    }
 	/* Less intuitive, but looks better here than in purchase_haggle. */
@@ -1573,7 +1580,7 @@ static int store_purchase(int store_num, int *cur_top)
 /*
  * Sell an item to the store	-RAK-	 
  */
-static int store_sell(int store_num, int *cur_top)
+static int store_sell(int *cur_top)
 {
     int                 item_val, item_pos;
     s32b               price;
@@ -1604,15 +1611,15 @@ static int store_sell(int store_num, int *cur_top)
 	    msg_print(out_val);
 	}
 	if ((*store_buy[store_num]) (sold_obj.tval))
-	    if (store_check_num(&sold_obj, store_num)) {
+	    if (store_check_num(&sold_obj)) {
 		if (!is_home) {
-		    choice = sell_haggle(store_num, &price, &sold_obj);
+		    choice = sell_haggle(&price, &sold_obj);
 		    if (choice == 0) {
 			s32b               cost;
 			s32b               dummy;
 
 			prt_comment1();
-			decrease_insults(store_num);
+			decrease_insults();
 			p_ptr->au += price;
 
 			cost = item_value(&sold_obj);
@@ -1689,21 +1696,21 @@ static int store_sell(int store_num, int *cur_top)
 				break;
 			    }
 			}
-			store_carry(store_num, &item_pos, &sold_obj);
+			store_carry(&item_pos, &sold_obj);
 			check_strength();
 			if (item_pos >= 0) {
 			    if (item_pos < 12)
 				if (*cur_top < 12)
-				    display_inventory(store_num, item_pos);
+				    display_inventory(item_pos);
 				else {
 				    *cur_top = 0;
-				    display_inventory(store_num, *cur_top);
+				    display_inventory(*cur_top);
 				}
 			    else if (*cur_top > 11)
-				display_inventory(store_num, item_pos);
+				display_inventory(item_pos);
 			    else {
 				*cur_top = 12;
-				display_inventory(store_num, *cur_top);
+				display_inventory(*cur_top);
 			    }
 			}
 			store_prt_gold();
@@ -1712,7 +1719,7 @@ static int store_sell(int store_num, int *cur_top)
 		    else if (choice == 3) {
 			msg_print("How dare you!");
 			msg_print("I will not buy that!");
-			sell = increase_insults(store_num);
+			sell = increase_insults();
 		    }
 		/* Less intuitive, but looks better here than in sell_haggle. */
 		    erase_line(1, 0);
@@ -1724,21 +1731,21 @@ static int store_sell(int store_num, int *cur_top)
 		    objdes(tmp_str, &sold_obj, TRUE);
 		    (void)sprintf(out_val, "You drop %s", tmp_str);
 		    msg_print(out_val);
-		    store_carry(store_num, &item_pos, &sold_obj);
+		    store_carry(&item_pos, &sold_obj);
 		    check_strength();
 		    if (item_pos >= 0) {
 			if (item_pos < 12)
 			    if (*cur_top < 12)
-				display_inventory(store_num, item_pos);
+				display_inventory(item_pos);
 			    else {
 				*cur_top = 0;
-				display_inventory(store_num, *cur_top);
+				display_inventory(*cur_top);
 			    }
 			else if (*cur_top > 11)
-			    display_inventory(store_num, item_pos);
+			    display_inventory(item_pos);
 			else {
 			    *cur_top = 12;
-			    display_inventory(store_num, *cur_top);
+			    display_inventory(*cur_top);
 			}
 		    }
 		/* Less intuitive, but looks better here than in sell_haggle. */
@@ -1767,12 +1774,15 @@ static int store_sell(int store_num, int *cur_top)
 /*
  * Entera store
  */
-void enter_store(int store_num)
+void enter_store(int which)
 {
     int                  cur_top, tmp_chr;
     char                 command;
     register int         exit_flag;
     register store_type *st_ptr;
+
+    /* Save the store number */
+    store_num = which;
 
     st_ptr = &store[store_num];
     if (store_num == 7)
@@ -1782,7 +1792,7 @@ void enter_store(int store_num)
     if (st_ptr->store_open < turn) {
 	exit_flag = FALSE;
 	cur_top = 0;
-	display_store(store_num, cur_top);
+	display_store(cur_top);
 	do {
 	    move_cursor(20, 9);
 	/* clear the msg flag just like we do in dungeon.c */
@@ -1793,12 +1803,12 @@ void enter_store(int store_num)
 		    if (cur_top == 0)
 			if (st_ptr->store_ctr > 12) {
 			    cur_top = 12;
-			    display_inventory(store_num, cur_top);
+			    display_inventory(cur_top);
 			} else
 			    msg_print("Entire inventory is shown.");
 		    else {
 			cur_top = 0;
-			display_inventory(store_num, cur_top);
+			display_inventory(cur_top);
 		    }
 		    break;
 		  case 'E':
@@ -1821,32 +1831,32 @@ void enter_store(int store_num)
 		    while (command);
 		/* redisplay store prices if charisma changes */
 		    if (tmp_chr != p_ptr->use_stat[A_CHR])
-			display_inventory(store_num, cur_top);
+			display_inventory(cur_top);
 		    free_turn_flag = FALSE;	/* No free moves here. -CJS- */
 		    break;
 		  case 'g':
 		    if (!is_home)
 			bell();
 		    else
-			exit_flag = store_purchase(store_num, &cur_top);
+			exit_flag = store_purchase(&cur_top);
 		    break;
 		  case 'p':
 		    if (is_home)
 			bell();
 		    else
-			exit_flag = store_purchase(store_num, &cur_top);
+			exit_flag = store_purchase(&cur_top);
 		    break;
 		  case 's':
 		    if (is_home)
 			bell();
 		    else
-			exit_flag = store_sell(store_num, &cur_top);
+			exit_flag = store_sell(&cur_top);
 		    break;
 		  case 'd':
 		    if (!is_home)
 			bell();
 		    else
-			exit_flag = store_sell(store_num, &cur_top);
+			exit_flag = store_sell(&cur_top);
 		    break;
 		  default:
 		    bell();
@@ -1860,6 +1870,9 @@ void enter_store(int store_num)
 	draw_cave();
     } else
 	msg_print("The doors are locked.");
+
+    /* Forget the store number */
+    store_num = 0;
 }
 
 
@@ -1875,23 +1888,36 @@ void store_maint(void)
 
     /* Maintain every store (except the home) */
     for (i = 0; i < (MAX_STORES - 1); i++) {
-	st_ptr = &store[i];
+
+	/* Save the store index */
+	store_num = i;
+
+	/* Activate that store */
+	st_ptr = &store[store_num];
+
+	/* Store keeper forgives the player */
 	st_ptr->insult_cur = 0;
+
+
 	if (st_ptr->store_ctr >= STORE_MIN_INVEN) {
 	    j = randint(STORE_TURN_AROUND);
 	    if (st_ptr->store_ctr >= STORE_MAX_INVEN)
 		j += 1 + st_ptr->store_ctr - STORE_MAX_INVEN;
 	    while (--j >= 0)
-		store_destroy(i, randint((int)st_ptr->store_ctr) - 1, FALSE);
+		store_destroy(randint((int)st_ptr->store_ctr) - 1, FALSE);
 	}
 	if (st_ptr->store_ctr <= STORE_MAX_INVEN) {
 	    j = randint(STORE_TURN_AROUND);
 	    if (st_ptr->store_ctr < STORE_MIN_INVEN)
 		j += STORE_MIN_INVEN - st_ptr->store_ctr;
 	    while (--j >= 0)
-		store_create(i);
+		store_create();
 	}
     }
+
+
+    /* Turn it all off */
+    store_num = 0;
 }
 
 
