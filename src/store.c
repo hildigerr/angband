@@ -1813,17 +1813,24 @@ void enter_store(int which)
 		}
 		break;
 
-	    case 'E': case 'e':	   /* Equipment List	 */
-	    case 'I': case 'i':	   /* Inventory		 */
-	    case 'T': case 't':	   /* Take off		 */
-	    case 'W': case 'w':	   /* Wear			 */
-	    case 'X': case 'x':	   /* Switch weapon		 */
-		inven_command(command);
+	    case 'E': case 'e':
+		inven_command('e');
 		break;
 
-	    case 'g':
-		if (store_num != 7) bell();
-		else exit_flag = store_purchase(&cur_top);
+	    case 'I': case 'i':
+		inven_command('i');
+		break;
+
+	    case 'W': case 'w':
+		inven_command('w');
+		break;
+
+	    case 'T': case 't':
+		inven_command('t');
+		break;
+
+	    case 'X': case 'x':
+		inven_command('x');
 		break;
 
 	    case 'p':
@@ -1834,6 +1841,11 @@ void enter_store(int which)
 	    case 's':
 		if (store_num == 7)bell();
 		else exit_flag = store_sell(&cur_top);
+		break;
+
+	    case 'g':
+		if (store_num != 7) bell();
+		else exit_flag = store_purchase(&cur_top);
 		break;
 
 	    case 'd':
