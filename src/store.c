@@ -1752,7 +1752,7 @@ static int store_sell(int *cur_top)
 
 
 /*
- * Entera store
+ * Enter a store, and interact with it.
  */
 void enter_store(int which)
 {
@@ -1770,77 +1770,84 @@ void enter_store(int which)
 
     if (st_ptr->store_open < turn) {
 	exit_flag = FALSE;
-	cur_top = 0;
-	display_store(cur_top);
-	do {
+
+    /* Start at the beginning */
+    cur_top = 0;
+
+    /* Display the store */
+    display_store(cur_top);
+
+    /* Interact with player */
+    do {
+
 	    move_cursor(20, 9);
-	/* clear the msg flag just like we do in dungeon.c */
-	    msg_flag = FALSE;
+
+	/* Assume player has read his messages */
+	msg_flag = FALSE;
+
 	    if (get_com(NULL, &command)) {
-		switch (command) {
-		  case 'b':
-		    if (cur_top == 0)
-			if (st_ptr->store_ctr > 12) {
-			    cur_top = 12;
-			    display_inventory(cur_top);
-			} else
-			    msg_print("Entire inventory is shown.");
-		    else {
-			cur_top = 0;
-			display_inventory(cur_top);
-		    }
-		    break;
-		  case 'E':
-		  case 'e':	   /* Equipment List	 */
-		  case 'I':
-		  case 'i':	   /* Inventory		 */
-		  case 'T':
-		  case 't':	   /* Take off		 */
-		  case 'W':
-		  case 'w':	   /* Wear			 */
-		  case 'X':
-		  case 'x':	   /* Switch weapon		 */
-		    tmp_chr = p_ptr->use_stat[A_CHR];
-		    do {
-			in_store_flag = TRUE;
-			inven_command(command);
-			command = doing_inven;
-			in_store_flag = FALSE;
-		    }
-		    while (command);
-		/* redisplay store prices if charisma changes */
-		    if (tmp_chr != p_ptr->use_stat[A_CHR])
-			display_inventory(cur_top);
-		    free_turn_flag = FALSE;	/* No free moves here. -CJS- */
-		    break;
-		  case 'g':
-		    if (store_num != 7)
-			bell();
-		    else
-			exit_flag = store_purchase(&cur_top);
-		    break;
-		  case 'p':
-		    if (store_num == 7)
-			bell();
-		    else
-			exit_flag = store_purchase(&cur_top);
-		    break;
-		  case 's':
-		    if (store_num == 7)
-			bell();
-		    else
-			exit_flag = store_sell(&cur_top);
-		    break;
-		  case 'd':
-		    if (store_num != 7)
-			bell();
-		    else
-			exit_flag = store_sell(&cur_top);
-		    break;
-		  default:
-		    bell();
-		    break;
+
+	/* Process the command */
+	switch (command) {
+
+	    case 'b':
+		if (cur_top == 0)
+		if (st_ptr->store_ctr > 12) {
+		    cur_top = 12;
+		    display_inventory(cur_top);
 		}
+		else {
+		    msg_print("Entire inventory is shown.");
+		}
+		else {
+		    cur_top = 0;
+		    display_inventory(cur_top);
+		}
+		break;
+
+	    case 'E': case 'e':	   /* Equipment List	 */
+	    case 'I': case 'i':	   /* Inventory		 */
+	    case 'T': case 't':	   /* Take off		 */
+	    case 'W': case 'w':	   /* Wear			 */
+	    case 'X': case 'x':	   /* Switch weapon		 */
+		tmp_chr = p_ptr->use_stat[A_CHR];
+		do {
+		in_store_flag = TRUE;
+		inven_command(command);
+		command = doing_inven;
+		in_store_flag = FALSE;
+		}
+		while (command);
+		/* redisplay store prices if charisma changes */
+		if (tmp_chr != p_ptr->use_stat[A_CHR])
+		    display_inventory(cur_top);
+		free_turn_flag = FALSE;	/* No free moves here. -CJS- */
+		break;
+
+	    case 'g':
+		if (store_num != 7) bell();
+		else exit_flag = store_purchase(&cur_top);
+		break;
+
+	    case 'p':
+		if (store_num == 7) bell();
+		else exit_flag = store_purchase(&cur_top);
+		break;
+
+	    case 's':
+		if (store_num == 7)bell();
+		else exit_flag = store_sell(&cur_top);
+		break;
+
+	    case 'd':
+		if (store_num != 7) bell();
+		else exit_flag = store_sell(&cur_top);
+		break;
+
+	    default:
+		bell();
+		break;
+	}
 	    } else
 		exit_flag = TRUE;
 	}
