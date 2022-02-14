@@ -1768,6 +1768,10 @@ void enter_store(int which)
     }
 
 
+    /* Hack -- note we are in a store */
+    in_store_flag = TRUE;
+
+
     /* Save the store number */
     store_num = which;
 
@@ -1791,7 +1795,10 @@ void enter_store(int which)
 	msg_flag = FALSE;
 
 	    if (get_com(NULL, &command)) {
-
+	
+	/* Check the charisma */
+	tmp_chr = p_ptr->use_stat[A_CHR];
+	
 	/* Process the command */
 	switch (command) {
 
@@ -1811,18 +1818,7 @@ void enter_store(int which)
 	    case 'T': case 't':	   /* Take off		 */
 	    case 'W': case 'w':	   /* Wear			 */
 	    case 'X': case 'x':	   /* Switch weapon		 */
-		tmp_chr = p_ptr->use_stat[A_CHR];
-		do {
-		in_store_flag = TRUE;
 		inven_command(command);
-		command = doing_inven;
-		in_store_flag = FALSE;
-		}
-		while (command);
-		/* redisplay store prices if charisma changes */
-		if (tmp_chr != p_ptr->use_stat[A_CHR])
-		    display_inventory(cur_top);
-		free_turn_flag = FALSE;	/* No free moves here. -CJS- */
 		break;
 
 	    case 'g':
@@ -1849,18 +1845,32 @@ void enter_store(int which)
 		bell();
 		break;
 	}
+
+	/* Redisplay store prices if charisma changes */
+	if (tmp_chr != p_ptr->use_stat[A_CHR]) {
+	    display_inventory(cur_top);
+	}
+
 	    } else
 		exit_flag = TRUE;
 	}
-
-    /* Can't save and restore the screen, because inven_command does that. */
-	draw_cave();
 
 
     /* Forget the store number, etc */
     store_num = 0;
     st_ptr = NULL;
     ot_ptr = NULL;    
+
+
+    /* Hack -- turn off the flag */
+    in_store_flag = FALSE;
+
+    /* Hack -- No free moves here. -CJS- */
+    free_turn_flag = FALSE;
+    
+
+    /* Hack -- Redraw the player stats and the map */
+    draw_cave();
 }
 
 
