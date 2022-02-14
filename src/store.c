@@ -488,28 +488,28 @@ static void special_offer(inven_type *i_ptr)
 /*
  * Asking price for an item			-RAK-
  */
-static s32b sell_price(int snum, s32b *max_sell, s32b *min_sell, inven_type *item)
+static s32b sell_price(int store_num, s32b *max_sell, s32b *min_sell, inven_type *i_ptr)
 {
     register s32b      i;
-    register store_type *s_ptr = &store[snum];
+    register store_type *st_ptr = &store[store_num];
 
-    i = item_value(item);
+    i = item_value(i_ptr);
 
-    /* check item->cost in case it is cursed, check i in case it is damaged */
-    if ((item->cost > 0) && (i > 0)) {
+    /* check i_ptr->cost in case it is cursed, check i in case it is damaged */
+    if ((i_ptr->cost > 0) && (i > 0)) {
 
     /* Get the "basic value" */
-    i = i * rgold_adj[owners[s_ptr->owner].owner_race][p_ptr->prace] / 100;
+    i = i * rgold_adj[owners[st_ptr->owner].owner_race][p_ptr->prace] / 100;
 
     /* Nothing becomes free */
     if (i < 1) i = 1;
 
     /* Extract min/max sell values */
-    *max_sell = i * owners[s_ptr->owner].max_inflate / 100;
-    *min_sell = i * owners[s_ptr->owner].min_inflate / 100;
+    *max_sell = i * owners[st_ptr->owner].max_inflate / 100;
+    *min_sell = i * owners[st_ptr->owner].min_inflate / 100;
 
     /* Black market is always over-priced */
-    if (snum == 6) {
+    if (store_num == 6) {
 	(*max_sell) *= 2;
 	(*min_sell) *= 2;
     }
@@ -529,43 +529,43 @@ static s32b sell_price(int snum, s32b *max_sell, s32b *min_sell, inven_type *ite
 /*
  * Check to see if the shop will be carrying too many objects	-RAK-	 
  */
-static int store_check_num(inven_type *t_ptr, int store_num)
+static int store_check_num(inven_type *i_ptr, int store_num)
 {
     register int        store_check, i;
-    register store_type *s_ptr;
-    register inven_type *i_ptr;
+    register store_type *st_ptr;
+    register inven_type *j_ptr;
 
     store_check = FALSE;
-    s_ptr = &store[store_num];
+    st_ptr = &store[store_num];
 
-    if (s_ptr->store_ctr < STORE_INVEN_MAX) store_check = TRUE;
+    if (st_ptr->store_ctr < STORE_INVEN_MAX) store_check = TRUE;
 
-    else if (t_ptr->sval >= ITEM_SINGLE_STACK_MIN)
-	for (i = 0; i < s_ptr->store_ctr; i++) {
-	    i_ptr = &s_ptr->store_item[i];
+    else if (i_ptr->sval >= ITEM_SINGLE_STACK_MIN)
+	for (i = 0; i < st_ptr->store_ctr; i++) {
+	    j_ptr = &st_ptr->store_item[i];
 
 	/* note: items with sval of gte ITEM_SINGLE_STACK_MAX only stack if
 	 * their svals match 
 	 */
-	    if (i_ptr->tval == t_ptr->tval && i_ptr->sval == t_ptr->sval
-		&& ((int)i_ptr->number + (int)t_ptr->number < 256)
-		&& (t_ptr->sval < ITEM_GROUP_MIN
-		    || (i_ptr->pval == t_ptr->pval)))
+	    if (j_ptr->tval == i_ptr->tval && j_ptr->sval == i_ptr->sval
+		&& ((int)j_ptr->number + (int)i_ptr->number < 256)
+		&& (i_ptr->sval < ITEM_GROUP_MIN
+		    || (j_ptr->pval == i_ptr->pval)))
 		store_check = TRUE;
 	}
 
 /* But, wait.  If at home, don't let player drop 25th item, or he will lose it. -CFT */
-    if (is_home && (t_ptr->sval >= ITEM_SINGLE_STACK_MIN))
-	for (i = 0; i < s_ptr->store_ctr; i++) {
-	    i_ptr = &s_ptr->store_item[i];
+    if (is_home && (i_ptr->sval >= ITEM_SINGLE_STACK_MIN))
+	for (i = 0; i < st_ptr->store_ctr; i++) {
+	    j_ptr = &st_ptr->store_item[i];
 	/*
 	 * note: items with sval of gte ITEM_SINGLE_STACK_MAX only stack if
 	 * their svals match 
 	 */
-	    if (i_ptr->tval == t_ptr->tval && i_ptr->sval == t_ptr->sval
-		&& ((int)i_ptr->number + (int)t_ptr->number > 24)
-		&& (t_ptr->sval < ITEM_GROUP_MIN
-		    || (i_ptr->pval == t_ptr->pval)))
+	    if (j_ptr->tval == i_ptr->tval && j_ptr->sval == i_ptr->sval
+		&& ((int)j_ptr->number + (int)i_ptr->number > 24)
+		&& (i_ptr->sval < ITEM_GROUP_MIN
+		    || (j_ptr->pval == i_ptr->pval)))
 		store_check = FALSE;
 	}
     return (store_check);
@@ -576,75 +576,75 @@ static int store_check_num(inven_type *t_ptr, int store_num)
 /*
  * Add the item in INVEN_MAX to stores inventory.	-RAK-	 
  */
-static void store_carry(int store_num, int *ipos, inven_type *t_ptr)
+static void store_carry(int store_num, int *ipos, inven_type *i_ptr)
 {
     int                 item_num, item_val, flag;
     register int        typ, subt;
     s32b               icost, dummy;
-    register inven_type *i_ptr;
-    register store_type *s_ptr;
+    register inven_type *j_ptr;
+    register store_type *st_ptr;
     int stacked = FALSE; /* from inven_carry() -CFT */
 
     *ipos = -1;
-    if (sell_price(store_num, &icost, &dummy, t_ptr) > 0 || is_home)
+    if (sell_price(store_num, &icost, &dummy, i_ptr) > 0 || is_home)
     {
-	s_ptr = &store[store_num];
+	st_ptr = &store[store_num];
 	item_val = 0;
-	item_num = t_ptr->number;
+	item_num = i_ptr->number;
 	flag = FALSE;
-	typ  = t_ptr->tval;
-	subt = t_ptr->sval;
+	typ  = i_ptr->tval;
+	subt = i_ptr->sval;
 	if (subt >= ITEM_SINGLE_STACK_MIN) { /* try to stack in store's inven */
 	    do {
-		i_ptr = &s_ptr->store_item[item_val];
-		if (typ == i_ptr->tval)
+		j_ptr = &st_ptr->store_item[item_val];
+		if (typ == j_ptr->tval)
 		{
-		    if (subt == i_ptr->sval && /* Adds to other item        */
+		    if (subt == j_ptr->sval && /* Adds to other item        */
 			subt >= ITEM_SINGLE_STACK_MIN
-			&& (subt < ITEM_GROUP_MIN || i_ptr->pval == t_ptr->pval))
+			&& (subt < ITEM_GROUP_MIN || j_ptr->pval == i_ptr->pval))
 		    {
 			stacked = TRUE; /* remember that we did stack it... -CFT */
 			*ipos = item_val;
-			i_ptr->number += item_num;
+			j_ptr->number += item_num;
 			/* must set new scost for group items, do this only for items
 			   strictly greater than group_min, not for torches, this
 			   must be recalculated for entire group */
 			if (subt > ITEM_GROUP_MIN)
 			{
-			    (void) sell_price (store_num, &icost, &dummy, i_ptr);
-			    s_ptr->store_item[item_val].scost = -icost;
+			    (void) sell_price (store_num, &icost, &dummy, j_ptr);
+			    st_ptr->store_item[item_val].scost = -icost;
 			}
 			/* must let group objects (except torches) stack over 24
 			   since there may be more than 24 in the group */
-			else if (i_ptr->number > 24)
-			    i_ptr->number = 24;
+			else if (j_ptr->number > 24)
+			    j_ptr->number = 24;
 			flag = TRUE;
 		    }
 		}
 		item_val ++;
-	    } while (!stacked && (item_val < s_ptr->store_ctr));
+	    } while (!stacked && (item_val < st_ptr->store_ctr));
 	} /* if might stack... -CFT */
 	if (!stacked) {		/* either never stacks, or didn't find a place to stack */
 	    item_val = 0;
 	    do {
-		i_ptr = &s_ptr->store_item[item_val];
-		if ((typ > i_ptr->tval) || /* sort by desc tval, */
-		    ((typ == i_ptr->tval) &&
-		     ((t_ptr->level < i_ptr->level) || /* then by inc level, */
-		      ((t_ptr->level == i_ptr->level) &&
-		       (subt < i_ptr->sval))))) /* and finally by inc sval -CFT */
+		j_ptr = &st_ptr->store_item[item_val];
+		if ((typ > j_ptr->tval) || /* sort by desc tval, */
+		    ((typ == j_ptr->tval) &&
+		     ((i_ptr->level < j_ptr->level) || /* then by inc level, */
+		      ((i_ptr->level == j_ptr->level) &&
+		       (subt < j_ptr->sval))))) /* and finally by inc sval -CFT */
 		{		/* Insert into list             */
-		    insert_store(store_num, item_val, icost, t_ptr);
+		    insert_store(store_num, item_val, icost, i_ptr);
 		    flag = TRUE;
 		    *ipos = item_val;
 		}
 		item_val++;
-	    } while ((item_val < s_ptr->store_ctr) && (!flag));
+	    } while ((item_val < st_ptr->store_ctr) && (!flag));
 	} /* if didn't already stack it... */
 	if (!flag)		/* Becomes last item in list    */
 	{
-	    insert_store(store_num, (int)s_ptr->store_ctr, icost, t_ptr);
-	    *ipos = s_ptr->store_ctr - 1;
+	    insert_store(store_num, (int)st_ptr->store_ctr, icost, i_ptr);
+	    *ipos = st_ptr->store_ctr - 1;
 	}
     }
 }
@@ -656,14 +656,14 @@ static void store_carry(int store_num, int *ipos, inven_type *t_ptr)
 static void insert_store(int store_num, int pos, s32b icost, inven_type *i_ptr)
 {
     register int        i;
-    register store_type *s_ptr;
+    register store_type *st_ptr;
 
-    s_ptr = &store[store_num];
-    for (i = s_ptr->store_ctr - 1; i >= pos; i--)
-	s_ptr->store_item[i + 1] = s_ptr->store_item[i];
-    s_ptr->store_item[pos] = *i_ptr;
-    s_ptr->store_item[pos].scost = (-icost);
-    s_ptr->store_ctr++;
+    st_ptr = &store[store_num];
+    for (i = st_ptr->store_ctr - 1; i >= pos; i--)
+	st_ptr->store_item[i + 1] = st_ptr->store_item[i];
+    st_ptr->store_item[pos] = *i_ptr;
+    st_ptr->store_item[pos].scost = (-icost);
+    st_ptr->store_ctr++;
 }
 
 
@@ -674,11 +674,11 @@ static void insert_store(int store_num, int pos, s32b icost, inven_type *i_ptr)
 void store_destroy(int store_num, int item_val, int one_of)
 {
     register int         j, number;
-    register store_type *s_ptr;
+    register store_type *st_ptr;
     register inven_type *i_ptr;
 
-    s_ptr = &store[store_num];
-    i_ptr = &s_ptr->store_item[item_val];
+    st_ptr = &store[store_num];
+    i_ptr = &st_ptr->store_item[item_val];
 
 /* for single stackable objects, only destroy one half on average, this will
  * help ensure that general store and alchemist have reasonable selection of
@@ -696,11 +696,11 @@ void store_destroy(int store_num, int item_val, int one_of)
     if (number != i_ptr->number)
 	i_ptr->number -= number;
     else {
-	for (j = item_val; j < s_ptr->store_ctr - 1; j++)
-	    s_ptr->store_item[j] = s_ptr->store_item[j + 1];
-	invcopy(&s_ptr->store_item[s_ptr->store_ctr - 1], OBJ_NOTHING);
-	s_ptr->store_item[s_ptr->store_ctr - 1].scost = 0;
-	s_ptr->store_ctr--;
+	for (j = item_val; j < st_ptr->store_ctr - 1; j++)
+	    st_ptr->store_item[j] = st_ptr->store_item[j + 1];
+	invcopy(&st_ptr->store_item[st_ptr->store_ctr - 1], OBJ_NOTHING);
+	st_ptr->store_item[st_ptr->store_ctr - 1].scost = 0;
+	st_ptr->store_ctr--;
     }
 }
 
@@ -712,27 +712,27 @@ static void store_create(int store_num)
 {
     int			i, tries;
     int                  cur_pos, dummy;
-    store_type *s_ptr;
-    inven_type		*t_ptr;
+    store_type *st_ptr;
+    inven_type		*i_ptr;
 
     tries = 0;
     cur_pos = i_pop();
-    s_ptr = &store[store_num];
+    st_ptr = &store[store_num];
     object_level = OBJ_TOWN_LEVEL;
     do {
 	if (store_num != 6) {
 	    i = store_choice[store_num][randint(STORE_CHOICES) - 1];
 	    invcopy(&i_list[cur_pos], i);
 	    apply_magic(&i_list[cur_pos], OBJ_TOWN_LEVEL, FALSE, TRUE);
-	    t_ptr = &i_list[cur_pos];
-	    if (store_check_num(t_ptr, store_num)) {
-		if ((t_ptr->cost > 0) &&	/* Item must be good	 */
-		    (t_ptr->cost < owners[s_ptr->owner].max_cost)) {
+	    i_ptr = &i_list[cur_pos];
+	    if (store_check_num(i_ptr, store_num)) {
+		if ((i_ptr->cost > 0) &&	/* Item must be good	 */
+		    (i_ptr->cost < owners[st_ptr->owner].max_cost)) {
 
 /* equivalent to calling ident_spell(), except will not change the object_ident array */
-		    store_bought(t_ptr);
-		    special_offer(t_ptr);
-		    store_carry(store_num, &dummy, t_ptr);
+		    store_bought(i_ptr);
+		    special_offer(i_ptr);
+		    store_carry(store_num, &dummy, i_ptr);
 		    tries = 10;
 		}
 	    }
@@ -741,16 +741,16 @@ static void store_create(int store_num)
 	    i = get_obj_num(40, FALSE);
 	    invcopy(&i_list[cur_pos], i);
 	    apply_magic(&i_list[cur_pos], 40, FALSE, TRUE);
-	    t_ptr = &i_list[cur_pos];
-	    if (store_check_num(t_ptr, store_num)) {
-		if (t_ptr->cost > 0) {	/* Item must be good	 */
+	    i_ptr = &i_list[cur_pos];
+	    if (store_check_num(i_ptr, store_num)) {
+		if (i_ptr->cost > 0) {	/* Item must be good	 */
 		/*
 		 * equivalent to calling ident_spell(), except will not
 		 * change the object_ident array 
 		 */
-		    store_bought(t_ptr);
-		    special_offer(t_ptr);
-		    store_carry(store_num, &dummy, t_ptr);
+		    store_bought(i_ptr);
+		    special_offer(i_ptr);
+		    store_carry(store_num, &dummy, i_ptr);
 		    tries = 10;
 		}
 	    }
@@ -769,13 +769,13 @@ static void store_create(int store_num)
 static int noneedtobargain(int store_num, s32b minprice)
 {
     register int         flagnoneed;
-    register store_type *s_ptr = &store[store_num];
+    register store_type *st_ptr = &store[store_num];
 
     /* Allow haggling to be turned off */
     if (no_haggle_flag) return (TRUE);
 
-    flagnoneed = ((s_ptr->good_buy == MAX_SHORT)
-		  || ((s_ptr->good_buy - 3 * s_ptr->bad_buy) > (5 + (minprice/50))));
+    flagnoneed = ((st_ptr->good_buy == MAX_SHORT)
+		  || ((st_ptr->good_buy - 3 * st_ptr->bad_buy) > (5 + (minprice/50))));
     return (flagnoneed);
 }
 
@@ -851,19 +851,19 @@ static void haggle_commands(int typ)
  */
 static void display_inventory(int store_num, int start)
 {
-    register store_type *s_ptr;
+    register store_type *st_ptr;
     register inven_type *i_ptr;
     register int         i, j, stop;
     bigvtype             out_val1, out_val2;
     s32b                x;
 
-    s_ptr = &store[store_num];
+    st_ptr = &store[store_num];
     i = (start % 12);
     stop = ((start / 12) + 1) * 12;
-    if (stop > s_ptr->store_ctr)
-	stop = s_ptr->store_ctr;
+    if (stop > st_ptr->store_ctr)
+	stop = st_ptr->store_ctr;
     while (start < stop) {
-	i_ptr = &s_ptr->store_item[start];
+	i_ptr = &st_ptr->store_item[start];
 	x = i_ptr->number;
 	if (!is_home) {
 	    if ((i_ptr->sval >= ITEM_SINGLE_STACK_MIN)
@@ -875,7 +875,7 @@ static void display_inventory(int store_num, int start)
 	(void)sprintf(out_val2, "%c) %s", 'a' + i, out_val1);
 	prt(out_val2, i + 5, 0);
 	if (!is_home) {
-	    x = s_ptr->store_item[start].scost;
+	    x = st_ptr->store_item[start].scost;
 	    if (x < 0) {
 		s32b               value = (s32b)(-x);
 		
@@ -894,7 +894,7 @@ static void display_inventory(int store_num, int start)
     if (i < 12)
 	for (j = 0; j < (11 - i + 1); j++)
 	    erase_line(j + i + 5, 0);	/* clear remaining lines */
-    if (s_ptr->store_ctr > 12)
+    if (st_ptr->store_ctr > 12)
 	put_str("- cont. -", 17, 60);
     else
 	erase_line(17, 60);
@@ -907,17 +907,17 @@ static void display_cost(int store_num, int pos)
     register int         i;
     register s32b       j;
     vtype                out_val;
-    register store_type *s_ptr;
+    register store_type *st_ptr;
 
-    s_ptr = &store[store_num];
+    st_ptr = &store[store_num];
     i = (pos % 12);
-    if (s_ptr->store_item[pos].scost < 0) {
-	j = (- (s_ptr->store_item[pos]).scost);
+    if (st_ptr->store_item[pos].scost < 0) {
+	j = (- (st_ptr->store_item[pos]).scost);
 	j = j * chr_adj() / 100;
 	(void)sprintf(out_val, "%ld", (long) j);
     } else
 	(void)sprintf(out_val, "%9ld [Fixed]",
-		      (long) (s_ptr->store_item[pos]).scost);
+		      (long) (st_ptr->store_item[pos]).scost);
     prt(out_val, i + 5, 59);
 }
 
@@ -939,13 +939,13 @@ static void store_prt_gold(void)
  */
 static void display_store(int store_num, int cur_top)
 {
-    register store_type *s_ptr = &store[store_num];
+    register store_type *st_ptr = &store[store_num];
 
     /* Erase the screen */
     clear_screen();
 
 	/* Put the owner name */
-	put_str(owners[s_ptr->owner].owner_name, 3, 9);
+	put_str(owners[st_ptr->owner].owner_name, 3, 9);
     put_str("Item", 4, 3);
     if (!is_home) {
 	put_str("Asking Price", 4, 60);
@@ -998,16 +998,16 @@ static int get_store_item(int *com_val, cptr pmt, int i, int j)
  */
 static int increase_insults(int store_num)
 {
-    register store_type *s_ptr = &store[store_num];
+    register store_type *st_ptr = &store[store_num];
 
-    s_ptr->insult_cur++;
+    st_ptr->insult_cur++;
 
-    if (s_ptr->insult_cur > owners[s_ptr->owner].insult_max) {
+    if (st_ptr->insult_cur > owners[st_ptr->owner].insult_max) {
 	prt_comment4();
-	s_ptr->insult_cur = 0;
-	s_ptr->good_buy = 0;
-	s_ptr->bad_buy = 0;
-	s_ptr->store_open = turn + 2500 + randint(2500);
+	st_ptr->insult_cur = 0;
+	st_ptr->good_buy = 0;
+	st_ptr->bad_buy = 0;
+	st_ptr->store_open = turn + 2500 + randint(2500);
 	return (TRUE);
     }
 
@@ -1020,9 +1020,9 @@ static int increase_insults(int store_num)
  */
 static void decrease_insults(int store_num)
 {
-    register store_type *s_ptr = &store[store_num];
+    register store_type *st_ptr = &store[store_num];
 
-    if (s_ptr->insult_cur != 0) s_ptr->insult_cur--;
+    if (st_ptr->insult_cur != 0) st_ptr->insult_cur--;
 }
 
 
@@ -1139,7 +1139,7 @@ static int receive_offer(int store_num, cptr comment, s32b *new_offer,
 /*
  * Haggling routine					-RAK-	 
  */
-static int purchase_haggle(int store_num, s32b *price, inven_type *item)
+static int purchase_haggle(int store_num, s32b *price, inven_type *i_ptr)
 {
     s32b               max_sell, min_sell, max_buy;
     s32b               cost, cur_ask, final_ask, min_offer;
@@ -1150,18 +1150,18 @@ static int purchase_haggle(int store_num, s32b *price, inven_type *item)
     const char         *comment;
     vtype               out_val;
     int                 purchase, num_offer, final_flag, final = FALSE;
-    register store_type *s_ptr;
-    register owner_type *o_ptr;
+    register store_type *st_ptr;
+    register owner_type *ot_ptr;
 
     flag = FALSE;
     purchase = 0;
     *price = 0;
     final_flag = 0;
-    s_ptr = &store[store_num];
-    o_ptr = &owners[s_ptr->owner];
+    st_ptr = &store[store_num];
+    ot_ptr = &owners[st_ptr->owner];
 
     /* Determine the cost of the group of items */
-    cost = sell_price(store_num, &max_sell, &min_sell, item);
+    cost = sell_price(store_num, &max_sell, &min_sell, i_ptr);
 
     max_sell = max_sell * chr_adj() / 100;
     if (max_sell <= 0) max_sell = 1;
@@ -1171,10 +1171,10 @@ static int purchase_haggle(int store_num, s32b *price, inven_type *item)
 
     /* XXX This appears to be a hack.  See sell_price(). */
     /* cast max_inflate to signed so that subtraction works correctly */
-    max_buy = cost * (200 - (int)o_ptr->max_inflate) / 100;
+    max_buy = cost * (200 - (int)ot_ptr->max_inflate) / 100;
     if (max_buy <= 0) max_buy = 1;
 
-    min_per = o_ptr->haggle_per;
+    min_per = ot_ptr->haggle_per;
     max_per = min_per * 3;
 
     haggle_commands(1);
@@ -1285,7 +1285,7 @@ static int purchase_haggle(int store_num, s32b *price, inven_type *item)
 /*
  * Haggling routine					-RAK-	 
  */
-static int sell_haggle(int store_num, s32b *price, inven_type *item)
+static int sell_haggle(int store_num, s32b *price, inven_type *i_ptr)
 {
     s32b               max_sell = 0, max_buy = 0, min_buy = 0;
     s32b               cost = 0, cur_ask = 0, final_ask = 0, min_offer = 0;
@@ -1296,8 +1296,8 @@ static int sell_haggle(int store_num, s32b *price, inven_type *item)
     register int        flag, loop_flag;
     const char          *comment;
     vtype               out_val;
-    register store_type *s_ptr;
-    register owner_type *o_ptr;
+    register store_type *st_ptr;
+    register owner_type *ot_ptr;
     int                 sell, num_offer, final_flag, final = FALSE;
 
     flag = FALSE;
@@ -1305,30 +1305,30 @@ static int sell_haggle(int store_num, s32b *price, inven_type *item)
     *price = 0;
     final_flag = 0;
 
-    s_ptr = &store[store_num];
-    cost = item_value(item);
+    st_ptr = &store[store_num];
+    cost = item_value(i_ptr);
     if (cost < 1) {
 	sell = 3;
 	flag = TRUE;
     } else {
-	o_ptr = &owners[s_ptr->owner];
+	ot_ptr = &owners[st_ptr->owner];
 
     cost = cost * (200 - chr_adj()) / 100;
-    cost = cost * (200 - rgold_adj[o_ptr->owner_race][p_ptr->prace]) / 100;
+    cost = cost * (200 - rgold_adj[ot_ptr->owner_race][p_ptr->prace]) / 100;
 
     if (cost < 1) cost = 1;
-    max_sell = cost * o_ptr->max_inflate / 100;
+    max_sell = cost * ot_ptr->max_inflate / 100;
 
     /* cast max_inflate to signed so that subtraction works correctly */
-    max_buy = cost * (200 - (int)o_ptr->max_inflate) / 100;
-    min_buy = cost * (200 - (int)o_ptr->min_inflate) / 100;
+    max_buy = cost * (200 - (int)ot_ptr->max_inflate) / 100;
+    min_buy = cost * (200 - (int)ot_ptr->min_inflate) / 100;
     if (min_buy < 1) min_buy = 1;
     if (max_buy < 1)  max_buy = 1;
 
     if (min_buy < max_buy) min_buy = max_buy;
-    min_per = o_ptr->haggle_per;
+    min_per = ot_ptr->haggle_per;
     max_per = min_per * 3;
-    max_gold = o_ptr->max_cost;
+    max_gold = ot_ptr->max_cost;
     }
     if (!flag) {
     haggle_commands(-1);
@@ -1463,21 +1463,21 @@ static int store_purchase(int store_num, int *cur_top)
     s32b               price;
     register int        i, choice;
     bigvtype            out_val, tmp_str;
-    register store_type *s_ptr;
+    register store_type *st_ptr;
     inven_type          sell_obj;
     register inven_type *r_ptr;
     int                 item_val, item_new, purchase;
 
     purchase = FALSE;
-    s_ptr = &store[store_num];
+    st_ptr = &store[store_num];
 /* i == number of objects shown on screen	 */
     if (*cur_top == 12)
-	i = s_ptr->store_ctr - 1 - 12;
-    else if (s_ptr->store_ctr > 11)
+	i = st_ptr->store_ctr - 1 - 12;
+    else if (st_ptr->store_ctr > 11)
 	i = 11;
     else
-	i = s_ptr->store_ctr - 1;
-    if (s_ptr->store_ctr < 1) {
+	i = st_ptr->store_ctr - 1;
+    if (st_ptr->store_ctr < 1) {
 	if (is_home)
 	    msg_print("Your home is empty.");
 	else
@@ -1488,11 +1488,11 @@ static int store_purchase(int store_num, int *cur_top)
 			    is_home ? "Which item do you want to take? " :
 			    "Which item are you interested in? ", 0, i)) {
 	item_val = item_val + *cur_top;	/* TRUE item_val	 */
-	take_one_item(&sell_obj, &s_ptr->store_item[item_val]);
+	take_one_item(&sell_obj, &st_ptr->store_item[item_val]);
 	if (inven_check_num(&sell_obj)) {
 	    if (!is_home) {
-		if (s_ptr->store_item[item_val].scost > 0) {
-		    price = s_ptr->store_item[item_val].scost;
+		if (st_ptr->store_item[item_val].scost > 0) {
+		    price = st_ptr->store_item[item_val].scost;
 		    choice = 0;
 		} else
 		    choice = purchase_haggle(store_num, &price, &sell_obj);
@@ -1502,7 +1502,7 @@ static int store_purchase(int store_num, int *cur_top)
 			decrease_insults(store_num);
 			p_ptr->au -= price;
 			item_new = inven_carry(&sell_obj);
-			i = s_ptr->store_ctr;
+			i = st_ptr->store_ctr;
 			store_destroy(store_num, item_val, TRUE);
 			inventory[item_new].inscrip[0] = 0;
 			objdes(tmp_str, &inventory[item_new], TRUE);
@@ -1510,12 +1510,12 @@ static int store_purchase(int store_num, int *cur_top)
 				      tmp_str, item_new + 'a');
 			prt(out_val, 0, 0);
 			check_strength();
-			if (*cur_top >= s_ptr->store_ctr) {
+			if (*cur_top >= st_ptr->store_ctr) {
 			    *cur_top = 0;
 			    display_inventory(store_num, *cur_top);
 			} else {
-			    r_ptr = &s_ptr->store_item[item_val];
-			    if (i == s_ptr->store_ctr) {
+			    r_ptr = &st_ptr->store_item[item_val];
+			    if (i == st_ptr->store_ctr) {
 				if (r_ptr->scost < 0) {
 				    r_ptr->scost = price;
 				    display_cost(store_num, item_val);
@@ -1536,21 +1536,21 @@ static int store_purchase(int store_num, int *cur_top)
 		    purchase = TRUE;
 	    } else {		   /* is_home... */
 		item_new = inven_carry(&sell_obj);
-		i = s_ptr->store_ctr;
+		i = st_ptr->store_ctr;
 		store_destroy(store_num, item_val, TRUE);
 		objdes(tmp_str, &inventory[item_new], TRUE);
 		(void)sprintf(out_val, "You have %s (%c)",
 			      tmp_str, item_new + 'a');
 		prt(out_val, 0, 0);
 		check_strength();
-		if (*cur_top >= s_ptr->store_ctr) {
+		if (*cur_top >= st_ptr->store_ctr) {
 		    *cur_top = 0;
 		    display_inventory(store_num, *cur_top);
 		} else {
-		    r_ptr = &s_ptr->store_item[item_val];
+		    r_ptr = &st_ptr->store_item[item_val];
 
 #if 0
-			if (i == s_ptr->store_ctr) {
+			if (i == st_ptr->store_ctr) {
 				if (r_ptr->scost < 0) {
 					r_ptr->scost = price;
 					display_cost(store_num, item_val);
@@ -1772,14 +1772,14 @@ void enter_store(int store_num)
     int                  cur_top, tmp_chr;
     char                 command;
     register int         exit_flag;
-    register store_type *s_ptr;
+    register store_type *st_ptr;
 
-    s_ptr = &store[store_num];
+    st_ptr = &store[store_num];
     if (store_num == 7)
 	is_home = TRUE;
     else
 	is_home = FALSE;
-    if (s_ptr->store_open < turn) {
+    if (st_ptr->store_open < turn) {
 	exit_flag = FALSE;
 	cur_top = 0;
 	display_store(store_num, cur_top);
@@ -1791,7 +1791,7 @@ void enter_store(int store_num)
 		switch (command) {
 		  case 'b':
 		    if (cur_top == 0)
-			if (s_ptr->store_ctr > 12) {
+			if (st_ptr->store_ctr > 12) {
 			    cur_top = 12;
 			    display_inventory(store_num, cur_top);
 			} else
@@ -1870,24 +1870,24 @@ void enter_store(int store_num)
 void store_maint(void)
 {
     register int         i, j;
-    register store_type *s_ptr;
+    register store_type *st_ptr;
 
 
     /* Maintain every store (except the home) */
     for (i = 0; i < (MAX_STORES - 1); i++) {
-	s_ptr = &store[i];
-	s_ptr->insult_cur = 0;
-	if (s_ptr->store_ctr >= STORE_MIN_INVEN) {
+	st_ptr = &store[i];
+	st_ptr->insult_cur = 0;
+	if (st_ptr->store_ctr >= STORE_MIN_INVEN) {
 	    j = randint(STORE_TURN_AROUND);
-	    if (s_ptr->store_ctr >= STORE_MAX_INVEN)
-		j += 1 + s_ptr->store_ctr - STORE_MAX_INVEN;
+	    if (st_ptr->store_ctr >= STORE_MAX_INVEN)
+		j += 1 + st_ptr->store_ctr - STORE_MAX_INVEN;
 	    while (--j >= 0)
-		store_destroy(i, randint((int)s_ptr->store_ctr) - 1, FALSE);
+		store_destroy(i, randint((int)st_ptr->store_ctr) - 1, FALSE);
 	}
-	if (s_ptr->store_ctr <= STORE_MAX_INVEN) {
+	if (st_ptr->store_ctr <= STORE_MAX_INVEN) {
 	    j = randint(STORE_TURN_AROUND);
-	    if (s_ptr->store_ctr < STORE_MIN_INVEN)
-		j += STORE_MIN_INVEN - s_ptr->store_ctr;
+	    if (st_ptr->store_ctr < STORE_MIN_INVEN)
+		j += STORE_MIN_INVEN - st_ptr->store_ctr;
 	    while (--j >= 0)
 		store_create(i);
 	}
@@ -1917,7 +1917,7 @@ void store_init(void)
 
 	/* No items yet */
 	for (k = 0; k < STORE_INVEN_MAX; k++) {
-	    invcopy(&s_ptr->store_item[k], OBJ_NOTHING);
+	    invcopy(&st_ptr->store_item[k], OBJ_NOTHING);
 	    st_ptr->store_item[k].scost = 0;
 	}
     }
