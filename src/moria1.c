@@ -117,9 +117,11 @@ cptr describe_use(int i)
  * The parameter col gives a column at which to start, but if the display does
  * not fit, it may be moved left.  The return value is the left edge used. 
  */
-int show_inven(int r1, int r2, int weight, int col, int (*test) ())
+int show_inven(int r1, int r2, int weight, int col)
 {
     register int i, j, k;
+    register inven_type	*i_ptr;
+
     int          len, l, lim;
     bigvtype     tmp_val;
     vtype        out_val[23];
@@ -134,11 +136,13 @@ int show_inven(int r1, int r2, int weight, int col, int (*test) ())
 
     for (k = 0, i = r1; i <= r2; i++) {
 
-	if (test) {
-	    if ((*test) (k_list[inventory[i].k_idx].tval)) {
+	i_ptr = &inventory[i];
+
+	/* Is this item acceptable? */
+	if (item_tester_hook && (!(*item_tester_hook)(i_ptr))) continue;
 
 	/* Describe the object, enforce max length */
-	objdes(tmp_val, &inventory[i], TRUE);
+	objdes(tmp_val, i_ptr, TRUE);
 	tmp_val[lim] = 0;  /* Truncate if too long. */
 
 	(void)sprintf(out_val[i], "  %c) %s", 'a' + i, tmp_val);
@@ -156,7 +160,7 @@ int show_inven(int r1, int r2, int weight, int col, int (*test) ())
 	k++;
     }
 
-	} else {
+	else {
 
 	    objdes(tmp_val, &inventory[i], TRUE);
 	    tmp_val[lim] = 0;	   /* Truncate if too long. */
@@ -279,7 +283,7 @@ int show_equip(int weight, int col)
 /*
  * Get the ID of an item and return the CTR value of it	-RAK-	 
  */
-int get_item(int *com_val, cptr pmt, int i, int j, int (*test) ())
+int get_item(int *com_val, cptr pmt, int i, int j)
 {
     vtype        out_val;
     char         which;
@@ -317,7 +321,7 @@ int get_item(int *com_val, cptr pmt, int i, int j, int (*test) ())
 	do {
 	    if (redraw) {
 		if (i_scr > 0)
-		    (void)show_inven(i, j, FALSE, 80, test);
+		    (void)show_inven(i, j, FALSE, 80);
 		else
 		    (void)show_equip(FALSE, 80);
 	    }
@@ -893,11 +897,11 @@ static void inven_screen(int new_scr)
 	    line = 7;
 	    break;
 	  case INVEN_SCR:
-	    scr_left = show_inven(0, inven_ctr - 1, show_inven_weight, scr_left, 0);
+	    scr_left = show_inven(0, inven_ctr - 1, show_inven_weight, scr_left);
 	    line = inven_ctr;
 	    break;
 	  case WEAR_SCR:
-	    scr_left = show_inven(wear_low, wear_high, show_inven_weight, scr_left, 0);
+	    scr_left = show_inven(wear_low, wear_high, show_inven_weight, scr_left);
 	    line = wear_high - wear_low + 1;
 	    break;
 	  case EQUIP_SCR:

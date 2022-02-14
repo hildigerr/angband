@@ -633,7 +633,7 @@ void cast()
     }
 
     /* Get a spell book */
-    if (get_item(&item_val, "Use which spell-book?", i, j, 0)) {
+    if (get_item(&item_val, "Use which spell-book?", i, j)) {
 
     /* Ask for a spell */
     result = cast_spell("Cast which spell?", item_val, &choice, &chance);

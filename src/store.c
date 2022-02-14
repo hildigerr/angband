@@ -15,21 +15,6 @@
 
 
 
-#ifndef MAC
-/* MPW doesn't seem to handle this very well, so replace store_buy array
-   with a function call on mac */
-/* functions defined in sets.c */
-extern int general_store(), armory(), weaponsmith(), temple(),
-  alchemist(), magic_shop();
-
-int blackmarket();
-int home();
-
-/* Each store will buy only certain items, based on TVAL */
-int (*store_buy[MAX_STORES])() = {
-       general_store, armory, weaponsmith, temple, alchemist, magic_shop,
-       blackmarket, home};
-#endif
 
 static cptr comment1[14] = {
     "Done! ", "Accepted! ", "Fine. ", "Agreed! ", "Ok. ", "Taken! ",
@@ -584,6 +569,127 @@ static int store_check_num(inven_type *i_ptr)
 		store_check = FALSE;
 	}
     return (store_check);
+}
+
+
+
+
+/*
+ * Determine if the current store will purchase the given item (by tval)
+ */
+static bool store_will_buy(inven_type *i_ptr)
+{
+    int tval = i_ptr->tval;
+
+    /* The Home accepts anything */
+    if (store_num == 7) return (TRUE);
+
+    /* Switch on the store */
+    switch (store_num) {
+
+      /* General Store */
+      case 0:
+
+	/* Analyze the type */
+	switch (tval) {
+	  case TV_DIGGING:
+	  case TV_BOOTS:
+	  case TV_CLOAK:
+	  case TV_FOOD:
+	  case TV_FLASK:
+	  case TV_LITE:
+	  case TV_SPIKE:
+	    return (TRUE);
+	  default:
+	    return (FALSE);
+	}
+
+      /* Armoury */
+      case 1:
+
+	/* Analyze the type */
+	switch (tval) {
+	  case TV_BOOTS:
+	  case TV_GLOVES:
+	  case TV_HELM:
+	  case TV_SHIELD:
+	  case TV_SOFT_ARMOR:
+	  case TV_HARD_ARMOR:
+	    return (TRUE);
+	  default:
+	    return (FALSE);
+	}
+
+      /* Weapon Shop */
+      case 2:
+
+	/* Analyze the type */
+	switch (tval) {
+	  case TV_SHOT:
+	  case TV_BOLT:
+	  case TV_ARROW:
+	  case TV_BOW:
+	  case TV_HAFTED:
+	  case TV_POLEARM:
+	  case TV_SWORD:
+	    return (TRUE);
+	  default:
+	    return (FALSE);
+	}
+
+      /* Temple */
+      case 3:
+
+	/* Analyze the type */
+	switch (tval) {
+	  case TV_PRAYER_BOOK:
+	  case TV_SCROLL1:
+	  case TV_SCROLL2:
+	  case TV_POTION1:
+	  case TV_POTION2:
+	  case TV_HAFTED:
+	    return (TRUE);
+	  default:
+	    return (FALSE);
+	}
+
+      /* Alchemist */
+      case 4:
+
+	/* Analyze the type */
+	switch (tval) {
+	  case TV_SCROLL1:
+	  case TV_SCROLL2:
+	  case TV_POTION1:
+	  case TV_POTION2:
+	    return (TRUE);
+	  default:
+	    return (FALSE);
+	}
+
+      /* Magic Shop */
+      case 5:
+
+	/* Analyze the type */
+	switch (tval) {
+	  case TV_MAGIC_BOOK:
+	  case TV_AMULET:
+	  case TV_RING:
+	  case TV_STAFF:
+	  case TV_WAND:
+	  case TV_ROD:
+	  case TV_SCROLL1:
+	  case TV_SCROLL2:
+	  case TV_POTION1:
+	  case TV_POTION2:
+	    return (TRUE);
+	  default:
+	    return (FALSE);
+	}
+    }
+
+    /* Black Market buys everything */
+    return (TRUE);
 }
 
 
@@ -1562,6 +1668,8 @@ static int store_purchase(int *cur_top)
  */
 static int store_sell(int *cur_top)
 {
+    register inven_type *i_ptr;
+
     int                 item_val, item_pos;
     s32b               price;
     bigvtype            out_val, tmp_str;
@@ -1569,28 +1677,33 @@ static int store_sell(int *cur_top)
     int			sell, choice, test;
 
     sell = FALSE;
-    for (item_val = 0, test = FALSE; (!test && (item_val < inven_ctr)); item_val++)
-	test = (*store_buy[store_num]) (inventory[item_val].tval);
+    for (item_val = 0, test = FALSE; (!test && (item_val < inven_ctr)); item_val++) {
+	i_ptr = &inventory[item_val];
+	test = store_will_buy(i_ptr);
+    }
 
     /* Check for stuff */
     if (inven_ctr < 1) {
 	msg_print("You aren't carrying anything.");
+	return (FALSE);
     }
 
     /* Check for stuff */
-    else if (!test) {
+    if (!test) {
 	msg_print("You have nothing that I want.");
+	return (FALSE);
     }
 
-    else if (get_item(&item_val, "Which one? ", 0,
-		      inven_ctr - 1, (store_buy[store_num]))) {
+    /* Semi-Hack -- Get an item */
+    item_tester_hook = store_will_buy;
+    if (get_item(&item_val, "Which one? ", 0, inven_ctr - 1)) {
 	take_one_item(&sold_obj, &inventory[item_val]);
 	objdes(tmp_str, &sold_obj, TRUE);
 	if (store_num != 7) {
 	    (void)sprintf(out_val, "Selling %s (%c)", tmp_str, item_val + 'a');
 	    msg_print(out_val);
 	}
-	if ((*store_buy[store_num]) (sold_obj.tval))
+	if (store_will_buy(&sold_obj))
 	    if (store_check_num(&sold_obj)) {
 		if (store_num != 7) {
 		    choice = sell_haggle(&price, &sold_obj);

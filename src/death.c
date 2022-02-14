@@ -657,7 +657,7 @@ static void print_tomb()
 	    if (inven_ctr) {
 		msg_print("You are carrying:");
 		clear_from(1);
-		(void)show_inven(0, inven_ctr - 1, TRUE, 0, 0);
+		(void)show_inven(0, inven_ctr - 1, TRUE, 0);
 		msg_print(NULL);
 	    }
           msg_print ("You have stored at your house:");

@@ -446,6 +446,12 @@ extern char	moriatop[], moriasav[];
 #endif
 
 
+/* 
+ * Here is a "hook" used during calls to "get_item()" and "show_inven()".
+ */
+extern bool (*item_tester_hook)(inven_type*);
+
+
 /*
  * The FILEPATH's to various files, see "arrays.c"
  */
@@ -739,12 +745,12 @@ void get_coin_type(monster_race *);
 void move_rec(int, int, int, int);
 void py_bonuses(struct inven_type *, int);
 void calc_bonuses(void);
-int show_inven(int, int, int, int, int ());
+int show_inven(int, int, int, int);
 int show_equip(int, int);
 void inven_takeoff(int, int);
 int verify(cptr , int);
 void inven_command(int);
-int get_item(int *, cptr, int, int, int ());
+int get_item(int *, cptr, int, int);
 void light_room(int, int);
 void move_light(int, int, int, int);
 int test_hit(int, int, int, int, int);
@@ -843,16 +849,6 @@ int set_plasma_destroy(inven_type *);
 int set_meteor_destroy(inven_type *);
 int set_holy_destroy(inven_type *);
 int set_mana_destroy(inven_type *);
-int general_store(int);
-int armory(int);
-int weaponsmith(int);
-int temple(int);
-int alchemist(int);
-int magic_shop(int);
-
-#ifdef MAC
-int store_buy(int, int);
-#endif
 
 /* signals.c */
 void signals_ignore_tstp(void);

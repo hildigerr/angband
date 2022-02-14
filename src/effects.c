@@ -141,7 +141,7 @@ void do_cmd_eat_food(void)
     }
 
     /* Get a food */
-    if (!get_item(&item_val, "Eat what?", i1, i2, 0)) return;
+    if (!get_item(&item_val, "Eat what?", i1, i2)) return;
 
     /* Get the item */
     i_ptr = &inventory[item_val];
@@ -393,7 +393,7 @@ void do_cmd_quaff_potion(void)
     }
 
     /* Get a potion */
-    if (!get_item(&item_val, "Quaff which potion?", i1, i2, 0)) return;
+    if (!get_item(&item_val, "Quaff which potion?", i1, i2)) return;
 
     /* Get the item */
     i_ptr = &inventory[item_val];
@@ -955,7 +955,7 @@ void do_cmd_read_scroll(void)
     }
 
     /* Get a scroll */
-    if (!get_item(&item_val, "Read which scroll?", i1, i2, 0)) return; {
+    if (!get_item(&item_val, "Read which scroll?", i1, i2)) return; {
 
     /* Get the item */
     i_ptr = &inventory[item_val];
@@ -1464,7 +1464,7 @@ void do_cmd_aim_wand(void)
     }
     
     /* Get a wand */
-    if (!get_item(&item_val, "Aim which wand?", i1, i2, 0)) return;
+    if (!get_item(&item_val, "Aim which wand?", i1, i2)) return;
     
     /* Get the item */
     i_ptr = &inventory[item_val];
@@ -1744,7 +1744,7 @@ void do_cmd_use_staff(void)
     }
     
     /* Get a staff */
-    if (!get_item(&item_val, "Use which staff?", i1, i2, 0)) return;
+    if (!get_item(&item_val, "Use which staff?", i1, i2)) return;
     
     /* Get the item */
     i_ptr = &inventory[item_val];
@@ -2032,7 +2032,7 @@ void do_cmd_zap_rod(void)
     }
 
     /* Get a rod */
-    if (!get_item(&item_val, "Activate which rod?", i1, i2, 0)) return;
+    if (!get_item(&item_val, "Activate which rod?", i1, i2)) return;
     
     /* Get the item */
     i_ptr = &inventory[item_val];

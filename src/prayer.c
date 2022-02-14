@@ -32,7 +32,7 @@ void pray()
 	msg_print("But you are not carrying anything!");
     else if (!find_range(TV_PRAYER_BOOK, TV_NEVER, &i, &j))
 	msg_print("You are not carrying any Holy Books!");
-    else if (get_item(&item_val, "Use which Holy Book?", i, j, 0)) {
+    else if (get_item(&item_val, "Use which Holy Book?", i, j)) {
 	result = cast_spell("Recite which prayer?", item_val, &choice, &chance);
 	if (result < 0)
 	    msg_print("You don't know any prayers in that book.");

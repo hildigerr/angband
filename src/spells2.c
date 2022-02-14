@@ -2284,7 +2284,7 @@ int ident_spell()
     cptr pmt = "Item you wish identified?";
 
     ident = FALSE;
-    switch (get_item(&item_val, pmt, 0, INVEN_ARRAY_SIZE, 0))
+    switch (get_item(&item_val, pmt, 0, INVEN_ARRAY_SIZE))
 	{
 	case TRUE:
 	    ident = TRUE;
@@ -2468,7 +2468,7 @@ int recharge(int num)
 
     /* Ask for it */
     else if (get_item(&item_val, "Recharge which item?",
-		      (k > -1) ? k : i, (j > -1) ? j : l, 0)) {
+		      (k > -1) ? k : i, (j > -1) ? j : l)) {
 
     /* Get the item */
     i_ptr = &inventory[item_val];

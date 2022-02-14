@@ -65,7 +65,7 @@ static void do_cmd_browse(void)
     }
 
     /* Get a book or stop checking */
-    if (!get_item(&item_val, "Which Book?", i, k, 0)) return;
+    if (!get_item(&item_val, "Which Book?", i, k)) return;
 
     flag = FALSE;
 

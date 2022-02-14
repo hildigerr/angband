@@ -1630,7 +1630,7 @@ void do_cmd_fire()
 	free_turn_flag = TRUE;
     }
 
-    else if (get_item(&item_val, "Fire/Throw which one?", 0, inven_ctr - 1, 0)) {
+    else if (get_item(&item_val, "Fire/Throw which one?", 0, inven_ctr - 1)) {
 
 	inven_type *t = &inventory[item_val];
 	
@@ -1985,7 +1985,7 @@ void scribe_object(void)
     vtype out_val, tmp_str;
 
     if (inven_ctr > 0 || equip_ctr > 0) {
-	if (get_item(&item_val, "Which one? ", 0, INVEN_ARRAY_SIZE, 0)) {
+	if (get_item(&item_val, "Which one? ", 0, INVEN_ARRAY_SIZE)) {
 	    objdes(tmp_str, &inventory[item_val], TRUE);
 	    (void)sprintf(out_val, "Inscribing %s.", tmp_str);
 	    msg_print(out_val);
