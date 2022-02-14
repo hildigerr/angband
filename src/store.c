@@ -1789,18 +1789,25 @@ void enter_store(int which)
     /* Interact with player */
     for (exit_flag = FALSE; !exit_flag; ) {
 
-	    move_cursor(20, 9);
 
 	/* Assume player has read his messages */
 	msg_flag = FALSE;
 
-	    if (get_com(NULL, &command)) {
+	    /* Cursor to the prompt location */
+	    move_cursor(21, 9);
+
+	    /* Get a command */
+	    command = inkey();
 	
 	/* Check the charisma */
 	tmp_chr = p_ptr->use_stat[A_CHR];
 	
 	/* Process the command */
 	switch (command) {
+
+	    case ESCAPE:
+		exit_flag = TRUE;
+		break;
 
 	    case 'b':
 		if (st_ptr->store_ctr <= 12) {
@@ -1863,9 +1870,7 @@ void enter_store(int which)
 	    display_inventory(cur_top);
 	}
 
-	    } else
-		exit_flag = TRUE;
-	}
+    }
 
 
     /* Forget the store number, etc */
