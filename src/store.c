@@ -349,6 +349,13 @@ static int store_num = 0;
  */
 static store_type *st_ptr = NULL;
 
+/*
+ * We store the current "owner type" here so everyone can access it
+ */
+static owner_type *ot_ptr = NULL;
+
+
+
 
 
 /*
@@ -509,14 +516,14 @@ static s32b sell_price(s32b *max_sell, s32b *min_sell, inven_type *i_ptr)
     if ((i_ptr->cost > 0) && (i > 0)) {
 
     /* Get the "basic value" */
-    i = i * rgold_adj[owners[st_ptr->owner].owner_race][p_ptr->prace] / 100;
+    i = i * rgold_adj[ot_ptr->owner_race][p_ptr->prace] / 100;
 
     /* Nothing becomes free */
     if (i < 1) i = 1;
 
     /* Extract min/max sell values */
-    *max_sell = i * owners[st_ptr->owner].max_inflate / 100;
-    *min_sell = i * owners[st_ptr->owner].min_inflate / 100;
+    *max_sell = i * ot_ptr->max_inflate / 100;
+    *min_sell = i * ot_ptr->min_inflate / 100;
 
     /* Black market is always over-priced */
     if (store_num == 6) {
@@ -1139,13 +1146,11 @@ static int purchase_haggle(s32b *price, inven_type *i_ptr)
     const char         *comment;
     vtype               out_val;
     int                 purchase, num_offer, final_flag, final = FALSE;
-    register owner_type *ot_ptr;
 
     flag = FALSE;
     purchase = 0;
     *price = 0;
     final_flag = 0;
-    ot_ptr = &owners[st_ptr->owner];
 
     /* Determine the cost of the group of items */
     cost = sell_price(&max_sell, &min_sell, i_ptr);
@@ -1283,7 +1288,6 @@ static int sell_haggle(s32b *price, inven_type *i_ptr)
     register int        flag, loop_flag;
     const char          *comment;
     vtype               out_val;
-    register owner_type *ot_ptr;
     int                 sell, num_offer, final_flag, final = FALSE;
 
     flag = FALSE;
@@ -1296,7 +1300,6 @@ static int sell_haggle(s32b *price, inven_type *i_ptr)
 	sell = 3;
 	flag = TRUE;
     } else {
-	ot_ptr = &owners[st_ptr->owner];
 
     cost = cost * (200 - chr_adj()) / 100;
     cost = cost * (200 - rgold_adj[ot_ptr->owner_race][p_ptr->prace]) / 100;
@@ -1761,8 +1764,9 @@ void enter_store(int which)
     /* Save the store number */
     store_num = which;
 
-    /* Save the store pointer */
+    /* Save the store and owner pointers */
     st_ptr = &store[store_num];
+    ot_ptr = &owners[st_ptr->owner];
 
     if (st_ptr->store_open < turn) {
 	exit_flag = FALSE;
@@ -1849,6 +1853,7 @@ void enter_store(int which)
     /* Forget the store number, etc */
     store_num = 0;
     st_ptr = NULL;
+    ot_ptr = NULL;    
 }
 
 
@@ -1869,6 +1874,10 @@ void store_maint(void)
 
 	/* Activate that store */
 	st_ptr = &store[store_num];
+
+	/* Activate the new owner */
+	ot_ptr = &owners[st_ptr->owner];
+
 
 	/* Store keeper forgives the player */
 	st_ptr->insult_cur = 0;
@@ -1894,6 +1903,7 @@ void store_maint(void)
     /* Turn it all off */
     store_num = 0;
     st_ptr = NULL;
+    ot_ptr = NULL;
 }
 
 
@@ -1902,9 +1912,7 @@ void store_maint(void)
  */
 void store_init(void)
 {
-    register int         i, j, k;
-
-    i = MAX_OWNERS / MAX_STORES;
+    register int         j, k;
 
     /* Build each store */
     for (j = 0; j < MAX_STORES; j++) {
@@ -1915,7 +1923,15 @@ void store_init(void)
 	/* Activate that store */
 	st_ptr = &store[store_num];
 
-	st_ptr->owner = MAX_STORES * (randint(i) - 1) + j;
+
+	/* Pick an owner */
+	st_ptr->owner = MAX_STORES * rand_int(MAX_OWNERS / MAX_STORES) + j;
+
+	/* Activate the new owner */
+	ot_ptr = &owners[st_ptr->owner];
+
+
+	/* Initialize the store */
 	st_ptr->insult_cur = 0;
 	st_ptr->store_open = 0;
 	st_ptr->store_ctr = 0;
@@ -1933,5 +1949,6 @@ void store_init(void)
     /* Turn it all off */
     store_num = 0;
     st_ptr = NULL;
+    ot_ptr = NULL;
 }
 
