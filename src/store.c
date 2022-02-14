@@ -14,7 +14,6 @@
 
 
 
-int is_home = FALSE;		/* Are we in our home? */
 
 #ifndef MAC
 /* MPW doesn't seem to handle this very well, so replace store_buy array
@@ -562,7 +561,7 @@ static int store_check_num(inven_type *i_ptr)
 	}
 
 /* But, wait.  If at home, don't let player drop 25th item, or he will lose it. -CFT */
-    if (is_home && (i_ptr->sval >= ITEM_SINGLE_STACK_MIN))
+    if (store_num == 7 && (i_ptr->sval >= ITEM_SINGLE_STACK_MIN))
 	for (i = 0; i < st_ptr->store_ctr; i++) {
 	    j_ptr = &st_ptr->store_item[i];
 	/*
@@ -593,7 +592,7 @@ static void store_carry(int *ipos, inven_type *i_ptr)
     int stacked = FALSE; /* from inven_carry() -CFT */
 
     *ipos = -1;
-    if (sell_price(&icost, &dummy, i_ptr) > 0 || is_home)
+    if (sell_price(&icost, &dummy, i_ptr) > 0 || store_num == 7)
     {
 	st_ptr = &store[store_num];
 	item_val = 0;
@@ -821,7 +820,7 @@ static void display_commands(void)
 {
     /* Display the legal commands */
     prt("You may:", 20, 0);
-    if (is_home) {
+    if (store_num == 7) {
 	prt(" g) Get an item.               b) Browse through your home.", 21, 0);
 	prt(" d) Drop an item.              i/e/t/w/x) Inventory/Equipment Lists.",
 	    22, 0);
@@ -872,7 +871,7 @@ static void display_inventory(int start)
     while (start < stop) {
 	i_ptr = &st_ptr->store_item[start];
 	x = i_ptr->number;
-	if (!is_home) {
+	if (store_num != 7) {
 	    if ((i_ptr->sval >= ITEM_SINGLE_STACK_MIN)
 		&& (i_ptr->sval <= ITEM_SINGLE_STACK_MAX))
 		i_ptr->number = 1;
@@ -881,7 +880,7 @@ static void display_inventory(int start)
 	i_ptr->number = x;
 	(void)sprintf(out_val2, "%c) %s", 'a' + i, out_val1);
 	prt(out_val2, i + 5, 0);
-	if (!is_home) {
+	if (store_num != 7) {
 	    x = st_ptr->store_item[start].scost;
 	    if (x < 0) {
 		s32b               value = (s32b)(-x);
@@ -954,7 +953,7 @@ static void display_store(int cur_top)
 	/* Put the owner name */
 	put_str(owners[st_ptr->owner].owner_name, 3, 9);
     put_str("Item", 4, 3);
-    if (!is_home) {
+    if (store_num != 7) {
 	put_str("Asking Price", 4, 60);
 	store_prt_gold();
     }
@@ -1485,19 +1484,19 @@ static int store_purchase(int *cur_top)
     else
 	i = st_ptr->store_ctr - 1;
     if (st_ptr->store_ctr < 1) {
-	if (is_home)
+	if (store_num == 7)
 	    msg_print("Your home is empty.");
 	else
 	    msg_print("I am currently out of stock.");
     }
 /* Get the item number to be bought		 */
     else if (get_store_item(&item_val,
-			    is_home ? "Which item do you want to take? " :
+			    store_num == 7 ? "Which item do you want to take? " :
 			    "Which item are you interested in? ", 0, i)) {
 	item_val = item_val + *cur_top;	/* TRUE item_val	 */
 	take_one_item(&sell_obj, &st_ptr->store_item[item_val]);
 	if (inven_check_num(&sell_obj)) {
-	    if (!is_home) {
+	    if (store_num != 7) {
 		if (st_ptr->store_item[item_val].scost > 0) {
 		    price = st_ptr->store_item[item_val].scost;
 		    choice = 0;
@@ -1606,13 +1605,13 @@ static int store_sell(int *cur_top)
 		      inven_ctr - 1, (store_buy[store_num]))) {
 	take_one_item(&sold_obj, &inventory[item_val]);
 	objdes(tmp_str, &sold_obj, TRUE);
-	if (!is_home) {
+	if (store_num != 7) {
 	    (void)sprintf(out_val, "Selling %s (%c)", tmp_str, item_val + 'a');
 	    msg_print(out_val);
 	}
 	if ((*store_buy[store_num]) (sold_obj.tval))
 	    if (store_check_num(&sold_obj)) {
-		if (!is_home) {
+		if (store_num != 7) {
 		    choice = sell_haggle(&price, &sold_obj);
 		    if (choice == 0) {
 			s32b               cost;
@@ -1753,13 +1752,13 @@ static int store_sell(int *cur_top)
 		    display_commands();
 		}
 	    } else {
-		if (is_home)
+		if (store_num == 7)
 		    msg_print("Your home is full.");
 		else
 		    msg_print("I have not the room in my store to keep it.");
 	    }
 	else {
-	    if (is_home)
+	    if (store_num == 7)
 		msg_print("Whoops! Cock up.");
 	    else
 		msg_print("I do not buy such items.");
@@ -1785,10 +1784,7 @@ void enter_store(int which)
     store_num = which;
 
     st_ptr = &store[store_num];
-    if (store_num == 7)
-	is_home = TRUE;
-    else
-	is_home = FALSE;
+
     if (st_ptr->store_open < turn) {
 	exit_flag = FALSE;
 	cur_top = 0;
@@ -1835,25 +1831,25 @@ void enter_store(int which)
 		    free_turn_flag = FALSE;	/* No free moves here. -CJS- */
 		    break;
 		  case 'g':
-		    if (!is_home)
+		    if (store_num != 7)
 			bell();
 		    else
 			exit_flag = store_purchase(&cur_top);
 		    break;
 		  case 'p':
-		    if (is_home)
+		    if (store_num == 7)
 			bell();
 		    else
 			exit_flag = store_purchase(&cur_top);
 		    break;
 		  case 's':
-		    if (is_home)
+		    if (store_num == 7)
 			bell();
 		    else
 			exit_flag = store_sell(&cur_top);
 		    break;
 		  case 'd':
-		    if (!is_home)
+		    if (store_num != 7)
 			bell();
 		    else
 			exit_flag = store_sell(&cur_top);
@@ -1933,6 +1929,10 @@ void store_init(void)
 
     /* Build each store */
     for (j = 0; j < MAX_STORES; j++) {
+
+	/* Save the store index */
+	store_num = j;
+
 	st_ptr = &store[j];
 	st_ptr->owner = MAX_STORES * (randint(i) - 1) + j;
 	st_ptr->insult_cur = 0;
@@ -1947,5 +1947,9 @@ void store_init(void)
 	    st_ptr->store_item[k].scost = 0;
 	}
     }
+
+
+    /* Turn it all off */
+    store_num = 0;
 }
 
