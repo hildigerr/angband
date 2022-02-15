@@ -707,7 +707,6 @@ void display_player(void);
 void get_name(void);
 void change_name(void);
 void inven_destroy(int);
-void take_one_item(struct inven_type *, struct inven_type *);
 int weight_limit(void);
 int inven_check_num(inven_type *);
 int inven_check_weight(struct inven_type *);

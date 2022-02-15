@@ -2665,19 +2665,6 @@ void inven_destroy(int item_val)
 }
 
 
-/*
- * Copies the object in the second argument over the first argument. However,
- * the second always gets a number of one except for ammo etc. 
- */
-void take_one_item(inven_type *s_ptr, inven_type *i_ptr)
-{
-    *s_ptr = *i_ptr;
-    if ((s_ptr->number > 1) && (s_ptr->sval >= ITEM_SINGLE_STACK_MIN)
-	&& (s_ptr->sval <= ITEM_SINGLE_STACK_MAX))
-	s_ptr->number = 1;
-}
-
-
 /* return FALSE if picking up an object would change the players speed */
 int inven_check_weight(inven_type *i_ptr)
 {

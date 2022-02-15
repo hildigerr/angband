@@ -1555,7 +1555,7 @@ static int sell_haggle(s32b *price, inven_type *i_ptr)
 static int store_purchase(int *cur_top)
 {
     s32b               price;
-    register int        i, choice;
+    register int        i, amt, choice;
     bigvtype            out_val, tmp_str;
     inven_type          sell_obj;
     register inven_type *r_ptr;
@@ -1581,7 +1581,17 @@ static int store_purchase(int *cur_top)
 			    store_num == 7 ? "Which item do you want to take? " :
 			    "Which item are you interested in? ", 0, i)) {
 	item_val = item_val + *cur_top;	/* TRUE item_val	 */
-	take_one_item(&sell_obj, &st_ptr->store_item[item_val]);
+
+    /* Get the actual item */
+    i_ptr = &st_ptr->store_item[item_val];
+
+    /* Assume the player wants just one of them */
+    amt = 1;
+
+    /* Hack -- get a "sample" object */
+    sell_obj = *i_ptr;
+    sell_obj.number = amt;
+
 	if (inven_check_num(&sell_obj)) {
 	    if (store_num != 7) {
 		if (st_ptr->store_item[item_val].scost > 0) {
@@ -1671,6 +1681,7 @@ static int store_sell(int *cur_top)
     register inven_type *i_ptr;
 
     int                 item_val, item_pos;
+    int			amt;
     s32b               price;
     bigvtype            out_val, tmp_str;
     inven_type          sold_obj;
@@ -1706,8 +1717,14 @@ static int store_sell(int *cur_top)
 	msg_print("I do not buy such items.");
 	return (FALSE);
     }
+    
+    /* Assume the player wants only one item */
+    amt = 1;
 
-	take_one_item(&sold_obj, &inventory[item_val]);
+    /* Create the object to be sold (structure copy) */
+    sold_obj = *i_ptr;
+    sold_obj.number = amt;
+
 	objdes(tmp_str, &sold_obj, TRUE);
 	if (store_num != 7) {
 	    (void)sprintf(out_val, "Selling %s (%c)", tmp_str, item_val + 'a');
@@ -1729,8 +1746,11 @@ static int store_sell(int *cur_top)
 
 		    /* identify object in inventory to set object_ident */
 			identify(&item_val);
-		    /* retake sold_obj so that it will be identified */
-			take_one_item(&sold_obj, &inventory[item_val]);
+
+	    /* retake sold_obj so that it will be identified */
+	    sold_obj = *i_ptr;
+	    sold_obj.number = amt;
+
 		    /* call known2 for store item, so charges/pluses are known */
 			known2(&sold_obj);
 
@@ -1828,8 +1848,6 @@ static int store_sell(int *cur_top)
 		    erase_line(1, 0);
 		    display_commands();
 		} else {	   /* is_home... */
-		/* retake sold_obj so that it will be identified */
-		    take_one_item(&sold_obj, &inventory[item_val]);
 		    inven_destroy(item_val);
 		    objdes(tmp_str, &sold_obj, TRUE);
 		    (void)sprintf(out_val, "You drop %s", tmp_str);
