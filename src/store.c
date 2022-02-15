@@ -1680,12 +1680,13 @@ static int store_sell(int *cur_top)
 {
     register inven_type *i_ptr;
 
+    int			sell, choice;
     int                 item_val, item_pos;
-    int			amt;
-    s32b               price;
-    bigvtype            out_val, tmp_str;
+    int			test, amt;
+    s32b               price, value, dummy;
+
     inven_type          sold_obj;
-    int			sell, choice, test;
+    bigvtype            out_val, tmp_str;
 
     sell = FALSE;
     for (item_val = 0, test = FALSE; (!test && (item_val < inven_ctr)); item_val++) {
@@ -1735,14 +1736,12 @@ static int store_sell(int *cur_top)
 		if (store_num != 7) {
 		    choice = sell_haggle(&price, &sold_obj);
 		    if (choice == 0) {
-			s32b               cost;
-			s32b               dummy;
 
 			prt_comment1();
 			decrease_insults();
 			p_ptr->au += price;
 
-			cost = item_value(&sold_obj);
+			value = item_value(&sold_obj);
 
 		    /* identify object in inventory to set object_ident */
 			identify(&item_val);
@@ -1776,7 +1775,7 @@ static int store_sell(int *cur_top)
 				msg_print("Arrgghh!!!!");
 				break;
 			    }
-			} else if (dummy < cost) {
+			} else if (dummy < value) {
 			    switch (randint(3)) {
 			      case 1:
 				msg_print("You hear someone swearing...");
@@ -1788,7 +1787,7 @@ static int store_sell(int *cur_top)
 				msg_print("The shopkeeper glares at you.");
 				break;
 			    }
-			} else if (dummy > (4 * cost)) {
+			} else if (dummy > (4 * value)) {
 			    switch (randint(4)) {
 			      case 1:
 				msg_print("You hear someone jumping for joy!");
@@ -1803,7 +1802,7 @@ static int store_sell(int *cur_top)
 				msg_print("The shopkeeper smiles gleefully!");
 				break;
 			    }
-			} else if (dummy > cost) {
+			} else if (dummy > value) {
 			    switch (randint(4)) {
 			      case 1:
 				msg_print("You hear someone giggling");
