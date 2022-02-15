@@ -1696,14 +1696,24 @@ static int store_sell(int *cur_top)
 
     /* Semi-Hack -- Get an item */
     item_tester_hook = store_will_buy;
-    if (get_item(&item_val, "Which one? ", 0, inven_ctr - 1)) {
+    if (!get_item(&item_val, "Which one? ", 0, inven_ctr - 1)) return (FALSE);
+    
+    /* Get the actual item */
+    i_ptr = &inventory[item_val];
+
+    /* Be sure the shop-keeper will buy those */
+    if (!store_will_buy(i_ptr)) {
+	msg_print("I do not buy such items.");
+	return (FALSE);
+    }
+
 	take_one_item(&sold_obj, &inventory[item_val]);
 	objdes(tmp_str, &sold_obj, TRUE);
 	if (store_num != 7) {
 	    (void)sprintf(out_val, "Selling %s (%c)", tmp_str, item_val + 'a');
 	    msg_print(out_val);
 	}
-	if (store_will_buy(&sold_obj))
+
 	    if (store_check_num(&sold_obj)) {
 		if (store_num != 7) {
 		    choice = sell_haggle(&price, &sold_obj);
@@ -1851,13 +1861,7 @@ static int store_sell(int *cur_top)
 		else
 		    msg_print("I have not the room in my store to keep it.");
 	    }
-	else {
-	    if (store_num == 7)
-		msg_print("Whoops! Cock up.");
-	    else
-		msg_print("I do not buy such items.");
-	}
-    }
+
 
     /* Return result */
     return (sell);
