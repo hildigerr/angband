@@ -1674,6 +1674,84 @@ static int store_purchase(int *cur_top)
 
 
 /*
+ * Let a shop-keeper React to a purchase
+ *
+ * We paid "price", it was worth "value", and we thought it was worth "guess"
+ */
+static void purchase_analyze(s32b price, s32b value, s32b guess)
+{
+    /* Item was worthless, but we bought it */
+    if (dummy == 0) {
+	switch (randint(4)) {
+	  case 1:
+	    msg_print("You hear a shriek!");
+	    break;
+	  case 2:
+	    msg_print("You bastard!");
+	    break;
+	  case 3:
+	    msg_print("You hear sobs coming from the back of the store...");
+	    break;
+	  case 4:
+	    msg_print("Arrgghh!!!!");
+	    break;
+	}
+    }
+
+    /* Item was cheaper than we thought, and we paid more than necessary */
+    else if (dummy < value) {
+	switch (randint(3)) {
+	  case 1:
+	    msg_print("You hear someone swearing...");
+	    break;
+	  case 2:
+	    msg_print("You hear mumbled curses...");
+	    break;
+	  case 3:
+	    msg_print("The shopkeeper glares at you.");
+	    break;
+	}
+    }
+
+    /* Item was a great bargain, and we got away with it */
+    else if (dummy > (4 * value)) {
+	switch (randint(4)) {
+	  case 1:
+	    msg_print("You hear someone jumping for joy!");
+	    break;
+	  case 2:
+	    msg_print("Yipee!");
+	    break;
+	  case 3:
+	    msg_print("I think I'll retire!");
+	    break;
+	  case 4:
+	    msg_print("The shopkeeper smiles gleefully!");
+	    break;
+	}
+    }
+
+    /* Item was a good bargain, and we got away with it */
+    else if (dummy > value) {
+	switch (randint(4)) {
+	  case 1:
+	    msg_print("You hear someone giggling");
+	    break;
+	  case 2:
+	    msg_print("You've made my day!");
+	    break;
+	  case 3:
+	    msg_print("What a fool!");
+	    break;
+	  case 4:
+	    msg_print("The shopkeeper laughs loudly!");
+	    break;
+	}
+    }
+}
+
+
+/*
  * Sell an item to the store	-RAK-	 
  */
 static int store_sell(int *cur_top)
@@ -1780,64 +1858,7 @@ static int store_sell(int *cur_top)
 	    msg_print(out_val);
 
 	    /* Analyze the prices (and comment verbally) */
-			if (dummy == 0) {
-			    switch (randint(4)) {
-			      case 1:
-				msg_print("You hear a shriek!");
-				break;
-			      case 2:
-				msg_print("You bastard!");
-				break;
-			      case 3:
-				msg_print("You hear sobs coming from the back of the store...");
-				break;
-			      case 4:
-				msg_print("Arrgghh!!!!");
-				break;
-			    }
-			} else if (dummy < value) {
-			    switch (randint(3)) {
-			      case 1:
-				msg_print("You hear someone swearing...");
-				break;
-			      case 2:
-				msg_print("You hear mumbled curses...");
-				break;
-			      case 3:
-				msg_print("The shopkeeper glares at you.");
-				break;
-			    }
-			} else if (dummy > (4 * value)) {
-			    switch (randint(4)) {
-			      case 1:
-				msg_print("You hear someone jumping for joy!");
-				break;
-			      case 2:
-				msg_print("Yipee!");
-				break;
-			      case 3:
-				msg_print("I think I'll retire!");
-				break;
-			      case 4:
-				msg_print("The shopkeeper smiles gleefully!");
-				break;
-			    }
-			} else if (dummy > value) {
-			    switch (randint(4)) {
-			      case 1:
-				msg_print("You hear someone giggling");
-				break;
-			      case 2:
-				msg_print("You've made my day!");
-				break;
-			      case 3:
-				msg_print("What a fool!");
-				break;
-			      case 4:
-				msg_print("The shopkeeper laughs loudly!");
-				break;
-			    }
-			}
+	    purchase_analyze(price, value, dummy);
 
 	    store_carry(&item_pos, &sold_obj);
 
