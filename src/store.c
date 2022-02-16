@@ -1271,7 +1271,6 @@ static int purchase_haggle(s32b *price, inven_type *i_ptr)
     vtype               out_val;
     int                 purchase, num, final_flag, final = FALSE;
 
-    flag = FALSE;
     *price = 0;
     purchase = 0;
     final_flag = 0;
@@ -1319,7 +1318,9 @@ static int purchase_haggle(s32b *price, inven_type *i_ptr)
 	cur_ask = min_sell;
 
     }
-    do {
+
+    for (flag = FALSE; !flag; ) {
+
 	do {
 	    loop_flag = TRUE;
 	    (void)sprintf(out_val, "%s :  %ld", pmt, (long)cur_ask);
@@ -1389,7 +1390,6 @@ static int purchase_haggle(s32b *price, inven_type *i_ptr)
 	    }
 	}
     }
-    while (!flag);
 
     /* update bargaining info */
     if (purchase == 0) updatebargain(*price, final_ask);
@@ -1414,16 +1414,14 @@ static int sell_haggle(s32b *price, inven_type *i_ptr)
     int                 sell, num, final_flag, final = FALSE;
     vtype               out_val;
 
-    flag = FALSE;
     sell = 0;
     *price = 0;
     final_flag = 0;
 
     cost = item_value(i_ptr);
-    if (cost < 1) {
-	sell = 3;
-	flag = TRUE;
-    } else {
+
+    /* Instantly react to worthless items */
+    if (cost <= 0) return (3);
 
     cost = cost * (200 - chr_adj()) / 100;
     cost = cost * (200 - rgold_adj[ot_ptr->owner_race][p_ptr->prace]) / 100;
@@ -1441,8 +1439,7 @@ static int sell_haggle(s32b *price, inven_type *i_ptr)
     min_per = ot_ptr->haggle_per;
     max_per = min_per * 3;
     max_gold = ot_ptr->max_cost;
-    }
-    if (!flag) {
+
     haggle_commands(-1);
 
     if (max_buy > max_gold) {
@@ -1485,8 +1482,9 @@ static int sell_haggle(s32b *price, inven_type *i_ptr)
 
     if (cur_ask < 1) cur_ask = 1;
 
+    for (flag = FALSE; !flag; ) {
+
 	do {
-	    do {
 	    loop_flag = TRUE;
 	    (void)sprintf(out_val, "%s :  %ld", pmt, (long)cur_ask);
 	    put_str(out_val, 1, 0);
@@ -1553,8 +1551,6 @@ static int sell_haggle(s32b *price, inven_type *i_ptr)
 		prt_comment3(cur_ask, last_offer, final_flag);
 	    }
 	}
-    }
-	while (!flag);
     }
 
     /* update bargaining info */
