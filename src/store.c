@@ -1740,33 +1740,46 @@ static int store_sell(int *cur_top)
     }
 
 
-		if (store_num != 7) {
-		    choice = sell_haggle(&price, &sold_obj);
-		    if (choice == 0) {
+    /* Real store */
+    if (store_num != 7) {
 
-			prt_comment1();
-			decrease_insults();
-			p_ptr->au += price;
+	/* Haggle for it */
+	choice = sell_haggle(&price, &sold_obj);
+
+	/* Sold... */
+	if (choice == 0) {
+
+	    prt_comment1();
+	    decrease_insults();
+
+	    /* Get some money */
+	    p_ptr->au += price;
 
 			value = item_value(&sold_obj);
 
-		    /* identify object in inventory to set object_ident */
-			identify(&item_val);
+	    /* identify object in inventory to set object_ident */
+	    identify(&item_val);
 
-	    /* retake sold_obj so that it will be identified */
+	    /* Re-Create the now-identified object that was sold */
 	    sold_obj = *i_ptr;
 	    sold_obj.number = amt;
 
-		    /* call known2 for store item, so charges/pluses are known */
-			known2(&sold_obj);
+	    /* call known2 for store item, so charges/pluses are known */
+	    known2(&sold_obj);
 
-			dummy = item_value(&sold_obj);
+	    /* Get the "apparent value" */
+	    dummy = item_value(&sold_obj);
 
-			inven_destroy(item_val);
-			objdes(tmp_str, &sold_obj, TRUE);
-			(void)sprintf(out_val, "You've sold %s. ", tmp_str);
-			msg_print(out_val);
+	    inven_destroy(item_val);
 
+	    /* Get the description all over again */
+	    objdes(tmp_str, &sold_obj, TRUE);
+
+	    /* Describe the result (in message buffer) */
+	    (void)sprintf(out_val, "You've sold %s. ", tmp_str);
+	    msg_print(out_val);
+
+	    /* Analyze the prices (and comment verbally) */
 			if (dummy == 0) {
 			    switch (randint(4)) {
 			      case 1:
@@ -1825,8 +1838,11 @@ static int store_sell(int *cur_top)
 				break;
 			    }
 			}
-			store_carry(&item_pos, &sold_obj);
-			check_strength();
+
+	    store_carry(&item_pos, &sold_obj);
+
+	    check_strength();
+
 			if (item_pos >= 0) {
 			    if (item_pos < 12)
 				if (*cur_top < 12)
@@ -1842,25 +1858,40 @@ static int store_sell(int *cur_top)
 				display_inventory(*cur_top);
 			    }
 			}
-			store_prt_gold();
-		    } else if (choice == 2)
-			sell = TRUE;
-		    else if (choice == 3) {
-			msg_print("How dare you!");
-			msg_print("I will not buy that!");
-			sell = increase_insults();
-		    }
+
+	    store_prt_gold();
+
+	}
+
+	else if (choice == 2) {
+	    sell = TRUE;
+	}
+
+	else if (choice == 3) {
+	    msg_print("How dare you!");
+	    msg_print("I will not buy that!");
+	    sell = increase_insults();
+	}
 		/* Less intuitive, but looks better here than in sell_haggle. */
 		    erase_line(1, 0);
 		    display_commands();
-		} else {	   /* is_home... */
-		    inven_destroy(item_val);
-		    objdes(tmp_str, &sold_obj, TRUE);
-		    (void)sprintf(out_val, "You drop %s", tmp_str);
-		    msg_print(out_val);
-		    store_carry(&item_pos, &sold_obj);
-		    check_strength();
-		    if (item_pos >= 0) {
+    }
+
+    /* Player is at home */
+    else {
+
+	inven_destroy(item_val);
+
+	/* Describe */
+	objdes(tmp_str, &sold_obj, TRUE);	
+	(void)sprintf(out_val, "You drop %s", tmp_str);
+	msg_print(out_val);
+
+	store_carry(&item_pos, &sold_obj);
+
+	check_strength();
+
+	if (item_pos >= 0) {
 			if (item_pos < 12)
 			    if (*cur_top < 12)
 				display_inventory(item_pos);
@@ -1874,11 +1905,11 @@ static int store_sell(int *cur_top)
 			    *cur_top = 12;
 			    display_inventory(*cur_top);
 			}
-		    }
+	}
 		/* Less intuitive, but looks better here than in sell_haggle. */
 		    erase_line(1, 0);
 		    display_commands();
-		}
+    }
 
 
     /* Return result */
