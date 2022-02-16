@@ -1681,7 +1681,7 @@ static int store_purchase(int *cur_top)
 static void purchase_analyze(s32b price, s32b value, s32b guess)
 {
     /* Item was worthless, but we bought it */
-    if (dummy == 0) {
+    if ((value <= 0) && (price > value)) {
 	switch (randint(4)) {
 	  case 1:
 	    msg_print("You hear a shriek!");
@@ -1699,7 +1699,7 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
     }
 
     /* Item was cheaper than we thought, and we paid more than necessary */
-    else if (dummy < value) {
+    else if ((value < guess) && (price > value)) {
 	switch (randint(3)) {
 	  case 1:
 	    msg_print("You hear someone swearing...");
@@ -1714,7 +1714,7 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
     }
 
     /* Item was a great bargain, and we got away with it */
-    else if (dummy > (4 * value)) {
+    else if ((value > (4 * guess)) && (price < value)) {
 	switch (randint(4)) {
 	  case 1:
 	    msg_print("You hear someone jumping for joy!");
@@ -1732,7 +1732,7 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
     }
 
     /* Item was a good bargain, and we got away with it */
-    else if (dummy > value) {
+    else if ((value > guess) && (price < value)) {
 	switch (randint(4)) {
 	  case 1:
 	    msg_print("You hear someone giggling");
@@ -1833,7 +1833,8 @@ static int store_sell(int *cur_top)
 	    p_ptr->au += price;
 	    store_prt_gold();
 
-			value = item_value(&sold_obj);
+	    /* Get the "apparent value" */
+	    dummy = item_value(&sold_obj);
 
 	    /* identify object in inventory to set object_ident */
 	    identify(&item_val);
@@ -1845,8 +1846,8 @@ static int store_sell(int *cur_top)
 	    /* call known2 for store item, so charges/pluses are known */
 	    known2(&sold_obj);
 
-	    /* Get the "apparent value" */
-	    dummy = item_value(&sold_obj);
+	    /* Get the "actual value" */
+	    value = item_value(&sold_obj);
 
 	    inven_destroy(item_val);
 
