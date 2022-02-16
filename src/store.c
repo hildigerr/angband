@@ -1580,14 +1580,6 @@ static int store_purchase(int *cur_top)
 
     purchase = FALSE;
 
-/* i == number of objects shown on screen	 */
-    if (*cur_top == 12)
-	i = st_ptr->store_ctr - 1 - 12;
-    else if (st_ptr->store_ctr > 11)
-	i = 11;
-    else
-	i = st_ptr->store_ctr - 1;
-
     /* Empty? */
     if (st_ptr->store_ctr <= 0) {
 	if (store_num == 7) msg_print("Your home is empty.");
@@ -1595,10 +1587,19 @@ static int store_purchase(int *cur_top)
 	return (FALSE);
     }
 
+
+    /* Find the number of objects on this and following pages */
+    i = (st_ptr->store_ctr - *cur_top);
+
+    /* And then restrict it to the current page */
+    if (i > 12) i = 12;
+
+    /* Prompt */
+    sprintf(out_val, "Which item %s? ",
+	    (store_num == 7) ? "do you want to take" : "are you interested in");
+
     /* Get the item number to be bought */
-    if (!get_store_item(&item_val,
-			    store_num == 7 ? "Which item do you want to take? " :
-			    "Which item are you interested in? ", 0, i)) return (FALSE);
+    if (!get_store_item(&item_val, out_val, 0, i-1)) return (FALSE);
 
     /* Get the actual index */
     item_val = item_val + *cur_top;
