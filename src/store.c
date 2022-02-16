@@ -1587,19 +1587,21 @@ static int store_purchase(int *cur_top)
 	i = 11;
     else
 	i = st_ptr->store_ctr - 1;
+
+    /* Empty? */
     if (st_ptr->store_ctr <= 0) {
-	if (store_num == 7)
-	    msg_print("Your home is empty.");
-	else
-	    msg_print("I am currently out of stock.");
+	if (store_num == 7) msg_print("Your home is empty.");
+	else msg_print("I am currently out of stock.");
 	return (FALSE);
     }
-/* Get the item number to be bought		 */
+
+    /* Get the item number to be bought */
     if (!get_store_item(&item_val,
 			    store_num == 7 ? "Which item do you want to take? " :
 			    "Which item are you interested in? ", 0, i)) return (FALSE);
 
-	item_val = item_val + *cur_top;	/* TRUE item_val	 */
+    /* Get the actual index */
+    item_val = item_val + *cur_top;
 
     /* Get the actual item */
     i_ptr = &st_ptr->store_item[item_val];
@@ -1617,77 +1619,124 @@ static int store_purchase(int *cur_top)
 	return (FALSE);
     }
 
-	    if (store_num != 7) {
-		if (i_ptr->scost > 0) {
-		    price = i_ptr->scost;
-		    choice = 0;
-		} else
-		    choice = purchase_haggle(&price, &sell_obj);
-		if (choice == 0) {
-		    if (p_ptr->au >= price) {
-			prt_comment1();
-			decrease_insults();
-			p_ptr->au -= price;
-			item_new = inven_carry(&sell_obj);
-			i = st_ptr->store_ctr;
-			store_destroy(item_val, TRUE);
-			inventory[item_new].inscrip[0] = 0;
-			objdes(tmp_str, &inventory[item_new], TRUE);
-			(void)sprintf(out_val, "You have %s (%c)",
-				      tmp_str, item_new + 'a');
-			prt(out_val, 0, 0);
-			check_strength();
-			if (*cur_top >= st_ptr->store_ctr) {
-			    *cur_top = 0;
-			    display_inventory(*cur_top);
-			} else {
-			    if (i == st_ptr->store_ctr) {
-				if (i_ptr->scost < 0) {
-				    i_ptr->scost = price;
-				    display_cost(item_val);
-				}
-			    } else
-				display_inventory(item_val);
-			    store_prt_gold();
-			}
-		    } else {
-			if (increase_insults())
-			    purchase = TRUE;
-			else {
-			    prt_comment1();
-			    msg_print("Liar!  You have not the gold!");
-			}
-		    }
-		} else if (choice == 2)
-		    purchase = TRUE;
-	    } else {		   /* is_home... */
+    /* Attempt to buy it */
+    if (store_num != 7) {
+
+	/* Fixed price, quick buy */
+	if (i_ptr->scost > 0) {
+
+	    price = i_ptr->scost;
+	    /* Assume accept */
+	    choice = 0;
+	}
+
+	/* Haggle for it */
+	else {
+
+	    /* Haggle for a final price */
+	    choice = purchase_haggle(&price, &sell_obj);
+	}
+
+	/* Player wants it */
+	if (choice == 0) {
+
+	    /* Player can afford it */
+	    if (p_ptr->au >= price) {
+
+		prt_comment1();
+		decrease_insults();
+
+		/* Spend the money */
+		p_ptr->au -= price;
+
 		item_new = inven_carry(&sell_obj);
+
+		/* Note how many slots the store used to have */
 		i = st_ptr->store_ctr;
+
 		store_destroy(item_val, TRUE);
+		inventory[item_new].inscrip[0] = 0;
+
+		/* Describe the final result */
 		objdes(tmp_str, &inventory[item_new], TRUE);
 		(void)sprintf(out_val, "You have %s (%c)",
 			      tmp_str, item_new + 'a');
 		prt(out_val, 0, 0);
+
 		check_strength();
+
 		if (*cur_top >= st_ptr->store_ctr) {
 		    *cur_top = 0;
 		    display_inventory(*cur_top);
 		} else {
-
-#if 0
-			if (i == st_ptr->store_ctr) {
-				if (i_ptr->scost < 0) {
-					i_ptr->scost = price;
-					display_cost(item_val);
-				}
-			} else 
-#endif
-		    display_inventory(item_val);
+		    if (i == st_ptr->store_ctr) {
+			if (i_ptr->scost < 0) {
+			    i_ptr->scost = price;
+			    display_cost(item_val);
+			}
+		    } else
+			display_inventory(item_val);
+		    store_prt_gold();
 		}
 	    }
+
+	    else {
+
+		if (increase_insults()) {
+		    purchase = TRUE;
+		}
+		else {
+		    prt_comment1();
+		    msg_print("Liar!  You have not the gold!");
+		}
+	    }
+	}
+
+	else if (choice == 2) {
+	    purchase = TRUE;
+	}
+    }
+
+    /* Home is much easier */
+    else {
+
+	/* Carry the item */
+	item_new = inven_carry(&sell_obj);
+
+	/* Take note if we take the last one */
+	i = st_ptr->store_ctr;
+
+	store_destroy(item_val, TRUE);
+
+	/* Describe just the result */
+	objdes(tmp_str, &inventory[item_new], TRUE);
+	(void)sprintf(out_val, "You have %s (%c)",
+		      tmp_str, item_new + 'a');
+	prt(out_val, 0, 0);
+
+	check_strength();
+
+	if (*cur_top >= st_ptr->store_ctr) {
+	    *cur_top = 0;
+	    display_inventory(*cur_top);
+	} else {
+
+#if 0
+		if (i == st_ptr->store_ctr) {
+			if (i_ptr->scost < 0) {
+				i_ptr->scost = price;
+				display_cost(item_val);
+			}
+		} else 
+#endif
+	    display_inventory(item_val);
+	}
+    }
 	/* Less intuitive, but looks better here than in purchase_haggle. */
 	    display_commands();
 	    erase_line(1, 0);
+
+    /* Return the result */
     return (purchase);
 }
 
