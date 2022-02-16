@@ -1587,16 +1587,18 @@ static int store_purchase(int *cur_top)
 	i = 11;
     else
 	i = st_ptr->store_ctr - 1;
-    if (st_ptr->store_ctr < 1) {
+    if (st_ptr->store_ctr <= 0) {
 	if (store_num == 7)
 	    msg_print("Your home is empty.");
 	else
 	    msg_print("I am currently out of stock.");
+	return (FALSE);
     }
 /* Get the item number to be bought		 */
-    else if (get_store_item(&item_val,
+    if (!get_store_item(&item_val,
 			    store_num == 7 ? "Which item do you want to take? " :
-			    "Which item are you interested in? ", 0, i)) {
+			    "Which item are you interested in? ", 0, i)) return (FALSE);
+
 	item_val = item_val + *cur_top;	/* TRUE item_val	 */
 
     /* Get the actual item */
@@ -1609,7 +1611,12 @@ static int store_purchase(int *cur_top)
     sell_obj = *i_ptr;
     sell_obj.number = amt;
 
-	if (inven_check_num(&sell_obj)) {
+    /* Hack -- require room in pack */
+    if (!inven_check_num(&sell_obj)) {
+	prt("You cannot carry that many different items.", 0, 0);
+	return (FALSE);
+    }
+
 	    if (store_num != 7) {
 		if (i_ptr->scost > 0) {
 		    price = i_ptr->scost;
@@ -1681,9 +1688,6 @@ static int store_purchase(int *cur_top)
 	/* Less intuitive, but looks better here than in purchase_haggle. */
 	    display_commands();
 	    erase_line(1, 0);
-	} else
-	    prt("You cannot carry that many different items.", 0, 0);
-    }
     return (purchase);
 }
 
