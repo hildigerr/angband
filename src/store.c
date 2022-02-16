@@ -1732,7 +1732,14 @@ static int store_sell(int *cur_top)
 	    msg_print(out_val);
 	}
 
-	    if (store_check_num(&sold_obj)) {
+    /* Is there room in the store (or the home?) */
+    if (!store_check_num(&sold_obj)) {
+	if (store_num == 7) msg_print("Your home is full.");
+	else msg_print("I have not the room in my store to keep it.");
+	return (FALSE);
+    }
+
+
 		if (store_num != 7) {
 		    choice = sell_haggle(&price, &sold_obj);
 		    if (choice == 0) {
@@ -1872,12 +1879,6 @@ static int store_sell(int *cur_top)
 		    erase_line(1, 0);
 		    display_commands();
 		}
-	    } else {
-		if (store_num == 7)
-		    msg_print("Your home is full.");
-		else
-		    msg_print("I have not the room in my store to keep it.");
-	    }
 
 
     /* Return result */
