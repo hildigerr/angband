@@ -958,22 +958,23 @@ static void haggle_commands(int typ)
 }
 
 
+
 /*
- * Displays a store's inventory			-RAK-	
+ * Re-displays a single store entry
  */
-static void display_inventory(int start)
+static void display_entry(int pos)
 {
+    register int         i;
     register inven_type *i_ptr;
-    register int         i, j, stop;
     bigvtype             out_val1, out_val2;
     s32b                x;
 
-    i = (start % 12);
-    stop = ((start / 12) + 1) * 12;
-    if (stop > st_ptr->store_ctr)
-	stop = st_ptr->store_ctr;
-    while (start < stop) {
-	i_ptr = &st_ptr->store_item[start];
+    /* Get the item */
+    i_ptr = &st_ptr->store_item[pos];
+
+    /* Get the "offset" */
+    i = (pos % 12);
+
 	x = i_ptr->number;
 	if (store_num != 7) {
 	    if ((i_ptr->sval >= ITEM_SINGLE_STACK_MIN)
@@ -985,7 +986,7 @@ static void display_inventory(int start)
 	(void)sprintf(out_val2, "%c) %s", 'a' + i, out_val1);
 	prt(out_val2, i + 5, 0);
 	if (store_num != 7) {
-	    x = st_ptr->store_item[start].scost;
+	    s32b x = st_ptr->store_item[start].scost;
 	    if (x < 0) {
 		s32b               value = (s32b)(-x);
 		
@@ -998,6 +999,22 @@ static void display_inventory(int start)
 	    }
 	    prt(out_val2, i + 5, 59);
 	}
+}
+
+
+/*
+ * Displays a store's inventory			-RAK-	 
+ */
+static void display_inventory(int start)
+{
+    register int         i, j, stop;
+
+    i = (start % 12);
+    stop = ((start / 12) + 1) * 12;
+    if (stop > st_ptr->store_ctr)
+	stop = st_ptr->store_ctr;
+    while (start < stop) {
+	display_entry(start);
 	i++;
 	start++;
     }
