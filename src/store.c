@@ -829,11 +829,12 @@ static void store_create(void)
     int                  cur_pos, dummy;
     inven_type		*i_ptr;
 
-    tries = 0;
     cur_pos = i_pop();
 
     object_level = OBJ_TOWN_LEVEL;
-    do {
+
+    for (tries = 0; tries < 4; tries++) {
+
 	if (store_num != 6) {
 	    i = store_choice[store_num][randint(STORE_CHOICES) - 1];
 	    invcopy(&i_list[cur_pos], i);
@@ -850,7 +851,6 @@ static void store_create(void)
 		    tries = 10;
 		}
 	    }
-	    tries++;
 	} else {
 	    i = get_obj_num(40, FALSE);
 	    invcopy(&i_list[cur_pos], i);
@@ -868,10 +868,8 @@ static void store_create(void)
 		    tries = 10;
 		}
 	    }
-	    tries++;
 	}
     }
-    while (tries <= 3);
     pusht(cur_pos);
 }
 
