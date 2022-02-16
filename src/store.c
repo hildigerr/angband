@@ -1726,12 +1726,6 @@ static int store_sell(int *cur_top)
     sold_obj = *i_ptr;
     sold_obj.number = amt;
 
-	objdes(tmp_str, &sold_obj, TRUE);
-	if (store_num != 7) {
-	    (void)sprintf(out_val, "Selling %s (%c)", tmp_str, item_val + 'a');
-	    msg_print(out_val);
-	}
-
     /* Is there room in the store (or the home?) */
     if (!store_check_num(&sold_obj)) {
 	if (store_num == 7) msg_print("Your home is full.");
@@ -1742,6 +1736,11 @@ static int store_sell(int *cur_top)
 
     /* Real store */
     if (store_num != 7) {
+
+	/* Describe the transaction */
+	objdes(tmp_str, &sold_obj, TRUE);	
+	(void)sprintf(out_val, "Selling %s (%c)", tmp_str, item_val + 'a');
+	msg_print(out_val);
 
 	/* Haggle for it */
 	choice = sell_haggle(&price, &sold_obj);
@@ -1754,6 +1753,7 @@ static int store_sell(int *cur_top)
 
 	    /* Get some money */
 	    p_ptr->au += price;
+	    store_prt_gold();
 
 			value = item_value(&sold_obj);
 
@@ -1858,9 +1858,6 @@ static int store_sell(int *cur_top)
 				display_inventory(*cur_top);
 			    }
 			}
-
-	    store_prt_gold();
-
 	}
 
 	else if (choice == 2) {
