@@ -1558,7 +1558,7 @@ static int store_purchase(int *cur_top)
     register int        i, amt, choice;
     bigvtype            out_val, tmp_str;
     inven_type          sell_obj;
-    register inven_type *r_ptr;
+    register inven_type *i_ptr;
     int                 item_val, item_new, purchase;
 
     purchase = FALSE;
@@ -1594,8 +1594,8 @@ static int store_purchase(int *cur_top)
 
 	if (inven_check_num(&sell_obj)) {
 	    if (store_num != 7) {
-		if (st_ptr->store_item[item_val].scost > 0) {
-		    price = st_ptr->store_item[item_val].scost;
+		if (i_ptr->scost > 0) {
+		    price = i_ptr->scost;
 		    choice = 0;
 		} else
 		    choice = purchase_haggle(&price, &sell_obj);
@@ -1617,10 +1617,9 @@ static int store_purchase(int *cur_top)
 			    *cur_top = 0;
 			    display_inventory(*cur_top);
 			} else {
-			    r_ptr = &st_ptr->store_item[item_val];
 			    if (i == st_ptr->store_ctr) {
-				if (r_ptr->scost < 0) {
-				    r_ptr->scost = price;
+				if (i_ptr->scost < 0) {
+				    i_ptr->scost = price;
 				    display_cost(item_val);
 				}
 			    } else
@@ -1650,12 +1649,11 @@ static int store_purchase(int *cur_top)
 		    *cur_top = 0;
 		    display_inventory(*cur_top);
 		} else {
-		    r_ptr = &st_ptr->store_item[item_val];
 
 #if 0
 			if (i == st_ptr->store_ctr) {
-				if (r_ptr->scost < 0) {
-					r_ptr->scost = price;
+				if (i_ptr->scost < 0) {
+					i_ptr->scost = price;
 					display_cost(item_val);
 				}
 			} else 
