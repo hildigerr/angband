@@ -1165,24 +1165,25 @@ static int haggle_insults(void)
 /*
  * Get a haggle
  */
-static int get_haggle(cptr comment, s32b *new_offer,
-		      int num_offer, s32b price, int final)
+static int get_haggle(cptr pmt, s32b *poffer,
+		      int num, s32b price, int final)
 {
+    static s32b        last_inc = 0L;
+
     register s32b      i;
-    vtype               out_val;
-    char                buf[100];
     register int        flag, clen;
     register char      *p;
-    static s32b        last_inc = 0L;
     int                 inc = FALSE;
+    vtype               out_val;
+    char                buf[100];
 
     flag = TRUE;
     if (last_inc && !final) {
-	(void)sprintf(buf, "%s [%c%ld] ", comment,
+	(void)sprintf(buf, "%s [%c%ld] ", pmt,
 			(last_inc < 0) ? '-' : '+', (last_inc < 0) ? (long)-last_inc : (long)last_inc);
     }
     else {
-	(void)sprintf(buf, "%s [accept] ", comment);
+	(void)sprintf(buf, "%s [accept] ", pmt);
     }
 
     clen = strlen(buf);
@@ -1196,7 +1197,7 @@ static int get_haggle(cptr comment, s32b *new_offer,
      * don't allow incremental haggling, if player has not made an offer yet 
      */
 	for (p = out_val; *p == ' '; p++);
-	if (flag && num_offer == 0 && (*p == '+' || *p == '-')) {
+	if (flag && num == 0 && (*p == '+' || *p == '-')) {
 	    msg_print("You haven't even made your first offer yet!");
 	    i = 0;
 	}
@@ -1208,11 +1209,11 @@ static int get_haggle(cptr comment, s32b *new_offer,
     if (flag) {
 	for (p = out_val; *p == ' '; p++);
 	if (*p == '+' || *p == '-')
-	    *new_offer += i, last_inc = i;
+	    *poffer += i, last_inc = i;
 	else if (inc)
-	    *new_offer += i, last_inc = i;
+	    *poffer += i, last_inc = i;
 	else
-	    *new_offer = i, last_inc = 0;
+	    *poffer = i, last_inc = 0;
     } else
 	erase_line(0, 0);
     return (flag);
@@ -1222,8 +1223,8 @@ static int get_haggle(cptr comment, s32b *new_offer,
 /*
  * Receive an offer (from the player)
  */
-static int receive_offer(cptr comment, s32b *new_offer,
-			 s32b last_offer, int num_offer, int factor,
+static int receive_offer(cptr pmt, s32b *poffer,
+			 s32b last_offer, int num, int factor,
 			 s32b price, int final)
 {
     register int flag, receive;
@@ -1231,8 +1232,8 @@ static int receive_offer(cptr comment, s32b *new_offer,
     receive = 0;
 
     for (flag = FALSE; !flag; ) {
-	if (get_haggle(comment, new_offer, num_offer, price, final)) {
-	    if (*new_offer * factor >= last_offer * factor) {
+	if (get_haggle(pmt, poffer, num, price, final)) {
+	    if ((*poffer) * factor >= last_offer * factor) {
 		flag = TRUE;
 	    }
 	    else if (haggle_insults()) {
@@ -1240,9 +1241,9 @@ static int receive_offer(cptr comment, s32b *new_offer,
 		flag = TRUE;
 	    }
 	    else {
-		/* new_offer rejected, reset so that */
+		/* offer rejected, reset offer so that */
 		/* incremental haggling works correctly */
-		(*new_offer) = last_offer;
+		(*poffer) = last_offer;
 	    }
 	}
 	else {
@@ -1262,17 +1263,17 @@ static int purchase_haggle(s32b *price, inven_type *i_ptr)
 {
     s32b               max_sell, min_sell, max_buy;
     s32b               cost, cur_ask, final_ask, min_offer;
-    s32b               last_offer, new_offer;
+    s32b               last_offer, offer;
     s32b               x1, x2, x3;
     s32b               min_per, max_per;
     register int        flag, loop_flag;
-    const char         *comment;
+    const char         *pmt;
     vtype               out_val;
-    int                 purchase, num_offer, final_flag, final = FALSE;
+    int                 purchase, num, final_flag, final = FALSE;
 
     flag = FALSE;
-    purchase = 0;
     *price = 0;
+    purchase = 0;
     final_flag = 0;
 
     /* Determine the cost of the group of items */
@@ -1298,11 +1299,11 @@ static int purchase_haggle(s32b *price, inven_type *i_ptr)
     final_ask = min_sell;
     min_offer = max_buy;
     last_offer = min_offer;
-    new_offer = 0;
+    offer = 0;
 
     /* this prevents incremental haggling on first try */
-    num_offer = 0;
-    comment = "Asking";
+    num = 0;
+    pmt = "Asking";
 
     /* Go right to final price if player has bargained well */
     if (noneedtobargain(final_ask)) {
@@ -1321,23 +1322,23 @@ static int purchase_haggle(s32b *price, inven_type *i_ptr)
     do {
 	do {
 	    loop_flag = TRUE;
-	    (void)sprintf(out_val, "%s :  %ld", comment, (long)cur_ask);
+	    (void)sprintf(out_val, "%s :  %ld", pmt, (long)cur_ask);
 	    put_str(out_val, 1, 0);
 	    purchase = receive_offer("What do you offer? ",
-				     &new_offer, last_offer, num_offer,
+				     &offer, last_offer, num,
 				     1, cur_ask, final);
 	    if (purchase != 0) {
 		flag = TRUE;
 	    }
 	    else {
-		if (new_offer > cur_ask) {
+		if (offer > cur_ask) {
 		    prt_comment6();
-		    /* rejected, reset new_offer for incremental haggling */
-		    new_offer = last_offer;
+		    /* rejected, reset offer for incremental haggling */
+		    offer = last_offer;
 		}
-		else if (new_offer == cur_ask) {
+		else if (offer == cur_ask) {
 		    flag = TRUE;
-		    *price = new_offer;
+		    *price = offer;
 		}
 		else {
 		    loop_flag = FALSE;
@@ -1347,7 +1348,7 @@ static int purchase_haggle(s32b *price, inven_type *i_ptr)
 	while (!flag && loop_flag);
 
 	if (!flag) {
-	    x1 = (new_offer - last_offer) * 100 / (cur_ask - last_offer);
+	    x1 = (offer - last_offer) * 100 / (cur_ask - last_offer);
 	    if (x1 < min_per) {
 		flag = haggle_insults();
 		if (flag) purchase = 2;
@@ -1357,7 +1358,7 @@ static int purchase_haggle(s32b *price, inven_type *i_ptr)
 		if (x1 < max_per) x1 = max_per;
 	    }
 	    x2 = x1 + randint(5) - 3;
-	    x3 = ((cur_ask - new_offer) * x2 / 100) + 1;
+	    x3 = ((cur_ask - offer) * x2 / 100) + 1;
 	    /* don't let the price go up */
 	    if (x3 < 0) x3 = 0;
 	    cur_ask -= x3;
@@ -1365,7 +1366,7 @@ static int purchase_haggle(s32b *price, inven_type *i_ptr)
 	    if (cur_ask < final_ask) {
 		final = TRUE;
 		cur_ask = final_ask;
-		comment = "Final Offer";
+		pmt = "Final Offer";
 		final_flag++;
 		if (final_flag > 3) {
 		    if (increase_insults()) purchase = 2;
@@ -1373,13 +1374,13 @@ static int purchase_haggle(s32b *price, inven_type *i_ptr)
 		    flag = TRUE;
 		}
 	    }
-	    else if (new_offer >= cur_ask) {
+	    else if (offer >= cur_ask) {
 		flag = TRUE;
-		*price = new_offer;
+		*price = offer;
 	    }
 	    if (!flag) {
-		last_offer = new_offer;
-		num_offer++;	   /* enable incremental haggling */
+		last_offer = offer;
+		num++;	   /* enable incremental haggling */
 		erase_line(1, 0);
 		(void)sprintf(out_val, "Your last offer : %ld",
 			      (long)last_offer);
@@ -1404,14 +1405,14 @@ static int sell_haggle(s32b *price, inven_type *i_ptr)
 {
     s32b               max_sell = 0, max_buy = 0, min_buy = 0;
     s32b               cost = 0, cur_ask = 0, final_ask = 0, min_offer = 0;
-    s32b               last_offer = 0, new_offer = 0;
+    s32b               last_offer = 0, offer = 0;
     s32b               max_gold = 0;
     s32b               x1, x2, x3;
     s32b               min_per, max_per;
     register int        flag, loop_flag;
-    const char          *comment;
+    const char          *pmt;
+    int                 sell, num, final_flag, final = FALSE;
     vtype               out_val;
-    int                 sell, num_offer, final_flag, final = FALSE;
 
     flag = FALSE;
     sell = 0;
@@ -1447,7 +1448,7 @@ static int sell_haggle(s32b *price, inven_type *i_ptr)
     if (max_buy > max_gold) {
 	final_flag = 1;
 	final = TRUE;
-	comment = "Final Offer";
+	pmt = "Final Offer";
 	cur_ask = max_gold;
 	final_ask = max_gold;
 	msg_print("I am sorry, but I have not the money to afford such a fine item.");
@@ -1456,7 +1457,7 @@ static int sell_haggle(s32b *price, inven_type *i_ptr)
 	cur_ask = max_buy;
 	final_ask = min_buy;
 	if (final_ask > max_gold) final_ask = max_gold;
-	comment = "Offer";
+	pmt = "Offer";
 
 	/* go right to final price if player has bargained well */
 	if (noneedtobargain(final_ask)) {
@@ -1477,33 +1478,33 @@ static int sell_haggle(s32b *price, inven_type *i_ptr)
 
     min_offer = max_sell;
     last_offer = min_offer;
-    new_offer = 0;
+    offer = 0;
 
     /* this prevents incremental haggling on first try */
-    num_offer = 0;
+    num = 0;
 
     if (cur_ask < 1) cur_ask = 1;
 
 	do {
 	    do {
 	    loop_flag = TRUE;
-	    (void)sprintf(out_val, "%s :  %ld", comment, (long)cur_ask);
+	    (void)sprintf(out_val, "%s :  %ld", pmt, (long)cur_ask);
 	    put_str(out_val, 1, 0);
 	    sell = receive_offer("What price do you ask? ",
-				 &new_offer, last_offer, num_offer,
+				 &offer, last_offer, num,
 				 -1, cur_ask, final);
 	    if (sell != 0) {
 		flag = TRUE;
 	    }
 	    else {
-		if (new_offer < cur_ask) {
+		if (offer < cur_ask) {
 		    prt_comment6();
-		    /* rejected, reset new_offer for incremental haggling */
-		    new_offer = last_offer;
+		    /* rejected, reset offer for incremental haggling */
+		    offer = last_offer;
 		}
-		else if (new_offer == cur_ask) {
+		else if (offer == cur_ask) {
 		    flag = TRUE;
-		    *price = new_offer;
+		    *price = offer;
 		}
 		else {
 		    loop_flag = FALSE;
@@ -1513,7 +1514,7 @@ static int sell_haggle(s32b *price, inven_type *i_ptr)
 	while (!flag && loop_flag);
 
 	if (!flag) {
-	    x1 = (last_offer - new_offer) * 100 / (last_offer - cur_ask);
+	    x1 = (last_offer - offer) * 100 / (last_offer - cur_ask);
 	    if (x1 < min_per) {
 		flag = haggle_insults();
 		if (flag) sell = 2;
@@ -1523,14 +1524,14 @@ static int sell_haggle(s32b *price, inven_type *i_ptr)
 		if (x1 < max_per) x1 = max_per;
 	    }
 	    x2 = x1 + randint(5) - 3;
-	    x3 = ((new_offer - cur_ask) * x2 / 100) + 1;
+	    x3 = ((offer - cur_ask) * x2 / 100) + 1;
 	    /* don't let the price go down */
 	    if (x3 < 0) x3 = 0;
 	    cur_ask += x3;
 	    if (cur_ask > final_ask) {
 		cur_ask = final_ask;
 		final = TRUE;
-		comment = "Final Offer";
+		pmt = "Final Offer";
 		final_flag++;
 		if (final_flag > 3) {
 		if (increase_insults()) sell = 2;
@@ -1538,13 +1539,13 @@ static int sell_haggle(s32b *price, inven_type *i_ptr)
 			flag = TRUE;
 		}
 	    }
-	    else if (new_offer <= cur_ask) {
+	    else if (offer <= cur_ask) {
 		flag = TRUE;
-		*price = new_offer;
+		*price = offer;
 	    }
 	    if (!flag) {
-		last_offer = new_offer;
-		num_offer++;   /* enable incremental haggling */
+		last_offer = offer;
+		num++;   /* enable incremental haggling */
 		erase_line(1, 0);
 		(void)sprintf(out_val,
 			     "Your last bid %ld", (long)last_offer);
