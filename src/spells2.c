@@ -2502,9 +2502,8 @@ int recharge(int num)
 	    } else {
 		num = (num / (i_ptr->level + 2)) + 1;
 		i_ptr->pval += 2 + randint(num);
-		if (known2_p(i_ptr))
-		    clear_known2(i_ptr);
-		clear_empty(i_ptr);
+		if (known2_p(i_ptr)) i_ptr->ident &= ~ID_KNOWN2;
+		i_ptr->ident &= ~ID_EMPTY;
 	    }
 	}
     }
