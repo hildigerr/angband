@@ -785,31 +785,19 @@ static void insert_store(int pos, s32b icost, inven_type *i_ptr)
 
 
 /*
- * Destroy an item in the stores inventory.  Note that if
- * "one_of" is false, an entire slot is destroyed	-RAK-	
- * This can result in zero items.
+ * Increase, by a given amount, the number of a certain item
+ * in a certain store.  This can result in zero items.
  */
-void store_destroy(int item_val, int one_of)
+static void store_item_increase(int item_val, int num)
 {
-    register int         number;
     register inven_type *i_ptr;
 
+    /* Get the item */
     i_ptr = &st_ptr->store_item[item_val];
 
-/* for single stackable objects, only destroy one half on average, this will
- * help ensure that general store and alchemist have reasonable selection of
- * objects 
- */
-    if ((i_ptr->sval >= ITEM_SINGLE_STACK_MIN) &&
-	(i_ptr->sval <= ITEM_SINGLE_STACK_MAX)) {
-	if (one_of)
-	    number = 1;
-	else
-	    number = randint((int)i_ptr->number);
-    } else
-	number = i_ptr->number;
 
-	i_ptr->number -= number;
+    /* Save the new number */
+    i_ptr->number += num;
 }
 
 
@@ -848,12 +836,22 @@ static void store_item_optimize(int item_val)
  */
 static void store_delete(void)
 {
-    int what;
+    int what, num;
 
     /* Pick a random slot */
     what = rand_int(st_ptr->store_ctr);
 
-    store_destroy(what, FALSE);
+    /* for single stackable objects, only destroy one half on average, this will
+     * help ensure that general store and alchemist have reasonable selection of
+     * objects */
+    if ((i_ptr->sval >= ITEM_SINGLE_STACK_MIN) && (i_ptr->sval <= ITEM_SINGLE_STACK_MAX)) {
+    num = randint(st_ptr->store_item[what].number);
+    }
+    else
+    num = st_ptr->store_item[what].number;
+
+    /* Actually destroy (part of) the item */
+    store_item_increase(what, -num);
     store_item_optimize(what);
 }
 
@@ -1688,7 +1686,8 @@ static int store_purchase(int *cur_top)
 		/* Note how many slots the store used to have */
 		i = st_ptr->store_ctr;
 
-		store_destroy(item_val, TRUE);
+		/* Remove the bought items from the store */
+		store_item_increase(item_val, -amt);
 		store_item_optimize(item_val);
 		inventory[item_new].inscrip[0] = 0;
 
@@ -1741,7 +1740,8 @@ static int store_purchase(int *cur_top)
 	/* Take note if we take the last one */
 	i = st_ptr->store_ctr;
 
-	store_destroy(item_val, TRUE);
+	/* Remove one item from the home */
+	store_item_increase(item_val, -amt);
 	store_item_optimize(item_val);
 
 	/* Describe just the result */
