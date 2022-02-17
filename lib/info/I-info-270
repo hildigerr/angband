@@ -2,6 +2,7 @@
 
 Made "store cost" a property of objects
 Functions floor_grid(), clean_grid(), and valid_grid().
+Rewrote store "maintainance" code.
 Major rewrite of the "savefile" code, plus "parser" for old files.
 Addition of a generic method for "machine dependant savefile info".
 Rewrite of the "pathname constructor" code.

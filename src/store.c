@@ -2140,9 +2140,8 @@ void enter_store(int which)
 }
 
 
-/* 
+/*
  * Maintain the inventory at the stores.
- * Initialize and up-keep the store's inventory.		-RAK-	
  */
 void store_maint(void)
 {
@@ -2166,20 +2165,42 @@ void store_maint(void)
 	st_ptr->insult_cur = 0;
 
 
-	if (st_ptr->store_ctr >= STORE_MIN_KEEP) {
-	    j = randint(STORE_TURNOVER);
-	    if (st_ptr->store_ctr >= STORE_MAX_KEEP)
-		j += 1 + st_ptr->store_ctr - STORE_MAX_KEEP;
-	    while (--j >= 0)
-		store_destroy(randint((int)st_ptr->store_ctr) - 1, FALSE);
-	}
-	if (st_ptr->store_ctr <= STORE_MAX_KEEP) {
-	    j = randint(STORE_TURNOVER);
-	    if (st_ptr->store_ctr < STORE_MIN_KEEP)
-		j += STORE_MIN_KEEP - st_ptr->store_ctr;
-	    while (--j >= 0)
-		store_create();
-	}
+	/* Choose the number of slots to keep */
+	j = st_ptr->store_ctr;
+
+	/* Sell a few items */
+	j = j - randint(STORE_TURNOVER);
+
+	/* Never keep more than "STORE_MAX_KEEP" slots */
+	if (j > STORE_MAX_KEEP) j = STORE_MAX_KEEP;
+
+	/* Always "keep" at least "STORE_MIN_KEEP" items */
+	if (j < STORE_MIN_KEEP) j = STORE_MIN_KEEP;
+
+	/* Hack -- prevent "underflow" */
+	if (j < 0) j = 0;
+
+	/* Destroy objects until only "j" slots are left */
+	while (st_ptr->store_ctr > j) store_destroy(randint((int)st_ptr->store_ctr) - 1, FALSE);
+
+
+	/* Choose the number of slots to fill */
+	j = st_ptr->store_ctr;
+
+	/* Buy some more items */
+	j = j + randint(STORE_TURNOVER);
+
+	/* Never keep more than "STORE_MAX_KEEP" slots */
+	if (j > STORE_MAX_KEEP) j = STORE_MAX_KEEP;
+
+	/* Always "keep" at least "STORE_MIN_KEEP" items */
+	if (j < STORE_MIN_KEEP) j = STORE_MIN_KEEP;
+
+	/* Hack -- prevent "overflow" */
+	if (j >= STORE_INVEN_MAX) j = STORE_INVEN_MAX - 1;
+
+	/* Acquire some new items */
+	while (st_ptr->store_ctr < j) store_create();
     }
 
 
