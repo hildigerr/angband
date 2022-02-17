@@ -787,10 +787,11 @@ static void insert_store(int pos, s32b icost, inven_type *i_ptr)
 /*
  * Destroy an item in the stores inventory.  Note that if
  * "one_of" is false, an entire slot is destroyed	-RAK-	
+ * This can result in zero items.
  */
 void store_destroy(int item_val, int one_of)
 {
-    register int         j, number;
+    register int         number;
     register inven_type *i_ptr;
 
     i_ptr = &st_ptr->store_item[item_val];
@@ -808,15 +809,29 @@ void store_destroy(int item_val, int one_of)
     } else
 	number = i_ptr->number;
 
-    if (number != i_ptr->number)
 	i_ptr->number -= number;
-    else {
+}
+
+
+/*
+ * Remove a slot if it is empty
+ */
+static void store_item_optimize(int item_val)
+{
+    register int         j;
+    register inven_type *i_ptr;
+
+    /* Get the item */
+    i_ptr = &st_ptr->store_item[item_val];
+
+    /* Must have no items */
+    if (i_ptr->number) return;
+
 	for (j = item_val; j < st_ptr->store_ctr - 1; j++)
 	    st_ptr->store_item[j] = st_ptr->store_item[j + 1];
 	invcopy(&st_ptr->store_item[st_ptr->store_ctr - 1], OBJ_NOTHING);
 	st_ptr->store_item[st_ptr->store_ctr - 1].scost = 0;
 	st_ptr->store_ctr--;
-    }
 }
 
 
@@ -833,6 +848,7 @@ static void store_delete(void)
     what = rand_int(st_ptr->store_ctr);
 
     store_destroy(what, FALSE);
+    store_item_optimize(what);
 }
 
 
@@ -1667,6 +1683,7 @@ static int store_purchase(int *cur_top)
 		i = st_ptr->store_ctr;
 
 		store_destroy(item_val, TRUE);
+		store_item_optimize(item_val);
 		inventory[item_new].inscrip[0] = 0;
 
 		/* Describe the final result */
@@ -1719,6 +1736,7 @@ static int store_purchase(int *cur_top)
 	i = st_ptr->store_ctr;
 
 	store_destroy(item_val, TRUE);
+	store_item_optimize(item_val);
 
 	/* Describe just the result */
 	objdes(tmp_str, &inventory[item_new], TRUE);
