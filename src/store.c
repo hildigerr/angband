@@ -827,11 +827,17 @@ static void store_item_optimize(int item_val)
     /* Must have no items */
     if (i_ptr->number) return;
 
-	for (j = item_val; j < st_ptr->store_ctr - 1; j++)
-	    st_ptr->store_item[j] = st_ptr->store_item[j + 1];
-	invcopy(&st_ptr->store_item[st_ptr->store_ctr - 1], OBJ_NOTHING);
-	st_ptr->store_item[st_ptr->store_ctr - 1].scost = 0;
-	st_ptr->store_ctr--;
+    /* Slide everyone */
+    for (j = item_val; j < st_ptr->store_ctr - 1; j++) {
+	st_ptr->store_item[j] = st_ptr->store_item[j + 1];
+    }
+
+    /* Nuke the final slot */
+    invcopy(&st_ptr->store_item[st_ptr->store_ctr - 1], OBJ_NOTHING);
+    st_ptr->store_item[st_ptr->store_ctr - 1].scost = 0;
+
+    /* One less item */
+    st_ptr->store_ctr--;
 }
 
 
