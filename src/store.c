@@ -2166,17 +2166,17 @@ void store_maint(void)
 	st_ptr->insult_cur = 0;
 
 
-	if (st_ptr->store_ctr >= STORE_MIN_INVEN) {
-	    j = randint(STORE_TURN_AROUND);
-	    if (st_ptr->store_ctr >= STORE_MAX_INVEN)
-		j += 1 + st_ptr->store_ctr - STORE_MAX_INVEN;
+	if (st_ptr->store_ctr >= STORE_MIN_KEEP) {
+	    j = randint(STORE_TURNOVER);
+	    if (st_ptr->store_ctr >= STORE_MAX_KEEP)
+		j += 1 + st_ptr->store_ctr - STORE_MAX_KEEP;
 	    while (--j >= 0)
 		store_destroy(randint((int)st_ptr->store_ctr) - 1, FALSE);
 	}
-	if (st_ptr->store_ctr <= STORE_MAX_INVEN) {
-	    j = randint(STORE_TURN_AROUND);
-	    if (st_ptr->store_ctr < STORE_MIN_INVEN)
-		j += STORE_MIN_INVEN - st_ptr->store_ctr;
+	if (st_ptr->store_ctr <= STORE_MAX_KEEP) {
+	    j = randint(STORE_TURNOVER);
+	    if (st_ptr->store_ctr < STORE_MIN_KEEP)
+		j += STORE_MIN_KEEP - st_ptr->store_ctr;
 	    while (--j >= 0)
 		store_create();
 	}

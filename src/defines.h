@@ -124,9 +124,9 @@
 #define MAX_STORES        8     /* Number of different stores            */
 #define STORE_INVEN_MAX  24     /* Max number of discrete objs in inven  */
 #define STORE_CHOICES    30     /* NUMBER of items to choose stock from  */
-#define STORE_MAX_INVEN  18     /* Max diff objs in stock for auto buy   */
-#define STORE_MIN_INVEN  10     /* Min diff objs in stock for auto sell  */
-#define STORE_TURN_AROUND 9     /* Amount of buying and selling normally */
+#define STORE_MAX_KEEP  18     /* Max diff objs in stock for auto buy   */
+#define STORE_MIN_KEEP  10     /* Min diff objs in stock for auto sell  */
+#define STORE_TURNOVER 9     /* Amount of buying and selling normally */
 
 #define MAX_QUESTS        4     /* only 1 defined anyway --CFT */
 #define DEFINED_QUESTS    1 
