@@ -1428,16 +1428,24 @@ void inven_item_describe(int i_idx)
 
 /*
  * Increase the "number" of a given item by a given amount
+ * Be sure not to exceed the legal bounds.
  * Note that this can result in an item with zero items
  * Take account of changes to the players weight.
  * Note that i_idx is an index into the inventory.
  */
 void inven_item_increase(int i_idx, int num)
 {
+    int cnt;
     inven_type *i_ptr;
 
     /* Get the item */
     i_ptr = &inventory[i_idx];
+
+    /* Bounds check */
+    cnt = i_ptr->number + num;
+    if (cnt > 255) cnt = 255;
+    else if (cnt < 0) cnt = 0;
+    num = cnt - i_ptr->number;
 
     /* Change the number and weight */
     if (num) {

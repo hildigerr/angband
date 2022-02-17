@@ -790,11 +790,17 @@ static void insert_store(int pos, s32b icost, inven_type *i_ptr)
  */
 static void store_item_increase(int item_val, int num)
 {
+    register int         cnt;
     register inven_type *i_ptr;
 
     /* Get the item */
     i_ptr = &st_ptr->store_item[item_val];
 
+    /* Verify the number */
+    cnt = i_ptr->number + num;
+    if (cnt > 255) cnt = 255;
+    else if (cnt < 0) cnt = 0;
+    num = cnt - i_ptr->number;
 
     /* Save the new number */
     i_ptr->number += num;
