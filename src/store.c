@@ -820,6 +820,22 @@ void store_destroy(int item_val, int one_of)
 }
 
 
+
+
+/*
+ * Attempt to delete (some of) a random item from the store
+ */
+static void store_delete(void)
+{
+    int what;
+
+    /* Pick a random slot */
+    what = rand_int(st_ptr->store_ctr);
+
+    store_destroy(what, FALSE);
+}
+
+
 /*
  * Creates a random item and gives it to a store
  */
@@ -2181,7 +2197,7 @@ void store_maint(void)
 	if (j < 0) j = 0;
 
 	/* Destroy objects until only "j" slots are left */
-	while (st_ptr->store_ctr > j) store_destroy(randint((int)st_ptr->store_ctr) - 1, FALSE);
+	while (st_ptr->store_ctr > j) store_delete();
 
 
 	/* Choose the number of slots to fill */
