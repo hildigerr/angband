@@ -1426,8 +1426,37 @@ void inven_item_describe(int i_idx)
 
 
 
-/* Destroy an item in the inventory			-RAK-	 */
-void inven_destroy(int i_idx)
+/*
+ * Increase the "number" of a given item by a given amount
+ * Note that this can result in an item with zero items
+ * Take account of changes to the players weight.
+ * Note that i_idx is an index into the inventory.
+ */
+void inven_item_increase(int i_idx, int num)
+{
+    inven_type *i_ptr;
+
+    /* Get the item */
+    i_ptr = &inventory[i_idx];
+
+    /* Change the number and weight */
+    if (num) {
+
+	/* Add the weight */
+	i_ptr->number += num;
+	inven_weight += num * i_ptr->weight;
+	
+	/* Remember to recalculate bonuses */
+	p_ptr->status |= PY_STR_WGT;
+    }
+}
+
+
+/*
+ * Destroy an inventory slot if it has no more items
+ * Slides items if necessary, and clears out the hole
+ */
+void inven_item_optimize(int i_idx)
 {
     register int i;
     inven_type *i_ptr;
@@ -1435,17 +1464,22 @@ void inven_destroy(int i_idx)
     /* Get the item */
     i_ptr = &inventory[i_idx];
 
-    if ((i_ptr->number > 1) && (i_ptr->sval <= ITEM_SINGLE_STACK_MAX)) {
-	i_ptr->number--;
-	inven_weight -= i_ptr->weight;
-    } else {
-	inven_weight -= i_ptr->weight * i_ptr->number;
-	for (i = i_idx; i < inven_ctr - 1; i++)
-	    inventory[i] = inventory[i + 1];
-	invcopy(&inventory[inven_ctr - 1], OBJ_NOTHING);
+    /* Paranoia -- be sure it exists */
+    if (i_ptr->tval == TV_NOTHING) return;
+
+    /* Only optimize if empty */
+    if (i_ptr->number) return;
+
+	/* One less item */
 	inven_ctr--;
-    }
-    p_ptr->status |= PY_STR_WGT;
+
+	/* Slide later entries onto us */
+	for (i = i_idx; i < inven_ctr; i++) {
+	    inventory[i] = inventory[i + 1];
+	}
+
+	/* Paranoia -- erase the empty slot */
+	invcopy(&inventory[inven_ctr], OBJ_NOTHING);
 }
 
 

@@ -324,8 +324,10 @@ static void do_cmd_refill_lamp()
 	    msg_print("Your lamp is less than half full.");
 	}
 
+	/* Destroy a single flask */
+	inven_item_increase(i, -1);
 	inven_item_describe(i);
-	inven_destroy(i);
+	inven_item_optimize(i);
     }
 }
 

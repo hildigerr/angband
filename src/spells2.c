@@ -2498,7 +2498,8 @@ int recharge(int num)
 
 	    if (randint((num + 100 - (int)i_ptr->level - (10 * i_ptr->pval)) / 15) == 1) {
 		msg_print("There is a bright flash of light.");
-		inven_destroy(item_val);
+		inven_item_increase(item_val, -1);
+		inven_item_optimize(item_val);
 	    } else {
 		num = (num / (i_ptr->level + 2)) + 1;
 		i_ptr->pval += 2 + randint(num);

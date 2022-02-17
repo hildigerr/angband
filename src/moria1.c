@@ -1301,7 +1301,9 @@ void inven_command(int command)
 				wear_high++;
 			    }
 			    inven_weight += i_ptr->weight * i_ptr->number;
-			    inven_destroy(item);	/* Subtracts weight */
+
+			    inven_item_increase(item, -1);
+			    inven_item_optimize(item);
 
 /* second, add old item to inv and remove from equipment list, if necessary */
 			    i_ptr = &inventory[slot];

@@ -1953,8 +1953,6 @@ static int store_sell(int *cur_top)
 	    /* Get the "actual value" */
 	    value = item_value(&sold_obj);
 
-	    inven_destroy(item_val);
-
 	    /* Get the description all over again */
 	    objdes(tmp_str, &sold_obj, TRUE);
 
@@ -1965,6 +1963,11 @@ static int store_sell(int *cur_top)
 	    /* Analyze the prices (and comment verbally) */
 	    purchase_analyze(price, value, dummy);
 
+	    /* Take the item from the player */
+	    inven_item_increase(item_val, -amt);
+	    inven_item_optimize(item_val);
+
+	    /* The store gets that item */
 	    store_carry(&item_pos, &sold_obj);
 
 	    check_strength();
@@ -2003,13 +2006,16 @@ static int store_sell(int *cur_top)
     /* Player is at home */
     else {
 
-	inven_destroy(item_val);
-
 	/* Describe */
 	objdes(tmp_str, &sold_obj, TRUE);	
 	(void)sprintf(out_val, "You drop %s", tmp_str);
 	msg_print(out_val);
 
+	/* Take it from the players inventory */
+	inven_item_increase(item_val, -amt);
+	inven_item_optimize(item_val);
+
+	/* Let the store (home) carry it */
 	store_carry(&item_pos, &sold_obj);
 
 	check_strength();

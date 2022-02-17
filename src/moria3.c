@@ -1538,7 +1538,7 @@ void do_cmd_spike()
 {
     int                  y, x, dir, i, j;
     register cave_type  *c_ptr;
-    register inven_type *t_ptr, *i_ptr;
+    register inven_type *t_ptr;
     char		tmp_str[80];
 
 #ifdef TARGET
@@ -1577,12 +1577,10 @@ void do_cmd_spike()
 	    /* Series is: 0 20 30 37 43 48 52 56 60 64 67 70 ... */
 	    t_ptr->pval -= 1 + 190 / (10 - t_ptr->pval);
 
-			i_ptr = &inventory[i];
-			if (i_ptr->number > 1) {
-			    i_ptr->number--;
-			    inven_weight -= i_ptr->weight;
-			} else
-			    inven_destroy(i);
+	    /* Use up a single spike */
+	    inven_item_increase(i, -1);
+	    inven_item_optimize(i);
+
 		    } else
 			msg_print("But you have no spikes.");
 		} else {

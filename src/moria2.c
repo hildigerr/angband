@@ -1065,13 +1065,9 @@ static void inven_throw(int item_val, inven_type *t_ptr)
 
     i_ptr = &inventory[item_val];
     *t_ptr = *i_ptr;
-    if (i_ptr->number > 1) {
 	t_ptr->number = 1;
-	i_ptr->number--;
-	inven_weight -= i_ptr->weight;
-	p_ptr->status |= PY_STR_WGT;
-    } else
-	inven_destroy(item_val);
+	inven_item_increase(item_val, -1);
+	inven_item_optimize(item_val);
 }
 
 

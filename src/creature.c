@@ -1343,6 +1343,7 @@ static void make_attack(int m_idx)
 		    msg_print("You grab hold of your backpack!");
 		}
 		else {
+		    int			amt;
 		    vtype               t1, t2;
 
 		    /* Steal a single item from the pack */
@@ -1353,6 +1354,9 @@ static void make_attack(int m_idx)
 
 		    /* Don't steal artifacts  -CFT */
 		    if (artifact_p(i_ptr)) break;
+
+		    /* XXX Hack -- only one item at a time */
+		    amt = 1;
 
 		    /* Get a description */
 		    objdes(t1, i_ptr, FALSE);
@@ -1370,7 +1374,8 @@ static void make_attack(int m_idx)
 		    msg_print(t2);
 
 		    /* Steal the items */
-		    inven_destroy(i);
+		    inven_item_increase(i,-amt);
+		    inven_item_optimize(i);
 		}
 
 		/* Allow monster to "blink" away */
@@ -1546,7 +1551,8 @@ static void make_attack(int m_idx)
 	      /* Eat food */
 	      case 22:
 		if (find_range(TV_FOOD, TV_NEVER, &i, &j)) {
-		    inven_destroy(i);
+		    inven_item_increase(i, -1);
+		    inven_item_optimize(i);
 		    msg_print("It got at your rations!");
 		}
 		else {

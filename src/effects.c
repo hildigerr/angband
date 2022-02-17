@@ -359,8 +359,9 @@ void do_cmd_eat_food(void)
     prt_hunger();
 
     /* Destroy the food */
+    inven_item_increase(item_val, -1);
     inven_item_describe(item_val);
-    inven_destroy(item_val);
+    inven_item_optimize(item_val);
 }
 
 
@@ -907,8 +908,9 @@ void do_cmd_quaff_potion(void)
     add_food(i_ptr->pval);
 
     /* Destroy the potion */
+    inven_item_increase(item_val, -1);
     inven_item_describe(item_val);
-    inven_destroy(item_val);
+    inven_item_optimize(item_val);
 }
 
 
@@ -1433,8 +1435,9 @@ void do_cmd_read_scroll(void)
     if (!used_up) return;
 
     /* Destroy the scroll */
+    inven_item_increase(item_val, -1);
     inven_item_describe(item_val);
-    inven_destroy(item_val);
+    inven_item_optimize(item_val);
     }
 }
 

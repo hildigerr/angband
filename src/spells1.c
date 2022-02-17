@@ -34,7 +34,10 @@ static int inven_damage(inven_func typ, int perc)
 		     (inventory[i].number > 1))	/* stacked group items */
 		    ? "were" : "was");
 	    msg_print(out_val);
-	    inven_destroy(i);
+
+		inven_item_increase(i,-1);
+		inven_item_optimize(i);
+
 	    j++;
 	}
     }
