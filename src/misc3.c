@@ -2644,27 +2644,6 @@ int get_obj_num(int level, int good)
 }
 
 
-/* Destroy an item in the inventory			-RAK-	 */
-void inven_destroy(int item_val)
-{
-    register int         j;
-    register inven_type *i_ptr;
-
-    i_ptr = &inventory[item_val];
-    if ((i_ptr->number > 1) && (i_ptr->sval <= ITEM_SINGLE_STACK_MAX)) {
-	i_ptr->number--;
-	inven_weight -= i_ptr->weight;
-    } else {
-	inven_weight -= i_ptr->weight * i_ptr->number;
-	for (j = item_val; j < inven_ctr - 1; j++)
-	    inventory[j] = inventory[j + 1];
-	invcopy(&inventory[inven_ctr - 1], OBJ_NOTHING);
-	inven_ctr--;
-    }
-    p_ptr->status |= PY_STR_WGT;
-}
-
-
 /* return FALSE if picking up an object would change the players speed */
 int inven_check_weight(inven_type *i_ptr)
 {
