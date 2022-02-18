@@ -1426,6 +1426,63 @@ void inven_item_describe(int i_idx)
 
 
 
+
+/*
+ * Look for things to combine with the given item
+ */
+void combine(int *item)
+{
+    register int         i, x1, x2;
+    register int         j;
+    register inven_type *i_ptr, *t_ptr;
+
+	x1 = i_ptr->tval;
+	x2 = i_ptr->sval;
+
+    /* no merging possible */
+    if (x2 < ITEM_SINGLE_STACK_MIN || x2 >= ITEM_GROUP_MIN) return;
+
+    /* Get the "base item" */
+    i_ptr = &inventory[*item];
+
+    /* Find everything that can combine with us */
+    for (i = 0; i < inven_ctr; i++) {
+
+	/* Get the pack item */
+	t_ptr = &inventory[i];
+
+	if (t_ptr->tval == x1 && t_ptr->sval == x2 && i != *item &&
+	    ((int)t_ptr->number + (int)i_ptr->number < 256)) {
+
+	    /* make *item the smaller number */
+	    if (*item > i) {
+	    j = *item;
+	    *item = i;
+	    i = j;
+	    }
+
+	    /* Message */
+	    msg_print("You combine similar objects from the shop and dungeon.");
+
+	    /* Add together the item counts */
+	    inventory[*item].number += inventory[i].number;
+
+	    /* One less item */
+	    inven_ctr--;
+
+	    /* Slide the inventory (via structure copy) */
+	    for (j = i; j < inven_ctr; j++) {
+		inventory[j] = inventory[j + 1];
+	    }
+
+	    /* Erase the last object */
+	    invcopy(&inventory[j], OBJ_NOTHING);
+	}
+    }
+}
+
+
+
 /*
  * Increase the "number" of a given item by a given amount
  * Be sure not to exceed the legal bounds.

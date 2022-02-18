@@ -362,15 +362,9 @@ void sample(inven_type *i_ptr)
 }
 
 /* Somethings been identified					 */
-/*
- * extra complexity by CJS so that it can merge store/dungeon objects when
- * appropriate 
- */
 void identify(int *item)
 {
-    register int         i, x1, x2;
-    int                  j;
-    register inven_type *i_ptr, *t_ptr;
+    register inven_type *i_ptr;
 
     i_ptr = &inventory[*item];
 
@@ -380,31 +374,7 @@ void identify(int *item)
 
     if (!known1_p(i_ptr)) {
 	known1(i_ptr);
-	x1 = i_ptr->tval;
-	x2 = i_ptr->sval;
-	if (x2 < ITEM_SINGLE_STACK_MIN || x2 >= ITEM_GROUP_MIN)
-	/* no merging possible */
-	    ;
-	else
-	    for (i = 0; i < inven_ctr; i++) {
-		t_ptr = &inventory[i];
-		if (t_ptr->tval == x1 && t_ptr->sval == x2 && i != *item
-		    && ((int)t_ptr->number + (int)i_ptr->number < 256)) {
-		/* make *item the smaller number */
-		    if (*item > i) {
-			j = *item;
-			*item = i;
-			i = j;
-		    }
-		    msg_print("You combine similar objects from the shop and dungeon.");
-
-		    inventory[*item].number += inventory[i].number;
-		    inven_ctr--;
-		    for (j = i; j < inven_ctr; j++)
-			inventory[j] = inventory[j + 1];
-		    invcopy(&inventory[j], OBJ_NOTHING);
-		}
-	    }
+	combine(item);
     }
 }
 
