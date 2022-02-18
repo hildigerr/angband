@@ -1432,15 +1432,12 @@ void inven_item_describe(int i_idx)
  */
 void combine(int *item)
 {
-    register int         j, x1, x2;
-    register int         k;
+    register int         j, k;
     register inven_type *i_ptr, *j_ptr;
 
-	x1 = i_ptr->tval;
-	x2 = i_ptr->sval;
 
     /* no merging possible */
-    if (x2 < ITEM_SINGLE_STACK_MIN || x2 >= ITEM_GROUP_MIN) return;
+    if (i_ptr->sval < ITEM_SINGLE_STACK_MIN || i_ptr->sval >= ITEM_GROUP_MIN) return;
 
     /* Get the "base item" */
     i_ptr = &inventory[*item];
@@ -1451,7 +1448,7 @@ void combine(int *item)
 	/* Get the pack item */
 	j_ptr = &inventory[j];
 
-	if (j_ptr->tval == x1 && j_ptr->sval == x2 && j != *item &&
+	if (j_ptr->tval == i_ptr->tval && j_ptr->sval == i_ptr->sval && j != *item &&
 	    ((int)j_ptr->number + (int)i_ptr->number < 256)) {
 
 	    /* make *item the smaller number */
@@ -1465,7 +1462,7 @@ void combine(int *item)
 	    msg_print("You combine similar objects from the shop and dungeon.");
 
 	    /* Add together the item counts */
-	    inventory[*item].number += inventory[j].number;
+	    i_ptr->number += j_ptr->number;
 
 	    /* One less item */
 	    inven_ctr--;
