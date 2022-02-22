@@ -1,5 +1,6 @@
 === Basic "changes" from Angband 2.6.1 to Angband 2.7.0 ===
 
+Functions combine() and combine_pack() to maintain inventory.
 Made "store cost" a property of objects
 Functions floor_grid(), clean_grid(), and valid_grid().
 Rewrote store "maintainance" code.

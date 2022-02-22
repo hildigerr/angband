@@ -1479,6 +1479,53 @@ int combine(int i)
 }
 
 
+/*
+ * Hack -- apply "combine" to every item in the pack
+ * Note that objects will only move "up" in the pack
+ */
+void combine_pack(void)
+{
+    register int i, j, k;
+    inven_type *i_ptr, *j_ptr;
+
+    /* Scan the pack (from the start) */
+    for (i = 0; i < inven_ctr; i++) {
+
+	/* Get the item */
+	i_ptr = &inventory[i];
+
+	/* Only check items BELOW us */
+	for (j = inven_ctr-1; j > i; j--) {
+
+	    /* Get the item */
+	    j_ptr = &inventory[j];
+
+	    /* Can we drop "j_ptr" onto "i_ptr"? */
+	    if (j_ptr->tval == i_ptr->tval && j_ptr->sval == i_ptr->sval &&
+	    ((int)j_ptr->number + (int)i_ptr->number < 256)) {
+
+		/* Message */
+		msg_print("You combine similar objects.");
+
+		/* Add together the item counts */
+		i_ptr->number += j_ptr->number;
+
+		/* One fewer object */
+		inven_ctr--;
+
+		/* Slide the inventory (via structure copy) */
+		for (k = j; k < inven_ctr; k++) {
+		    inventory[k] = inventory[k + 1];
+		}
+
+		/* Erase the last object */
+		invcopy(&inventory[inven_ctr], OBJ_NOTHING);
+	    }
+	}
+    }
+}
+
+
 
 /*
  * Increase the "number" of a given item by a given amount

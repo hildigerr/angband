@@ -705,6 +705,7 @@ void display_player(void);
 void get_name(void);
 void change_name(void);
 int combine(int);
+void combine_pack(void);
 int weight_limit(void);
 void inven_item_increase(int, int);
 void inven_item_optimize(int);
