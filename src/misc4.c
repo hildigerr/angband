@@ -1429,34 +1429,28 @@ void inven_item_describe(int i_idx)
 
 /*
  * Look for things to combine with the given item
+ * Return the (possibly changed) index of the item
  */
-void combine(int *item)
+int combine(int i)
 {
     register int         j, k;
     register inven_type *i_ptr, *j_ptr;
 
 
     /* no merging possible */
-    if (i_ptr->sval < ITEM_SINGLE_STACK_MIN || i_ptr->sval >= ITEM_GROUP_MIN) return;
+    if (i_ptr->sval < ITEM_SINGLE_STACK_MIN || i_ptr->sval >= ITEM_GROUP_MIN) return (i);
 
     /* Get the "base item" */
-    i_ptr = &inventory[*item];
+    i_ptr = &inventory[i];
 
     /* Find everything that can combine with us */
-    for (j = 0; j < inven_ctr; j++) {
+    for (j = inven_ctr - 1; j >= 0; j--) {
 
 	/* Get the pack item */
 	j_ptr = &inventory[j];
 
-	if (j_ptr->tval == i_ptr->tval && j_ptr->sval == i_ptr->sval && j != *item &&
+	if (j_ptr->tval == i_ptr->tval && j_ptr->sval == i_ptr->sval && j != i &&
 	    ((int)j_ptr->number + (int)i_ptr->number < 256)) {
-
-	    /* make *item the smaller number */
-	    if (*item > j) {
-	    k = *item;
-	    *item = j;
-	    j = k;
-	    }
 
 	    /* Message */
 	    msg_print("You combine similar objects from the shop and dungeon.");
@@ -1472,10 +1466,16 @@ void combine(int *item)
 		inventory[k] = inventory[k + 1];
 	    }
 
+	    /* Notice if the base object has moved "up" */
+	    if (i > j) i_ptr = &inventory[--i];
+
 	    /* Erase the last object */
-	    invcopy(&inventory[k], OBJ_NOTHING);
+	    invcopy(&inventory[inven_ctr], OBJ_NOTHING);
 	}
     }
+
+    /* Return the (possibly new) index */
+    return (i);
 }
 
 

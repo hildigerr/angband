@@ -704,7 +704,7 @@ void put_misc3(void);
 void display_player(void);
 void get_name(void);
 void change_name(void);
-void combine(int *);
+int combine(int);
 int weight_limit(void);
 void inven_item_increase(int, int);
 void inven_item_optimize(int);

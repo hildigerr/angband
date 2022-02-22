@@ -374,7 +374,7 @@ void identify(int *item)
 
     if (!known1_p(i_ptr)) {
 	known1(i_ptr);
-	combine(item);
+	*item = combine(*item);
     }
 }
 
