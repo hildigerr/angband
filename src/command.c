@@ -1067,7 +1067,7 @@ void do_command(char com_val)
 		prt_map();
 		break;
 	      case CTRL('I'):	/* ^I = identify */
-		(void)ident_spell();
+		if (!ident_floor()) ident_spell();
 		break;
 	      case CTRL('T'):	/* ^T = teleport */
 		teleport(100);

@@ -53,9 +53,6 @@
  */
 
 
-#ifndef FUZZY
-#define FUZZY 2
-#endif
 
 /*
  * These values are used to keep things "small"

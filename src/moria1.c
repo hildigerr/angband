@@ -290,18 +290,6 @@ int get_item(int *com_val, cptr pmt, int i, int j)
     register int test_flag, item;
     int          full, i_scr, redraw;
 
-    int on_floor, ih;
-    cave_type *c_ptr;
- 
-    /* check we're a) identifying and b) on the floor is an object
-     * and c) it is a object wich could be picked up
-     */
-
-    c_ptr = &cave[char_row][char_col];
-    ih = i_list[c_ptr->i_idx].tval;
-    on_floor = ( (strcmp("Item you wish identified?",pmt) == 0) &&
-		 !( (c_ptr->i_idx == 0) || ih == TV_NOTHING
-		    || ih > TV_MAX_PICK_UP) );
 
     item = FALSE;
     redraw = FALSE;
@@ -329,7 +317,6 @@ int get_item(int *com_val, cptr pmt, int i, int j)
 		(void)sprintf(out_val,
 			      "(%s: %c-%c,%s%s / for %s, or ESC) %s",
 			     (i_scr > 0 ? "Inven" : "Equip"), i + 'a', j + 'a',
-			      (on_floor ? " - floor," : ""),
 			      (redraw ? "" : " * to see,"),
 			      (i_scr > 0 ? "Equip" : "Inven"), pmt);
 	    else
@@ -392,14 +379,6 @@ int get_item(int *com_val, cptr pmt, int i, int j)
 			redraw = TRUE;
 		    }
 		    break;
-		case '-':
-		/* not identified from INVEN or EQU but not aborted */
-		    if (on_floor) {
-			item = FUZZY;
-			test_flag = TRUE;
-			i_scr = -1;
-			break;
-		    }
 		  default:
 		    if (isupper((int)which))
 			*com_val = which - 'A';

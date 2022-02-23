@@ -874,6 +874,7 @@ int detect_invisible(void);
 int lite_area(int, int, int, int);
 int unlite_area(int, int);
 void map_area(void);
+bool ident_floor(void);
 int ident_spell(void);
 int aggravate_monster(int);
 int trap_creation(void);

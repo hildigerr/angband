@@ -985,6 +985,9 @@ void do_cmd_read_scroll(void)
     /* Apply the first set of scroll effects */
     for (flg = i_ptr->flags1; flg; ) {
 
+	/* XXX XXX Hack -- only "pure" scrolls can be conserved */
+	used_up = TRUE;
+
 	/* Extract the next effect bit-flag */
 	j = bit_pos(&i);
 	if (i_ptr->tval == TV_SCROLL2) j += 32;
@@ -1068,7 +1071,13 @@ void do_cmd_read_scroll(void)
 	    /* Can be identified by "label" on scroll */
 	    msg_print("This is an identify scroll.");
 	    ident = TRUE;
-	    used_up = ident_spell();
+
+	    /* Check the floor, and then Check the inventory */
+	    if (!ident_floor()) {
+
+		/* Identify an item, or preserve the scroll */
+		if (!ident_spell()) used_up = FALSE;
+	    }
 	    
 	    break;
 
@@ -1826,7 +1835,14 @@ void do_cmd_use_staff(void)
 	break;
 
       case SV_STAFF_IDENTIFY:
-	ident_spell();
+
+	/* Check floor, or inventory plus combining */
+	if (!ident_floor()) {
+
+	    /* Identify an item, or preserve charges */
+	    if (!ident_spell()) use_charge = FALSE;
+	}
+
 	ident = TRUE;
 	break;
 
@@ -2207,9 +2223,18 @@ void do_cmd_zap_rod(void)
 	break;
 
       case SV_ROD_IDENTIFY:
-	ident_spell();
+
 	/* We know what it is now */
 	ident = TRUE;
+
+	/* Check the floor, and then Check the inventory */
+	if (!ident_floor()) {
+
+	    /* Identify an item, or preserve a charge */
+	    if (!ident_spell()) use_charge = FALSE;
+	}
+
+	/* For now, decharge */
 	i_ptr->timeout = 10;
 	break;
 
@@ -2607,7 +2632,9 @@ void do_cmd_activate(void)
 
 	    case (54):
 		if (inventory[i].name2 == ART_ERIRIL) {
-		    ident_spell();
+		/* Check floor, or inventory plus combining */
+		/* XXX Note that the artifact is always de-charged */
+		if (!ident_floor()) ident_spell();
 		    inventory[i].timeout = 10;
 		    combine_pack();
 		} else if (inventory[i].name2 == ART_OLORIN) {

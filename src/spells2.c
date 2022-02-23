@@ -2272,8 +2272,60 @@ int detect_invisible()
 
 
 /*
- * Identify an object	-RAK-	 
+ * Allow identification of an object below the player
+ */
+bool ident_floor(void)
+{
+    register inven_type *i_ptr;
+    cave_type		*c_ptr;
+    cptr prt = "You are standing on something.  Identify it?";
+    bigvtype            out_val, tmp_str;
+
+    /* Hack -- allow "on-floor" identifications */
+    c_ptr = &cave[char_row][char_col];
+
+    /* Nothing there */
+    if (c_ptr->i_idx == 0) return (FALSE);
+
+    /* Get the item */
+    i_ptr = &i_list[c_ptr->i_idx];
+
+    /* Be sure the item is "legal" */
+    if (i_ptr->tval == TV_NOTHING) return (FALSE);
+
+    /* Be sure the item can be picked up */
+    if (i_ptr->tval >= TV_MAX_PICK_UP) return (FALSE);
+
+    /* Already identified */
+    if (known2_p(i_ptr)) return (FALSE);
+    
+    /* See if the user wants to identify it */
+    if (!get_check(prt)) return (FALSE);
+
+    /* Identify it fully */
+    if ((i_ptr->flags1 & TR3_CURSED) && (i_ptr->tval != TV_MAGIC_BOOK) &&
+    (i_ptr->tval != TV_PRAYER_BOOK))
+    add_inscribe(i_ptr, ID_DAMD);
+
+    if (!known1_p(i_ptr))
+    known1(i_ptr);
+    known2(i_ptr);
+
+    /* Describe it */
+    objdes(tmp_str, i_ptr, TRUE);
+    (void) sprintf(out_val, "On the ground: %s", tmp_str);
+    msg_print(out_val);
+
+    /* Success */
+    return (TRUE);
+}
+
+
+/*
+ * Identify an object in the inventory	-RAK-	 
  * This routine no longer automatically combines objects
+ * Use "ident_floor()" to allow identification of items on floor,
+ * as in "used_up = (ident_floor() || ident_spell());"
  * Use "combine()" to do combining.
  */
 int ident_spell()
@@ -2302,25 +2354,6 @@ int ident_spell()
 	    }  else
 		(void)sprintf(out_val, "(%c) %s. ", item_val + 97, tmp_str);
 	    msg_print(out_val);
-	    break;
-	case FUZZY:
-	    ident = TRUE;
-	    i_ptr = &i_list[cave[char_row][char_col].i_idx];
-	    /* that piece of code taken from desc.c:identify()
-	     * no use to convert type for calling identify since obj
-	     * on floor can't stack
-	     */
-
-	    if ((i_ptr->flags1 & TR3_CURSED) && (i_ptr->tval != TV_MAGIC_BOOK) &&
-		(i_ptr->tval != TV_PRAYER_BOOK))
-		add_inscribe(i_ptr, ID_DAMD);
-	    if (!known1_p(i_ptr))
-		known1(i_ptr);
-	    /* end of identify-code */
-	    known2(i_ptr);
-	    objdes(tmp_str, i_ptr, TRUE);
-	    (void) sprintf(out_val, "%c %s", item_val+97, tmp_str);
-	    msg_print(out_val+2);
 	    break;
 	default:
 	    break;	    
