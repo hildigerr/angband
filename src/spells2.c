@@ -2340,18 +2340,23 @@ int ident_spell()
     /* Get an item to identify */
     if (!get_item(&item_val, pmt, 0, INVEN_ARRAY_SIZE)) return (-1);
 
-	    identify(&item_val);
-	    i_ptr = &inventory[item_val];
-	    known2(i_ptr);
-	    objdes(tmp_str, i_ptr, TRUE);
-	    if (item_val >= INVEN_WIELD) {
-		calc_bonuses();
-		
-		(void)sprintf(out_val, "%s: %s. ",
-			      describe_use(item_val), tmp_str);
-	    }  else
-		(void)sprintf(out_val, "(%c) %s. ", item_val + 97, tmp_str);
-	    msg_print(out_val);
+    /* Identify it fully */
+    identify(&item_val);
+    i_ptr = &inventory[item_val];
+    known2(i_ptr);
+
+    /* Description */
+    objdes(tmp_str, i_ptr, TRUE);
+    if (item_val >= INVEN_WIELD) {
+	calc_bonuses();		
+	(void)sprintf(out_val, "%s: %s. ",
+		      describe_use(item_val), tmp_str);
+    }
+    else {
+	(void)sprintf(out_val, "(%c) %s. ",
+		      item_val + 97, tmp_str);
+    }
+    msg_print(out_val);
 
     return (item_val);
 }
