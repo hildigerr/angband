@@ -210,7 +210,7 @@ void pray()
 		    (void)detection();
 		    break;
 		  case 34:
-		    if (!ident_floor()) ident_spell();
+		    if (!ident_floor()) combine(ident_spell());
 		    break;
 		  case 35:	   /* probing */
 		    (void)probing();

@@ -792,7 +792,7 @@ void cast()
 	    break;
 	    
 	  case 23:
-	    if (!ident_floor()) ident_spell();
+	    if (!ident_floor()) combine(ident_spell());
 	    break;
 
 	  case 24:

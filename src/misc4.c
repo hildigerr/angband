@@ -1436,6 +1436,8 @@ int combine(int i)
     register int         j, k;
     register inven_type *i_ptr, *j_ptr;
 
+    /* Allow function chaining with "ident_spell()" */
+    if (i < 0) return (-1);
 
     /* no merging possible */
     if (i_ptr->sval < ITEM_SINGLE_STACK_MIN || i_ptr->sval >= ITEM_GROUP_MIN) return (i);

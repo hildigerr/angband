@@ -2324,24 +2324,22 @@ bool ident_floor(void)
 /*
  * Identify an object in the inventory	-RAK-	 
  * This routine no longer automatically combines objects
+ * This routine now returns the index of the identified object
  * Use "ident_floor()" to allow identification of items on floor,
- * as in "used_up = (ident_floor() || ident_spell());"
- * Use "combine()" to do combining.
+ * as in "used_up = (ident_floor() || (ident_spell() >= 0));"
+ * Use "combine()" as in "combine(ident_spell())" to do combining.
  */
 int ident_spell()
 {
     int			item_val;
-    register int        ident;
     register inven_type *i_ptr;
     bigvtype            out_val, tmp_str;
 
     cptr pmt = "Item you wish identified?";
 
-    ident = FALSE;
-    switch (get_item(&item_val, pmt, 0, INVEN_ARRAY_SIZE))
-	{
-	case TRUE:
-	    ident = TRUE;
+    /* Get an item to identify */
+    if (!get_item(&item_val, pmt, 0, INVEN_ARRAY_SIZE)) return (-1);
+
 	    identify(&item_val);
 	    i_ptr = &inventory[item_val];
 	    known2(i_ptr);
@@ -2354,11 +2352,8 @@ int ident_spell()
 	    }  else
 		(void)sprintf(out_val, "(%c) %s. ", item_val + 97, tmp_str);
 	    msg_print(out_val);
-	    break;
-	default:
-	    break;	    
-	}
-    return (ident);
+
+    return (item_val);
 }
 
 

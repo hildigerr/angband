@@ -1076,7 +1076,7 @@ void do_cmd_read_scroll(void)
 	    if (!ident_floor()) {
 
 		/* Identify an item, or preserve the scroll */
-		if (!ident_spell()) used_up = FALSE;
+		if (ident_spell() < 0) used_up = FALSE;
 	    }
 	    
 	    break;
@@ -1840,7 +1840,7 @@ void do_cmd_use_staff(void)
 	if (!ident_floor()) {
 
 	    /* Identify an item, or preserve charges */
-	    if (!ident_spell()) use_charge = FALSE;
+	    if (ident_spell() < 0) use_charge = FALSE;
 	}
 
 	ident = TRUE;
@@ -2231,7 +2231,7 @@ void do_cmd_zap_rod(void)
 	if (!ident_floor()) {
 
 	    /* Identify an item, or preserve a charge */
-	    if (!ident_spell()) use_charge = FALSE;
+	    if (ident_spell() < 0) use_charge = FALSE;
 	}
 
 	/* For now, decharge */
@@ -2634,9 +2634,8 @@ void do_cmd_activate(void)
 		if (inventory[i].name2 == ART_ERIRIL) {
 		/* Check floor, or inventory plus combining */
 		/* XXX Note that the artifact is always de-charged */
-		if (!ident_floor()) ident_spell();
-		    inventory[i].timeout = 10;
-		    combine_pack();
+		inventory[i].timeout = 10;
+		if (!ident_floor()) combine(ident_spell());
 		} else if (inventory[i].name2 == ART_OLORIN) {
 		    probing();
 		    inventory[i].timeout = 20;
