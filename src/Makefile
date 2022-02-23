@@ -15,7 +15,7 @@ SRCS = \
   spells1.c spells2.c cave.c desc.c tables.c variable.c \
   store.c recall.c wizard.c \
   sets.c eat.c help.c monsters.c treasure.c player.c describe_mon.c \
-  potions.c prayer.c staffs.c wands.c scrolls.c rods.c \
+  potions.c staffs.c wands.c scrolls.c rods.c \
   random.c z-util.c z-virt.c z-form.c
 
 OBJS = \
@@ -26,7 +26,7 @@ OBJS = \
   spells1.o spells2.o cave.o desc.o tables.o variable.o \
   store.o recall.o wizard.o \
   sets.o eat.o help.o monsters.o treasure.o player.o describe_mon.o \
-  potions.o prayer.o staffs.o wands.o scrolls.o rods.o \
+  potions.o staffs.o wands.o scrolls.o rods.o \
   random.o z-util.o z-virt.o z-form.o
 
 

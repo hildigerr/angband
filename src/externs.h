@@ -594,6 +594,7 @@ void bell(void);
 void print(int, int, int);
 
 /* magic.c */
+void pray(void);
 void cast(void);
 
 /* arrays.c */
@@ -808,9 +809,6 @@ void move_player(int, int);
 void find_step(void);
 void find_init(int);
 void end_find(void);
-
-/* prayer.c */
-void pray(void);
 
 /* recall.c */
 int bool_roff_recall(int);
