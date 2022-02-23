@@ -2273,6 +2273,8 @@ int detect_invisible()
 
 /*
  * Identify an object	-RAK-	 
+ * This routine no longer automatically combines objects
+ * Use "combine()" to do combining.
  */
 int ident_spell()
 {

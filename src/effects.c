@@ -19,6 +19,12 @@
  * reading scrolls, aiming wands, using staffs, zapping rods,
  * and activating artifacts.
  *
+ * For simplicity, these routines induce a full "pack recombination"
+ * so we do not have to deal with tracking item movement.  This is not
+ * really that inefficient, since at most we do 400 item similarity tests,
+ * and in most cases, each of these requires one integer compare.  It might
+ * make more sense to actually require the user to recombine by hand.
+ *
  * XXX XXX XXX XXX Someone needs to verify all of these effects.
  */
 
@@ -362,6 +368,9 @@ void do_cmd_eat_food(void)
     inven_item_increase(item_val, -1);
     inven_item_describe(item_val);
     inven_item_optimize(item_val);
+
+    /* Hack -- combine the pack */
+    combine_pack();
 }
 
 
@@ -911,6 +920,9 @@ void do_cmd_quaff_potion(void)
     inven_item_increase(item_val, -1);
     inven_item_describe(item_val);
     inven_item_optimize(item_val);
+
+    /* Hack -- combine the pack */
+    combine_pack();
 }
 
 
@@ -1057,16 +1069,6 @@ void do_cmd_read_scroll(void)
 	    msg_print("This is an identify scroll.");
 	    ident = TRUE;
 	    used_up = ident_spell();
-
-	    /* The identify may merge objects, causing the identify scroll to
-	     * move to a different place.  Check for that here.  It can
-	     * move arbitrarily far if an identify scroll was used on another
-	     * identify scroll, but it always moves down. 
-	     */
-		while (i_ptr->tval != TV_SCROLL1 || i_ptr->flags1 != 0x00000008) {
-		    item_val--;
-		    i_ptr = &inventory[item_val];
-		}
 	    
 	    break;
 
@@ -1438,6 +1440,9 @@ void do_cmd_read_scroll(void)
     inven_item_increase(item_val, -1);
     inven_item_describe(item_val);
     inven_item_optimize(item_val);
+
+    /* Hack -- combine the pack */
+    combine_pack();
     }
 }
 
@@ -1716,6 +1721,9 @@ void do_cmd_aim_wand(void)
 	} else if (!known1_p(i_ptr)) sample(i_ptr);
 
 	inven_item_charges(item_val);
+
+    /* Hack -- combine the pack */
+    combine_pack();
     }
 }
 
@@ -2006,6 +2014,9 @@ void do_cmd_use_staff(void)
     } else if (!known1_p(i_ptr)) sample(i_ptr);
 
     inven_item_charges(item_val);
+
+    /* Hack -- combine the pack */
+    combine_pack();
 }
 
 
@@ -2318,11 +2329,24 @@ void do_cmd_zap_rod(void)
 	}
     } else if (!known1_p(i_ptr)) sample(i_ptr);
 
+
+    /* Hack -- combine the pack */
+    combine_pack();
 }
 
 
 
 
+/*
+ * Activate a wielded object.  Wielded objects never stack.
+ * And even if they did, activatable objects never stack.
+ *
+ * Currently, only (some) artifacts, and Dragon Scale Mail, can be activated.
+ * But one could, for example, easily make an activatable "Ring of Plasma".
+ *
+ * It is assumed that artifacts that have effects that would require a
+ * "combine_pack()" will make such a call themselves.
+ */
 void do_cmd_activate(void)
 {
     int         i, flag, first, num, j, redraw, test = FALSE;
@@ -2585,6 +2609,7 @@ void do_cmd_activate(void)
 		if (inventory[i].name2 == ART_ERIRIL) {
 		    ident_spell();
 		    inventory[i].timeout = 10;
+		    combine_pack();
 		} else if (inventory[i].name2 == ART_OLORIN) {
 		    probing();
 		    inventory[i].timeout = 20;
