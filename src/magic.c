@@ -1056,8 +1056,14 @@ void pray()
 	msg_print("But you are not carrying anything!");
     else if (!find_range(TV_PRAYER_BOOK, TV_NEVER, &i, &j))
 	msg_print("You are not carrying any Holy Books!");
+    
+    /* Choose a book */
     else if (get_item(&item_val, "Use which Holy Book?", i, j)) {
+    
+
+    /* Choose a spell */
 	result = cast_spell("Recite which prayer?", item_val, &choice, &chance);
+
 	if (result < 0)
 	    msg_print("You don't know any prayers in that book.");
 	else if (result > 0) {
@@ -1068,11 +1074,14 @@ void pray()
 	chance += 25;
     else if (p_ptr->stun > 0)
 	chance += 15;
-    if (randint(100) <= chance)	/* changed -CFT */
+
+    /* Check for failure */	    
+    if (randint(100) <= chance)	
 	msg_print("You lost your concentration!");
+	    
+    /* Success */
     else {
 
-    /* Prayers.					 */
 	switch (choice + 1) {
 
 	  case 1:
@@ -1102,7 +1111,6 @@ void pray()
 	     damroll(2, (p_ptr->lev / 2)), (p_ptr->lev / 10) + 1);
 	    break;
 	    
-/* FIXME: hammer? */
 	  case 6:
 	    (void)detect_trap();
 	    break;
@@ -1147,7 +1155,7 @@ void pray()
 	    break;
 	    
 	  case 15:
-	    remove_curse();/* -CFT */
+	    remove_curse();
 	    break;
 	    
 	  case 16:
@@ -1161,6 +1169,7 @@ void pray()
 	    
 	  case 18:
 	    if (get_dir(NULL, &dir))
+	    /* Radius increases with level */
 		fire_ball(GF_HOLY_ORB, dir, char_row, char_col,
 			  (int)(damroll(3,6)+p_ptr->lev+
 				(p_ptr->pclass==2 ? 2 : 1)*stat_adj(A_WIS)),
@@ -1383,11 +1392,13 @@ void pray()
 
 	  case 51:	   /* enchant armor */
 
+	    /* Contain variables */
 	    if (1) {
 		int                 k = 0;
 		int                 l = 0;
 		int                 tmp[100];
 
+		/* Build a list of armor */
 		if (inventory[INVEN_BODY].tval != TV_NOTHING)
 		    tmp[k++] = INVEN_BODY;
 		if (inventory[INVEN_ARM].tval != TV_NOTHING)
@@ -1398,7 +1409,6 @@ void pray()
 		    tmp[k++] = INVEN_HANDS;
 		if (inventory[INVEN_HEAD].tval != TV_NOTHING)
 		    tmp[k++] = INVEN_HEAD;
-	    /* also enchant boots */
 		if (inventory[INVEN_FEET].tval != TV_NOTHING)
 		    tmp[k++] = INVEN_FEET;
 
@@ -1421,26 +1431,29 @@ void pray()
 		    char                out_val[100], tmp_str[100];
 
 		    i_ptr = &inventory[l];
+
+		/* Describe the effect */
 		    objdes(tmp_str, i_ptr, FALSE);
 		    sprintf(out_val, "Your %s glows faintly!", tmp_str);
 		    msg_print(out_val);
+
+		/* Attempt to enchant */
 		    if (!enchant(i_ptr, randint(3)+1, ENCH_TOAC))
 			msg_print("The enchantment fails.");
 		}
 	    }
 	    break;
 
-	  case 52:	   /* Elemental brand */
+	  /* Elemental brand */
+	  case 52:
 
 	    i_ptr = &inventory[INVEN_WIELD];
 
+	    /* you can't create an ego weapon from a cursed */
+	    /* object.  the curse would "taint" the magic -CFT */
 	    if (i_ptr->tval != TV_NOTHING &&
 		i_ptr->name2 == SN_NULL &&
 		!(i_ptr->flags1 & TR3_CURSED)) {
-
-/* you can't create an ego weapon from a cursed object...
- * the curse would "taint" the magic -CFT
- */
 
 		int hot = randint(2)-1;
 		char tmp_str[100], out_val[100];
@@ -1520,6 +1533,8 @@ void pray()
 		}
 	    }
 	    if (!free_turn_flag) {
+
+    /* Reduce mana */
 		if (s_ptr->smana > p_ptr->cmana) {
 		    msg_print("You faint from fatigue!");
 		    p_ptr->paralysis =
@@ -1532,6 +1547,8 @@ void pray()
 		    }
 		} else
 		    p_ptr->cmana -= s_ptr->smana;
+    
+    /* Display current mana */
 		prt_cmana();
 	    }
 	}
