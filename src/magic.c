@@ -163,6 +163,7 @@ void calc_spells(int stat)
 		}
 	    }
 	}
+    }
 
 
     /* Learn some new spells */
@@ -194,7 +195,7 @@ void calc_spells(int stat)
 	/* Cannot learn more spells than exist */
 	if (new_spells > k) new_spells = k;
     }
-    } else 
+
 
     /* Forget spells */
     if (new_spells < 0) {
