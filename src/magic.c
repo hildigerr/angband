@@ -325,7 +325,7 @@ void gain_spells(void)
 	for (i = 0; i < inven_ctr; i++) {
 	    if (((stat == A_INT) && (inventory[i].tval == TV_MAGIC_BOOK)) ||
 		((stat == A_WIS) && (inventory[i].tval == TV_PRAYER_BOOK))) {
-		spell_flag |= inventory[i].flags11;
+		spell_flag |= inventory[i].flags1;
 		spell_flag2 |= inventory[i].flags2;
 	    }
 	}
