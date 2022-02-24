@@ -568,7 +568,8 @@ void play_game()
 	rogue_like_commands = force_keys_to;
     }
 
-    magic_init();
+    /* Prep the object descriptions */
+    flavor_init();
 
     /* Begin the game */
     clear_screen();

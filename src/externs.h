@@ -504,7 +504,7 @@ long total_points(void);
 int look_line(int);
 
 /* desc.c */
-void magic_init(void);
+void flavor_init(void);
 void known1(inven_type *);
 int known1_p(inven_type *);
 void known2(inven_type *);

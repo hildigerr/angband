@@ -148,7 +148,7 @@ static char scroll_adj[MAX_TITLES][10];
 /*
  * Initialize all Potions, wands, staves, scrolls, etc.	
  */
-void magic_init(void)
+void flavor_init(void)
 {
     register int        h, i, j, k;
     register cptr		tmp;

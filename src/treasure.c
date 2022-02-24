@@ -45,7 +45,7 @@
 	Rarity     : Normally 0, but is 1/rare chance of it being found
 	Flags2     : Even more abilities of objects...
 
-	Special Abilities can be added to item by magic_init(),
+	Special Abilities can be added to item by flavor_init(),
 	found in misc.c.
 
 	Scrolls, Potions, and Food:
@@ -56,12 +56,12 @@
 
 	Wands and Staffs:
 	Flags defines a function, pval contains number of charges
-	for item.  pval is set in magic_init() in misc.c.
+	for item.  pval is set in flavor_init() in misc.c.
 
 	Chests:
         pval contains level chest is found on (randomly determined for
         store-bought chests).
-	Traps are added randomly by magic_init() in misc.c.	*/
+	Traps are added randomly by flavor_init() in misc.c.	*/
 
 /* Object list (All objects must be defined here)		 */
 #ifdef MACGAME
