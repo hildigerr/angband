@@ -991,40 +991,39 @@ void cast()
 	    break;
 
 	  default:
-		    break;
-		}
+	    break;
+	}
 
 	    /* End of spells.				     */
 		if (!free_turn_flag) {
-		    if (choice < 32) {
-			if ((spell_worked & (1L << choice)) == 0) {
-			    p_ptr->exp += s_ptr->sexp << 2;
-			    spell_worked |= (1L << choice);
-			    prt_experience();
+	if (choice < 32) {
+	    if ((spell_worked & (1L << choice)) == 0) {
+		p_ptr->exp += s_ptr->sexp << 2;
+		spell_worked |= (1L << choice);
+		prt_experience();
 			}
 		    } else {
-			if ((spell_worked2 & (1L << (choice - 32))) == 0) {
-			    p_ptr->exp += s_ptr->sexp << 2;
-			    spell_worked2 |= (1L << (choice - 32));
-			    prt_experience();
+	    if ((spell_worked2 & (1L << (choice - 32))) == 0) {
+		p_ptr->exp += s_ptr->sexp << 2;
+		 spell_worked2 |= (1L << (choice - 32));
+		prt_experience();
 			}
 		    }
 		}
 	    }
 	    if (!free_turn_flag) {
-		if (s_ptr->smana > p_ptr->cmana) {
-		    msg_print("You faint from the effort!");
-		    p_ptr->paralysis =
-			randint((int)(5 * (s_ptr->smana - p_ptr->cmana)));
-		    p_ptr->cmana = 0;
-		    p_ptr->cmana_frac = 0;
-		    if (randint(3) == 1) {
-			msg_print("You have damaged your health!");
-			(void)dec_stat(A_CON);
+    if (s_ptr->smana > p_ptr->cmana) {
+	msg_print("You faint from the effort!");
+	p_ptr->paralysis = randint((int)(5 * (s_ptr->smana - p_ptr->cmana)));
+	p_ptr->cmana = 0;
+	p_ptr->cmana_frac = 0;
+	if (randint(3) == 1) {
+	    msg_print("You have damaged your health!");
+	    (void)dec_stat(A_CON);
 		    }
 		} else
-		    p_ptr->cmana -= s_ptr->smana;
-		prt_cmana();
+	p_ptr->cmana -= s_ptr->smana;
+    prt_cmana();
 	    }
 	}
     }
