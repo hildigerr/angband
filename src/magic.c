@@ -1079,7 +1079,7 @@ void pray()
     
 
     /* Choose a spell */
-	result = cast_spell("Recite which prayer?", item_val, &choice, &chance);
+    result = cast_spell("Recite which prayer?", item_val, &choice, &chance);
 
     if (result < 0) {
 	msg_print("You don't know any prayers in that book.");
@@ -1087,13 +1087,13 @@ void pray()
     }
 
 	else if (result > 0) {
-	    s_ptr = &magic_spell[p_ptr->pclass - 1][choice];
+
+    s_ptr = &magic_spell[p_ptr->pclass - 1][choice];
+
 	    free_turn_flag = FALSE;
 
-    if (p_ptr->stun > 50)
-	chance += 25;
-    else if (p_ptr->stun > 0)
-	chance += 15;
+    if (p_ptr->stun > 50) chance += 25;
+    else if (p_ptr->stun > 0) chance += 15;
 
     /* Check for failure */	    
     if (randint(100) <= chance)	{
@@ -1113,8 +1113,7 @@ void pray()
 	    (void)hp_player(damroll(3, 3));
 	    if (p_ptr->cut > 0) {
 		p_ptr->cut -= 10;
-		if (p_ptr->cut < 0)
-		    p_ptr->cut = 0;
+		if (p_ptr->cut < 0) p_ptr->cut = 0;
 		msg_print("Your wounds heal.");
 	    }
 	    break;
@@ -1129,7 +1128,7 @@ void pray()
 	    
 	  case 5:
 	    (void)lite_area(char_row, char_col,
-	     damroll(2, (p_ptr->lev / 2)), (p_ptr->lev / 10) + 1);
+		            damroll(2, (p_ptr->lev / 2)), (p_ptr->lev / 10) + 1);
 	    break;
 	    
 	  case 6:
@@ -1157,8 +1156,7 @@ void pray()
 	    (void)hp_player(damroll(4, 4));
 	    if (p_ptr->cut > 0) {
 		p_ptr->cut = (p_ptr->cut / 2) - 20;
-		if (p_ptr->cut < 0)
-		    p_ptr->cut = 0;
+		if (p_ptr->cut < 0) p_ptr->cut = 0;
 		msg_print("Your wounds heal.");
 	    }
 	    break;
@@ -1191,10 +1189,10 @@ void pray()
 	  case 18:
 	    if (!get_dir(NULL, &dir)) return;
 	    /* Radius increases with level */
-		fire_ball(GF_HOLY_ORB, dir, char_row, char_col,
-			  (int)(damroll(3,6)+p_ptr->lev+
-				(p_ptr->pclass==2 ? 2 : 1)*stat_adj(A_WIS)),
-			  (p_ptr->lev<30 ? 2 : 3));
+	    fire_ball(GF_HOLY_ORB, dir, char_row, char_col,
+		      (int)(damroll(3,6) + p_ptr->lev +
+			    (p_ptr->pclass == 2 ? 2 : 1) * stat_adj(A_WIS)),
+		      (p_ptr->lev<30 ? 2 : 3));
 	    break;
 
 	  case 19:
@@ -1428,33 +1426,20 @@ void pray()
 		int                 tmp[100];
 
 		/* Build a list of armor */
-		if (inventory[INVEN_BODY].tval != TV_NOTHING)
-		    tmp[k++] = INVEN_BODY;
-		if (inventory[INVEN_ARM].tval != TV_NOTHING)
-		    tmp[k++] = INVEN_ARM;
-		if (inventory[INVEN_OUTER].tval != TV_NOTHING)
-		    tmp[k++] = INVEN_OUTER;
-		if (inventory[INVEN_HANDS].tval != TV_NOTHING)
-		    tmp[k++] = INVEN_HANDS;
-		if (inventory[INVEN_HEAD].tval != TV_NOTHING)
-		    tmp[k++] = INVEN_HEAD;
-		if (inventory[INVEN_FEET].tval != TV_NOTHING)
-		    tmp[k++] = INVEN_FEET;
+		if (inventory[INVEN_BODY].tval != TV_NOTHING) tmp[k++] = INVEN_BODY;
+		if (inventory[INVEN_ARM].tval != TV_NOTHING) tmp[k++] = INVEN_ARM;
+		if (inventory[INVEN_OUTER].tval != TV_NOTHING) tmp[k++] = INVEN_OUTER;
+		if (inventory[INVEN_HANDS].tval != TV_NOTHING) tmp[k++] = INVEN_HANDS;
+		if (inventory[INVEN_HEAD].tval != TV_NOTHING) tmp[k++] = INVEN_HEAD;
+		if (inventory[INVEN_FEET].tval != TV_NOTHING) tmp[k++] = INVEN_FEET;
 
-		if (k > 0)
-		    l = tmp[randint(k) - 1];
-		if (TR3_CURSED & inventory[INVEN_BODY].flags1)
-		    l = INVEN_BODY;
-		else if (TR3_CURSED & inventory[INVEN_ARM].flags1)
-		    l = INVEN_ARM;
-		else if (TR3_CURSED & inventory[INVEN_OUTER].flags1)
-		    l = INVEN_OUTER;
-		else if (TR3_CURSED & inventory[INVEN_HEAD].flags1)
-		    l = INVEN_HEAD;
-		else if (TR3_CURSED & inventory[INVEN_HANDS].flags1)
-		    l = INVEN_HANDS;
-		else if (TR3_CURSED & inventory[INVEN_FEET].flags1)
-		    l = INVEN_FEET;
+		if (k > 0) l = tmp[randint(k) - 1];
+		if (TR3_CURSED & inventory[INVEN_BODY].flags1) l = INVEN_BODY;
+		else if (TR3_CURSED & inventory[INVEN_ARM].flags1) l = INVEN_ARM;
+		else if (TR3_CURSED & inventory[INVEN_OUTER].flags1) l = INVEN_OUTER;
+		else if (TR3_CURSED & inventory[INVEN_HEAD].flags1) l = INVEN_HEAD;
+		else if (TR3_CURSED & inventory[INVEN_HANDS].flags1) l = INVEN_HANDS;
+		else if (TR3_CURSED & inventory[INVEN_FEET].flags1) l = INVEN_FEET;
 
 		if (l > 0) {
 		    char                out_val[100], tmp_str[100];
@@ -1462,9 +1447,9 @@ void pray()
 		    i_ptr = &inventory[l];
 
 		/* Describe the effect */
-		    objdes(tmp_str, i_ptr, FALSE);
-		    sprintf(out_val, "Your %s glows faintly!", tmp_str);
-		    msg_print(out_val);
+		objdes(tmp_str, i_ptr, FALSE);
+		sprintf(out_val, "Your %s glows faintly!", tmp_str);
+		msg_print(out_val);
 
 		/* Attempt to enchant */
 		if (!enchant(i_ptr, randint(3)+1, ENCH_TOAC)) {
@@ -1496,16 +1481,20 @@ void pray()
 			    tmp_str);
 		    i_ptr->name2 |= EGO_FT;
 		    i_ptr->flags1 |= (TR1_BRAND_FIRE | TR2_RES_FIRE);
-		} else {
+		}
+		else {
 		    sprintf(out_val, "Your %s glows deep, icy blue!",
 			    tmp_str);
 		    i_ptr->name2 |= EGO_FB;
 		    i_ptr->flags1 |= (TR1_BRAND_COLD | TR2_RES_COLD);
 		}
+
 		msg_print(out_val);
+
 		enchant(i_ptr, 3+randint(3), ENCH_TOHIT|ENCH_TODAM);
 		calc_bonuses();
-	    } else {
+	    }
+	    else {
 		msg_print("The Branding fails.");
 	    }
 	    break;
@@ -1548,41 +1537,43 @@ void pray()
 
 	/* End of prayers.				 */
 		if (!free_turn_flag) {
-		    if (choice < 32) {
-			if ((spell_worked & (1L << choice)) == 0) {
-			    p_ptr->exp += s_ptr->sexp << 2;
-			    spell_worked |= (1L << choice);
-			    prt_experience();
-			}
-		    } else {
-			if ((spell_worked2 & (1L << (choice - 32))) == 0) {
-			    p_ptr->exp += s_ptr->sexp << 2;
-			    spell_worked2 |= (1L << (choice - 32));
-			    prt_experience();
-			}
-		    }
+	if (choice < 32) {
+	    if ((spell_worked & (1L << choice)) == 0) {
+		p_ptr->exp += s_ptr->sexp << 2;
+		spell_worked |= (1L << choice);
+		prt_experience();
+	    }
+	}
+	else {
+	    if ((spell_worked2 & (1L << (choice - 32))) == 0) {
+		 p_ptr->exp += s_ptr->sexp << 2;
+		 spell_worked2 |= (1L << (choice - 32));
+		 prt_experience();
+	    }
+	}
 		}
 	    }
+
 	    if (!free_turn_flag) {
 
     /* Reduce mana */
-		if (s_ptr->smana > p_ptr->cmana) {
-		    msg_print("You faint from fatigue!");
-		    p_ptr->paralysis =
-			randint((int)(5 * (s_ptr->smana - p_ptr->cmana)));
-		    p_ptr->cmana = 0;
-		    p_ptr->cmana_frac = 0;
-		    if (randint(3) == 1) {
-			msg_print("You have damaged your health!");
-			(void)dec_stat(A_CON);
-		    }
-		}
+    if (s_ptr->smana > p_ptr->cmana) {
+	msg_print("You faint from fatigue!");
+	p_ptr->paralysis = randint((int)(5 * (s_ptr->smana - p_ptr->cmana)));
+	p_ptr->cmana = 0;
+	p_ptr->cmana_frac = 0;
+	if (randint(3) == 1) {
+	    msg_print("You have damaged your health!");
+	    (void)dec_stat(A_CON);
+	}
+    }
     else {
 	p_ptr->cmana -= s_ptr->smana;
     }
     
     /* Display current mana */
-		prt_cmana();
+    prt_cmana();
+
 	    }
 	}
     }
