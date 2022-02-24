@@ -991,7 +991,6 @@ void cast()
 	    
 	  case 56:
 	    p_ptr->shield += randint(20) + 30;
-	    calc_bonuses();
 	    prt_pac();
 	    calc_mana(A_INT);
 	    msg_print("A mystic shield forms around your body!");
@@ -1056,6 +1055,8 @@ void cast()
     /* Display current mana */
     prt_cmana();
 
+    /* Hack -- recalculate all bonuses */
+    calc_bonuses();
 }
 
 
@@ -1521,7 +1522,6 @@ void pray()
 		msg_print(out_val);
 
 		enchant(i_ptr, 3+randint(3), ENCH_TOHIT|ENCH_TODAM);
-		calc_bonuses();
 	    }
 	    else {
 		msg_print("The Branding fails.");
@@ -1601,5 +1601,8 @@ void pray()
     
     /* Display current mana */
     prt_cmana();
+    
+    /* Hack -- Recalculate bonuses */
+    calc_bonuses();
 }
 
