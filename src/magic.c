@@ -1075,18 +1075,20 @@ void pray()
     }
     
     /* Choose a book */
-    if (!get_item(&item_val, "Use which Holy Book?", i, j)) return; {
+    if (!get_item(&item_val, "Use which Holy Book?", i, j)) return;
     
 
     /* Choose a spell */
     result = cast_spell("Recite which prayer?", item_val, &choice, &chance);
 
+    if (!result) return;
+    
     if (result < 0) {
 	msg_print("You don't know any prayers in that book.");
 	return;
     }
 
-	else if (result > 0) {
+
 
     s_ptr = &magic_spell[p_ptr->pclass - 1][choice];
 
@@ -1575,7 +1577,5 @@ void pray()
     prt_cmana();
 
 	    }
-	}
-    }
 }
 
