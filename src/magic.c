@@ -46,7 +46,9 @@ void calc_spells(int stat)
     /* XXX Hack -- this technically runs in the "wrong" order */
 
     /* Check to see if know any spells greater than level, eliminate them */
-    for (i = 31, mask = 0x80000000L; mask; mask >>= 1, i--) {
+    for (i = 31; i >= 0; i--) {
+
+	mask = 1L << i;
 
 	if (mask & spell_learned) {
 	    if (s_ptr[i].slevel > p_ptr->lev) {
@@ -95,7 +97,8 @@ void calc_spells(int stat)
 
     /* Count the number of spells we know */
     num_known = 0;
-    for (mask = 0x1; mask; mask <<= 1) {
+    for (i = 0; i < 32; i++) {
+	mask = 1L << i;
 	if (mask & spell_learned) num_known++;
 	if (mask & spell_learned2) num_known++;
     }
@@ -108,8 +111,16 @@ void calc_spells(int stat)
     if (new_spells > 0) {
 
 	/* Remember spells that were forgetten */
-	for (i = 0; ((spell_forgotten | spell_forgotten2) && new_spells
-		     && (i < num_allowed) && (i < 64)); i++) {
+	for (i = 0; new_spells > 0; i++) {
+
+	    /* No spells left to remember */
+	    if (i >= 64) break;
+
+	    /* Not allowed to remember any more */
+	    if (i >= num_allowed) break;
+
+	    /* No more forgotten spells to remember */
+	    if (!spell_forgotten && !spell_forgotten2) break;
 
 	    /* Get the (i+1)th spell learned */
 	    j = spell_order[i];
@@ -163,9 +174,9 @@ void calc_spells(int stat)
 
 	/* only bother with spells learnable by class -CFT */
 	spell_flag = spellmasks[p_ptr->pclass][0] & ~spell_learned;
-	mask = 0x1;
 	i = 0;
-	for (j = 0, mask = 0x1; spell_flag; mask <<= 1, j++) {
+	for (j = 0; spell_flag; j++) {
+	    mask = 1L << j;
 	    if (spell_flag & mask) {
 		spell_flag &= ~mask;
 		if (s_ptr[j].slevel <= p_ptr->lev)i++;
@@ -174,11 +185,11 @@ void calc_spells(int stat)
 
 	/* only bother with spells learnable by class -CFT */
 	spell_flag = spellmasks[p_ptr->pclass][1] & ~spell_learned2;
-	mask = 0x1;
-	for (j = 0, mask = 0x1; spell_flag; mask <<= 1, j++) {
+	for (j = 32; spell_flag; j++) {
+	    mask = 1L << (j - 32);
 	    if (spell_flag & mask) {
 		spell_flag &= ~mask;
-		if (s_ptr[j + 32].slevel <= p_ptr->lev) i++;
+		if (s_ptr[j].slevel <= p_ptr->lev) i++;
 	    }
 	}
 
@@ -191,7 +202,11 @@ void calc_spells(int stat)
     if (new_spells < 0) {
 
 	/* Forget spells in the opposite order they were learned */
-	for (i = 63; new_spells && (spell_learned | spell_learned2); i--) {
+	for (i = 63; new_spells < 0; i--) {
+
+	    if (!spell_learned && !spell_learned2) {
+		break;
+	    }
 
 	    /* Get the (i+1)th spell learned */
 	    j = spell_order[i];
@@ -321,10 +336,13 @@ void gain_spells(void)
     spell_flag &= ~spell_learned;
     spell_flag2 &= ~spell_learned2;
 
-    mask = 0x1;
     i = 0;
 
-    for (j = 0, mask = 0x1; (spell_flag | spell_flag2); mask <<= 1, j++) {
+    for (j = 0; (spell_flag | spell_flag2); j++) {
+
+	/* Get the mode */
+	mask = 1L << j;
+
 	if (spell_flag & mask) {
 	    spell_flag &= ~mask;
 	    if (s_ptr[j].slevel <= p_ptr->lev) {
@@ -356,7 +374,10 @@ void gain_spells(void)
 	print_spells(spells, i, FALSE, -1);
 
 	/* Let player choose spells until done */
-	while (new_spells && get_com("Learn which spell?", &query)) {
+	while (new_spells) {
+
+	    /* Let player choose a spell */
+	    if (!get_com("Learn which spell?", &query)) break;
 
 	    /* Analyze request */
 	    j = query - 'a';
@@ -641,6 +662,9 @@ void cast()
     /* Ask for a spell */
     result = cast_spell("Cast which spell?", item_val, &choice, &chance);
 
+    /* Cancelled */
+    if (!result) return;
+
 
 	if (p_ptr->stun > 50) chance += 25;
 	else if (p_ptr->stun > 0) chance += 15;
@@ -651,7 +675,6 @@ void cast()
 	return;
     }
 
-	else if (result > 0) {
 
 	    s_ptr = &magic_spell[p_ptr->pclass - 1][choice];
 
@@ -1036,7 +1059,6 @@ void cast()
     /* Display current mana */
     prt_cmana();
 
-	}
     }
 }
 
