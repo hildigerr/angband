@@ -636,7 +636,7 @@ void cast()
     }
 
     /* Get a spell book */
-    if (get_item(&item_val, "Use which spell-book?", i, j)) {
+    if (!get_item(&item_val, "Use which spell-book?", i, j)) return;
 
     /* Ask for a spell */
     result = cast_spell("Cast which spell?", item_val, &choice, &chance);
@@ -673,7 +673,7 @@ void cast()
 	switch (choice + 1) {
 
 	  case 1:
-	    if (get_dir(NULL, &dir))
+	    if (!get_dir(NULL, &dir)) return;
 		if (randint(100) < (chance-10))
 		    line_spell(GF_MISSILE, dir, char_row, char_col,
 			       damroll(3 + ((p_ptr->lev - 1) / 5), 4) );
@@ -718,18 +718,18 @@ void cast()
 	    break;
 
 	  case 9:
-	    if (get_dir(NULL, &dir))
+	    if (!get_dir(NULL, &dir)) return;
 	    fire_ball(GF_POIS, dir, char_row, char_col,
 		      10 + (p_ptr->lev / 2), 2);
 	    break;
 
 	  case 10:
-	    if (get_dir(NULL, &dir))
+	    if (!get_dir(NULL, &dir)) return;
 	    (void)confuse_monster(dir, char_row, char_col, p_ptr->lev);
 	    break;
 
 	  case 11:
-	    if (get_dir(NULL, &dir))
+	    if (!get_dir(NULL, &dir)) return;
 		if (randint(100) < (chance-10))
 		    line_spell(GF_ELEC, dir, char_row, char_col,
 			       damroll(3+((p_ptr->lev-5)/4),8));
@@ -743,7 +743,7 @@ void cast()
 	    break;
 	    
 	  case 13:
-	    if (get_dir(NULL, &dir))
+	    if (!get_dir(NULL, &dir)) return;
 	    (void)sleep_monster(dir, char_row, char_col);
 	    break;
 
@@ -756,14 +756,13 @@ void cast()
 	    break;
 
 	  case 16:
-	    if (get_dir(NULL, &dir)) {
+	    if (!get_dir(NULL, &dir)) return;
 	    msg_print("A line of blue shimmering light appears.");
 	    lite_line(dir, char_row, char_col);
-	    }
 	    break;
 
 	  case 17:
-	    if (get_dir(NULL, &dir))
+	    if (!get_dir(NULL, &dir)) return;
 		if (randint(100) < (chance-10))
 		    line_spell(GF_COLD, dir, char_row, char_col,
 			       damroll(5+((p_ptr->lev-5)/4),8));
@@ -773,7 +772,7 @@ void cast()
 	    break;
 
 	  case 18:
-	    if (get_dir(NULL, &dir))
+	    if (!get_dir(NULL, &dir)) return;
 	    (void)wall_to_mud(dir, char_row, char_col);
 	    break;
 
@@ -790,7 +789,7 @@ void cast()
 	    break;
 	    
 	  case 22:
-	    if (get_dir(NULL, &dir))
+	    if (!get_dir(NULL, &dir)) return;
 	    (void)poly_monster(dir, char_row, char_col);
 	    break;
 	    
@@ -803,7 +802,7 @@ void cast()
 	    break;
 
 	  case 25:
-	    if (get_dir(NULL, &dir))
+	    if (!get_dir(NULL, &dir)) return;
 		if (randint(100) < chance)
 		    line_spell(GF_FIRE, dir, char_row, char_col,
 			       damroll(8+((p_ptr->lev-5)/4),8));
@@ -813,12 +812,12 @@ void cast()
 	    break;
 	    
 	  case 26:
-	    if (get_dir(NULL, &dir))
+	    if (!get_dir(NULL, &dir)) return;
 	    (void)speed_monster(dir, char_row, char_col, -1);
 	    break;
 
 	  case 27:
-	    if (get_dir(NULL, &dir))
+	    if (!get_dir(NULL, &dir)) return;
 	    fire_ball(GF_COLD, dir, char_row, char_col,
 		      30 + (p_ptr->lev), 2);
 	    break;
@@ -828,8 +827,8 @@ void cast()
 	    break;
 
 	  case 29:
-	    if (get_dir(NULL, &dir))
-		      (void)teleport_monster(dir, char_row, char_col);
+	    if (!get_dir(NULL, &dir)) return;
+	    (void)teleport_monster(dir, char_row, char_col);
 	    break;
 
 	  case 30:
@@ -842,7 +841,7 @@ void cast()
 	    break;
 
 	  case 31:
-	    if (get_dir(NULL, &dir))
+	    if (!get_dir(NULL, &dir)) return;
 	    fire_ball(GF_FIRE, dir, char_row, char_col,
 		      55 + (p_ptr->lev), 2);
 	    break;
@@ -883,7 +882,7 @@ void cast()
 	    break;
 
 	  case 39:	   /* Acid Bolt */
-	    if (get_dir(NULL, &dir))
+	    if (!get_dir(NULL, &dir)) return;
 		if (randint(100) < (chance-5))
 		    line_spell(GF_ACID, dir, char_row, char_col,
 			       damroll(6+((p_ptr->lev-5)/4), 8));
@@ -893,31 +892,31 @@ void cast()
 	    break;
 
 	  case 40:	   /* Cloud kill */
-	    if (get_dir(NULL, &dir))
+	    if (!get_dir(NULL, &dir)) return;
 	    fire_ball(GF_POIS, dir, char_row, char_col,
 		      20 + (p_ptr->lev / 2), 3);
 	    break;
 
 	  case 41:	   /* Acid Ball */
-	    if (get_dir(NULL, &dir))
+	    if (!get_dir(NULL, &dir)) return;
 	    fire_ball(GF_ACID, dir, char_row, char_col,
 		      40 + (p_ptr->lev), 2);
 	    break;
 
 	  case 42:	   /* Ice Storm */
-	    if (get_dir(NULL, &dir))
+	    if (!get_dir(NULL, &dir)) return;
 	    fire_ball(GF_COLD, dir, char_row, char_col,
 		      70 + (p_ptr->lev), 3);
 	    break;
 
 	  case 43:	   /* Meteor Swarm */
-	    if (get_dir(NULL, &dir))
+	    if (!get_dir(NULL, &dir)) return;
 	    fire_ball(GF_METEOR, dir, char_row, char_col,
 		      65 + (p_ptr->lev), 3);
 	    break;
 
 	  case 44:	   /* Hellfire */
-	    if (get_dir(NULL, &dir))
+	    if (!get_dir(NULL, &dir)) return;
 	    fire_ball(GF_HOLY_ORB, dir, char_row, char_col, 300, 2);
 	    break;
 
@@ -1005,17 +1004,19 @@ void cast()
 		p_ptr->exp += s_ptr->sexp << 2;
 		spell_worked |= (1L << choice);
 		prt_experience();
-			}
-		    } else {
+	    }
+	}
+	else {
 	    if ((spell_worked2 & (1L << (choice - 32))) == 0) {
 		p_ptr->exp += s_ptr->sexp << 2;
 		 spell_worked2 |= (1L << (choice - 32));
 		prt_experience();
-			}
-		    }
-		}
 	    }
-	    if (!free_turn_flag) {
+	}
+    }
+    }
+
+    if (!free_turn_flag) {
 
     /* Use some mana */
     if (s_ptr->smana > p_ptr->cmana) {
@@ -1026,13 +1027,15 @@ void cast()
 	if (randint(3) == 1) {
 	    msg_print("You have damaged your health!");
 	    (void)dec_stat(A_CON);
-		    }
-		} else
+	}
+    }
+    else {
 	p_ptr->cmana -= s_ptr->smana;
+    }
 
     /* Display current mana */
     prt_cmana();
-	    }
+
 	}
     }
 }
