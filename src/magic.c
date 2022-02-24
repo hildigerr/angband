@@ -644,6 +644,11 @@ void cast()
 
     free_turn_flag = TRUE;
 
+    if (class[p_ptr->pclass].spell != MAGE) {
+	msg_print("You can't cast spells!");
+	return;
+    }
+
     if (p_ptr->blind > 0) {
 	msg_print("You can't see to read your spell book!");
 	return;
@@ -656,11 +661,6 @@ void cast()
     
     if (p_ptr->confused > 0) {
 	msg_print("You are too confused.");
-	return;
-    }
-
-    if (class[p_ptr->pclass].spell != MAGE) {
-	msg_print("You can't cast spells!");
 	return;
     }
 
@@ -1065,6 +1065,11 @@ void pray()
 
     free_turn_flag = TRUE;
 
+    if (class[p_ptr->pclass].spell != PRIEST) {
+	msg_print("Pray hard enough and your prayers may be answered.");
+	return;
+    }
+
     if (p_ptr->blind > 0) {
 	msg_print("You can't see to read your prayer!");
 	return;
@@ -1077,16 +1082,6 @@ void pray()
 
     if (p_ptr->confused > 0) {
 	msg_print("You are too confused.");
-	return;
-    }
-
-    if (class[p_ptr->pclass].spell != PRIEST) {
-	msg_print("Pray hard enough and your prayers may be answered.");
-	return;
-    }
-
-    if (inven_ctr == 0) {
-	msg_print("But you are not carrying anything!");
 	return;
     }
 
