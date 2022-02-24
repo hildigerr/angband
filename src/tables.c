@@ -323,6 +323,199 @@ struct monster_attack a_list[MAX_A_IDX] = {
 
 
 /*
+ * Special name table
+ */
+
+cptr special_names[SN_ARRAY_SIZE] = {
+
+    NULL,			/* 0 */
+    "of Resistance",
+    "of Resist Acid",
+    "of Resist Fire",
+    "of Resist Cold",
+    "of Resist Lightning",
+    "(Holy Avenger)",
+    "(Defender)",
+    "of Animal Slaying",
+    "of Dragon Slaying",
+    "of Slay Evil",		/* 10 */
+    "of Slay Undead",
+    "of Flame",
+    "of Frost",
+    "of Free Action",
+    "of Slaying",		/* 15 */
+    "of Clumsiness",
+    "of Weakness",
+    "of Slow Descent",
+    "of Speed",
+    "of Stealth",		/* 20 */
+    "of Slowness",
+    "of Noise",
+    "of Great Mass",
+    "of Intelligence",
+    "of Wisdom",		/* 25 */
+    "of Infra-Vision",
+    "of Might",
+    "of Lordliness",
+    "of the Magi",
+    "of Beauty",		/* 30 */
+    "of Seeing",
+    "of Regeneration",
+    "of Stupidity",
+    "of Dullness",
+    "of Blindness",
+    "of Timidness",
+    "of Teleportation",
+    "of Ugliness",
+    "of Protection",
+    "of Irritation",
+    "of Vulnerability",
+    "of Enveloping",
+    "of Fire",
+    "of Slay Evil",
+    "of Dragon Slaying",	/* 45 */
+    "(Empty)",
+    "(Locked)",
+    "(Poison Needle)",
+    "(Gas Trap)",
+    "(Explosion Device)",
+    "(Summoning Runes)",
+    "(Multiple Traps)",
+    "(Disarmed)",
+    "(Unlocked)",
+    "of Slay Animal",		/* 55 */
+    "'Grond'",
+    "'Ringil'",
+    "'Aeglos'",
+    "'Arunruth'",
+    "'Mormegil'",				/* 60 */
+    "of Morgul",
+    "'Angrist'",
+    "'Gurthang'",
+    "'Calris'",
+    "of Accuracy",		/* 65 */
+    "'Anduril'",
+    "of Orc Slaying",
+    "of Power",
+    "of Durin",
+    "of Aule",
+    "of Westernesse",
+    "(Blessed)",
+    "of Demon Slaying",
+    "of Troll Slaying",		/* 74 */
+    "'Bloodspike'",				/* 75 */
+    "'Thunderfist'",
+    "of Wounding",
+    "'Orcrist'",
+    "'Glamdring'",
+    "'Sting'",
+    "of Light",
+    "of Agility",
+    "of Backbiting",
+    "'Doomcaller'",
+    "of Giant Slaying",		/* 85 */
+    "of Telepathy",
+    "of Dragonkind",
+    "'Nenya'",
+    "'Narya'",
+    "'Vilya'",    /* 90 */
+    "of Aman",
+    "'Belegennon'",
+    "of Feanor",
+    "of Anarion",
+    "of Isildur",
+    "of Fingolfin",
+    "of Elvenkind",
+    "'Soulkeeper'",
+    "of Dor-Lomin",
+    "of Morgoth",
+    "'Belthronding'",
+    "'Dal-i-thalion'",
+    "'Paurhach'",
+    "'Paurnimmen'",
+    "'Pauraegen'",    /* 105 */
+    "'Cammithrim'",
+    "'Cambeleg'",
+    "'Holhenneth'",
+    "'Paurnen'",
+    "'Aeglin'",
+    "'Camlost'",
+    "'Nimloth'",
+    "'Nar-i-vagil'",
+    "of Beruthiel",
+    "of Gorlim",
+    "'Narthanc'",
+    "'Nimthanc'",
+    "'Dethanc'",
+    "'Gilettar'",
+    "of Rilia",    /* 120 */
+    "'Belangil'",
+    "of Balli Stonehand",
+    "'Lotharang'",
+    "'Firestar'",
+    "'Eriril'",
+    "'Cubragol'",
+    "of Bard",
+    "'Colluin'",
+    "'Holcolleth'",
+    "'Totila'",
+    "of Pain",
+    "'Elvagil'",
+    "'Aglarang'",
+    "of the Rohirrim",
+    "of Eorlingas",    /* 135 */
+    "'Barukkheled'",
+    "of Wrath",
+    "'Haradekket'",
+    "'Mundwine'",
+    "'Gondricam'",
+    "'Zarcuthra'",
+    "'Careth Asdriag'",
+    "'Forasgil'",
+    "'Crisdurian'",
+    "'Colannon'",
+    "'Hithlomir'",
+    "'Thalkettoth'",
+    "of Arvedui",
+    "of Thranduil",
+    "of Thengel",    /* 150 */
+    "of Hammerhand",
+    "of Celegorm",
+    "of Thror",
+    "of Maedhros",
+    "of Olorin",
+    "'Anguirel'",
+    "of Thorin",
+    "of Celeborn",
+    "of Orome",
+    "of Eonwe",
+    "of Gondor",
+    "of Theoden",
+    "of Thingol",
+    "of Thorongil",
+    "of Luthien",    /* 165 */
+    "of Tuor",
+    "of Ulmo",
+    "'Osondir'",
+    "'Turmil'",
+    "of Caspanion",
+    "'Til-i-arc'",
+    "'Deathwreaker'",
+    "'Avavir'",
+    "'Taratol'",
+    "'Razorback'",
+    "'Bladeturner'",
+    "(Shattered)",
+    "(Blasted)",
+    "of Extra Attacks"		/* 180 */
+};
+
+
+
+
+
+
+/*
  * Class titles for different levels			
  */
 cptr player_title[MAX_CLASS][MAX_PLAYER_LEVEL] = {
