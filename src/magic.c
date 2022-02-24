@@ -32,6 +32,7 @@ void calc_spells(int stat)
     register spell_type  *s_ptr;
 
     s_ptr = &magic_spell[p_ptr->pclass - 1][0];
+
     if (stat == A_INT) {
 	p = "spell";
 	offset = SPELL_OFFSET;
@@ -40,6 +41,9 @@ void calc_spells(int stat)
 	p = "prayer";
 	offset = PRAYER_OFFSET;
     }
+
+
+    /* XXX Hack -- this technically runs in the "wrong" order */
 
     /* Check to see if know any spells greater than level, eliminate them */
     for (i = 31, mask = 0x80000000L; mask; mask >>= 1, i--) {
@@ -103,8 +107,7 @@ void calc_spells(int stat)
     /* We can learn some forgotten spells */
     if (new_spells > 0) {
 
-	/* Remember forgotten spells while forgotten spells exist of new_spells
-	 * positive, remember the spells in the order that they were learned  */
+	/* Remember spells that were forgetten */
 	for (i = 0; ((spell_forgotten | spell_forgotten2) && new_spells
 		     && (i < num_allowed) && (i < 64)); i++) {
 
@@ -906,6 +909,7 @@ void cast()
 	    fire_ball(GF_COLD, dir, char_row, char_col,
 		      70 + (p_ptr->lev), 3);
 	    break;
+
 	  case 43:	   /* Meteor Swarm */
 	    if (get_dir(NULL, &dir))
 	    fire_ball(GF_METEOR, dir, char_row, char_col,
@@ -994,8 +998,8 @@ void cast()
 	    break;
 	}
 
-	    /* End of spells.				     */
 		if (!free_turn_flag) {
+	/* A spell was cast */
 	if (choice < 32) {
 	    if ((spell_worked & (1L << choice)) == 0) {
 		p_ptr->exp += s_ptr->sexp << 2;
@@ -1012,6 +1016,8 @@ void cast()
 		}
 	    }
 	    if (!free_turn_flag) {
+
+    /* Use some mana */
     if (s_ptr->smana > p_ptr->cmana) {
 	msg_print("You faint from the effort!");
 	p_ptr->paralysis = randint((int)(5 * (s_ptr->smana - p_ptr->cmana)));
@@ -1023,6 +1029,8 @@ void cast()
 		    }
 		} else
 	p_ptr->cmana -= s_ptr->smana;
+
+    /* Display current mana */
     prt_cmana();
 	    }
 	}
@@ -1072,6 +1080,7 @@ void pray()
 	msg_print("You are not carrying any Holy Books!");
 	return;
     }
+
     
     /* Choose a book */
     if (!get_item(&item_val, "Use which Holy Book?", i, j)) return;
