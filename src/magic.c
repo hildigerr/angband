@@ -676,9 +676,7 @@ void cast()
     }
 
 
-	    s_ptr = &magic_spell[p_ptr->pclass - 1][choice];
-
-	    free_turn_flag = FALSE;
+    s_ptr = &magic_spell[p_ptr->pclass - 1][choice];
 
     /* Failed spell */
     if (randint(100) <= chance) {
@@ -1020,7 +1018,6 @@ void cast()
 	    break;
 	}
 
-		if (!free_turn_flag) {
 	/* A spell was cast */
 	if (choice < 32) {
 	    if ((spell_worked & (1L << choice)) == 0) {
@@ -1037,9 +1034,9 @@ void cast()
 	    }
 	}
     }
-    }
 
-    if (!free_turn_flag) {
+    /* Take a turn */
+    free_turn_flag = FALSE;
 
     /* Use some mana */
     if (s_ptr->smana > p_ptr->cmana) {
@@ -1059,7 +1056,6 @@ void cast()
     /* Display current mana */
     prt_cmana();
 
-    }
 }
 
 
@@ -1124,8 +1120,6 @@ void pray()
 
 
     s_ptr = &magic_spell[p_ptr->pclass - 1][choice];
-
-	    free_turn_flag = FALSE;
 
     if (p_ptr->stun > 50) chance += 25;
     else if (p_ptr->stun > 0) chance += 15;
@@ -1571,7 +1565,6 @@ void pray()
 	}
 
 	/* End of prayers.				 */
-		if (!free_turn_flag) {
 	if (choice < 32) {
 	    if ((spell_worked & (1L << choice)) == 0) {
 		p_ptr->exp += s_ptr->sexp << 2;
@@ -1586,10 +1579,10 @@ void pray()
 		 prt_experience();
 	    }
 	}
-		}
-	    }
+    }
 
-	    if (!free_turn_flag) {
+    /* Take a turn */
+    free_turn_flag = FALSE;
 
     /* Reduce mana */
     if (s_ptr->smana > p_ptr->cmana) {
@@ -1608,7 +1601,5 @@ void pray()
     
     /* Display current mana */
     prt_cmana();
-
-	    }
 }
 
