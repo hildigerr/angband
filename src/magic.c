@@ -620,6 +620,20 @@ void calc_mana(int stat)
 
 
 /*
+ * Hack -- fire a bolt, or a beam if lucky
+ */
+static void bolt_or_beam(int prob, int typ, int dir, int dam)
+{
+    if (randint(100) < prob) {
+	line_spell(typ, dir, char_row, char_col, dam);
+    }
+    else {
+	fire_bolt(typ, dir, char_row, char_col, dam);
+    }
+}
+
+
+/*
  * Throw a magic spell					-RAK-	 
  */
 void cast()
@@ -693,12 +707,8 @@ void cast()
 
 	  case 1:
 	    if (!get_dir(NULL, &dir)) return;
-		if (randint(100) < (chance-10))
-		    line_spell(GF_MISSILE, dir, char_row, char_col,
-			       damroll(3 + ((p_ptr->lev - 1) / 5), 4) );
-		else
-		    fire_bolt(GF_MISSILE, dir, char_row, char_col,
-			      damroll(3 + ((p_ptr->lev - 1) / 5), 4) );
+	    bolt_or_beam(chance-10, GF_MISSILE, dir,
+			 damroll(3 + ((p_ptr->lev - 1) / 5), 4));
 	    break;
 
 	  case 2:
@@ -749,12 +759,8 @@ void cast()
 
 	  case 11:
 	    if (!get_dir(NULL, &dir)) return;
-		if (randint(100) < (chance-10))
-		    line_spell(GF_ELEC, dir, char_row, char_col,
-			       damroll(3+((p_ptr->lev-5)/4),8));
-		else
-		    fire_bolt(GF_ELEC, dir, char_row, char_col,
-			      damroll(3+((p_ptr->lev-5)/4),8));
+	    bolt_or_beam(chance-10, GF_ELEC, dir,
+			 damroll(3+((p_ptr->lev-5)/4),8));
 	    break;
 	    
 	  case 12:
@@ -782,12 +788,8 @@ void cast()
 
 	  case 17:
 	    if (!get_dir(NULL, &dir)) return;
-		if (randint(100) < (chance-10))
-		    line_spell(GF_COLD, dir, char_row, char_col,
-			       damroll(5+((p_ptr->lev-5)/4),8));
-		else
-		    fire_bolt(GF_COLD, dir, char_row, char_col,
-			      damroll(5+((p_ptr->lev-5)/4),8));
+	    bolt_or_beam(chance-10, GF_COLD, dir,
+			 damroll(5+((p_ptr->lev-5)/4),8));
 	    break;
 
 	  case 18:
@@ -822,12 +824,8 @@ void cast()
 
 	  case 25:
 	    if (!get_dir(NULL, &dir)) return;
-		if (randint(100) < chance)
-		    line_spell(GF_FIRE, dir, char_row, char_col,
-			       damroll(8+((p_ptr->lev-5)/4),8));
-		else
-		    fire_bolt(GF_FIRE, dir, char_row, char_col,
-			      damroll(8+((p_ptr->lev-5)/4),8));
+	    bolt_or_beam(chance, GF_FIRE, dir,
+			 damroll(8+((p_ptr->lev-5)/4),8));
 	    break;
 	    
 	  case 26:
@@ -902,12 +900,8 @@ void cast()
 
 	  case 39:	   /* Acid Bolt */
 	    if (!get_dir(NULL, &dir)) return;
-		if (randint(100) < (chance-5))
-		    line_spell(GF_ACID, dir, char_row, char_col,
-			       damroll(6+((p_ptr->lev-5)/4), 8));
-		else
-		    fire_bolt(GF_ACID, dir, char_row, char_col,
-			      damroll(6+((p_ptr->lev-5)/4), 8));
+	    bolt_or_beam(chance-5, GF_ACID, dir,
+			 damroll(6+((p_ptr->lev-5)/4), 8));
 	    break;
 
 	  case 40:	   /* Cloud kill */
