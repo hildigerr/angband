@@ -1071,11 +1071,14 @@ void pray()
 	    if (randint(100) <= chance)	/* changed -CFT */
 		msg_print("You lost your concentration!");
 	    else {
+
 	    /* Prayers.					 */
 		switch (choice + 1) {
+
 		  case 1:
 		    (void)detect_evil();
 		    break;
+
 		  case 2:
 		    (void)hp_player(damroll(3, 3));
 		    if (p_ptr->cut > 0) {
@@ -1085,33 +1088,42 @@ void pray()
 			msg_print("Your wounds heal.");
 		    }
 		    break;
+	    
 		  case 3:
 		    bless(randint(12) + 12);
 		    break;
+	    
 		  case 4:
 		    (void)remove_fear();
 		    break;
+	    
 		  case 5:
 		    (void)lite_area(char_row, char_col,
 		     damroll(2, (p_ptr->lev / 2)), (p_ptr->lev / 10) + 1);
 		    break;
+	    
 /* FIXME: hammer? */
 		  case 6:
 		    (void)detect_trap();
 		    break;
+	    
 		  case 7:
 		    (void)detect_sdoor();
 		    break;
+	    
 		  case 8:
 		    (void)slow_poison();
 		    break;
+	    
 		  case 9:
 		    if (get_dir(NULL, &dir))
 			(void)fear_monster(dir, char_row, char_col, p_ptr->lev);
 		    break;
+	    
 		  case 10:
 		    teleport((int)(p_ptr->lev * 3));
 		    break;
+	    
 		  case 11:
 		    (void)hp_player(damroll(4, 4));
 		    if (p_ptr->cut > 0) {
@@ -1121,25 +1133,32 @@ void pray()
 			msg_print("Your wounds heal.");
 		    }
 		    break;
+	    
 		  case 12:
 		    bless(randint(24) + 24);
 		    break;
+	    
 		  case 13:
 		    (void)sleep_monsters1(char_row, char_col);
 		    break;
+	    
 		  case 14:
 		    create_food();
 		    break;
+	    
 		  case 15:
 		    remove_curse();/* -CFT */
 		    break;
+	    
 		  case 16:
 		    p_ptr->oppose_fire += randint(10) + 10;
 		    p_ptr->oppose_cold += randint(10) + 10;
 		    break;
+	    
 		  case 17:
 		    (void)cure_poison();
 		    break;
+	    
 		  case 18:
 		    if (get_dir(NULL, &dir))
 			fire_ball(GF_HOLY_ORB, dir, char_row, char_col,
@@ -1147,6 +1166,7 @@ void pray()
 					(p_ptr->pclass==2 ? 2 : 1)*stat_adj(A_WIS)),
 				  (p_ptr->lev<30 ? 2 : 3));
 		    break;
+
 		  case 19:
 		    (void)hp_player(damroll(8, 4));
 		    if (p_ptr->cut > 0) {
@@ -1154,18 +1174,23 @@ void pray()
 			msg_print("Your wounds heal.");
 		    }
 		    break;
+	    
 		  case 20:
 		    detect_inv2(randint(24) + 24);
 		    break;
+	    
 		  case 21:
 		    (void)protect_evil();
 		    break;
+	    
 		  case 22:
 		    earthquake();
 		    break;
+	    
 		  case 23:
 		    map_area();
 		    break;
+	    
 		  case 24:
 		    (void)hp_player(damroll(16, 4));
 		    if (p_ptr->cut > 0) {
@@ -1173,15 +1198,19 @@ void pray()
 			msg_print("Your wounds heal.");
 		    }
 		    break;
+	    
 		  case 25:
 		    (void)turn_undead();
 		    break;
+	    
 		  case 26:
 		    bless(randint(48) + 48);
 		    break;
+	    
 		  case 27:
 		    (void)dispel_creature(MF2_UNDEAD, (int)(3 * p_ptr->lev));
 		    break;
+	    
 		  case 28:
 		    (void)hp_player(200);
 		    if (p_ptr->stun > 0) {
@@ -1200,12 +1229,15 @@ void pray()
 			msg_print("You feel better.");
 		    }
 		    break;
+	    
 		  case 29:
 		    (void)dispel_creature(MF2_EVIL, (int)(3 * p_ptr->lev));
 		    break;
+	    
 		  case 30:
 		    warding_glyph();
 		    break;
+	    
 		  case 31:
 		    (void)dispel_creature(MF2_EVIL, (int)(4 * p_ptr->lev));
 		    (void)remove_fear();
@@ -1227,21 +1259,27 @@ void pray()
 			msg_print("You feel better.");
 		    }
 		    break;
+	    
 		  case 32:
 		    (void)detect_monsters();
 		    break;
+	    
 		  case 33:
 		    (void)detection();
 		    break;
+	    
 		  case 34:
 		    if (!ident_floor()) combine(ident_spell());
 		    break;
+	    
 		  case 35:	   /* probing */
 		    (void)probing();
 		    break;
+	    
 		  case 36:	   /* Clairvoyance */
 		    wiz_lite(TRUE);
 		    break;
+	    
 		  case 37:
 		    (void)hp_player(damroll(8, 4));
 		    if (p_ptr->cut > 0) {
@@ -1249,6 +1287,7 @@ void pray()
 			msg_print("Your wounds heal.");
 		    }
 		    break;
+	    
 		  case 38:
 		    (void)hp_player(damroll(16, 4));
 		    if (p_ptr->cut > 0) {
@@ -1256,6 +1295,7 @@ void pray()
 			msg_print("Your wounds heal.");
 		    }
 		    break;
+	    
 		  case 39:
 		    (void)hp_player(2000);
 		    if (p_ptr->stun > 0) {
@@ -1274,6 +1314,7 @@ void pray()
 			msg_print("You feel better.");
 		    }
 		    break;
+	    
 		  case 40:	   /* restoration */
 		    if (res_stat(A_STR))
 			msg_print("You feel warm all over.");
@@ -1288,36 +1329,47 @@ void pray()
 		    if (res_stat(A_CHR))
 			msg_print("You feel your looks returning.");
 		    break;
+
 		  case 41:	   /* rememberance */
 		    (void)restore_level();
 		    break;
+	    
 		  case 42:	   /* dispel undead */
 		    (void)dispel_creature(MF2_UNDEAD, (int)(4 * p_ptr->lev));
 		    break;
+	    
 		  case 43:	   /* dispel evil */
 		    (void)dispel_creature(MF2_EVIL, (int)(4 * p_ptr->lev));
 		    break;
+	    
 		  case 44:	   /* banishment */
 		    if (banish_creature(MF2_EVIL, 100))
 			msg_print("The Power of your god banishes the creatures!");
 		    break;
+	    
 		  case 45:	   /* word of destruction */
 		    destroy_area(char_row, char_col);
 		    break;
+
 		  case 46:	   /* annihilation */
 		    if (get_dir(NULL, &dir))
 			drain_life(dir, char_row, char_col, 200);
 		    break;
+
 		  case 47:	   /* unbarring ways */
 		    (void)td_destroy();
 		    break;
+
 		  case 48:	   /* recharging */
 		    (void)recharge(15);
 		    break;
+
 		  case 49:	   /* dispel curse */
 		    (void)remove_all_curse();
 		    break;
+
 		  case 50:	   /* enchant weapon */
+
 		    i_ptr = &inventory[INVEN_WIELD];
 		    if (i_ptr->tval != TV_NOTHING) {
 			char tmp_str[100], out_val[100];
@@ -1329,7 +1381,9 @@ void pray()
 			    msg_print("The enchantment fails.");
 		    }
 		    break;
+
 		  case 51:	   /* enchant armor */
+
 		    if (1) {
 			int                 k = 0;
 			int                 l = 0;
@@ -1376,8 +1430,11 @@ void pray()
 			}
 		    }
 		    break;
+
 		  case 52:	   /* Elemental brand */
+
 		    i_ptr = &inventory[INVEN_WIELD];
+
 		    if (i_ptr->tval != TV_NOTHING &&
 			i_ptr->name2 == SN_NULL &&
 			!(i_ptr->flags1 & TR3_CURSED)) {
@@ -1390,6 +1447,7 @@ void pray()
 			char tmp_str[100], out_val[100];
 
 			objdes(tmp_str, i_ptr, FALSE);
+
 			if (hot) {
 			    sprintf(out_val,
 				    "Your %s is covered in a fiery shield!",
@@ -1409,19 +1467,24 @@ void pray()
 			msg_print("The Branding fails.");
 		    }
 		    break;
+
 		  case 53:	   /* blink */
 		    teleport(10);
 		    break;
+
 		  case 54:	   /* teleport */
 		    teleport((int)(p_ptr->lev * 8));
 		    break;
+
 		  case 55:	   /* teleport away */
 		    if (get_dir(NULL, &dir))
 			(void)teleport_monster(dir, char_row, char_col);
 		    break;
+
 		  case 56:	   /* teleport level */
 		    (void)tele_level();
 		    break;
+	    
 		  case 57:	   /* word of recall */
 		    if (p_ptr->word_recall == 0) {
 			p_ptr->word_recall = 15 + randint(20);
@@ -1431,12 +1494,14 @@ void pray()
 			msg_print("A tension leaves the air around you...");
 		    }
 		    break;
+	    
 		  case 58:	   /* alter reality */
 		    new_level_flag = TRUE;
 		    break;
 		  default:
 		    break;
 		}
+
 	    /* End of prayers.				 */
 		if (!free_turn_flag) {
 		    if (choice < 32) {
@@ -1472,3 +1537,4 @@ void pray()
 	}
     }
 }
+
