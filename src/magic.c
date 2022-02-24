@@ -1044,28 +1044,48 @@ void pray()
 
     free_turn_flag = TRUE;
 
-    if (p_ptr->blind > 0)
+    if (p_ptr->blind > 0) {
 	msg_print("You can't see to read your prayer!");
-    else if (no_lite())
+	return;
+    }
+
+    if (no_lite()) {
 	msg_print("You have no light to read by.");
-    else if (p_ptr->confused > 0)
+	return;
+    }
+
+    if (p_ptr->confused > 0) {
 	msg_print("You are too confused.");
-    else if (class[p_ptr->pclass].spell != PRIEST)
+	return;
+    }
+
+    if (class[p_ptr->pclass].spell != PRIEST) {
 	msg_print("Pray hard enough and your prayers may be answered.");
-    else if (inven_ctr == 0)
+	return;
+    }
+
+    if (inven_ctr == 0) {
 	msg_print("But you are not carrying anything!");
-    else if (!find_range(TV_PRAYER_BOOK, TV_NEVER, &i, &j))
+	return;
+    }
+
+    if (!find_range(TV_PRAYER_BOOK, TV_NEVER, &i, &j)) {
 	msg_print("You are not carrying any Holy Books!");
+	return;
+    }
     
     /* Choose a book */
-    else if (get_item(&item_val, "Use which Holy Book?", i, j)) {
+    if (!get_item(&item_val, "Use which Holy Book?", i, j)) return; {
     
 
     /* Choose a spell */
 	result = cast_spell("Recite which prayer?", item_val, &choice, &chance);
 
-	if (result < 0)
-	    msg_print("You don't know any prayers in that book.");
+    if (result < 0) {
+	msg_print("You don't know any prayers in that book.");
+	return;
+    }
+
 	else if (result > 0) {
 	    s_ptr = &magic_spell[p_ptr->pclass - 1][choice];
 	    free_turn_flag = FALSE;
@@ -1076,8 +1096,9 @@ void pray()
 	chance += 15;
 
     /* Check for failure */	    
-    if (randint(100) <= chance)	
+    if (randint(100) <= chance)	{
 	msg_print("You lost your concentration!");
+    }
 	    
     /* Success */
     else {
@@ -1124,8 +1145,8 @@ void pray()
 	    break;
 	    
 	  case 9:
-	    if (get_dir(NULL, &dir))
-		(void)fear_monster(dir, char_row, char_col, p_ptr->lev);
+	    if (!get_dir(NULL, &dir)) return;
+	    (void)fear_monster(dir, char_row, char_col, p_ptr->lev);
 	    break;
 	    
 	  case 10:
@@ -1168,7 +1189,7 @@ void pray()
 	    break;
 	    
 	  case 18:
-	    if (get_dir(NULL, &dir))
+	    if (!get_dir(NULL, &dir)) return;
 	    /* Radius increases with level */
 		fire_ball(GF_HOLY_ORB, dir, char_row, char_col,
 			  (int)(damroll(3,6)+p_ptr->lev+
@@ -1325,18 +1346,24 @@ void pray()
 	    break;
 	    
 	  case 40:	   /* restoration */
-	    if (res_stat(A_STR))
+	    if (res_stat(A_STR)) {
 		msg_print("You feel warm all over.");
-	    if (res_stat(A_INT))
+	    }
+	    if (res_stat(A_INT)) {
 		msg_print("You have a warm feeling.");
-	    if (res_stat(A_WIS))
+	    }
+	    if (res_stat(A_WIS)) {
 		msg_print("You feel your wisdom returning.");
-	    if (res_stat(A_DEX))
+	    }
+	    if (res_stat(A_DEX)) {
 		msg_print("You feel less clumsy.");
-	    if (res_stat(A_CON))
+	    }
+	    if (res_stat(A_CON)) {
 		msg_print("You feel your health returning!");
-	    if (res_stat(A_CHR))
+	    }
+	    if (res_stat(A_CHR)) {
 		msg_print("You feel your looks returning.");
+	    }
 	    break;
 
 	  case 41:	   /* rememberance */
@@ -1352,8 +1379,9 @@ void pray()
 	    break;
 	    
 	  case 44:	   /* banishment */
-	    if (banish_creature(MF2_EVIL, 100))
+	    if (banish_creature(MF2_EVIL, 100)) {
 		msg_print("The Power of your god banishes the creatures!");
+	    }
 	    break;
 	    
 	  case 45:	   /* word of destruction */
@@ -1361,8 +1389,8 @@ void pray()
 	    break;
 
 	  case 46:	   /* annihilation */
-	    if (get_dir(NULL, &dir))
-		drain_life(dir, char_row, char_col, 200);
+	    if (!get_dir(NULL, &dir)) return;
+	    drain_life(dir, char_row, char_col, 200);
 	    break;
 
 	  case 47:	   /* unbarring ways */
@@ -1385,15 +1413,16 @@ void pray()
 		objdes(tmp_str, i_ptr, FALSE);
 		sprintf(out_val, "Your %s glows brightly!", tmp_str);
 		msg_print(out_val);
-		if (!enchant(i_ptr, randint(4), ENCH_TOHIT|ENCH_TODAM))
+		if (!enchant(i_ptr, randint(4), ENCH_TOHIT|ENCH_TODAM)) {
 		    msg_print("The enchantment fails.");
+		}
 	    }
 	    break;
 
 	  case 51:	   /* enchant armor */
 
 	    /* Contain variables */
-	    if (1) {
+	    if (TRUE) {
 		int                 k = 0;
 		int                 l = 0;
 		int                 tmp[100];
@@ -1438,8 +1467,9 @@ void pray()
 		    msg_print(out_val);
 
 		/* Attempt to enchant */
-		    if (!enchant(i_ptr, randint(3)+1, ENCH_TOAC))
-			msg_print("The enchantment fails.");
+		if (!enchant(i_ptr, randint(3)+1, ENCH_TOAC)) {
+		    msg_print("The enchantment fails.");
+		}
 		}
 	    }
 	    break;
@@ -1489,8 +1519,8 @@ void pray()
 	    break;
 
 	  case 55:	   /* teleport away */
-	    if (get_dir(NULL, &dir))
-		(void)teleport_monster(dir, char_row, char_col);
+	    if (!get_dir(NULL, &dir)) return;
+	    (void)teleport_monster(dir, char_row, char_col);
 	    break;
 
 	  case 56:	   /* teleport level */
@@ -1501,7 +1531,8 @@ void pray()
 	    if (p_ptr->word_recall == 0) {
 		p_ptr->word_recall = 15 + randint(20);
 		msg_print("The air about you becomes charged...");
-	    } else {
+	    }
+	    else {
 		p_ptr->word_recall = 0;
 		msg_print("A tension leaves the air around you...");
 	    }
@@ -1545,8 +1576,10 @@ void pray()
 			msg_print("You have damaged your health!");
 			(void)dec_stat(A_CON);
 		    }
-		} else
-		    p_ptr->cmana -= s_ptr->smana;
+		}
+    else {
+	p_ptr->cmana -= s_ptr->smana;
+    }
     
     /* Display current mana */
 		prt_cmana();
