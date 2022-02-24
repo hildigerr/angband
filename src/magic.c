@@ -12,9 +12,6 @@
 
 #include "angband.h"
 
-int door_creation();
-int detect_magic();
-int stair_creation();
 
 /*
  * calculate number of spells player should have,
@@ -171,10 +168,11 @@ void calc_spells(int stat)
     /* Learn some new spells */
     if (new_spells > 0) {
 
+	/* Count the spells */
+	i = 0;
 
 	/* only bother with spells learnable by class -CFT */
 	spell_flag = spellmasks[p_ptr->pclass][0] & ~spell_learned;
-	i = 0;
 	for (j = 0; spell_flag; j++) {
 	    mask = 1L << j;
 	    if (spell_flag & mask) {
@@ -665,16 +663,15 @@ void cast()
     /* Cancelled */
     if (!result) return;
 
-
-	if (p_ptr->stun > 50) chance += 25;
-	else if (p_ptr->stun > 0) chance += 15;
-
     /* Unknown */    
     if (result < 0) {
 	msg_print("You don't know any spells in that book.");
 	return;
     }
 
+
+    if (p_ptr->stun > 50) chance += 25;
+    else if (p_ptr->stun > 0) chance += 15;
 
     s_ptr = &magic_spell[p_ptr->pclass - 1][choice];
 
@@ -1020,15 +1017,15 @@ void cast()
 	/* A spell was cast */
 	if (choice < 32) {
 	    if ((spell_worked & (1L << choice)) == 0) {
-		p_ptr->exp += s_ptr->sexp << 2;
 		spell_worked |= (1L << choice);
+		p_ptr->exp += s_ptr->sexp << 2;
 		prt_experience();
 	    }
 	}
 	else {
 	    if ((spell_worked2 & (1L << (choice - 32))) == 0) {
-		p_ptr->exp += s_ptr->sexp << 2;
 		 spell_worked2 |= (1L << (choice - 32));
+		p_ptr->exp += s_ptr->sexp << 2;
 		prt_experience();
 	    }
 	}
@@ -1451,16 +1448,17 @@ void pray()
 
 	    /* Contain variables */
 	    if (TRUE) {
-		int                 k = 0;
-		int                 l = 0;
+		int                 l, k = 0;
 		int                 tmp[100];
+		char		    tmp_str[160];
+		char		    out_val[160];
 
 		/* Build a list of armor */
 		if (inventory[INVEN_BODY].tval)  tmp[k++] = INVEN_BODY;
-		if (inventory[INVEN_ARM].tval)   tmp[k++] = INVEN_ARM;
 		if (inventory[INVEN_OUTER].tval) tmp[k++] = INVEN_OUTER;
-		if (inventory[INVEN_HANDS].tval) tmp[k++] = INVEN_HANDS;
+		if (inventory[INVEN_ARM].tval)   tmp[k++] = INVEN_ARM;
 		if (inventory[INVEN_HEAD].tval)  tmp[k++] = INVEN_HEAD;
+		if (inventory[INVEN_HANDS].tval) tmp[k++] = INVEN_HANDS;
 		if (inventory[INVEN_FEET].tval)  tmp[k++] = INVEN_FEET;
 
 		if (k > 0) l = tmp[randint(k) - 1];
@@ -1472,7 +1470,6 @@ void pray()
 		else if (TR3_CURSED & inventory[INVEN_FEET].flags1) l = INVEN_FEET;
 
 		if (l > 0) {
-		    char                out_val[100], tmp_str[100];
 
 		    i_ptr = &inventory[l];
 
@@ -1500,12 +1497,9 @@ void pray()
 		(!i_ptr->name2) &&
 		(!(i_ptr->flags1 & TR3_CURSED))) {
 
-		int hot = randint(2)-1;
 		char tmp_str[100], out_val[100];
 
-		objdes(tmp_str, i_ptr, FALSE);
-
-		if (hot) {
+		if (rand_int(2)) {
 		    sprintf(out_val,
 			    "Your %s is covered in a fiery shield!",
 			    tmp_str);
@@ -1518,6 +1512,8 @@ void pray()
 		    i_ptr->name2 |= EGO_FB;
 		    i_ptr->flags1 |= (TR1_BRAND_COLD | TR2_RES_COLD);
 		}
+
+		objdes(tmp_str, i_ptr, FALSE);
 
 		msg_print(out_val);
 
@@ -1567,15 +1563,15 @@ void pray()
 	/* End of prayers.				 */
 	if (choice < 32) {
 	    if ((spell_worked & (1L << choice)) == 0) {
-		p_ptr->exp += s_ptr->sexp << 2;
 		spell_worked |= (1L << choice);
+		p_ptr->exp += s_ptr->sexp << 2;
 		prt_experience();
 	    }
 	}
 	else {
 	    if ((spell_worked2 & (1L << (choice - 32))) == 0) {
-		 p_ptr->exp += s_ptr->sexp << 2;
 		 spell_worked2 |= (1L << (choice - 32));
+		 p_ptr->exp += s_ptr->sexp << 2;
 		 prt_experience();
 	    }
 	}
