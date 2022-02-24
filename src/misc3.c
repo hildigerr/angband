@@ -20,6 +20,8 @@ char               *index();
 
 extern int rating;
 
+s16b sorted_objects[MAX_DUNGEON_OBJ];
+
 
 /*
  * Pushs a record back onto free space list		-RAK-

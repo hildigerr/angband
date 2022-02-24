@@ -388,18 +388,27 @@ extern inven_kind k_list[MAX_OBJECTS];
 #endif
 extern byte object_ident[OBJECT_IDENT_SIZE];
 
+
+/*** Inventory ***/
+
+/* Inventory information */
+extern s16b inven_weight;		/* Total carried weight */
+extern s16b inven_ctr;			/* Number of obj's in inven */
+extern s16b equip_ctr;			/* Number of obj's in equip */
+
+/* Player inventory */
+extern inven_type inventory[INVEN_ARRAY_SIZE];
+
+
+/*** Item Information ***/
+
 /* Treasure heap pointer (used with i_list) */
 extern s16b i_max;
 
 /* Actual array of all physical objects (on the ground) */
 extern inven_type i_list[MAX_I_IDX];
 
-extern inven_type inventory[INVEN_ARRAY_SIZE];
 extern cptr special_names[SN_ARRAY_SIZE];
-extern s16b sorted_objects[MAX_DUNGEON_OBJ];
-extern s16b inven_ctr;			/* Total different obj's	*/
-extern s16b inven_weight;		/* Cur carried weight	*/
-extern s16b equip_ctr;			/* Cur equipment ctr	*/
 
 /* Following are creature arrays and variables			*/
 

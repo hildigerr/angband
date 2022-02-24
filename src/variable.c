@@ -70,6 +70,11 @@ int coin_type;		/* remember Creeping _xxx_ coin type -CWS */
 int opening_chest = 0;          /* Hack -- prevent chest generation */
 
 
+/* Inventory info */
+s16b inven_ctr = 0;		/* Total different obj's	*/
+s16b inven_weight = 0;		/* Cur carried weight	*/
+s16b equip_ctr = 0;		/* Cur equipment ctr	*/
+
 s16b missile_ctr = 0;		/* Counter for missiles */
 int weapon_heavy = FALSE;
 int pack_heavy = FALSE;
@@ -167,6 +172,11 @@ cave_type (*cave)[MAX_WIDTH];
 cave_type cave[MAX_HEIGHT][MAX_WIDTH];
 #endif
 
+/* The player's inventory */
+inven_type inventory[INVEN_ARRAY_SIZE];
+
+
+
 /* The array of dungeon monsters [MAX_M_IDX] */
 monster_type m_list[MAX_M_IDX];
 
@@ -182,6 +192,9 @@ struct unique_mon u_list[MAX_R_IDX]; /* Unique check list... -LVB- */
 
 /* The array of dungeon items [MAX_I_IDX] */
 inven_type i_list[MAX_I_IDX];
+
+/* Identified objects flags					*/
+byte object_ident[OBJECT_IDENT_SIZE];
 
 static player_type p_body;	/* Static player info record */
 player_type *p_ptr = &p_body;	/* Pointer to the player info */

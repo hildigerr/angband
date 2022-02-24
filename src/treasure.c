@@ -1208,13 +1208,3 @@ const char *special_names[SN_ARRAY_SIZE] = {
 /* 180 */
 };
 
-s16b sorted_objects[MAX_DUNGEON_OBJ];
-
-/* Identified objects flags					*/
-byte object_ident[OBJECT_IDENT_SIZE];
-inven_type inventory[INVEN_ARRAY_SIZE];
-
-/* Treasure related values					*/
-s16b inven_ctr = 0;		/* Total different obj's	*/
-s16b inven_weight = 0;		/* Cur carried weight	*/
-s16b equip_ctr = 0;		/* Cur equipment ctr	*/
