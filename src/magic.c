@@ -1406,7 +1406,7 @@ void pray()
 	  case 50:	   /* enchant weapon */
 
 	    i_ptr = &inventory[INVEN_WIELD];
-	    if (i_ptr->tval != TV_NOTHING) {
+	    if (i_ptr->tval) {
 		char tmp_str[100], out_val[100];
 		objdes(tmp_str, i_ptr, FALSE);
 		sprintf(out_val, "Your %s glows brightly!", tmp_str);
@@ -1426,12 +1426,12 @@ void pray()
 		int                 tmp[100];
 
 		/* Build a list of armor */
-		if (inventory[INVEN_BODY].tval != TV_NOTHING) tmp[k++] = INVEN_BODY;
-		if (inventory[INVEN_ARM].tval != TV_NOTHING) tmp[k++] = INVEN_ARM;
-		if (inventory[INVEN_OUTER].tval != TV_NOTHING) tmp[k++] = INVEN_OUTER;
-		if (inventory[INVEN_HANDS].tval != TV_NOTHING) tmp[k++] = INVEN_HANDS;
-		if (inventory[INVEN_HEAD].tval != TV_NOTHING) tmp[k++] = INVEN_HEAD;
-		if (inventory[INVEN_FEET].tval != TV_NOTHING) tmp[k++] = INVEN_FEET;
+		if (inventory[INVEN_BODY].tval)  tmp[k++] = INVEN_BODY;
+		if (inventory[INVEN_ARM].tval)   tmp[k++] = INVEN_ARM;
+		if (inventory[INVEN_OUTER].tval) tmp[k++] = INVEN_OUTER;
+		if (inventory[INVEN_HANDS].tval) tmp[k++] = INVEN_HANDS;
+		if (inventory[INVEN_HEAD].tval)  tmp[k++] = INVEN_HEAD;
+		if (inventory[INVEN_FEET].tval)  tmp[k++] = INVEN_FEET;
 
 		if (k > 0) l = tmp[randint(k) - 1];
 		if (TR3_CURSED & inventory[INVEN_BODY].flags1) l = INVEN_BODY;
@@ -1466,9 +1466,9 @@ void pray()
 
 	    /* you can't create an ego weapon from a cursed */
 	    /* object.  the curse would "taint" the magic -CFT */
-	    if (i_ptr->tval != TV_NOTHING &&
-		i_ptr->name2 == SN_NULL &&
-		!(i_ptr->flags1 & TR3_CURSED)) {
+	    if ((i_ptr->tval) &&
+		(!i_ptr->name2) &&
+		(!(i_ptr->flags1 & TR3_CURSED))) {
 
 		int hot = randint(2)-1;
 		char tmp_str[100], out_val[100];
