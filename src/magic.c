@@ -19,7 +19,7 @@
  */
 void calc_spells(int stat)
 {
-    register int    i;
+    register int    i, k;
     register u32b mask;
     u32b          spell_flag;
     int             j, offset;
@@ -169,7 +169,7 @@ void calc_spells(int stat)
     if (new_spells > 0) {
 
 	/* Count the spells */
-	i = 0;
+	k = 0;
 
 	/* only bother with spells learnable by class -CFT */
 	spell_flag = spellmasks[p_ptr->pclass][0] & ~spell_learned;
@@ -177,7 +177,7 @@ void calc_spells(int stat)
 	    mask = 1L << j;
 	    if (spell_flag & mask) {
 		spell_flag &= ~mask;
-		if (s_ptr[j].slevel <= p_ptr->lev)i++;
+		if (s_ptr[j].slevel <= p_ptr->lev) k++;
 	    }
 	}
 
@@ -187,12 +187,12 @@ void calc_spells(int stat)
 	    mask = 1L << (j - 32);
 	    if (spell_flag & mask) {
 		spell_flag &= ~mask;
-		if (s_ptr[j].slevel <= p_ptr->lev) i++;
+		if (s_ptr[j].slevel <= p_ptr->lev) k++;
 	    }
 	}
 
 	/* Cannot learn more spells than exist */
-	if (new_spells > i) new_spells = i;
+	if (new_spells > k) new_spells = k;
     }
     } else 
 
