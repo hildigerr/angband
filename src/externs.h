@@ -380,12 +380,6 @@ extern store_type store[MAX_STORES];
 extern int (*store_buy[MAX_STORES])();
 #endif
 
-/* Following are treasure arrays	and variables			*/
-#ifdef MACGAME
-extern inven_kind *k_list;
-#else
-extern inven_kind k_list[MAX_OBJECTS];
-#endif
 extern byte object_ident[OBJECT_IDENT_SIZE];
 
 
@@ -407,6 +401,13 @@ extern s16b i_max;
 
 /* Actual array of all physical objects (on the ground) */
 extern inven_type i_list[MAX_I_IDX];
+
+/* The array of object types */
+#ifdef MACGAME
+extern inven_kind *k_list;
+#else
+extern inven_kind k_list[MAX_OBJECTS];
+#endif
 
 extern cptr special_names[SN_ARRAY_SIZE];
 
@@ -608,6 +609,7 @@ void cast(void);
 
 /* arrays.c */
 void get_file_paths(void);
+void init_some_arrays(void);
 
 /* main.c */
 void play_game(void);

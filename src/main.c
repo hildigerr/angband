@@ -311,6 +311,9 @@ int main(int argc, char *argv[])
 
     /* Show news file */
     show_news();
+
+    /* Initialize the arrays */
+    init_some_arrays();
     
     /* Wait for response */
     pause_line(23);

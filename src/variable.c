@@ -193,6 +193,9 @@ struct unique_mon u_list[MAX_R_IDX]; /* Unique check list... -LVB- */
 /* The array of dungeon items [MAX_I_IDX] */
 inven_type i_list[MAX_I_IDX];
 
+/* The array of object types [MAX_OBJECTS] */
+inven_kind *k_list;
+
 /* Identified objects flags					*/
 byte object_ident[OBJECT_IDENT_SIZE];
 
