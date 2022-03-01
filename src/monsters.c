@@ -2987,7 +2987,3 @@ monster_race r_list[MAX_R_IDX] = {
 };
 
 
-
-/* Blank monster values	*/
-monster_type blank_monster = {0,0,0,0,0,0,0,FALSE,0,FALSE};
-s16b mon_tot_mult;		/* # of repro's of creature	*/

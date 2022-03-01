@@ -17,6 +17,7 @@ cptr copyright[5] = {
 
 int hack_m_idx = (-1);		/* XXX Current monster in "process_monsters()" */
 
+s16b mon_tot_mult;		/* # of repro's of creature	*/
 
 int player_light;		/* Player carrying light */
 int cur_lite = 0;		/* Current light radius (zero for none) */
