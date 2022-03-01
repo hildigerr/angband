@@ -1924,9 +1924,9 @@ D:It is a giant beetle wreathed in flames.
 N:292:Creeping adamantite coins
 I:$:12:20d25:5:50:10:4:27:45
 A:161:172:10:10
-F:MV_ATT_NORM | HAS_2D2 | HAS_90 | CARRY_GOLD | ANIMAL | IM_POIS | NO_INFRA
+F:MV_ATT_NORM | HAS_2D2 | HAS_90 | CARRY_GOLD | ANIMAL | IM_POIS | NO_INFRA | PLURAL
 D:A mass of shining coins slithering towards you... Quick!  Pick it up and 
-D:put it in your pocket., 'p'
+D:put it in your pocket.
 
 N:293:Algroth
 I:T:11:21d12:20:60:40:1:27:150

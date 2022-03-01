@@ -1325,7 +1325,7 @@ monster_race r_list[MAX_R_IDX] = {
 
 {"Creeping adamantite coins",(MF1_MV_ATT_NORM|MF1_HAS_2D2|MF1_HAS_90|MF1_CARRY_GOLD),(NONE8)
 			    ,(MF2_ANIMAL|MF2_IM_POIS|MF2_NO_INFRA),(NONE8),(NONE8)
-			   ,45,10,5,50,12,'$',{20,25},{161,172,10,10},27,4,'n'},
+			   ,45,10,5,50,12,'$',{20,25},{161,172,10,10},27,4,'p'},
 
 {"Algroth"		    ,(MF1_MV_ATT_NORM|MF1_THRO_DR|MF1_HAS_60|MF1_CARRY_GOLD|
 			     MF1_CARRY_OBJ),(NONE8),(MF2_TROLL|MF2_EVIL|MF2_GROUP)
