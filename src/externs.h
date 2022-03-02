@@ -382,6 +382,8 @@ extern int (*store_buy[MAX_STORES])();
 
 extern byte object_ident[OBJECT_IDENT_SIZE];
 
+extern char ghost_name[128];		/* Writable ghost name */
+
 
 /*** Inventory ***/
 

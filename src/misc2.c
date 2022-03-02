@@ -540,20 +540,23 @@ static char *cap(char *str)
 }
 
 /*
+ * XXX Note that g->name is set during "init_r_list()"
+ */
+
+
+/*
  * Prepare the "ghost" monster_race info
  */
-void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
+void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
 {
     char ghost_race[20];
     char ghost_class[20];
     int  i;
 
-    /* Allocate storage for name -TL -- braindamaged ghost name spoo -CWS */
-    if (r_list[MAX_R_IDX - 1].name == NULL) {
-	r_list[MAX_R_IDX - 1].name = (char*)malloc(101);
-	C_WIPE(r_list[MAX_R_IDX - 1].name, 101, char);
-	*((char *) r_list[MAX_R_IDX - 1].name) = 'A';
-    }
+    char name[20];
+
+    /* Extract the basic ghost name */
+    strcpy(name, pn);
 
     switch (gr) {
       case 0:
@@ -619,7 +622,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
     if (!dun_level) {
 
 	/* A wanderer in the town */
-	sprintf(g->name, "%s, the %s %s",
+	sprintf(ghost_name, "%s, the %s %s",
 		cap(name), cap(ghost_race), cap(ghost_class));
 
 	g->cflags1 |= (MF1_THRO_DR | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_90 | MF1_HAS_60 | MF2_GOOD);
@@ -752,7 +755,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
       case 1:
       case 2:
       case 3:
-	sprintf(g->name, "%s, the Skeleton %s", name, ghost_race);
+	sprintf(ghost_name, "%s, the Skeleton %s", name, ghost_race);
 	g->cflags1 |= (MF1_THRO_DR | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_90 | MF2_GOOD);
 	g->spells1 |= (NONE8);
 	g->cflags2 |= (MF2_IM_POIS | MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_COLD | MF2_NO_INFRA);
@@ -770,7 +773,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 
       case 4:
       case 5:
-	sprintf(g->name, "%s, the %s zombie", name, cap(ghost_race));
+	sprintf(ghost_name, "%s, the %s zombie", name, cap(ghost_race));
 	g->cflags1 |= (MF1_THRO_DR | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_60 | MF1_HAS_90 | MF2_GOOD);
 	g->spells1 |= (NONE8);
 	g->cflags2 |= (MF2_IM_POIS | MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_NO_INFRA);
@@ -787,7 +790,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	break;
 
       case 6:
-	sprintf(g->name, "%s, the Poltergeist", name);
+	sprintf(ghost_name, "%s, the Poltergeist", name);
 	g->cflags1 |= (MF1_MV_INVIS | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF2_GOOD | MF1_HAS_1D2 | MF1_MV_75 | MF1_THRO_WALL);
 	g->spells1 |= (NONE8);
 	g->cflags2 |= (MF2_IM_POIS | MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_COLD | MF2_NO_INFRA);
@@ -803,7 +806,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 
       case 7:
       case 8:
-	sprintf(g->name, "%s, the Mummified %s", name, cap(ghost_race));
+	sprintf(ghost_name, "%s, the Mummified %s", name, cap(ghost_race));
 	g->cflags1 |= (MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_1D2 | MF2_GOOD);
 	g->spells1 |= (NONE8);
 	g->cflags2 |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_POIS | MF2_NO_INFRA);
@@ -822,7 +825,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 
       case 9:
       case 10:
-	sprintf(g->name, "%s%s spirit", name,
+	sprintf(ghost_name, "%s%s spirit", name,
 		(name[strlen(name) - 1] == 's') ? "'" : "'s");
 	g->cflags1 |= (MF1_MV_INVIS | MF1_THRO_WALL | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_1D2 | MF2_GOOD);
 	g->spells1 |= (NONE8);
@@ -839,7 +842,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	break;
 
       case 11:
-	sprintf(g->name, "%s%s ghost", name,
+	sprintf(ghost_name, "%s%s ghost", name,
 		(name[strlen(name) - 1] == 's') ? "'" : "'s");
 	g->cflags1 |= (MF1_MV_INVIS | MF1_THRO_WALL | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_1D2 | MF2_GOOD);
 	g->spells1 |= (0xFL | MS1_HOLD | MS1_MANA_DRAIN | MS1_BLIND);
@@ -856,7 +859,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	break;
 
       case 12:
-	sprintf(g->name, "%s, the Vampire", name);
+	sprintf(ghost_name, "%s, the Vampire", name);
 	g->cflags1 |= (MF1_THRO_DR | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_2D2 | MF2_GOOD);
 	g->spells1 |= (0x8L | MS1_HOLD | MS1_FEAR | MS1_TELE_TO | MS1_CAUSE_2);
 	g->cflags2 |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_POIS | MF2_NO_INFRA | MF2_HURT_LITE);
@@ -872,7 +875,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	break;
 
       case 13:
-	sprintf(g->name, "%s%s Wraith", name,
+	sprintf(ghost_name, "%s%s Wraith", name,
 		(name[strlen(name) - 1] == 's') ? "'" : "'s");
 	g->cflags1 |= (MF1_THRO_DR | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_4D2 | MF1_HAS_2D2 | MF2_GOOD);
 	g->spells1 |= (0x7L | MS1_HOLD | MS1_FEAR | MS1_BLIND | MS1_CAUSE_3);
@@ -890,7 +893,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	break;
 
       case 14:
-	sprintf(g->name, "%s, the Vampire Lord", name);
+	sprintf(ghost_name, "%s, the Vampire Lord", name);
 	g->cflags1 |= (MF1_THRO_DR | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_1D2 | MF2_SPECIAL);
 	g->spells1 |= (0x8L | MS1_HOLD | MS1_FEAR | MS1_TELE_TO | MS1_CAUSE_3);
 	g->spells2 |= (MS2_BO_NETH);
@@ -908,7 +911,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	break;
 
       case 15:
-	sprintf(g->name, "%s%s ghost", name,
+	sprintf(ghost_name, "%s%s ghost", name,
 		 (name[strlen(name) - 1] == 's') ? "'" : "'s");
 	g->cflags1 |= (MF1_MV_INVIS | MF1_THRO_WALL | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_2D2 | MF2_SPECIAL);
 	g->spells1 |= (0x5L | MS1_HOLD | MS1_MANA_DRAIN | MS1_BLIND | MS1_CONF);
@@ -925,7 +928,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	break;
 
       case 17:
-	sprintf(g->name, "%s, the Lich", name);
+	sprintf(ghost_name, "%s, the Lich", name);
 	g->cflags1 |= (MF1_THRO_DR | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_2D2 | MF1_HAS_1D2 | MF2_SPECIAL);
 	g->spells1 |= (0x3L | MS1_FEAR | MS1_CAUSE_3 | MS1_TELE_TO | MS1_BLINK |
 		       MS1_S_UNDEAD | MS1_BA_FIRE | MS1_BA_COLD | MS1_HOLD |
@@ -945,7 +948,7 @@ void set_ghost(monster_race *g, cptr name, int gr, int gc, int lev)
 	break;
 
       default:
-	sprintf(g->name, "%s%s ghost", name,
+	sprintf(ghost_name, "%s%s ghost", name,
 		(name[strlen(name) - 1] == 's') ? "'" : "'s");
 	g->cflags1 |= (MF1_MV_INVIS | MF1_THRO_WALL | MF1_MV_ATT_NORM | MF1_CARRY_OBJ |
 		       MF1_HAS_1D2 | MF1_HAS_2D2 | MF2_SPECIAL);

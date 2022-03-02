@@ -479,13 +479,9 @@ static void rd_ghost_old()
     /* A buffer for the ghost name */
     char gname[128];
 
-    /* Allocate storage for name */
-	r_ptr->name = (char*)malloc(101);
-	C_WIPE(r_ptr->name, 101, char);
-
     /* Hack -- read the name as bytes */
     for (i = 0; i < 100; i++) rd_char(&gname[i]);
-    strcpy(r_ptr->name, gname);
+    strcpy(ghost_name, gname);
 
     /* Restore ghost names & stats etc... */
 

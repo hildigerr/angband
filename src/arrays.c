@@ -554,6 +554,20 @@ static void init_r_list()
 {
     errr err;
 
+
+    /* XXX Hack -- prepare "ghost" race */
+    monster_race *r_ptr = &r_list[MAX_R_IDX-1];
+
+
+    /* Hack -- Give the ghost monster a "fake" name */
+    r_ptr->name = ghost_name;
+
+    /* Hack -- set the char info */
+    r_ptr->r_char = 'G';
+    
+    /* Hack -- Prepare a fake ghost name */
+    strcpy(ghost_name, "Someone's Ghost");
+
     /* Try the text version */
     err = init_r_list_txt();
 

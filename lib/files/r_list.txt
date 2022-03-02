@@ -4354,7 +4354,7 @@ D:two remaining Silmarils forever burning him.  Grond, the mighty Hammer of
 D:the Underworld, cries defiance as he strides towards you to crush you to a 
 D:pulp!
 
-N:548:NULL
-I:@:11:5d5:100:0:0:255:32000:0
-F:NONE8 | EVIL | CHARM_SLEEP | UNDEAD | UNIQUE | GOOD | IM_POIS | IM_COLD | NO_INFRA
+#N:548:Someone's Ghost
+#I:G:11:5d5:100:0:0:255:32000:0
+#F:NONE8 | EVIL | CHARM_SLEEP | UNDEAD | UNIQUE | GOOD | IM_POIS | IM_COLD | NO_INFRA
 

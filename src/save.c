@@ -610,16 +610,7 @@ static void rd_ghost()
     u32b tmp32u;
 
 
-    /* A buffer for the ghost name */
-    char gname[128];
-
-    /* Allocate storage for name */
-	r_ptr->name = (char*)malloc(101);
-	C_WIPE(r_ptr->name, 101, char);
-
-    /* Hack -- read the name as bytes */
-    for (i = 0; i < 100; i++) rd_char(&gname[i]);
-    strcpy(r_ptr->name, gname);
+    rd_string(ghost_name);
 
     rd_byte(&r_ptr->level);
 
@@ -651,13 +642,7 @@ static void wr_ghost()
     monster_race *r_ptr = &r_list[MAX_R_IDX-1];
 	u16b temp;
 
-     if (!r_ptr->name) {
-	 r_ptr->name = (char*)malloc(101);
-	 C_WIPE(r_ptr->name, 101, char);
-     }
-
-    for (i = 0; i < 100; i++)
-    wr_byte(r_ptr->name[i]);
+    wr_string(ghost_name);
 
     wr_byte(r_ptr->level);
 
