@@ -3076,10 +3076,10 @@ N:418:Erinyes
 I:&:11:30d8:20:50:80:2:38:1000
 A:17:87
 F:MAX_HP | CARRY_OBJ | MV_ATT_NORM | THRO_DR | HAS_60 | EVIL | DEMON | 
-F:IM_FIRE | IM_POIS | CHARM_SLEEP
+F:IM_FIRE | IM_POIS | CHARM_SLEEP | FEMALE
 S:1_IN_7 | BLIND | CONF | BO_FIRE
 D:It is a lesser demon of female form; however, she takes little time to 
-D:show its true colours.
+D:show her true colours.
 
 N:419:Nether wraith
 I:W:12:60d8:20:55:10:2:39:1700
