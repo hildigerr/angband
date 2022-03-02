@@ -543,67 +543,34 @@ static char *cap(char *str)
  * XXX Note that g->name is set during "init_r_list()"
  */
 
+static cptr ghost_race_names[] = {
+    "human", "elf", "elf", "hobbit", "gnome",
+    "dwarf", "orc", "troll", "human", "elf"
+};
+
+static cptr ghost_class_names[] = {
+    "warrior", "mage", "priest",
+    "rogue", "ranger", "paladin"
+};
+
 
 /*
  * Prepare the "ghost" monster_race info
  */
 void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
 {
-    char ghost_race[20];
-    char ghost_class[20];
     int  i;
 
     char name[20];
+    char gr_name[20];
+    char gc_name[20];
 
     /* Extract the basic ghost name */
     strcpy(name, pn);
 
-    switch (gr) {
-      case 0:
-      case 8:
-	strcpy(ghost_race, "human");
-	break;
-      case 1:
-      case 2:
-      case 9:
-	strcpy(ghost_race, "elf");
-	break;
-      case 3:
-	strcpy(ghost_race, "hobbit");
-	break;
-      case 4:
-	strcpy(ghost_race, "gnome");
-	break;
-      case 5:
-	strcpy(ghost_race, "dwarf");
-	break;
-      case 6:
-	strcpy(ghost_race, "orc");
-	break;
-      case 7:
-	strcpy(ghost_race, "troll");
-	break;
-    }
-    switch (gc) {
-      case 0:
-	strcpy(ghost_class, "warrior");
-	break;
-      case 1:
-	strcpy(ghost_class, "mage");
-	break;
-      case 2:
-	strcpy(ghost_class, "priest");
-	break;
-      case 3:
-	strcpy(ghost_class, "rogue");
-	break;
-      case 4:
-	strcpy(ghost_class, "ranger");
-	break;
-      case 5:
-	strcpy(ghost_class, "paladin");
-	break;
-    }
+    /* Extract the race and class names */
+    strcpy(gr_name, ghost_race_names[gr]);
+    strcpy(gc_name, ghost_class_names[gc]);
 
     /* Save the level */
     g->level = lev;
@@ -623,7 +590,7 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
 
 	/* A wanderer in the town */
 	sprintf(ghost_name, "%s, the %s %s",
-		cap(name), cap(ghost_race), cap(ghost_class));
+		cap(name), cap(gr_name), cap(gc_name));
 
 	g->cflags1 |= (MF1_THRO_DR | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_90 | MF1_HAS_60 | MF2_GOOD);
 
@@ -755,7 +722,7 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
       case 1:
       case 2:
       case 3:
-	sprintf(ghost_name, "%s, the Skeleton %s", name, ghost_race);
+	sprintf(ghost_name, "%s, the Skeleton %s", name, gr_name);
 	g->cflags1 |= (MF1_THRO_DR | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_90 | MF2_GOOD);
 	g->spells1 |= (NONE8);
 	g->cflags2 |= (MF2_IM_POIS | MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_COLD | MF2_NO_INFRA);
@@ -773,7 +740,7 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
 
       case 4:
       case 5:
-	sprintf(ghost_name, "%s, the %s zombie", name, cap(ghost_race));
+	sprintf(ghost_name, "%s, the %s zombie", name, cap(gr_name));
 	g->cflags1 |= (MF1_THRO_DR | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_60 | MF1_HAS_90 | MF2_GOOD);
 	g->spells1 |= (NONE8);
 	g->cflags2 |= (MF2_IM_POIS | MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_NO_INFRA);
@@ -806,7 +773,7 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
 
       case 7:
       case 8:
-	sprintf(ghost_name, "%s, the Mummified %s", name, cap(ghost_race));
+	sprintf(ghost_name, "%s, the Mummified %s", name, cap(gr_name));
 	g->cflags1 |= (MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_1D2 | MF2_GOOD);
 	g->spells1 |= (NONE8);
 	g->cflags2 |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_POIS | MF2_NO_INFRA);
