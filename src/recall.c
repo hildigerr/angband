@@ -374,20 +374,12 @@ int roff_recall(int r_idx)
 	roff("No battles to the death are recalled.  ");
     }
 
-#if 0
-    for (k = 0; k < MAX_R_IDX; k++) {
-	if (!stricmp(desc_list[k].name, r_ptr->name)) {
-	    if (strlen(desc_list[k].desc) != 0)
-		roff(desc_list[k].desc);
-	    break;
-	}
-    }
-#endif
+
     k = r_idx;
     if (k == MAX_R_IDX - 1)
 	roff("You feel you know it, and it knows you.  This can only mean trouble.  ");
     else {
-	roff(desc_list[k].desc);
+	roff(r_ptr->desc);
 	roff("  ");
     }
 

@@ -74,7 +74,9 @@ struct _monster_attack {
 typedef struct _monster_race monster_race;
 
 struct _monster_race {
-  cptr name;			/* Descrip of creature    */
+
+  cptr name;			/* Name				*/
+  cptr desc;			/* Desc				*/
 
   byte level;			/* Level of creature		*/
   byte rarity;			/* Rarity of creature		*/
