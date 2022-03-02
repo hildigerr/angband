@@ -219,6 +219,13 @@ static int grab_one_spell(monster_race *r_ptr, cptr what)
 
     if (!what) what = what;
 
+    /* Hack -- store the "frequency" in the spell flags */
+    else if (1 == sscanf(what, "1_IN_%d", &chance)) {
+
+	/* Hack -- frequency stored as "flags" */
+	flags1 |= ((u32b)chance & CS1_FREQ);
+    }
+
     else if (streq(what,"HEAL"))		flags2 |= MS2_HEAL;
     else if (streq(what,"HASTE"))		flags2 |= MS2_HASTE;
     else if (streq(what,"BLINK"))		flags1 |= MS1_BLINK;
