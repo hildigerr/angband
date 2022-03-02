@@ -181,6 +181,9 @@ inven_type inventory[INVEN_ARRAY_SIZE];
 /* The array of dungeon monsters [MAX_M_IDX] */
 monster_type m_list[MAX_M_IDX];
 
+/* The array of monster races [MAX_R_IDX] */
+monster_race *r_list;
+
 /* The array of monster "memory" [MAX_R_IDX] */
 #ifdef MAC
 monster_lore *l_list;

@@ -4,6 +4,8 @@ Parsing of Item kinds from text files
 Properly handled "identify" inducing object "awareness" and "combining".
 Functions combine() and combine_pack() to maintain inventory.
 Made "store cost" a property of objects
+
+Parsing of monster race info from a text file.
 Functions floor_grid(), clean_grid(), and valid_grid().
 Rewrote store "maintainance" code.
 Major rewrite of the "savefile" code, plus "parser" for old files.

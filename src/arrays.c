@@ -48,6 +48,7 @@ cptr ANGBAND_O_HELP = NULL;		/* Original command help */
 cptr ANGBAND_W_HELP = NULL;		/* Wizard command help */
 cptr ANGBAND_OWIZ_HELP = NULL;	/* was LIBDIR(files/owizcmds.hlp) */
 
+cptr ANGBAND_R_LIST = NULL;		/* Ascii monster race file */
 cptr ANGBAND_K_LIST = NULL;		/* Ascii item kind file */
 
 
@@ -125,8 +126,442 @@ void get_file_paths()
     strcpy(tail, "loadcheck" );
     ANGBAND_LOAD = string_make(path);
 
+    /* Parsable Item/Monster template files */
+    strcpy(tail, "r_list.txt");
+    ANGBAND_R_LIST = string_make(path);
     strcpy(tail, "k_list.txt");
     ANGBAND_K_LIST = string_make(path);
+}
+
+
+/*
+ * Grab one flag in a monster_race from a textual string
+ */
+static int grab_one_flag(monster_race *r_ptr, cptr what)
+{
+    u32b flags1 = 0L, flags2 = 0L;
+
+    if (!what) what = what;
+
+    else if (streq(what,"WINNER"))	flags1 |= MF1_WINNER;
+    else if (streq(what,"QUESTOR"))	flags2 |= MF2_QUESTOR;
+    else if (streq(what,"UNIQUE"))	flags2 |= MF2_UNIQUE;
+    else if (streq(what,"MAX_HP"))	flags2 |= MF2_MAX_HP;
+    else if (streq(what,"INTELLIGENT"))	flags2 |= MF2_INTELLIGENT;
+
+    else if (streq(what,"SPECIAL"))	flags2 |= MF2_SPECIAL;
+    else if (streq(what,"GOOD"))	flags2 |= MF2_GOOD;
+    else if (streq(what,"CARRY_GOLD"))	flags1 |= MF1_CARRY_GOLD;
+    else if (streq(what,"CARRY_OBJ"))	flags1 |= MF1_CARRY_OBJ;
+    else if (streq(what,"PICK_UP"))	flags1 |= MF1_PICK_UP;
+
+    else if (streq(what,"MV_ONLY_ATT"))	flags1 |= MF1_MV_ONLY_ATT;
+    else if (streq(what,"MV_ATT_NORM"))	flags1 |= MF1_MV_ATT_NORM;
+    else if (streq(what,"MV_20"))	flags1 |= MF1_MV_20;
+    else if (streq(what,"MV_40"))	flags1 |= MF1_MV_40;
+    else if (streq(what,"MV_75"))	flags1 |= MF1_MV_75;
+    else if (streq(what,"MV_INVIS"))	flags1 |= MF1_MV_INVIS;
+    else if (streq(what,"NO_INFRA"))	flags2 |= MF2_NO_INFRA;
+    else if (streq(what,"MINDLESS"))	flags2 |= MF2_MINDLESS;
+    else if (streq(what,"THRO_DR"))	flags1 |= MF1_THRO_DR;
+    else if (streq(what,"THRO_WALL"))	flags1 |= MF1_THRO_WALL;
+    else if (streq(what,"THRO_CREAT"))	flags1 |= MF1_THRO_CREAT;
+    else if (streq(what,"MULTIPLY"))	flags1 |= MF1_MULTIPLY;
+    else if (streq(what,"GROUP"))	flags2 |= MF2_GROUP;
+    else if (streq(what,"HAS_60"))	flags1 |= MF1_HAS_60;
+    else if (streq(what,"HAS_90"))	flags1 |= MF1_HAS_90;
+    else if (streq(what,"HAS_1D2"))	flags1 |= MF1_HAS_1D2;
+    else if (streq(what,"HAS_2D2"))	flags1 |= MF1_HAS_2D2;
+    else if (streq(what,"HAS_4D2"))	flags1 |= MF1_HAS_4D2;
+
+    else if (streq(what,"ANIMAL"))	flags2 |= MF2_ANIMAL;
+    else if (streq(what,"EVIL"))	flags2 |= MF2_EVIL;
+    else if (streq(what,"ORC"))	flags2 |= MF2_ORC;
+    else if (streq(what,"TROLL"))	flags2 |= MF2_TROLL;
+    else if (streq(what,"GIANT"))	flags2 |= MF2_GIANT;
+    else if (streq(what,"DRAGON"))	flags2 |= MF2_DRAGON;
+    else if (streq(what,"DEMON"))	flags2 |= MF2_DEMON;
+    else if (streq(what,"UNDEAD"))	flags2 |= MF2_UNDEAD;
+
+    else if (streq(what,"IM_ACID"))	flags2 |= MF2_IM_ACID;
+    else if (streq(what,"IM_FIRE"))	flags2 |= MF2_IM_FIRE;
+    else if (streq(what,"IM_COLD"))	flags2 |= MF2_IM_COLD;
+    else if (streq(what,"IM_ELEC"))	flags2 |= MF2_IM_ELEC;
+    else if (streq(what,"IM_POIS"))	flags2 |= MF2_IM_POIS;
+
+    else if (streq(what,"HURT_LITE"))	flags2 |= MF2_HURT_LITE;
+    else if (streq(what,"HURT_ROCK"))	flags2 |= MF2_HURT_ROCK;
+    else if (streq(what,"CHARM_SLEEP"))	flags2 |= MF2_CHARM_SLEEP;
+    else if (streq(what,"BREAK_WALL"))	flags2 |= MF2_BREAK_WALL;
+    else if (streq(what,"DESTRUCT"))	flags2 |= MF2_DESTRUCT;
+
+    else if (streq(what,"MALE"))	r_ptr->gender = 'm';
+    else if (streq(what,"FEMALE"))	r_ptr->gender = 'f';
+    else if (streq(what,"PLURAL"))	r_ptr->gender = 'p';
+
+    if (!flags1 && !flags2) return (0);
+
+    if (flags1) r_ptr->cflags1 |= flags1;
+    if (flags2) r_ptr->cflags2 |= flags2;
+
+    return (1);
+}
+
+
+/*
+ * Grab one spell in a monster_race from a textual string
+ */
+static int grab_one_spell(monster_race *r_ptr, cptr what)
+{
+    u32b flags1 = 0L, flags2 = 0L, flags3 = 0L;
+
+    int chance;
+
+    if (!what) what = what;
+
+    else if (streq(what,"HEAL"))		flags2 |= MS2_HEAL;
+    else if (streq(what,"HASTE"))		flags2 |= MS2_HASTE;
+    else if (streq(what,"BLINK"))		flags1 |= MS1_BLINK;
+    else if (streq(what,"TELEPORT"))		flags1 |= MS1_TELEPORT;
+
+    else if (streq(what,"TELE_TO"))		flags1 |= MS1_TELE_TO;
+    else if (streq(what,"TELE_AWAY"))		flags2 |= MS2_TELE_AWAY;
+    else if (streq(what,"TELE_LEVEL"))	flags2 |= MS2_TELE_LEVEL;
+    else if (streq(what,"BLIND"))		flags1 |= MS1_BLIND;
+    else if (streq(what,"HOLD"))		flags1 |= MS1_HOLD;
+    else if (streq(what,"SLOW"))		flags1 |= MS1_SLOW;
+    else if (streq(what,"CONF"))		flags1 |= MS1_CONF;
+    else if (streq(what,"FEAR"))		flags1 |= MS1_FEAR;
+
+    else if (streq(what,"CAUSE_1"))		flags1 |= MS1_CAUSE_1;
+    else if (streq(what,"CAUSE_2"))		flags1 |= MS1_CAUSE_2;
+    else if (streq(what,"CAUSE_3"))		flags1 |= MS1_CAUSE_3;
+    else if (streq(what,"ARROW_1"))		flags1 |= MS1_ARROW_1;
+    else if (streq(what,"ARROW_2"))		flags2 |= MS2_ARROW_2;
+    else if (streq(what,"ARROW_3"))		flags3 |= MS3_ARROW_3;
+    else if (streq(what,"RAZOR"))		flags2 |= MS2_RAZOR;
+
+    else if (streq(what,"MANA_DRAIN"))	flags1 |= MS1_MANA_DRAIN;
+    else if (streq(what,"MIND_BLAST"))	flags2 |= MS2_MIND_BLAST;
+    else if (streq(what,"BRAIN_SMASH"))	flags2 |= MS2_BRAIN_SMASH;
+    else if (streq(what,"FORGET"))		flags2 |= MS2_FORGET;
+    else if (streq(what,"TRAP_CREATE"))	flags2 |= MS2_TRAP_CREATE;
+    else if (streq(what,"DARKNESS"))		flags2 |= MS2_DARKNESS;
+    else if (streq(what,"DARK_STORM"))	flags3 |= MS3_DARK_STORM;
+    else if (streq(what,"MANA_STORM"))	flags3 |= MS3_MANA_STORM;
+
+    else if (streq(what,"BO_ACID"))		flags1 |= MS1_BO_ACID;
+    else if (streq(what,"BO_FIRE"))		flags1 |= MS1_BO_FIRE;
+    else if (streq(what,"BO_COLD"))		flags1 |= MS1_BO_COLD;
+    else if (streq(what,"BO_ELEC"))		flags2 |= MS2_BO_ELEC;
+    else if (streq(what,"BO_ICEE"))		flags2 |= MS2_BO_ICEE;
+    else if (streq(what,"BO_WATE"))		flags2 |= MS2_BO_WATE;
+    else if (streq(what,"BO_MANA"))		flags1 |= MS1_BO_MANA;
+    else if (streq(what,"BO_PLAS"))		flags2 |= MS2_BO_PLAS;
+    else if (streq(what,"BO_NETH"))		flags2 |= MS2_BO_NETH;
+
+    else if (streq(what,"BA_ACID"))		flags2 |= MS2_BA_ACID;
+    else if (streq(what,"BA_FIRE"))		flags1 |= MS1_BA_FIRE;
+    else if (streq(what,"BA_COLD"))		flags1 |= MS1_BA_COLD;
+    else if (streq(what,"BA_ELEC"))		flags2 |= MS2_BA_ELEC;
+    else if (streq(what,"BA_WATE"))		flags2 |= MS2_BA_WATE;
+    else if (streq(what,"BA_POIS"))		flags2 |= MS2_BA_POIS;
+    else if (streq(what,"BA_NETH"))		flags2 |= MS2_BA_NETH;
+
+    else if (streq(what,"BR_ACID"))		flags1 |= MS1_BR_ACID;
+    else if (streq(what,"BR_FIRE"))		flags1 |= MS1_BR_FIRE;
+    else if (streq(what,"BR_COLD"))		flags1 |= MS1_BR_COLD;
+    else if (streq(what,"BR_ELEC"))		flags1 |= MS1_BR_ELEC;
+    else if (streq(what,"BR_POIS"))		flags1 |= MS1_BR_POIS;
+    else if (streq(what,"BR_LITE"))		flags3 |= MS3_BR_LITE;
+    else if (streq(what,"BR_DARK"))		flags3 |= MS3_BR_DARK;
+    else if (streq(what,"BR_SOUN"))		flags2 |= MS2_BR_SOUN;
+    else if (streq(what,"BR_CONF"))		flags2 |= MS2_BR_CONF;
+    else if (streq(what,"BR_CHAO"))		flags2 |= MS2_BR_CHAO;
+    else if (streq(what,"BR_SHAR"))		flags2 |= MS2_BR_SHAR;
+    else if (streq(what,"BR_LIFE"))		flags2 |= MS2_BR_LIFE;
+    else if (streq(what,"BR_DISE"))		flags2 |= MS2_BR_DISE;
+    else if (streq(what,"BR_WALL"))		flags3 |= MS3_BR_WALL;
+    else if (streq(what,"BR_SLOW"))		flags3 |= MS3_BR_SLOW;
+    else if (streq(what,"BR_TIME"))		flags3 |= MS3_BR_TIME;
+    else if (streq(what,"BR_GRAV"))		flags3 |= MS3_BR_GRAV;
+    else if (streq(what,"BR_PLAS"))		flags3 |= MS3_BR_PLAS;
+    else if (streq(what,"BR_NETH"))		flags2 |= MS2_BR_NETH;
+
+    else if (streq(what,"S_MONSTER"))		flags1 |= MS1_S_MONSTER;
+    else if (streq(what,"S_SUMMON"))		flags2 |= MS2_S_SUMMON;
+    else if (streq(what,"S_UNDEAD"))		flags1 |= MS1_S_UNDEAD;
+    else if (streq(what,"S_DEMON"))		flags1 |= MS1_S_DEMON;
+    else if (streq(what,"S_DRAGON"))		flags1 |= MS1_S_DRAGON;
+    else if (streq(what,"S_ANGEL"))		flags2 |= MS2_S_ANGEL;
+    else if (streq(what,"S_REPTILE"))		flags3 |= MS3_S_REPTILE;
+    else if (streq(what,"S_SPIDER"))		flags2 |= MS2_S_SPIDER;
+    else if (streq(what,"S_ANT"))		flags3 |= MS3_S_ANT;
+    else if (streq(what,"S_HOUND"))		flags2 |= MS2_S_HOUND;
+    else if (streq(what,"S_UNIQUE"))		flags3 |= MS3_S_UNIQUE;
+    else if (streq(what,"S_WRAITH"))		flags3 |= MS3_S_WRAITH;
+    else if (streq(what,"S_GUNDEAD"))		flags3 |= MS3_S_GUNDEAD;
+    else if (streq(what,"S_ANCIENTD"))	flags3 |= MS3_S_ANCIENTD;
+
+    if (!flags1 && !flags2 && !flags3) return (0);
+
+    if (flags1) r_ptr->spells1 |= flags1;
+    if (flags2) r_ptr->spells2 |= flags2;
+    if (flags3) r_ptr->spells3 |= flags3;
+
+    return (1);
+}
+
+
+/*
+ * Hack -- indicate errors during parsing of "r_list.txt"
+ */
+static int error_r_idx = -1;
+
+/*
+ * Initialize the "r_list" array by parsing an ascii file
+ */
+static errr init_r_list_txt(void)
+{
+    register char *s, *t;
+
+    /* No monster yet */
+    int m = -1;
+
+    /* No r_ptr yet */
+    monster_race *r_ptr = NULL;
+
+    /* The "monsters" file */
+    FILE *fp;
+
+    /* No line should be more than 80 chars */
+    char buf[160];
+
+    /* Current race description */
+    char desc[24*80];
+
+    /* Open the monster file */
+    fp = fopen(ANGBAND_R_LIST, "r");
+
+    /* Failure */
+    if (!fp) return (-1);
+
+    
+    /* Load the monster descriptions from the file */
+    while (1) {
+
+	/* Read a line from the file, stop when done */
+	if (!fgets(buf, 160, fp)) break;
+
+	/* Skip comments */
+	if (buf[0] == '#') continue;
+
+	/* Strip the final newline */
+	for (s = buf; isprint(*s); ++s); *s = '\0';
+
+	/* Blank lines terminate monsters */
+	if (!buf[0]) {
+
+	    /* No current r_ptr */
+	    if (!r_ptr) continue;
+
+	    /* Save the decription */
+	    if (desc[0]) r_ptr->desc = string_make(desc);
+
+	    /* Now there is no current r_ptr */
+	    r_ptr = NULL;
+
+	    /* Next... */
+	    continue;
+	}
+
+	/* The line better have a colon and such */
+	if (buf[1] != ':') return (1);
+
+	/* Process 'N' for "New/Number/Name" */
+	if (buf[0] == 'N') {
+
+	    /* Not done the previous one */
+	    if (r_ptr) return (11);
+
+	    /* Find, verify, and nuke the colon before the name */
+	    if (!(s = strchr(buf+2, ':'))) return (2);
+
+	    /* Nuke the colon, advance to the name */
+	    *s++ = '\0';
+
+	    /* Require non-empty names */
+	    if (!*s) return (3);
+
+	    /* Get the index */
+	    m = atoi(buf+2);
+
+	    /* Save the index */
+	    error_r_idx = m;
+
+	    /* Verify */
+	    if ((m < 0) || (m >= MAX_R_IDX)) return (7);
+
+	    /* Start a new r_ptr */
+	    r_ptr = &r_list[m];
+
+	    /* Make sure we have not done him yet */
+	    if (r_ptr->name) return (8);
+
+	    /* Save the name */
+	    r_ptr->name = string_make(s);
+
+	    /* No desc yet */
+	    desc[0] = '\0';
+
+	    /* Next... */
+	    continue;
+	}
+
+	/* There better be a current r_ptr */
+	if (!r_ptr) return (10);
+
+	/* Process 'I' for "Info" (one line only) */
+	if (buf[0] == 'I') {
+
+	    char chr;
+	    int tmp, spd, hp1, hp2, aaf, ac, slp, rar, lev;
+	    long exp;
+
+	    /* Scan for the values */
+	    if (11 != sscanf(buf, "I:%c:%d:%dd%d:%d:%d:%d:%d:%d:%ld",
+		&chr, &spd, &hp1, &hp2,
+		&aaf, &ac, &slp, &rar, &lev, &exp)) return (11);
+
+	    /* Save the values */
+	    r_ptr->r_char = chr;
+	    r_ptr->speed = spd;
+	    r_ptr->hd[0] = hp1;
+	    r_ptr->hd[1] = hp2;
+	    r_ptr->aaf = aaf;
+	    r_ptr->ac = ac;
+	    r_ptr->sleep = slp;
+	    r_ptr->rarity = rar;
+	    r_ptr->level = lev;
+	    r_ptr->mexp = exp;
+
+	    /* Next... */
+	    continue;
+	}
+
+	/* Process 'A' for "Attacks" (one line only) */
+	if (buf[0] == 'A') {
+
+	    int i;
+
+	    /* Simply read each number following a colon */
+	    for (i = 0, s = buf+1; s && (s[0] == ':') && s[1]; ++i) {
+
+		/* Store the attack damage index */
+		r_ptr->damage[i] = atoi(s+1);
+
+		/* Find the next colon */
+		s = strchr(s+1, ':');
+	    }
+
+	    /* Next... */
+	    continue;
+	}
+
+	/* Process 'F' for "Flags" (multiple lines) */
+	if (buf[0] == 'F') {
+
+	    /* Parse every entry */
+	    for (s = buf + 2; *s; ) {
+
+		/* Find the end of this entry */
+		for (t = s; *t && *t != ' ' && *t != '|'; ++t);
+
+		/* Nuke and skip any dividers */
+		if (*t) {
+		    *t++ = '\0';
+		    while (*t == ' ' || *t == '|') t++;
+		}
+
+		/* Parse this entry */
+		if (!grab_one_flag(r_ptr, s)) return (18);
+
+		/* Start the next entry */
+		s = t;
+	    }
+
+	    /* Next... */
+	    continue;
+	}
+
+	/* Process 'S' for "Spells" (multiple lines) */
+	if (buf[0] == 'S') {
+
+	    /* Parse every entry */
+	    for (s = buf + 2; *s; ) {
+
+		/* Find the end of this entry */
+		for (t = s; *t && *t != ' ' && *t != '|'; ++t);
+
+		/* Nuke and skip any dividers */
+		if (*t) {
+		    *t++ = '\0';
+		    while (*t == ' ' || *t == '|') t++;
+		}
+
+		/* Parse this entry */
+		if (!grab_one_spell(r_ptr, s)) return (19);
+
+		/* Start the next entry */
+		s = t;
+	    }
+
+	    /* Next... */
+	    continue;
+	}
+
+	/* Process 'D' for "Description" */
+	if (buf[0] == 'D') {
+
+	    /* Collect the description, allocated later */
+	    strcat(desc,buf+2);
+
+	    /* Next... */
+	    continue;
+	}
+    }
+
+    /* Close the file */
+    fclose(fp);
+
+
+    /* Success */
+    return (0);
+}
+
+
+/*
+ * Initialize the "r_list" array by parsing various files.
+ */
+static void init_r_list()
+{
+    errr err;
+
+    /* Try the text version */
+    err = init_r_list_txt();
+
+    /* Still no luck? Fail! */
+    if (err) {
+    
+	/* Warning */
+	msg_print(format("Fatal error #%d parsing 'r_list.txt', record %d",
+			 err, error_r_idx));
+	msg_print(NULL);
+
+	/* Quit */
+	quit("cannot load 'r_list.txt'");
+    }
+
 }
 
 
@@ -605,9 +1040,14 @@ static char original_commands(char command)
  */
 void init_some_arrays()
 {
+    /* Allocate and Wipe the array of monster "race info" */
+    C_MAKE(r_list, MAX_R_IDX, monster_race);
 
     /* Allocate and Wipe the array of object "kind info" */
     C_MAKE(k_list, MAX_OBJECTS, inven_kind);
+
+    /* Initialize r_list from a file of some kind */
+    init_r_list();
 
     /* Initialize k_list from a file */
     init_k_list();

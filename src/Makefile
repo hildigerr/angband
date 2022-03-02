@@ -14,7 +14,7 @@ SRCS = \
   misc1.c misc2.c misc3.c misc4.c moria1.c moria2.c moria3.c moria4.c \
   spells1.c spells2.c cave.c desc.c tables.c variable.c \
   store.c recall.c wizard.c \
-  sets.c eat.c help.c monsters.c player.c \
+  sets.c eat.c help.c player.c \
   potions.c staffs.c wands.c scrolls.c rods.c \
   random.c z-util.c z-virt.c z-form.c
 
@@ -25,7 +25,7 @@ OBJS = \
   misc1.o misc2.o misc3.o misc4.o moria1.o moria2.o moria3.o moria4.o \
   spells1.o spells2.o cave.o desc.o tables.o variable.o \
   store.o recall.o wizard.o \
-  sets.o eat.o help.o monsters.o player.o \
+  sets.o eat.o help.o player.o \
   potions.o staffs.o wands.o scrolls.o rods.o \
   random.o z-util.o z-virt.o z-form.o
 
