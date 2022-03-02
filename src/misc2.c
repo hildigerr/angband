@@ -532,12 +532,6 @@ int place_win_monster()
 }
 
 
-static char *cap(char *str)
-{
-    if ((*str >= 'a') && (*str <= 'z'))
-	*str = *str - 'a' + 'A';
-    return str;
-}
 
 /*
  * XXX Note that g->name is set during "init_r_list()"
@@ -572,6 +566,13 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
     strcpy(gr_name, ghost_race_names[gr]);
     strcpy(gc_name, ghost_class_names[gc]);
 
+    /* Capitalize the name */
+    if (islower(name[0])) name[0] = toupper(name[0]);
+
+    /* Capitalize the race/class */
+    if (islower(gr_name[0])) gr_name[0] = toupper(gr_name[0]);
+    if (islower(gc_name[0])) gc_name[0] = toupper(gc_name[0]);
+
     /* Save the level */
     g->level = lev;
 
@@ -590,7 +591,7 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
 
 	/* A wanderer in the town */
 	sprintf(ghost_name, "%s, the %s %s",
-		cap(name), cap(gr_name), cap(gc_name));
+		name, gr_name, gc_name);
 
 	g->cflags1 |= (MF1_THRO_DR | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_90 | MF1_HAS_60 | MF2_GOOD);
 
@@ -740,7 +741,7 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
 
       case 4:
       case 5:
-	sprintf(ghost_name, "%s, the %s zombie", name, cap(gr_name));
+	sprintf(ghost_name, "%s, the %s zombie", name, gr_name);
 	g->cflags1 |= (MF1_THRO_DR | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_60 | MF1_HAS_90 | MF2_GOOD);
 	g->spells1 |= (NONE8);
 	g->cflags2 |= (MF2_IM_POIS | MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_NO_INFRA);
@@ -773,7 +774,7 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
 
       case 7:
       case 8:
-	sprintf(ghost_name, "%s, the Mummified %s", name, cap(gr_name));
+	sprintf(ghost_name, "%s, the Mummified %s", name, gr_name);
 	g->cflags1 |= (MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_1D2 | MF2_GOOD);
 	g->spells1 |= (NONE8);
 	g->cflags2 |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_POIS | MF2_NO_INFRA);
