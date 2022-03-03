@@ -568,6 +568,9 @@ static void init_r_list()
     /* Hack -- Prepare a fake ghost name */
     strcpy(ghost_name, "Someone's Ghost");
 
+    /* Hack -- Try to prevent a few "potential" bugs */
+    r_ptr->cflags2 |= MF2_UNIQUE;
+
     /* Try the text version */
     err = init_r_list_txt();
 

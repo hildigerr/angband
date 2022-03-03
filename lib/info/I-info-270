@@ -18,6 +18,7 @@ Separated out some generic "non-angband" files (like random.c).
 Added files to do "memory management" and "string formatting".
 Renamed a LOT of variables/fields to more "consistent" forms.
 Forced "flag constants" to refer to theie "flag set" explicitly.
+Fixed a few old bugs based in misplacement of certain flags.
 Reorganized the source to make the files more "self-contained".
 
 Threw out the "Bill Cosby" message.  "Cute" is not "good".

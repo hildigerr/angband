@@ -535,6 +535,11 @@ int place_win_monster()
 
 /*
  * XXX Note that g->name is set during "init_r_list()"
+ *
+ * I am a little concerned about the reliance of "ghost fields"
+ * In particular, shouldn't we clear most of them first?
+ * I worry, because "cflags2" is set pretty high in the
+ * default initializations.
  */
 
 static cptr ghost_race_names[] = {
@@ -550,6 +555,12 @@ static cptr ghost_class_names[] = {
 
 /*
  * Prepare the "ghost" monster_race info
+ *
+ * XXX This code has only recently been debugged,
+ * so it may have brand new bugs now.
+ *
+ * Even if not, it really needs to be re-writtem, there are redundancies
+ * and incorrectnesses everywhere.  And the savefile ruins everything.
  */
 void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
 {
@@ -573,6 +584,9 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
     if (islower(gr_name[0])) gr_name[0] = toupper(gr_name[0]);
     if (islower(gc_name[0])) gc_name[0] = toupper(gc_name[0]);
 
+    /* Forget any flags a previous ghost had */
+    g->cflags1 = g->cflags2 = 0L;
+
     /* Save the level */
     g->level = lev;
 
@@ -586,6 +600,12 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
 
     g->spells2 = NONE8;
 
+    /* Initialize some of the flags */
+    g->cflags1 |= (MF1_MV_ATT_NORM | MF1_CARRY_OBJ);
+    g->cflags2 |= (MF2_GOOD);
+    g->cflags2 |= (MF2_UNIQUE | MF2_CHARM_SLEEP | MF2_EVIL);
+
+
     /* Town ghost */
     if (!dun_level) {
 
@@ -593,7 +613,7 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
 	sprintf(ghost_name, "%s, the %s %s",
 		name, gr_name, gc_name);
 
-	g->cflags1 |= (MF1_THRO_DR | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_90 | MF1_HAS_60 | MF2_GOOD);
+	g->cflags1 |= (MF1_THRO_DR | MF1_HAS_90 | MF1_HAS_60);
 
 	if (lev > 10) g->cflags1 |= (MF1_HAS_1D2);
 	if (lev > 18) g->cflags1 |= (MF1_HAS_2D2);
@@ -673,10 +693,8 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
 	    break;
 	}
 
-	g->cflags2 |= (MF2_CHARM_SLEEP | MF2_EVIL);
-
 	if (gr == 6) g->cflags2 |= MF2_ORC;
-	else if (gr == 7) g->cflags2 |= MF2_TROLL;
+	if (gr == 7) g->cflags2 |= MF2_TROLL;
 
 	g->ac = 15 + randint(15);
 	if (gc == 0 || gc >= 3) g->ac += randint(60);
@@ -717,6 +735,11 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
 	return;
     }
 
+
+    /* Initialize some more of the flags */    
+    g->cflags2 |= (MF2_UNDEAD | MF2_NO_INFRA | MF2_IM_POIS);
+
+
     /* Make a ghost with power based on the ghost level */
     switch ((int) (g->level / 4) + randint(3)) {
 
@@ -724,9 +747,9 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
       case 2:
       case 3:
 	sprintf(ghost_name, "%s, the Skeleton %s", name, gr_name);
-	g->cflags1 |= (MF1_THRO_DR | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_90 | MF2_GOOD);
+	g->cflags1 |= (MF1_THRO_DR | MF1_HAS_90);
 	g->spells1 |= (NONE8);
-	g->cflags2 |= (MF2_IM_POIS | MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_COLD | MF2_NO_INFRA);
+	g->cflags2 |= (MF2_IM_COLD);
 	if (gr == 6) g->cflags2 |= MF2_ORC;
 	if (gr == 7) g->cflags2 |= MF2_TROLL;
 	g->ac = 26;
@@ -742,9 +765,8 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
       case 4:
       case 5:
 	sprintf(ghost_name, "%s, the %s zombie", name, gr_name);
-	g->cflags1 |= (MF1_THRO_DR | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_60 | MF1_HAS_90 | MF2_GOOD);
+	g->cflags1 |= (MF1_THRO_DR | MF1_HAS_60 | MF1_HAS_90);
 	g->spells1 |= (NONE8);
-	g->cflags2 |= (MF2_IM_POIS | MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_NO_INFRA);
 	if (gr == 6) g->cflags2 |= MF2_ORC;
 	if (gr == 7) g->cflags2 |= MF2_TROLL;
 	g->ac = 30;
@@ -759,9 +781,9 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
 
       case 6:
 	sprintf(ghost_name, "%s, the Poltergeist", name);
-	g->cflags1 |= (MF1_MV_INVIS | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF2_GOOD | MF1_HAS_1D2 | MF1_MV_75 | MF1_THRO_WALL);
+	g->cflags1 |= (MF1_MV_INVIS | MF1_HAS_1D2 | MF1_MV_75 | MF1_THRO_WALL);
 	g->spells1 |= (NONE8);
-	g->cflags2 |= (MF2_IM_POIS | MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_COLD | MF2_NO_INFRA);
+	g->cflags2 |= (MF2_IM_COLD);
 	g->ac = 20;
 	g->speed = 13;
 	g->r_char = 'G';
@@ -775,9 +797,8 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
       case 7:
       case 8:
 	sprintf(ghost_name, "%s, the Mummified %s", name, gr_name);
-	g->cflags1 |= (MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_1D2 | MF2_GOOD);
+	g->cflags1 |= (MF1_HAS_1D2);
 	g->spells1 |= (NONE8);
-	g->cflags2 |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_POIS | MF2_NO_INFRA);
 	if (gr == 6) g->cflags2 |= MF2_ORC;
 	if (gr == 7) g->cflags2 |= MF2_TROLL;
 	g->ac = 35;
@@ -795,9 +816,9 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
       case 10:
 	sprintf(ghost_name, "%s%s spirit", name,
 		(name[strlen(name) - 1] == 's') ? "'" : "'s");
-	g->cflags1 |= (MF1_MV_INVIS | MF1_THRO_WALL | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_1D2 | MF2_GOOD);
+	g->cflags1 |= (MF1_MV_INVIS | MF1_THRO_WALL | MF1_HAS_1D2);
 	g->spells1 |= (NONE8);
-	g->cflags2 |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_POIS | MF2_IM_COLD | MF2_NO_INFRA);
+	g->cflags2 |= (MF2_IM_COLD);
 	g->ac = 20;
 	g->speed = 11;
 	g->r_char = 'G';
@@ -812,9 +833,9 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
       case 11:
 	sprintf(ghost_name, "%s%s ghost", name,
 		(name[strlen(name) - 1] == 's') ? "'" : "'s");
-	g->cflags1 |= (MF1_MV_INVIS | MF1_THRO_WALL | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_1D2 | MF2_GOOD);
+	g->cflags1 |= (MF1_MV_INVIS | MF1_THRO_WALL | MF1_HAS_1D2);
+	g->cflags2 |= (MF2_IM_COLD);
 	g->spells1 |= (0xFL | MS1_HOLD | MS1_MANA_DRAIN | MS1_BLIND);
-	g->cflags2 |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_POIS | MF2_IM_COLD | MF2_NO_INFRA);
 	g->ac = 40;
 	g->speed = 12;
 	g->r_char = 'G';
@@ -828,9 +849,9 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
 
       case 12:
 	sprintf(ghost_name, "%s, the Vampire", name);
-	g->cflags1 |= (MF1_THRO_DR | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_2D2 | MF2_GOOD);
+	g->cflags1 |= (MF1_THRO_DR | MF1_HAS_2D2);
+	g->cflags2 |= (MF2_HURT_LITE);
 	g->spells1 |= (0x8L | MS1_HOLD | MS1_FEAR | MS1_TELE_TO | MS1_CAUSE_2);
-	g->cflags2 |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_POIS | MF2_NO_INFRA | MF2_HURT_LITE);
 	g->ac = 40;
 	g->speed = 11;
 	g->r_char = 'V';
@@ -845,10 +866,10 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
       case 13:
 	sprintf(ghost_name, "%s%s Wraith", name,
 		(name[strlen(name) - 1] == 's') ? "'" : "'s");
-	g->cflags1 |= (MF1_THRO_DR | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_4D2 | MF1_HAS_2D2 | MF2_GOOD);
+	g->cflags1 |= (MF1_THRO_DR | MF1_HAS_4D2 | MF1_HAS_2D2);
+	g->cflags2 |= (MF2_IM_COLD | MF2_HURT_LITE);
 	g->spells1 |= (0x7L | MS1_HOLD | MS1_FEAR | MS1_BLIND | MS1_CAUSE_3);
 	g->spells2 |= (MS2_BO_NETH);
-	g->cflags2 |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_POIS | MF2_IM_COLD | MF2_NO_INFRA | MF2_HURT_LITE);
 	g->ac = 60;
 	g->speed = 12;
 	g->r_char = 'W';
@@ -862,10 +883,10 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
 
       case 14:
 	sprintf(ghost_name, "%s, the Vampire Lord", name);
-	g->cflags1 |= (MF1_THRO_DR | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_1D2 | MF2_SPECIAL);
+	g->cflags1 |= (MF1_THRO_DR | MF1_HAS_1D2);
+	g->cflags2 |= (MF2_HURT_LITE | MF2_SPECIAL);
 	g->spells1 |= (0x8L | MS1_HOLD | MS1_FEAR | MS1_TELE_TO | MS1_CAUSE_3);
 	g->spells2 |= (MS2_BO_NETH);
-	g->cflags2 |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_POIS | MF2_NO_INFRA | MF2_HURT_LITE);
 	g->ac = 80;
 	g->speed = 11;
 	g->r_char = 'V';
@@ -881,9 +902,9 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
       case 15:
 	sprintf(ghost_name, "%s%s ghost", name,
 		 (name[strlen(name) - 1] == 's') ? "'" : "'s");
-	g->cflags1 |= (MF1_MV_INVIS | MF1_THRO_WALL | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_2D2 | MF2_SPECIAL);
+	g->cflags1 |= (MF1_MV_INVIS | MF1_THRO_WALL | MF1_HAS_2D2);
+	g->cflags2 |= (MF2_SPECIAL | MF2_IM_COLD);
 	g->spells1 |= (0x5L | MS1_HOLD | MS1_MANA_DRAIN | MS1_BLIND | MS1_CONF);
-	g->cflags2 |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_COLD | MF2_IM_POIS | MF2_NO_INFRA);
 	g->ac = 90;
 	g->speed = 13;
 	g->r_char = 'G';
@@ -897,12 +918,12 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
 
       case 17:
 	sprintf(ghost_name, "%s, the Lich", name);
-	g->cflags1 |= (MF1_THRO_DR | MF1_MV_ATT_NORM | MF1_CARRY_OBJ | MF1_HAS_2D2 | MF1_HAS_1D2 | MF2_SPECIAL);
+	g->cflags1 |= (MF1_THRO_DR | MF1_HAS_2D2 | MF1_HAS_1D2);
+	g->cflags2 |= (MF2_SPECIAL | MF2_IM_COLD | MF2_INTELLIGENT);
 	g->spells1 |= (0x3L | MS1_FEAR | MS1_CAUSE_3 | MS1_TELE_TO | MS1_BLINK |
 		       MS1_S_UNDEAD | MS1_BA_FIRE | MS1_BA_COLD | MS1_HOLD |
 		       MS1_MANA_DRAIN | MS1_BLIND | MS1_CONF | MS1_TELEPORT);
 	g->spells2 |= (MS2_BRAIN_SMASH | MS2_RAZOR);
-	g->cflags2 |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_COLD | MF2_NO_INFRA | MF2_IM_POIS| MF2_INTELLIGENT);
 	g->ac = 120;
 	g->speed = 12;
 	g->r_char = 'L';
@@ -918,13 +939,13 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
       default:
 	sprintf(ghost_name, "%s%s ghost", name,
 		(name[strlen(name) - 1] == 's') ? "'" : "'s");
-	g->cflags1 |= (MF1_MV_INVIS | MF1_THRO_WALL | MF1_MV_ATT_NORM | MF1_CARRY_OBJ |
-		       MF1_HAS_1D2 | MF1_HAS_2D2 | MF2_SPECIAL);
+	g->cflags1 |= (MF1_MV_INVIS | MF1_THRO_WALL |
+		       MF1_HAS_1D2 | MF1_HAS_2D2);
+	g->cflags2 |= (MF2_SPECIAL | MF2_IM_COLD | MF2_INTELLIGENT);
 	g->spells1 |= (0x2L | MS1_HOLD | MS1_MANA_DRAIN | 
 		       MS1_BLIND | MS1_CONF | MS1_TELE_TO);
 	g->spells2 |= (MS2_BO_NETH | MS2_BA_NETH | MS2_BRAIN_SMASH |
 		       MS2_TELE_LEVEL);
-	g->cflags2 |= (MF2_CHARM_SLEEP | MF2_UNDEAD | MF2_EVIL | MF2_IM_POIS | MF2_IM_COLD | MF2_NO_INFRA | MF2_INTELLIGENT);
 	g->ac = 130;
 	g->speed = 13;
 	g->r_char = 'G';
