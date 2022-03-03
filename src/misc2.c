@@ -587,6 +587,9 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
     /* Forget any flags a previous ghost had */
     g->cflags1 = g->cflags2 = 0L;
 
+    /* Forget any spells a previous ghost had */
+    g->spells1 = g->spells2 = g->spells3 = 0L;
+
     /* Save the level */
     g->level = lev;
 
@@ -598,7 +601,6 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
 
     g->mexp = lev * 5 + 5;
 
-    g->spells2 = NONE8;
 
     /* Initialize some of the flags */
     g->cflags1 |= (MF1_MV_ATT_NORM | MF1_CARRY_OBJ);
@@ -647,7 +649,6 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
 
 	switch (gc) {
 	  case 0:		   /* Warrior */
-	    g->spells1 = NONE8;
 	    break;
 	  case 1:		   /* Mage */
 	    g->spells1 |= (0x3L | MS1_BLINK | MS1_ARROW_1 |
@@ -748,7 +749,6 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
       case 3:
 	sprintf(ghost_name, "%s, the Skeleton %s", name, gr_name);
 	g->cflags1 |= (MF1_THRO_DR | MF1_HAS_90);
-	g->spells1 |= (NONE8);
 	g->cflags2 |= (MF2_IM_COLD);
 	if (gr == 6) g->cflags2 |= MF2_ORC;
 	if (gr == 7) g->cflags2 |= MF2_TROLL;
@@ -766,7 +766,6 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
       case 5:
 	sprintf(ghost_name, "%s, the %s zombie", name, gr_name);
 	g->cflags1 |= (MF1_THRO_DR | MF1_HAS_60 | MF1_HAS_90);
-	g->spells1 |= (NONE8);
 	if (gr == 6) g->cflags2 |= MF2_ORC;
 	if (gr == 7) g->cflags2 |= MF2_TROLL;
 	g->ac = 30;
@@ -782,7 +781,6 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
       case 6:
 	sprintf(ghost_name, "%s, the Poltergeist", name);
 	g->cflags1 |= (MF1_MV_INVIS | MF1_HAS_1D2 | MF1_MV_75 | MF1_THRO_WALL);
-	g->spells1 |= (NONE8);
 	g->cflags2 |= (MF2_IM_COLD);
 	g->ac = 20;
 	g->speed = 13;
@@ -798,7 +796,6 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
       case 8:
 	sprintf(ghost_name, "%s, the Mummified %s", name, gr_name);
 	g->cflags1 |= (MF1_HAS_1D2);
-	g->spells1 |= (NONE8);
 	if (gr == 6) g->cflags2 |= MF2_ORC;
 	if (gr == 7) g->cflags2 |= MF2_TROLL;
 	g->ac = 35;
@@ -817,7 +814,6 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
 	sprintf(ghost_name, "%s%s spirit", name,
 		(name[strlen(name) - 1] == 's') ? "'" : "'s");
 	g->cflags1 |= (MF1_MV_INVIS | MF1_THRO_WALL | MF1_HAS_1D2);
-	g->spells1 |= (NONE8);
 	g->cflags2 |= (MF2_IM_COLD);
 	g->ac = 20;
 	g->speed = 11;
