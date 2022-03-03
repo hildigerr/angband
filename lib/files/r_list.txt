@@ -4354,6 +4354,3 @@ D:two remaining Silmarils forever burning him.  Grond, the mighty Hammer of
 D:the Underworld, cries defiance as he strides towards you to crush you to a 
 D:pulp!
 
-#N:548:Someone's Ghost
-#I:G:11:5d5:100:0:0:255:32000:0
-

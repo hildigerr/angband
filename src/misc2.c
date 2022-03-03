@@ -561,8 +561,9 @@ static cptr ghost_class_names[] = {
  *
  * Even if not, it really needs to be re-writtem, there are redundancies
  * and incorrectnesses everywhere.  And the savefile ruins everything.
+ * Actually, the new savefile is "much better".  It may fix the problems.
  */
-void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
+static void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
 {
     int  i;
 
@@ -590,16 +591,15 @@ void set_ghost(monster_race *g, cptr pn, int gr, int gc, int lev)
     /* Forget any spells a previous ghost had */
     g->spells1 = g->spells2 = g->spells3 = 0L;
 
-    /* Save the level */
+    /* Save the level, extract the experience */
     g->level = lev;
+    g->mexp = lev * 5 + 5;
 
     /* Never asleep (?) */
     g->sleep = 0;
 
     /* Very attentive (?) */
     g->aaf = 100;
-
-    g->mexp = lev * 5 + 5;
 
 
     /* Initialize some of the flags */

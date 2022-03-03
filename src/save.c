@@ -604,17 +604,24 @@ static void rd_ghost()
 {
     monster_race *r_ptr = &r_list[MAX_R_IDX-1];
 
-    int i;
     byte tmp8u;
-    u16b tmp16u;
-    u32b tmp32u;
+    u32b tmp32u; 
+
+
+    /* Hack -- old method barely works */
+    if (older_than(2,7,0)) abort();
 
 
     rd_string(ghost_name);
 
     rd_byte(&r_ptr->level);
+    rd_byte(&r_ptr->rarity);
+    rd_byte(&tmp8u);
+    rd_byte(&tmp8u);
 
+    rd_byte(&r_ptr->gender);
     rd_char(&r_ptr->r_char);
+    rd_byte(&tmp8u);
 
     rd_byte(&r_ptr->hd[0]);
     rd_byte(&r_ptr->hd[1]);
@@ -625,14 +632,18 @@ static void rd_ghost()
 
     rd_u32b(&r_ptr->mexp);
 
-    /* Hack -- read the attacks */
-    for (i = 0; i < 4; i++) {
-	rd_u16b(&r_ptr->damage[i]);
+    rd_u16b(&r_ptr->damage[0]);
+    rd_u16b(&r_ptr->damage[1]);
+    rd_u16b(&r_ptr->damage[2]);
+    rd_u16b(&r_ptr->damage[3]);
 
     rd_u32b(&r_ptr->cflags1);
     rd_u32b(&r_ptr->cflags2);
+    rd_u32b(&tmp32u);
 
     rd_u32b(&r_ptr->spells1);
+    rd_u32b(&r_ptr->spells2);
+    rd_u32b(&r_ptr->spells3);
     }
 
 }
@@ -640,13 +651,17 @@ static void rd_ghost()
 static void wr_ghost()
 {
     monster_race *r_ptr = &r_list[MAX_R_IDX-1];
-	u16b temp;
 
     wr_string(ghost_name);
 
     wr_byte(r_ptr->level);
+    wr_byte(r_ptr->rarity);
+    wr_byte(0);
+    wr_byte(0);
 
+    wr_char(r_ptr->gender);
     wr_char(r_ptr->r_char);
+    wr_byte(0);		/* was "gchar" in 2.7.0 */
 
     wr_byte(r_ptr->hd[0]);
     wr_byte(r_ptr->hd[1]);
@@ -664,8 +679,11 @@ static void wr_ghost()
 
     wr_u32b(r_ptr->cflags1);
     wr_u32b(r_ptr->cflags2);
+    wr_u32b(0L);
 
     wr_u32b(r_ptr->spells1);
+    wr_u32b(r_ptr->spells2);
+    wr_u32b(r_ptr->spells3);
 }
 
 
