@@ -408,7 +408,7 @@ extern inven_type i_list[MAX_I_IDX];
 #ifdef MACGAME
 extern inven_kind *k_list;
 #else
-extern inven_kind k_list[MAX_OBJECTS];
+extern inven_kind k_list[MAX_K_IDX];
 #endif
 
 extern cptr special_names[SN_ARRAY_SIZE];

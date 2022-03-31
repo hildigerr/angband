@@ -168,10 +168,10 @@
 /*Special start for rings amulets etc... */
 #define OBJ_SPECIAL         	(MAX_DUNGEON_OBJ+79)
   /* Number of objects for universe*/
-#define MAX_OBJECTS				(MAX_DUNGEON_OBJ+90)
+#define MAX_K_IDX				(MAX_DUNGEON_OBJ+90)
 
 
-/* was 7*64, see flavor_p() in desc.c, could be MAX_OBJECTS o_o() rewritten
+/* was 7*64, see flavor_p() in desc.c, could be MAX_K_IDX o_o() rewritten
  * now 8*64 beacuse of Rods
  */
 

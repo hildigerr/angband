@@ -741,7 +741,7 @@ again:
 	}
     }
     if (j < 21) {
-	for (i = (i - (MAX_DUNGEON_OBJ - 1)) + (OBJ_SPECIAL - 1); i < MAX_OBJECTS; i++) {
+	for (i = (i - (MAX_DUNGEON_OBJ - 1)) + (OBJ_SPECIAL - 1); i < MAX_K_IDX; i++) {
 	    switch (i_ptr->tval) {
 	      case TV_POTION1:
 		if ((k_list[i].tval == TV_POTION1) ||
@@ -816,7 +816,7 @@ again:
 	    break;
     }
     if (j != k) {
-	for (i = (OBJ_SPECIAL - 1); i < MAX_OBJECTS; i++) {
+	for (i = (OBJ_SPECIAL - 1); i < MAX_K_IDX; i++) {
 	    switch (i_ptr->tval) {
 	      case TV_POTION1:
 		if ((k_list[i].tval == TV_POTION1) ||

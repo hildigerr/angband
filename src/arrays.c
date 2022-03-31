@@ -671,7 +671,7 @@ static errr init_k_list_txt()
 	    error_k_idx = m;
 
 	    /* Verify */
-	    if ((m < 0) || (m >= MAX_OBJECTS)) return (5);
+	    if ((m < 0) || (m >= MAX_K_IDX)) return (5);
 
 	    /* Start a new k_ptr */
 	    k_ptr = &k_list[m];
@@ -1068,7 +1068,7 @@ void init_some_arrays()
     C_MAKE(r_list, MAX_R_IDX, monster_race);
 
     /* Allocate and Wipe the array of object "kind info" */
-    C_MAKE(k_list, MAX_OBJECTS, inven_kind);
+    C_MAKE(k_list, MAX_K_IDX, inven_kind);
 
     /* Initialize r_list from a file of some kind */
     init_r_list();

@@ -2036,7 +2036,7 @@ int special_place_object(int y, int x)
 again:
     if (done > 20)
 	return 0;
-    tmp = randint(MAX_OBJECTS - (OBJ_SPECIAL - 1)) + (OBJ_SPECIAL - 1) - 1;
+    tmp = randint(MAX_K_IDX - (OBJ_SPECIAL - 1)) + (OBJ_SPECIAL - 1) - 1;
     switch (tmp) {
       case (OBJ_SPECIAL - 1):
 	done++;
@@ -2265,7 +2265,7 @@ void place_object(int y, int x)
     /* Delete anything already there */
     delete_object(y, x);
     
-    if (randint(MAX_OBJECTS)>OBJ_SPECIAL && randint(10)==1)
+    if (randint(MAX_K_IDX)>OBJ_SPECIAL && randint(10)==1)
 	if (special_place_object(y,x)==(-1))
 	    return;
 
