@@ -1084,14 +1084,20 @@ static void roff(register const char *p)
 
 
 /*
- * Identify a character
+ * Identify a character, allow recall of monnsters
  */
 void do_cmd_query_symbol(void)
 {
     char         command, query;
-    register int i, n;
+    register int i;
+    int n;
 
-    if (get_com("Enter character to be identified :", &command))
+    /* The turn is free */
+    free_turn_flag = TRUE;
+
+    /* Get a character, or abort */
+    if (!get_com("Enter character to be identified :", &command)) return;
+
 	switch (command) {
 	/*
 	 * every printing ASCII character is listed here, in the order in
@@ -1378,30 +1384,43 @@ void do_cmd_query_symbol(void)
 	    break;
 	}
 
-/* Allow access to monster memory. -CJS- */
+
+    /* No monsters recalled yet */
     n = 0;
+
 #ifdef MSDOS
     if (command == '.' || command == '#')
 	command = (command == '.' ? floorsym : wallsym);
 #endif
-    for (i = MAX_R_IDX - 1; i >= 0; i--)
-#ifdef MSDOS
-	if ((r_list[i].r_char == (unsigned) command) && bool_roff_recall(i))
-#else
-	if ((r_list[i].r_char == (unsigned) command) && bool_roff_recall(i))
-#endif
+
+    /* Allow access to monster memory. */
+    for (i = MAX_R_IDX - 1; i >= 0; i--) {
+
+	/* Did they ask about this monster? */
+	if ((r_list[i].r_char == command) && bool_roff_recall(i))
 	{
-	    if (n == 0) {
+	    /* First monster gets a query */
+	    if (!n) {
+
 		put_str("You recall those details? [y/n]", 0, 40);
 		query = inkey();
 		if (query != 'y' && query != 'Y') break;
 		erase_line(0, 40);
 		save_screen();
 	    }
+
+	    /* Count the monsters shown */
 	    n++;
+
+		/* Describe the monster */
 		query = roff_recall(i);
+
+		/* Restore the screen */
 		restore_screen();
+
+	    /* Let the user stop it */
 	    if (query == ESCAPE) break;
 	}
+    }
 }
 
