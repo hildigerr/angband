@@ -920,7 +920,7 @@ void do_command(char com_val)
 	/* Identify Symbol */
 	case '/':
 	    free_turn_flag = TRUE;
-	    ident_char(); break;
+	    do_cmd_query_symbol(); break;
 
 	/* Character Description */
 	case 'C':

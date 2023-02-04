@@ -1084,9 +1084,9 @@ static void roff(register const char *p)
 
 
 /*
- * help.c: identify a symbol 
+ * Identify a character
  */
-void ident_char()
+void do_cmd_query_symbol(void)
 {
     char         command, query;
     register int i, n;

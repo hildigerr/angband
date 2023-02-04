@@ -823,7 +823,7 @@ void end_find(void);
 /* recall.c */
 int bool_roff_recall(int);
 int roff_recall(int);
-void ident_char(void);
+void do_cmd_query_symbol(void);
 
 /* rnd.c is unused now -CWS */
 /* random.c */
