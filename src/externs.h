@@ -572,8 +572,6 @@ void lite_spot(int, int);
 
 void screen_map(void);
 
-/* help.c */
-void ident_char(void);
 
 /* io.c */
 #ifdef SIGTSTP
@@ -825,6 +823,7 @@ void end_find(void);
 /* recall.c */
 int bool_roff_recall(int);
 int roff_recall(int);
+void ident_char(void);
 
 /* rnd.c is unused now -CWS */
 /* random.c */
