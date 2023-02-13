@@ -12,7 +12,7 @@
 
 #include "angband.h"
 
-static void roff(const char *);
+
 
 static const char  *desc_atype[] = {
     "do something undefined",
@@ -207,6 +207,40 @@ static int          roffpline;	   /* Place to print line now being loaded. */
 
 
 
+/* Print out strings, filling up lines as we go. */
+static void roff(register const char *p)
+{
+    register char *q, *r;
+    register int   linesize;
+
+    linesize = sizeof(roffbuf);
+    if (linesize > 80)
+	linesize = 80;
+
+    while (*p) {
+	*roffp = *p;
+	if (*p == '\n' || roffp >= roffbuf + linesize) {
+	    q = roffp;
+	    if (*p != '\n') {
+		if (*q == ' ')
+		    q--;
+		if (*q == ' ')
+		    q--;
+		while (*q != ' ')
+		    q--;
+	    }
+	    *q = 0;
+	    prt(roffbuf, roffpline, 0);
+	    roffpline++;
+	    r = roffbuf;
+	    while (q < roffp)
+		*r++ = *++q;
+	    roffp = r;
+	} else
+	    roffp++;
+	p++;
+    }
+}
 
 
 
@@ -1044,40 +1078,6 @@ int roff_recall(int r_idx)
     return inkey();
 }
 
-/* Print out strings, filling up lines as we go. */
-static void roff(register const char *p)
-{
-    register char *q, *r;
-    register int   linesize;
-
-    linesize = sizeof(roffbuf);
-    if (linesize > 80)
-	linesize = 80;
-
-    while (*p) {
-	*roffp = *p;
-	if (*p == '\n' || roffp >= roffbuf + linesize) {
-	    q = roffp;
-	    if (*p != '\n') {
-		if (*q == ' ')
-		    q--;
-		if (*q == ' ')
-		    q--;
-		while (*q != ' ')
-		    q--;
-	    }
-	    *q = 0;
-	    prt(roffbuf, roffpline, 0);
-	    roffpline++;
-	    r = roffbuf;
-	    while (q < roffp)
-		*r++ = *++q;
-	    roffp = r;
-	} else
-	    roffp++;
-	p++;
-    }
-}
 
 
 
