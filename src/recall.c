@@ -230,16 +230,18 @@ void lore_do_probe(monster_type *m_ptr)
 
 
 /* Print out strings, filling up lines as we go. */
-static void roff(register const char *p)
+static void roff(cptr str)
 {
-    register char *q, *r;
+    register cptr p, q, r;
     register int   linesize;
 
     linesize = sizeof(roffbuf);
     if (linesize > 80)
 	linesize = 80;
 
-    while (*p) {
+    /* Scan the given string, character at a time */
+    for (p = str; *p; p++) {
+
 	*roffp = *p;
 	if (*p == '\n' || roffp >= roffbuf + linesize) {
 	    q = roffp;
@@ -260,7 +262,6 @@ static void roff(register const char *p)
 	    roffp = r;
 	} else
 	    roffp++;
-	p++;
     }
 }
 
