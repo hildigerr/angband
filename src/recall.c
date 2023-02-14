@@ -300,21 +300,23 @@ int bool_roff_recall(int r_idx)
  */
 int roff_recall(int r_idx)
 {
-    const char             *p, *q;
-    u16b                  *pu;
-    vtype                   temp;
 
     register monster_lore  *l_ptr;
     register monster_race  *r_ptr;
-
     register u32b         i, j, k;
+
+    const char             *p, *q;
+    u16b                  *pu;
 
     int                 mspeed;
     u32b              rcflags1, rcflags2;
     u32b              rspells1, rspells2, rspells3;
-    monster_lore         save_mem;
     int                 breath = FALSE, magic = FALSE;
     char			sex;
+
+    monster_lore        save_mem;
+
+    vtype               temp;
 
     /* Access the race and lore */
     r_ptr = &r_list[r_idx];
