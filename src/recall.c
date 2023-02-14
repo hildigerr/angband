@@ -207,6 +207,28 @@ static int          roffpline;	   /* Place to print line now being loaded. */
 
 
 
+
+
+
+/*
+ * Probe a monster and learn all about it
+ */
+void lore_do_probe(monster_type *m_ptr)
+{
+    monster_race *r_ptr = &r_list[m_ptr->r_idx];
+
+    /* Get the monster lore pointer */
+    monster_lore *l_ptr = &l_list[m_ptr->r_idx];
+
+    /* Acquire pure information about all non-spell flags */
+    l_ptr->r_cflags1 = r_ptr->cflags1;
+    l_ptr->r_cflags2 = r_ptr->cflags2;
+
+    /* Hack -- Retain knowledge about dropped treasure */
+    l_ptr->r_cflags1 &= ~CM1_TREASURE;
+}
+
+
 /* Print out strings, filling up lines as we go. */
 static void roff(register const char *p)
 {

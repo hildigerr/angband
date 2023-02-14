@@ -827,9 +827,8 @@ int probing(void)
 	    move_cursor_relative(m_ptr->fy, m_ptr->fx);
 	    msg_print(out_val);
 
-	    /* let's make probing do good things to the monster memory -CWS */
-	    l_ptr->r_cflags2 = r_ptr->cflags2;
-	    l_ptr->r_cflags1 = (r_ptr->cflags1 & ~CM1_TREASURE);
+	    /* Learn all of the non-spell, non-treasure flags */
+	    lore_do_probe(m_ptr);
 
 	    /* Probe worked */
 	    probe = TRUE;

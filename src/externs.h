@@ -821,8 +821,9 @@ void find_init(int);
 void end_find(void);
 
 /* recall.c */
-int bool_roff_recall(int);
 int roff_recall(int);
+int bool_roff_recall(int);
+void lore_do_probe(monster_type *m_ptr);
 void do_cmd_query_symbol(void);
 
 /* rnd.c is unused now -CWS */
