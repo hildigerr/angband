@@ -22,6 +22,8 @@ Fixed a few old bugs based in misplacement of certain flags.
 Reorganized the source to make the files more "self-contained".
 
 Threw out the "Bill Cosby" message.  "Cute" is not "good".
+Added monster race fields for "current/max" population per level.
+Considered using this instead of the old "reproduction limits".
 Cleaned up the use of "hack_monptr" in a BIG way.
 Separated "update_monsters()" from "process_monsters()".
 Put "XXX" and "Hack" in the code to label areas of future work.

@@ -2029,25 +2029,16 @@ void do_cmd_check_uniques()
 	/* Only print Uniques */
 	if ((strlen(r_list[k].name) > 0) && (r_list[k].cflags2 & MF2_UNIQUE)) {
 
-	    /* Wizards know everything */
-	    if (wizard) {
+	    bool dead = (l_list[k].max_num == 0);
+
+	    /* Wizards know everything, players know kills */
+	    if (wizard || dead) {
 
 		/* Print a message */            
 		sprintf(msg, "%s is %s.", r_list[k].name,
-			(u_list[k].dead) ? "dead" : "alive");            
+			dead ? "dead" : "alive");            
 		prt(msg, i++, j);
 
-		/* is screen full? */
-		if (i == 22) {
-		    prt("-- more --", i, j);
-		    inkey();
-		    for (t = 2; t < 23; t++) erase_line(t, j);
-		    prt("Uniques: (continued)", 1, j + 5);
-		    i = 2;
-		}
-	    } else if (u_list[k].dead) {
-		sprintf(msg, "%s is dead.", r_list[k].name);
-		prt(msg, i++, j);
 		/* is screen full? */
 		if (i == 22) {
 		    prt("-- more --", i, j);

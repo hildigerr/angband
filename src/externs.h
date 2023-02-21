@@ -234,8 +234,6 @@ HOLHENNETH, AEGLIN, CAMLOST, NIMLOTH, NAR, BERUTHIEL, GORLIM, ELENDIL,
 THORIN, CELEBORN, THRAIN, GONDOR, THINGOL, THORONGIL, LUTHIEN, TUOR, ROHAN,
 TULKAS, NECKLACE, BARAHIR, CASPANION, RAZORBACK, BLADETURNER;
 
-/* Brand new extra effecient and kind way to add unique monsters... HOORAY!! */
-extern struct unique_mon u_list[MAX_R_IDX];
 
 extern int quests[MAX_QUESTS];
 

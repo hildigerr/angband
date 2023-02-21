@@ -431,6 +431,9 @@ static void rd_lore(monster_lore *l_ptr)
 
 	rd_byte(&l_ptr->r_wake);
 	rd_byte(&l_ptr->r_ignore);
+
+	rd_byte(&tmp8u);		/* Old "cur_num" */
+	rd_byte(&l_ptr->max_num);
 }
 
 static void wr_lore(monster_lore *l_ptr)
@@ -454,6 +457,9 @@ static void wr_lore(monster_lore *l_ptr)
     wr_byte(l_ptr->r_attacks[3]);
     wr_byte(l_ptr->r_wake);
     wr_byte(l_ptr->r_ignore);
+
+    /* Monster limit per level */
+    wr_byte(l_ptr->max_num);
 }
 
 
@@ -1289,11 +1295,12 @@ static errr rd_dungeon()
 	return (93);
     }
 
-    /* Read the monsters, note locations in cave */
+    /* Read the monsters, note locations in cave, count by race */
     for (i = MIN_M_IDX; i < m_max; i++) {
 	monster_type *m_ptr = &m_list[i];
 	rd_monster(m_ptr);
 	cave[m_ptr->fy][m_ptr->fx].m_idx = i;
+	l_list[m_ptr->r_idx].cur_num++;
     }
 
 #ifdef MSDOS
@@ -1432,13 +1439,6 @@ static errr rd_savefile()
     for (i = 0; i < tmp16u; i++) rd_lore(&l_list[i]);
     if (say) prt_note(-1,"Loaded Monster Memory");
 
-    /* Load the old "Uniques" flags */
-    for (i = 0; i < MAX_R_IDX; i++) {
-
-	rd_s32b(&u_list[i].exist);
-	rd_s32b(&u_list[i].dead);
-    }
-    if (say) prt_note(-1,"Loaded Unique Beasts");
 
     /* Object Memory */
     rd_u16b(&tmp16u);
@@ -1760,10 +1760,6 @@ static int wr_savefile()
     wr_u16b(tmp16u);
     for (i = 0; i < tmp16u; i++) wr_lore(&l_list[i]);
 
-    for (i = 0; i < MAX_R_IDX; i++) {
-	wr_s32b(u_list[i].exist);
-	wr_s32b(u_list[i].dead);
-    }
 
     /* Dump the object memory */
     tmp16u = OBJECT_IDENT_SIZE;
@@ -2377,6 +2373,27 @@ closefiles:
 
 		/* Rotate the store inventories (once per day) */
 		for (i = 0; i < days; i++) store_maint();
+
+
+		/* Older savefiles */
+		if (older_than(2,7,0)) {
+
+		    int y, x;
+
+		    /* Check the monsters */
+		    for (y = 0; y < cur_height; y++) {
+			for (x = 0; x < cur_width; x++) {
+
+			    /* Monsters -- count total population */
+			    if (cave[y][x].m_idx) {
+				monster_type *m_ptr;
+				m_ptr = &m_list[cave[y][x].m_idx];
+				l_list[m_ptr->r_idx].cur_num++;
+			    }
+			}
+		    }
+		}
+
 	    }
 
 #if 0

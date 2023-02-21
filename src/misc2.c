@@ -59,7 +59,8 @@ static void delete_monster_fully(int j)
     fx = m_ptr->fx;
     fy = m_ptr->fy;
 
-    if (r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE) u_list[m_ptr->mptr].exist = 0;
+    /* One less of this monster on this level */
+    l_list[m_ptr->r_idx].cur_num--;
 
     /* Forget that the monster is here */
     cave[fy][fx].m_idx = 0;
@@ -139,8 +140,6 @@ static void delete_monster_later(int j)
     /* Targetted monster moved to replace dead or compacted monster   CDW */
     if (target_mon == m_max-1) target_mon = j;
 #endif
-
-	if (r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE) u_list[m_ptr->mptr].exist = 0;
 
     /* Mark the monster as "dead" (non-optimal method) */
     m_ptr->hp = (-1);
@@ -316,23 +315,24 @@ int place_monster(int y, int x, int r_idx, int slp)
     /* Get the race */
     r_ptr = &r_list[r_idx];
 
-    if (r_ptr->cflags2 & MF2_UNIQUE) {
-	if (u_list[r_idx].exist) {
-	    if (wizard) {
-		(void)sprintf(buf, "Tried to create %s but exists.", r_ptr->name);
-		msg_print(buf);
-	    }
-	    return FALSE;
+    /* See if we can make any more of them */
+    if (l_list[r_idx].cur_num >= l_list[r_idx].max_num) {
+
+	/* Note for wizard */
+	if (wizard) {
+	    (void)sprintf(buf, "Ignoring %s monster (%s).",
+			  (l_list[r_idx].max_num ? "excessive" : "dead"),
+			  r_ptr->name);
+	    msg_print(buf);
 	}
-	if (u_list[r_idx].dead) {
-	    if (wizard) {
-		(void)sprintf(buf, "Tried to create %s but dead.", r_ptr->name);
-		msg_print(buf);
-	    }
-	    return FALSE;
-	}
-	u_list[r_idx].exist = 1;
+
+	/* Cannot create */
+	return FALSE;
     }
+
+
+    /* Count the monsters on the level */
+    l_list[r_idx].cur_num++;
 
     /* Get the next monster record */
     cur_pos = m_pop();		   /* from um55, paranoia error check... */

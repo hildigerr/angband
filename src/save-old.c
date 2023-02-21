@@ -298,6 +298,8 @@ static void rd_lore_old(monster_lore *l_ptr)
     rd_byte(&l_ptr->r_attacks[1]);
     rd_byte(&l_ptr->r_attacks[2]);
     rd_byte(&l_ptr->r_attacks[3]);
+
+    /* XXX Remember to "extract" max_num later */
 }
 
 
@@ -977,8 +979,17 @@ static errr rd_savefile_old()
     /* Load the old "Uniques" flags */
     for (i = 0; i < MAX_R_IDX; i++) {
 
-	rd_s32b(&u_list[i].exist);
-	rd_s32b(&u_list[i].dead);
+	/* Ignore the "exist" info, extracted later */
+	rd_u32b(&tmp32u);
+
+	/* Already true, but do it again anyway */
+	l_list[i].cur_num = 0;
+
+	/* XXX Hack -- That unique has been killed */
+	rd_u32b(&tmp32u);
+	l_list[i].max_num = 100;
+	if (r_list[i].cflags2 & MF2_UNIQUE) l_list[i].max_num = 1;
+	if (tmp32u) l_list[i].max_num = 0;
     }
     if (say) prt_note(-1,"Loaded Unique Beasts");
 

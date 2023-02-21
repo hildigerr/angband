@@ -3264,8 +3264,9 @@ static void mon_move(int m_idx, u32b *rcflags1)
 	m_ptr->monfear = (byte) t;
     }
 
-    /* Does the critter multiply? */
+    /* Does the critter multiply?  Are creatures allowed to multiply? */
     if ((r_ptr->cflags1 & MF1_MULTIPLY) &&
+	(l_ptr->cur_num < l_ptr->max_num) &&
 	(MAX_MON_MULT >= mon_tot_mult) &&
 	(((p_ptr->rest != -1) && ((p_ptr->rest % MON_MULT_ADJ) == 0)) ||
 	 ((p_ptr->rest == -1) && (randint(MON_MULT_ADJ) == 1)))) {

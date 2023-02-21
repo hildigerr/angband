@@ -189,13 +189,8 @@ monster_type m_list[MAX_M_IDX];
 monster_race *r_list;
 
 /* The array of monster "memory" [MAX_R_IDX] */
-#ifdef MAC
 monster_lore *l_list;
-#else
-monster_lore l_list[MAX_R_IDX];	/* Monster memories */
-#endif
 
-struct unique_mon u_list[MAX_R_IDX]; /* Unique check list... -LVB- */ 
 
 
 /* The array of dungeon items [MAX_I_IDX] */

@@ -107,9 +107,18 @@ struct _monster_race {
 /*
  * Monster memories (or "lore").
  *
+ * Also, contains, for each monster race, the number of monsters
+ * (of the given race) currently alive on the level, and the maximum
+ * number of such monsters allowed at any one time on any level.
+ * For uniques, we set "max_num" to "one", and then reset it to "zero"
+ * once the unique has been killed.
+ *
  * Note that there is really no reason for "monster_lore" not to
  * be part of "monster_race" except that it separates the things
  * that get written to the save-file from those that do not.
+ *
+ * Note that "max_num" is not retained across "lives".
+ * Note that "cur_num" is not retained across "levels".
  */
 
 typedef struct _monster_lore monster_lore;
@@ -130,12 +139,9 @@ struct _monster_lore {
     byte r_wake;		/* Number of times woken up (?) */
     byte r_ignore;		/* Number of times ignored (?) */
 
-};
+    byte max_num;		/* Maximum population allowed per level */
 
-
-struct unique_mon {
-  s32b exist;
-  s32b dead;
+    byte cur_num;		/* Monster population on this level */
 };
 
 

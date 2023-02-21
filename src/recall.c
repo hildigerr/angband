@@ -370,6 +370,10 @@ int roff_recall(int r_idx)
 /* Conflict history. */
 /* changed to act better for unique monsters -CFT */
     if (r_ptr->cflags2 & MF2_UNIQUE) {   /* treat unique differently... -CFT */
+
+	/* Hack -- Determine if the unique is "dead" */
+	bool dead = (l_ptr->max_num == 0);
+
 	if (l_ptr->r_deaths) {	   /* We've been killed... */
 	    (void)sprintf(temp, "%s slain %d of your ancestors",
 			  (sex == 'm' ? "He has" : sex == 'f' ? "She has" :
@@ -378,7 +382,7 @@ int roff_recall(int r_idx)
 	    roff(temp);
 
 	    /* but we've also killed it */
-	    if (u_list[r_idx].dead) {
+	    if (dead) {
 		sprintf(temp, ", but you have avenged %s!  ",
 			plural(l_ptr->r_deaths, "him", "them"));
 		roff(temp);
@@ -391,7 +395,7 @@ int roff_recall(int r_idx)
 	}
 
 	/* Dead unique who never hurt us */
-	else if (u_list[r_idx].dead) {
+	else if (dead) {
 	    roff("You have slain this foe.  ");
 	}
     }

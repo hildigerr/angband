@@ -763,12 +763,6 @@ int mon_take_hit(int m_idx, int dam, int print_fear)
 		l_list[m_ptr->r_idx].r_kills++;
 	}
 
-
-	if (r_ptr->cflags2 & MF2_UNIQUE) {
-	    u_list[m_ptr->r_idx].exist = 0;
-	    u_list[m_ptr->r_idx].dead = 1;
-	}
-
 	/* Give some experience */
 	new_exp = ((long)r_ptr->mexp * r_ptr->level) / p_ptr->lev;
 	new_exp_frac = ((((long)r_ptr->mexp * r_ptr->level) % p_ptr->lev)
@@ -796,6 +790,11 @@ int mon_take_hit(int m_idx, int dam, int print_fear)
 
 	/* Delete the monster, decrement the "current" population */
 	delete_monster_idx(m_idx);
+
+	/* When the player kills a Unique, it stays dead */
+	if (r_ptr->cflags2 & MF2_UNIQUE) {
+	    l_list[r_idx].max_num = 0;
+	}
 
 	monster_is_afraid = 0;
     } else {
