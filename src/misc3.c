@@ -476,6 +476,9 @@ static void charge_staff(inven_type *i_ptr)
  *
  * The base "chance" of being "good" increases with the "level" parameter,
  * which is usually derived from the dungeon level.
+ *
+ * Note that the "k_list" has been rebuilt to remove the old problems
+ * with multiple "similar" objects.
  */
 void apply_magic(inven_type *i_ptr, int level, int good, int not_unique)
 {
@@ -492,12 +495,6 @@ void apply_magic(inven_type *i_ptr, int level, int good, int not_unique)
     /* Extract the "chance" of ickiness (approx range 11-54 percent) */
     cursed = (10 * chance) / OBJ_DIV_CURSED;
 
-/*
- * some objects appear multiple times in the k_list with different
- * levels, this is to make the object occur more often, however, for
- * consistency, must set the level of these duplicates to be the same as the
- * object with the lowest level 
- */
 
     /* Apply magic (good or bad) according to type */
     switch (i_ptr->tval) {
