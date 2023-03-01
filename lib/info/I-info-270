@@ -1,6 +1,7 @@
 === Basic "changes" from Angband 2.6.1 to Angband 2.7.0 ===
 
 Parsing of Item kinds from text files
+Reorganization of Item kind file
 Properly handled "identify" inducing object "awareness" and "combining".
 Functions combine() and combine_pack() to maintain inventory.
 Made "store cost" a property of objects
