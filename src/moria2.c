@@ -454,7 +454,7 @@ u32b monster_death(int y, int x, u32b flags, u32b good, u32b win)
 			crown = TRUE;
 			cur_pos = i_pop();
 			cave[j][k].i_idx = cur_pos;
-			invcopy(&i_list[cur_pos], 98);
+			invcopy(&i_list[cur_pos], OBJ_IRON_CROWN);
 			t_ptr = &i_list[cur_pos];
 			t_ptr->flags1 |= (TR1_STR | TR1_DEX | TR1_CON | TR1_INT | TR1_WIS | TR1_CHR |
 				       TR3_SEE_INVIS | TR3_CURSED | TR1_INFRA);
@@ -472,7 +472,7 @@ u32b monster_death(int y, int x, u32b flags, u32b good, u32b win)
 			grond = TRUE;
 			cur_pos = i_pop();
 			cave[j][k].i_idx = cur_pos;
-			invcopy(&i_list[cur_pos], 56);
+			invcopy(&i_list[cur_pos], OBJ_LEAD_FILLED_MACE);
 			t_ptr = &i_list[cur_pos];
 			t_ptr->name2 = ART_GROND;
 			t_ptr->tohit = 5;

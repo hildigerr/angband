@@ -503,9 +503,7 @@ void apply_magic(inven_type *i_ptr, int level, int good, int not_unique)
       case TV_SOFT_ARMOR:
       case TV_SHIELD:
 
-	if ((i_ptr->k_idx >= 389 && i_ptr->k_idx <= 394)
-	    || (i_ptr->k_idx >= 408 && i_ptr->k_idx <= 409)
-	    || (i_ptr->k_idx >= 415 && i_ptr->k_idx <= 419)) {
+	if (i_ptr->k_idx >= 400 && i_ptr->k_idx <= 414) {
 
 	/* all DSM are enchanted, I guess -CFT */
 	    i_ptr->toac += randint(3) + m_bonus(0, 5, level);

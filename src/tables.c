@@ -32,33 +32,31 @@ char days[7][29] = {
 #endif
 
 
-#define MDO MAX_DUNGEON_OBJ
+
 /*
  * Each player starts out with a few provisions.
- * Note that the entries refer to elements of the k_list[] array
- * 356 = Food Ration, 365 = Wooden Torch, 123 = Cloak, 30 = Stiletto,
- * 103 = Soft Leather Armor, 318 = Beginners-Magic, 322 = Beginners Handbook
+ * The OBJ_xxx constants refer to k_list indexes
  */
 
 u16b player_init[MAX_CLASS][5] = {
 
 	/* Warrior */
-    { MDO, MDO+21,  34, 109, 258},
+    { OBJ_FOOD_RATION, OBJ_TORCH,  OBJ_BROAD_SWORD, OBJ_CHAIN_MAIL, OBJ_POTION_BERSERK },
 
 	/* Mage */
-    { MDO, MDO+21,  29, 330, 220},
+    { OBJ_FOOD_RATION, OBJ_TORCH,  OBJ_DAGGER, OBJ_SPELL_BOOK, OBJ_SCROLL_RECALL },
 
 	/* Priest */
-    { MDO, MDO+21,  53, 334, 242},
+    { OBJ_FOOD_RATION, OBJ_TORCH,  OBJ_MACE, OBJ_PRAYER_BOOK, OBJ_POTION_HEALING },
 
 	/* Rogue */
-    { MDO, MDO+21,  46, 103, 330},
+    { OBJ_FOOD_RATION, OBJ_TORCH,  OBJ_SMALL_SWORD, OBJ_SOFT_LEATHER, OBJ_SPELL_BOOK },
 
 	/* Ranger */
-    { MDO, MDO+21,  34, 330,  74},
+    { OBJ_FOOD_RATION, OBJ_TORCH,  OBJ_BROAD_SWORD, OBJ_SPELL_BOOK,  OBJ_LONG_BOW },
 
 	/* Paladin */
-    { MDO, MDO+21,  34, 334, 209}
+    { OBJ_FOOD_RATION, OBJ_TORCH,  OBJ_BROAD_SWORD, OBJ_PRAYER_BOOK, OBJ_ANTI_EVIL }
 };
 
 

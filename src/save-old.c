@@ -224,6 +224,234 @@ static errr rd_item_old(inven_type *i_ptr)
     /* Clear the timeout */
     i_ptr->timeout = 0;
 
+    /* Several objects now have new "locations" */
+    switch (i_ptr->k_idx) {
+
+	/* Items map to their "base" */
+	case 0: i_ptr->k_idx = 15; break;
+	case 13: i_ptr->k_idx = 12; break;
+	case 14: i_ptr->k_idx = 12; break;
+	case 22: i_ptr->k_idx = 21; break;
+	case 23: i_ptr->k_idx = 21; break;
+	case 26: i_ptr->k_idx = 25; break;
+	case 27: i_ptr->k_idx = 25; break;
+
+	/* Cleaning of Edged Blades */
+	case 28: i_ptr->k_idx = 38; break;
+	case 29: i_ptr->k_idx = 43; break;
+
+	/* Items map to their "base" */
+	case 35: i_ptr->k_idx = 34; break;
+	case 38: i_ptr->k_idx = 37; break;
+	case 43: i_ptr->k_idx = 42; break;
+
+	/* Separate Hafted from Polearm */
+	case 58: i_ptr->k_idx = 62; break;
+	case 62: i_ptr->k_idx = 58; break;
+
+	/* Spikes, Lantern, Torches */
+	case 84: i_ptr->k_idx = 345; break;
+	case 85: i_ptr->k_idx = 347; break;
+	case 86: i_ptr->k_idx = 346; break;
+
+	/* Dungeon Shovels and Picks */
+	case 87: i_ptr->k_idx = 88; break;
+	case 88: i_ptr->k_idx = 89; break;
+	case 89: i_ptr->k_idx = 85; break;
+	case 90: i_ptr->k_idx = 86; break;
+
+	/* More items mapping to their "base" */        
+	case 102: i_ptr->k_idx = 101; break;
+	case 144: i_ptr->k_idx = 78; break;
+	case 170: i_ptr->k_idx = 80; break;
+	case 177: i_ptr->k_idx = 176; break;
+	case 178: i_ptr->k_idx = 176; break;
+	case 179: i_ptr->k_idx = 176; break;
+	case 182: i_ptr->k_idx = 181; break;
+	case 183: i_ptr->k_idx = 181; break;
+	case 191: i_ptr->k_idx = 190; break;
+	case 195: i_ptr->k_idx = 194; break;
+
+	/* Random Rod */
+	case 196: i_ptr->k_idx = 352; break;
+
+	/* More items linking to "base" */
+	case 198: i_ptr->k_idx = 197; break;
+	case 199: i_ptr->k_idx = 197; break;
+	case 205: i_ptr->k_idx = 214; break;
+	case 238: i_ptr->k_idx = 237; break;
+	case 239: i_ptr->k_idx = 237; break;
+	case 256: i_ptr->k_idx = 249; break;
+	case 284: i_ptr->k_idx = 283; break;
+
+	/* Flask of oil */
+	case 268: i_ptr->k_idx = 348; break;
+
+	/* Random Staff */
+	case 293: i_ptr->k_idx = 306; break;
+
+	/* Random Staff */
+	case 299: i_ptr->k_idx = 316; break;
+
+	/* More items linking to "base" */
+	case 306: i_ptr->k_idx = 305; break;
+	case 316: i_ptr->k_idx = 307; break;
+	case 321: i_ptr->k_idx = 322; break;
+
+	/* Miscellaneous Junk */
+	case 345: i_ptr->k_idx = 389; break;
+	case 346: i_ptr->k_idx = 390; break;
+
+	/* Skeletons */
+	case 353: i_ptr->k_idx = 391; break;
+	case 354: i_ptr->k_idx = 392; break;
+	case 347: i_ptr->k_idx = 393; break;
+	case 348: i_ptr->k_idx = 394; break;
+	case 349: i_ptr->k_idx = 395; break;
+	case 350: i_ptr->k_idx = 396; break;
+	case 351: i_ptr->k_idx = 397; break;
+	case 352: i_ptr->k_idx = 398; break;
+
+	/* Empty bottle */
+	case 355: i_ptr->k_idx = 349; break;
+
+	/* Random Scroll */
+	case 378: i_ptr->k_idx = 191; break;
+
+	/* Dragon Scale Mail */
+	case 389: i_ptr->k_idx = 401; break;
+	case 390: i_ptr->k_idx = 402; break;
+	case 391: i_ptr->k_idx = 400; break;
+	case 392: i_ptr->k_idx = 404; break;
+	case 393: i_ptr->k_idx = 403; break;
+	case 394: i_ptr->k_idx = 405; break;
+
+	/* Random Daggers */
+	case 395: i_ptr->k_idx = 43; break;
+	case 396: i_ptr->k_idx = 43; break;
+	case 397: i_ptr->k_idx = 43; break;
+
+	/* Random Short Sword */
+	case 398: i_ptr->k_idx = 35; break;
+
+	/* Random leftover potions */
+	case 399: i_ptr->k_idx = 422; break;
+	case 400: i_ptr->k_idx = 417; break;
+	case 401: i_ptr->k_idx = 415; break;
+	case 402: i_ptr->k_idx = 420; break;
+	case 403: i_ptr->k_idx = 418; break;
+	case 404: i_ptr->k_idx = 416; break;
+
+	/* Random Rods */  
+	case 405: i_ptr->k_idx = 355; break;
+	case 406: i_ptr->k_idx = 353; break;
+
+	/* Random Staff */
+	case 407: i_ptr->k_idx = 321; break;
+
+	/* Dragon Scale Mail */
+	case 408: i_ptr->k_idx = 408; break;
+	case 409: i_ptr->k_idx = 409; break;
+
+	/* Random Rod */
+	case 410: i_ptr->k_idx = 354; break;
+
+	/* Random Cloak */
+	case 411: i_ptr->k_idx = 123; break;
+
+	/* Random Scrolls */
+	case 412: i_ptr->k_idx = 198; break;
+	case 413: i_ptr->k_idx = 199; break;
+
+	/* Random Ring */
+	case 414: i_ptr->k_idx = 144; break;
+
+	/* Dragon Scale Mail */
+	case 415: i_ptr->k_idx = 410; break;
+	case 416: i_ptr->k_idx = 407; break;
+	case 417: i_ptr->k_idx = 411; break;
+	case 418: i_ptr->k_idx = 406; break;
+	case 419: i_ptr->k_idx = 412; break;
+
+	/* More random potions */
+	case 420: i_ptr->k_idx = 256; break;
+	case 421: i_ptr->k_idx = 421; break;
+	case 422: i_ptr->k_idx = 419; break;
+
+	/* Store bought food */
+	case 423: i_ptr->k_idx = 21; break;
+	case 424: i_ptr->k_idx = 22; break;
+	case 425: i_ptr->k_idx = 23; break;
+	case 426: i_ptr->k_idx = 26; break;
+	case 427: i_ptr->k_idx = 27; break;
+
+	/* Storebought Shovels/Picks */
+	case 428: i_ptr->k_idx = 87; break;
+	case 429: i_ptr->k_idx = 84; break;
+
+	/* Many old shop items mapped to real items */
+	case 430: i_ptr->k_idx = 176; break;
+	case 431: i_ptr->k_idx = 181; break;
+	case 432: i_ptr->k_idx = 185; break;
+	case 433: i_ptr->k_idx = 189; break;
+	case 434: i_ptr->k_idx = 192; break;
+	case 435: i_ptr->k_idx = 193; break;
+	case 436: i_ptr->k_idx = 201; break;
+	case 437: i_ptr->k_idx = 217; break;
+	case 438: i_ptr->k_idx = 220; break;
+	case 439: i_ptr->k_idx = 237; break;
+	case 440: i_ptr->k_idx = 257; break;
+	case 441: i_ptr->k_idx = 259; break;
+	case 442: i_ptr->k_idx = 264; break;
+
+	/* Old shop items -- lantern, torch, oil */
+	case 443: i_ptr->k_idx = 347; break;
+	case 444: i_ptr->k_idx = 346; break;
+	case 445: i_ptr->k_idx = 348; break;
+
+	/* Clean up the traps, the mush, and the rubble */
+	case 459: i_ptr->k_idx = 460; break;
+	case 460: i_ptr->k_idx = 477; break;
+	case 477: i_ptr->k_idx = 445; break;
+	case 478: i_ptr->k_idx = 21; break;
+	case 479: i_ptr->k_idx = 459; break;
+
+	/* The old "nothing" object */
+	case 498: i_ptr->k_idx = 0; break;
+
+	/* Ruined Chest */
+	case 499: i_ptr->k_idx = 344; break;
+
+	/* Special objects */
+	case 501: i_ptr->k_idx = 508; break;
+	case 502: i_ptr->k_idx = 509; break;
+	case 503: i_ptr->k_idx = 510; break;
+	case 504: i_ptr->k_idx = 511; break;
+	case 505: i_ptr->k_idx = 500; break;
+	case 506: i_ptr->k_idx = 504; break;
+	case 507: i_ptr->k_idx = 503; break;
+	case 508: i_ptr->k_idx = 501; break;
+	case 509: i_ptr->k_idx = 502; break;
+	case 510: i_ptr->k_idx = 507; break;
+	case 511: i_ptr->k_idx = 505; break;
+	case 512: i_ptr->k_idx = 506; break;
+    }
+
+
+    /* Access the (possibly new) item template */
+    k_ptr = &k_list[i_ptr->k_idx];
+
+    /* Take note if the object was an invisible trap */
+    if (i_ptr->tval == TV_INVIS_TRAP) invis_trap = TRUE;
+
+    /* Hack -- repair "tval" */
+    i_ptr->tval = k_ptr->tval;
+
+    /* Hack -- repair "sval" */
+    i_ptr->sval = k_ptr->sval;
+
+    /* XXX Hack -- un-repair invisible traps */
+    if (invis_trap) i_ptr->tval = TV_INVIS_TRAP;
 
     /* Success */
     return (0);

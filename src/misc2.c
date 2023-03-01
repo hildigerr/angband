@@ -3411,11 +3411,11 @@ static void magic_ammo(inven_type *t_ptr, int good, int chance, int special, int
 		 (i_ptr->sval >= 10) && (i_ptr->sval <= 12));
 	/* right type, do nothing */
 	else if ((i_ptr->sval >= 20) && (i_ptr->sval <= 21))
-	    invcopy(t_ptr, 83); /* this should be treasure list index of shots -CFT */
+	    invcopy(t_ptr, OBJ_SHOT);
 	else if ((i_ptr->sval >= 1) && (i_ptr->sval <= 4))
-	    invcopy(t_ptr, 78); /* this should be index of arrows -CFT */
+	    invcopy(t_ptr, OBJ_ARROW);
 	else			/* xbow */
-	    invcopy(t_ptr, 80); /* this should be index of bolts -CFT */
+	    invcopy(t_ptr, OBJ_BOLT);
     }
 
     t_ptr->number = 0;
