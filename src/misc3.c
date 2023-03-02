@@ -1714,7 +1714,129 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
       case TV_SHOT:
 
 	/* this fn makes ammo for player's missile weapon more common -CFT */
-	magic_ammo(i_ptr, good, great, chance, special, cursed, level);
+{
+    inven_type *w_ptr = NULL;
+
+    /* if wielding a bow as main/aux weapon, then ammo will be "right" ammo
+     * more often than not of the time -CFT */
+    if (inventory[INVEN_WIELD].tval == TV_BOW) w_ptr=&inventory[INVEN_WIELD];
+    else if (inventory[INVEN_AUX].tval == TV_BOW) w_ptr=&inventory[INVEN_AUX];
+
+    if (w_ptr && (randint(2)==1)){
+	if ((i_ptr->tval == TV_SHOT) &&
+	    (w_ptr->sval >= 20) && (w_ptr->sval <= 21));
+	/* right type, do nothing */
+	else if ((i_ptr->tval == TV_ARROW) &&
+		 (w_ptr->sval >= 1) && (w_ptr->sval <= 4));
+	/* right type, do nothing */
+	else if ((i_ptr->tval == TV_BOLT) &&
+		 (w_ptr->sval >= 10) && (w_ptr->sval <= 12));
+	/* right type, do nothing */
+	else if ((w_ptr->sval >= 20) && (w_ptr->sval <= 21))
+	    invcopy(i_ptr, OBJ_SHOT);
+	else if ((w_ptr->sval >= 1) && (w_ptr->sval <= 4))
+	    invcopy(i_ptr, OBJ_ARROW);
+	else			/* xbow */
+	    invcopy(i_ptr, OBJ_BOLT);
+    }
+
+    i_ptr->number = 0;
+    for (i = 0; i < 7; i++)
+	i_ptr->number += randint(6);
+    if (missile_ctr == MAX_SHORT)
+	missile_ctr = -MAX_SHORT - 1;
+    else
+	missile_ctr++;
+    i_ptr->pval = missile_ctr;
+
+    /* always show tohit/todam values if identified */
+    i_ptr->ident |= ID_SHOW_HITDAM;
+
+	if (magik(chance)||good) {
+
+	    i_ptr->tohit = randint(5) + m_bonus(1, 15, level);
+	    i_ptr->todam = randint(5) + m_bonus(1, 15, level);
+
+	    /* see comment for weapons */
+	    if (magik(5*special/2)||(great))
+
+		switch (randint(11)) {
+
+		  case 1: case 2: case 3:
+		    i_ptr->name2 = EGO_WOUNDING; /* swapped with slaying -CFT */
+		    i_ptr->tohit += 5;
+		    i_ptr->todam += 5;
+		    i_ptr->damage[0] ++; /* added -CFT */
+		    i_ptr->cost += 30;
+		    rating += 5;
+		    break;
+
+		  case 4: case 5:
+		    i_ptr->flags1 |= (TR1_BRAND_FIRE|TR2_RES_FIRE); /* RF so won't burn */
+		    i_ptr->tohit += 2;
+		    i_ptr->todam += 4;
+		    i_ptr->name2 = EGO_FIRE;
+		    i_ptr->cost += 25;
+		    rating += 6;
+		    break;
+
+		  case 6: case 7:
+		    i_ptr->flags1 |= TR1_SLAY_EVIL;
+		    i_ptr->tohit += 3;
+		    i_ptr->todam += 3;
+		    i_ptr->name2 = EGO_SLAY_EVIL;
+		    i_ptr->cost += 25;
+		    rating += 7;
+		    break;
+
+		  case 8: case 9:
+		    i_ptr->flags1 |= TR1_SLAY_ANIMAL;
+		    i_ptr->tohit += 2;
+		    i_ptr->todam += 2;
+		    i_ptr->name2 = EGO_SLAY_ANIMAL;
+		    i_ptr->cost += 30;
+		    rating += 5;
+		    break;
+
+		  case 10:
+		    i_ptr->flags1 |= TR1_SLAY_DRAGON;
+		    i_ptr->tohit += 3;
+		    i_ptr->todam += 3;
+		    i_ptr->name2 = EGO_DRAGON_SLAYING;
+		    i_ptr->cost += 35;
+		    rating += 9;
+		    break;
+
+		  case 11:
+		    i_ptr->tohit += 10; /* reduced because of dice bonus -CFT */
+		    i_ptr->todam += 10;
+		    i_ptr->name2 = EGO_SLAYING; /* swapped w/ wounding -CFT */
+		    i_ptr->damage[0] += 2; /* added -CFT */
+		    i_ptr->cost += 45;
+		    rating += 10;
+		    break;
+	    }
+
+	    while (magik(special)) { /* added -CFT */
+		i_ptr->damage[0]++;
+		i_ptr->cost += i_ptr->damage[0]*5;
+	    }
+	}
+
+	else if (magik(cursed)) {
+
+	    i_ptr->tohit = (-randint(10)) - m_bonus(5, 25, level);
+	    i_ptr->todam = (-randint(10)) - m_bonus(5, 25, level);
+	    i_ptr->flags1 |= TR3_CURSED;
+	    i_ptr->cost = 0;
+
+	    if (randint(5)==1) {
+		i_ptr->name2 = EGO_BACKBITING;
+		i_ptr->tohit -= 20;
+		i_ptr->todam -= 20;
+	    }
+	}
+}
 
 	break;
 
