@@ -3390,7 +3390,7 @@ int unique_armour(inven_type *t_ptr)
 
 
 
-static void magic_ammo(inven_type *t_ptr, int good, int chance, int special, int cursed, int level)
+static void magic_ammo(inven_type *t_ptr, int good, int great, int chance, int special, int cursed, int level)
 {
     register inven_type *i_ptr = NULL;
     register int         i;
@@ -3433,7 +3433,7 @@ static void magic_ammo(inven_type *t_ptr, int good, int chance, int special, int
 	t_ptr->tohit = randint(5) + m_bonus(1, 15, level);
 	t_ptr->todam = randint(5) + m_bonus(1, 15, level);
 	/* see comment for weapons */
-	if (magik(5*special/2)||(good==666))
+	if (magik(5*special/2)||(great))
 	    switch(randint(11)) {
 	      case 1: case 2: case 3:
 		t_ptr->name2 = EGO_WOUNDING; /* swapped with slaying -CFT */

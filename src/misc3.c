@@ -480,9 +480,8 @@ static void charge_staff(inven_type *i_ptr)
  * Note that the "k_list" has been rebuilt to remove the old problems
  * with multiple "similar" objects.
  */
-void apply_magic(inven_type *i_ptr, int level, int good, int not_unique)
+void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_unique)
 {
-    bool great = (good == 666);
     register u32b      chance, special, cursed, i;
     u32b               tmp;
 
@@ -1348,7 +1347,7 @@ void apply_magic(inven_type *i_ptr, int level, int good, int not_unique)
 		switch (randint(30)) {
 
 		  case 1:
-			if (((randint(2) == 1) || (good == 666))
+			if (((randint(2) == 1) || (great))
 			    && !not_unique &&
 			    unique_weapon(i_ptr))
 			    break;
@@ -1372,7 +1371,7 @@ void apply_magic(inven_type *i_ptr, int level, int good, int not_unique)
 		    break;
 
 		  case 2:
-			if (((randint(2) == 1) || (good == 666)) && !not_unique &&
+			if (((randint(2) == 1) || (great)) && !not_unique &&
 			    unique_weapon(i_ptr))
 			    break;
 		    i_ptr->flags1 |= (TR3_FEATHER | TR2_RES_ELEC | TR3_SEE_INVIS |
@@ -1391,7 +1390,7 @@ void apply_magic(inven_type *i_ptr, int level, int good, int not_unique)
 		    break;
 
 		  case 3: case 4:
-		    if (((randint(2) == 1) || (good == 666)) && !not_unique &&
+		    if (((randint(2) == 1) || (great)) && !not_unique &&
 			    unique_weapon(i_ptr))
 			    break;
 		    i_ptr->flags1 |= (TR1_BRAND_FIRE | TR2_RES_FIRE);
@@ -1404,7 +1403,7 @@ void apply_magic(inven_type *i_ptr, int level, int good, int not_unique)
 		    break;
 
 		  case 5: case 6:
-			if (((randint(2) == 1) || (good == 666)) && !not_unique &&
+			if (((randint(2) == 1) || (great)) && !not_unique &&
 			    unique_weapon(i_ptr))
 			    break;
 		    i_ptr->flags1 |= (TR1_BRAND_COLD | TR2_RES_COLD);
@@ -1515,7 +1514,7 @@ void apply_magic(inven_type *i_ptr, int level, int good, int not_unique)
 		    break;
 
 		  case 27:
-			if (((randint(2) == 1) || (good == 666)) && !not_unique &&
+			if (((randint(2) == 1) || (great)) && !not_unique &&
 			    unique_weapon(i_ptr))
 			    break;
 		    i_ptr->flags1 |= (TR3_SEE_INVIS | TR1_DEX | TR1_CON | TR1_STR |
@@ -1550,7 +1549,7 @@ void apply_magic(inven_type *i_ptr, int level, int good, int not_unique)
 
 		  /* Extra Attacks */
 		  case 30:
-			if (((randint(2) == 1) || (good == 666))
+			if (((randint(2) == 1) || (great))
 			    && !not_unique && unique_weapon(i_ptr))
 			    break;
 		    i_ptr->tohit += randint(5);
@@ -1612,7 +1611,7 @@ void apply_magic(inven_type *i_ptr, int level, int good, int not_unique)
 	    switch (randint(15)) {
 
 		  case 1: case 2: case 3:
-		if (((randint(3)==1)||(good==666)) && !not_unique &&
+		if (((randint(3)==1)||(great)) && !not_unique &&
 		    !stricmp(k_list[i_ptr->k_idx].name, "& Long Bow") &&
 		    (((i=randint(2))==1 && !BELEG) || (i==2 && !BARD))) {
 		    switch (i) {
@@ -1654,7 +1653,7 @@ void apply_magic(inven_type *i_ptr, int level, int good, int not_unique)
 		    }
 		    break;
 		}
-		if (((randint(5) == 1) || (good == 666)) && !not_unique &&
+		if (((randint(5) == 1) || (great)) && !not_unique &&
 		    !stricmp(k_list[i_ptr->k_idx].name, "& Light Crossbow")
 		    && !CUBRAGOL) {
 		    if (CUBRAGOL)
@@ -1715,7 +1714,7 @@ void apply_magic(inven_type *i_ptr, int level, int good, int not_unique)
       case TV_SHOT:
 
 	/* this fn makes ammo for player's missile weapon more common -CFT */
-	magic_ammo(i_ptr, good, chance, special, cursed, level);
+	magic_ammo(i_ptr, good, great, chance, special, cursed, level);
 
 	break;
 
@@ -2273,7 +2272,7 @@ void place_object(int y, int x)
     } while (opening_chest && (k_list[sorted_objects[tmp]].tval == TV_CHEST));
 	
     invcopy(&i_list[cur_pos], sorted_objects[tmp]);
-    apply_magic(&i_list[cur_pos], dun_level, FALSE, 0);
+    apply_magic(&i_list[cur_pos], dun_level, FALSE, FALSE, 0);
     if (k_list[sorted_objects[tmp]].level > dun_level)
 	rating += k_list[sorted_objects[tmp]].level - dun_level;
     if (peek) {
@@ -2351,7 +2350,7 @@ void place_good(int y, int x, u32b good)
 	    is_good = TRUE;
     } while (!is_good);
     invcopy(&i_list[cur_pos], sorted_objects[tmp]);
-    apply_magic(&i_list[cur_pos], object_level, (good & MF2_SPECIAL) ? 666 : 1, 0);
+    apply_magic(&i_list[cur_pos], object_level, TRUE, (good & MF2_SPECIAL), 0);
     if (peek) {
 	if (k_list[sorted_objects[tmp]].level > object_level) {
 	    char                buf[200];

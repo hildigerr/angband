@@ -880,7 +880,7 @@ static void store_create(void)
 	if (store_num != 6) {
 	    i = store_choice[store_num][randint(STORE_CHOICES) - 1];
 	    invcopy(&i_list[cur_pos], i);
-	    apply_magic(&i_list[cur_pos], OBJ_TOWN_LEVEL, FALSE, TRUE);
+	    apply_magic(&i_list[cur_pos], OBJ_TOWN_LEVEL, FALSE, FALSE, TRUE);
 	    i_ptr = &i_list[cur_pos];
 	    if (store_check_num(i_ptr)) {
 		if ((i_ptr->cost > 0) &&	/* Item must be good	 */
@@ -896,7 +896,7 @@ static void store_create(void)
 	} else {
 	    i = get_obj_num(40, FALSE);
 	    invcopy(&i_list[cur_pos], i);
-	    apply_magic(&i_list[cur_pos], 40, FALSE, TRUE);
+	    apply_magic(&i_list[cur_pos], 40, FALSE, FALSE, TRUE);
 	    i_ptr = &i_list[cur_pos];
 	    if (store_check_num(i_ptr)) {
 		if (i_ptr->cost > 0) {	/* Item must be good	 */
