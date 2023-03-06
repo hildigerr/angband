@@ -873,32 +873,32 @@ F:SEE_INVIS
 N:156:Sustain Strength
 I:=:45:24:1:1:2:28:750
 A:28/0
-F:SUST_STAT
+F:SUST_STR
 
 N:157:Sustain Intelligence
 I:=:45:25:2:1:2:28:600
 A:28/0
-F:SUST_STAT
+F:SUST_INT
 
 N:158:Sustain Wisdom
 I:=:45:26:3:1:2:28:600
 A:28/0
-F:SUST_STAT
+F:SUST_WIS
 
 N:159:Sustain Constitution
 I:=:45:27:4:1:2:28:750
 A:28/0
-F:SUST_STAT
+F:SUST_CON
 
 N:160:Sustain Dexterity
 I:=:45:28:5:1:2:28:750
 A:28/0
-F:SUST_STAT
+F:SUST_DEX
 
 N:161:Sustain Charisma
 I:=:45:29:6:1:2:28:500
 A:28/0
-F:SUST_STAT
+F:SUST_CHR
 
 N:162:Slaying
 I:=:45:30:0:1:2:40:1000

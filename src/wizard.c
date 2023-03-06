@@ -1127,9 +1127,26 @@ again:
 		i_ptr->flags2 |= TR2_RES_BLIND;
 	} else if (ch == '\033')
 	    goto end;
-	if (get_com("Sustain a stat (Magic value 10 for all stats)? [yn]: ", &ch)) {
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags1 |= TR_SUST_STAT;
+	if (get_com("Sustain Any Stats? ", &ch)) {
+	    if (ch == 'y' || ch == 'Y') {
+	    if (!get_com("Sustain strength? ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_SUST_STR;
+
+	    if (!get_com("Sustain intelligence? ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_SUST_INT;
+
+	    if (!get_com("Sustain wisdom? ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_SUST_WIS;
+
+	    if (!get_com("Sustain dexterity? ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_SUST_DEX;
+
+	    if (!get_com("Sustain constitution? ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_SUST_CON;
+
+	    if (!get_com("Sustain charisma? ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_SUST_CHR;
+	    }
 	} else if (ch == '\033')
 	    goto end;
 	if (get_com("See invisible? [yn]: ", &ch)) {

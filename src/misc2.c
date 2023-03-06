@@ -1752,7 +1752,7 @@ int unique_weapon(inven_type *t_ptr)
 	    t_ptr->tohit = 10;
 	    t_ptr->todam = 15;
 	    t_ptr->flags1 = (TR1_STR | TR1_SLAY_EVIL | TR1_BRAND_FIRE | TR1_SLAY_TROLL | TR1_SLAY_ORC);
-	    t_ptr->flags2 = (TR2_FREE_ACT | TR2_RES_FIRE | TR_SUST_STAT | TR_ARTIFACT);
+	    t_ptr->flags2 = (TR2_FREE_ACT | TR2_RES_FIRE | TR2_SUST_DEX | TR_ARTIFACT);
 	    t_ptr->flags3 = (TR3_SEE_INVIS | TR3_ACTIVATE);
 	    t_ptr->pval = 4;
 	    t_ptr->toac = 5;
@@ -2046,7 +2046,7 @@ int unique_weapon(inven_type *t_ptr)
 	t_ptr->todam = 12;
 	t_ptr->toac = 10;
 	t_ptr->flags1 = (TR1_INT | TR1_BRAND_COLD | TR1_BRAND_FIRE | TR1_SLAY_DEMON | TR1_SLAY_TROLL | TR1_SLAY_GIANT);
-	t_ptr->flags2 = (TR_ARTIFACT | TR2_RES_FIRE | TR2_RES_COLD | TR_SUST_STAT);
+	t_ptr->flags2 = (TR_ARTIFACT | TR2_RES_FIRE | TR2_RES_COLD | TR2_SUST_INT);
 	t_ptr->flags3 = (TR3_SLOW_DIGEST);
 	t_ptr->pval = 2;
 	t_ptr->cost = 32000L;
@@ -2346,7 +2346,7 @@ int unique_weapon(inven_type *t_ptr)
 	t_ptr->damage[1] = 8;
 	t_ptr->weight = 50;
 	t_ptr->flags1 = (TR1_DEX);
-	t_ptr->flags2 = (TR_ARTIFACT | TR_SUST_STAT);
+	t_ptr->flags2 = (TR_ARTIFACT | TR2_SUST_DEX);
 	t_ptr->pval = 5;
 	t_ptr->cost = 40000L;
 	AGLARANG = 1;
@@ -2428,7 +2428,7 @@ int unique_weapon(inven_type *t_ptr)
 	    t_ptr->damage[0] = 2;
 	    t_ptr->damage[1] = 5;
 	    t_ptr->flags1 = (TR1_DEX | TR1_SLAY_EVIL | TR1_SLAY_TROLL | TR1_SLAY_ORC);
-	    t_ptr->flags2 |= (TR2_FREE_ACT | TR2_RES_DARK | TR_SUST_STAT | TR_ARTIFACT);
+	    t_ptr->flags2 |= (TR2_FREE_ACT | TR2_RES_DARK | TR2_SUST_DEX | TR_ARTIFACT);
 	    t_ptr->toac = 5;
 	    t_ptr->pval = 4;
 	    t_ptr->cost = 100000L;
@@ -2911,7 +2911,7 @@ int unique_armour(inven_type *t_ptr)
 	else
 	    good_item_flag = TRUE;
 	t_ptr->flags1 |= (TR1_DEX);
-	t_ptr->flags2 |= (TR2_FREE_ACT | TR2_RES_ACID | TR2_RES_NETHER | TR2_RES_CHAOS | TR_SUST_STAT | TR_ARTIFACT);
+	t_ptr->flags2 |= (TR2_FREE_ACT | TR2_RES_ACID | TR2_RES_NETHER | TR2_RES_CHAOS | TR2_SUST_CON | TR_ARTIFACT);
 	t_ptr->flags3 |= (TR3_ACTIVATE);
 	t_ptr->name2 = ART_DAL;
 	t_ptr->pval = 5;
@@ -2981,7 +2981,7 @@ int unique_armour(inven_type *t_ptr)
 	if (wizard || peek)
 	    msg_print("Anarion");
 	t_ptr->flags2 |= (TR2_RES_ACID | TR2_RES_FIRE | TR2_RES_COLD | TR2_RES_ELEC |
-			 TR_SUST_STAT);
+			 TR2_SUST_STR | TR2_SUST_INT | TR2_SUST_WIS | TR2_SUST_DEX | TR2_SUST_CON | TR2_SUST_CHR);
 	t_ptr->flags2 |= (TR_ARTIFACT);
 	t_ptr->name2 = ART_ANARION;
 	t_ptr->pval = 10;
@@ -3038,7 +3038,7 @@ int unique_armour(inven_type *t_ptr)
 		msg_print("Cammithrim");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->flags2 |= (TR_SUST_STAT | TR2_FREE_ACT | TR2_RES_LITE | TR_ARTIFACT);
+	    t_ptr->flags2 |= (TR2_FREE_ACT | TR2_RES_LITE | TR2_SUST_CON | TR_ARTIFACT);
 	    t_ptr->flags3 |= (TR3_ACTIVATE | TR3_LITE);
 	    t_ptr->name2 = ART_CAMMITHRIM;
 	    t_ptr->ident |= ID_NOSHOW_P1;

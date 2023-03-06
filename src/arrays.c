@@ -662,7 +662,12 @@ static bool grab_one_kind_flag(inven_kind *k_ptr, cptr what)
     else if (streq(what, "RES_CHAOS"))		flags2 |= TR2_RES_CHAOS;
     else if (streq(what, "RES_DISEN"))		flags2 |= TR2_RES_DISEN;
 
-    else if (streq(what, "SUST_STAT"))		flags1 |= TR_SUST_STAT;
+    else if (streq(what, "SUST_STR"))		flags2 |= TR2_SUST_STR;
+    else if (streq(what, "SUST_INT"))		flags2 |= TR2_SUST_INT;
+    else if (streq(what, "SUST_WIS"))		flags2 |= TR2_SUST_WIS;
+    else if (streq(what, "SUST_DEX"))		flags2 |= TR2_SUST_DEX;
+    else if (streq(what, "SUST_CON"))		flags2 |= TR2_SUST_CON;
+    else if (streq(what, "SUST_CHR"))		flags2 |= TR2_SUST_CHR;
 
     else if (streq(what, "FEATHER"))		flags3 |= TR3_FEATHER;
     else if (streq(what, "LITE"))		flags3 |= TR3_LITE;

@@ -541,7 +541,9 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		    i_ptr->flags2 |= (TR2_RES_ELEC | TR2_RES_COLD | 
 				      TR2_RES_ACID | TR2_RES_FIRE |
 				      TR2_HOLD_LIFE |
-				      TR_SUST_STAT);
+				      TR2_SUST_STR | TR2_SUST_DEX |
+				      TR2_SUST_CON | TR2_SUST_INT |
+				      TR2_SUST_WIS | TR2_SUST_CHR);
 		    i_ptr->ident |= ID_NOSHOW_P1;
 		    i_ptr->pval = 10;
 		    i_ptr->toac += 10 + randint(5);
@@ -1360,16 +1362,20 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			    && !not_unique &&
 			    unique_weapon(i_ptr))
 			    break;
-		    i_ptr->flags1 |= (TR1_SLAY_DEMON | TR1_WIS | TR_SUST_STAT |
+		    i_ptr->flags1 |= (TR1_SLAY_DEMON | TR1_WIS |
 				      TR1_SLAY_UNDEAD | TR1_SLAY_EVIL);
 		    i_ptr->flags3 |= (TR3_BLESSED | TR3_SEE_INVIS);
 		    i_ptr->tohit += 5;
 		    i_ptr->todam += 5;
 		    i_ptr->toac += randint(4);
 
-		    /* the value in pval is used for strength increase */
-		    /* pval is also used for sustain stat */
-		    i_ptr->pval = randint(4);
+		    /* Obsolete Hack -- Pick "Sustain" based on "Pval" */
+		    switch (i_ptr->pval) {
+			case 1: i_ptr->flags2 |= (TR2_SUST_STR); break;
+			case 2: i_ptr->flags2 |= (TR2_SUST_INT); break;
+			case 3: i_ptr->flags2 |= (TR2_SUST_WIS); break;
+			case 4: i_ptr->flags2 |= (TR2_SUST_DEX); break;
+		    }
 
 		    i_ptr->cost += i_ptr->pval * 500;
 		    i_ptr->cost += 10000L;

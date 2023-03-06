@@ -222,7 +222,7 @@ static void repair_item_flags_old(inven_type *i_ptr)
     if (f1 & 0x00080000L) i_ptr->flags2 |= TR2_RES_FIRE;
     if (f1 & 0x00100000L) i_ptr->flags2 |= TR2_RES_ACID;
     if (f1 & 0x00200000L) i_ptr->flags2 |= TR2_RES_COLD;
-    if (f1 & 0x00400000L) i_ptr->flags2 = TR_SUST_STAT;
+    if (f1 & 0x00400000L) i = i; /* SUST_STAT extracted already */
     if (f1 & 0x00800000L) i_ptr->flags2 |= TR2_FREE_ACT;
     if (f1 & 0x01000000L) i_ptr->flags3 |= TR3_SEE_INVIS;
     if (f1 & 0x02000000L) i_ptr->flags2 |= TR2_RES_ELEC;
@@ -544,9 +544,43 @@ static errr rd_item_old(inven_type *i_ptr)
     if (wearable_p(i_ptr)) {
 
 
+	/* Save the "Sustain Stat flags" */
+	u32b sustain2 = 0L;
+
+
+	/* Extract old "TR_SUST_STAT" flag, save it for later */
+	if (i_ptr->flags1 & 0x00400000L) {
+
+	    /* Hack -- multi-sustain2 */
+	    if (i_ptr->pval == 10) {
+
+		/* Sustain everything */
+		sustain2 |= (TR2_SUST_STR | TR2_SUST_DEX | TR2_SUST_CON |
+			     TR2_SUST_INT | TR2_SUST_WIS | TR2_SUST_CHR);
+
+		/* Forget the bogus pval */
+		i_ptr->pval = 0;
+	    }
+
+	    /* Give a normal sustain2, keep the pval */
+	    switch (i_ptr->pval) {
+		case 1: sustain2 |= (TR2_SUST_STR); break;
+		case 2: sustain2 |= (TR2_SUST_INT); break;
+		case 3: sustain2 |= (TR2_SUST_WIS); break;
+		case 4: sustain2 |= (TR2_SUST_DEX); break;
+		case 5: sustain2 |= (TR2_SUST_CON); break;
+		case 6: sustain2 |= (TR2_SUST_CHR); break;
+	    }
+
+	    /* Hack -- If the "pval" was "hidden", forget it */
+	    if (i_ptr->ident & 0x40) i_ptr->pval = 0;
+	}
+
 	/* Completely repair old flags */
 	repair_item_flags_old(i_ptr);
 
+	/* Drop in the new "Sustain Stat" flags */
+	i_ptr->flags2 |= sustain2;
     }
 
 

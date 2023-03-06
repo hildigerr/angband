@@ -675,41 +675,13 @@ void calc_bonuses()
     if (TR2_RES_NETHER & item_flags2) p_ptr->resist_nether = TRUE;
     if (TR2_RES_FEAR & item_flags2) p_ptr->resist_fear = TRUE;
 
-    i_ptr = &inventory[INVEN_WIELD];
-    for (i = INVEN_WIELD; i < INVEN_LITE; i++) {
-	if (TR_SUST_STAT & i_ptr->flags1)
-	    switch (i_ptr->pval) {
-	      case 1:
-		p_ptr->sustain_str = TRUE;
-		break;
-	      case 2:
-		p_ptr->sustain_int = TRUE;
-		break;
-	      case 3:
-		p_ptr->sustain_wis = TRUE;
-		break;
-	      case 4:
-		p_ptr->sustain_con = TRUE;
-		break;
-	      case 5:
-		p_ptr->sustain_dex = TRUE;
-		break;
-	      case 6:
-		p_ptr->sustain_chr = TRUE;
-		break;
-	      case 10:		   /* :-) ~Ludwig the Hacker!!! */
-		p_ptr->sustain_str = TRUE;
-		p_ptr->sustain_int = TRUE;
-		p_ptr->sustain_wis = TRUE;
-		p_ptr->sustain_con = TRUE;
-		p_ptr->sustain_dex = TRUE;
-		p_ptr->sustain_chr = TRUE;
-		break;
-	      default:
-		break;
-	    }
-	i_ptr++;
-    }
+    /* New method for sustaining stats */
+    if (item_flags2 & TR2_SUST_STR) p_ptr->sustain_str = TRUE;
+    if (item_flags2 & TR2_SUST_INT) p_ptr->sustain_int = TRUE;
+    if (item_flags2 & TR2_SUST_WIS) p_ptr->sustain_wis = TRUE;
+    if (item_flags2 & TR2_SUST_DEX) p_ptr->sustain_dex = TRUE;
+    if (item_flags2 & TR2_SUST_CON) p_ptr->sustain_con = TRUE;
+    if (item_flags2 & TR2_SUST_CHR) p_ptr->sustain_chr = TRUE;
 
     if (p_ptr->slow_digest)
 	p_ptr->food_digested--;
