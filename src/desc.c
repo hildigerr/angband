@@ -723,10 +723,24 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	else
 	    (void)strcpy(out_val, tmp_val);
     } else {
-	if (i_ptr->name2 != SN_NULL && known2_p(i_ptr)) {
+
+
+    /* Hack -- Append "Artifact" or "Special" names */
+    if (known2_p(i_ptr)) {
+
+	/* Hack -- grab the artifact name */
+	if (i_ptr->name1) {
+	    (void)strcat(tmp_val, " ");
+	    (void)strcat(tmp_val, special_names[i_ptr->name1]);
+	}
+
+	/* Otherwise, grab the "ego-item" name */
+	else if (i_ptr->name2) {
 	    (void)strcat(tmp_val, " ");
 	    (void)strcat(tmp_val, special_names[i_ptr->name2]);
 	}
+    }
+
 	if (damstr[0] != '\0')
 	    (void)strcat(tmp_val, damstr);
 
@@ -935,8 +949,11 @@ void invcopy(inven_type *i_ptr, int k_idx)
     /* Wipe the inscription */
     i_ptr->inscrip[0] = '\0';
 
+    /* No artifact name */
+    i_ptr->name1 = 0;
+
     /* No special name */
-    i_ptr->name2 = SN_NULL;
+    i_ptr->name2 = 0;
 
     /* No ident info yet */
     i_ptr->ident = 0;

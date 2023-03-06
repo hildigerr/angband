@@ -1728,7 +1728,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Ringil");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_RINGIL;
+	    t_ptr->name1 = ART_RINGIL;
 	    t_ptr->tohit = 22;
 	    t_ptr->todam = 25;
 	    t_ptr->damage[0] = 4;
@@ -1748,7 +1748,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Anduril");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_ANDURIL;
+	    t_ptr->name1 = ART_ANDURIL;
 	    t_ptr->tohit = 10;
 	    t_ptr->todam = 15;
 	    t_ptr->flags1 = (TR1_STR | TR1_SLAY_EVIL | TR1_BRAND_FIRE | TR1_SLAY_TROLL | TR1_SLAY_ORC);
@@ -1769,7 +1769,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Anguirel");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_ANGUIREL;
+	    t_ptr->name1 = ART_ANGUIREL;
 	    t_ptr->tohit = 8;
 	    t_ptr->todam = 12;
 	    t_ptr->flags1 = (TR1_STR | TR1_CON | TR1_SLAY_EVIL | TR1_BRAND_ELEC | TR1_SLAY_DEMON);
@@ -1786,7 +1786,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Elvagil");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_ELVAGIL;
+	    t_ptr->name1 = ART_ELVAGIL;
 	    t_ptr->ident |= ID_NOSHOW_TYPE;
 	    t_ptr->tohit = 2;
 	    t_ptr->todam = 7;
@@ -1808,7 +1808,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Gurthang");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_GURTHANG;
+	    t_ptr->name1 = ART_GURTHANG;
 	    t_ptr->tohit = 13;
 	    t_ptr->todam = 17;
 	    t_ptr->flags1 = (TR1_STR | TR1_KILL_DRAGON | TR1_SLAY_TROLL);
@@ -1827,7 +1827,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Zarcuthra");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_ZARCUTHRA;
+	    t_ptr->name1 = ART_ZARCUTHRA;
 	    t_ptr->ident |= ID_NOSHOW_TYPE;
 	    t_ptr->tohit = 19;
 	    t_ptr->todam = 21;
@@ -1848,7 +1848,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Mormegil");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_MORMEGIL;
+	    t_ptr->name1 = ART_MORMEGIL;
 	    t_ptr->tohit = -40;
 	    t_ptr->todam = -60;
 	    t_ptr->flags1 = (TR1_SPEED);
@@ -1870,7 +1870,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Arunruth");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_ARUNRUTH;
+	    t_ptr->name1 = ART_ARUNRUTH;
 	    t_ptr->tohit = 20;
 	    t_ptr->todam = 12;
 	    t_ptr->damage[0] = 3;
@@ -1891,7 +1891,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Glamdring");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_GLAMDRING;
+	    t_ptr->name1 = ART_GLAMDRING;
 	    t_ptr->tohit = 10;
 	    t_ptr->todam = 15;
 	    t_ptr->flags1 = (TR1_SEARCH | TR1_SLAY_EVIL | TR1_BRAND_FIRE | TR1_SLAY_ORC);
@@ -1908,7 +1908,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Aeglin");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_AEGLIN;
+	    t_ptr->name1 = ART_AEGLIN;
 	    t_ptr->tohit = 12;
 	    t_ptr->todam = 16;
 	    t_ptr->flags1 = (TR1_SEARCH | TR1_BRAND_ELEC);
@@ -1925,7 +1925,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Orcrist");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_ORCRIST;
+	    t_ptr->name1 = ART_ORCRIST;
 	    t_ptr->tohit = 10;
 	    t_ptr->todam = 15;
 	    t_ptr->flags1 = (TR1_STEALTH | TR1_SLAY_EVIL | TR1_BRAND_COLD | TR1_SLAY_ORC);
@@ -1943,7 +1943,7 @@ int unique_weapon(inven_type *t_ptr)
 	    msg_print("Calris");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->name2 = ART_CALRIS;
+	t_ptr->name1 = ART_CALRIS;
 	t_ptr->tohit = -20;
 	t_ptr->todam = 20;
 	t_ptr->damage[0] = 3;
@@ -1964,7 +1964,7 @@ int unique_weapon(inven_type *t_ptr)
 	    msg_print("Maedhros");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->name2 = ART_MAEDHROS;
+	t_ptr->name1 = ART_MAEDHROS;
 	t_ptr->tohit = 12;
 	t_ptr->todam = 15;
 	t_ptr->damage[0] = 2;
@@ -1985,7 +1985,7 @@ int unique_weapon(inven_type *t_ptr)
 	    msg_print("Pain!");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->name2 = ART_PAIN;
+	t_ptr->name1 = ART_PAIN;
 	t_ptr->tohit = 0;
 	t_ptr->todam = 30;
 	t_ptr->damage[0] = 10;
@@ -2001,7 +2001,7 @@ int unique_weapon(inven_type *t_ptr)
 	    msg_print("Osondir");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->name2 = ART_OSONDIR;
+	t_ptr->name1 = ART_OSONDIR;
 	t_ptr->tohit = 6;
 	t_ptr->todam = 9;
 	t_ptr->flags1 = (TR1_CHR | TR1_BRAND_FIRE | TR1_SLAY_UNDEAD | TR1_SLAY_GIANT);
@@ -2020,7 +2020,7 @@ int unique_weapon(inven_type *t_ptr)
 	    msg_print("Turmil");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->name2 = ART_TURMIL;
+	t_ptr->name1 = ART_TURMIL;
 	t_ptr->ident |= ID_NOSHOW_TYPE;
 	t_ptr->tohit = 10;
 	t_ptr->todam = 6;
@@ -2041,7 +2041,7 @@ int unique_weapon(inven_type *t_ptr)
 	    msg_print("Til-i-arc");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->name2 = ART_TIL;
+	t_ptr->name1 = ART_TIL;
 	t_ptr->tohit = 10;
 	t_ptr->todam = 12;
 	t_ptr->toac = 10;
@@ -2061,7 +2061,7 @@ int unique_weapon(inven_type *t_ptr)
 	    msg_print("Deathwreaker");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->name2 = ART_DEATHWREAKER;
+	t_ptr->name1 = ART_DEATHWREAKER;
 	t_ptr->tohit = 18;
 	t_ptr->todam = 18;
 	t_ptr->damage[1] = 12;
@@ -2079,7 +2079,7 @@ int unique_weapon(inven_type *t_ptr)
 	    msg_print("Avavir");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->name2 = ART_AVAVIR;
+	t_ptr->name1 = ART_AVAVIR;
 	t_ptr->tohit = 8;
 	t_ptr->todam = 8;
 	t_ptr->toac = 10;
@@ -2099,7 +2099,7 @@ int unique_weapon(inven_type *t_ptr)
 	    msg_print("Taratol");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->name2 = ART_TARATOL;
+	t_ptr->name1 = ART_TARATOL;
 	t_ptr->tohit = 12;
 	t_ptr->todam = 12;
 	t_ptr->weight = 200;
@@ -2119,7 +2119,7 @@ int unique_weapon(inven_type *t_ptr)
 	    msg_print("Lance of Eorlingas");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->name2 = ART_EORLINGAS;
+	t_ptr->name1 = ART_EORLINGAS;
 	t_ptr->tohit = 3;
 	t_ptr->todam = 21;
 	t_ptr->weight = 360;
@@ -2138,7 +2138,7 @@ int unique_weapon(inven_type *t_ptr)
 	    msg_print("Barukkheled");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->name2 = ART_BARUKKHELED;
+	t_ptr->name1 = ART_BARUKKHELED;
 	t_ptr->tohit = 13;
 	t_ptr->todam = 19;
 	t_ptr->flags1 |= (TR1_CON | TR1_SLAY_EVIL | TR1_SLAY_TROLL | TR1_SLAY_GIANT | TR1_SLAY_ORC);
@@ -2160,7 +2160,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Wrath");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_WRATH;
+	    t_ptr->name1 = ART_WRATH;
 	    t_ptr->tohit = 16;
 	    t_ptr->todam = 18;
 	    t_ptr->weight = 300;
@@ -2182,7 +2182,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Ulmo");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_ULMO;
+	    t_ptr->name1 = ART_ULMO;
 	    t_ptr->tohit = 15;
 	    t_ptr->todam = 19;
 	    t_ptr->damage[0] = 4;
@@ -2202,7 +2202,7 @@ int unique_weapon(inven_type *t_ptr)
 	    msg_print("Haradekket");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->name2 = ART_HARADEKKET;
+	t_ptr->name1 = ART_HARADEKKET;
 	t_ptr->tohit = 9;
 	t_ptr->todam = 11;
 	t_ptr->flags1 |= (TR1_DEX | TR1_ATTACK_SPD | TR1_SLAY_ANIMAL |  | TR1_SLAY_EVIL | TR1_SLAY_UNDEAD);
@@ -2219,7 +2219,7 @@ int unique_weapon(inven_type *t_ptr)
 	    msg_print("Mundwine");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->name2 = ART_MUNDWINE;
+	t_ptr->name1 = ART_MUNDWINE;
 	t_ptr->tohit = 12;
 	t_ptr->todam = 17;
 	t_ptr->flags1 |= (TR1_SLAY_EVIL | TR2_RES_ACID | TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_COLD);
@@ -2234,7 +2234,7 @@ int unique_weapon(inven_type *t_ptr)
 	    msg_print("Gondricam");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->name2 = ART_GONDRICAM;
+	t_ptr->name1 = ART_GONDRICAM;
 	t_ptr->ident |= ID_NOSHOW_TYPE;
 	t_ptr->tohit = 10;
 	t_ptr->todam = 11;
@@ -2252,7 +2252,7 @@ int unique_weapon(inven_type *t_ptr)
 	    msg_print("Careth Asdriag");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->name2 = ART_CARETH;
+	t_ptr->name1 = ART_CARETH;
 	t_ptr->tohit = 6;
 	t_ptr->todam = 8;
 	t_ptr->flags1 |= (TR1_ATTACK_SPD | TR1_SLAY_DRAGON | TR1_SLAY_ANIMAL | TR1_SLAY_TROLL | TR1_SLAY_GIANT | TR1_SLAY_ORC);
@@ -2268,7 +2268,7 @@ int unique_weapon(inven_type *t_ptr)
 	    msg_print("Forasgil");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->name2 = ART_FORASGIL;
+	t_ptr->name1 = ART_FORASGIL;
 	t_ptr->tohit = 12;
 	t_ptr->todam = 19;
 	t_ptr->flags1 |= (TR1_SLAY_ANIMAL | TR1_BRAND_COLD);
@@ -2286,7 +2286,7 @@ int unique_weapon(inven_type *t_ptr)
 	    msg_print("Crisdurian");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->name2 = ART_CRISDURIAN;
+	t_ptr->name1 = ART_CRISDURIAN;
 	t_ptr->tohit = 18;
 	t_ptr->todam = 19;
 	t_ptr->flags1 |= (TR1_SLAY_DRAGON | TR1_SLAY_EVIL | TR1_SLAY_UNDEAD | TR1_SLAY_TROLL | TR1_SLAY_GIANT | TR1_SLAY_ORC);
@@ -2302,7 +2302,7 @@ int unique_weapon(inven_type *t_ptr)
 	    msg_print("Totila");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->name2 = ART_TOTILA;
+	t_ptr->name1 = ART_TOTILA;
 	t_ptr->tohit = 6;
 	t_ptr->todam = 8;
 	t_ptr->damage[1] = 9;
@@ -2320,7 +2320,7 @@ int unique_weapon(inven_type *t_ptr)
 	    msg_print("Gilettar");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->name2 = ART_GILETTAR;
+	t_ptr->name1 = ART_GILETTAR;
 	t_ptr->tohit = 3;
 	t_ptr->todam = 7;
 	t_ptr->flags1 = (TR1_ATTACK_SPD | TR1_SLAY_ANIMAL);
@@ -2339,7 +2339,7 @@ int unique_weapon(inven_type *t_ptr)
 	    msg_print("Aglarang");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->name2 = ART_AGLARANG;
+	t_ptr->name1 = ART_AGLARANG;
 	t_ptr->tohit = 0;
 	t_ptr->todam = 0;
 	t_ptr->damage[0] = 6;
@@ -2360,7 +2360,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Aeglos");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_AEGLOS;
+	    t_ptr->name1 = ART_AEGLOS;
 	    t_ptr->tohit = 15;
 	    t_ptr->todam = 25;
 	    t_ptr->damage[0] = 1;
@@ -2383,7 +2383,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Nimloth");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_NIMLOTH;
+	    t_ptr->name1 = ART_NIMLOTH;
 	    t_ptr->tohit = 11;
 	    t_ptr->todam = 13;
 	    t_ptr->flags1 = (TR1_STEALTH | TR1_BRAND_COLD | TR1_SLAY_UNDEAD);
@@ -2400,7 +2400,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Orome");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_OROME;
+	    t_ptr->name1 = ART_OROME;
 	    t_ptr->ident |= ID_NOSHOW_TYPE;
 	    t_ptr->tohit = 15;
 	    t_ptr->todam = 15;
@@ -2422,7 +2422,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Angrist");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_ANGRIST;
+	    t_ptr->name1 = ART_ANGRIST;
 	    t_ptr->tohit = 10;
 	    t_ptr->todam = 15;
 	    t_ptr->damage[0] = 2;
@@ -2442,7 +2442,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Narthanc");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_NARTHANC;
+	    t_ptr->name1 = ART_NARTHANC;
 	    t_ptr->tohit = 4;
 	    t_ptr->todam = 6;
 	    t_ptr->flags1 = (TR1_BRAND_FIRE);
@@ -2459,7 +2459,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Nimthanc");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_NIMTHANC;
+	    t_ptr->name1 = ART_NIMTHANC;
 	    t_ptr->tohit = 4;
 	    t_ptr->todam = 6;
 	    t_ptr->flags1 = (TR1_BRAND_COLD);
@@ -2476,7 +2476,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Dethanc");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_DETHANC;
+	    t_ptr->name1 = ART_DETHANC;
 	    t_ptr->tohit = 4;
 	    t_ptr->todam = 6;
 	    t_ptr->flags1 = (TR1_BRAND_ELEC);
@@ -2493,7 +2493,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Rilia");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_RILIA;
+	    t_ptr->name1 = ART_RILIA;
 	    t_ptr->tohit = 4;
 	    t_ptr->todam = 3;
 	    t_ptr->damage[0] = 2;
@@ -2511,7 +2511,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Belangil");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_BELANGIL;
+	    t_ptr->name1 = ART_BELANGIL;
 	    t_ptr->tohit = 6;
 	    t_ptr->todam = 9;
 	    t_ptr->damage[0] = 3;
@@ -2531,7 +2531,7 @@ int unique_weapon(inven_type *t_ptr)
 	    msg_print("Sting");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->name2 = ART_STING;
+	t_ptr->name1 = ART_STING;
 	t_ptr->tohit = 7;
 	t_ptr->todam = 8;
 	t_ptr->flags1 |= (TR1_STR | TR1_DEX | TR1_CON | TR1_ATTACK_SPD |  | TR1_SLAY_EVIL | TR1_SLAY_UNDEAD | TR1_SLAY_ORC);
@@ -2552,7 +2552,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Durin");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_DURIN;
+	    t_ptr->name1 = ART_DURIN;
 	    t_ptr->tohit = 10;
 	    t_ptr->todam = 20;
 	    t_ptr->toac = 15;
@@ -2572,7 +2572,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Eonwe");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_EONWE;
+	    t_ptr->name1 = ART_EONWE;
 	    t_ptr->tohit = 15;
 	    t_ptr->todam = 18;
 	    t_ptr->toac = 8;
@@ -2593,7 +2593,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Balli Stonehand");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_BALLI;
+	    t_ptr->name1 = ART_BALLI;
 	    t_ptr->ident |= ID_NOSHOW_TYPE;
 	    t_ptr->tohit = 8;
 	    t_ptr->todam = 11;
@@ -2615,7 +2615,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Lotharang");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_LOTHARANG;
+	    t_ptr->name1 = ART_LOTHARANG;
 	    t_ptr->tohit = 4;
 	    t_ptr->todam = 3;
 	    t_ptr->flags1 = (TR1_STR | TR1_DEX | TR1_SLAY_TROLL | TR1_SLAY_ORC);
@@ -2635,7 +2635,7 @@ int unique_weapon(inven_type *t_ptr)
 	    msg_print("Aule");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->name2 = ART_AULE;
+	t_ptr->name1 = ART_AULE;
 	t_ptr->damage[0] = 5;
 	t_ptr->damage[1] = 5;
 	t_ptr->tohit = 19;
@@ -2657,7 +2657,7 @@ int unique_weapon(inven_type *t_ptr)
 	    msg_print("Theoden");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->name2 = ART_THEODEN;
+	t_ptr->name1 = ART_THEODEN;
 	t_ptr->tohit = 8;
 	t_ptr->todam = 10;
 	t_ptr->flags1 = (TR1_WIS | TR1_CON | TR1_SEARCH | TR1_SLAY_DRAGON);
@@ -2677,7 +2677,7 @@ int unique_weapon(inven_type *t_ptr)
 	    msg_print("Thunderfist");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->name2 = ART_THUNDERFIST;
+	t_ptr->name1 = ART_THUNDERFIST;
 	t_ptr->tohit = 5;
 	t_ptr->todam = 18;
 	t_ptr->flags1 = (TR1_STR | TR1_SLAY_ANIMAL | TR1_BRAND_FIRE |
@@ -2699,7 +2699,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Bloodspike");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_BLOODSPIKE;
+	    t_ptr->name1 = ART_BLOODSPIKE;
 	    t_ptr->tohit = 8;
 	    t_ptr->todam = 22;
 	    t_ptr->flags1 = ( TR1_STR | TR1_SLAY_ANIMAL | TR1_SLAY_TROLL | TR_SLAY_ORC);
@@ -2716,7 +2716,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Firestar");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_FIRESTAR;
+	    t_ptr->name1 = ART_FIRESTAR;
 	    t_ptr->tohit = 5;
 	    t_ptr->todam = 7;
 	    t_ptr->flags1 = (TR1_BRAND_FIRE);
@@ -2736,7 +2736,7 @@ int unique_weapon(inven_type *t_ptr)
 	    msg_print("Doomcaller");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->name2 = ART_DOOMCALLER;
+	t_ptr->name1 = ART_DOOMCALLER;
 	t_ptr->tohit = 18;
 	t_ptr->todam = 28;
 	t_ptr->flags1 = (TR1_CON | TR1_KILL_DRAGON | TR1_SLAY_ANIMAL |
@@ -2759,7 +2759,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Nar-i-vagil");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_NAR;
+	    t_ptr->name1 = ART_NAR;
 	    t_ptr->tohit = 10;
 	    t_ptr->todam = 20;
 	    t_ptr->flags1 = (TR1_INT | TR1_SLAY_ANIMAL | TR1_BRAND_FIRE);
@@ -2777,7 +2777,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Eriril");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_ERIRIL;
+	    t_ptr->name1 = ART_ERIRIL;
 	    t_ptr->tohit = 3;
 	    t_ptr->todam = 5;
 	    t_ptr->flags1 = (TR1_INT | TR1_WIS | TR1_SLAY_EVIL);
@@ -2796,7 +2796,7 @@ int unique_weapon(inven_type *t_ptr)
 		msg_print("Olorin");
 	    else
 		good_item_flag = TRUE;
-	    t_ptr->name2 = ART_OLORIN;
+	    t_ptr->name1 = ART_OLORIN;
 	    t_ptr->tohit = 10;
 	    t_ptr->todam = 13;
 	    t_ptr->damage[0] = 2;
@@ -2830,7 +2830,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->flags2 = (TR2_HOLD_LIFE | TR2_RES_ACID | TR2_RES_COLD | TR2_RES_DARK | TR2_RES_NETHER |
 			  TR2_RES_NEXUS | TR2_RES_CHAOS | TR_ARTIFACT);
 	t_ptr->flags3 = (TR3_ACTIVATE);
-	t_ptr->name2 = ART_SOULKEEPER;
+	t_ptr->name1 = ART_SOULKEEPER;
 	t_ptr->toac = 20;
 	t_ptr->cost = 300000L;
 	SOULKEEPER = 1;
@@ -2858,7 +2858,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->ac = 30;
 	t_ptr->tohit = -3;
 	t_ptr->cost = 400000L;
-	t_ptr->name2 = ART_RAZORBACK;
+	t_ptr->name1 = ART_RAZORBACK;
 	RAZORBACK = 1;
 	return 1;
     } else if (!strncmp("Power Drag", name, 10)) {
@@ -2882,7 +2882,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->tohit = -4;
 	t_ptr->weight = 500;
 	t_ptr->cost = 500000L;
-	t_ptr->name2 = ART_BLADETURNER;
+	t_ptr->name1 = ART_BLADETURNER;
 	BLADETURNER = 1;
 	return 1;
     } else if (!stricmp("& Pair of Hard Leather Boots", name)) {
@@ -2897,7 +2897,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->flags1 |= (TR1_SPEED | TR1_STEALTH);
 	t_ptr->flags2 |= (TR2_RES_ACID | TR2_RES_NEXUS | TR_ARTIFACT);
 	t_ptr->flags3 |= (TR3_ACTIVATE);
-	t_ptr->name2 = ART_FEANOR;
+	t_ptr->name1 = ART_FEANOR;
 	t_ptr->pval = 1;
 	t_ptr->toac = 20;
 	t_ptr->cost = 130000L;
@@ -2913,7 +2913,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->flags1 |= (TR1_DEX);
 	t_ptr->flags2 |= (TR2_FREE_ACT | TR2_RES_ACID | TR2_RES_NETHER | TR2_RES_CHAOS | TR2_SUST_CON | TR_ARTIFACT);
 	t_ptr->flags3 |= (TR3_ACTIVATE);
-	t_ptr->name2 = ART_DAL;
+	t_ptr->name1 = ART_DAL;
 	t_ptr->pval = 5;
 	t_ptr->toac = 15;
 	t_ptr->cost = 40000L;
@@ -2930,7 +2930,7 @@ int unique_armour(inven_type *t_ptr)
 	    good_item_flag = TRUE;
 	t_ptr->flags1 |= (TR1_STR | TR1_CON | TR1_SEARCH);
 	t_ptr->flags2 |= (TR2_FREE_ACT | TR2_IM_ACID | TR2_RES_ACID | TR2_RES_SOUND | TR2_RES_CHAOS | TR_ARTIFACT);
-	t_ptr->name2 = ART_THORIN;
+	t_ptr->name1 = ART_THORIN;
 	t_ptr->ident |= ID_NOSHOW_TYPE;
 	t_ptr->tohit = 0;
 	t_ptr->pval = 4;
@@ -2948,7 +2948,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->weight = 300;
 	t_ptr->flags2 |= (TR2_RES_ACID | TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_COLD);
 	t_ptr->flags2 |= (TR2_RES_SOUND | TR_ARTIFACT | TR2_RES_NEXUS);
-	t_ptr->name2 = ART_ISILDUR;
+	t_ptr->name1 = ART_ISILDUR;
 	t_ptr->tohit = 0;
 	t_ptr->toac = 25;
 	t_ptr->cost = 40000L;
@@ -2964,7 +2964,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->weight = 200;
 	t_ptr->flags1 |= (TR1_STR | TR1_DEX);
 	t_ptr->flags2 |= (TR2_RES_ACID | TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_COLD | TR2_RES_CONF |TR2_RES_SOUND | TR_ARTIFACT);
-	t_ptr->name2 = EGO_ROHAN;
+	t_ptr->name1 = EGO_ROHAN;
 	t_ptr->tohit = 0;
 	t_ptr->pval = 2;
 	t_ptr->toac = 15;
@@ -2983,7 +2983,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->flags2 |= (TR2_RES_ACID | TR2_RES_FIRE | TR2_RES_COLD | TR2_RES_ELEC |
 			 TR2_SUST_STR | TR2_SUST_INT | TR2_SUST_WIS | TR2_SUST_DEX | TR2_SUST_CON | TR2_SUST_CHR);
 	t_ptr->flags2 |= (TR_ARTIFACT);
-	t_ptr->name2 = ART_ANARION;
+	t_ptr->name1 = ART_ANARION;
 	t_ptr->pval = 10;
 	t_ptr->ident |= ID_NOSHOW_P1;
 	t_ptr->tohit = 0;
@@ -3003,7 +3003,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->flags1 |= (TR1_DEX);
 	t_ptr->flags2 |= (TR2_FREE_ACT | TR2_RES_ACID | TR_ARTIFACT);
 	t_ptr->flags3 |= (TR3_ACTIVATE);
-	t_ptr->name2 = ART_FINGOLFIN;
+	t_ptr->name1 = ART_FINGOLFIN;
 	t_ptr->ident |= ID_SHOW_HITDAM;
 	t_ptr->pval = 4;
 	t_ptr->tohit = 10;
@@ -3022,7 +3022,7 @@ int unique_armour(inven_type *t_ptr)
 		good_item_flag = TRUE;
 	    t_ptr->flags1 |= (TR1_STR | TR1_CON);
 	    t_ptr->flags2 |= (TR_ARTIFACT | TR2_FREE_ACT);
-	    t_ptr->name2 = ART_CAMBELEG;
+	    t_ptr->name1 = ART_CAMBELEG;
 	    t_ptr->ident |= ID_SHOW_HITDAM;
 	    t_ptr->pval = 2;
 	    t_ptr->tohit = 8;
@@ -3040,7 +3040,7 @@ int unique_armour(inven_type *t_ptr)
 		good_item_flag = TRUE;
 	    t_ptr->flags2 |= (TR2_FREE_ACT | TR2_RES_LITE | TR2_SUST_CON | TR_ARTIFACT);
 	    t_ptr->flags3 |= (TR3_ACTIVATE | TR3_LITE);
-	    t_ptr->name2 = ART_CAMMITHRIM;
+	    t_ptr->name1 = ART_CAMMITHRIM;
 	    t_ptr->ident |= ID_NOSHOW_P1;
 	    t_ptr->pval = 5;
 	    t_ptr->toac = 10;
@@ -3059,7 +3059,7 @@ int unique_armour(inven_type *t_ptr)
 		good_item_flag = TRUE;
 	    t_ptr->flags2 |= (TR2_RES_FIRE | TR_ARTIFACT);
 	    t_ptr->flags3 |= (TR3_ACTIVATE);
-	    t_ptr->name2 = ART_PAURHACH;
+	    t_ptr->name1 = ART_PAURHACH;
 	    t_ptr->toac = 15;
 	    t_ptr->cost = 15000L;
 	    PAURHACH = 1;
@@ -3073,7 +3073,7 @@ int unique_armour(inven_type *t_ptr)
 		good_item_flag = TRUE;
 	    t_ptr->flags2 |= TR2_RES_COLD | TR_ARTIFACT;
 	    t_ptr->flags3 |= (TR3_ACTIVATE);
-	    t_ptr->name2 = ART_PAURNIMMEN;
+	    t_ptr->name1 = ART_PAURNIMMEN;
 	    t_ptr->toac = 15;
 	    t_ptr->cost = 13000L;
 	    PAURNIMMEN = 1;
@@ -3087,7 +3087,7 @@ int unique_armour(inven_type *t_ptr)
 		good_item_flag = TRUE;
 	    t_ptr->flags2 |= TR2_RES_ELEC | TR_ARTIFACT;
 	    t_ptr->flags3 |= (TR3_ACTIVATE);
-	    t_ptr->name2 = ART_PAURAEGEN;
+	    t_ptr->name1 = ART_PAURAEGEN;
 	    t_ptr->toac = 15;
 	    t_ptr->cost = 11000L;
 	    PAURAEGEN = 1;
@@ -3101,7 +3101,7 @@ int unique_armour(inven_type *t_ptr)
 		good_item_flag = TRUE;
 	    t_ptr->flags2 |= TR2_RES_ACID | TR_ARTIFACT;
 	    t_ptr->flags3 |= (TR3_ACTIVATE);
-	    t_ptr->name2 = ART_PAURNEN;
+	    t_ptr->name1 = ART_PAURNEN;
 	    t_ptr->toac = 15;
 	    t_ptr->cost = 12000L;
 	    PAURNEN = 1;
@@ -3116,7 +3116,7 @@ int unique_armour(inven_type *t_ptr)
 	    t_ptr->flags1 |= (TR1_STR | TR1_DEX);
 	    t_ptr->flags2 |= (TR_ARTIFACT);
 	    t_ptr->flags3 |= (TR3_AGGRAVATE | TR3_CURSED);
-	    t_ptr->name2 = ART_CAMLOST;
+	    t_ptr->name1 = ART_CAMLOST;
 	    t_ptr->toac = 0;
 	    t_ptr->pval = -5;
 	    t_ptr->tohit = -11;
@@ -3136,7 +3136,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->flags1 |= (TR1_STEALTH);
 	t_ptr->flags2 |= (TR2_RES_ACID | TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_COLD | TR_ARTIFACT);
 	t_ptr->flags3 |= (TR3_ACTIVATE);
-	t_ptr->name2 = ART_BELEGENNON;
+	t_ptr->name1 = ART_BELEGENNON;
 	t_ptr->pval = 4;
 	t_ptr->toac = 20;
 	t_ptr->cost = 105000L;
@@ -3153,7 +3153,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->flags1 |= (TR1_STR | TR1_CHR);
 	t_ptr->flags2 |= (TR2_RES_ACID | TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_COLD | TR2_RES_DARK | TR2_RES_DISEN | TR_ARTIFACT);
 	t_ptr->flags2 |= (TR3_ACTIVATE);
-	t_ptr->name2 = ART_CELEBORN;
+	t_ptr->name1 = ART_CELEBORN;
 	t_ptr->pval = 4;
 	t_ptr->toac = 25;
 	t_ptr->cost = 150000L;
@@ -3171,7 +3171,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->flags1 |= (TR1_INT | TR1_WIS | TR1_CON);
 	t_ptr->flags2 |= (TR2_RES_ACID | TR2_RES_POIS | TR2_RES_CONF | TR_ARTIFACT);
 	t_ptr->flags3 |= (TR3_ACTIVATE);
-	t_ptr->name2 = ART_CASPANION;
+	t_ptr->name1 = ART_CASPANION;
 	t_ptr->pval = 3;
 	t_ptr->toac = 20;
 	t_ptr->cost = 40000L;
@@ -3187,7 +3187,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->flags1 |= (TR1_STEALTH);
 	t_ptr->flags2 |= (TR2_RES_ACID | TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_COLD);
 	t_ptr->flags2 |= (TR_ARTIFACT | TR2_RES_DARK);
-	t_ptr->name2 = ART_HITHLOMIR;
+	t_ptr->name1 = ART_HITHLOMIR;
 	t_ptr->pval = 4;
 	t_ptr->toac = 20;
 	t_ptr->cost = 45000L;
@@ -3203,7 +3203,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->weight = 60;
 	t_ptr->flags1 |= (TR1_DEX);
 	t_ptr->flags2 |= (TR_ARTIFACT | TR2_RES_ACID | TR2_RES_SHARDS);
-	t_ptr->name2 = ART_THALKETTOTH;
+	t_ptr->name1 = ART_THALKETTOTH;
 	t_ptr->toac = 25;
 	t_ptr->pval = 3;
 	t_ptr->cost = 25000L;
@@ -3219,7 +3219,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->flags1 |= (
 			 TR1_STR | TR1_CHR);
 	t_ptr->flags2 |= (TR_ARTIFACT | TR2_RES_ACID | TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_COLD | TR2_RES_SHARDS | TR2_RES_NEXUS);
-	t_ptr->name2 = ART_ARVEDUI;
+	t_ptr->name1 = ART_ARVEDUI;
 	t_ptr->pval = 2;
 	t_ptr->toac = 15;
 	t_ptr->cost = 32000L;
@@ -3235,7 +3235,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->flags1 |= (TR1_INT | TR1_WIS);
 	t_ptr->flags2 |= (TR2_RES_ACID | TR2_RES_BLIND | TR_ARTIFACT);
 	t_ptr->flags3 |= (TR3_TELEPATHY);
-	t_ptr->name2 = ART_THRANDUIL;
+	t_ptr->name1 = ART_THRANDUIL;
 	t_ptr->pval = 2;
 	t_ptr->toac = 10;
 	t_ptr->cost = 50000L;
@@ -3250,7 +3250,7 @@ int unique_armour(inven_type *t_ptr)
 	    good_item_flag = TRUE;
 	t_ptr->flags1 |= (TR1_WIS | TR1_CHR);
 	t_ptr->flags2 |= (TR2_RES_ACID | TR_ARTIFACT);
-	t_ptr->name2 = ART_THENGEL;
+	t_ptr->name1 = ART_THENGEL;
 	t_ptr->pval = 3;
 	t_ptr->toac = 12;
 	t_ptr->cost = 22000L;
@@ -3265,7 +3265,7 @@ int unique_armour(inven_type *t_ptr)
 	    good_item_flag = TRUE;
 	t_ptr->flags1 |= (TR1_STR | TR1_DEX | TR1_CON);
 	t_ptr->flags2 |= (TR_ARTIFACT | TR2_RES_ACID | TR2_RES_NEXUS);
-	t_ptr->name2 = ART_HAMMERHAND;
+	t_ptr->name1 = ART_HAMMERHAND;
 	t_ptr->pval = 3;
 	t_ptr->toac = 20;
 	t_ptr->cost = 45000L;
@@ -3281,7 +3281,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->weight = 60;
 	t_ptr->flags2 |= (TR2_RES_ACID | TR2_RES_FIRE | TR2_RES_COLD | TR2_RES_ELEC);
 	t_ptr->flags2 |= (TR2_RES_LITE | TR2_RES_DARK | TR_ARTIFACT);
-	t_ptr->name2 = ART_CELEGORM;
+	t_ptr->name1 = ART_CELEGORM;
 	t_ptr->toac = 20;
 	t_ptr->cost = 12000L;
 	CELEGORM = 1;
@@ -3295,7 +3295,7 @@ int unique_armour(inven_type *t_ptr)
 	    good_item_flag = TRUE;
 	t_ptr->flags1 |= (TR1_CON | TR1_STR);
 	t_ptr->flags2 |= (TR_ARTIFACT | TR2_RES_ACID);
-	t_ptr->name2 = ART_THROR;
+	t_ptr->name1 = ART_THROR;
 	t_ptr->pval = 3;
 	t_ptr->toac = 20;
 	t_ptr->cost = 12000L;
@@ -3314,7 +3314,7 @@ int unique_armour(inven_type *t_ptr)
 			      | TR_ARTIFACT);
 	    t_ptr->flags3 |= (TR2_RES_BLIND | TR3_LITE | TR3_SEE_INVIS |
 			     TR3_TELEPATHY);
-	    t_ptr->name2 = ART_DOR_LOMIN;
+	    t_ptr->name1 = ART_DOR_LOMIN;
 	    t_ptr->pval = 4;
 	    t_ptr->toac = 20;
 	    t_ptr->cost = 300000L;
@@ -3330,7 +3330,7 @@ int unique_armour(inven_type *t_ptr)
 	    t_ptr->flags1 |= (TR1_INT | TR1_WIS | TR1_SEARCH);
 	    t_ptr->flags2 |= (TR2_RES_ACID | TR2_RES_BLIND | TR_ARTIFACT);
 	    t_ptr->flags3 |= (TR3_SEE_INVIS | TR3_ACTIVATE);
-	    t_ptr->name2 = ART_HOLHENNETH;
+	    t_ptr->name1 = ART_HOLHENNETH;
 	    t_ptr->ident |= ID_NOSHOW_TYPE;
 	    t_ptr->pval = 2;
 	    t_ptr->toac = 10;
@@ -3347,7 +3347,7 @@ int unique_armour(inven_type *t_ptr)
 	    t_ptr->flags1 |= (TR1_INT | TR1_WIS |  | TR1_SEARCH);
 	    t_ptr->flags2 |= (TR_ARTIFACT);
 	    t_ptr->flags3 |= (TR3_SEE_INVIS | TR3_AGGRAVATE | TR3_CURSED);
-	    t_ptr->name2 = ART_GORLIM;
+	    t_ptr->name1 = ART_GORLIM;
 	    t_ptr->ident |= ID_NOSHOW_TYPE;
 	    t_ptr->pval = -125;
 	    t_ptr->toac = 10;
@@ -3364,7 +3364,7 @@ int unique_armour(inven_type *t_ptr)
 	    msg_print("Gondor");
 	else
 	    good_item_flag = TRUE;
-	t_ptr->name2 = ART_GONDOR;
+	t_ptr->name1 = ART_GONDOR;
 	t_ptr->flags1 = (TR1_STR | TR1_WIS | TR1_CON);
 	t_ptr->flags2 = (TR2_RES_ACID | TR2_RES_FIRE | TR2_RES_LITE | TR2_RES_BLIND |
 			 TR_ARTIFACT);
@@ -3384,7 +3384,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->flags1 |= (TR1_STR | TR1_DEX | TR1_CON);
 	t_ptr->flags2 |= (TR2_FREE_ACT | TR2_RES_ACID | TR_ARTIFACT);
 	t_ptr->flags3 |= (TR3_SEE_INVIS | TR3_TELEPATHY | TR3_CURSED);
-	t_ptr->name2 = ART_BERUTHIEL;
+	t_ptr->name1 = ART_BERUTHIEL;
 	t_ptr->pval = -125;
 	t_ptr->toac = 20;
 	t_ptr->cost = 10000L;

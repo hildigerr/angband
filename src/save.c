@@ -306,6 +306,7 @@ static void rd_item(inven_type *i_ptr)
     rd_byte(&i_ptr->sval);
     rd_s16b(&i_ptr->pval);
 
+    rd_byte(&i_ptr->name1);
     rd_byte(&i_ptr->name2);
     rd_byte(&i_ptr->ident);
     rd_byte(&i_ptr->number);
@@ -340,6 +341,7 @@ static void wr_item(inven_type *i_ptr)
     wr_byte(i_ptr->sval);
     wr_s16b(i_ptr->pval);
 
+    wr_byte(i_ptr->name1);
     wr_byte(i_ptr->name2);
     wr_byte(i_ptr->ident);
     wr_byte(i_ptr->number);

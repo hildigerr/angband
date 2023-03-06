@@ -183,6 +183,197 @@ static void rd_string(char *str)
 
 
 /*
+ * Mega-Hack -- convert the old "name2" fields into the new
+ * name1/name2 fields.
+ */
+
+static int convert_name2[] = {
+
+    0				/* 0 = SN_NULL */,
+    2000+EGO_R			/* 1 = SN_R */,
+    2000+EGO_RESIST_A		/* 2 = SN_RA */,
+    2000+EGO_RESIST_F		/* 3 = SN_RF */,
+    2000+EGO_RESIST_C		/* 4 = SN_RC */,
+    2000+EGO_RESIST_E		/* 5 = SN_RL */,
+    2000+EGO_HA			/* 6 = SN_HA */,
+    2000+EGO_DF			/* 7 = SN_DF */,
+    2000+EGO_SLAY_A		/* 8 = SN_SA */,
+    2000+EGO_SLAY_D		/* 9 = SN_SD */,
+    2000+EGO_SLAY_E		/* 10 = SN_SE */,
+    2000+EGO_SLAY_U		/* 11 = SN_SU */,
+    2000+EGO_FT			/* 12 = SN_FT */,
+    2000+EGO_FB			/* 13 = SN_FB */,
+    2000+EGO_FREE_ACTION	/* 14 = SN_FREE_ACTION */,
+    2000+EGO_SLAYING		/* 15 = SN_SLAYING */,
+    2000+EGO_CLUMSINESS		/* 16 = SN_CLUMSINESS */,
+    2000+EGO_WEAKNESS		/* 17 = SN_WEAKNESS */,
+    2000+EGO_SLOW_DESCENT	/* 18 = SN_SLOW_DESCENT */,
+    2000+EGO_SPEED		/* 19 = SN_SPEED */,
+    2000+EGO_STEALTH		/* 20 = SN_STEALTH */,
+    2000+EGO_SLOWNESS		/* 21 = SN_SLOWNESS */,
+    2000+EGO_NOISE		/* 22 = SN_NOISE */,
+    2000+EGO_GREAT_MASS		/* 23 = SN_GREAT_MASS */,
+    2000+EGO_INTELLIGENCE	/* 24 = SN_INTELLIGENCE */,
+    2000+EGO_WISDOM		/* 25 = SN_WISDOM */,
+    2000+EGO_INFRAVISION	/* 26 = SN_INFRAVISION */,
+    2000+EGO_MIGHT		/* 27 = SN_MIGHT */,
+    2000+EGO_LORDLINESS		/* 28 = SN_LORDLINESS */,
+    2000+EGO_MAGI		/* 29 = SN_MAGI */,
+    2000+EGO_BEAUTY		/* 30 = SN_BEAUTY */,
+    2000+EGO_SEEING		/* 31 = SN_SEEING */,
+    2000+EGO_REGENERATION	/* 32 = SN_REGENERATION */,
+    2000+EGO_STUPIDITY		/* 33 = SN_STUPIDITY */,
+    2000+EGO_DULLNESS		/* 34 = SN_DULLNESS */,
+    2000+EGO_BLINDNESS				/* 35 = SN_BLINDNESS */,
+    2000+EGO_TIMIDNESS				/* 36 = SN_TIMIDNESS */,
+    2000+EGO_TELEPORTATION				/* 37 = SN_TELEPORTATION */,
+    2000+EGO_UGLINESS		/* 38 = SN_UGLINESS */,
+    2000+EGO_PROTECTION		/* 39 = SN_PROTECTION */,
+    2000+EGO_IRRITATION		/* 40 = SN_IRRITATION */,
+    2000+EGO_VULNERABILITY	/* 41 = SN_VULNERABILITY */,
+    2000+EGO_ENVELOPING		/* 42 = SN_ENVELOPING */,
+    2000+EGO_FIRE		/* 43 = SN_FIRE */,
+    2000+EGO_SLAY_EVIL		/* 44 = SN_SLAY_EVIL */,
+    2000+EGO_DRAGON_SLAYING	/* 45 = SN_DRAGON_SLAYING */,
+    9000+EGO_EMPTY		/* 46 = SN_EMPTY */,
+    9000+EGO_LOCKED		/* 47 = SN_LOCKED */,
+    9000+EGO_POISON_NEEDLE	/* 48 = SN_POISON_NEEDLE */,
+    9000+EGO_GAS_TRAP		/* 49 = SN_GAS_TRAP */,
+    9000+EGO_EXPLOSION_DEVICE	/* 50 = SN_EXPLOSION_DEVICE */,
+    9000+EGO_SUMMONING_RUNES	/* 51 = SN_SUMMONING_RUNES */,
+    9000+EGO_MULTIPLE_TRAPS	/* 52 = SN_MULTIPLE_TRAPS */,
+    9000+EGO_DISARMED		/* 53 = SN_DISARMED */,
+    9000+EGO_UNLOCKED		/* 54 = SN_UNLOCKED */,
+    2000+EGO_SLAY_ANIMAL	/* 55 = SN_SLAY_ANIMAL */,
+    1000+ART_GROND		/* 56 = SN_GROND */,
+    1000+ART_RINGIL		/* 57 = SN_RINGIL */,
+    1000+ART_AEGLOS		/* 58 = SN_AEGLOS */,
+    1000+ART_ARUNRUTH		/* 59 = SN_ARUNRUTH */,
+    1000+ART_MORMEGIL		/* 60 = SN_MORMEGIL */,
+    2000+EGO_MORGUL		/* 61 = SN_MORGUL */,
+    1000+ART_ANGRIST		/* 62 = SN_ANGRIST */,
+    1000+ART_GURTHANG		/* 63 = SN_GURTHANG */,
+    1000+ART_CALRIS		/* 64 = SN_CALRIS */,
+    2000+EGO_ACCURACY		/* 65 = SN_ACCURACY */,
+    1000+ART_ANDURIL		/* 66 = SN_ANDURIL */,
+    2000+EGO_SLAY_O		/* 67 = SN_SO */,
+    2000+ART_POWER		/* 68 = SN_POWER */,
+    1000+ART_DURIN		/* 69 = SN_DURIN */,
+    1000+ART_AULE		/* 70 = SN_AULE */,
+    2000+EGO_WEST		/* 71 = SN_WEST */,
+    2000+EGO_BLESS_BLADE	/* 72 = SN_BLESS_BLADE */,
+    2000+EGO_SLAY_DEMON		/* 73 = SN_SDEM */,
+    2000+EGO_SLAY_T		/* 74 = SN_ST */,
+    1000+ART_BLOODSPIKE		/* 75 = SN_BLOODSPIKE */,
+    1000+ART_THUNDERFIST	/* 76 = SN_THUNDERFIST */,
+    2000+EGO_WOUNDING		/* 77 = SN_WOUNDING */,
+    1000+ART_ORCRIST		/* 78 = SN_ORCRIST */,
+    1000+ART_GLAMDRING		/* 79 = SN_GLAMDRING */,
+    1000+ART_STING		/* 80 = SN_STING */,
+    2000+EGO_LIGHT		/* 81 = SN_LITE */,
+    2000+EGO_AGILITY		/* 82 = SN_AGILITY */,
+    2000+EGO_BACKBITING		/* 83 = SN_BACKBITING */,
+    1000+ART_DOOMCALLER		/* 84 = SN_DOOMCALLER */,
+    2000+EGO_SLAY_G		/* 85 = SN_SG */,
+    2000+EGO_TELEPATHY		/* 86 = SN_TELEPATHY */,
+    2000+EGO_DRAGONKIND				/* 87 = SN_DRAGONKIND */,
+    1000+ART_NENYA				/* 88 = SN_NENYA */,
+    1000+ART_NARYA				/* 89 = SN_NARYA */,
+    1000+ART_VILYA				/* 90 = SN_VILYA */,
+    2000+EGO_AMAN		/* 91 = SN_AMAN */,
+    1000+ART_BELEGENNON		/* 92 = SN_BELEGENNON */,
+    1000+ART_FEANOR		/* 93 = SN_FEANOR */,
+    1000+ART_ANARION		/* 94 = SN_ANARION */,
+    1000+ART_ISILDUR		/* 95 = SN_ISILDUR */,
+    1000+ART_FINGOLFIN		/* 96 = SN_FINGOLFIN */,
+    2000+EGO_ELVENKIND		/* 97 = SN_ELVENKIND */,
+    1000+ART_SOULKEEPER		/* 98 = SN_SOULKEEPER */,
+    1000+ART_DOR_LOMIN		/* 99 = SN_DOR_LOMIN */,
+    1000+ART_MORGOTH		/* 100 = SN_MORGOTH */,
+    1000+EGO_BELEG	/* 101 = SN_BELTHRONDING */,
+    1000+ART_DAL		/* 102 = SN_DAL */,
+    1000+ART_PAURHACH		/* 103 = SN_PAURHACH */,
+    1000+ART_PAURNIMMEN		/* 104 = SN_PAURNIMMEN */,
+    1000+ART_PAURAEGEN		/* 105 = SN_PAURAEGEN */,
+    1000+ART_CAMMITHRIM		/* 106 = SN_CAMMITHRIM */,
+    1000+ART_CAMBELEG		/* 107 = SN_CAMBELEG */,
+    1000+ART_HOLHENNETH		/* 108 = SN_HOLHENNETH */,
+    1000+ART_PAURNEN		/* 109 = SN_PAURNEN */,
+    1000+ART_AEGLIN		/* 110 = SN_AEGLIN */,
+    1000+ART_CAMLOST		/* 111 = SN_CAMLOST */,
+    1000+ART_NIMLOTH		/* 112 = SN_NIMLOTH */,
+    1000+ART_NAR		/* 113 = SN_NAR */,
+    1000+ART_BERUTHIEL		/* 114 = SN_BERUTHIEL */,
+    1000+ART_GORLIM		/* 115 = SN_GORLIM */,
+    1000+ART_NARTHANC		/* 116 = SN_NARTHANC */,
+    1000+ART_NIMTHANC		/* 117 = SN_NIMTHANC */,
+    1000+ART_DETHANC		/* 118 = SN_DETHANC */,
+    1000+ART_GILETTAR		/* 119 = SN_GILETTAR */,
+    1000+ART_RILIA		/* 120 = SN_RILIA */,
+    1000+ART_BELANGIL		/* 121 = SN_BELANGIL */,
+    1000+ART_BALLI		/* 122 = SN_BALLI */,
+    1000+ART_LOTHARANG		/* 123 = SN_LOTHARANG */,
+    1000+ART_FIRESTAR		/* 124 = SN_FIRESTAR */,
+    1000+ART_ERIRIL		/* 125 = SN_ERIRIL */,
+    1000+ART_CUBRAGOL		/* 126 = SN_CUBRAGOL */,
+    1000+ART_BARD		/* 127 = SN_BARD */,
+    1000+ART_COLLUIN		/* 128 = SN_COLLUIN */,
+    1000+ART_HOLCOLLETH		/* 129 = SN_HOLCOLLETH */,
+    1000+ART_TOTILA		/* 130 = SN_TOTILA */,
+    1000+ART_PAIN		/* 131 = SN_PAIN */,
+    1000+ART_ELVAGIL		/* 132 = SN_ELVAGIL */,
+    1000+ART_AGLARANG		/* 133 = SN_AGLARANG */,
+    1000+EGO_ROHAN		/* 134 = SN_ROHIRRIM */,
+    1000+ART_EORLINGAS		/* 135 = SN_EORLINGAS */,
+    1000+ART_BARUKKHELED	/* 136 = SN_BARUKKHELED */,
+    1000+ART_WRATH		/* 137 = SN_WRATH */,
+    1000+ART_HARADEKKET		/* 138 = SN_HARADEKKET */,
+    1000+ART_MUNDWINE		/* 139 = SN_MUNDWINE */,
+    1000+ART_GONDRICAM		/* 140 = SN_GONDRICAM */,
+    1000+ART_ZARCUTHRA		/* 141 = SN_ZARCUTHRA */,
+    1000+ART_CARETH		/* 142 = SN_CARETH */,
+    1000+ART_FORASGIL		/* 143 = SN_FORASGIL */,
+    1000+ART_CRISDURIAN		/* 144 = SN_CRISDURIAN */,
+    1000+ART_COLANNON		/* 145 = SN_COLANNON */,
+    1000+ART_HITHLOMIR		/* 146 = SN_HITHLOMIR */,
+    1000+ART_THALKETTOTH	/* 147 = SN_THALKETTOTH */,
+    1000+ART_ARVEDUI		/* 148 = SN_ARVEDUI */,
+    1000+ART_THRANDUIL		/* 149 = SN_THRANDUIL */,
+    1000+ART_THENGEL		/* 150 = SN_THENGEL */,
+    1000+ART_HAMMERHAND		/* 151 = SN_HAMMERHAND */,
+    1000+ART_CELEGORM		/* 152 = SN_CELEGORM */,
+    1000+ART_THROR		/* 153 = SN_THROR */,
+    1000+ART_MAEDHROS		/* 154 = SN_MAEDHROS */,
+    1000+ART_OLORIN		/* 155 = SN_OLORIN */,
+    1000+ART_ANGUIREL		/* 156 = SN_ANGUIREL */,
+    1000+ART_THORIN		/* 157 = SN_THORIN */,
+    1000+ART_CELEBORN		/* 158 = SN_CELEBORN */,
+    1000+ART_OROME		/* 159 = SN_OROME */,
+    1000+ART_EONWE		/* 160 = SN_EONWE */,
+    1000+ART_GONDOR		/* 161 = SN_GONDOR */,
+    1000+ART_THEODEN		/* 162 = SN_THEODEN */,
+    1000+ART_THINGOL		/* 163 = SN_THINGOL */,
+    1000+ART_THORONGIL		/* 164 = SN_THORONGIL */,
+    1000+ART_LUTHIEN		/* 165 = SN_LUTHIEN */,
+    1000+ART_TUOR		/* 166 = SN_TUOR */,
+    1000+ART_ULMO		/* 167 = SN_ULMO */,
+    1000+ART_OSONDIR		/* 168 = SN_OSONDIR */,
+    1000+ART_TURMIL		/* 169 = SN_TURMIL */,
+    1000+ART_CASPANION		/* 170 = SN_CASPANION */,
+    1000+ART_TIL		/* 171 = SN_TIL */,
+    1000+ART_DEATHWREAKER	/* 172 = SN_DEATHWREAKER */,
+    1000+ART_AVAVIR		/* 173 = SN_AVAVIR */,
+    1000+ART_TARATOL		/* 174 = SN_TARATOL */,
+    1000+ART_RAZORBACK		/* 175 = SN_RAZORBACK */,
+    1000+ART_BLADETURNER	/* 176 = SN_BLADETURNER */,
+    2000+EGO_SHATTERED		/* 177 = SN_SHATTERED */,
+    2000+EGO_BLASTED		/* 178 = SN_BLASTED */,
+    2000+EGO_ATTACKS		/* 179 = SN_ATTACKS */,
+};
+
+
+
+/*
  * Convert the old savefile "flags" into the new ones
  * This just converts the flags that are the same, see
  * "rd_item_old()" for total conversion method.
@@ -520,6 +711,43 @@ static errr rd_item_old(inven_type *i_ptr)
 	case 510: i_ptr->k_idx = 507; break;
 	case 511: i_ptr->k_idx = 505; break;
 	case 512: i_ptr->k_idx = 506; break;
+    }
+
+    /* Artifact Names Dominate Ego-Item Names */
+    if (i_ptr->name1) i_ptr->name2 = 0;
+
+
+    /* The Old Special Names induce Artifact Names */
+    if (i_ptr->name2) {
+
+	int hack;
+
+	/* Analyze the old "special name" */
+	hack = convert_name2[i_ptr->name2];
+
+	/* "Chest" names */
+	if (hack > 9000) {
+	}
+
+	/* It is an ego-item */        
+	else if (hack > 2000) {
+	}
+
+	/* It is an artifact */        
+	else if (hack > 1000) {
+
+	    /* Move it into the artifact table */
+	    i_ptr->name1 = (hack - 1000);
+
+	    /* Forget the old name */
+	    i_ptr->name2 = 0;
+	}
+
+	/* Oops.  That name no longer exists... */
+	else {
+	    message("Ignoring illegal 'name2' field", 0);
+	    i_ptr->name2 = 0;
+	}
     }
 
 

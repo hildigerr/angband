@@ -90,10 +90,10 @@
     ((x) >= panel_col_min) && ((x) <= panel_col_max)) ? (TRUE) : (FALSE))
 
 /*
- * Artifacts
+ * Artifacts use the "name1" field
  */
 #define artifact_p(T) \
-	((!(T->tval < TV_MIN_WEAR) && !(T->tval > TV_MIN_WEAR) && (T->flags2 & TR_ARTIFACT)) ? TRUE : FALSE)
+	((T)->name1 ? TRUE : FALSE)
 
 
 

@@ -47,9 +47,12 @@ static cptr value_check(inven_type *i_ptr)
     /* Cursed items (including artifacts/ego-weapons) */
     if (i_ptr->flags3 & TR3_CURSED ) {
 
+	/* Cursed artifacts are terrible */
+	if (artifact_p(i_ptr)) return "terrible";
+
+	/* Cursed ego-items are worthless */
     if (i_ptr->name2 == SN_NULL) return "worthless";
 
-    if (i_ptr->name2 != SN_NULL) return "terrible";
     }
 
 

@@ -1085,7 +1085,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			    msg_print("Colluin");
 			else
 			    good_item_flag = TRUE;
-			i_ptr->name2 = ART_COLLUIN;
+			i_ptr->name1 = ART_COLLUIN;
 			i_ptr->toac = 15;
 			i_ptr->flags2 |= (TR2_RES_FIRE | TR2_RES_COLD | TR2_RES_POIS |
 					 TR2_RES_ELEC | TR2_RES_ACID);
@@ -1102,7 +1102,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			    msg_print("Holcolleth");
 			else
 			    good_item_flag = TRUE;
-			i_ptr->name2 = ART_HOLCOLLETH;
+			i_ptr->name1 = ART_HOLCOLLETH;
 			i_ptr->toac = 4;
 			i_ptr->pval = 2;
 			i_ptr->flags1 |= (TR1_INT | TR1_WIS | TR1_STEALTH);
@@ -1120,7 +1120,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			    msg_print("Thingol");
 			else
 			    good_item_flag = TRUE;
-			i_ptr->name2 = ART_THINGOL;
+			i_ptr->name1 = ART_THINGOL;
 			i_ptr->toac = 18;
 			i_ptr->flags1 = (TR1_DEX | TR1_CHR);
 			i_ptr->flags2 = (TR2_RES_FIRE |
@@ -1139,7 +1139,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			    msg_print("Thorongil");
 			else
 			    good_item_flag = TRUE;
-			i_ptr->name2 = ART_THORONGIL;
+			i_ptr->name1 = ART_THORONGIL;
 			i_ptr->toac = 10;
 			i_ptr->flags2 = (TR2_FREE_ACT |
 					TR2_RES_ACID);
@@ -1156,7 +1156,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			    msg_print("Colannon");
 			else
 			    good_item_flag = TRUE;
-			i_ptr->name2 = ART_COLANNON;
+			i_ptr->name1 = ART_COLANNON;
 			i_ptr->toac = 15;
 			i_ptr->flags1 |= (TR1_STEALTH);
 			i_ptr->flags2 |= (TR2_RES_ACID);
@@ -1180,7 +1180,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			    msg_print("Luthien");
 			else
 			    good_item_flag = TRUE;
-			i_ptr->name2 = ART_LUTHIEN;
+			i_ptr->name1 = ART_LUTHIEN;
 			i_ptr->toac = 20;
 			i_ptr->flags1 = 
 				    (TR1_INT | TR1_WIS | TR1_CHR);
@@ -1198,7 +1198,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			    msg_print("Tuor");
 			else
 			    good_item_flag = TRUE;
-			i_ptr->name2 = ART_TUOR;
+			i_ptr->name1 = ART_TUOR;
 			i_ptr->toac = 12;
 			i_ptr->flags1 = (TR1_STEALTH);
 			i_ptr->flags2 |= (TR2_IM_ACID | 
@@ -1643,7 +1643,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			    msg_print("Belthronding");
 			else
 			    good_item_flag = TRUE;
-			i_ptr->name2 = EGO_BELEG;
+			i_ptr->name1 = EGO_BELEG;
 			i_ptr->ident |= ID_NOSHOW_TYPE;
 			i_ptr->sval = 4; /* make do x5 damage!! -CFT */
 			i_ptr->tohit = 20;
@@ -1661,7 +1661,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			    msg_print("Bard");
 			else
 			    good_item_flag = TRUE;
-			i_ptr->name2 = ART_BARD;
+			i_ptr->name1 = ART_BARD;
 			i_ptr->sval = 3; /* make do x4 damage!! -CFT */
 			i_ptr->tohit = 17;
 			i_ptr->todam = 19;
@@ -1681,7 +1681,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			break;
 		    if (wizard || peek)
 			msg_print("Cubragol");
-		    i_ptr->name2 = ART_CUBRAGOL;
+		    i_ptr->name1 = ART_CUBRAGOL;
 		    i_ptr->sval = 11;
 		    i_ptr->tohit = 10;
 		    i_ptr->todam = 14;

@@ -253,6 +253,7 @@ struct _inven_type {
   s16b pval;			/* Misc. use variable		*/
 
   s16b timeout;		/* Timeout counter		*/
+  byte name1;			/* Artifact type, if any	*/
   byte name2;			/* Special type, if any		*/
   byte ident;			/* Identification info		*/
   byte number;			/* Number of items		*/

@@ -1483,7 +1483,9 @@ void pray()
 
 	    /* you can't create an ego weapon from a cursed */
 	    /* object.  the curse would "taint" the magic -CFT */
+	    /* And you cannot modify artifacts */
 	    if ((i_ptr->tval) &&
+		(!i_ptr->name1) &&
 		(!i_ptr->name2) &&
 		(!(i_ptr->flags3 & TR3_CURSED))) {
 
@@ -1493,14 +1495,14 @@ void pray()
 		    sprintf(out_val,
 			    "Your %s is covered in a fiery shield!",
 			    tmp_str);
-		    i_ptr->name2 |= EGO_FT;
+		    i_ptr->name2 = EGO_FT;
 		    i_ptr->flags1 |= (TR1_BRAND_FIRE);
 		    i_ptr->flags2 |= (TR2_RES_FIRE);
 		}
 		else {
 		    sprintf(out_val, "Your %s glows deep, icy blue!",
 			    tmp_str);
-		    i_ptr->name2 |= EGO_FB;
+		    i_ptr->name2 = EGO_FB;
 		    i_ptr->flags1 |= (TR1_BRAND_COLD);
 		    i_ptr->flags2 |= (TR2_RES_COLD);
 		}
