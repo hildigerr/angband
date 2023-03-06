@@ -2,6 +2,8 @@
 
 Parsing of Item kinds from text files
 Reorganization of Item kind file
+Addition of another flag set for items.
+Reorganization of the flags for items.
 Properly handled "identify" inducing object "awareness" and "combining".
 Functions combine() and combine_pack() to maintain inventory.
 Made "store cost" a property of objects

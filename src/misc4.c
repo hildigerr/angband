@@ -1820,7 +1820,7 @@ int spell_chance(int spell)
 	register inven_type *i_ptr;
 	i_ptr = &inventory[INVEN_WIELD];
 	if ((i_ptr->tval == TV_SWORD) || (i_ptr->tval == TV_POLEARM)) {
-	    if (!(i_ptr->flags2 & TR3_BLESSED)) {
+	    if (!(i_ptr->flags3 & TR3_BLESSED)) {
 		chance += 25;
 	    }
 	}
@@ -2227,7 +2227,7 @@ int attack_blows(int weight, int *wtohit)
 
 	s = 0;				/* do Weapons of Speed */
 	for (d = INVEN_WIELD; d < INVEN_AUX; d++)
-	    if (inventory[d].flags2 & TR1_ATTACK_SPD)
+	    if (inventory[d].flags1 & TR1_ATTACK_SPD)
 		s += inventory[d].pval;
 
 	/* Use the blows table */
@@ -2266,7 +2266,7 @@ int tot_dam(inven_type *i_ptr, int tdam, int r_idx)
 	monster_lore	*l_ptr = &l_list[r_idx];
 
     /* Mjollnir? :-> */
-	if (!(r_ptr->cflags2 & MF2_IM_ELEC) && (i_ptr->flags2 & TR1_BRAND_ELEC)) {
+	if (!(r_ptr->cflags2 & MF2_IM_ELEC) && (i_ptr->flags1 & TR1_BRAND_ELEC)) {
 	    tdam *= 5;
 	}
 
@@ -2289,25 +2289,25 @@ int tot_dam(inven_type *i_ptr, int tdam, int r_idx)
 	}
 
 	/* Slay Orc */
-	else if ((r_ptr->cflags2 & MF2_ORC) && (i_ptr->flags2 & TR1_SLAY_ORC)) {
+	else if ((r_ptr->cflags2 & MF2_ORC) && (i_ptr->flags1 & TR1_SLAY_ORC)) {
 	    tdam *= 3;
 	    l_ptr->r_cflags2 |= MF2_ORC;
 	}
 
 	/* Slay Troll */
-	else if ((r_ptr->cflags2 & MF2_TROLL) && (i_ptr->flags2 & TR1_SLAY_TROLL)) {
+	else if ((r_ptr->cflags2 & MF2_TROLL) && (i_ptr->flags1 & TR1_SLAY_TROLL)) {
 	    tdam *= 3;
 	    l_ptr->r_cflags2 |= MF2_TROLL;
 	}
 
 	/* Slay Giant */
-	else if ((r_ptr->cflags2 & MF2_GIANT) && (i_ptr->flags2 & TR1_SLAY_GIANT)) {
+	else if ((r_ptr->cflags2 & MF2_GIANT) && (i_ptr->flags1 & TR1_SLAY_GIANT)) {
 	    tdam *= 3;
 	    l_ptr->r_cflags2 |= MF2_GIANT;
 	}
 
 	/* Slay Demon */
-	else if ((r_ptr->cflags2 & MF2_DEMON) && (i_ptr->flags2 & TR1_SLAY_DEMON)) {
+	else if ((r_ptr->cflags2 & MF2_DEMON) && (i_ptr->flags1 & TR1_SLAY_DEMON)) {
 	    tdam *= 3;
 	    l_ptr->r_cflags2 |= MF2_DEMON;
 	}
@@ -2350,14 +2350,14 @@ int tot_dam(inven_type *i_ptr, int tdam, int r_idx)
 		reduced = TRUE;
 	    }
 	}
-	if (((r_ptr->cflags2 & MF2_IM_ELEC)) && (i_ptr->flags2 & TR1_BRAND_ELEC)) {
+	if (((r_ptr->cflags2 & MF2_IM_ELEC)) && (i_ptr->flags1 & TR1_BRAND_ELEC)) {
 	    l_ptr->r_cflags2 |= MF2_IM_ELEC;
 	    if (!reduced) {
 		tdam = (tdam * 3) / 4;
 		reduced = TRUE;
 	    }
 	}
-	if ((i_ptr->flags2 & TR1_IMPACT) && (tdam > 50))
+	if ((i_ptr->flags1 & TR1_IMPACT) && (tdam > 50))
 	    earthquake();
     }
 

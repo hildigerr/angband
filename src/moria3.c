@@ -897,7 +897,7 @@ void do_cmd_open()
 		 * clear the cursed chest/monster win flag, so that people
 		 * can not win by opening a cursed chest 
 		 */
-		    i_ptr->flags1 &= ~TR3_CURSED;
+		    i_ptr->flags3 &= ~TR3_CURSED;
 
 		/* generate based on level chest was found on - dbd */
 		    object_level = i_ptr->pval;
@@ -1652,7 +1652,7 @@ void do_cmd_fire()
 	else if (!known2_p(t) && (t->ident & ID_DAMD))
 	    ok_throw = TRUE;  /* Not IDed, but user knows it's cursed... */
 	else if ((t->tval >= TV_MIN_WEAR) && (t->tval <= TV_MAX_WEAR) &&
-		 (t->flags1 & TR3_CURSED) && known2_p(t))
+		 (t->flags3 & TR3_CURSED) && known2_p(t))
 	    ok_throw = TRUE; /* if user wants to throw cursed, let him */
 	else if ((k_list[t->k_idx].cost <= 0) && known1_p(t) &&
 		 !(known2_p(t) && (t->cost > 0)))

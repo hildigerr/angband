@@ -213,6 +213,7 @@ struct _inven_kind {
 
   u32b flags1;		/* Flags, set 1			*/
   u32b flags2;		/* Flags, set 2			*/
+  u32b flags3;		/* Flags, set 3			*/
 };
 
 
@@ -268,6 +269,7 @@ struct _inven_type {
 
   u32b flags1;		/* Flags, set 1			*/
   u32b flags2;		/* Flags, set 2			*/
+  u32b flags3;		/* Flags, set 3			*/
 
   byte level;			/* Level item first found	*/
   byte tchar;			/* Character representation */

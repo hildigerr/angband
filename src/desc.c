@@ -814,7 +814,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 			     (i_ptr->name2 != EGO_INFRAVISION))
 			(void)sprintf(tmp_str, " (%c%d to infravision)",
 				      (i_ptr->pval < 0) ? '-' : '+', MY_ABS(i_ptr->pval));
-		    else if (i_ptr->flags2 & TR1_ATTACK_SPD) {
+		    else if (i_ptr->flags1 & TR1_ATTACK_SPD) {
 			if (MY_ABS(i_ptr->pval) == 1)
 			    (void)sprintf(tmp_str, " (%c%d attack)",
 					  (i_ptr->pval < 0) ? '-' : '+', MY_ABS(i_ptr->pval));

@@ -538,10 +538,10 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	    if (!stricmp(k_list[i_ptr->k_idx].name, "& Robe") &&
 		((magik(special) && randint(30) == 1))) {
 
-		    i_ptr->flags1 |= (TR2_RES_ELEC | TR2_RES_COLD | 
+		    i_ptr->flags2 |= (TR2_RES_ELEC | TR2_RES_COLD | 
 				      TR2_RES_ACID | TR2_RES_FIRE |
+				      TR2_HOLD_LIFE |
 				      TR_SUST_STAT);
-		    i_ptr->flags2 |= TR2_HOLD_LIFE;
 		    i_ptr->ident |= ID_NOSHOW_P1;
 		    i_ptr->pval = 10;
 		    i_ptr->toac += 10 + randint(5);
@@ -562,7 +562,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		    if ((great || randint(3) == 1) && !not_unique &&
 			unique_armour(i_ptr))
 			break;
-		    i_ptr->flags1 |= (TR2_RES_ELEC | TR2_RES_COLD |
+		    i_ptr->flags2 |= (TR2_RES_ELEC | TR2_RES_COLD |
 				      TR2_RES_ACID | TR2_RES_FIRE);
 		    if (randint(3) == 1) {
 			i_ptr->flags1 |= TR1_STEALTH;
@@ -592,7 +592,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			!strncmp(k_list[i_ptr->k_idx].name,
 				 "Adamantite", 10))
 			break;
-		    i_ptr->flags1 |= TR2_RES_ACID;
+		    i_ptr->flags2 |= (TR2_RES_ACID);
 		    i_ptr->cost += 1000L;
 		    i_ptr->name2 = EGO_RESIST_A;
 		    rating += 15;
@@ -603,7 +603,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		    if ((great || randint(3) == 1) && !not_unique &&
 			unique_armour(i_ptr))
 			break;
-		    i_ptr->flags1 |= TR2_RES_FIRE;
+		    i_ptr->flags2 |= (TR2_RES_FIRE);
 		    i_ptr->cost += 600L;
 		    i_ptr->name2 = EGO_RESIST_F;
 		    rating += 17;
@@ -614,7 +614,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		    if ((great || randint(3) == 1) && !not_unique &&
 			unique_armour(i_ptr))
 			break;
-		    i_ptr->flags1 |= TR2_RES_COLD;
+		    i_ptr->flags2 |= (TR2_RES_COLD);
 		    i_ptr->cost += 600L;
 		    i_ptr->name2 = EGO_RESIST_C;
 		    rating += 16;
@@ -625,7 +625,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		    if ((great || randint(3) == 1) && !not_unique &&
 			unique_armour(i_ptr))
 			break;
-		    i_ptr->flags1 |= TR2_RES_ELEC;
+		    i_ptr->flags2 |= (TR2_RES_ELEC);
 		    i_ptr->cost += 500L;
 		    i_ptr->name2 = EGO_RESIST_E;
 		    rating += 15;
@@ -637,7 +637,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 
 	/* Cursed armor */
 	else if (magik(cursed)) {
-	    i_ptr->flags1 |= TR3_CURSED;
+	    i_ptr->flags3 |= TR3_CURSED;
 	    i_ptr->toac = -randint(3) - m_bonus(0, 10, level);
 	    i_ptr->cost = 0L;
 	}
@@ -674,7 +674,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		switch (randint(10)) {
 
 		  case 1: case 2: case 3:
-		    i_ptr->flags1 |= TR2_FREE_ACT;
+		    i_ptr->flags2 |= (TR2_FREE_ACT);
 		    i_ptr->cost += 1000L;
 		    i_ptr->name2 = EGO_FREE_ACTION;
 		    rating += 11;
@@ -692,7 +692,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		    break;
 
 		  case 7: case 8: case 9:
-		    i_ptr->flags1 |= TR1_DEX;
+		    i_ptr->flags1 |= (TR1_DEX);
 		    i_ptr->pval = 2 + randint(2);	/* +N DEX */
 		    i_ptr->cost += (i_ptr->pval) * 400;
 		    i_ptr->name2 = EGO_AGILITY;
@@ -704,7 +704,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		    if (((great || randint(3) == 1)) && !not_unique &&
 			unique_armour(i_ptr))
 			break;
-		    i_ptr->flags1 |= TR1_STR;
+		    i_ptr->flags1 |= (TR1_STR);
 		    i_ptr->ident |= ID_SHOW_HITDAM;
 		    i_ptr->ident |= ID_NOSHOW_TYPE;
 		    i_ptr->pval = 1 + randint(4);	/* +N STR */
@@ -724,7 +724,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	else if (magik(cursed)) {
 
 	    /* Cursed */
-	    i_ptr->flags1 |= TR3_CURSED;
+	    i_ptr->flags3 |= TR3_CURSED;
 	    i_ptr->toac = 0 - (m_bonus(1, 20, level));
 
 		/* Permanently damaged */
@@ -779,7 +779,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 				   k_list[i_ptr->k_idx].name))	/* not metal */
 
 		  if (tmp > 6) {
-		    i_ptr->flags1 |= TR3_FEATHER;
+		    i_ptr->flags3 |= TR3_FEATHER;
 		    i_ptr->cost += 250;
 		    i_ptr->name2 = EGO_SLOW_DESCENT;
 		    rating += 7;
@@ -790,7 +790,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		    i_ptr->name2 = EGO_STEALTH;
 		    rating += 16;
 		  } else {	   /* 5,6 */
-		    i_ptr->flags1 |= TR2_FREE_ACT;
+		    i_ptr->flags2 |= (TR2_FREE_ACT);
 		    i_ptr->cost += 500;
 		    i_ptr->cost *= 2;
 		    i_ptr->name2 = EGO_FREE_ACTION;
@@ -799,13 +799,13 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		else
 		 /* is metal boots, different odds since no stealth */
 		  if (tmp < 5) {
-		    i_ptr->flags1 |= TR2_FREE_ACT;
+		    i_ptr->flags2 |= (TR2_FREE_ACT);
 		    i_ptr->cost += 500;
 		    i_ptr->cost *= 2;
 		    i_ptr->name2 = EGO_FREE_ACTION;
 		    rating += 15;
 		  } else {	   /* tmp > 4 */
-		    i_ptr->flags1 |= TR3_FEATHER;
+		    i_ptr->flags3 |= TR3_FEATHER;
 		    i_ptr->cost += 250;
 		    i_ptr->name2 = EGO_SLOW_DESCENT;
 		    rating += 7;
@@ -817,7 +817,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	else if (magik(cursed)) {
 
 	    /* Cursed */
-	    i_ptr->flags1 |= TR3_CURSED;
+	    i_ptr->flags3 |= TR3_CURSED;
 	    i_ptr->toac = 0 - m_bonus(2, 20, level);
 
 		/* Permanent damage */
@@ -831,7 +831,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			i_ptr->name2 = EGO_SLOWNESS;
 			break;
 		    case 2:
-			i_ptr->flags1 |= TR3_AGGRAVATE;
+			i_ptr->flags3 |= TR3_AGGRAVATE;
 			i_ptr->name2 = EGO_NOISE;
 			break;
 		    case 3:
@@ -909,7 +909,8 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		      case 10: case 11:
 			if (!((randint(2) == 1) && !not_unique &&
 			      unique_armour(i_ptr))) {
-			i_ptr->flags2 |= (TR2_RES_LITE | TR3_LITE);
+			i_ptr->flags2 |= (TR2_RES_LITE);
+			i_ptr->flags3 |= (TR3_LITE);
 			i_ptr->cost += 500;
 			i_ptr->name2 = EGO_LIGHT;
 			rating += 6;
@@ -920,8 +921,8 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		      case 12: case 13:
 			if (!((randint(2) == 1) && !not_unique &&
 			      unique_armour(i_ptr))) {
-			i_ptr->flags1 |= TR3_SEE_INVIS;
 			i_ptr->flags2 |= TR2_RES_BLIND;
+			i_ptr->flags3 |= TR3_SEE_INVIS;
 			i_ptr->cost += 1000;
 			i_ptr->name2 = EGO_SEEING;
 			rating += 8;
@@ -932,7 +933,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		     default: /* case 14: */
 			if (!((randint(2) == 1) && !not_unique &&
 			      unique_armour(i_ptr))) {
-			i_ptr->flags2 |= TR3_TELEPATHY;
+			i_ptr->flags3 |= TR3_TELEPATHY;
 			i_ptr->cost += 50000L;
 			i_ptr->name2 = EGO_TELEPATHY;
 			rating += 20;
@@ -951,7 +952,8 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		      case 1:
 			if (!((great || (randint(2) == 1)) &&
 			      !not_unique && unique_armour(i_ptr))) {
-			i_ptr->flags1 |= (TR2_FREE_ACT | TR1_CON | TR1_DEX | TR1_STR);
+			i_ptr->flags1 |= (TR1_STR | TR1_DEX | TR1_CON);
+			i_ptr->flags2 |= (TR2_FREE_ACT);
 			i_ptr->pval = randint(3);	/* +N STR/DEX/CON */
 			i_ptr->cost += 1000 + i_ptr->pval * 500;
 			i_ptr->name2 = EGO_MIGHT;
@@ -970,9 +972,9 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			break;
 
 		      case 3:
-			i_ptr->flags1 |= (TR2_RES_ELEC | TR2_RES_COLD |
-					  TR2_RES_ACID | TR2_RES_FIRE |
-					  TR1_INT);
+			i_ptr->flags1 |= (TR1_INT);
+			i_ptr->flags2 |= (TR2_RES_ELEC | TR2_RES_COLD |
+					  TR2_RES_ACID | TR2_RES_FIRE);
 			i_ptr->pval = randint(3);	/* +N INT */
 			i_ptr->cost += 3000 + i_ptr->pval * 500;
 			i_ptr->name2 = EGO_MAGI;
@@ -990,7 +992,8 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			break;
 
 		      case 5:
-			i_ptr->flags1 |= (TR3_SEE_INVIS | TR1_SEARCH);
+			i_ptr->flags1 |= (TR1_SEARCH);
+			i_ptr->flags3 |= (TR3_SEE_INVIS);
 			i_ptr->pval = 5 * (1 + randint(4));	/* +N Search */
 			i_ptr->cost += 1000 + i_ptr->pval * 100;
 			i_ptr->name2 = EGO_SEEING;
@@ -999,7 +1002,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			break;
 
 		      case 6:
-			i_ptr->flags1 |= TR3_REGEN;
+			i_ptr->flags3 |= TR3_REGEN;
 			i_ptr->cost += 1500;
 			i_ptr->name2 = EGO_REGENERATION;
 			rating += 10;
@@ -1014,7 +1017,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	else if (magik(cursed)) {
 
 	    /* Cursed */
-	    i_ptr->flags1 |= TR3_CURSED;
+	    i_ptr->flags3 |= TR3_CURSED;
 	    i_ptr->toac -= m_bonus(1, 20, level);
 	    i_ptr->cost = 0;
 
@@ -1041,7 +1044,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		    i_ptr->name2 = EGO_WEAKNESS;
 		    break;
 		  case 6:
-		    i_ptr->flags1 |= TR3_TELEPORT;
+		    i_ptr->flags3 |= TR3_TELEPORT;
 		    i_ptr->name2 = EGO_TELEPORTATION;
 		    break;
 		  case 7:
@@ -1082,9 +1085,9 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			    good_item_flag = TRUE;
 			i_ptr->name2 = ART_COLLUIN;
 			i_ptr->toac = 15;
-			i_ptr->flags1 |= (TR2_RES_FIRE | TR2_RES_COLD | TR2_RES_POIS |
+			i_ptr->flags2 |= (TR2_RES_FIRE | TR2_RES_COLD | TR2_RES_POIS |
 					 TR2_RES_ELEC | TR2_RES_ACID);
-			i_ptr->flags2 |= (TR3_ACTIVATE | TR_ARTIFACT);
+			i_ptr->flags3 |= (TR3_ACTIVATE | TR_ARTIFACT);
 			i_ptr->cost = 10000L;
 			made_art_cloak = 1;
 			COLLUIN = 1;
@@ -1100,9 +1103,9 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			i_ptr->name2 = ART_HOLCOLLETH;
 			i_ptr->toac = 4;
 			i_ptr->pval = 2;
-			i_ptr->flags1 |= (TR1_INT | TR1_WIS | TR1_STEALTH |
-					 TR2_RES_ACID);
-			i_ptr->flags2 |= (TR3_ACTIVATE | TR_ARTIFACT);
+			i_ptr->flags1 |= (TR1_INT | TR1_WIS | TR1_STEALTH);
+			i_ptr->flags2 |= (TR2_RES_ACID);
+			i_ptr->flags3 |= (TR3_ACTIVATE | TR_ARTIFACT);
 			i_ptr->ident |= ID_NOSHOW_TYPE;
 			i_ptr->cost = 13000L;
 			made_art_cloak = 1;
@@ -1117,9 +1120,10 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			    good_item_flag = TRUE;
 			i_ptr->name2 = ART_THINGOL;
 			i_ptr->toac = 18;
-			i_ptr->flags1 = (TR1_DEX | TR1_CHR | TR2_RES_FIRE |
+			i_ptr->flags1 = (TR1_DEX | TR1_CHR);
+			i_ptr->flags2 = (TR2_RES_FIRE |
 				   TR2_RES_ACID | TR2_RES_COLD | TR2_FREE_ACT);
-			i_ptr->flags2 = (TR3_ACTIVATE | TR_ARTIFACT);
+			i_ptr->flags3 = (TR3_ACTIVATE | TR_ARTIFACT);
 			i_ptr->pval = 3;
 			i_ptr->cost = 35000L;
 			made_art_cloak = 1;
@@ -1135,9 +1139,9 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			    good_item_flag = TRUE;
 			i_ptr->name2 = ART_THORONGIL;
 			i_ptr->toac = 10;
-			i_ptr->flags1 = (TR3_SEE_INVIS | TR2_FREE_ACT |
+			i_ptr->flags2 = (TR2_FREE_ACT |
 					TR2_RES_ACID);
-			i_ptr->flags2 |= (TR_ARTIFACT);
+			i_ptr->flags3 |= (TR3_SEE_INVIS | TR_ARTIFACT);
 			i_ptr->cost = 8000L;
 			made_art_cloak = 1;
 			THORONGIL = 1;
@@ -1152,8 +1156,9 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			    good_item_flag = TRUE;
 			i_ptr->name2 = ART_COLANNON;
 			i_ptr->toac = 15;
-			i_ptr->flags1 |= (TR1_STEALTH | TR2_RES_ACID);
-			i_ptr->flags2 |= (TR3_ACTIVATE | TR_ARTIFACT);
+			i_ptr->flags1 |= (TR1_STEALTH);
+			i_ptr->flags2 |= (TR2_RES_ACID);
+			i_ptr->flags3 |= (TR3_ACTIVATE | TR_ARTIFACT);
 			i_ptr->pval = 3;
 			i_ptr->cost = 11000L;
 			made_art_cloak = 1;
@@ -1175,9 +1180,10 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			    good_item_flag = TRUE;
 			i_ptr->name2 = ART_LUTHIEN;
 			i_ptr->toac = 20;
-			i_ptr->flags1 = (TR2_RES_FIRE | TR2_RES_COLD |
-				    TR1_INT | TR1_WIS | TR1_CHR | TR2_RES_ACID);
-			i_ptr->flags2 = (TR3_ACTIVATE | TR_ARTIFACT);
+			i_ptr->flags1 = 
+				    (TR1_INT | TR1_WIS | TR1_CHR);
+			i_ptr->flags2 = (TR2_RES_FIRE | TR2_RES_COLD | TR2_RES_ACID);
+			i_ptr->flags3 = (TR3_ACTIVATE | TR_ARTIFACT);
 			i_ptr->pval = 2;
 			i_ptr->cost = 45000L;
 			made_art_cloak = 1;
@@ -1192,9 +1198,10 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			    good_item_flag = TRUE;
 			i_ptr->name2 = ART_TUOR;
 			i_ptr->toac = 12;
-			i_ptr->flags1 = (TR1_STEALTH |
-				  TR2_FREE_ACT | TR3_SEE_INVIS | TR2_RES_ACID);
-			i_ptr->flags2 |= (TR2_IM_ACID | TR_ARTIFACT);
+			i_ptr->flags1 = (TR1_STEALTH);
+			i_ptr->flags2 |= (TR2_IM_ACID | 
+				  TR2_FREE_ACT | TR2_RES_ACID);
+			i_ptr->flags3 |= (TR3_SEE_INVIS | TR_ARTIFACT);
 			i_ptr->pval = 4;
 			i_ptr->cost = 35000L;
 			made_art_cloak = 1;
@@ -1215,7 +1222,8 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		else if (randint(10) == 1) {
 		    i_ptr->toac += 10 + randint(10);
 		    i_ptr->pval = randint(3);
-		    i_ptr->flags1 |= (TR1_STEALTH | TR2_RES_ACID);
+		    i_ptr->flags1 |= (TR1_STEALTH);
+		    i_ptr->flags2 |= (TR2_RES_ACID);
 		    i_ptr->name2 = EGO_AMAN;
 		    i_ptr->cost += 4000 + (100 * i_ptr->toac);
 		    rating += 16;
@@ -1236,7 +1244,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	else if (magik(cursed)) {
 
 	    /* Cursed */
-	    i_ptr->flags1 |= TR3_CURSED;
+	    i_ptr->flags3 |= TR3_CURSED;
 
 		/* Permanent damage */
 		i_ptr->cost = 0;
@@ -1246,7 +1254,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		    case 1:
 			i_ptr->name2 = EGO_IRRITATION;
 			i_ptr->ident |= ID_SHOW_HITDAM;
-			i_ptr->flags1 |= TR3_AGGRAVATE;
+			i_ptr->flags3 |= TR3_AGGRAVATE;
 			i_ptr->toac -= m_bonus(1, 10, level);
 			i_ptr->tohit -= m_bonus(1, 10, level);
 			i_ptr->todam -= m_bonus(1, 10, level);
@@ -1284,7 +1292,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 
 	    else {
 	    /* a cursed digging tool */
-		i_ptr->flags1 |= TR3_CURSED;
+	    i_ptr->flags3 |= TR3_CURSED;
 		i_ptr->pval = (-m_bonus(1, 15, level));
 		i_ptr->cost = 0L;
 	    }
@@ -1322,7 +1330,8 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		if (!stricmp("& Whip", k_list[i_ptr->k_idx].name) &&
 		    (randint(2) == 1)) {
 
-		    i_ptr->flags1 |= (TR1_BRAND_FIRE | TR2_RES_FIRE);
+		    i_ptr->flags1 |= (TR1_BRAND_FIRE);
+		    i_ptr->flags2 |= (TR2_RES_FIRE);
 
 		    /* Better stats */
 		    i_ptr->tohit += 5;
@@ -1351,9 +1360,9 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			    && !not_unique &&
 			    unique_weapon(i_ptr))
 			    break;
-			i_ptr->flags1 |= (TR3_SEE_INVIS | TR_SUST_STAT |
-				      TR1_SLAY_UNDEAD | TR1_SLAY_EVIL | TR1_WIS);
-		    i_ptr->flags2 |= (TR1_SLAY_DEMON | TR3_BLESSED);
+		    i_ptr->flags1 |= (TR1_SLAY_DEMON | TR1_WIS | TR_SUST_STAT |
+				      TR1_SLAY_UNDEAD | TR1_SLAY_EVIL);
+		    i_ptr->flags3 |= (TR3_BLESSED | TR3_SEE_INVIS);
 		    i_ptr->tohit += 5;
 		    i_ptr->todam += 5;
 		    i_ptr->toac += randint(4);
@@ -1374,9 +1383,11 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			if (((randint(2) == 1) || (great)) && !not_unique &&
 			    unique_weapon(i_ptr))
 			    break;
-		    i_ptr->flags1 |= (TR3_FEATHER | TR2_RES_ELEC | TR3_SEE_INVIS |
-				      TR2_FREE_ACT | TR2_RES_COLD | TR2_RES_ACID |
-				      TR2_RES_FIRE | TR3_REGEN | TR1_STEALTH);
+		    i_ptr->flags1 |= (TR1_STEALTH);
+		    i_ptr->flags2 |= (TR2_FREE_ACT |
+				      TR2_RES_FIRE | TR2_RES_COLD |
+				      TR2_RES_ELEC | TR2_RES_ACID);
+		    i_ptr->flags3 |= (TR3_FEATHER | TR3_REGEN | TR3_SEE_INVIS );
 		    i_ptr->tohit += 3;
 		    i_ptr->todam += 3;
 		    i_ptr->toac += 5 + randint(5);
@@ -1393,7 +1404,8 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		    if (((randint(2) == 1) || (great)) && !not_unique &&
 			    unique_weapon(i_ptr))
 			    break;
-		    i_ptr->flags1 |= (TR1_BRAND_FIRE | TR2_RES_FIRE);
+		    i_ptr->flags1 |= (TR1_BRAND_FIRE);
+		    i_ptr->flags2 |= (TR2_RES_FIRE);
 		    i_ptr->tohit += 2;
 		    i_ptr->todam += 3;
 		    i_ptr->cost += 3000L;
@@ -1406,7 +1418,8 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			if (((randint(2) == 1) || (great)) && !not_unique &&
 			    unique_weapon(i_ptr))
 			    break;
-		    i_ptr->flags1 |= (TR1_BRAND_COLD | TR2_RES_COLD);
+		    i_ptr->flags1 |= (TR1_BRAND_COLD);
+		    i_ptr->flags2 |= (TR2_RES_COLD);
 		    i_ptr->tohit += 2;
 		    i_ptr->todam += 2;
 		    i_ptr->cost += 2200L;
@@ -1445,7 +1458,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		    /* One in three is also a blessed wisdom booster */
 		    if (randint(3) == 1) {
 			i_ptr->flags1 |= (TR1_WIS);
-			i_ptr->flags2 |= (TR3_BLESSED);
+			i_ptr->flags3 |= (TR3_BLESSED);
 			i_ptr->pval = m_bonus(0, 3, level);
 			i_ptr->cost += (200 * i_ptr->pval);
 		    }
@@ -1456,7 +1469,8 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		    break;
 
 		  case 13: case 14:
-		    i_ptr->flags1 |= (TR3_SEE_INVIS | TR1_SLAY_UNDEAD);
+		    i_ptr->flags1 |= (TR1_SLAY_UNDEAD);
+		    i_ptr->flags3 |= (TR3_SEE_INVIS);
 		    i_ptr->tohit += 2;
 		    i_ptr->todam += 2;
 		    i_ptr->cost += 3000L;
@@ -1474,7 +1488,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		    break;
 
 		  case 15: case 16: case 17:
-		    i_ptr->flags2 |= TR1_SLAY_ORC;
+		    i_ptr->flags1 |= TR1_SLAY_ORC;
 		    i_ptr->tohit += 2;
 		    i_ptr->todam += 2;
 		    i_ptr->cost += 1200L;
@@ -1484,7 +1498,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		    break;
 
 		  case 18: case 19: case 20:
-		    i_ptr->flags2 |= TR1_SLAY_TROLL;
+		    i_ptr->flags1 |= TR1_SLAY_TROLL;
 		    i_ptr->tohit += 2;
 		    i_ptr->todam += 2;
 		    i_ptr->cost += 1200L;
@@ -1494,7 +1508,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		    break;
 
 		  case 21: case 22: case 23:
-		    i_ptr->flags2 |= TR1_SLAY_GIANT;
+		    i_ptr->flags1 |= TR1_SLAY_GIANT;
 		    i_ptr->tohit += 2;
 		    i_ptr->todam += 2;
 		    i_ptr->cost += 1200L;
@@ -1504,7 +1518,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		    break;
 
 		  case 24: case 25: case 26:
-		    i_ptr->flags2 |= TR1_SLAY_DEMON;
+		    i_ptr->flags1 |= TR1_SLAY_DEMON;
 		    i_ptr->tohit += 2;
 		    i_ptr->todam += 2;
 		    i_ptr->cost += 1200L;
@@ -1517,9 +1531,10 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			if (((randint(2) == 1) || (great)) && !not_unique &&
 			    unique_weapon(i_ptr))
 			    break;
-		    i_ptr->flags1 |= (TR3_SEE_INVIS | TR1_DEX | TR1_CON | TR1_STR |
-				      TR2_FREE_ACT);
-		    i_ptr->flags2 |= TR1_SLAY_ORC;
+		    i_ptr->flags1 |= (TR1_SLAY_ORC |
+				      TR1_DEX | TR1_CON | TR1_STR);
+		    i_ptr->flags2 |= (TR2_FREE_ACT);
+		    i_ptr->flags3 |= (TR3_SEE_INVIS);
 		    i_ptr->tohit += 3 + randint(5);
 		    i_ptr->todam += 3 + randint(5);
 		    i_ptr->pval = 1;
@@ -1535,8 +1550,8 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			if ((i_ptr->tval != TV_SWORD) &&
 			    (i_ptr->tval != TV_POLEARM))
 			    break;
-		    i_ptr->flags1 = TR1_WIS;
-		    i_ptr->flags2 = TR3_BLESSED;
+		    i_ptr->flags3 |= TR3_BLESSED;
+		    i_ptr->flags1 |= TR1_WIS;
 		    i_ptr->tohit += 3;
 		    i_ptr->todam += 3;
 		    i_ptr->pval = randint(3);
@@ -1554,7 +1569,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			    break;
 		    i_ptr->tohit += randint(5);
 		    i_ptr->todam += randint(3);
-		    i_ptr->flags2 = TR1_ATTACK_SPD;
+		    i_ptr->flags1 |= (TR1_ATTACK_SPD);
 		    if (i_ptr->weight <= 80) {
 			i_ptr->pval = randint(3);
 		    }
@@ -1578,13 +1593,13 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	else if (magik(cursed)) {
 	
 	    /* Cursed */
-	    i_ptr->flags1 |= TR3_CURSED;
+	    i_ptr->flags3 |= TR3_CURSED;
 	    i_ptr->tohit = 0 - randint(3) - m_bonus(1, 20, level);
 	    i_ptr->todam = 0 - randint(3) - m_bonus(1, 20, level);
 
 	    /* Permanently cursed Weapon of Morgul */
 	    if (level > (20 + randint(15)) && randint(10) == 1) {
-		i_ptr->flags1 |= (TR3_SEE_INVIS | TR3_AGGRAVATE);
+		i_ptr->flags3 |= (TR3_AGGRAVATE | TR3_SEE_INVIS);
 		i_ptr->tohit -= 15;
 		i_ptr->todam -= 15;
 		i_ptr->toac = -10;
@@ -1645,8 +1660,8 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			i_ptr->tohit = 17;
 			i_ptr->todam = 19;
 			i_ptr->pval = 3;
-			i_ptr->flags1 |= (TR2_FREE_ACT | TR1_DEX);
-			i_ptr->flags2 |= (TR_ARTIFACT);
+			i_ptr->flags1 |= (TR1_DEX);
+			i_ptr->flags2 |= (TR2_FREE_ACT | TR_ARTIFACT);
 			i_ptr->cost = 20000L;
 			BARD = 1;
 			break;
@@ -1665,8 +1680,9 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		    i_ptr->tohit = 10;
 		    i_ptr->todam = 14;
 		    i_ptr->pval = 1;
-		    i_ptr->flags1 |= (TR1_SPEED | TR2_RES_FIRE);
-		    i_ptr->flags2 |= (TR3_ACTIVATE | TR_ARTIFACT);
+		    i_ptr->flags1 |= (TR1_SPEED);
+		    i_ptr->flags2 |= (TR2_RES_FIRE);
+		    i_ptr->flags3 |= (TR3_ACTIVATE | TR_ARTIFACT);
 		    i_ptr->cost = 38000L;
 		    CUBRAGOL = 1;
 		    break;
@@ -1700,7 +1716,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	}
 
 	else if (magik(cursed)) {
-	    i_ptr->flags1 |= TR3_CURSED;
+	    i_ptr->flags3 |= TR3_CURSED;
 	    i_ptr->tohit = 0 - m_bonus(5, 30, level);
 	    i_ptr->todam = 0 - m_bonus(5, 20, level);
 	    i_ptr->cost = 0L;
@@ -1772,7 +1788,8 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		    break;
 
 		  case 4: case 5:
-		    i_ptr->flags1 |= (TR1_BRAND_FIRE|TR2_RES_FIRE); /* RF so won't burn */
+		    i_ptr->flags1 |= (TR1_BRAND_FIRE);
+		    i_ptr->flags2 |= (TR2_RES_FIRE); /* RF so won't burn */
 		    i_ptr->tohit += 2;
 		    i_ptr->todam += 4;
 		    i_ptr->name2 = EGO_FIRE;
@@ -1825,9 +1842,9 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 
 	else if (magik(cursed)) {
 
+	    i_ptr->flags3 |= TR3_CURSED;
 	    i_ptr->tohit = (-randint(10)) - m_bonus(5, 25, level);
 	    i_ptr->todam = (-randint(10)) - m_bonus(5, 25, level);
-	    i_ptr->flags1 |= TR3_CURSED;
 	    i_ptr->cost = 0;
 
 	    if (randint(5)==1) {
@@ -1855,7 +1872,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	    i_ptr->pval = m_bonus(1, 6, level);
 	    if (magik(cursed)) {
 		i_ptr->pval = -m_bonus(1, 10, level);
-		i_ptr->flags1 |= TR3_CURSED;
+		i_ptr->flags3 |= TR3_CURSED;
 		i_ptr->cost = -i_ptr->cost;
 	    } else {
 		i_ptr->cost += i_ptr->pval * 100;
@@ -1867,7 +1884,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 
 	    /* Cursed Ring */
 	    if (magik(cursed)) {
-		i_ptr->flags1 |= TR3_CURSED;
+		i_ptr->flags3 |= TR3_CURSED;
 		i_ptr->pval = -randint(3);
 		i_ptr->cost = -i_ptr->cost;
 	    } else {
@@ -1886,7 +1903,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	    i_ptr->pval = 5 * m_bonus(1, 10, level);
 	    i_ptr->cost += i_ptr->pval * 30;
 	    if (magik(cursed)) {
-		i_ptr->flags1 |= TR3_CURSED;
+		i_ptr->flags3 |= TR3_CURSED;
 		i_ptr->pval = -i_ptr->pval;
 		i_ptr->cost = -i_ptr->cost;
 	    }
@@ -1914,7 +1931,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	    i_ptr->todam += 3 + randint(10);
 	    i_ptr->cost += i_ptr->todam * 100;
 	    if (magik(cursed)) {
-		i_ptr->flags1 |= TR3_CURSED;
+		i_ptr->flags3 |= TR3_CURSED;
 		i_ptr->todam = -i_ptr->todam;
 		i_ptr->cost = -i_ptr->cost;
 	    }
@@ -1926,7 +1943,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	    i_ptr->tohit += 3 + randint(10);
 	    i_ptr->cost += i_ptr->tohit * 100;
 	    if (magik(cursed)) {
-		i_ptr->flags1 |= TR3_CURSED;
+		i_ptr->flags3 |= TR3_CURSED;
 		i_ptr->tohit = -i_ptr->tohit;
 		i_ptr->cost = -i_ptr->cost;
 	    }
@@ -1938,7 +1955,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	    i_ptr->toac += 4 + randint(5);
 	    i_ptr->cost += i_ptr->toac * 100;
 	    if (magik(cursed)) {
-		i_ptr->flags1 |= TR3_CURSED;
+		i_ptr->flags3 |= TR3_CURSED;
 		i_ptr->toac = -i_ptr->toac;
 		i_ptr->cost = -i_ptr->cost;
 	    }
@@ -1962,7 +1979,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	    i_ptr->tohit += 2 + randint(3);
 	    i_ptr->cost += (i_ptr->tohit + i_ptr->todam) * 100;
 	    if (magik(cursed)) {
-		i_ptr->flags1 |= TR3_CURSED;
+		i_ptr->flags3 |= TR3_CURSED;
 		i_ptr->tohit = 0 - i_ptr->tohit;
 		i_ptr->todam = 0 - i_ptr->todam;
 		i_ptr->cost = -i_ptr->cost;
@@ -1977,7 +1994,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	if (i_ptr->sval < 2) {
 	    i_ptr->pval = m_bonus(1, 5, level);
 	    if (magik(cursed)) {
-		i_ptr->flags1 |= TR3_CURSED;
+		i_ptr->flags3 |= TR3_CURSED;
 		i_ptr->pval = -m_bonus(1, 5, level);
 		i_ptr->cost = -i_ptr->cost;
 	    } else {
@@ -1987,7 +2004,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	else if (i_ptr->sval == 2) { /* searching */
 	    i_ptr->pval = 5 * (randint(3) + m_bonus(0, 8, level));
 	    if (magik(cursed)) {
-		i_ptr->flags1 |= TR3_CURSED;
+		i_ptr->flags3 |= TR3_CURSED;
 		i_ptr->pval = -i_ptr->pval;
 		i_ptr->cost = -i_ptr->cost;
 	    } else
@@ -1999,10 +2016,10 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	    i_ptr->toac = randint(4) + m_bonus(0, 8, level) - 2;
 	    i_ptr->cost += 20 * i_ptr->pval + 50 * i_ptr->toac;
 	    if (i_ptr->toac < 0) /* sort-of cursed...just to be annoying -CWS */
-		i_ptr->flags1 |= TR3_CURSED;
+		i_ptr->flags3 |= TR3_CURSED;
 	}
 	else if (i_ptr->sval == 9) { /* amulet of DOOM */
-	    i_ptr->flags1 |= TR3_CURSED;
+	    i_ptr->flags3 |= TR3_CURSED;
 	    i_ptr->pval = 0 - randint(5) - m_bonus(2, 10, level);
 	    i_ptr->toac = 0 - randint(3) - m_bonus(0, 6, level);
 	}
@@ -2822,7 +2839,7 @@ void check_strength()
 
     if (p_ptr->pclass == 2 && !notlike) {
         if ((i_ptr->tval == TV_SWORD || i_ptr->tval == TV_POLEARM)
-            && ((i_ptr->flags2 & TR3_BLESSED) == 0)) {
+            && ((i_ptr->flags3 & TR3_BLESSED) == 0)) {
             notlike = TRUE;
             msg_print("You do not feel comfortable with your weapon.");
         }
@@ -2831,7 +2848,7 @@ void check_strength()
             notlike = FALSE;
             msg_print("You feel comfortable again after removing that weapon.");
         } else if (!(i_ptr->tval == TV_SWORD || i_ptr->tval == TV_POLEARM)
-		   || !((i_ptr->flags2 & TR3_BLESSED) == 0)) {
+		   || !((i_ptr->flags3 & TR3_BLESSED) == 0)) {
             notlike = FALSE;
             msg_print("You feel comfortable with your weapon once more.");
         }

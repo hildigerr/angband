@@ -90,7 +90,7 @@ static int minus_ac(u32b typ_dam)
 	i_ptr = &inventory[j];
 	switch (typ_dam) {
 	  case TR2_RES_ACID:
-	    if ((i_ptr->flags1 & TR2_RES_ACID) || (i_ptr->flags2 & TR2_IM_ACID) ||
+	    if ((i_ptr->flags2 & TR2_RES_ACID) || (i_ptr->flags2 & TR2_IM_ACID) ||
 		((i_ptr->flags2 & TR_ARTIFACT) && (randint(5)>2)))
 		do_damage = FALSE;
 	    else

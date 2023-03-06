@@ -2076,10 +2076,10 @@ static void make_move(int m_idx, int *mm, u32b *rcflags1)
 			if (i_ptr->flags1 & TR1_SLAY_DRAGON) flg |= MF2_DRAGON;
 			if (i_ptr->flags1 & TR1_KILL_DRAGON) flg |= MF2_DRAGON;                            
 			if (i_ptr->flags1 & TR1_SLAY_UNDEAD) flg |= MF2_UNDEAD;
-			if (i_ptr->flags2 & TR1_SLAY_DEMON) flg |= MF2_DEMON;
-			if (i_ptr->flags2 & TR1_SLAY_TROLL) flg |= MF2_TROLL;
-			if (i_ptr->flags2 & TR1_SLAY_GIANT) flg |= MF2_GIANT;
-			if (i_ptr->flags2 & TR1_SLAY_ORC) flg |= MF2_ORC;
+			if (i_ptr->flags1 & TR1_SLAY_DEMON) flg |= MF2_DEMON;
+			if (i_ptr->flags1 & TR1_SLAY_TROLL) flg |= MF2_TROLL;
+			if (i_ptr->flags1 & TR1_SLAY_GIANT) flg |= MF2_GIANT;
+			if (i_ptr->flags1 & TR1_SLAY_ORC) flg |= MF2_ORC;
 
 		    /* The object cannot be picked up by the monster */
 		    if (artifact_p(i_ptr) || (r_ptr->cflags2 & flg)) {

@@ -326,6 +326,7 @@ static void rd_item(inven_type *i_ptr)
 
     rd_u32b(&i_ptr->flags1);
     rd_u32b(&i_ptr->flags2);
+    rd_u32b(&i_ptr->flags3);
 
     rd_string(i_ptr->inscrip);
 }

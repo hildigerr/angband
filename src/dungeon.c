@@ -45,7 +45,7 @@ static cptr value_check(inven_type *i_ptr)
     if (i_ptr->inscrip[0] != '\0') return 0;
 
     /* Cursed items (including artifacts/ego-weapons) */
-    if (i_ptr->flags1 & TR3_CURSED ) {
+    if (i_ptr->flags3 & TR3_CURSED ) {
 
     if (i_ptr->name2 == SN_NULL) return "worthless";
 
@@ -385,7 +385,7 @@ void dungeon(void)
 
 	if (player_light)
 	    if (i_ptr->pval > 0) {
-		if (!(i_ptr->flags2 & TR3_LITE))
+		if (!(i_ptr->flags3 & TR3_LITE))
 
 		/* Decrease life-span */
 		i_ptr->pval--;   /* don't dec if perm light -CFT */
@@ -401,7 +401,7 @@ void dungeon(void)
 		/* The light is getting dim */
 		else if ((i_ptr->pval < 40) && (randint(5) == 1) &&
 			   (p_ptr->blind < 1) &&
-			   !(i_ptr->flags2 & TR3_LITE)) { /* perm light doesn't dim -CFT */
+			   !(i_ptr->flags3 & TR3_LITE)) { /* perm light doesn't dim -CFT */
 		    disturb(0, 0);
 		    msg_print("Your light is growing faint.");
 		}
@@ -414,7 +414,7 @@ void dungeon(void)
 		}
 	    }
 	else if (i_ptr->pval > 0 || p_ptr->lite) {
-	    if (!(i_ptr->flags2 & TR3_LITE))
+	    if (!(i_ptr->flags3 & TR3_LITE))
 		i_ptr->pval--;	   /* don't dec if perm light -CFT */
 	    player_light = TRUE;
 	    disturb(0, 1);
@@ -881,7 +881,7 @@ void dungeon(void)
 		else {
 		    p_ptr->see_inv = FALSE;	/* unless item grants it */
 		    for (i = INVEN_WIELD; i <= INVEN_LITE; i++)
-			if (TR3_SEE_INVIS & inventory[i].flags1)
+			if (TR3_SEE_INVIS & inventory[i].flags3)
 			    p_ptr->see_inv = TRUE;
 		}
 		update_monsters();
@@ -1081,7 +1081,7 @@ void dungeon(void)
 	    /* Skip fake objects */
 	    if (i_ptr->tval == TV_NOTHING) continue;
 
-	    if (i_ptr->flags2 & TR3_ACTIVATE) {
+	    if (i_ptr->flags3 & TR3_ACTIVATE) {
 
 	    /* Let activatable objects recharge */
 	    if (i_ptr->timeout > 0) i_ptr->timeout--;
@@ -1100,7 +1100,7 @@ void dungeon(void)
 
 	    i_ptr = &inventory[i];
 
-	    if (i_ptr->tval == TV_ROD && (i_ptr->flags2 & TR3_ACTIVATE)) {
+	    if (i_ptr->tval == TV_ROD && (i_ptr->flags3 & TR3_ACTIVATE)) {
 		if (i_ptr->timeout > 0) i_ptr->timeout--;
 	    }
 	}
@@ -1449,7 +1449,7 @@ int special_check(inven_type *t_ptr)
 	return 0;
     if (t_ptr->ident & ID_DAMD)
 	return 0;
-    if (t_ptr->flags1 & TR3_CURSED)
+    if (t_ptr->flags3 & TR3_CURSED)
 	return -1;
     if (t_ptr->tval != TV_HARD_ARMOR && t_ptr->tval != TV_SWORD &&
 	t_ptr->tval != TV_SOFT_ARMOR && t_ptr->tval != TV_SHIELD &&

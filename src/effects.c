@@ -1042,12 +1042,12 @@ void do_cmd_read_scroll(void)
 	    if (inventory[INVEN_FEET].tval != TV_NOTHING)  tmp[k++] = INVEN_FEET;
 
 	    if (k > 0) l = tmp[randint(k) - 1];
-	    if (TR3_CURSED & inventory[INVEN_BODY].flags1) l = INVEN_BODY;
-	    else if (TR3_CURSED & inventory[INVEN_ARM].flags1) l = INVEN_ARM;
-	    else if (TR3_CURSED & inventory[INVEN_OUTER].flags1) l = INVEN_OUTER;
-	    else if (TR3_CURSED & inventory[INVEN_HEAD].flags1) l = INVEN_HEAD;
-	    else if (TR3_CURSED & inventory[INVEN_HANDS].flags1) l = INVEN_HANDS;
-	    else if (TR3_CURSED & inventory[INVEN_FEET].flags1) l = INVEN_FEET;
+	    if (TR3_CURSED & inventory[INVEN_BODY].flags3) l = INVEN_BODY;
+	    else if (TR3_CURSED & inventory[INVEN_ARM].flags3) l = INVEN_ARM;
+	    else if (TR3_CURSED & inventory[INVEN_OUTER].flags3) l = INVEN_OUTER;
+	    else if (TR3_CURSED & inventory[INVEN_HEAD].flags3) l = INVEN_HEAD;
+	    else if (TR3_CURSED & inventory[INVEN_HANDS].flags3) l = INVEN_HANDS;
+	    else if (TR3_CURSED & inventory[INVEN_FEET].flags3) l = INVEN_FEET;
 
 	    if (l > 0) {
 	    i_ptr = &inventory[l];
@@ -1262,7 +1262,7 @@ void do_cmd_read_scroll(void)
 		    i_ptr->name2 = EGO_SHATTERED;
 		    i_ptr->tohit = (-randint(5) - randint(5));
 		    i_ptr->todam = (-randint(5) - randint(5));
-		    i_ptr->flags1 = TR3_CURSED;
+		    i_ptr->flags3 = TR3_CURSED;
 		    i_ptr->flags2 = 0;
 		    i_ptr->damage[0] = i_ptr->damage[1] = 1;
 		    i_ptr->toac = 0;	/* in case defender... */
@@ -1290,12 +1290,12 @@ void do_cmd_read_scroll(void)
 	    if (inventory[INVEN_FEET].tval != TV_NOTHING)  tmp[k++] = INVEN_FEET;
 
 	    if (k > 0) l = tmp[randint(k) - 1];
-	    if (TR3_CURSED & inventory[INVEN_BODY].flags1) l = INVEN_BODY;
-	    else if (TR3_CURSED & inventory[INVEN_ARM].flags1) l = INVEN_ARM;
-	    else if (TR3_CURSED & inventory[INVEN_OUTER].flags1) l = INVEN_OUTER;
-	    else if (TR3_CURSED & inventory[INVEN_HEAD].flags1) l = INVEN_HEAD;
-	    else if (TR3_CURSED & inventory[INVEN_HANDS].flags1) l = INVEN_HANDS;
-	    else if (TR3_CURSED & inventory[INVEN_FEET].flags1) l = INVEN_FEET;
+	    if (TR3_CURSED & inventory[INVEN_BODY].flags3) l = INVEN_BODY;
+	    else if (TR3_CURSED & inventory[INVEN_ARM].flags3) l = INVEN_ARM;
+	    else if (TR3_CURSED & inventory[INVEN_OUTER].flags3) l = INVEN_OUTER;
+	    else if (TR3_CURSED & inventory[INVEN_HEAD].flags3) l = INVEN_HEAD;
+	    else if (TR3_CURSED & inventory[INVEN_HANDS].flags3) l = INVEN_HANDS;
+	    else if (TR3_CURSED & inventory[INVEN_FEET].flags3) l = INVEN_FEET;
 
 	    if (l > 0) {
 	    i_ptr = &inventory[l];
@@ -1353,7 +1353,7 @@ void do_cmd_read_scroll(void)
 		/* Blast the armor */
 		py_bonuses(i_ptr, -1);	/* take off current bonuses -CFT */
 		i_ptr->name2 = EGO_BLASTED;
-		i_ptr->flags1 = TR3_CURSED;
+		i_ptr->flags3 = TR3_CURSED;
 		i_ptr->flags2 = 0;
 		i_ptr->toac = (-randint(5) - randint(5));
 		i_ptr->tohit = i_ptr->todam = 0;
@@ -2386,7 +2386,7 @@ void do_cmd_activate(void)
 
     for (i = 22; i < (INVEN_ARRAY_SIZE - 1); i++) {
 
-	if ((inventory[i].flags2 & TR3_ACTIVATE) && (known2_p(&(inventory[i])))) {
+	if ((inventory[i].flags3 & TR3_ACTIVATE) && (known2_p(&(inventory[i])))) {
 	    num++;
 	    if (!flag)
 		first = i;
@@ -2413,7 +2413,7 @@ void do_cmd_activate(void)
 	    j=0;
 	    if (!redraw) {
 		for (i = first; i < (INVEN_ARRAY_SIZE - 1); i++) {
-		    if ((inventory[i].flags2 & TR3_ACTIVATE) &&
+		    if ((inventory[i].flags3 & TR3_ACTIVATE) &&
 			known2_p(&(inventory[i]))) {
 			objdes(tmp2, &inventory[i], TRUE);
 			sprintf(tmp, "%c) %-61s", 'a' + j, tmp2);
@@ -2458,7 +2458,7 @@ void do_cmd_activate(void)
 	    flag = TRUE;
 	    j = 0;
 	    for (i = first; i < (INVEN_ARRAY_SIZE - 1); i++) {
-		if ((inventory[i].flags2 & TR3_ACTIVATE) && known2_p(&(inventory[i]))) {
+		if ((inventory[i].flags3 & TR3_ACTIVATE) && known2_p(&(inventory[i]))) {
 		    if (j == choice)
 			break;
 		    j++;
@@ -2669,14 +2669,15 @@ void do_cmd_activate(void)
 		    for (a = 0; a < INVEN_WIELD; a++)
 /* search for bolts that are not cursed and are not already named -CWS */
 			if ((inventory[a].tval == TV_BOLT) &&
-			    !(inventory[a].flags1 & TR3_CURSED) &&
+			    !(inventory[a].flags3 & TR3_CURSED) &&
 			    (inventory[a].name2 == SN_NULL))
 			    break;
 		    if (a < INVEN_WIELD) {
 			i_ptr = &inventory[a];
 			msg_print("Your bolts are covered in a fiery aura!");
 			i_ptr->name2 = EGO_FIRE;
-			i_ptr->flags1 |= (TR1_BRAND_FIRE|TR2_RES_FIRE);
+			i_ptr->flags1 |= TR1_BRAND_FIRE;
+			i_ptr->flags2 |= TR2_RES_FIRE;
 			i_ptr->cost += 25;
 			enchant(i_ptr, 3+randint(3), ENCH_TOHIT|ENCH_TODAM);
 			calc_bonuses();

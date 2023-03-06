@@ -516,7 +516,7 @@ void calc_mana(int stat)
 
 	/* good gauntlets of dexterity or free action do not hurt spells */
 	if ((i_ptr->tval != TV_NOTHING) &&
-	    !((i_ptr->flags1 & TR2_FREE_ACT) ||
+	    !((i_ptr->flags2 & TR2_FREE_ACT) ||
 	      ((i_ptr->flags1 & TR1_DEX) &&
 	       (i_ptr->pval > 0)))) {
 
@@ -1452,12 +1452,12 @@ void pray()
 		if (inventory[INVEN_FEET].tval)  tmp[k++] = INVEN_FEET;
 
 		if (k > 0) l = tmp[randint(k) - 1];
-		if (TR3_CURSED & inventory[INVEN_BODY].flags1) l = INVEN_BODY;
-		else if (TR3_CURSED & inventory[INVEN_ARM].flags1) l = INVEN_ARM;
-		else if (TR3_CURSED & inventory[INVEN_OUTER].flags1) l = INVEN_OUTER;
-		else if (TR3_CURSED & inventory[INVEN_HEAD].flags1) l = INVEN_HEAD;
-		else if (TR3_CURSED & inventory[INVEN_HANDS].flags1) l = INVEN_HANDS;
-		else if (TR3_CURSED & inventory[INVEN_FEET].flags1) l = INVEN_FEET;
+		if (TR3_CURSED & inventory[INVEN_BODY].flags3) l = INVEN_BODY;
+		else if (TR3_CURSED & inventory[INVEN_ARM].flags3) l = INVEN_ARM;
+		else if (TR3_CURSED & inventory[INVEN_OUTER].flags3) l = INVEN_OUTER;
+		else if (TR3_CURSED & inventory[INVEN_HEAD].flags3) l = INVEN_HEAD;
+		else if (TR3_CURSED & inventory[INVEN_HANDS].flags3) l = INVEN_HANDS;
+		else if (TR3_CURSED & inventory[INVEN_FEET].flags3) l = INVEN_FEET;
 
 		if (l > 0) {
 
@@ -1485,7 +1485,7 @@ void pray()
 	    /* object.  the curse would "taint" the magic -CFT */
 	    if ((i_ptr->tval) &&
 		(!i_ptr->name2) &&
-		(!(i_ptr->flags1 & TR3_CURSED))) {
+		(!(i_ptr->flags3 & TR3_CURSED))) {
 
 		char tmp_str[100], out_val[100];
 
@@ -1494,13 +1494,15 @@ void pray()
 			    "Your %s is covered in a fiery shield!",
 			    tmp_str);
 		    i_ptr->name2 |= EGO_FT;
-		    i_ptr->flags1 |= (TR1_BRAND_FIRE | TR2_RES_FIRE);
+		    i_ptr->flags1 |= (TR1_BRAND_FIRE);
+		    i_ptr->flags2 |= (TR2_RES_FIRE);
 		}
 		else {
 		    sprintf(out_val, "Your %s glows deep, icy blue!",
 			    tmp_str);
 		    i_ptr->name2 |= EGO_FB;
-		    i_ptr->flags1 |= (TR1_BRAND_COLD | TR2_RES_COLD);
+		    i_ptr->flags1 |= (TR1_BRAND_COLD);
+		    i_ptr->flags2 |= (TR2_RES_COLD);
 		}
 
 		objdes(tmp_str, i_ptr, FALSE);

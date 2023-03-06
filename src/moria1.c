@@ -640,26 +640,29 @@ void calc_bonuses()
 	i_ptr++;
     }
 
-    if (TR3_SLOW_DIGEST & item_flags1) p_ptr->slow_digest = TRUE;
-    if (TR3_AGGRAVATE & item_flags1) p_ptr->aggravate = TRUE;
-    if (TR3_TELEPORT & item_flags1) p_ptr->teleport = TRUE;
-    if (TR3_REGEN & item_flags1) p_ptr->regenerate = TRUE;
-    if (TR2_RES_FIRE & item_flags1) p_ptr->resist_fire = TRUE;
-    if (TR2_RES_ACID & item_flags1) p_ptr->resist_acid = TRUE;
-    if (TR2_RES_COLD & item_flags1) p_ptr->resist_cold = TRUE;
-    if (TR2_RES_POIS & item_flags1) p_ptr->resist_pois = TRUE;
+    /* Process the item flags */
+    if (TR3_SLOW_DIGEST & item_flags3) p_ptr->slow_digest = TRUE;
+    if (TR3_AGGRAVATE & item_flags3) p_ptr->aggravate = TRUE;
+    if (TR3_TELEPORT & item_flags3) p_ptr->teleport = TRUE;
+    if (TR3_REGEN & item_flags3) p_ptr->regenerate = TRUE;
+    if (TR3_TELEPATHY & item_flags3) p_ptr->telepathy = TRUE;
+    if (TR3_LITE & item_flags3) p_ptr->lite = TRUE;
+    if (TR3_SEE_INVIS & item_flags3) p_ptr->see_inv = TRUE;
+    if (TR3_FEATHER & item_flags3) p_ptr->ffall = TRUE;
+    if (TR2_FREE_ACT & item_flags2) p_ptr->free_act = TRUE;
     if (TR2_HOLD_LIFE & item_flags2) p_ptr->hold_life = TRUE;
-    if (TR3_TELEPATHY & item_flags2) p_ptr->telepathy = TRUE;
+    
+    /* Immunity and resistance */
     if (TR2_IM_FIRE & item_flags2) p_ptr->immune_fire = TRUE;
     if (TR2_IM_ACID & item_flags2) p_ptr->immune_acid = TRUE;
     if (TR2_IM_COLD & item_flags2) p_ptr->immune_cold = TRUE;
     if (TR2_IM_ELEC & item_flags2) p_ptr->immune_elec = TRUE;
     if (TR2_IM_POIS & item_flags2) p_ptr->immune_pois = TRUE;
-    if (TR3_LITE & item_flags2) p_ptr->lite = TRUE;
-    if (TR2_FREE_ACT & item_flags1) p_ptr->free_act = TRUE;
-    if (TR3_SEE_INVIS & item_flags1) p_ptr->see_inv = TRUE;
-    if (TR2_RES_ELEC & item_flags1) p_ptr->resist_elec = TRUE;
-    if (TR3_FEATHER & item_flags1) p_ptr->ffall = TRUE;
+    if (TR2_RES_ACID & item_flags2) p_ptr->resist_acid = TRUE;
+    if (TR2_RES_ELEC & item_flags2) p_ptr->resist_elec = TRUE;
+    if (TR2_RES_FIRE & item_flags2) p_ptr->resist_fire = TRUE;
+    if (TR2_RES_COLD & item_flags2) p_ptr->resist_cold = TRUE;
+    if (TR2_RES_POIS & item_flags2) p_ptr->resist_pois = TRUE;
     if (TR2_RES_CONF & item_flags2) p_ptr->resist_conf = TRUE;
     if (TR2_RES_SOUND & item_flags2) p_ptr->resist_sound = TRUE;
     if (TR2_RES_LITE & item_flags2) p_ptr->resist_lite = TRUE;

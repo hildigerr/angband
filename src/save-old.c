@@ -182,6 +182,91 @@ static void rd_string(char *str)
 
 
 
+/*
+ * Convert the old savefile "flags" into the new ones
+ * This just converts the flags that are the same, see
+ * "rd_item_old()" for total conversion method.
+ */
+static void repair_item_flags_old(inven_type *i_ptr)
+{
+    int i = 0;
+    u32b f1 = i_ptr->flags1;
+    u32b f2 = i_ptr->flags2;
+
+
+    /* Wipe the flags */
+    i_ptr->flags1 = i_ptr->flags2 = i_ptr->flags3 = 0L;
+
+
+    /*** Old Flag Set #1 ***/
+
+    if (f1 & 0x00000001L) i_ptr->flags1 |= TR1_STR;
+    if (f1 & 0x00000002L) i_ptr->flags1 |= TR1_INT;
+    if (f1 & 0x00000004L) i_ptr->flags1 |= TR1_WIS;
+    if (f1 & 0x00000008L) i_ptr->flags1 |= TR1_DEX;
+    if (f1 & 0x00000010L) i_ptr->flags1 |= TR1_CON;
+    if (f1 & 0x00000020L) i_ptr->flags1 |= TR1_CHR;
+    if (f1 & 0x00000040L) i_ptr->flags1 |= TR1_SEARCH;
+    if (f1 & 0x00000080L) i_ptr->flags3 |= TR3_SLOW_DIGEST;
+    if (f1 & 0x00000100L) i_ptr->flags1 |= TR1_STEALTH;
+    if (f1 & 0x00000200L) i_ptr->flags3 |= TR3_AGGRAVATE;
+    if (f1 & 0x00000400L) i_ptr->flags3 |= TR3_TELEPORT;
+    if (f1 & 0x00000800L) i_ptr->flags3 |= TR3_REGEN;
+    if (f1 & 0x00001000L) i_ptr->flags1 |= TR1_SPEED;
+    if (f1 & 0x00002000L) i_ptr->flags1 |= TR1_SLAY_DRAGON;
+    if (f1 & 0x00004000L) i_ptr->flags1 |= TR1_SLAY_ANIMAL;
+    if (f1 & 0x00008000L) i_ptr->flags1 |= TR1_SLAY_EVIL;
+    if (f1 & 0x00010000L) i_ptr->flags1 |= TR1_SLAY_UNDEAD;
+    if (f1 & 0x00020000L) i_ptr->flags1 |= TR1_BRAND_COLD;
+    if (f1 & 0x00040000L) i_ptr->flags1 |= TR1_BRAND_FIRE;
+    if (f1 & 0x00080000L) i_ptr->flags2 |= TR2_RES_FIRE;
+    if (f1 & 0x00100000L) i_ptr->flags2 |= TR2_RES_ACID;
+    if (f1 & 0x00200000L) i_ptr->flags2 |= TR2_RES_COLD;
+    if (f1 & 0x00400000L) i_ptr->flags2 = TR_SUST_STAT;
+    if (f1 & 0x00800000L) i_ptr->flags2 |= TR2_FREE_ACT;
+    if (f1 & 0x01000000L) i_ptr->flags3 |= TR3_SEE_INVIS;
+    if (f1 & 0x02000000L) i_ptr->flags2 |= TR2_RES_ELEC;
+    if (f1 & 0x04000000L) i_ptr->flags3 |= TR3_FEATHER;
+    if (f1 & 0x08000000L) i_ptr->flags1 |= TR1_KILL_DRAGON;
+    if (f1 & 0x10000000L) i_ptr->flags2 |= TR2_RES_POIS;
+    if (f1 & 0x20000000L) i_ptr->flags1 |= TR1_TUNNEL;
+    if (f1 & 0x40000000L) i_ptr->flags1 |= TR1_INFRA;
+    if (f1 & 0x80000000L) i_ptr->flags3 |= TR3_CURSED;
+
+
+    /*** Old Flag Set #2 ***/
+
+    if (f2 & 0x00000001L) i_ptr->flags1 |= TR1_SLAY_DEMON;
+    if (f2 & 0x00000002L) i_ptr->flags1 |= TR1_SLAY_TROLL;
+    if (f2 & 0x00000004L) i_ptr->flags1 |= TR1_SLAY_GIANT;
+    if (f2 & 0x00000008L) i_ptr->flags2 |= TR2_HOLD_LIFE;
+    if (f2 & 0x00000010L) i_ptr->flags1 |= TR1_SLAY_ORC;
+    if (f2 & 0x00000020L) i_ptr->flags3 |= TR3_TELEPATHY;
+    if (f2 & 0x00000040L) i_ptr->flags2 |= TR2_IM_FIRE;
+    if (f2 & 0x00000080L) i_ptr->flags2 |= TR2_IM_COLD;
+    if (f2 & 0x00000100L) i_ptr->flags2 |= TR2_IM_ACID;
+    if (f2 & 0x00000200L) i_ptr->flags2 |= TR2_IM_ELEC;
+    if (f2 & 0x00000400L) i_ptr->flags3 |= TR3_LITE;
+    if (f2 & 0x00000800L) i_ptr->flags3 |= TR3_ACTIVATE;
+    if (f2 & 0x00001000L) i_ptr->flags1 |= TR1_BRAND_ELEC;
+    if (f2 & 0x00002000L) i_ptr->flags1 |= TR1_IMPACT;
+    if (f2 & 0x00004000L) i_ptr->flags2 |= TR2_IM_POIS;
+    if (f2 & 0x00008000L) i_ptr->flags2 |= TR2_RES_CONF;
+    if (f2 & 0x00010000L) i_ptr->flags2 |= TR2_RES_SOUND;
+    if (f2 & 0x00020000L) i_ptr->flags2 |= TR2_RES_LITE;
+    if (f2 & 0x00040000L) i_ptr->flags2 |= TR2_RES_DARK;
+    if (f2 & 0x00080000L) i_ptr->flags2 |= TR2_RES_CHAOS;
+    if (f2 & 0x00100000L) i_ptr->flags2 |= TR2_RES_DISEN;
+    if (f2 & 0x00200000L) i_ptr->flags2 |= TR2_RES_SHARDS;
+    if (f2 & 0x00400000L) i_ptr->flags2 |= TR2_RES_NEXUS;
+    if (f2 & 0x00800000L) i_ptr->flags2 |= TR2_RES_BLIND;
+    if (f2 & 0x01000000L) i_ptr->flags2 |= TR2_RES_NETHER;
+    if (f2 & 0x02000000L) i_ptr->flags2 |= TR_ARTIFACT;
+    if (f2 & 0x04000000L) i_ptr->flags3 |= TR3_BLESSED;
+    if (f2 & 0x08000000L) i_ptr->flags1 |= TR1_ATTACK_SPD;
+    if (f2 & 0x10000000L) i_ptr->flags2 |= TR2_RES_FEAR;
+}
+
 
 /*
  * Read an old-version "item" structure
@@ -452,6 +537,18 @@ static errr rd_item_old(inven_type *i_ptr)
 
     /* XXX Hack -- un-repair invisible traps */
     if (invis_trap) i_ptr->tval = TV_INVIS_TRAP;
+
+
+
+    /* Repair the "flags" in wearable objects */
+    if (wearable_p(i_ptr)) {
+
+
+	/* Completely repair old flags */
+	repair_item_flags_old(i_ptr);
+
+    }
+
 
     /* Success */
     return (0);

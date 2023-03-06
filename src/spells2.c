@@ -1176,10 +1176,10 @@ int enchant(inven_type *i_ptr, int n, byte eflag)
 		res = TRUE;
 
 		/* only when you get it above -1 -CFT */
-		if ((i_ptr->flags1 & TR3_CURSED) &&
+		if ((i_ptr->flags3 & TR3_CURSED) &&
 		    (i_ptr->tohit >= 0) && (randint(4)==1)) {
 		    msg_print("The curse is broken! ");
-		    i_ptr->flags1 &= ~TR3_CURSED;
+		    i_ptr->flags3 &= ~TR3_CURSED;
 		    i_ptr->ident &= ~ID_DAMD;
 		}
 	    }
@@ -1197,10 +1197,10 @@ int enchant(inven_type *i_ptr, int n, byte eflag)
 		res = TRUE;
 
 		/* only when you get it above -1 -CFT */
-		if ((i_ptr->flags1 & TR3_CURSED) &&
+		if ((i_ptr->flags3 & TR3_CURSED) &&
 		    (i_ptr->todam >= 0) && (randint(4)==1)) {
 		    msg_print("The curse is broken! ");
-		    i_ptr->flags1 &= ~TR3_CURSED;
+		    i_ptr->flags3 &= ~TR3_CURSED;
 		    i_ptr->ident &= ~ID_DAMD;
 		}
 	    }
@@ -1218,10 +1218,10 @@ int enchant(inven_type *i_ptr, int n, byte eflag)
 		res = TRUE;
 
 		/* only when you get it above -1 -CFT */
-		if ((i_ptr->flags1 & TR3_CURSED) &&
+		if ((i_ptr->flags3 & TR3_CURSED) &&
 		    (i_ptr->toac >= 0) && (randint(4)==1)) {
 		    msg_print("The curse is broken! ");
-		    i_ptr->flags1 &= ~TR3_CURSED;
+		    i_ptr->flags3 &= ~TR3_CURSED;
 		    i_ptr->ident &= ~ID_DAMD;
 		}
 	    }
@@ -1355,14 +1355,14 @@ int remove_curse()
 
 	i_ptr = &inventory[i];
 
-	if ((TR3_CURSED & i_ptr->flags1) &&
+	if ((TR3_CURSED & i_ptr->flags3) &&
 	    (i_ptr->name2 != EGO_MORGUL) &&
 	    (i_ptr->name2 != ART_CALRIS) &&
 	    (i_ptr->name2 != ART_MORMEGIL)) {
 	    if (!(!stricmp(k_list[i_ptr->k_idx].name, "Power") &&
 		  (i_ptr->tval == TV_RING))) {
 
-		i_ptr->flags1 &= ~TR3_CURSED;
+		i_ptr->flags3 &= ~TR3_CURSED;
 		i_ptr->ident &= ~ID_DAMD;	/* DGK */
 		i_ptr->inscrip[0] = '\0';
 		calc_bonuses();
@@ -1381,10 +1381,10 @@ int remove_all_curse()
     result = FALSE;
     for (i = INVEN_WIELD; i <= INVEN_OUTER; i++) {
 	i_ptr = &inventory[i];
-	if (TR3_CURSED & i_ptr->flags1) {
+	if (TR3_CURSED & i_ptr->flags3) {
 	    if (!(!stricmp(k_list[i_ptr->k_idx].name, "Power") &&
 		  (i_ptr->tval == TV_RING))) {
-		i_ptr->flags1 &= ~TR3_CURSED;
+		i_ptr->flags3 &= ~TR3_CURSED;
 		i_ptr->ident &= ~ID_DAMD;	/* DGK */
 		calc_bonuses();
 		i_ptr->inscrip[0] = '\0';
@@ -1431,7 +1431,7 @@ int restore_level()
 void self_knowledge()
 {
     int    i, j;
-    u32b f = 0L, f2 = 0L;
+    u32b f1 = 0L, f2 = 0L, f3 = 0L;
 
 
     /* Acquire item flags (from worn items) */
@@ -1442,10 +1442,11 @@ void self_knowledge()
 
 	    /* Certain fields depend on a positive "pval" */
 	    if (inventory[i].pval < 0) /* don't adjust TR_STATS if pval is negative -CWS */
-		f |= (inventory[i].flags1 & ~(TR_STATS | TR1_SEARCH | TR1_STEALTH) );
+		f1 |= (inventory[i].flags1 & ~(TR_STATS | TR1_SEARCH | TR1_STEALTH) );
 	    else
-		f |= inventory[i].flags1;
+		f1 |= inventory[i].flags1;
 	    f2 |= inventory[i].flags2;
+	    f3 |= inventory[i].flags3;
 	}
     }
 
@@ -1515,10 +1516,10 @@ void self_knowledge()
     if (p_ptr->word_recall > 0) {
 	prt("You will soon be recalled.", i++, j);
     }
-    if (f & TR1_STEALTH) {
+    if (f1 & TR1_STEALTH) {
 	prt("You are magically stealthy.", i++, j);
     }
-    if (f & TR1_SEARCH) {
+    if (f1 & TR1_SEARCH) {
 	prt("You are magically perceptive.", i++, j);
 	pause_if_screen_full(&i, j);
     }
@@ -1667,27 +1668,27 @@ void self_knowledge()
 /* Are these needed?  The player can see this...  For now, in here for
  * completeness... -CFT 
  */
-    if (f & TR1_STR) {
+    if (f1 & TR1_STR) {
 	prt("You are magically strong.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f & TR1_INT) {
+    if (f1 & TR1_INT) {
 	prt("You are magically intelligent.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f & TR1_WIS) {
+    if (f1 & TR1_WIS) {
 	prt("You are magically wise.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f & TR1_DEX) {
+    if (f1 & TR1_DEX) {
 	prt("You are magically agile.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f & TR1_CON) {
+    if (f1 & TR1_CON) {
 	prt("You are magically tough.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f & TR1_CHR) {
+    if (f1 & TR1_CHR) {
 	prt("You are magically popular.", i++, j);
 	pause_if_screen_full(&i, j);
     }
@@ -1718,8 +1719,8 @@ void self_knowledge()
 	prt("You will not become less popular.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (inventory[INVEN_LEFT].flags2 & TR1_ATTACK_SPD ||
-	inventory[INVEN_RIGHT].flags2 & TR1_ATTACK_SPD) {
+    if (inventory[INVEN_LEFT].flags1 & TR1_ATTACK_SPD ||
+	inventory[INVEN_RIGHT].flags1 & TR1_ATTACK_SPD) {
 	prt("You can strike at your foes with uncommon speed.", i++, j);
 	pause_if_screen_full(&i, j);
     }
@@ -1728,13 +1729,15 @@ void self_knowledge()
  * affecting the weapon stats... -CFT
  */
     if (inventory[INVEN_WIELD].tval != TV_NOTHING) {
-	f = inventory[INVEN_WIELD].flags1;
+	f1 = inventory[INVEN_WIELD].flags1;
 	f2 = inventory[INVEN_WIELD].flags2;
+	f3 = inventory[INVEN_WIELD].flags3;
     } else {
-	f = 0L;
+	f1 = 0L;
 	f2 = 0L;
+	f3 = 0L;
     }
-    if (f & TR3_CURSED) {
+    if (f3 & TR3_CURSED) {
 	if (inventory[INVEN_WIELD].name2 == EGO_MORGUL) {
 	    prt("Your weapon is truly foul.", i++, j);
     }
@@ -1749,67 +1752,67 @@ void self_knowledge()
     }
 	pause_if_screen_full(&i, j);
     }
-    if (f & TR1_TUNNEL) {
+    if (f1 & TR1_TUNNEL) {
 	prt("Your weapon is an effective digging tool.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f2 & TR3_BLESSED) {
+    if (f3 & TR3_BLESSED) {
 	prt("Your weapon has been blessed by the gods.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f2 & TR1_ATTACK_SPD) {
+    if (f1 & TR1_ATTACK_SPD) {
 	prt("Your weapon strikes with uncommon speed.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f2 & TR1_SLAY_ORC) {
+    if (f1 & TR1_SLAY_ORC) {
 	prt("Your weapon is especially deadly against orcs.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f2 & TR1_SLAY_TROLL) {
+    if (f1 & TR1_SLAY_TROLL) {
 	prt("Your weapon is especially deadly against trolls.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f2 & TR1_SLAY_GIANT) {
+    if (f1 & TR1_SLAY_GIANT) {
 	prt("Your weapon is especially deadly against giants.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f & TR1_SLAY_ANIMAL) {
+    if (f1 & TR1_SLAY_ANIMAL) {
 	prt("Your weapon is especially deadly against natural creatures.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f & TR1_KILL_DRAGON) {
+    if (f1 & TR1_KILL_DRAGON) {
 	prt("Your weapon is a great bane of dragons.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    else if (f & TR1_SLAY_DRAGON) {
+    else if (f1 & TR1_SLAY_DRAGON) {
 	prt("Your weapon is especially deadly against dragons.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f2 & TR1_SLAY_DEMON) {
+    if (f1 & TR1_SLAY_DEMON) {
 	prt("Your weapon strikes at demons with holy wrath.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f & TR1_SLAY_UNDEAD) {
+    if (f1 & TR1_SLAY_UNDEAD) {
 	prt("Your weapon strikes at undead with holy wrath.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f & TR1_SLAY_EVIL) {
+    if (f1 & TR1_SLAY_EVIL) {
 	prt("Your weapon fights against evil with holy fury.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f & TR1_BRAND_COLD) {
+    if (f1 & TR1_BRAND_COLD) {
 	prt("Your frigid weapon freezes your foes.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f & TR1_BRAND_FIRE) {
+    if (f1 & TR1_BRAND_FIRE) {
 	prt("Your flaming weapon burns your foes.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f2 & TR1_BRAND_ELEC) {
+    if (f1 & TR1_BRAND_ELEC) {
 	prt("Your weapon electrocutes your foes.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f2 & TR1_IMPACT)
+    if (f1 & TR1_IMPACT)
 	prt("The unbelievable impact of your weapon can cause earthquakes.", i++, j);
 
     /* Pause */
@@ -2302,7 +2305,7 @@ bool ident_floor(void)
     if (!get_check(prt)) return (FALSE);
 
     /* Identify it fully */
-    if ((i_ptr->flags1 & TR3_CURSED) && (i_ptr->tval != TV_MAGIC_BOOK) &&
+    if ((i_ptr->flags3 & TR3_CURSED) && (i_ptr->tval != TV_MAGIC_BOOK) &&
     (i_ptr->tval != TV_PRAYER_BOOK))
     add_inscribe(i_ptr, ID_DAMD);
 

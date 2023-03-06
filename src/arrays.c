@@ -589,6 +589,106 @@ static void init_r_list()
 }
 
 
+
+
+
+
+/*
+ * Grab one flag in a inven_kind from a textual string
+ */
+static bool grab_one_kind_flag(inven_kind *k_ptr, cptr what)
+{
+    u32b flags1 = 0L, flags2 = 0L, flags3 = 0L;
+
+    if (!what) what = what;
+
+    else if (streq(what, "STR"))		flags1 |= TR1_STR;
+    else if (streq(what, "INT"))		flags1 |= TR1_INT;
+    else if (streq(what, "WIS"))		flags1 |= TR1_WIS;
+    else if (streq(what, "DEX"))		flags1 |= TR1_DEX;
+    else if (streq(what, "CON"))		flags1 |= TR1_CON;
+    else if (streq(what, "CHR"))		flags1 |= TR1_CHR;
+
+    else if (streq(what, "SEARCH"))		flags1 |= TR1_SEARCH;
+    else if (streq(what, "SPEED"))		flags1 |= TR1_SPEED;
+    else if (streq(what, "STEALTH"))		flags1 |= TR1_STEALTH;
+    else if (streq(what, "TUNNEL"))		flags1 |= TR1_TUNNEL;
+    else if (streq(what, "INFRA"))		flags1 |= TR1_INFRA;
+    else if (streq(what, "ATTACK_SPD"))		flags1 |= TR1_ATTACK_SPD;
+
+    else if (streq(what, "KILL_DRAGON"))	flags1 |= TR1_KILL_DRAGON;
+    else if (streq(what, "SLAY_DRAGON"))	flags1 |= TR1_SLAY_DRAGON;
+    else if (streq(what, "SLAY_ANIMAL"))	flags1 |= TR1_SLAY_ANIMAL;
+    else if (streq(what, "SLAY_EVIL"))		flags1 |= TR1_SLAY_EVIL;
+
+    else if (streq(what, "IMPACT"))		flags1 |= TR1_IMPACT;
+    else if (streq(what, "BRAND_COLD"))		flags1 |= TR1_BRAND_COLD;
+    else if (streq(what, "BRAND_FIRE"))		flags1 |= TR1_BRAND_FIRE;
+    else if (streq(what, "BRAND_ELEC"))		flags1 |= TR1_BRAND_ELEC;
+
+    else if (streq(what, "SLAY_UNDEAD"))	flags1 |= TR1_SLAY_UNDEAD;
+    else if (streq(what, "SLAY_DEMON"))		flags1 |= TR1_SLAY_DEMON;
+
+    else if (streq(what, "SLAY_TROLL"))		flags1 |= TR1_SLAY_TROLL;
+    else if (streq(what, "SLAY_GIANT"))		flags1 |= TR1_SLAY_GIANT;
+    else if (streq(what, "SLAY_ORC"))		flags1 |= TR1_SLAY_ORC;
+
+    else if (streq(what, "FREE_ACT"))		flags2 |= TR2_FREE_ACT;
+    else if (streq(what, "HOLD_LIFE"))		flags2 |= TR2_HOLD_LIFE;
+
+
+    else if (streq(what, "IM_FIRE"))		flags2 |= TR2_IM_FIRE;
+    else if (streq(what, "IM_COLD"))		flags2 |= TR2_IM_COLD;
+    else if (streq(what, "IM_ACID"))		flags2 |= TR2_IM_ACID;
+    else if (streq(what, "IM_ELEC"))		flags2 |= TR2_IM_ELEC;
+    else if (streq(what, "IM_POIS"))		flags2 |= TR2_IM_POIS;
+
+
+    else if (streq(what, "RES_ACID"))		flags2 |= TR2_RES_ACID;
+    else if (streq(what, "RES_ELEC"))		flags2 |= TR2_RES_ELEC;
+    else if (streq(what, "RES_FIRE"))		flags2 |= TR2_RES_FIRE;
+    else if (streq(what, "RES_COLD"))		flags2 |= TR2_RES_COLD;
+    else if (streq(what, "RES_POIS"))		flags2 |= TR2_RES_POIS;
+    else if (streq(what, "RES_LITE"))		flags2 |= TR2_RES_LITE;
+    else if (streq(what, "RES_DARK"))		flags2 |= TR2_RES_DARK;
+
+    else if (streq(what, "RES_BLIND"))		flags2 |= TR2_RES_BLIND;
+    else if (streq(what, "RES_CONF"))		flags2 |= TR2_RES_CONF;
+    else if (streq(what, "RES_SOUND"))		flags2 |= TR2_RES_SOUND;
+    else if (streq(what, "RES_SHARDS"))		flags2 |= TR2_RES_SHARDS;
+
+    else if (streq(what, "RES_NETHER"))		flags2 |= TR2_RES_NETHER;
+    else if (streq(what, "RES_NEXUS"))		flags2 |= TR2_RES_NEXUS;
+    else if (streq(what, "RES_CHAOS"))		flags2 |= TR2_RES_CHAOS;
+    else if (streq(what, "RES_DISEN"))		flags2 |= TR2_RES_DISEN;
+
+    else if (streq(what, "SUST_STAT"))		flags1 |= TR_SUST_STAT;
+
+    else if (streq(what, "FEATHER"))		flags3 |= TR3_FEATHER;
+    else if (streq(what, "LITE"))		flags3 |= TR3_LITE;
+    else if (streq(what, "SEE_INVIS"))		flags3 |= TR3_SEE_INVIS;
+    else if (streq(what, "TELEPATHY"))		flags3 |= TR3_TELEPATHY;
+
+    else if (streq(what, "SLOW_DIGEST"))	flags3 |= TR3_SLOW_DIGEST;
+    else if (streq(what, "REGEN"))		flags3 |= TR3_REGEN;
+
+    else if (streq(what, "ACTIVATE"))		flags3 |= TR3_ACTIVATE;
+    else if (streq(what, "TELEPORT"))		flags3 |= TR3_TELEPORT;
+    else if (streq(what, "AGGRAVATE"))		flags3 |= TR3_AGGRAVATE;
+
+    else if (streq(what, "BLESSED"))		flags3 |= TR3_BLESSED;
+    else if (streq(what, "CURSED"))		flags3 |= TR3_CURSED;
+
+    if (!flags1 && !flags2 && !flags3) return (FALSE);
+
+    if (flags1) k_ptr->flags1 |= flags1;
+    if (flags2) k_ptr->flags2 |= flags2;
+    if (flags3) k_ptr->flags3 |= flags3;
+
+    return (TRUE);
+}
+
+
 /*
  * Hack -- location saver for error messages
  */
@@ -764,17 +864,37 @@ static errr init_k_list_txt()
 	/* Hack -- Process 'F' for flags */
 	if (buf[0] == 'F') {
 
-	    huge flags1, flags2;
+	    huge flags1, flags2, flags3;
 
 	    /* XXX XXX Hack -- Scan for "pure" values */
 	    /* Note that "huge" may not equal "u32b" */
-	    if (3 == sscanf(buf+2, "0x%lx:0x%lx",
-		&flags1, &flags2)) {
+	    if (3 == sscanf(buf+2, "0x%lx:0x%lx:0x%lx",
+		&flags1, &flags2, &flags3)) {
 
 		k_ptr->flags1 = flags1;
 		k_ptr->flags2 = flags2;
+		k_ptr->flags3 = flags3;
 
 		continue;
+	    }
+
+	    /* Parse every entry textually */
+	    for (s = buf + 2; *s; ) {
+
+		/* Find the end of this entry */
+		for (t = s; *t && *t != ' ' && *t != '|'; ++t);
+
+		/* Nuke and skip any dividers */
+		if (*t) {
+		    *t++ = '\0';
+		    while (*t == ' ' || *t == '|') t++;
+		}
+
+		/* Parse this entry */
+		if (!grab_one_kind_flag(k_ptr, s)) return (18);
+
+		/* Start the next entry */
+		s = t;
 	    }
 
 	    /* Next... */
