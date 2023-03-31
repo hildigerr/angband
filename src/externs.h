@@ -522,7 +522,6 @@ void store_bought(inven_type *);
 int store_bought_p(inven_type *);
 void sample(struct inven_type *);
 void identify(int *);
-void unmagic_name(inven_type *);
 void objdes(char *, struct inven_type *, int);
 void scribe_object(void);
 void add_inscribe(inven_type *, int);

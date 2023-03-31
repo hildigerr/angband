@@ -377,14 +377,7 @@ void identify(int *item)
     }
 }
 
-/*
- * If an object has lost magical properties, remove the appropriate portion
- * of the name.	       -CJS- 
- */
-void unmagic_name(inven_type *i_ptr)
-{
-    i_ptr->name2 = SN_NULL;
-}
+
 
 
 /*
