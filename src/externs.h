@@ -771,7 +771,7 @@ int is_quest(int);
 int ruin_stat(int);
 void hit_trap(int, int);
 int cast_spell(cptr ,int, int *, int *);
-u32b monster_death(int, int, u32b, u32b, u32b);
+u32b monster_death(monster_type *);
 int mon_take_hit(int, int, int);
 
 /* moria3.c */

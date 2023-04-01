@@ -499,12 +499,21 @@ static int summon_object(int y, int x, int num, int typ, u32b good)
  * Returns a mask of bits from the given flags which indicates what the
  * monster is seen to have dropped.  This may be added to monster memory. 
  */
-u32b monster_death(int y, int x, u32b flags, u32b good, u32b win)
+u32b monster_death(monster_type *m_ptr)
 {
     register int i, number;
     u32b       dump, res;
 
-    if (win) {		   /* MORGOTH */
+    monster_race *r_ptr = &r_list[m_ptr->r_idx];
+
+    bool good = (r_ptr->cflags2 & (MF2_SPECIAL | MF2_GOOD));
+    bool winner = (r_ptr->cflags1 & MF1_WINNER);
+
+    int y = (int)m_ptr->fy;
+    int x = (int)m_ptr->fx;
+
+
+    if (winner) {		   /* MORGOTH */
 	register int        j, k;
 	register cave_type *c_ptr;
 	int                 crown = FALSE, grond = FALSE;
@@ -569,23 +578,24 @@ u32b monster_death(int y, int x, u32b flags, u32b good, u32b win)
 	}
 	while (!grond && i < 50);
     }
-    if (flags & MF1_CARRY_OBJ)
+
+    if (r_ptr->cflags1 & MF1_CARRY_OBJ)
 	i = 1;
     else
 	i = 0;
-    if (flags & MF1_CARRY_GOLD)
+    if (r_ptr->cflags1 & MF1_CARRY_GOLD)
 	i += 2;
 
     number = 0;
-    if ((flags & MF1_HAS_60) && (randint(100) < 60))
+    if ((r_ptr->cflags1 & MF1_HAS_60) && (randint(100) < 60))
 	number++;
-    if ((flags & MF1_HAS_90) && (randint(100) < 90))
+    if ((r_ptr->cflags1 & MF1_HAS_90) && (randint(100) < 90))
 	number++;
-    if (flags & MF1_HAS_1D2)
+    if (r_ptr->cflags1 & MF1_HAS_1D2)
 	number += randint(2);
-    if (flags & MF1_HAS_2D2)
+    if (r_ptr->cflags1 & MF1_HAS_2D2)
 	number += damroll(2, 2);
-    if (flags & MF1_HAS_4D2)
+    if (r_ptr->cflags1 & MF1_HAS_4D2)
 	number += damroll(4, 2);
     if (number > 0)
 	dump = summon_object(y, x, number, i, good);
@@ -593,7 +603,7 @@ u32b monster_death(int y, int x, u32b flags, u32b good, u32b win)
 	dump = 0;
 
 
-    if (flags & MF1_WINNER)
+    if (r_ptr->cflags1 & MF1_WINNER)
     {
 	total_winner = TRUE;
 	prt_winner();
@@ -720,10 +730,7 @@ int mon_take_hit(int m_idx, int dam, int print_fear)
 	object_level = (dun_level + r_ptr->level) >> 1;
 	coin_type = 0;
 	get_coin_type(r_ptr);
-	i = monster_death((int)m_ptr->fy, (int)m_ptr->fx,
-			  r_list[m_ptr->r_idx].cflags1,
-			  (r_list[m_ptr->r_idx].cflags2 & (MF2_SPECIAL | MF2_GOOD)),
-			  (r_list[m_ptr->r_idx].cflags1 & MF1_WINNER));
+	i = monster_death(m_ptr);
 	coin_type = 0;
 	if ((p_ptr->blind < 1 && m_ptr->ml) ||
 	    (r_list[m_ptr->r_idx].cflags1 & MF1_WINNER) ||

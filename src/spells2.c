@@ -4259,8 +4259,7 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
 			object_level = (dun_level + r_ptr->level) >> 1;
 			coin_type = 0;
 			get_coin_type(r_ptr);
-			treas = monster_death((int)m_ptr->fy, (int)m_ptr->fx,
-					      r_ptr->cflags1, 0, 0);
+			treas = monster_death(m_ptr);
 			coin_type = 0;
 			if (m_ptr->ml || (r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE)) {
 			    tmp = (l_list[m_ptr->r_idx].r_cflags1 & CM1_TREASURE)
@@ -4792,8 +4791,7 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 			    object_level = (dun_level + r_ptr->level) >> 1;
 				coin_type = 0;
 				get_coin_type(r_ptr);
-			    treas = monster_death((int)m_ptr->fy, (int)m_ptr->fx,
-						  r_ptr->cflags1, 0, 0);
+			    treas = monster_death(m_ptr);
 				coin_type = 0;
 				/* recall even invisible uniques -CWS */
 			    if (m_ptr->ml || (r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE)) {

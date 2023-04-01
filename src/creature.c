@@ -685,7 +685,7 @@ static void shatter_quake(int cy, int cx)
 			    msg_print(out_val);
 
 			    object_level = (dun_level + r_ptr->level) >> 1;
-			    treas = monster_death((int)m_ptr->fy, (int)m_ptr->fx, r_ptr->cflags1, 0, 0);
+			    treas = monster_death(m_ptr);
 			    if (m_ptr->ml) {
 				temp = (l_list[m_ptr->r_idx].r_cflags1 & CM1_TREASURE) >> CM1_TR_SHIFT;
 				if (temp > ((treas & CM1_TREASURE) >> CM1_TR_SHIFT))
