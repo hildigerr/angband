@@ -724,6 +724,9 @@ static void chest_death(int y, int x, inven_type *i_ptr)
 		/* Must be legal, must be visible */
 		if (!los(y, x, y1, x1)) continue;
 
+		/* Opening a chest */
+		opening_chest = TRUE;
+
 		    if (typ == 3) {/* typ == 3 -> 50% objects, 50% gold */
 			if (randint(100) < 50) real_typ = 1;
 			else real_typ = 256;
@@ -736,6 +739,9 @@ static void chest_death(int y, int x, inven_type *i_ptr)
 		else {
 		    place_gold(y1, x1);
 		}
+		
+		/* No longer opening a chest */
+		opening_chest = FALSE;
 
 		/* Actually display the object's grid */
 		lite_spot(y1, x1);
@@ -745,6 +751,9 @@ static void chest_death(int y, int x, inven_type *i_ptr)
 	    }
 	}
     }
+
+    /* The chest is "dead" */
+    i_ptr->flags1 = 0L;
 }
 
 
@@ -991,10 +1000,7 @@ void do_cmd_open()
 			object_level = MAX_OBJ_LEVEL;
 
 		    coin_type = 0;
-		    opening_chest = TRUE; /* don't generate another chest -CWS */
 		    chest_death(y, x, i_ptr);
-		    i_list[c_ptr->i_idx].flags1 = 0;
-		    opening_chest = FALSE;
 		}
 	    }
     }
