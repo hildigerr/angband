@@ -366,6 +366,79 @@ int cast_spell(cptr prompt, int item_val, int *sn, int *sc)
 
 
 
+
+/*
+ */
+static void check_quest(monster_type *m_ptr)
+{
+    monster_race *r_ptr = &r_list[m_ptr->r_idx];
+
+    cave_type		*c_ptr;
+
+    int			i;
+    int                 cur_pos;
+    int                 ty, tx;
+    int			ny, nx;
+
+    int                     found = FALSE;
+
+
+    /* Only process "Quest Monsters" */
+    if (!(r_ptr->cflags2 & MF2_QUESTOR)) return;
+
+
+    /* search for monster's lv, not cur lv. -CFT */
+    for (i = 0; i < DEFINED_QUESTS; i++) {
+
+	if (quests[i] == r_ptr->level) {
+	quests[i] = 0;
+	found = TRUE;
+	break;
+	}
+    }
+
+
+    if (found) {
+    if ((unsigned) dun_level != r_ptr->level) {
+		    /* just mesg */
+		    msg_print("Well done!!  Now continue onward towards Morgoth.");
+		} else {	   /* stairs and mesg */
+
+	/* Start on the dead monster */
+	ty = m_ptr->fy;
+	tx = m_ptr->fx;
+
+	/* Stagger around until we find a legal grid */
+	while (!valid_grid(ty, tx)) {
+	    ny = rand_spread(ty, 1);
+	    nx = rand_spread(tx, 1);
+	    if (!in_bounds(ny,nx)) continue;
+	    ty = ny, tx = nx;
+	}
+
+	/* Get the cave location */
+	c_ptr = &cave[ty][tx];
+	delete_object(ty, tx);/* so we can delete it -CFT */
+
+	/* Create a stairway */
+	cur_pos = i_pop();
+	invcopy(&i_list[cur_pos], OBJ_DOWN_STAIR);
+
+	c_ptr->i_idx = cur_pos;
+
+	/* Explain the stairway */
+	msg_print("Well done!! Go for it!");
+	msg_print("A magical stairway appears...");
+
+    } /* if-else for stairway */
+    } /* if found */
+
+
+}
+
+
+
+
 /* Creates objects nearby the coordinates given		-RAK-	  */
 static int summon_object(int y, int x, int num, int typ, u32b good)
 {
@@ -657,7 +730,6 @@ int mon_take_hit(int m_idx, int dam, int print_fear)
 {
     int			    r_idx;
     register u32b         i;
-    int                     found = FALSE;
     s32b                   new_exp, new_exp_frac;
 
     register monster_type  *m_ptr;
@@ -698,47 +770,8 @@ int mon_take_hit(int m_idx, int dam, int print_fear)
 	    unlink(temp);
 	}
 
-	if (r_list[m_ptr->r_idx].cflags2 & MF2_QUESTOR) {
-	    for (i = 0; i < DEFINED_QUESTS; i++) {	/* search for monster's
-							 * lv, not... */
-		if (quests[i] == r_list[m_ptr->r_idx].level) {	/* ...cur lv. -CFT */
-		    quests[i] = 0;
-		    found = TRUE;
-		    break;
-		}
-	    }
-	    if (found) {
-		if ((unsigned) dun_level != r_list[m_ptr->r_idx].level) {
-		    /* just mesg */
-		    msg_print("Well done!!  Now continue onward towards Morgoth.");
-		} else {	   /* stairs and mesg */
-		    cave_type          *ca_ptr;
-		    int                 cur_pos;
-
-		    ca_ptr = &cave[m_ptr->fy][m_ptr->fx];
-		    if (ca_ptr->i_idx != 0) {	/* don't overwrite artifact -CFT */
-			int                 ty = m_ptr->fy, tx = m_ptr->fx, ny, nx;
-
-	/* Stagger around until we find a legal grid */
-			while (!valid_grid(ty, tx)) {
-				ny = rand_spread(ty, 1);
-				nx = rand_spread(tx, 1);
-			    if (!in_bounds(ny,nx)) continue;
-			    ty = ny, tx = nx;
-			}
-
-			if (cave[ty][tx].i_idx != 0)	/* so we can delete it -CFT */
-			    (void)delete_object(ty, tx);
-			ca_ptr = &cave[ty][tx];	/* put stairway here... */
-		    }
-		    cur_pos = i_pop();
-		    ca_ptr->i_idx = cur_pos;
-		    invcopy(&i_list[cur_pos], OBJ_DOWN_STAIR);
-		    msg_print("Well done!! Go for it!");
-		    msg_print("A magical stairway appears...");
-		} /* if-else for stairway */
-	    } /* if found */
-	} /* if quest monster */
+	/* Check to see if a quest is complete */
+	check_quest(m_ptr);
 
 	object_level = (dun_level + r_ptr->level) >> 1;
 	coin_type = 0;
