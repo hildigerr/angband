@@ -13,7 +13,6 @@
 #include "angband.h"
 
 
-static int summon_object(int, int, int, int, u32b);
 static void py_attack(int, int);
 static void inven_throw(int, struct inven_type *);
 static void facts(struct inven_type *, int *, int *, int *, int *, int *);
@@ -439,61 +438,6 @@ static void check_quest(monster_type *m_ptr)
 
 
 
-/* Creates objects nearby the coordinates given		-RAK-	  */
-static int summon_object(int y, int x, int num, int typ, u32b good)
-{
-    register int        i, j, k;
-    register cave_type *c_ptr;
-    int                 real_typ, res;
-
-    if (typ == 1)
-	real_typ = 1;		   /* typ == 1 -> objects */
-    else
-	real_typ = 256;		   /* typ == 2 -> gold */
-    res = 0;
-    do {
-	i = 0;
-	do {
-	    j = y - 3 + randint(5);
-	    k = x - 3 + randint(5);
-	    if (in_bounds(j, k) && los(y, x, j, k)) {
-		c_ptr = &cave[j][k];
-		if (floor_grid_bold(j, k) && (c_ptr->i_idx == 0)) {
-		    if (typ == 3) {/* typ == 3 -> 50% objects, 50% gold */
-			if (randint(100) < 50)
-			    real_typ = 1;
-			else
-			    real_typ = 256;
-		    }
-		    if (real_typ == 1) {
-			if (good)
-			    place_good(j, k, good);
-			else
-			    place_object(j, k);
-		    } else {
-			if (good)
-			    place_good(j, k, good);
-			else
-			    place_gold(j, k);
-		    }
-		    lite_spot(j, k);
-		    if (test_lite(j, k))
-			res += real_typ;
-		    i = 20;
-		}
-	    }
-	    i++;
-	}
-	while (i <= 20);
-	num--;
-    }
-    while (num != 0);
-    return res;
-}
-
-
-
-
 /*
  * Allocates basic objects upon a creatures death.
  *
@@ -505,7 +449,7 @@ static int summon_object(int y, int x, int num, int typ, u32b good)
  */
 u32b monster_death(monster_type *m_ptr)
 {
-    int			i, number;
+    int			i, y1, x1, number;
     u32b       dump, res;
 
     monster_race *r_ptr = &r_list[m_ptr->r_idx];
@@ -516,6 +460,7 @@ u32b monster_death(monster_type *m_ptr)
     int y = (int)m_ptr->fy;
     int x = (int)m_ptr->fx;
 
+    int	typ, real_typ;
 
     if (winner) {		   /* MORGOTH */
 	register int        j, k;
@@ -583,9 +528,9 @@ u32b monster_death(monster_type *m_ptr)
 	while (!grond && i < 50);
     }
 
-    if (r_ptr->cflags1 & MF1_CARRY_OBJ) i = 1;
-    else i = 0;
-    if (r_ptr->cflags1 & MF1_CARRY_GOLD) i += 2;
+    if (r_ptr->cflags1 & MF1_CARRY_OBJ) typ = 1;
+    else typ = 0;
+    if (r_ptr->cflags1 & MF1_CARRY_GOLD) typ += 2;
 
     /* Determine how much we can drop */
     number = 0;
@@ -598,7 +543,55 @@ u32b monster_death(monster_type *m_ptr)
     /* Dump stuff */
     if (number > 0) {
 
-	dump = summon_object(y, x, number, i, good);
+    if (typ == 1) real_typ = 1;		   /* typ == 1 -> objects */
+    else real_typ = 256;		   /* typ == 2 -> gold */
+    res = 0;
+
+	/* Drop some objects */    
+	for ( ; number > 0; --number) {
+
+	    /* Try 20 times per item, increasing range */
+	    for (i = 0; i < 20; ++i) {
+
+		/* Pick a location */
+		y1 = y - 3 + randint(5);
+		x1 = x - 3 + randint(5);
+
+		/* Must be a legal grid */
+		if (!in_bounds(y1, x1)) continue;
+
+		/* Must be "clean" floor grid */
+		if (!clean_grid_bold(y1, x1)) continue;
+
+		/* Must be visible to dead monster */
+		if (!los(y, x, y1, x1)) continue;
+
+
+		if (typ == 3) {/* typ == 3 -> 50% objects, 50% gold */
+		if (randint(100) < 50) real_typ = 1;
+		else real_typ = 256;
+		}
+
+		if (real_typ == 1) {
+		if (good)
+		    place_good(y1, x1, good);
+		else
+		    place_object(y1, x1);
+		} else {
+		if (good)
+		    place_good(y1, x1, good);
+		else
+		    place_gold(y1, x1);
+		}
+
+		/* Actually display the object's grid */
+		lite_spot(y1, x1);
+		if (test_lite(y1, x1)) res += real_typ;
+		break;
+	}
+    }
+
+    dump = res;
     }
     else dump = 0;
 

@@ -681,11 +681,11 @@ void do_cmd_locate()
  */
 static void chest_death(int y, int x, inven_type *i_ptr)
 {
-    int			i, number;
+    int			i, y1, x1, number, typ, real_typ;
 
-    if (i_ptr->flags1 & MF1_CARRY_OBJ) i = 1;
-    else i = 0;
-    if (i_ptr->flags1 & MF1_CARRY_GOLD) i += 2;
+    if (i_ptr->flags1 & MF1_CARRY_OBJ) typ = 1;
+    else typ = 0;
+    if (i_ptr->flags1 & MF1_CARRY_GOLD) typ += 2;
 
 
     /* Must be a chest */
@@ -702,7 +702,48 @@ static void chest_death(int y, int x, inven_type *i_ptr)
     /* Summon some objects */
     if (number > 0) {
 
-	(void)summon_object(y, x, number, i, 0);
+    if (typ == 1) real_typ = 1;		   /* typ == 1 -> objects */
+    else real_typ = 256;		   /* typ == 2 -> gold */
+
+	/* Drop some objects (non-chests) */    
+	for ( ; number > 0; --number) {
+
+	    /* Try 20 times per item */
+	    for (i = 0; i < 20; ++i) {
+
+		/* Pick a location */
+		y1 = y - 3 + randint(5);
+		x1 = x - 3 + randint(5);
+
+		/* Must be a legal grid */
+		if (!in_bounds(y1, x1)) continue;
+		
+		/* Must be a clean floor grid */
+		if (!clean_grid_bold(y1, x1)) continue;
+
+		/* Must be legal, must be visible */
+		if (!los(y, x, y1, x1)) continue;
+
+		    if (typ == 3) {/* typ == 3 -> 50% objects, 50% gold */
+			if (randint(100) < 50) real_typ = 1;
+			else real_typ = 256;
+		    }
+
+		/* Place an Item or Gold */
+		if (real_typ == 1) {
+		    place_object(y1, x1);
+		}
+		else {
+		    place_gold(y1, x1);
+		}
+
+		/* Actually display the object's grid */
+		lite_spot(y1, x1);
+
+		/* Successful placement */
+		break;
+	    }
+	}
     }
 }
 
