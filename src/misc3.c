@@ -2163,10 +2163,15 @@ int special_place_object(int y, int x)
     register int	cur_pos, tmp;
     char         str[100];
     int          done = 0;
+    cave_type		*c_ptr;
 
 
     /* Is this cave grid sacred? */
     if (!valid_grid(y,x)) return (FALSE);
+
+
+    /* Get the cave */
+    c_ptr = &cave[y][x];
 
     /* Delete anything that is there */
     delete_object(y, x);
@@ -2374,7 +2379,7 @@ again:
     /* Make the object, using the index from above */
     cur_pos = i_pop();
 
-    cave[y][x].i_idx = cur_pos;
+    c_ptr->i_idx = cur_pos;
     invcopy(&i_list[cur_pos], tmp);
     i_list[cur_pos].timeout = 0;
     i_list[cur_pos].ident |= ID_NOSHOW_TYPE; /* don't show (+x of yyy) for these */
@@ -2383,7 +2388,7 @@ again:
     }
 
     /* Is it on the player? */
-    if (cave[y][x].m_idx == 1) {
+    if (c_ptr->m_idx == 1) {
 	msg_print("You feel something roll beneath your feet.");
     }
 
@@ -2397,9 +2402,14 @@ again:
 void place_object(int y, int x)
 {
     register int cur_pos, tmp;
+    cave_type *c_ptr;
 
     /* Certain locations are not valid */
     if (!valid_grid(y,x)) return;
+
+
+    /* Get the cave */
+    c_ptr = &cave[y][x];
 
     /* Delete anything already there */
     delete_object(y, x);
@@ -2410,7 +2420,7 @@ void place_object(int y, int x)
 
     /* Make it */
     cur_pos = i_pop();
-    cave[y][x].i_idx = cur_pos;
+    c_ptr->i_idx = cur_pos;
 
     do {	   /* don't generate another chest if opening_chest is true -CWS */
 	tmp = get_obj_num(dun_level, FALSE);
@@ -2434,7 +2444,7 @@ void place_object(int y, int x)
     }
 
     /* Under the player */
-    if (cave[y][x].m_idx == 1) {
+    if (c_ptr->m_idx == 1) {
 	msg_print ("You feel something roll beneath your feet.");
     }
 }
@@ -2447,9 +2457,14 @@ void place_good(int y, int x, u32b good)
 {
     register int cur_pos, tmp;
     int          tv, is_good = FALSE;
+    cave_type *c_ptr;
 
     /* Do not hurt artifacts, stairs, store doors */
     if (!valid_grid(y, x)) return;
+
+
+    /* Get the grid */
+    c_ptr = &cave[y][x];
 
     /* Delete anything already there */
     delete_object(y, x);
@@ -2460,7 +2475,7 @@ void place_good(int y, int x, u32b good)
     }
 
     cur_pos = i_pop();
-    cave[y][x].i_idx = cur_pos;
+    c_ptr->i_idx = cur_pos;
     do {
 
 	/* Pick a random object, based on "object_level" */
@@ -2509,7 +2524,7 @@ void place_good(int y, int x, u32b good)
 	}
     }
 
-    if (cave[y][x].m_idx == 1) {
+    if (c_ptr->m_idx == 1) {
 	msg_print("You feel something roll beneath your feet.");
     }
 }
@@ -2601,6 +2616,7 @@ void special_random_object(int y, int x, int num)
  */
 void place_trap(int y, int x, int sval)
 {
+    cave_type *c_ptr;
     register int cur_pos;
 
 
@@ -2608,8 +2624,12 @@ void place_trap(int y, int x, int sval)
     if (!valid_grid(y, x)) return;
 
 
+    /* Get the cave grid */
+    c_ptr = &cave[y][x];
+
+
     /* Don't put traps under player/monsters, it's annoying -CFT */
-    if (cave[y][x].m_idx >= MIN_M_IDX) return;
+    if (c_ptr->m_idx) return;
 
 
     /* Delete whatever is there */
@@ -2617,7 +2637,7 @@ void place_trap(int y, int x, int sval)
 
     /* Make a new object */
     cur_pos = i_pop();
-    cave[y][x].i_idx = cur_pos;
+    c_ptr->i_idx = cur_pos;
     invcopy(&i_list[cur_pos], OBJ_TRAP_LIST + sval);
 }
 
@@ -2665,9 +2685,15 @@ void place_gold(int y, int x)
 {
     register int        i, cur_pos;
     register inven_type *i_ptr;
+    cave_type *c_ptr;
+
 
     /* Do not hurt illegals, artifacts, stairs, store doors */
     if (!valid_grid(y, x)) return;
+
+
+    /* Get the grid */
+    c_ptr = &cave[y][x];
 
     /* Delete the object under us (acidic gold?) */
 	delete_object(y, x);
@@ -2692,7 +2718,7 @@ void place_gold(int y, int x)
 	i = coin_type;
     }
 
-    cave[y][x].i_idx = cur_pos;
+    c_ptr->i_idx = cur_pos;
     invcopy(&i_list[cur_pos], OBJ_GOLD_LIST + i);
     i_ptr = &i_list[cur_pos];
     i_ptr->cost += (8L * (long)randint((int)i_ptr->cost)) + randint(8);
@@ -2704,7 +2730,7 @@ void place_gold(int y, int x)
     }
 
     /* Under the player */
-    if (cave[y][x].m_idx == 1) {
+    if (c_ptr->m_idx == 1) {
 	msg_print("You feel something roll beneath your feet.");
     }
 }
