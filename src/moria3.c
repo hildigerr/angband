@@ -671,6 +671,38 @@ void do_cmd_locate()
 }
 
 
+
+
+/*
+ * Allocates objects upon opening a chest    -BEN-
+ *
+ * Disperse treasures from the chest "i_ptr", centered at (x,y).
+ * Adapted from "monster_death()", but much simpler...
+ */
+static void chest_death(int y, int x, inven_type *i_ptr)
+{
+    int			i, number;
+
+    if (i_ptr->flags1 & MF1_CARRY_OBJ) i = 1;
+    else i = 0;
+    if (i_ptr->flags1 & MF1_CARRY_GOLD) i += 2;
+
+    /* Count how many objects */
+    number = 0;
+    if ((i_ptr->flags1 & MF1_HAS_60) && (randint(100) < 60)) number++;
+    if ((i_ptr->flags1 & MF1_HAS_90) && (randint(100) < 90)) number++;
+    if (i_ptr->flags1 & MF1_HAS_1D2) number += randint(2);
+    if (i_ptr->flags1 & MF1_HAS_2D2) number += damroll(2, 2);
+    if (i_ptr->flags1 & MF1_HAS_4D2) number += damroll(4, 2);
+
+    /* Summon some objects */
+    if (number > 0) {
+
+	(void)summon_object(y, x, number, i, 0);
+    }
+}
+
+
 /*
  * Chests have traps too.
  * Note: Chest traps are based on the FLAGS value
@@ -915,7 +947,7 @@ void do_cmd_open()
 
 		    coin_type = 0;
 		    opening_chest = TRUE; /* don't generate another chest -CWS */
-		    (void)monster_death(y, x, i_list[c_ptr->i_idx].flags1, 0, 0);
+		    chest_death(y, x, i_ptr);
 		    i_list[c_ptr->i_idx].flags1 = 0;
 		    opening_chest = FALSE;
 		}
