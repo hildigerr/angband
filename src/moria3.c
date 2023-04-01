@@ -687,6 +687,10 @@ static void chest_death(int y, int x, inven_type *i_ptr)
     else i = 0;
     if (i_ptr->flags1 & MF1_CARRY_GOLD) i += 2;
 
+
+    /* Must be a chest */
+    if (i_ptr->tval != TV_CHEST) return;
+
     /* Count how many objects */
     number = 0;
     if ((i_ptr->flags1 & MF1_HAS_60) && (randint(100) < 60)) number++;
