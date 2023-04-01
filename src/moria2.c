@@ -1185,33 +1185,33 @@ static void drop_throw(int y, int x, inven_type *t_ptr)
     register cave_type *c_ptr;
 
     flag = FALSE;
-    i = y;
-    j = x;
-    k = 0;
+
+    i = y;  j = x;
+
     if (randint(5) > 1) {
-	do {
-	    if (in_bounds(i, j)) {
-		c_ptr = &cave[i][j];
-		if (floor_grid_bold(i, j) && c_ptr->i_idx == 0)
-		    flag = TRUE;
-	    }
+	for (k = 0; !flag && (k <= 9); ++k) {
+
+	    if (!in_bounds(i, j)) continue;
+
+	    if (!clean_grid_bold(i, j)) continue;
+
+	    flag = TRUE;
+
 	    if (!flag) {
 		i = y + randint(3) - 2;
 		j = x + randint(3) - 2;
-		k++;
 	    }
 	}
-	while ((!flag) && (k <= 9));
     }
     if (!flag && artifact_p(t_ptr)) {
-	k = 0;  i = y;  j = x;
-	do {		/* pick place w/o an object, unless doesn't seem to be one */
+	i = y;  j = x;
+	for (k = 0; !flag; k++) {		/* pick place w/o an object, unless doesn't seem to be one */
 	    y = i;  x = j;
 	    do {		/* pick place in bounds and not in wall */
 		i = y + randint(3) -2;
 		j = x + randint(3) -2;
 	    } while (!in_bounds(i,j) || !floor_grid_bold(i, j));
-	    k++;
+
 	    if (!(cur_pos = cave[i][j].i_idx) || (k>64))
 		flag = TRUE;
 	    if (flag && !valid_grid(i,j)) flag = FALSE;
@@ -1221,7 +1221,7 @@ static void drop_throw(int y, int x, inven_type *t_ptr)
  */
 	    
 	    if (k>888) flag = TRUE; /* if this many tries, TOO BAD! -CFT */
-	} while (!flag);
+	}
     } /* if not flag and is artifact */
     if (flag)
     {
