@@ -492,16 +492,20 @@ static int summon_object(int y, int x, int num, int typ, u32b good)
 }
 
 
-/* Allocates objects upon a creatures death		-RAK-	 */
-/* Oh well,  another creature bites the dust.  Reward the victor */
-/* based on flags set in the main creature record		 */
+
+
 /*
+ * Allocates basic objects upon a creatures death.
+ *
+ * Disperse treasures centered at the monster location based on the
+ * various flags contained in the monster flags fields.
+ *
  * Returns a mask of bits from the given flags which indicates what the
  * monster is seen to have dropped.  This may be added to monster memory. 
  */
 u32b monster_death(monster_type *m_ptr)
 {
-    register int i, number;
+    int			i, number;
     u32b       dump, res;
 
     monster_race *r_ptr = &r_list[m_ptr->r_idx];
@@ -579,28 +583,24 @@ u32b monster_death(monster_type *m_ptr)
 	while (!grond && i < 50);
     }
 
-    if (r_ptr->cflags1 & MF1_CARRY_OBJ)
-	i = 1;
-    else
-	i = 0;
-    if (r_ptr->cflags1 & MF1_CARRY_GOLD)
-	i += 2;
+    if (r_ptr->cflags1 & MF1_CARRY_OBJ) i = 1;
+    else i = 0;
+    if (r_ptr->cflags1 & MF1_CARRY_GOLD) i += 2;
 
+    /* Determine how much we can drop */
     number = 0;
-    if ((r_ptr->cflags1 & MF1_HAS_60) && (randint(100) < 60))
-	number++;
-    if ((r_ptr->cflags1 & MF1_HAS_90) && (randint(100) < 90))
-	number++;
-    if (r_ptr->cflags1 & MF1_HAS_1D2)
-	number += randint(2);
-    if (r_ptr->cflags1 & MF1_HAS_2D2)
-	number += damroll(2, 2);
-    if (r_ptr->cflags1 & MF1_HAS_4D2)
-	number += damroll(4, 2);
-    if (number > 0)
+    if ((r_ptr->cflags1 & MF1_HAS_60) && (randint(100) < 60)) number++;
+    if ((r_ptr->cflags1 & MF1_HAS_90) && (randint(100) < 90)) number++;
+    if (r_ptr->cflags1 & MF1_HAS_1D2) number += randint(2);
+    if (r_ptr->cflags1 & MF1_HAS_2D2) number += damroll(2, 2);
+    if (r_ptr->cflags1 & MF1_HAS_4D2) number += damroll(4, 2);
+
+    /* Dump stuff */
+    if (number > 0) {
+
 	dump = summon_object(y, x, number, i, good);
-    else
-	dump = 0;
+    }
+    else dump = 0;
 
 
     if (r_ptr->cflags1 & MF1_WINNER)
