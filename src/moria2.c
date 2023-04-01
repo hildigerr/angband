@@ -1177,6 +1177,9 @@ static void facts(inven_type *i_ptr, \
 }
 
 
+/*
+ * Let an item 't_ptr' fall to the ground at or near (y,x).
+ */
 static void drop_throw(int y, int x, inven_type *t_ptr)
 {
     register int i, j, k;
@@ -1184,17 +1187,23 @@ static void drop_throw(int y, int x, inven_type *t_ptr)
     bigvtype out_val, tmp_str;
     register cave_type *c_ptr;
 
+    /* No place found yet */
     flag = FALSE;
 
+
+    /* Start at the drop point */
     i = y;  j = x;
 
+    /* See if the object "survives" the fall */
     if (randint(5) > 1) {
 	for (k = 0; !flag && (k <= 9); ++k) {
 
 	    if (!in_bounds(i, j)) continue;
 
+	    /* Require empty floor space */
 	    if (!clean_grid_bold(i, j)) continue;
 
+	    /* Here looks good */
 	    flag = TRUE;
 
 	    if (!flag) {
@@ -1203,13 +1212,20 @@ static void drop_throw(int y, int x, inven_type *t_ptr)
 	    }
 	}
     }
+
+    /* Try really hard to place an artifact */
     if (!flag && artifact_p(t_ptr)) {
+
+	/* Start at the drop point */
 	i = y;  j = x;
+
+	/* Try really hard to drop it */
 	for (k = 0; !flag; k++) {		/* pick place w/o an object, unless doesn't seem to be one */
+
 	    y = i;  x = j;
 	    do {		/* pick place in bounds and not in wall */
-		i = y + randint(3) -2;
-		j = x + randint(3) -2;
+	    i = y + randint(3) -2;
+	    j = x + randint(3) -2;
 	    } while (!in_bounds(i,j) || !floor_grid_bold(i, j));
 
 	    if (!(cur_pos = cave[i][j].i_idx) || (k>64))
@@ -1223,22 +1239,29 @@ static void drop_throw(int y, int x, inven_type *t_ptr)
 	    if (k>888) flag = TRUE; /* if this many tries, TOO BAD! -CFT */
 	}
     } /* if not flag and is artifact */
-    if (flag)
-    {
+
+    /* Successful drop */
+    if (flag) {
 	if (cave[i][j].i_idx)	/* we must have crushed something; waste it -CFT */
-	    delete_object(i,j);
+	delete_object(i,j);
+
+	/* Make a dungeon object based on the given object */
 	cur_pos = i_pop();
 	cave[i][j].i_idx = cur_pos;
 	i_list[cur_pos] = *t_ptr;
+
+	/* Update the display */
 	lite_spot(i, j);
     }
-    else
-    {
+
+    /* Poor little object */
+    else {
 	objdes(tmp_str, t_ptr, FALSE);
-	(void) sprintf(out_val, "The %s disappears.", tmp_str);
+	(void)sprintf(out_val, "The %s disappears.", tmp_str);
 	msg_print(out_val);
     }
 }
+
 
 /* This is another adaptation of DGK's Fangband code to help throw item
    stay around (like Artifacts!) -CFT */
