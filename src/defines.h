@@ -671,7 +671,7 @@
 #define ART_SOULKEEPER           98
 #define ART_DOR            99
 #define ART_MORGOTH             100
-#define EGO_BELEG               101
+#define ART_BELTHRONDING               101
 #define ART_DAL                 102
 #define ART_PAURHACH            103
 #define ART_PAURNIMMEN          104

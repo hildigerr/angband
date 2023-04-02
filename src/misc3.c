@@ -1643,7 +1643,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			    msg_print("Belthronding");
 			else
 			    good_item_flag = TRUE;
-			i_ptr->name1 = EGO_BELEG;
+			i_ptr->name1 = ART_BELTHRONDING;
 			i_ptr->ident |= ID_NOSHOW_TYPE;
 			i_ptr->sval = 4; /* make do x5 damage!! -CFT */
 			i_ptr->tohit = 20;
