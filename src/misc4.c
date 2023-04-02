@@ -2266,7 +2266,7 @@ int tot_dam(inven_type *i_ptr, int tdam, int r_idx)
 	monster_lore	*l_ptr = &l_list[r_idx];
 
     /* Mjollnir? :-> */
-	if (!(r_ptr->cflags2 & MF2_IM_ELEC) && (i_ptr->flags2 & TR3_LITENING)) {
+	if (!(r_ptr->cflags2 & MF2_IM_ELEC) && (i_ptr->flags2 & TR1_BRAND_ELEC)) {
 	    tdam *= 5;
 	}
 
@@ -2350,7 +2350,7 @@ int tot_dam(inven_type *i_ptr, int tdam, int r_idx)
 		reduced = TRUE;
 	    }
 	}
-	if (((r_ptr->cflags2 & MF2_IM_ELEC)) && (i_ptr->flags2 & TR3_LITENING)) {
+	if (((r_ptr->cflags2 & MF2_IM_ELEC)) && (i_ptr->flags2 & TR1_BRAND_ELEC)) {
 	    l_ptr->r_cflags2 |= MF2_IM_ELEC;
 	    if (!reduced) {
 		tdam = (tdam * 3) / 4;

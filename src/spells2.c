@@ -1805,7 +1805,7 @@ void self_knowledge()
 	prt("Your flaming weapon burns your foes.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f2 & TR3_LITENING) {
+    if (f2 & TR1_BRAND_ELEC) {
 	prt("Your weapon electrocutes your foes.", i++, j);
 	pause_if_screen_full(&i, j);
     }

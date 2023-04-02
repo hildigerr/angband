@@ -983,7 +983,7 @@ again:
 		goto end;
 	    if (get_com("Lightning Brand? [yn]: ", &ch)) {
 		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags2 |= TR3_LITENING;
+		    i_ptr->flags2 |= TR1_BRAND_ELEC;
 	    } else if (ch == '\033')
 		goto end;
 	    if (get_com("Earthquake Brand? [yn]: ", &ch)) {
