@@ -1353,7 +1353,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			    break;
 			i_ptr->flags1 |= (TR3_SEE_INVIS | TR_SUST_STAT |
 				      TR1_SLAY_UNDEAD | TR1_SLAY_EVIL | TR1_WIS);
-		    i_ptr->flags2 |= (TR1_SLAY_DEMON | TR_BLESS_BLADE);
+		    i_ptr->flags2 |= (TR1_SLAY_DEMON | TR3_BLESSED);
 		    i_ptr->tohit += 5;
 		    i_ptr->todam += 5;
 		    i_ptr->toac += randint(4);
@@ -1445,7 +1445,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		    /* One in three is also a blessed wisdom booster */
 		    if (randint(3) == 1) {
 			i_ptr->flags1 |= (TR1_WIS);
-			i_ptr->flags2 |= (TR_BLESS_BLADE);
+			i_ptr->flags2 |= (TR3_BLESSED);
 			i_ptr->pval = m_bonus(0, 3, level);
 			i_ptr->cost += (200 * i_ptr->pval);
 		    }
@@ -1536,7 +1536,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			    (i_ptr->tval != TV_POLEARM))
 			    break;
 		    i_ptr->flags1 = TR1_WIS;
-		    i_ptr->flags2 = TR_BLESS_BLADE;
+		    i_ptr->flags2 = TR3_BLESSED;
 		    i_ptr->tohit += 3;
 		    i_ptr->todam += 3;
 		    i_ptr->pval = randint(3);
@@ -2822,7 +2822,7 @@ void check_strength()
 
     if (p_ptr->pclass == 2 && !notlike) {
         if ((i_ptr->tval == TV_SWORD || i_ptr->tval == TV_POLEARM)
-            && ((i_ptr->flags2 & TR_BLESS_BLADE) == 0)) {
+            && ((i_ptr->flags2 & TR3_BLESSED) == 0)) {
             notlike = TRUE;
             msg_print("You do not feel comfortable with your weapon.");
         }
@@ -2831,7 +2831,7 @@ void check_strength()
             notlike = FALSE;
             msg_print("You feel comfortable again after removing that weapon.");
         } else if (!(i_ptr->tval == TV_SWORD || i_ptr->tval == TV_POLEARM)
-		   || !((i_ptr->flags2 & TR_BLESS_BLADE) == 0)) {
+		   || !((i_ptr->flags2 & TR3_BLESSED) == 0)) {
             notlike = FALSE;
             msg_print("You feel comfortable with your weapon once more.");
         }

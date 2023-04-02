@@ -2167,7 +2167,7 @@ int unique_weapon(inven_type *t_ptr)
 	    t_ptr->damage[1] = 9;
 	    t_ptr->flags1 |= (TR3_SEE_INVIS | TR1_SLAY_EVIL | TR1_STR | TR1_DEX |
 			     TR1_SLAY_UNDEAD);
-	    t_ptr->flags2 |= (TR2_RES_DARK | TR2_RES_LITE | TR_ARTIFACT | TR_BLESS_BLADE);
+	    t_ptr->flags2 |= (TR2_RES_DARK | TR2_RES_LITE | TR_ARTIFACT | TR3_BLESSED);
 	    t_ptr->pval = 2;
 	    t_ptr->cost = 90000L;
 	    WRATH = 1;
@@ -2190,7 +2190,7 @@ int unique_weapon(inven_type *t_ptr)
 			    TR3_SLOW_DIGEST | TR1_SLAY_ANIMAL | TR1_SLAY_DRAGON |
 			    TR2_RES_ACID);
 	    t_ptr->flags2 |= (TR2_IM_ACID | TR2_HOLD_LIFE | TR3_ACTIVATE
-			    | TR2_RES_NETHER | TR_ARTIFACT | TR_BLESS_BLADE);
+			    | TR2_RES_NETHER | TR_ARTIFACT | TR3_BLESSED);
 	    t_ptr->pval = 4;
 	    t_ptr->cost = 120000L;
 	    ULMO = 1;
@@ -2367,7 +2367,7 @@ int unique_weapon(inven_type *t_ptr)
 	    t_ptr->flags1 = (TR1_WIS | TR1_BRAND_COLD |
 			    TR2_RES_COLD | TR2_FREE_ACT | TR3_SLOW_DIGEST);
 	    t_ptr->flags2 |= (TR1_SLAY_TROLL | TR_SLAY_ORC | TR3_ACTIVATE | TR_ARTIFACT |
-			      TR_BLESS_BLADE);
+			      TR3_BLESSED);
 	    t_ptr->toac = 5;
 	    t_ptr->pval = 4;
 	    t_ptr->cost = 140000L;
@@ -2407,7 +2407,7 @@ int unique_weapon(inven_type *t_ptr)
 	    t_ptr->flags1 = (TR1_BRAND_FIRE | TR3_SEE_INVIS | TR1_SEARCH | TR1_INT |
 			    TR2_RES_FIRE | TR3_FEATHER | TR1_INFRA);
 	    t_ptr->flags2 |= (TR3_ACTIVATE | TR3_LITE | TR1_SLAY_GIANT | TR2_RES_LITE
-			      | TR_ARTIFACT | TR_BLESS_BLADE);
+			      | TR_ARTIFACT | TR3_BLESSED);
 	    t_ptr->pval = 4;
 	    t_ptr->cost = 60000L;
 	    OROME = 1;
@@ -2580,7 +2580,7 @@ int unique_weapon(inven_type *t_ptr)
 	    t_ptr->flags1 = (TR_STATS | TR1_SLAY_EVIL | TR1_SLAY_UNDEAD | TR1_BRAND_COLD |
 			    TR2_FREE_ACT | TR3_SEE_INVIS | TR2_RES_COLD);
 	    t_ptr->flags2 |= (TR2_IM_COLD | TR1_SLAY_ORC | TR3_ACTIVATE | TR_ARTIFACT |
-			      TR_BLESS_BLADE);
+			      TR3_BLESSED);
 	    t_ptr->pval = 2;
 	    t_ptr->cost = 200000L;
 	    EONWE = 1;

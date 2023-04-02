@@ -1753,7 +1753,7 @@ void self_knowledge()
 	prt("Your weapon is an effective digging tool.", i++, j);
 	pause_if_screen_full(&i, j);
     }
-    if (f2 & TR_BLESS_BLADE) {
+    if (f2 & TR3_BLESSED) {
 	prt("Your weapon has been blessed by the gods.", i++, j);
 	pause_if_screen_full(&i, j);
     }

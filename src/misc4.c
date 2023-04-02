@@ -1820,7 +1820,7 @@ int spell_chance(int spell)
 	register inven_type *i_ptr;
 	i_ptr = &inventory[INVEN_WIELD];
 	if ((i_ptr->tval == TV_SWORD) || (i_ptr->tval == TV_POLEARM)) {
-	    if (!(i_ptr->flags2 & TR_BLESS_BLADE)) {
+	    if (!(i_ptr->flags2 & TR3_BLESSED)) {
 		chance += 25;
 	    }
 	}

@@ -563,7 +563,7 @@ void calc_bonuses()
 
     if (p_ptr->pclass == 2) {
 	i_ptr = &inventory[INVEN_WIELD];
-	if (!(i_ptr->flags2 & TR_BLESS_BLADE) && /* blessed blade == no penalty -CWS */
+	if (!(i_ptr->flags2 & TR3_BLESSED) && /* blessed blade == no penalty -CWS */
 	    (i_ptr->tval == TV_SWORD || i_ptr->tval == TV_POLEARM)) {
 	    p_ptr->ptohit -= 2;
 	    p_ptr->ptodam -= 2;

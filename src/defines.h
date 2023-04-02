@@ -511,7 +511,7 @@
 #define TR2_RES_BLIND    0x00800000L
 #define TR2_RES_NETHER   0x01000000L
 #define TR_ARTIFACT     0x02000000L /* means "is an artifact" -CFT */
-#define TR_BLESS_BLADE  0x04000000L /* priests use w/o penalty -DGK*/
+#define TR3_BLESSED  0x04000000L /* priests use w/o penalty -DGK*/
 #define TR1_ATTACK_SPD   0x08000000L /* extra attacks/round -DGK */
 #define TR2_RES_FEAR     0x10000000L
 
