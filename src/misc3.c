@@ -914,7 +914,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			i_ptr->flags2 |= (TR2_RES_LITE);
 			i_ptr->flags3 |= (TR3_LITE);
 			i_ptr->cost += 500;
-			i_ptr->name2 = EGO_LIGHT;
+			i_ptr->name2 = EGO_LITE;
 			rating += 6;
 			if (peek) msg_print("Light");
 			}

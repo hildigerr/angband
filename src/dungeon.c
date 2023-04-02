@@ -88,7 +88,7 @@ static cptr value_check(inven_type *i_ptr)
 	(i_ptr->name2 == EGO_ACCURACY) || (i_ptr->name2 == EGO_SLAY_O) ||
 	(i_ptr->name2 == EGO_POWER) || (i_ptr->name2 == EGO_WEST) ||
 	(i_ptr->name2 == EGO_SLAY_DEMON) || (i_ptr->name2 == EGO_SLAY_T) ||
-	(i_ptr->name2 == EGO_LIGHT) || (i_ptr->name2 == EGO_AGILITY) ||
+	(i_ptr->name2 == EGO_LITE) || (i_ptr->name2 == EGO_AGILITY) ||
 	(i_ptr->name2 == EGO_SLAY_G) || (i_ptr->name2 == EGO_TELEPATHY) ||
 	(i_ptr->name2 == EGO_DRAGONKIND) || (i_ptr->name2 == EGO_AMAN) ||
 	(i_ptr->name2 == EGO_ELVENKIND) || (i_ptr->name2 == EGO_WOUNDING) ||

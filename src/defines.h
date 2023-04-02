@@ -647,7 +647,7 @@
 #define ART_GLAMDRING            79
 #define ART_STING                80
 
-#define EGO_LIGHT		81
+#define EGO_LITE		81
 #define EGO_AGILITY		82
 
 #define EGO_BACKBITING           83
