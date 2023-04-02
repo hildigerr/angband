@@ -628,7 +628,7 @@
 #define ART_ANDURIL              66
 
 #define EGO_SLAY_O		67
-#define ART_POWER		68
+#define EGO_POWER		68
 
 #define ART_DURIN                69
 #define ART_AULE                 70

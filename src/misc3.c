@@ -714,7 +714,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		    i_ptr->todam += 1 + randint(4);
 		    i_ptr->cost += (i_ptr->tohit + i_ptr->todam +
 				      i_ptr->pval) * 300;
-		    i_ptr->name2 = ART_POWER;
+		    i_ptr->name2 = EGO_POWER;
 		    rating += 22;
 		    if (peek) msg_print("Power");
 		    break;
