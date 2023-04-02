@@ -1089,7 +1089,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			i_ptr->toac = 15;
 			i_ptr->flags2 |= (TR2_RES_FIRE | TR2_RES_COLD | TR2_RES_POIS |
 					 TR2_RES_ELEC | TR2_RES_ACID);
-			i_ptr->flags3 |= (TR3_ACTIVATE | TR_ARTIFACT);
+			i_ptr->flags3 |= (TR3_ACTIVATE);
 			i_ptr->cost = 10000L;
 			made_art_cloak = 1;
 			COLLUIN = 1;
@@ -1107,7 +1107,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			i_ptr->pval = 2;
 			i_ptr->flags1 |= (TR1_INT | TR1_WIS | TR1_STEALTH);
 			i_ptr->flags2 |= (TR2_RES_ACID);
-			i_ptr->flags3 |= (TR3_ACTIVATE | TR_ARTIFACT);
+			i_ptr->flags3 |= (TR3_ACTIVATE);
 			i_ptr->ident |= ID_NOSHOW_TYPE;
 			i_ptr->cost = 13000L;
 			made_art_cloak = 1;
@@ -1125,7 +1125,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			i_ptr->flags1 = (TR1_DEX | TR1_CHR);
 			i_ptr->flags2 = (TR2_RES_FIRE |
 				   TR2_RES_ACID | TR2_RES_COLD | TR2_FREE_ACT);
-			i_ptr->flags3 = (TR3_ACTIVATE | TR_ARTIFACT);
+			i_ptr->flags3 = (TR3_ACTIVATE);
 			i_ptr->pval = 3;
 			i_ptr->cost = 35000L;
 			made_art_cloak = 1;
@@ -1143,7 +1143,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			i_ptr->toac = 10;
 			i_ptr->flags2 = (TR2_FREE_ACT |
 					TR2_RES_ACID);
-			i_ptr->flags3 |= (TR3_SEE_INVIS | TR_ARTIFACT);
+			i_ptr->flags3 |= (TR3_SEE_INVIS);
 			i_ptr->cost = 8000L;
 			made_art_cloak = 1;
 			THORONGIL = 1;
@@ -1160,7 +1160,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			i_ptr->toac = 15;
 			i_ptr->flags1 |= (TR1_STEALTH);
 			i_ptr->flags2 |= (TR2_RES_ACID);
-			i_ptr->flags3 |= (TR3_ACTIVATE | TR_ARTIFACT);
+			i_ptr->flags3 |= (TR3_ACTIVATE);
 			i_ptr->pval = 3;
 			i_ptr->cost = 11000L;
 			made_art_cloak = 1;
@@ -1185,7 +1185,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			i_ptr->flags1 = 
 				    (TR1_INT | TR1_WIS | TR1_CHR);
 			i_ptr->flags2 = (TR2_RES_FIRE | TR2_RES_COLD | TR2_RES_ACID);
-			i_ptr->flags3 = (TR3_ACTIVATE | TR_ARTIFACT);
+			i_ptr->flags3 = (TR3_ACTIVATE);
 			i_ptr->pval = 2;
 			i_ptr->cost = 45000L;
 			made_art_cloak = 1;
@@ -1203,7 +1203,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			i_ptr->flags1 = (TR1_STEALTH);
 			i_ptr->flags2 |= (TR2_IM_ACID | 
 				  TR2_FREE_ACT | TR2_RES_ACID);
-			i_ptr->flags3 |= (TR3_SEE_INVIS | TR_ARTIFACT);
+			i_ptr->flags3 |= (TR3_SEE_INVIS);
 			i_ptr->pval = 4;
 			i_ptr->cost = 35000L;
 			made_art_cloak = 1;
@@ -1650,7 +1650,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			i_ptr->todam = 22;
 			i_ptr->pval = 3;
 			i_ptr->flags1 |= (TR1_STEALTH | TR1_DEX);
-			i_ptr->flags2 |= (TR_ARTIFACT | TR2_RES_DISEN);
+			i_ptr->flags2 |= (TR2_RES_DISEN);
 			i_ptr->cost = 35000L;
 			BELEG = 1;
 			break;
@@ -1667,7 +1667,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			i_ptr->todam = 19;
 			i_ptr->pval = 3;
 			i_ptr->flags1 |= (TR1_DEX);
-			i_ptr->flags2 |= (TR2_FREE_ACT | TR_ARTIFACT);
+			i_ptr->flags2 |= (TR2_FREE_ACT);
 			i_ptr->cost = 20000L;
 			BARD = 1;
 			break;
@@ -1688,7 +1688,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		    i_ptr->pval = 1;
 		    i_ptr->flags1 |= (TR1_SPEED);
 		    i_ptr->flags2 |= (TR2_RES_FIRE);
-		    i_ptr->flags3 |= (TR3_ACTIVATE | TR_ARTIFACT);
+		    i_ptr->flags3 |= (TR3_ACTIVATE);
 		    i_ptr->cost = 38000L;
 		    CUBRAGOL = 1;
 		    break;

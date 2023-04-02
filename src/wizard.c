@@ -1219,11 +1219,6 @@ again:
 		i_ptr->flags3 |= TR3_ACTIVATE;
 	} else if (ch == '\033')
 	    goto end;
-	if (get_com("Is it an Artifact? [yn]: ", &ch)) {
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR_ARTIFACT;
-	} else if (ch == '\033')
-	    goto end;
 	if (get_com("Cursed? [yn]: ", &ch)) {
 	    if (ch == 'y' || ch == 'Y')
 		i_ptr->flags3 |= TR3_CURSED;

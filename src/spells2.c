@@ -2019,7 +2019,7 @@ int detect_enchantment()
 		( ((tv > TV_MAX_ENCHANT) && (tv < TV_FLASK)) || /* misc items */
 		 (tv == TV_MAGIC_BOOK) || (tv == TV_PRAYER_BOOK) || /* books */
 		 ((tv >= TV_MIN_WEAR) && (tv <= TV_MAX_ENCHANT) && /* armor/weap */
-		  ((i_list[c_ptr->i_idx].flags2 & TR_ARTIFACT) || /* if Art., or */
+		  (artifact_p(&i_list[c_ptr->i_idx]) || /* if Art., or */
 		   (i_list[c_ptr->i_idx].tohit>0) || /* has pluses, then show */
 		   (i_list[c_ptr->i_idx].todam>0) ||
 		   (i_list[c_ptr->i_idx].toac>0))) )){
@@ -3286,7 +3286,7 @@ int door_creation()
 			 && (i_list[c_ptr->i_idx].tval != TV_STORE_DOOR)) ||
 			(i_list[c_ptr->i_idx].tval < TV_MIN_WEAR) ||
 			(i_list[c_ptr->i_idx].tval > TV_MAX_WEAR) ||
-			!(i_list[c_ptr->i_idx].flags2 & TR_ARTIFACT)) {
+			!artifact_p(&i_list[c_ptr->i_idx])) {
 				/* if no artifact here -CFT */
 			door = TRUE;
 			if (c_ptr->i_idx != 0)
@@ -3324,7 +3324,7 @@ int trap_creation()
 		     && (i_list[c_ptr->i_idx].tval != TV_STORE_DOOR)) ||
 		    (i_list[c_ptr->i_idx].tval < TV_MIN_WEAR) ||
 		    (i_list[c_ptr->i_idx].tval > TV_MAX_WEAR) ||
-		    !(i_list[c_ptr->i_idx].flags2 & TR_ARTIFACT)) {
+		    !artifact_p(&i_list[c_ptr->i_idx])) {
 				/* if no artifact here -CFT */
 		    trap = TRUE;
 		    if (c_ptr->i_idx != 0)
@@ -4450,7 +4450,7 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
 			    }
 			    i_ptr = &inventory[t];
 			    chance = 1;
-			    if (i_ptr->flags2 & TR_ARTIFACT)	/* Artifacts have 2/3 */
+			    if artifact_p(i_ptr)	/* Artifacts have 2/3 */
 				chance = randint(3);	/* chance to resist -DGK */
 			    if ((i_ptr->tohit > 0) && (chance == 1)) {
 				i_ptr->tohit -= randint(2);
@@ -4977,7 +4977,7 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 				i_ptr = &inventory[t];
 				chance = 1;
 				/* Artifacts have 2/3 chance to resist -DGK */
-				if (i_ptr->flags2 & TR_ARTIFACT)
+				if artifact_p(i_ptr)
 				    chance = randint(3);
 				if ((i_ptr->tohit > 0) && (chance == 1)) {
 				    i_ptr->tohit -= randint(2);

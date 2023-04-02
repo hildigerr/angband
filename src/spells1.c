@@ -91,7 +91,7 @@ static int minus_ac(u32b typ_dam)
 	switch (typ_dam) {
 	  case TR2_RES_ACID:
 	    if ((i_ptr->flags2 & TR2_RES_ACID) || (i_ptr->flags2 & TR2_IM_ACID) ||
-		((i_ptr->flags2 & TR_ARTIFACT) && (randint(5)>2)))
+		(artifact_p(i_ptr) && (randint(5)>2)))
 		do_damage = FALSE;
 	    else
 		do_damage = TRUE;

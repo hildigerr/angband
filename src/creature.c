@@ -559,7 +559,7 @@ static void br_wall(int cy, int cx)
 			      (i_list[c_ptr->i_idx].tval != TV_STORE_DOOR) &&
 			      !((i_list[c_ptr->i_idx].tval >= TV_MIN_WEAR) &&
 				(i_list[c_ptr->i_idx].tval <= TV_MAX_WEAR) &&
-			    (i_list[c_ptr->i_idx].flags2 & TR_ARTIFACT))))) {
+			    artifact_p(&i_list[c_ptr->i_idx]))))) {
 	    if (c_ptr->i_idx)
 		delete_object(char_row, char_col);
 	    tmp = randint(10);
@@ -768,7 +768,7 @@ static void shatter_quake(int cy, int cx)
 		if (c_ptr->i_idx != 0)
 		    if (((i_list[c_ptr->i_idx].tval >= TV_MIN_WEAR) &&
 			 (i_list[c_ptr->i_idx].tval <= TV_MAX_WEAR) &&
-			 (i_list[c_ptr->i_idx].flags2 & TR_ARTIFACT)) ||
+			 artifact_p(&i_list[c_ptr->i_idx])) ||
 			(i_list[c_ptr->i_idx].tval == TV_UP_STAIR) ||
 			(i_list[c_ptr->i_idx].tval == TV_DOWN_STAIR) ||
 			(i_list[c_ptr->i_idx].tval == TV_STORE_DOOR))
@@ -1505,7 +1505,7 @@ static void make_attack(int m_idx)
 		    }
 		    i_ptr = &inventory[i];
 		    if (i_ptr->tval != TV_NOTHING) {
-			if (i_ptr->flags2 & TR_ARTIFACT)
+			if artifact_p(i_ptr)
 			    chance = randint(5);
 			if ((i_ptr->tohit > 0) && (chance < 3)){
 			    i_ptr->tohit -= randint(2);

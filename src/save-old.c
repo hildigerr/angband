@@ -452,7 +452,7 @@ static void repair_item_flags_old(inven_type *i_ptr)
     if (f2 & 0x00400000L) i_ptr->flags2 |= TR2_RES_NEXUS;
     if (f2 & 0x00800000L) i_ptr->flags2 |= TR2_RES_BLIND;
     if (f2 & 0x01000000L) i_ptr->flags2 |= TR2_RES_NETHER;
-    if (f2 & 0x02000000L) i_ptr->flags2 |= TR_ARTIFACT;
+    if (f2 & 0x02000000L) i = i; /* Artifact Flag extracted into "name1" */
     if (f2 & 0x04000000L) i_ptr->flags3 |= TR3_BLESSED;
     if (f2 & 0x08000000L) i_ptr->flags1 |= TR1_ATTACK_SPD;
     if (f2 & 0x10000000L) i_ptr->flags2 |= TR2_RES_FEAR;

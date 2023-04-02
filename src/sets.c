@@ -20,7 +20,7 @@ int set_corrodes(inven_type *e)			   /* changed -CFT */
       case TV_HELM:
       case TV_SHIELD:
       case TV_HARD_ARMOR:
-	if ((e->flags2 & TR_ARTIFACT)	/* shouldn't kill artifacts -CFT */
+	if (artifact_p(e)	/* shouldn't kill artifacts -CFT */
 	    ||(e->flags2 & TR2_RES_ACID)	/* can't check outside, because flags1 */
 	    ||(e->flags2 & TR2_IM_ACID))	/* used differently in potions/etc */
 	    return (FALSE);
@@ -45,7 +45,7 @@ int set_flammable(inven_type *e)		   /* changed -CFT */
       case TV_GLOVES:
       case TV_CLOAK:
       case TV_SOFT_ARMOR:
-	if ((e->flags2 & TR_ARTIFACT)	/* shouldn't kill artifacts -CFT */
+	if (artifact_p(e)	/* shouldn't kill artifacts -CFT */
 	    ||(e->flags2 & TR2_RES_FIRE)	/* can't check outside, because flags1 */
 	    ||(e->flags2 & TR2_IM_FIRE))	/* used differently in potions/etc */
 	    return (FALSE);
@@ -91,7 +91,7 @@ int set_mana_destroy(inven_type *e)		   /* added -DGK */
     int element = e->tval;
 
     if ((element >= TV_MIN_ENCHANT) && (element <= TV_MAX_WEAR) &&
-	(e->flags2 & TR_ARTIFACT))
+	artifact_p(e))
 	return (FALSE);
     return (TRUE);
 }
@@ -102,7 +102,7 @@ int set_holy_destroy(inven_type *e)		   /* added -DGK */
     int element = e->tval;
 
     if ((element >= TV_MIN_ENCHANT) && (element <= TV_MAX_WEAR) &&
-	(e->flags3 & TR3_CURSED) && (!(e->flags2 & TR_ARTIFACT)))
+	(e->flags3 & TR3_CURSED) && (!artifact_p(e)))
 	return (TRUE);
     return (FALSE);
 }
@@ -132,7 +132,7 @@ int set_acid_affect(inven_type *e)		   /* changed -CFT */
       case TV_GLOVES:
       case TV_CLOAK:
       case TV_SOFT_ARMOR:
-	if ((e->flags2 & TR_ARTIFACT)	/* shouldn't kill artifacts -CFT */
+	if (artifact_p(e)	/* shouldn't kill artifacts -CFT */
 	    ||(e->flags2 & TR2_RES_ACID)	/* can't check outside, because flags1 */
 	    ||(e->flags2 & TR2_IM_ACID))	/* used differently in potions/etc */
 	    return (FALSE);
@@ -151,7 +151,7 @@ int set_lightning_destroy(inven_type *e)	   /* changed -CFT */
 
     switch (element) {
       case TV_RING:
-	if ((e->flags2 & TR_ARTIFACT)	/* shouldn't kill artifacts -CFT */
+	if (artifact_p(e)	/* shouldn't kill artifacts -CFT */
 	    ||(e->flags2 & TR2_RES_ELEC)	/* can't check outside, because flags1 */
 	    ||(e->flags2 & TR2_IM_ELEC))	/* used differently in potions/etc */
 	    return (FALSE);
@@ -185,7 +185,7 @@ int set_acid_destroy(inven_type *e)		   /* changed -CFT */
       case TV_SHIELD:
       case TV_HARD_ARMOR:
       case TV_SOFT_ARMOR:
-	if ((e->flags2 & TR_ARTIFACT)	/* shouldn't kill artifacts -CFT */
+	if (artifact_p(e)	/* shouldn't kill artifacts -CFT */
 	    ||(e->flags2 & TR2_RES_ACID)	/* can't check outside, because flags1 */
 	    ||(e->flags2 & TR2_IM_ACID))	/* used differently in potions/etc */
 	    return (FALSE);
@@ -215,7 +215,7 @@ int set_fire_destroy(inven_type *e)		   /* changed -CFT */
       case TV_GLOVES:
       case TV_CLOAK:
       case TV_SOFT_ARMOR:
-	if ((e->flags2 & TR_ARTIFACT)	/* shouldn't kill artifacts -CFT */
+	if (artifact_p(e)	/* shouldn't kill artifacts -CFT */
 	    ||(e->flags2 & TR2_RES_FIRE)	/* can't check outside, because flags1 */
 	    ||(e->flags2 & TR2_IM_FIRE))	/* used differently in potions/etc */
 	    return (FALSE);

@@ -450,7 +450,6 @@
 #define TR_EGO_WEAPON   0x0007E000L
 
 
-#define TR_ARTIFACT     0x02000000L /* means "is an artifact" -CFT */
 
 /* definitions for chests */
 #define CH_LOCKED       0x00000001L
