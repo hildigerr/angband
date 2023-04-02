@@ -2949,7 +2949,7 @@ int unique_armour(inven_type *t_ptr)
 	t_ptr->weight = 200;
 	t_ptr->flags1 |= (TR1_STR | TR1_DEX);
 	t_ptr->flags2 |= (TR2_RES_ACID | TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_COLD | TR2_RES_CONF |TR2_RES_SOUND);
-	t_ptr->name1 = EGO_ROHAN;
+	t_ptr->name1 = ART_ROHIRRIM;
 	t_ptr->tohit = 0;
 	t_ptr->pval = 2;
 	t_ptr->toac = 15;

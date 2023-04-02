@@ -704,7 +704,7 @@
 #define ART_PAIN                131
 #define ART_ELVAGIL             132
 #define ART_AGLARANG            133
-#define EGO_ROHAN               134
+#define ART_ROHIRRIM               134
 #define ART_EORLINGAS           135
 #define ART_BARUKKHELED         136
 #define ART_WRATH               137
