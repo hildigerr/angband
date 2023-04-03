@@ -724,7 +724,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	/* Hack -- grab the artifact name */
 	if (i_ptr->name1) {
 	    (void)strcat(tmp_val, " ");
-	    (void)strcat(tmp_val, special_names[i_ptr->name1]);
+	    (void)strcat(tmp_val, art_names[i_ptr->name1]);
 	}
 
 	/* Otherwise, grab the "ego-item" name */
