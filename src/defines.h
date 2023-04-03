@@ -545,7 +545,14 @@
 #define ID_NOSHOW_P1    0x40    /* don't show (+x) even if pval != 0 -CWS   */
 #define ID_NOSHOW_TYPE  0x80    /* don't show (+x of yyy), just (+x) -CWS */
 
-/* indexes into the special name table */
+
+
+/*
+ * Ego-Item indexes
+ *
+ * The holes were left by artifacts.
+ */
+
 #define SN_NULL                 0
 #define EGO_R			1
 #define EGO_RESIST_A		2
@@ -613,61 +620,70 @@
 
 #define EGO_SLAY_ANIMAL		55
 
-#define ART_GROND                56
-#define ART_RINGIL               57
-#define ART_AEGLOS               58
-#define ART_ARUNRUTH             59
-#define ART_MORMEGIL             60
 #define EGO_MORGUL               61
-#define ART_ANGRIST              62
-#define ART_GURTHANG             63
-#define ART_CALRIS               64
 
 #define EGO_ACCURACY		65
 
-#define ART_ANDURIL              66
-
 #define EGO_SLAY_O		67
 #define EGO_POWER		68
-
-#define ART_DURIN                69
-#define ART_AULE                 70
 
 #define EGO_WEST		71
 #define EGO_BLESS_BLADE		72
 #define EGO_SLAY_DEMON		73
 #define EGO_SLAY_T		74
 
-#define ART_BLOODSPIKE           75
-#define ART_THUNDERFIST          76
-
 #define EGO_WOUNDING		77
-
-#define ART_ORCRIST              78
-#define ART_GLAMDRING            79
-#define ART_STING                80
 
 #define EGO_LITE		81
 #define EGO_AGILITY		82
 
 #define EGO_BACKBITING           83
-#define ART_DOOMCALLER           84
 
 #define EGO_SLAY_G		85
 #define EGO_TELEPATHY		86
 
 #define EGO_DRAGONKIND           87
+#define EGO_ELVENKIND            97
 
+#define EGO_ATTACKS             179
+
+#define EGO_AMAN                 91
+
+#define EGO_SHATTERED           177
+#define EGO_BLASTED             178
+
+#define SN_ARRAY_SIZE          180 /* must be at end of this list */
+
+
+
+/*
+ * Artifact indexes
+ */
+#define ART_GROND                56
+#define ART_RINGIL               57
+#define ART_AEGLOS               58
+#define ART_ARUNRUTH             59
+#define ART_MORMEGIL             60
+#define ART_ANGRIST              62
+#define ART_GURTHANG             63
+#define ART_CALRIS               64
+#define ART_ANDURIL              66
+#define ART_DURIN                69
+#define ART_AULE                 70
+#define ART_BLOODSPIKE           75
+#define ART_THUNDERFIST          76
+#define ART_ORCRIST              78
+#define ART_GLAMDRING            79
+#define ART_STING                80
+#define ART_DOOMCALLER           84
 #define ART_NENYA                88
 #define ART_NARYA                89
 #define ART_VILYA                90
-#define EGO_AMAN                 91
 #define ART_BELEGENNON           92
 #define ART_FEANOR               93
 #define ART_ANARION              94
 #define ART_ISILDUR              95
 #define ART_FINGOLFIN            96
-#define EGO_ELVENKIND            97
 #define ART_SOULKEEPER           98
 #define ART_DOR            99
 #define ART_MORGOTH             100
@@ -747,10 +763,6 @@
 #define ART_TARATOL             174
 #define ART_RAZORBACK           175
 #define ART_BLADETURNER         176
-#define EGO_SHATTERED           177
-#define EGO_BLASTED             178
-#define EGO_ATTACKS             179
-#define SN_ARRAY_SIZE          180 /* must be at end of this list */
 
 
 /* The values for the treasure type (tval) field of various objects.
