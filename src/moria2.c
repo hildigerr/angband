@@ -504,10 +504,6 @@ u32b monster_death(int y, int x, u32b flags, u32b good, u32b win)
     register int i, number;
     u32b       dump, res;
 
-#if defined(ATARIST_MWC)
-    u32b              holder;	   /* avoid a compiler bug */
-#endif
-
     if (win) {		   /* MORGOTH */
 	register int        j, k;
 	register cave_type *c_ptr;
@@ -573,7 +569,6 @@ u32b monster_death(int y, int x, u32b flags, u32b good, u32b win)
 	}
 	while (!grond && i < 50);
     }
-#if !defined(ATARIST_MWC)
     if (flags & MF1_CARRY_OBJ)
 	i = 1;
     else
@@ -596,46 +591,9 @@ u32b monster_death(int y, int x, u32b flags, u32b good, u32b win)
 	dump = summon_object(y, x, number, i, good);
     else
 	dump = 0;
-#else
-    holder = MF1_CARRY_OBJ;
-    if (flags & holder)
-	i = 1;
-    else
-	i = 0;
-    holder = MF1_CARRY_GOLD;
-    if (flags & holder)
-	i += 2;
-
-    number = 0;
-    holder = MF1_HAS_60;
-    if ((flags & holder) && (randint(100) < 60))
-	number++;
-    holder = MF1_HAS_90;
-    if ((flags & holder) && (randint(100) < 90))
-	number++;
-    holder = MF1_HAS_1D2;
-    if (flags & holder)
-	number += randint(2);
-    holder = MF1_HAS_2D2;
-    if (flags & holder)
-	number += damroll(2, 2);
-    holder = MF1_HAS_4D2;
-    if (flags & holder)
-	number += damroll(4, 2);
-    if (number > 0)
-	dump = summon_object(y, x, number, i, good);
-    else
-	dump = 0;
 
 
-#endif
-
-#if defined(ATARIST_MWC)
-    holder = MF1_WINNER;
-    if (flags & holder)
-#else
     if (flags & MF1_WINNER)
-#endif
     {
 	total_winner = TRUE;
 	prt_winner();
@@ -645,23 +603,9 @@ u32b monster_death(int y, int x, u32b flags, u32b good, u32b win)
     if (dump) {
 	res = 0;
 	if (dump & 255)
-#ifdef ATARIST_MWC
-	{
-	    holder = MF1_CARRY_OBJ;
-	    res |= holder;
-	}
-#else
 	    res |= MF1_CARRY_OBJ;
-#endif
 	if (dump >= 256)
-#ifdef ATARIST_MWC
-	{
-	    holder = MF1_CARRY_GOLD;
-	    res |= holder;
-	}
-#else
 	    res |= MF1_CARRY_GOLD;
-#endif
 	dump = (dump % 256) + (dump / 256);	/* number of items */
 	res |= dump << CM1_TR_SHIFT;
     } else
