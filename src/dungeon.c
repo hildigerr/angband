@@ -51,10 +51,31 @@ static cptr value_check(inven_type *i_ptr)
 	if (artifact_p(i_ptr)) return "terrible";
 
 	/* Cursed ego-items are worthless */
-    if (i_ptr->name2 == SN_NULL) return "worthless";
+	if (i_ptr->name2) return "worthless";
 
+	/* Cursed */
+	return "cursed";
     }
 
+
+    /* Check for uncursed artifacts */
+    if (artifact_p(i_ptr)) return "special";
+
+    /* Check for "good" ego-items */
+    if (i_ptr->name2) {
+
+	/* Some of the ego-items are excellent */
+	if (i_ptr->name2 < EGO_MIN_WORTHLESS) return "excellent";
+
+	/* The rest are awful */
+	return "worthless";
+    }
+
+
+    /* Hack -- Any form of bonus is considered good */
+    if ((i_ptr->toac > 0) || (i_ptr->tohit > 0) || (i_ptr->todam > 0)) {
+	return "good";
+    }
 
     /* Hack -- "good" digging tools -CFT */
     if ((i_ptr->tval == TV_DIGGING) && (i_ptr->flags1 & TR1_TUNNEL) &&
@@ -62,41 +83,12 @@ static cptr value_check(inven_type *i_ptr)
 	return "good";
     }
 
-    if ((i_ptr->tohit<=0 && i_ptr->todam<=0 && i_ptr->toac<=0) &&
-	i_ptr->name2==SN_NULL)  /* normal shovels will also reach here -CFT */
-	return "average";
-
-    if (i_ptr->name2 == SN_NULL)
-	return "good";
-
-    if ((i_ptr->name2 == EGO_R) || (i_ptr->name2 == EGO_RESIST_A) ||
-	(i_ptr->name2 == EGO_RESIST_F) || (i_ptr->name2 == EGO_RESIST_C) ||
-	(i_ptr->name2 == EGO_RESIST_E) || (i_ptr->name2 == EGO_SLAY_E) ||
-	(i_ptr->name2 == EGO_HA) || (i_ptr->name2 == EGO_FT) ||
-	(i_ptr->name2 == EGO_DF) || (i_ptr->name2 == EGO_FB) ||
-	(i_ptr->name2 == EGO_SLAY_A) || (i_ptr->name2 == EGO_FREE_ACTION) ||
-	(i_ptr->name2 == EGO_SLAY_D) || (i_ptr->name2 == EGO_SLAYING) ||
-	(i_ptr->name2 == EGO_SLAY_U) || (i_ptr->name2 == EGO_SLOW_DESCENT) ||
-	(i_ptr->name2 == EGO_SPEED) || (i_ptr->name2 == EGO_STEALTH) ||
-	(i_ptr->name2 == EGO_INTELLIGENCE) || (i_ptr->name2 == EGO_WISDOM) ||
-	(i_ptr->name2 == EGO_INFRAVISION) || (i_ptr->name2 == EGO_MIGHT) ||
-	(i_ptr->name2 == EGO_LORDLINESS) || (i_ptr->name2 == EGO_MAGI) ||
-	(i_ptr->name2 == EGO_BEAUTY) || (i_ptr->name2 == EGO_SEEING) ||
-     (i_ptr->name2 == EGO_REGENERATION) || (i_ptr->name2 == EGO_PROTECTION) ||
-	(i_ptr->name2 == EGO_FIRE) || (i_ptr->name2 == EGO_SLAY_EVIL) ||
-	(i_ptr->name2 == EGO_DRAGON_SLAYING) || (i_ptr->name2 == EGO_SLAY_ANIMAL) ||
-	(i_ptr->name2 == EGO_ACCURACY) || (i_ptr->name2 == EGO_SLAY_O) ||
-	(i_ptr->name2 == EGO_POWER) || (i_ptr->name2 == EGO_WEST) ||
-	(i_ptr->name2 == EGO_SLAY_DEMON) || (i_ptr->name2 == EGO_SLAY_T) ||
-	(i_ptr->name2 == EGO_LITE) || (i_ptr->name2 == EGO_AGILITY) ||
-	(i_ptr->name2 == EGO_SLAY_G) || (i_ptr->name2 == EGO_TELEPATHY) ||
-	(i_ptr->name2 == EGO_DRAGONKIND) || (i_ptr->name2 == EGO_AMAN) ||
-	(i_ptr->name2 == EGO_ELVENKIND) || (i_ptr->name2 == EGO_WOUNDING) ||
-	(i_ptr->name2 == EGO_BLESS_BLADE) || (i_ptr->name2 == EGO_ATTACKS))
-	return "excellent";
-
-    return "special";
+    /* Default to "average" */
+    return "average";
 }
+
+
+
 
 
 /*

@@ -554,7 +554,6 @@
  * The holes were left by artifacts.
  */
 
-#define SN_NULL                 0
 #define EGO_R			1
 #define EGO_RESIST_A		2
 #define EGO_RESIST_F		3
