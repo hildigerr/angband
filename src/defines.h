@@ -669,7 +669,7 @@
 #define ART_FINGOLFIN            96
 #define EGO_ELVENKIND            97
 #define ART_SOULKEEPER           98
-#define ART_DOR_LOMIN            99
+#define ART_DOR            99
 #define ART_MORGOTH             100
 #define EGO_BELEG               101
 #define ART_DAL                 102

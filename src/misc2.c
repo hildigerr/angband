@@ -3296,7 +3296,7 @@ int unique_armour(inven_type *t_ptr)
 	    t_ptr->flags2 |= (TR2_RES_ACID | TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_COLD | TR2_RES_LITE);
 	    t_ptr->flags3 |= (TR2_RES_BLIND | TR3_LITE | TR3_SEE_INVIS |
 			     TR3_TELEPATHY);
-	    t_ptr->name1 = ART_DOR_LOMIN;
+	    t_ptr->name1 = ART_DOR;
 	    t_ptr->pval = 4;
 	    t_ptr->toac = 20;
 	    t_ptr->cost = 300000L;
