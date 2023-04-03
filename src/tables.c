@@ -324,7 +324,7 @@ struct monster_attack a_list[MAX_A_IDX] = {
  * Special name table
  */
 
-cptr special_names[SN_ARRAY_SIZE] = {
+cptr ego_names[EGO_MAX] = {
 
     NULL,			/* 0 */
     "of Resistance",
@@ -342,14 +342,14 @@ cptr special_names[SN_ARRAY_SIZE] = {
     "of Frost",
     "of Free Action",
     "of Slaying",		/* 15 */
-    "of Clumsiness",
-    "of Weakness",
+NULL,
+NULL,
     "of Slow Descent",
     "of Speed",
     "of Stealth",		/* 20 */
-    "of Slowness",
-    "of Noise",
-    "of Great Mass",
+NULL,
+NULL,
+NULL,
     "of Intelligence",
     "of Wisdom",		/* 25 */
     "of Infra-Vision",
@@ -359,16 +359,16 @@ cptr special_names[SN_ARRAY_SIZE] = {
     "of Beauty",		/* 30 */
     "of Seeing",
     "of Regeneration",
-    "of Stupidity",
-    "of Dullness",
+NULL,
+NULL,
     "of Blindness",
     "of Timidness",
-    "of Teleportation",
-    "of Ugliness",
+NULL,
+NULL,
     "of Protection",
-    "of Irritation",
-    "of Vulnerability",
-    "of Enveloping",
+NULL,				/* 40 */
+NULL,
+NULL,
     "of Fire",
     "of Slay Evil",
     "of Dragon Slaying",	/* 45 */
@@ -387,7 +387,7 @@ NULL,
 NULL,
 NULL,
 NULL,				/* 60 */
-    "of Morgul",
+NULL,
 NULL,
 NULL,
 NULL,
@@ -396,7 +396,7 @@ NULL,
     "of Orc Slaying",
     "of Power",
 NULL,
-NULL,
+NULL,				/* 70 */
     "of Westernesse",
     "(Blessed)",
     "of Demon Slaying",
@@ -406,106 +406,54 @@ NULL,
     "of Wounding",
 NULL,
 NULL,
-NULL,
+NULL,				/* 80 */
     "of Light",
     "of Agility",
-    "of Backbiting",
+NULL,
 NULL,
     "of Giant Slaying",		/* 85 */
     "of Telepathy",
     "of Dragonkind",
-NULL,
-NULL,
-NULL,    /* 90 */
-    "of Aman",
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
     "of Elvenkind",
 NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,    /* 105 */
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,    /* 120 */
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,    /* 135 */
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,    /* 150 */
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,    /* 165 */
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-NULL,
-    "(Shattered)",
-    "(Blasted)",
-    "of Extra Attacks"		/* 180 */
+    "of Extra Attacks",		/* 90 (was 179) */
+    "of Aman",			/* 91 */
+NULL,				/* 92 */
+NULL,				/* 93 */
+NULL,				/* 94 */
+NULL,				/* 95 */
+NULL,				/* 96 -- first "bad" item */
+NULL,				/* 97 */
+NULL,				/* 98 */
+NULL,				/* 99 */
+NULL,				/* 100 */
+NULL,				/* 101 */
+NULL,				/* 102 */
+NULL,				/* 103 */
+    "of Weakness",		/* 104 */
+    "of Stupidity",		/* 105 */
+    "of Dullness",		/* 106 */
+    "of Clumsiness",		/* 107 */
+NULL,		/* 108 */
+    "of Ugliness",		/* 109 */
+    "of Teleportation",		/* 110 */
+NULL,				/* 111 */
+    "of Irritation",		/* 112 */
+    "of Vulnerability",		/* 113 */
+    "of Enveloping",		/* 114 */
+NULL,				/* 115 */
+    "of Slowness",		/* 116 */
+    "of Noise",			/* 117 */
+    "of Great Mass",		/* 118 */
+NULL,				/* 119 */
+    "of Backbiting",		/* 120 */
+    "of Blindness",				/* 121 */
+    "of Timidness",				/* 122 */
+NULL,				/* 123 */
+    "of Morgul",		/* 124 */
+NULL,				/* 125 */
+    "(Shattered)",		/* 126 */
+    "(Blasted)",		/* 127 */
 };
 
 cptr art_names[ART_MAX] = {

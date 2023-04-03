@@ -550,6 +550,7 @@
 /*
  * Ego-Item indexes
  *
+ * All the "Bad" Ego-Items are at the end.
  * The holes were left by artifacts.
  */
 
@@ -570,16 +571,9 @@
 #define EGO_FREE_ACTION		14
 #define EGO_SLAYING		15
 
-#define EGO_CLUMSINESS           16
-#define EGO_WEAKNESS             17
-
 #define EGO_SLOW_DESCENT	18
 #define EGO_SPEED		19
 #define EGO_STEALTH		20
-
-#define EGO_SLOWNESS             21
-#define EGO_NOISE                22
-#define EGO_GREAT_MASS           23
 
 #define EGO_INTELLIGENCE	24
 #define EGO_WISDOM		25
@@ -591,18 +585,7 @@
 #define EGO_SEEING		31
 #define EGO_REGENERATION	32
 
-#define EGO_STUPIDITY            33
-#define EGO_DULLNESS             34
-#define EGO_BLINDNESS            35
-#define EGO_TIMIDNESS            36
-#define EGO_TELEPORTATION        37
-#define EGO_UGLINESS             38
-
 #define EGO_PROTECTION		39
-
-#define EGO_IRRITATION           40
-#define EGO_VULNERABILITY        41
-#define EGO_ENVELOPING           42
 
 #define EGO_FIRE		43
 #define EGO_SLAY_EVIL		44
@@ -620,7 +603,6 @@
 
 #define EGO_SLAY_ANIMAL		55
 
-#define EGO_MORGUL               61
 
 #define EGO_ACCURACY		65
 
@@ -637,22 +619,44 @@
 #define EGO_LITE		81
 #define EGO_AGILITY		82
 
-#define EGO_BACKBITING           83
-
 #define EGO_SLAY_G		85
 #define EGO_TELEPATHY		86
 
 #define EGO_DRAGONKIND           87
-#define EGO_ELVENKIND            97
+#define EGO_ELVENKIND            88	/* Was 97 */
 
-#define EGO_ATTACKS             179
+#define EGO_ATTACKS		90	/* Was 179 */
 
-#define EGO_AMAN                 91
+#define EGO_AMAN		91
 
-#define EGO_SHATTERED           177
-#define EGO_BLASTED             178
+#define EGO_MIN_WORTHLESS	96	/* First "worthless" Ego-Item */
 
-#define SN_ARRAY_SIZE          180 /* must be at end of this list */
+#define EGO_WEAKNESS		104
+#define EGO_STUPIDITY		105
+#define EGO_DULLNESS		106
+#define EGO_CLUMSINESS		108
+#define EGO_UGLINESS		109
+#define EGO_TELEPORTATION	110
+
+#define EGO_IRRITATION		112
+#define EGO_VULNERABILITY	113
+#define EGO_ENVELOPING		114
+
+#define EGO_SLOWNESS		116
+#define EGO_NOISE		117
+#define EGO_GREAT_MASS		118
+
+#define EGO_BACKBITING		120
+
+#define EGO_BLINDNESS		121
+#define EGO_TIMIDNESS		122
+
+#define EGO_MORGUL		124
+
+#define EGO_SHATTERED		126
+#define EGO_BLASTED		127
+
+#define EGO_MAX			128
 
 
 

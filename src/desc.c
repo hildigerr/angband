@@ -730,7 +730,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	/* Otherwise, grab the "ego-item" name */
 	else if (i_ptr->name2) {
 	    (void)strcat(tmp_val, " ");
-	    (void)strcat(tmp_val, special_names[i_ptr->name2]);
+	    (void)strcat(tmp_val, ego_names[i_ptr->name2]);
 	}
     }
 
