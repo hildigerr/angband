@@ -16,7 +16,6 @@
 static void py_attack(int, int);
 static void inven_throw(int, struct inven_type *);
 static void facts(struct inven_type *, int *, int *, int *, int *, int *);
-static void drop_throw(int, int, struct inven_type *);
 static void py_bash(int, int);
 static int fearless(monster_race *);
 
@@ -1178,14 +1177,14 @@ static void facts(inven_type *i_ptr, \
 
 
 /*
- * Let an item 't_ptr' fall to the ground at or near (y,x).
+ * Let an item 'i_ptr' fall to the ground at or near (y,x).
  */
-static void drop_throw(int y, int x, inven_type *t_ptr)
+void drop_near(inven_type *i_ptr, int y, int x)
 {
     register int i, j, k;
     int flag, cur_pos;
-    bigvtype out_val, tmp_str;
     register cave_type *c_ptr;
+    bigvtype out_val, tmp_str;
 
     /* No place found yet */
     flag = FALSE;
@@ -1214,7 +1213,7 @@ static void drop_throw(int y, int x, inven_type *t_ptr)
     }
 
     /* Try really hard to place an artifact */
-    if (!flag && artifact_p(t_ptr)) {
+    if (!flag && artifact_p(i_ptr)) {
 
 	/* Start at the drop point */
 	i = y;  j = x;
@@ -1242,7 +1241,7 @@ static void drop_throw(int y, int x, inven_type *t_ptr)
 	/* XXX Artifacts will destroy ANYTHING to stay alive */
 	if (!flag) {
 	    i = y, j = x, flag = TRUE;
-	    objdes(tmp_str, t_ptr, FALSE);
+	    objdes(tmp_str, i_ptr, FALSE);
 	    (void)sprintf(out_val, "The %s crashes to the floor.", tmp_str);
 	    message(out_val, 0);
 	}
@@ -1257,7 +1256,7 @@ static void drop_throw(int y, int x, inven_type *t_ptr)
 	/* Make a dungeon object based on the given object */
 	cur_pos = i_pop();
 	cave[i][j].i_idx = cur_pos;
-	i_list[cur_pos] = *t_ptr;
+	i_list[cur_pos] = *i_ptr;
 
 	/* Update the display */
 	lite_spot(i, j);
@@ -1265,7 +1264,7 @@ static void drop_throw(int y, int x, inven_type *t_ptr)
 
     /* Poor little object */
     else {
-	objdes(tmp_str, t_ptr, FALSE);
+	objdes(tmp_str, i_ptr, FALSE);
 	(void)sprintf(out_val, "The %s disappears.", tmp_str);
 	msg_print(out_val);
     }
@@ -1279,7 +1278,7 @@ static int stays_when_throw(inven_type *i_ptr)
   if (artifact_p(i_ptr))
     return TRUE;
 
-  /* for non-artifacts, drop_throw() still loses 20% of them... */
+  /* for non-artifacts, drop_near() still loses 20% of them... */
   if ((i_ptr->tval >= TV_BOW) && (i_ptr->tval <= TV_STAFF))
     return TRUE;
   switch (i_ptr->tval){

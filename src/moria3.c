@@ -1856,10 +1856,10 @@ void do_cmd_fire()
 				}
 				if (stays_when_throw(&throw_obj))
 /* should it land on floor?  Or else vanish forever? */
-				    drop_throw(oldy, oldx, &throw_obj);
+				    drop_near(&throw_obj, oldy, oldx);
 			    }
 			    else
-				drop_throw(oldy, oldx, &throw_obj);
+				drop_near(&throw_obj, oldy, oldx);
 			}
 			else
 			{   /* do not test c_ptr->fm here */
@@ -1876,7 +1876,7 @@ void do_cmd_fire()
 			}
 		    } else {
 			flag = TRUE;
-			drop_throw(oldy, oldx, &throw_obj);
+			drop_near(&throw_obj, oldy, old);
 		    }
 		    oldy = y;
 		    oldx = x;
