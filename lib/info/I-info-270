@@ -6,6 +6,7 @@ Added field "name1" for artifact identities
 Addition of another flag set for items.
 Reorganization of the flags for items.
 Properly handled "identify" inducing object "awareness" and "combining".
+Made artifacts MUCH more resistant to "death by throwing" :-)
 Functions combine() and combine_pack() to maintain inventory.
 Made "store cost" a property of objects
 Rewrote "object feeling" code

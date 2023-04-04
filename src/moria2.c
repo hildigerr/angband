@@ -1238,11 +1238,20 @@ static void drop_throw(int y, int x, inven_type *t_ptr)
 	    
 	    if (k>888) flag = TRUE; /* if this many tries, TOO BAD! -CFT */
 	}
+
+	/* XXX Artifacts will destroy ANYTHING to stay alive */
+	if (!flag) {
+	    i = y, j = x, flag = TRUE;
+	    objdes(tmp_str, t_ptr, FALSE);
+	    (void)sprintf(out_val, "The %s crashes to the floor.", tmp_str);
+	    message(out_val, 0);
+	}
     } /* if not flag and is artifact */
 
     /* Successful drop */
     if (flag) {
-	if (cave[i][j].i_idx)	/* we must have crushed something; waste it -CFT */
+
+	/* Crush anything under us (for artifacts) */
 	delete_object(i,j);
 
 	/* Make a dungeon object based on the given object */
