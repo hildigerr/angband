@@ -713,6 +713,23 @@ static errr rd_item_old(inven_type *i_ptr)
 	case 512: i_ptr->k_idx = 506; break;
     }
 
+
+    /* The "Special Objects" now have Artifact Names */
+    switch (i_ptr->k_idx) {
+	case OBJ_GALADRIEL: i_ptr->name1 = ART_GALADRIEL; break;
+	case OBJ_ELENDIL: i_ptr->name1 = ART_ELENDIL; break;
+	case OBJ_THRAIN: i_ptr->name1 = ART_THRAIN; break;
+	case OBJ_CARLAMMAS: i_ptr->name1 = ART_CARLAMMAS; break;
+	case OBJ_INGWE: i_ptr->name1 = ART_INGWE; break;
+	case OBJ_DWARVES: i_ptr->name1 = ART_DWARVES; break;
+	case OBJ_BARAHIR: i_ptr->name1 = ART_BARAHIR; break;
+	case OBJ_TULKAS: i_ptr->name1 = ART_TULKAS; break;
+	case OBJ_NARYA: i_ptr->name1 = ART_NARYA; break;
+	case OBJ_NENYA: i_ptr->name1 = ART_NENYA; break;
+	case OBJ_VILYA: i_ptr->name1 = ART_VILYA; break;
+	case OBJ_POWER: i_ptr->name1 = ART_POWER; break;
+    }
+
     /* Artifact Names Dominate Ego-Item Names */
     if (i_ptr->name1) i_ptr->name2 = 0;
 
