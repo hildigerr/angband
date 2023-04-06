@@ -203,6 +203,24 @@
 
 #define OBJ_SPECIAL         	500
 
+/* The actual special objects */
+
+#define OBJ_GALADRIEL		(OBJ_SPECIAL + 0)
+#define OBJ_ELENDIL		(OBJ_SPECIAL + 1)
+#define OBJ_THRAIN		(OBJ_SPECIAL + 2)
+
+#define OBJ_CARLAMMAS		(OBJ_SPECIAL + 3)
+#define OBJ_INGWE		(OBJ_SPECIAL + 4)
+#define OBJ_DWARVES		(OBJ_SPECIAL + 5)
+
+#define OBJ_BARAHIR		(OBJ_SPECIAL + 6)
+#define OBJ_TULKAS		(OBJ_SPECIAL + 7)
+#define OBJ_NARYA		(OBJ_SPECIAL + 8)
+#define OBJ_NENYA		(OBJ_SPECIAL + 9)
+#define OBJ_VILYA		(OBJ_SPECIAL + 10)
+#define OBJ_POWER		(OBJ_SPECIAL + 11)
+
+
 /* Total Number of object kinds */
 #define MAX_K_IDX				512
 
@@ -663,10 +681,23 @@
  * Artifact indexes
  */
 
+	/* Lites */
+#define ART_GALADRIEL		1
+#define ART_ELENDIL		2
+#define ART_THRAIN		3
+
+	/* Amulets */
+#define ART_CARLAMMAS		4
+#define ART_INGWE		5
+#define ART_DWARVES		6
+
 	/* Rings */
+#define ART_BARAHIR		8
+#define ART_TULKAS		9
 #define ART_NARYA		10
 #define ART_NENYA		11
 #define ART_VILYA		12
+#define ART_POWER		13
 
 	/* Dragon Scale */
 #define ART_RAZORBACK		16
