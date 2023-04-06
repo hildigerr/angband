@@ -2192,8 +2192,6 @@ int special_place_object(int y, int x)
 	if ((k_list[tmp].level > object_level) && (randint(50) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Narya");
-	else
-	    good_item_flag = TRUE;
 	NARYA = TRUE;
 	break;
       case (OBJ_SPECIAL):
@@ -2203,8 +2201,6 @@ int special_place_object(int y, int x)
 	if ((k_list[tmp].level > object_level) && (randint(60) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Nenya");
-	else
-	    good_item_flag = TRUE;
 	NENYA = TRUE;
 	break;
       case (OBJ_SPECIAL + 1):
@@ -2214,8 +2210,6 @@ int special_place_object(int y, int x)
 	if ((k_list[tmp].level > object_level) && (randint(70) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Vilya");
-	else
-	    good_item_flag = TRUE;
 	VILYA = TRUE;
 	break;
       case (OBJ_SPECIAL + 2):
@@ -2225,8 +2219,6 @@ int special_place_object(int y, int x)
 	if ((k_list[tmp].level > object_level) && (randint(100) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Power (The One Ring)");
-	else
-	    good_item_flag = TRUE;
 	POWER = TRUE;
 	break;
       case (OBJ_SPECIAL + 3):
@@ -2235,8 +2227,6 @@ int special_place_object(int y, int x)
 	if ((k_list[tmp].level > object_level) && (randint(30) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Phial of Galadriel");
-	else
-	    good_item_flag = TRUE;
 	PHIAL = TRUE;
 	break;
       case (OBJ_SPECIAL + 4):
@@ -2246,8 +2236,6 @@ int special_place_object(int y, int x)
 	if ((k_list[tmp].level > object_level) && (randint(50) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Amulet of Ingwe");
-	else
-	    good_item_flag = TRUE;
 	INGWE = TRUE;
 	break;
       case (OBJ_SPECIAL + 5):
@@ -2257,8 +2245,6 @@ int special_place_object(int y, int x)
 	if ((k_list[tmp].level > object_level) && (randint(35) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Amulet of Carlammas");
-	else
-	    good_item_flag = TRUE;
 	CARLAMMAS = TRUE;
 	break;
       case (OBJ_SPECIAL + 6):
@@ -2268,8 +2254,6 @@ int special_place_object(int y, int x)
 	if ((k_list[tmp].level > object_level) && (randint(30) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Star of Elendil");
-	else
-	    good_item_flag = TRUE;
 	ELENDIL = TRUE;
 	break;
       case (OBJ_SPECIAL + 7):
@@ -2279,8 +2263,6 @@ int special_place_object(int y, int x)
 	if ((k_list[tmp].level > object_level) && (randint(60) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Arkenstone of Thrain");
-	else
-	    good_item_flag = TRUE;
 	THRAIN = TRUE;
 	break;
       case (OBJ_SPECIAL + 8):
@@ -2290,8 +2272,6 @@ int special_place_object(int y, int x)
 	if ((k_list[tmp].level > object_level) && (randint(65) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Ring of Tulkas");
-	else
-	    good_item_flag = TRUE;
 	TULKAS = TRUE;
 	break;
       case (OBJ_SPECIAL + 9):
@@ -2301,8 +2281,6 @@ int special_place_object(int y, int x)
 	if ((k_list[tmp].level > object_level) && (randint(60) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Necklace of the Dwarves");
-	else
-	    good_item_flag = TRUE;
 	NECKLACE = TRUE;
 	break;
       case (OBJ_SPECIAL + 10):
@@ -2312,12 +2290,14 @@ int special_place_object(int y, int x)
 	if ((k_list[tmp].level > object_level) && (randint(50) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Ring of Barahir");
-	else
-	    good_item_flag = TRUE;
 	BARAHIR = TRUE;
 	break;
     }
     }
+
+    /* Set the good item flag */
+    good_item_flag = TRUE;
+
     if (strlen(str) > 0 && (wizard || peek))
 	msg_print(str);
 
