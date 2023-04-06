@@ -2177,21 +2177,19 @@ int special_place_object(int y, int x)
     delete_object(y, x);
     str[0] = 0;
 
-again:
-    if (done > 20)
-	return 0;
+    /* Try to allocate a special object */
+    for (tmp = 0, done = 0; !tmp; ++done) {
+
+	/* Abort after a while */
+	if (done > 20) return 0;
+
     tmp = randint(MAX_K_IDX - (OBJ_SPECIAL - 1)) + (OBJ_SPECIAL - 1) - 1;
     switch (tmp) {
       case (OBJ_SPECIAL - 1):
-	done++;
-	if (randint(30) > 1)
-	    goto again;
-	if (NARYA)
-	    goto again;
-	if ((k_list[tmp].level - 40) > object_level)
-	    goto again;
-	if ((k_list[tmp].level > object_level) && (randint(50) > 1))
-	    goto again;
+	if (randint(30) > 1) continue;
+	if (NARYA) continue;
+	if ((k_list[tmp].level - 40) > object_level) continue;
+	if ((k_list[tmp].level > object_level) && (randint(50) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Narya");
 	else
@@ -2199,15 +2197,10 @@ again:
 	NARYA = TRUE;
 	break;
       case (OBJ_SPECIAL):
-	done++;
-	if (randint(35) > 1)
-	    goto again;
-	if (NENYA)
-	    goto again;
-	if ((k_list[tmp].level - 40) > object_level)
-	    goto again;
-	if ((k_list[tmp].level > object_level) && (randint(60) > 1))
-	    goto again;
+	if (randint(35) > 1) continue;
+	if (NENYA) continue;
+	if ((k_list[tmp].level - 40) > object_level) continue;
+	if ((k_list[tmp].level > object_level) && (randint(60) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Nenya");
 	else
@@ -2215,15 +2208,10 @@ again:
 	NENYA = TRUE;
 	break;
       case (OBJ_SPECIAL + 1):
-	done++;
-	if (randint(40) > 1)
-	    goto again;
-	if (VILYA)
-	    goto again;
-	if ((k_list[tmp].level - 40) > object_level)
-	    goto again;
-	if ((k_list[tmp].level > object_level) && (randint(70) > 1))
-	    goto again;
+	if (randint(40) > 1) continue;
+	if (VILYA) continue;
+	if ((k_list[tmp].level - 40) > object_level) continue;
+	if ((k_list[tmp].level > object_level) && (randint(70) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Vilya");
 	else
@@ -2231,15 +2219,10 @@ again:
 	VILYA = TRUE;
 	break;
       case (OBJ_SPECIAL + 2):
-	done++;
-	if (randint(60) > 1)
-	    goto again;
-	if (POWER)
-	    goto again;
-	if ((k_list[tmp].level - 40) > object_level)
-	    goto again;
-	if ((k_list[tmp].level > object_level) && (randint(100) > 1))
-	    goto again;
+	if (randint(60) > 1) continue;
+	if (POWER) continue;
+	if ((k_list[tmp].level - 40) > object_level) continue;
+	if ((k_list[tmp].level > object_level) && (randint(100) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Power (The One Ring)");
 	else
@@ -2247,13 +2230,9 @@ again:
 	POWER = TRUE;
 	break;
       case (OBJ_SPECIAL + 3):
-	done++;
-	if (PHIAL)
-	    goto again;
-	if ((k_list[tmp].level - 40) > object_level)
-	    goto again;
-	if ((k_list[tmp].level > object_level) && (randint(30) > 1))
-	    goto again;
+	if (PHIAL) continue;
+	if ((k_list[tmp].level - 40) > object_level) continue;
+	if ((k_list[tmp].level > object_level) && (randint(30) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Phial of Galadriel");
 	else
@@ -2261,15 +2240,10 @@ again:
 	PHIAL = TRUE;
 	break;
       case (OBJ_SPECIAL + 4):
-	done++;
-	if (randint(10) > 1)
-	    goto again;
-	if (INGWE)
-	    goto again;
-	if ((k_list[tmp].level - 40) > object_level)
-	    goto again;
-	if ((k_list[tmp].level > object_level) && (randint(50) > 1))
-	    goto again;
+	if (randint(10) > 1) continue;
+	if (INGWE) continue;
+	if ((k_list[tmp].level - 40) > object_level) continue;
+	if ((k_list[tmp].level > object_level) && (randint(50) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Amulet of Ingwe");
 	else
@@ -2277,15 +2251,10 @@ again:
 	INGWE = TRUE;
 	break;
       case (OBJ_SPECIAL + 5):
-	done++;
-	if (randint(6) > 1)
-	    goto again;
-	if (CARLAMMAS)
-	    goto again;
-	if ((k_list[tmp].level - 40) > object_level)
-	    goto again;
-	if ((k_list[tmp].level > object_level) && (randint(35) > 1))
-	    goto again;
+	if (randint(6) > 1) continue;
+	if (CARLAMMAS) continue;
+	if ((k_list[tmp].level - 40) > object_level) continue;
+	if ((k_list[tmp].level > object_level) && (randint(35) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Amulet of Carlammas");
 	else
@@ -2293,15 +2262,10 @@ again:
 	CARLAMMAS = TRUE;
 	break;
       case (OBJ_SPECIAL + 6):
-	done++;
-	if (randint(8) > 1)
-	    goto again;
-	if (ELENDIL)
-	    goto again;
-	if ((k_list[tmp].level - 40) > object_level)
-	    goto again;
-	if ((k_list[tmp].level > object_level) && (randint(30) > 1))
-	    goto again;
+	if (randint(8) > 1) continue;
+	if (ELENDIL) continue;
+	if ((k_list[tmp].level - 40) > object_level) continue;
+	if ((k_list[tmp].level > object_level) && (randint(30) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Star of Elendil");
 	else
@@ -2309,15 +2273,10 @@ again:
 	ELENDIL = TRUE;
 	break;
       case (OBJ_SPECIAL + 7):
-	done++;
-	if (randint(18) > 1)
-	    goto again;
-	if (THRAIN)
-	    goto again;
-	if ((k_list[tmp].level - 40) > object_level)
-	    goto again;
-	if ((k_list[tmp].level > object_level) && (randint(60) > 1))
-	    goto again;
+	if (randint(18) > 1) continue;
+	if (THRAIN) continue;
+	if ((k_list[tmp].level - 40) > object_level) continue;
+	if ((k_list[tmp].level > object_level) && (randint(60) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Arkenstone of Thrain");
 	else
@@ -2325,15 +2284,10 @@ again:
 	THRAIN = TRUE;
 	break;
       case (OBJ_SPECIAL + 8):
-	done++;
-	if (randint(25) > 1)
-	    goto again;
-	if (TULKAS)
-	    goto again;
-	if ((k_list[tmp].level - 40) > object_level)
-	    goto again;
-	if ((k_list[tmp].level > object_level) && (randint(65) > 1))
-	    goto again;
+	if (randint(25) > 1) continue;
+	if (TULKAS) continue;
+	if ((k_list[tmp].level - 40) > object_level) continue;
+	if ((k_list[tmp].level > object_level) && (randint(65) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Ring of Tulkas");
 	else
@@ -2341,15 +2295,10 @@ again:
 	TULKAS = TRUE;
 	break;
       case (OBJ_SPECIAL + 9):
-	done++;
-	if (randint(25) > 1)
-	    goto again;
-	if (NECKLACE)
-	    goto again;
-	if ((k_list[tmp].level - 40) > object_level)
-	    goto again;
-	if ((k_list[tmp].level > object_level) && (randint(60) > 1))
-	    goto again;
+	if (randint(25) > 1) continue;
+	if (NECKLACE) continue;
+	if ((k_list[tmp].level - 40) > object_level) continue;
+	if ((k_list[tmp].level > object_level) && (randint(60) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Necklace of the Dwarves");
 	else
@@ -2357,21 +2306,17 @@ again:
 	NECKLACE = TRUE;
 	break;
       case (OBJ_SPECIAL + 10):
-	done++;
-	if (randint(20) > 1)
-	    goto again;
-	if (BARAHIR)
-	    goto again;
-	if ((k_list[tmp].level - 40) > object_level)
-	    goto again;
-	if ((k_list[tmp].level > object_level) && (randint(50) > 1))
-	    goto again;
+	if (randint(20) > 1) continue;
+	if (BARAHIR) continue;
+	if ((k_list[tmp].level - 40) > object_level) continue;
+	if ((k_list[tmp].level > object_level) && (randint(50) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Ring of Barahir");
 	else
 	    good_item_flag = TRUE;
 	BARAHIR = TRUE;
 	break;
+    }
     }
     if (strlen(str) > 0 && (wizard || peek))
 	msg_print(str);
