@@ -252,7 +252,7 @@ int m_bonus(int base, int limit, int level)
  * Help pick and create a "special" object
  *
  * XXX XXX This function is a total hack.
- * Note that the function below calls us 19 times per "call".
+ * Note that the function below calls us 20 times per "call".
  */
 static int make_artifact_special_aux(inven_type *i_ptr)
 {
@@ -374,6 +374,46 @@ static int make_artifact_special_aux(inven_type *i_ptr)
     return (0);
 }
 
+
+
+/*
+ * Attempt to create one of the "Special Objects"
+ *
+ * XXX Mega-Hack -- completely ignore the properties
+ * of the given "object" -- just dump over them.
+ */
+static bool make_artifact_special(inven_type *i_ptr)
+{
+    int			what;
+    int			done;
+
+
+    /* Try to allocate a special object */
+    for (what = 0, done = 0; !what; ++done) {
+
+	/* Abort after a while */
+	if (done > 21) return FALSE;
+
+	/* Pick a special object */
+	what = make_artifact_special_aux(i_ptr);
+    }
+
+    /* Save the Artifact "Name" */  
+    i_ptr->name1 = what;
+
+    /* Set the good item flag */
+    good_item_flag = TRUE;
+
+    /* Hack -- Describe */
+    if (wizard || peek) {
+	char buf[256];
+	objdes_store(buf, i_ptr, TRUE);
+	msg_print(buf);
+    }
+
+    /* Success */
+    return (TRUE);    
+}
 
 
 /*
@@ -2296,8 +2336,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
  */
 int special_place_object(int y, int x)
 {
-    register int	cur_pos, tmp;
-    int          done = 0;
+    register int	cur_pos;
     cave_type		*c_ptr;
     inven_type		hack;
 
@@ -2313,28 +2352,8 @@ int special_place_object(int y, int x)
     /* Hack -- clean up "hack" */
     invcopy(&hack, OBJ_NOTHING);
 
-    /* Try to allocate a special object */
-    for (tmp = 0, done = 0; !tmp; ++done) {
-
-	/* Abort after a while */
-	if (done > 20) return 0;
-
-	/* Pick a special object */
-	tmp = make_artifact_special_aux(&hack);
-    }
-
-    /* Save the Artifact "Name" */  
-    i_ptr->name1 = tmp;
-
-    /* Set the good item flag */
-    good_item_flag = TRUE;
-
-    /* Hack -- Describe */
-    if (wizard || peek) {
-	char buf[256];
-	objdes_store(buf, &hack, TRUE);
-	msg_print(buf);
-    }
+    /* Hack -- Try to allocate a special object */
+    if (!make_artifact_special(&hack)) return (FALSE);
 
 
     /* Delete anything that is there */
