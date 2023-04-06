@@ -2158,12 +2158,17 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 
 
 
+/*
+ * XXX Mega-Hack -- attempt to place one of the "Special Objects"
+ *
+ */
 int special_place_object(int y, int x)
 {
     register int	cur_pos, tmp;
     char         str[100];
     int          done = 0;
     cave_type		*c_ptr;
+    inven_type		hack;
 
 
     /* Is this cave grid sacred? */
@@ -2173,9 +2178,11 @@ int special_place_object(int y, int x)
     /* Get the cave */
     c_ptr = &cave[y][x];
 
-    /* Delete anything that is there */
-    delete_object(y, x);
     str[0] = 0;
+
+
+    /* Hack -- clean up "hack" */
+    invcopy(&hack, OBJ_NOTHING);
 
     /* Try to allocate a special object */
     for (tmp = 0, done = 0; !tmp; ++done) {
@@ -2191,6 +2198,7 @@ int special_place_object(int y, int x)
 	if ((k_list[OBJ_NARYA].level > object_level) && (randint(50) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Narya");
+	invcopy(hack, OBJ_NARYA);
 	NARYA = TRUE;
 	tmp = ART_NARYA;
 	break;
@@ -2201,6 +2209,7 @@ int special_place_object(int y, int x)
 	if ((k_list[OBJ_NENYA].level > object_level) && (randint(60) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Nenya");
+	invcopy(hack, OBJ_NENYA);
 	NENYA = TRUE;
 	tmp = ART_NENYA;
 	break;
@@ -2211,6 +2220,7 @@ int special_place_object(int y, int x)
 	if ((k_list[OBJ_VILYA].level > object_level) && (randint(70) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Vilya");
+	invcopy(hack, OBJ_VILYA);
 	VILYA = TRUE;
 	tmp = ART_VILYA;
 	break;
@@ -2221,6 +2231,7 @@ int special_place_object(int y, int x)
 	if ((k_list[OBJ_POWER].level > object_level) && (randint(100) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Power (The One Ring)");
+	invcopy(hack, OBJ_POWER);
 	POWER = TRUE;
 	tmp = ART_POWER;
 	break;
@@ -2230,6 +2241,7 @@ int special_place_object(int y, int x)
 	if ((k_list[OBJ_GALADRIEL].level > object_level) && (randint(30) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Phial of Galadriel");
+	invcopy(hack, OBJ_GALADRIEL);
 	PHIAL = TRUE;
 	tmp = ART_GALADRIEL;
 	break;
@@ -2240,6 +2252,7 @@ int special_place_object(int y, int x)
 	if ((k_list[OBJ_INGWE].level > object_level) && (randint(50) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Amulet of Ingwe");
+	invcopy(hack, OBJ_INGWE);
 	INGWE = TRUE;
 	tmp = ART_INGWE;
 	break;
@@ -2250,6 +2263,7 @@ int special_place_object(int y, int x)
 	if ((k_list[OBJ_CARLAMMAS].level > object_level) && (randint(35) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Amulet of Carlammas");
+	invcopy(hack, OBJ_CARLAMMAS);
 	CARLAMMAS = TRUE;
 	tmp = ART_CARLAMMAS;
 	break;
@@ -2260,6 +2274,7 @@ int special_place_object(int y, int x)
 	if ((k_list[OBJ_ELENDIL].level > object_level) && (randint(30) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Star of Elendil");
+	invcopy(hack, OBJ_ELENDIL);
 	ELENDIL = TRUE;
 	tmp = ART_ELENDIL;
 	break;
@@ -2270,6 +2285,7 @@ int special_place_object(int y, int x)
 	if ((k_list[OBJ_THRAIN].level > object_level) && (randint(60) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Arkenstone of Thrain");
+	invcopy(hack, OBJ_THRAIN);
 	THRAIN = TRUE;
 	tmp = ART_THRAIN;
 	break;
@@ -2280,6 +2296,7 @@ int special_place_object(int y, int x)
 	if ((k_list[OBJ_TULKAS].level > object_level) && (randint(65) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Ring of Tulkas");
+	invcopy(hack, OBJ_TULKAS);
 	TULKAS = TRUE;
 	tmp = ART_TULKAS;
 	break;
@@ -2290,6 +2307,7 @@ int special_place_object(int y, int x)
 	if ((k_list[OBJ_DWARVES].level > object_level) && (randint(60) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Necklace of the Dwarves");
+	invcopy(hack, OBJ_DWARVES);
 	NECKLACE = TRUE;
 	tmp = ART_DWARVES;
 	break;
@@ -2300,6 +2318,7 @@ int special_place_object(int y, int x)
 	if ((k_list[OBJ_BARAHIR].level > object_level) && (randint(50) > 1)) continue;
 	if ((wizard || peek))
 	    sprintf(str, "Ring of Barahir");
+	invcopy(hack, OBJ_BARAHIR);
 	BARAHIR = TRUE;
 	tmp = ART_BARAHIR;
 	break;
@@ -2312,11 +2331,17 @@ int special_place_object(int y, int x)
     if (strlen(str) > 0 && (wizard || peek))
 	msg_print(str);
 
+
+    /* Delete anything that is there */
+    delete_object(y, x);
+
     /* Make the object, using the index from above */
     cur_pos = i_pop();
 
+    /* Place the object there */
+    i_list[cur_pos] = hack;
+
     c_ptr->i_idx = cur_pos;
-    invcopy(&i_list[cur_pos], tmp);
     i_list[cur_pos].timeout = 0;
     i_list[cur_pos].ident |= ID_NOSHOW_TYPE; /* don't show (+x of yyy) for these */
     if (k_list[tmp].level > object_level) {
