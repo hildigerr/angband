@@ -244,6 +244,138 @@ int m_bonus(int base, int limit, int level)
 }
 
 
+
+
+
+
+/*
+ * Help pick and create a "special" object
+ *
+ * XXX XXX This function is a total hack.
+ * Note that the function below calls us 19 times per "call".
+ */
+static int make_artifact_special_aux(inven_type *i_ptr)
+{
+    int lev = object_level;
+
+
+    /* Analyze it */
+    switch (randint(12)) {
+
+      case 1:
+	if (PHIAL) return (0);
+	if (k_list[OBJ_GALADRIEL].level > lev + 40) return (0);
+	if ((k_list[OBJ_GALADRIEL].level > lev) && (randint(30) > 1)) return (0);
+	invcopy(i_ptr, OBJ_GALADRIEL);
+	PHIAL = TRUE;
+	return (ART_GALADRIEL);
+	break;
+
+      case 2:
+	if (randint(8) > 1) return (0);
+	if (ELENDIL) return (0);
+	if (k_list[OBJ_ELENDIL].level > lev + 40) return (0);
+	if ((k_list[OBJ_ELENDIL].level > lev) && (randint(30) > 1)) return (0);
+	invcopy(i_ptr, OBJ_ELENDIL);
+	ELENDIL = TRUE;
+	return (ART_ELENDIL);
+
+      case 3:
+	if (randint(18) > 1) return (0);
+	if (THRAIN) return (0);
+	if (k_list[OBJ_THRAIN].level > lev + 40) return (0);
+	if ((k_list[OBJ_THRAIN].level > lev) && (randint(60) > 1)) return (0);
+	invcopy(i_ptr, OBJ_THRAIN);
+	THRAIN = TRUE;
+	return (ART_THRAIN);
+
+      case 4:
+	if (randint(6) > 1) return (0);
+	if (CARLAMMAS) return (0);
+	if (k_list[OBJ_CARLAMMAS].level > lev + 40) return (0);
+	if ((k_list[OBJ_CARLAMMAS].level > lev) && (randint(35) > 1)) return (0);
+	invcopy(i_ptr, OBJ_CARLAMMAS);
+	CARLAMMAS = TRUE;
+	return (ART_CARLAMMAS);
+
+      case 5:
+	if (randint(10) > 1) return (0);
+	if (INGWE) return (0);
+	if (k_list[OBJ_INGWE].level > lev + 40) return (0);
+	if ((k_list[OBJ_INGWE].level > lev) && (randint(50) > 1)) return (0);
+	invcopy(i_ptr, OBJ_INGWE);
+	INGWE = TRUE;
+	return (ART_INGWE);
+
+      case 6:
+	if (randint(25) > 1) return (0);
+	if (NECKLACE) return (0);
+	if (k_list[OBJ_DWARVES].level > lev + 40) return (0);
+	if ((k_list[OBJ_DWARVES].level > lev) && (randint(60) > 1)) return (0);
+	invcopy(i_ptr, OBJ_DWARVES);
+	NECKLACE = TRUE;
+	return (ART_DWARVES);
+
+      case 7:
+	if (randint(20) > 1) return (0);
+	if (BARAHIR) return (0);
+	if (k_list[OBJ_BARAHIR].level > lev + 40) return (0);
+	if ((k_list[OBJ_BARAHIR].level > lev) && (randint(50) > 1)) return (0);
+	invcopy(i_ptr, OBJ_BARAHIR);
+	BARAHIR = TRUE;
+	return (ART_BARAHIR);
+
+      case 8:
+	if (randint(25) > 1) return (0);
+	if (TULKAS) return (0);
+	if (k_list[OBJ_TULKAS].level > lev + 40) return (0);
+	if ((k_list[OBJ_TULKAS].level > lev) && (randint(65) > 1)) return (0);
+	invcopy(i_ptr, OBJ_TULKAS);
+	TULKAS = TRUE;
+	return (ART_TULKAS);
+
+      case 9:
+	if (randint(30) > 1) return (0);
+	if (NARYA) return (0);
+	if (k_list[OBJ_NARYA].level > lev + 40) return (0);
+	if ((k_list[OBJ_NARYA].level > lev) && (randint(50) > 1)) return (0);
+	invcopy(i_ptr, OBJ_NARYA);
+	NARYA = TRUE;
+	return (ART_NARYA);
+
+      case 10:
+	if (randint(35) > 1) return (0);
+	if (NENYA) return (0);
+	if (k_list[OBJ_NENYA].level > lev + 40) return (0);
+	if ((k_list[OBJ_NENYA].level > lev) && (randint(60) > 1)) return (0);
+	invcopy(i_ptr, OBJ_NENYA);
+	NENYA = TRUE;
+	return (ART_NENYA);
+
+      case 11:
+	if (randint(40) > 1) return (0);
+	if (VILYA) return (0);
+	if (k_list[OBJ_VILYA].level > lev + 40) return (0);
+	if ((k_list[OBJ_VILYA].level > lev) && (randint(70) > 1)) return (0);
+	invcopy(i_ptr, OBJ_VILYA);
+	VILYA = TRUE;
+	return (ART_VILYA);
+
+      case 12:
+	if (randint(60) > 1) return (0);
+	if (POWER) return (0);
+	if (k_list[OBJ_POWER].level > lev + 40) return (0);
+	if ((k_list[OBJ_POWER].level > lev) && (randint(100) > 1)) return (0);
+	invcopy(i_ptr, OBJ_POWER);
+	POWER = TRUE;
+	return (ART_POWER);
+    }
+
+    return (0);
+}
+
+
+
 /*
  * Give an item one of the "powerful resistances"
  */
@@ -2187,115 +2319,8 @@ int special_place_object(int y, int x)
 	/* Abort after a while */
 	if (done > 20) return 0;
 
-    switch (randint(12)) {
-      case 1:
-	if (randint(30) > 1) continue;
-	if (NARYA) continue;
-	if ((k_list[OBJ_NARYA].level - 40) > object_level) continue;
-	if ((k_list[OBJ_NARYA].level > object_level) && (randint(50) > 1)) continue;
-	invcopy(hack, OBJ_NARYA);
-	NARYA = TRUE;
-	tmp = ART_NARYA;
-	break;
-      case 2:
-	if (randint(35) > 1) continue;
-	if (NENYA) continue;
-	if ((k_list[OBJ_NENYA].level - 40) > object_level) continue;
-	if ((k_list[OBJ_NENYA].level > object_level) && (randint(60) > 1)) continue;
-	invcopy(hack, OBJ_NENYA);
-	NENYA = TRUE;
-	tmp = ART_NENYA;
-	break;
-      case 3:
-	if (randint(40) > 1) continue;
-	if (VILYA) continue;
-	if ((k_list[OBJ_VILYA].level - 40) > object_level) continue;
-	if ((k_list[OBJ_VILYA].level > object_level) && (randint(70) > 1)) continue;
-	invcopy(hack, OBJ_VILYA);
-	VILYA = TRUE;
-	tmp = ART_VILYA;
-	break;
-      case 4:
-	if (randint(60) > 1) continue;
-	if (POWER) continue;
-	if ((k_list[OBJ_POWER].level - 40) > object_level) continue;
-	if ((k_list[OBJ_POWER].level > object_level) && (randint(100) > 1)) continue;
-	invcopy(hack, OBJ_POWER);
-	POWER = TRUE;
-	tmp = ART_POWER;
-	break;
-      case 5:
-	if (PHIAL) continue;
-	if ((k_list[OBJ_GALADRIEL].level - 40) > object_level) continue;
-	if ((k_list[OBJ_GALADRIEL].level > object_level) && (randint(30) > 1)) continue;
-	invcopy(hack, OBJ_GALADRIEL);
-	PHIAL = TRUE;
-	tmp = ART_GALADRIEL;
-	break;
-      case 6:
-	if (randint(10) > 1) continue;
-	if (INGWE) continue;
-	if ((k_list[OBJ_INGWE].level - 40) > object_level) continue;
-	if ((k_list[OBJ_INGWE].level > object_level) && (randint(50) > 1)) continue;
-	invcopy(hack, OBJ_INGWE);
-	INGWE = TRUE;
-	tmp = ART_INGWE;
-	break;
-      case 7:
-	if (randint(6) > 1) continue;
-	if (CARLAMMAS) continue;
-	if ((k_list[OBJ_CARLAMMAS].level - 40) > object_level) continue;
-	if ((k_list[OBJ_CARLAMMAS].level > object_level) && (randint(35) > 1)) continue;
-	invcopy(hack, OBJ_CARLAMMAS);
-	CARLAMMAS = TRUE;
-	tmp = ART_CARLAMMAS;
-	break;
-      case 8:
-	if (randint(8) > 1) continue;
-	if (ELENDIL) continue;
-	if ((k_list[OBJ_ELENDIL].level - 40) > object_level) continue;
-	if ((k_list[OBJ_ELENDIL].level > object_level) && (randint(30) > 1)) continue;
-	invcopy(hack, OBJ_ELENDIL);
-	ELENDIL = TRUE;
-	tmp = ART_ELENDIL;
-	break;
-      case 9:
-	if (randint(18) > 1) continue;
-	if (THRAIN) continue;
-	if ((k_list[OBJ_THRAIN].level - 40) > object_level) continue;
-	if ((k_list[OBJ_THRAIN].level > object_level) && (randint(60) > 1)) continue;
-	invcopy(hack, OBJ_THRAIN);
-	THRAIN = TRUE;
-	tmp = ART_THRAIN;
-	break;
-      case 10:
-	if (randint(25) > 1) continue;
-	if (TULKAS) continue;
-	if ((k_list[OBJ_TULKAS].level - 40) > object_level) continue;
-	if ((k_list[OBJ_TULKAS].level > object_level) && (randint(65) > 1)) continue;
-	invcopy(hack, OBJ_TULKAS);
-	TULKAS = TRUE;
-	tmp = ART_TULKAS;
-	break;
-      case 11:
-	if (randint(25) > 1) continue;
-	if (NECKLACE) continue;
-	if ((k_list[OBJ_DWARVES].level - 40) > object_level) continue;
-	if ((k_list[OBJ_DWARVES].level > object_level) && (randint(60) > 1)) continue;
-	invcopy(hack, OBJ_DWARVES);
-	NECKLACE = TRUE;
-	tmp = ART_DWARVES;
-	break;
-      case 12:
-	if (randint(20) > 1) continue;
-	if (BARAHIR) continue;
-	if ((k_list[OBJ_BARAHIR].level - 40) > object_level) continue;
-	if ((k_list[OBJ_BARAHIR].level > object_level) && (randint(50) > 1)) continue;
-	invcopy(hack, OBJ_BARAHIR);
-	BARAHIR = TRUE;
-	tmp = ART_BARAHIR;
-	break;
-    }
+	/* Pick a special object */
+	tmp = make_artifact_special_aux(&hack);
     }
 
     /* Save the Artifact "Name" */  
