@@ -2820,6 +2820,49 @@ void do_cmd_activate(void)
 		    inventory[i].timeout = 400;
 		break;
 
+
+	    case ART_GALADRIEL:
+		msg_print("The phial wells with clear light...");
+		lite_area(char_row, char_col, damroll(2, 15), 3);
+		inventory[i].timeout = 10 + randint(10);
+		break;
+
+	    case ART_ELENDIL:
+		msg_print("The star shines brightly...");
+		msg_print("And you sense your surroundings...");
+		map_area();
+		inventory[i].timeout = 50 + randint(50);
+		break;
+
+	    case ART_THRAIN:
+		msg_print("The stone glows a deep green");
+		wiz_lite(TRUE);
+		(void)detect_sdoor();
+		(void)detect_trap();
+		inventory[i].timeout = 100 + randint(100);
+		break;
+
+
+	    case ART_INGWE:
+		msg_print("An aura of good floods the area...");
+		dispel_creature(MF2_EVIL, (int)(5 * p_ptr->lev));
+		inventory[i].timeout = 444 + randint(222);
+		break;
+
+	    case ART_CARLAMMAS:
+		msg_print("The amulet lets out a shrill wail...");
+		msg_print("You feel somewhat safer...");
+		protect_evil();
+		inventory[i].timeout = 222 + randint(222);
+		break;
+
+
+	    case ART_TULKAS:
+		msg_print("The ring glows brightly...");
+		p_ptr->fast += randint(100) + 50;
+		inventory[i].timeout = 200;
+		break;
+
 	    case ART_NARYA:
 		msg_print("The ring glows deep red...");
 		if (get_dir_c(NULL, &dir)) {
@@ -2846,6 +2889,7 @@ void do_cmd_activate(void)
 
 	    case ART_POWER:
 		msg_print("The ring glows intensely black...");
+
 		switch (randint(17) + (8 - p_ptr->lev / 10)) {
 		  case 5:
 		    dispel_creature(0xFFFFFFFL, 1000);
@@ -3048,45 +3092,6 @@ void do_cmd_activate(void)
 		}
 		break;
 
-	    case ART_GALADRIEL:
-		msg_print("The phial wells with clear light...");
-		lite_area(char_row, char_col, damroll(2, 15), 3);
-		inventory[i].timeout = 10 + randint(10);
-		break;
-
-	    case ART_INGWE:
-		msg_print("An aura of good floods the area...");
-		dispel_creature(MF2_EVIL, (int)(5 * p_ptr->lev));
-		inventory[i].timeout = 444 + randint(222);
-		break;
-
-	    case ART_CARLAMMAS:
-		msg_print("The amulet lets out a shrill wail...");
-		msg_print("You feel somewhat safer...");
-		protect_evil();
-		inventory[i].timeout = 222 + randint(222);
-		break;
-
-	    case ART_ELENDIL:
-		msg_print("The star shines brightly...");
-		msg_print("And you sense your surroundings...");
-		map_area();
-		inventory[i].timeout = 50 + randint(50);
-		break;
-
-	    case ART_THRAIN:
-		msg_print("The stone glows a deep green");
-		wiz_lite(TRUE);
-		(void)detect_sdoor();
-		(void)detect_trap();
-		inventory[i].timeout = 100 + randint(100);
-		break;
-
-	    case ART_TULKAS:
-		msg_print("The ring glows brightly...");
-		p_ptr->fast += randint(100) + 50;
-		inventory[i].timeout = 200;
-		break;
 
 	    default:
 		(void)sprintf(tmp2, "Inventory num %d, index %d", i,
