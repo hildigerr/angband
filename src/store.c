@@ -696,17 +696,21 @@ static bool store_will_buy(inven_type *i_ptr)
 
 
 /*
- * Add the item in INVEN_MAX to stores inventory.	-RAK-	 
+ * Add the item "i_ptr" to a real stores inventory.
+ *
+ * In all cases, return the slot (or -1) where the object was placed
  */
-static void store_carry(int *ipos, inven_type *i_ptr)
+static int store_carry(inven_type *i_ptr)
 {
+    int                 slot;
     int                 item_num, item_val, flag;
     register int        typ, subt;
-    s32b               icost, dummy;
     register inven_type *j_ptr;
+
+    s32b               icost, dummy;
     int stacked = FALSE; /* from inven_carry() -CFT */
 
-    *ipos = -1;
+    slot = -1;
     if (sell_price(&icost, &dummy, i_ptr) > 0 || store_num == 7)
     {
 	item_val = 0;
@@ -724,7 +728,7 @@ static void store_carry(int *ipos, inven_type *i_ptr)
 			&& (subt < ITEM_GROUP_MIN || j_ptr->pval == i_ptr->pval))
 		    {
 			stacked = TRUE; /* remember that we did stack it... -CFT */
-			*ipos = item_val;
+			slot = item_val;
 			j_ptr->number += item_num;
 			/* must set new scost for group items, do this only for items
 			   strictly greater than group_min, not for torches, this
@@ -756,7 +760,7 @@ static void store_carry(int *ipos, inven_type *i_ptr)
 		{		/* Insert into list             */
 		    insert_store(item_val, icost, i_ptr);
 		    flag = TRUE;
-		    *ipos = item_val;
+		    slot = item_val;
 		}
 		item_val++;
 	    } while ((item_val < st_ptr->store_ctr) && (!flag));
@@ -764,9 +768,11 @@ static void store_carry(int *ipos, inven_type *i_ptr)
 	if (!flag)		/* Becomes last item in list    */
 	{
 	    insert_store((int)st_ptr->store_ctr, icost, i_ptr);
-	    *ipos = st_ptr->store_ctr - 1;
+	    slot = st_ptr->store_ctr - 1;
 	}
     }
+    /* Return the location */
+    return (slot);
 }
 
 
@@ -869,7 +875,7 @@ static void store_delete(void)
 static void store_create(void)
 {
     int			i, tries;
-    int                  cur_pos, dummy;
+    int                  cur_pos;
     inven_type		*i_ptr;
 
     cur_pos = i_pop();
@@ -890,7 +896,7 @@ static void store_create(void)
 /* equivalent to calling ident_spell(), except will not change the object_ident array */
 		    store_bought(i_ptr);
 		    special_offer(i_ptr);
-		    store_carry(&dummy, i_ptr);
+		    (void)store_carry(i_ptr);
 		    tries = 10;
 		}
 	    }
@@ -907,7 +913,7 @@ static void store_create(void)
 		 */
 		    store_bought(i_ptr);
 		    special_offer(i_ptr);
-		    store_carry(&dummy, i_ptr);
+		    (void)store_carry(i_ptr);
 		    tries = 10;
 		}
 	    }
@@ -1975,7 +1981,7 @@ static int store_sell(int *cur_top)
 	    inven_item_optimize(item_val);
 
 	    /* The store gets that item */
-	    store_carry(&item_pos, &sold_obj);
+	    item_pos = store_carry(&sold_obj);
 
 	    check_strength();
 
@@ -2023,7 +2029,7 @@ static int store_sell(int *cur_top)
 	inven_item_optimize(item_val);
 
 	/* Let the store (home) carry it */
-	store_carry(&item_pos, &sold_obj);
+	item_pos = store_carry(&sold_obj);
 
 	check_strength();
 
