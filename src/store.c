@@ -706,12 +706,9 @@ static int store_carry(inven_type *i_ptr)
 {
     int                 slot;
     s32b               value;
-    int                 item_num, item_val, flag;
-    register int        typ, subt;
     register inven_type *j_ptr;
 
     s32b               icost, dummy;
-    int stacked = FALSE; /* from inven_carry() -CFT */
 
 
     /* Determine the "value" of the item */
@@ -720,63 +717,67 @@ static int store_carry(inven_type *i_ptr)
     /* Cursed/Worthless items "disappear" when sold */
     if ((value <= 0)&& (store_num != 7)) return (-1);
 
-	item_val = 0;
-	item_num = i_ptr->number;
-	flag = FALSE;
-	typ  = i_ptr->tval;
-	subt = i_ptr->sval;
-	if (subt >= ITEM_SINGLE_STACK_MIN) { /* try to stack in store's inven */
-	    do {
-		j_ptr = &st_ptr->store_item[item_val];
-		if (typ == j_ptr->tval)
-		{
-		    if (subt == j_ptr->sval && /* Adds to other item        */
-			subt >= ITEM_SINGLE_STACK_MIN
-			&& (subt < ITEM_GROUP_MIN || j_ptr->pval == i_ptr->pval))
+
+    /* Check each existing item (try to combine) */
+    for (slot = 0; slot < st_ptr->store_ctr; slot++) {
+
+	/* Get the existing item */
+	j_ptr = &st_ptr->store_item[slot];
+
+	/* Can the existing items be incremented? */
+		if (j_ptr->tval == i_ptr->tval) {
+		    if (i_ptr->sval == j_ptr->sval && /* Adds to other item        */
+			i_ptr->sval >= ITEM_SINGLE_STACK_MIN
+			&& (i_ptr->sval < ITEM_GROUP_MIN || j_ptr->pval == i_ptr->pval))
 		    {
-			stacked = TRUE; /* remember that we did stack it... -CFT */
-			slot = item_val;
-			j_ptr->number += item_num;
+
+			j_ptr->number += i_ptr->number;
 			/* must set new scost for group items, do this only for items
 			   strictly greater than group_min, not for torches, this
 			   must be recalculated for entire group */
-			if (subt > ITEM_GROUP_MIN)
+			if (i_ptr->sval > ITEM_GROUP_MIN)
 			{
 			    (void) sell_price (&icost, &dummy, j_ptr);
-			    st_ptr->store_item[item_val].scost = -icost;
+			    st_ptr->store_item[slot].scost = -icost;
 			}
 			/* must let group objects (except torches) stack over 24
 			   since there may be more than 24 in the group */
 			else if (j_ptr->number > 24)
 			    j_ptr->number = 24;
-			flag = TRUE;
+
+	    /* All done */
+	    return (slot);
+
 		    }
 		}
-		item_val ++;
-	    } while (!stacked && (item_val < st_ptr->store_ctr));
-	} /* if might stack... -CFT */
-	if (!stacked) {		/* either never stacks, or didn't find a place to stack */
-	    item_val = 0;
-	    do {
-		j_ptr = &st_ptr->store_item[item_val];
-		if ((typ > j_ptr->tval) || /* sort by desc tval, */
-		    ((typ == j_ptr->tval) &&
+	    }
+
+
+
+    /* Check existing slots to see if we must "slide" */
+    for (slot = 0; slot < st_ptr->store_ctr; slot++) {
+
+	/* Get that item */
+	j_ptr = &st_ptr->store_item[slot];
+
+		if ((i_ptr->tval > j_ptr->tval) || /* sort by desc tval, */
+		    ((i_ptr->tval == j_ptr->tval) &&
 		     ((i_ptr->level < j_ptr->level) || /* then by inc level, */
 		      ((i_ptr->level == j_ptr->level) &&
-		       (subt < j_ptr->sval))))) /* and finally by inc sval -CFT */
+		       (i_ptr->sval < j_ptr->sval))))) /* and finally by inc sval -CFT */
 		{		/* Insert into list             */
-		    insert_store(item_val, icost, i_ptr);
-		    flag = TRUE;
-		    slot = item_val;
+		    insert_store(slot, icost, i_ptr);
+
+    /* Return the location */
+    return (slot);
+
 		}
-		item_val++;
-	    } while ((item_val < st_ptr->store_ctr) && (!flag));
-	} /* if didn't already stack it... */
-	if (!flag)		/* Becomes last item in list    */
-	{
+
+	    }
+
+
 	    insert_store((int)st_ptr->store_ctr, icost, i_ptr);
 	    slot = st_ptr->store_ctr - 1;
-	}
 
     /* Return the location */
     return (slot);
