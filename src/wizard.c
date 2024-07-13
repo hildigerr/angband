@@ -566,13 +566,16 @@ void wizard_create()
 
 	  case 'A': case 'a':
 	    prt("What type of Armour?    : ", 0, 0);
-	    prt("[H]ard armour, [S]oft armour.", 1, 0);
+	    prt("[D]ragon Scale, [H]ard armour, [S]oft armour.", 1, 0);
 	    if (!get_com((char *)0, &ch)) {
 		restore_screen();
 		return;
 	    }
 
 	    switch (ch) {
+	      case 'D': case 'd':
+		i_ptr->tval = TV_DRAG_ARMOR;
+		break;
 	      case 'H': case 'h':
 		i_ptr->tval = TV_HARD_ARMOR;
 		break;
@@ -888,8 +891,9 @@ again:
     if (tmp_val) i_ptr->todam = tmp_val;
 
     /* Extra Armor Info */
-    if ((i_ptr->tval == TV_SOFT_ARMOR) ||
+    if ((i_ptr->tval == TV_DRAG_ARMOR) ||
 	(i_ptr->tval == TV_HARD_ARMOR) ||
+	(i_ptr->tval == TV_SOFT_ARMOR) ||
 	(i_ptr->tval == TV_HELM) ||
 	(i_ptr->tval == TV_CLOAK) ||
 	(i_ptr->tval == TV_BOOTS) ||

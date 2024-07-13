@@ -2913,7 +2913,7 @@ void do_cmd_activate(void)
 	/* Branch on the sub-type */
 	switch (i_ptr->sval) {
 
-	    case (389):	   /* Blue */
+	    case SV_DRAGON_BLUE:
 		msg_print("You breathe lightning...");
 		if (get_dir_c(NULL, &dir)) {
 		    fire_ball(GF_ELEC, dir, char_row, char_col, 100, 2);
@@ -2921,7 +2921,7 @@ void do_cmd_activate(void)
 		}
 		break;
 
-	    case (390):	   /* White */
+	    case SV_DRAGON_WHITE:
 		msg_print("You breathe frost...");
 		if (get_dir_c(NULL, &dir)) {
 		    fire_ball(GF_COLD, dir, char_row, char_col, 110, 2);
@@ -2929,7 +2929,7 @@ void do_cmd_activate(void)
 		}
 		break;
 
-	    case (391):	   /* Black */
+	    case SV_DRAGON_BLACK:
 		msg_print("You breathe acid...");
 		if (get_dir_c(NULL, &dir)) {
 		    fire_ball(GF_ACID, dir, char_row, char_col, 130, 2);
@@ -2937,7 +2937,7 @@ void do_cmd_activate(void)
 		}
 		break;
 
-	    case (392):	   /* Gas */
+	    case SV_DRAGON_GREEN:
 		msg_print("You breathe poison gas...");
 		if (get_dir_c(NULL, &dir)) {
 		    fire_ball(GF_POIS, dir, char_row, char_col, 150, 2);
@@ -2945,7 +2945,7 @@ void do_cmd_activate(void)
 		}
 		break;
 
-	    case (393):	   /* Fire */
+	    case SV_DRAGON_RED:
 		msg_print("You breathe fire...");
 		if (get_dir_c(NULL, &dir)) {
 		    fire_ball(GF_FIRE, dir, char_row, char_col, 200, 2);
@@ -2953,7 +2953,7 @@ void do_cmd_activate(void)
 		}
 		break;
 
-	    case (394):	   /* Multi-hued */
+	    case SV_DRAGON_MULTIHUED:
 		    get_dir_c(NULL, &dir);
 			choice = randint(5);
 			sprintf(tmp2, "You breathe %s...",
@@ -2970,7 +2970,7 @@ void do_cmd_activate(void)
 			inventory[i].timeout = 222 + randint(222);
 		break;
 
-	    case (408):	   /* Bronze */
+	    case SV_DRAGON_BRONZE:
 		msg_print("You breathe confusion...");
 		if (get_dir_c(NULL, &dir)) {
 		    fire_ball(GF_CONFUSION, dir, char_row, char_col, 120, 2);
@@ -2978,7 +2978,7 @@ void do_cmd_activate(void)
 		}
 		break;
 
-	    case (409):	   /* Gold */
+	    case SV_DRAGON_GOLD:
 		msg_print("You breathe sound...");
 		if (get_dir_c(NULL, &dir)) {
 		    fire_ball(GF_SOUND, dir, char_row, char_col, 130, 2);
@@ -2986,7 +2986,7 @@ void do_cmd_activate(void)
 		}
 		break;
 
-	    case (415):	   /* Chaos */
+	    case SV_DRAGON_CHAOS:
 		if (get_dir_c(NULL, &dir)) {
 		    choice = randint(2);
 		    sprintf(tmp2, "You breathe %s...",
@@ -2998,7 +2998,7 @@ void do_cmd_activate(void)
 		}
 		break;
 
-	    case (416):	   /* Law */
+	    case SV_DRAGON_LAW:
 		if (get_dir_c(NULL, &dir)) {
 		    choice = randint(2);
 		    sprintf(tmp2, "You breathe %s...",
@@ -3010,7 +3010,7 @@ void do_cmd_activate(void)
 		}
 		break;
 
-	    case (417):	   /* Balance */
+	    case SV_DRAGON_BALANCE:
 		if (get_dir_c(NULL, &dir)) {
 		    choice = randint(4);
 		    sprintf(tmp2, "You breathe %s...",
@@ -3026,7 +3026,7 @@ void do_cmd_activate(void)
 		}
 		break;
 
-	    case (418):	   /* Shining */
+	    case SV_DRAGON_SHINING:
 		if (get_dir_c(NULL, &dir)) {
 		    choice = randint(2);
 		    sprintf(tmp2, "You breathe %s...",
@@ -3038,12 +3038,13 @@ void do_cmd_activate(void)
 		}
 		break;
 
-		else {
+	    case SV_DRAGON_POWER:
 		    msg_print("You breathe the elements...");
 		    get_dir_c(NULL, &dir);
 			fire_ball(GF_MISSILE, dir, char_row, char_col, 300, 2);
 			inventory[i].timeout = 300 + randint(300);
-		    }
+		break;
+
 		}
 		break;
 

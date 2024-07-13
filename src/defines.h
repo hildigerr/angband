@@ -865,6 +865,7 @@
 #define TV_SHIELD       34	/* Shields */
 #define TV_HARD_ARMOR   35	/* Hard Armor */
 #define TV_SOFT_ARMOR   36	/* Soft Armor */
+#define TV_DRAG_ARMOR	38	/* Dragon Scale Mail */
 /* max tval that uses the TR_* flags */
 #define TV_MAX_ENCHANT  39
 #define TV_AMULET       40
@@ -900,6 +901,20 @@
 #define TV_MAX_VISIBLE  110
 
 
+/* The "sval" codes for TV_DRAG_ARMOR */
+#define SV_DRAGON_BLACK			1
+#define SV_DRAGON_BLUE			2
+#define SV_DRAGON_WHITE			3
+#define SV_DRAGON_RED			4
+#define SV_DRAGON_GREEN			5
+#define SV_DRAGON_MULTIHUED		6
+#define SV_DRAGON_SHINING		10
+#define SV_DRAGON_LAW			12
+#define SV_DRAGON_BRONZE		14
+#define SV_DRAGON_GOLD			16
+#define SV_DRAGON_CHAOS			18
+#define SV_DRAGON_BALANCE		20
+#define SV_DRAGON_POWER			30
 
 
 #define SV_STAFF_LITE        1L

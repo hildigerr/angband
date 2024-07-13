@@ -502,6 +502,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
       case TV_SHIELD:
       case TV_HARD_ARMOR:
       case TV_SOFT_ARMOR:
+      case TV_DRAG_ARMOR:
 	pval_use = FLAGS;
 	break;
 

@@ -670,17 +670,16 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
     /* Apply magic (good or bad) according to type */
     switch (i_ptr->tval) {
 
-      case TV_HARD_ARMOR:
-      case TV_SOFT_ARMOR:
-      case TV_SHIELD:
 
-	if (i_ptr->k_idx >= 400 && i_ptr->k_idx <= 414) {
+      case TV_DRAG_ARMOR:
 
 	/* all DSM are enchanted, I guess -CFT */
-	    i_ptr->toac += randint(3) + m_bonus(0, 5, level);
-	    rating += 30;
 
-	    if ((magik(chance) && magik(special)) || great) {
+	    /* Enchant */
+	    i_ptr->toac += randint(3) + m_bonus(0, 5, level);
+
+	    /* Perhaps an artifact */
+	    if (great || (magik(chance) && magik(special))) {
 
 		/* Even better */
 		i_ptr->toac += randint(5);
@@ -690,13 +689,18 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		    break;
 	    }
 
-		if (wizard || peek) msg_print("Dragon Scale Mail");
 	    /* Hack -- adjust cost for "toac" */
-	    i_ptr->cost += ((s32b) i_ptr->toac * 500L);
+	    i_ptr->cost += i_ptr->toac * 500L;
+
+	rating += 30;
+	if (wizard || peek) msg_print("Dragon Scale Mail");
 
 	break;
-	}
-	 /* end if is a DSM */
+
+
+      case TV_HARD_ARMOR:
+      case TV_SOFT_ARMOR:
+      case TV_SHIELD:
 
 	/* Good */
 	if (good || magik(chance)) {
@@ -2472,8 +2476,10 @@ void place_good(int y, int x, u32b good)
 	if ((tv == TV_HELM) || (tv == TV_SHIELD) ||
 	    (tv == TV_CLOAK) || (tv == TV_HAFTED) || (tv == TV_POLEARM) ||
 	    (tv == TV_BOW) || (tv == TV_BOLT) || (tv == TV_ARROW) ||
-	    (tv == TV_BOOTS) || (tv == TV_GLOVES))
+	    (tv == TV_DRAG_ARMOR) || (tv == TV_BOOTS) || (tv == TV_GLOVES)) {
 	    is_good = TRUE;
+	}
+
 	if ((tv == TV_SWORD) &&
 	    strncmp("& Broken", k_list[sorted_objects[tmp]].name, 8))
 	    is_good = TRUE;	   /* broken swords/daggers are NOT good!

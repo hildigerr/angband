@@ -1171,6 +1171,7 @@ void inven_command(int command)
 			      case TV_SHIELD:
 				slot = INVEN_ARM;
 				break;
+			      case TV_DRAG_ARMOR:
 			      case TV_HARD_ARMOR:
 			      case TV_SOFT_ARMOR:
 				slot = INVEN_BODY;

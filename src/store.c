@@ -358,7 +358,7 @@ s32b item_value(inven_type *i_ptr)
 
 		/* Weapons and armor	 */
     else if (((i_ptr->tval >= TV_BOW) && (i_ptr->tval <= TV_SWORD)) ||
-	     ((i_ptr->tval >= TV_BOOTS) && (i_ptr->tval <= TV_SOFT_ARMOR))) {
+	     ((i_ptr->tval >= TV_BOOTS) && (i_ptr->tval <= TV_DRAG_ARMOR))) {
 	if (!known2_p(i_ptr))
 	    value = k_list[i_ptr->k_idx].cost;
 	else if ((i_ptr->tval >= TV_BOW) && (i_ptr->tval <= TV_SWORD)) {
@@ -615,6 +615,7 @@ static bool store_will_buy(inven_type *i_ptr)
 	  case TV_SHIELD:
 	  case TV_SOFT_ARMOR:
 	  case TV_HARD_ARMOR:
+	  case TV_DRAG_ARMOR:
 	    return (TRUE);
 	  default:
 	    return (FALSE);
