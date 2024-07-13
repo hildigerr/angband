@@ -698,11 +698,14 @@ static bool store_will_buy(inven_type *i_ptr)
 /*
  * Add the item "i_ptr" to a real stores inventory.
  *
+ * If the item is "worthless", it is thrown away (except in the home).
+ *
  * In all cases, return the slot (or -1) where the object was placed
  */
 static int store_carry(inven_type *i_ptr)
 {
     int                 slot;
+    s32b               value;
     int                 item_num, item_val, flag;
     register int        typ, subt;
     register inven_type *j_ptr;
@@ -710,9 +713,13 @@ static int store_carry(inven_type *i_ptr)
     s32b               icost, dummy;
     int stacked = FALSE; /* from inven_carry() -CFT */
 
-    slot = -1;
-    if (sell_price(&icost, &dummy, i_ptr) > 0 || store_num == 7)
-    {
+
+    /* Determine the "value" of the item */
+    value = sell_price(&icost, &dummy, i_ptr);
+
+    /* Cursed/Worthless items "disappear" when sold */
+    if ((value <= 0)&& (store_num != 7)) return (-1);
+
 	item_val = 0;
 	item_num = i_ptr->number;
 	flag = FALSE;
@@ -770,7 +777,7 @@ static int store_carry(inven_type *i_ptr)
 	    insert_store((int)st_ptr->store_ctr, icost, i_ptr);
 	    slot = st_ptr->store_ctr - 1;
 	}
-    }
+
     /* Return the location */
     return (slot);
 }
