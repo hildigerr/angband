@@ -1195,6 +1195,9 @@ void init_some_arrays()
     /* Allocate and Wipe the array of object "kind info" */
     C_MAKE(k_list, MAX_K_IDX, inven_kind);
 
+    /* Allocate and Wipe the array of object "memories" */
+    C_MAKE(x_list, MAX_K_IDX, inven_xtra);
+
     /* Initialize r_list from a file of some kind */
     init_r_list();
 

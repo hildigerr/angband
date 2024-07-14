@@ -199,8 +199,10 @@ inven_type i_list[MAX_I_IDX];
 /* The array of object types [MAX_K_IDX] */
 inven_kind *k_list;
 
-/* Identified objects flags					*/
-byte object_ident[OBJECT_IDENT_SIZE];
+/* Extra item "memory" [MAX_K_IDX] */ 
+inven_xtra *x_list;
+
+
 
 static player_type p_body;	/* Static player info record */
 player_type *p_ptr = &p_body;	/* Pointer to the player info */

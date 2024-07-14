@@ -1720,7 +1720,7 @@ void do_cmd_fire()
 	    (t->tval == TV_SPIKE) || (t->tval == TV_MISC))
 	    ok_throw = TRUE;
 	else if (((t->tval == TV_FOOD) || (t->tval == TV_POTION1) ||
-		  (t->tval == TV_POTION2)) && known1_p(t) &&
+		  (t->tval == TV_POTION2)) && inven_aware_p(t) &&
 		 /* almost all potions do 1d1 damage when thrown.  I want the code
 		    to ask before throwing away potions of DEX, *Healing*, etc.
 		    This also means it will ask before throwing potions of slow
@@ -1737,7 +1737,7 @@ void do_cmd_fire()
 	else if (wearable_p(t) &&
 		 (t->flags3 & TR3_CURSED) && known2_p(t))
 	    ok_throw = TRUE; /* if user wants to throw cursed, let him */
-	else if ((k_list[t->k_idx].cost <= 0) && known1_p(t) &&
+	else if ((k_list[t->k_idx].cost <= 0) && inven_aware_p(t) &&
 		 !(known2_p(t) && (t->cost > 0)))
 	    ok_throw = TRUE;
 	else if ((t->cost <= 0) && known2_p(t))

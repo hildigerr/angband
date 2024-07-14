@@ -349,13 +349,15 @@ void do_cmd_eat_food(void)
 	}
     }
 
+    /* We have tried it */
+    inven_tried(i_ptr);
+
     /* The player is now aware of the object */
-    if (ident) { if (!known1_p(i_ptr)) {
+    if (ident && !inven_aware_p(i_ptr)) {
 	p_ptr->exp += (i_ptr->level + (p_ptr->lev >> 1)) / p_ptr->lev;
 	prt_experience();
-	identify(&item_val);
-	}
-    } else if (!known1_p(i_ptr)) sample(i_ptr);
+	inven_aware(i_ptr);
+    }
 
     /* Consume the food */
     add_food(i_ptr->pval);
@@ -903,15 +905,16 @@ void do_cmd_quaff_potion(void)
 	}
     }
 
+    /* The item has been tried */
+    inven_tried(i_ptr);
+
     /* An identification was made */
-    if (ident) { if (!known1_p(i_ptr)) {
+    if (ident && !inven_aware_p(i_ptr)) {
 	int lev = i_ptr->level;
 	p_ptr->exp += (lev + (p_ptr->lev >> 1)) / p_ptr->lev;
 	prt_experience();
-	identify(&item_val);
-	i_ptr = &inventory[item_val];
-	}
-    } else if (!known1_p(i_ptr)) sample(i_ptr);
+	inven_aware(i_ptr);
+    }
 
     /* Potions can feed the player */
     add_food(i_ptr->pval);
@@ -1433,15 +1436,17 @@ void do_cmd_read_scroll(void)
 
 	i_ptr = &inventory[item_val];
 
+    /* The item was tried */
+    inven_tried(i_ptr);
+
     /* An identification was made */
-    if (ident) { if (!known1_p(i_ptr)) {
+    if (ident && !inven_aware_p(i_ptr)) {
 	int lev = i_ptr->level;
 	/* round half-way case up */
 	p_ptr->exp += (lev + (p_ptr->lev >> 1)) / p_ptr->lev;
 	prt_experience();
-	identify(&item_val);
+	inven_aware(i_ptr);
     }
-    } else if (!known1_p(i_ptr)) sample(i_ptr);
 
 
     /* Hack -- allow certain scrolls to be "preserved" */
@@ -1722,14 +1727,16 @@ void do_cmd_aim_wand(void)
     }
 	}
 
+    /* Mark it as tried */
+    inven_tried(i_ptr);
+
     /* Apply identification */
-    if (ident) { if (!known1_p(i_ptr)) {
+    if (ident && !inven_aware_p(i_ptr)) {
 	/* round half-way case up */
 	p_ptr->exp += (lev + (p_ptr->lev >> 1)) / p_ptr->lev;
 	prt_experience();
-	identify(&item_val);
+	inven_aware(i_ptr);
     }
-	} else if (!known1_p(i_ptr)) sample(i_ptr);
 
 	inven_item_charges(item_val);
 
@@ -2023,13 +2030,15 @@ void do_cmd_use_staff(void)
 	break;
     }
 
+    /* Tried the item */
+    inven_tried(i_ptr);
+
     /* An identification was made */
-    if (ident) { if (!known1_p(i_ptr)) {
+    if (ident && !inven_aware_p(i_ptr)) {
 	p_ptr->exp += (lev + (p_ptr->lev >> 1)) / p_ptr->lev;
 	prt_experience();
-	identify(&item_val);
-	}
-    } else if (!known1_p(i_ptr)) sample(i_ptr);
+	inven_aware(i_ptr);
+    }
 
     inven_item_charges(item_val);
 
@@ -2348,13 +2357,16 @@ void do_cmd_zap_rod(void)
     }
 
 
+
+    /* Tried the object */
+    inven_tried(i_ptr);
+
     /* Successfully determined the object function */
-    if (ident) { if (!known1_p(i_ptr)) {
+    if (ident && !inven_aware_p(i_ptr)) {
 	p_ptr->exp += (lev + (p_ptr->lev >> 1)) / p_ptr->lev;
 	prt_experience();
-	identify(&item_val);
-	}
-    } else if (!known1_p(i_ptr)) sample(i_ptr);
+	inven_aware(i_ptr);
+    }
 
 
     /* Hack -- combine the pack */

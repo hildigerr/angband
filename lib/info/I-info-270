@@ -3,6 +3,7 @@
 Parsing of Item kinds from text files
 Reorganization of Item kind file
 Added field "name1" for artifact identities
+Rewrite of the "known"/"aware" formalism for items/kinds.
 Addition of another flag set for items.
 Reorganization of the flags for items.
 Properly handled "identify" inducing object "awareness" and "combining".

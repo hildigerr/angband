@@ -384,7 +384,7 @@ extern store_type store[MAX_STORES];
 extern int (*store_buy[MAX_STORES])();
 #endif
 
-extern byte object_ident[OBJECT_IDENT_SIZE];
+
 
 extern char ghost_name[128];		/* Writable ghost name */
 
@@ -414,6 +414,9 @@ extern inven_kind *k_list;
 #else
 extern inven_kind k_list[MAX_K_IDX];
 #endif
+
+/* The "xtra" array ("extra" object info) */
+extern inven_xtra *x_list;
 
 extern cptr special_names[SN_ARRAY_SIZE];
 
@@ -520,14 +523,14 @@ int look_line(int);
 
 /* desc.c */
 void flavor_init(void);
-void known1(inven_type *);
-int known1_p(inven_type *);
+bool inven_aware_p(inven_type *);
+void inven_aware(inven_type *);
+bool inven_tried_p(inven_type *);
+void inven_tried(inven_type *);
 void known2(inven_type *);
 int known2_p(inven_type *);
 void store_bought(inven_type *);
 int store_bought_p(inven_type *);
-void sample(struct inven_type *);
-void identify(int *);
 void objdes(char *, struct inven_type *, int);
 void scribe_object(void);
 void add_inscribe(inven_type *, int);

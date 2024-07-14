@@ -181,6 +181,20 @@ struct _monster_type {
 
 
 /*
+ * Extra Item "memory" (not very important)
+ */
+
+typedef struct _inven_xtra inven_xtra;
+
+struct _inven_xtra {
+
+    bool aware;		/* The player is "aware" of the item's effects */
+    bool tried;		/* The player has "tried" one of the items */
+};
+
+
+
+/*
  * The "kind" of an object (or treasure).
  *
  * Note that "name" is dynamically allocated.

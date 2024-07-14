@@ -1641,7 +1641,7 @@ int inven_check_num(inven_type *i_ptr)
 	/* they always stack (sval < 192), or else they have same pval */
 		((i_ptr->sval < ITEM_GROUP_MIN) || (inventory[i].pval == i_ptr->pval))
 	/* only stack if both or neither are identified */
-		&& (known1_p(&inventory[i]) == known1_p(i_ptr))) return TRUE;
+		&& (inven_aware_p(&inventory[i]) == inven_aware_p(i_ptr))) return TRUE;
     }
 
     /* And there was no room in the inn... */
@@ -1686,7 +1686,7 @@ int inven_carry(inven_type *i_ptr)
 	/* they always stack (sval < 192), or else they have same pval */
 		((i_ptr->sval < ITEM_GROUP_MIN) || (j_ptr->pval == i_ptr->pval))
 	/* only stack if both or neither are identified */
-		&& (known1_p(&inventory[slot]) == known1_p(i_ptr))) {
+		&& (inven_aware_p(&inventory[slot]) == inven_aware_p(i_ptr))) {
 		stacked = TRUE;	   /* note that we did process the item -CFT */
 
 	    /* Add together the item counts */
@@ -1707,7 +1707,7 @@ int inven_carry(inven_type *i_ptr)
 	for (slot = 0;; slot++) {
 	    j_ptr = &inventory[slot];
 
-	/* For items which are always known1_p, i.e. never have a 'color',
+	/* For items which are always inven_aware_p, i.e. never have a 'color',
 	 * insert them into the inventory in sorted order.  
 	 */
 	    if ((typ == TV_PRAYER_BOOK) && (class[p_ptr->pclass].spell == MAGE))

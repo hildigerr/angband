@@ -641,7 +641,7 @@ static void print_tomb()
 	for (i = 0; i < INVEN_ARRAY_SIZE; i++) {
 	    inven_type *i_ptr = &inventory[i];
 	    if (i_ptr && i_ptr->tval != TV_NOTHING) {
-		known1(i_ptr);
+	    inven_aware(i_ptr);
 		known2(i_ptr);
 	    }
 	}
@@ -672,7 +672,7 @@ static void print_tomb()
               sprintf(t2, "(page %d)", (ii==0?1:2));
               prt(t2, 1, 3);
               while ((ii<s_ptr->store_ctr) && (j<12)){
-                known1(&s_ptr->store_item[ii]);
+                inven_aware(&s_ptr->store_item[ii]);
                 known2(&s_ptr->store_item[ii]);
                 objdes(t1, &s_ptr->store_item[ii], TRUE);
                 sprintf(t2, "%c) %s", 'a'+j, t1);

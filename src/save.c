@@ -468,6 +468,32 @@ static void wr_lore(monster_lore *l_ptr)
 
 
 /*
+ * Read/Write the "xtra" info for objects
+ */
+
+static void rd_xtra(inven_xtra *xtra)
+{
+    byte tmp8u;
+
+    rd_byte(&tmp8u);
+
+    xtra->aware = (tmp8u & 0x01) ? TRUE: FALSE;
+    xtra->tried = (tmp8u & 0x02) ? TRUE: FALSE;
+}
+
+static void wr_xtra(inven_xtra *xtra)
+{
+    byte tmp8u = 0;
+
+    if (xtra->aware) tmp8u |= 0x01;
+    if (xtra->tried) tmp8u |= 0x02;
+
+    wr_byte(tmp8u);
+}
+
+
+
+/*
  * Write/Read a store
  */
 static void wr_store(store_type *st_ptr)
@@ -1445,7 +1471,8 @@ static errr rd_savefile()
 
     /* Object Memory */
     rd_u16b(&tmp16u);
-    for (i = 0; i < tmp16u; i++) rd_byte(&object_ident[i]);
+    for (i = 0; i < tmp16u; i++) rd_xtra(&x_list[i]);
+    if (say) prt_note(-1,"Loaded Object Memory");
 
 
     /* Load the Quests */
@@ -1765,9 +1792,9 @@ static int wr_savefile()
 
 
     /* Dump the object memory */
-    tmp16u = OBJECT_IDENT_SIZE;
+    tmp16u = MAX_K_IDX;
     wr_u16b(tmp16u);
-    for (i = 0; i < tmp16u; i++) wr_byte(object_ident[i]);
+    for (i = 0; i < tmp16u; i++) wr_xtra(&x_list[i]);
 
 
     /* Hack -- Dump the quests */    

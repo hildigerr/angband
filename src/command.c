@@ -1121,7 +1121,7 @@ void do_command(char com_val)
 		    for (temp = 0; temp < MAX_DUNGEON_OBJ; temp++) {
 			if (k_list[temp].level <= i) {
 			    invcopy(&inv, temp);
-			    known1(&inv);
+			    inven_aware(&inv);
 			}
 		    }
 		}

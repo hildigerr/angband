@@ -222,14 +222,7 @@
 
 
 /* Total Number of object kinds */
-#define MAX_K_IDX				512
-
-
-/* was 7*64, see flavor_p() in desc.c, could be MAX_K_IDX o_o() rewritten
- * now 8*64 beacuse of Rods
- */
-
-#define OBJECT_IDENT_SIZE 1024
+#define MAX_K_IDX		512
 
 
 
@@ -548,10 +541,6 @@
 
 
 /* Special "Item Description Flags" */
-
-/* id's used for object description, stored in object_ident */
-#define OD_TRIED        0x1
-#define OD_KNOWN1       0x2
 
 /* id's used for item description, stored in i_ptr->ident */
 #define ID_MAGIK        0x1

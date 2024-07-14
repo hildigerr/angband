@@ -1564,6 +1564,7 @@ static errr rd_inventory_old()
 static errr rd_savefile_old()
 {
     int i;
+    byte tmp8u;
 
     /* XXX Fake the system info */
 
@@ -1645,9 +1646,50 @@ static errr rd_savefile_old()
 
 
     /* Hack -- analyze the "object_ident" array. */
-    for (i = 0; i < OBJECT_IDENT_SIZE; i++)  {            
-    rd_byte(&object_ident[i]);
+    for (i = 0; i < 1024; i++) {            
+
+	int k, tval, sval, tried, aware;
+
+	rd_byte(&tmp8u);
+	if (!tmp8u) continue;
+
+	/* Extract the flags */
+	tried = (tmp8u & 0x01) ? 1 : 0;
+	aware = (tmp8u & 0x02) ? 1 : 0;
+
+	/* Extract the identity */
+	switch (i >> 6) {
+	    case 0: tval = TV_AMULET; break;
+	    case 1: tval = TV_RING; break;
+	    case 2: tval = TV_STAFF; break;
+	    case 3: tval = TV_WAND; break;
+	    case 4: tval = TV_SCROLL; break;
+	    case 5: tval = TV_POTION; break;
+	    case 6: tval = TV_FOOD; break;
+	    case 7: tval = TV_ROD; break;
+	    default: tval = TV_NOTHING;
 	}
+
+	/* No type? */
+	if (tval == TV_NOTHING) continue;
+
+	/* Extract the sub-type */
+	sval = i % 64; 
+
+	/* Find the object this refers to */
+	for (k = 0; k < MAX_K_IDX; k++) {
+
+	    inven_kind *k_ptr = &k_list[k];
+
+	    /* Set the object info */
+	    if ((tval == k_ptr->tval) &&
+		(sval == k_ptr->sval % 64)) {
+		x_list[k].tried = tried;
+		x_list[k].aware = aware;
+	    }
+	}
+    }
+    if (say) prt_note(-1, "Parsed old 'known1' flags");
 
     /* Old seeds */
     rd_u32b(&randes_seed);

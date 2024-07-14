@@ -275,53 +275,14 @@ s16b  flavor_p(inven_type *i_ptr)
     }
 }
 
-/* Remove "Secret" symbol for identity of object			 */
-void known1(inven_type *i_ptr)
-{
-    s16b offset;
-    byte indexx;
-
-    if ((offset = flavor_p(i_ptr)) < 0)
-	return;
-    offset <<= 6;
-    indexx = i_ptr->sval & (ITEM_SINGLE_STACK_MIN - 1);
-    object_ident[offset + indexx] |= OD_KNOWN1;
-/* clear the tried flag, since it is now known */
-    object_ident[offset + indexx] &= ~OD_TRIED;
-}
-
-int known1_p(inven_type *i_ptr)
-{
-    s16b offset;
-    byte indexx;
-
-/* Items which don't have a 'color' are always known1, so that they can be
- * carried in order in the inventory.  
- */
-    if ((offset = flavor_p(i_ptr)) < 0)
-	return OD_KNOWN1;
-    if (store_bought_p(i_ptr))
-	return OD_KNOWN1;
-    offset <<= 6;
-    indexx = i_ptr->sval & (ITEM_SINGLE_STACK_MIN - 1);
-    return (object_ident[offset + indexx] & OD_KNOWN1);
-}
 
 
 /* Remove "Secret" symbol for identity of plusses			 */
 void known2(inven_type *i_ptr)
 {
-    s16b offset;
-    byte indexx;
-
     /* Remove an automatically generated inscription.	-CJS- */
     /* used to clear ID_DAMD flag, but I think it should remain set */
     i_ptr->ident &= ~(ID_MAGIK | ID_EMPTY);
-    if ((offset != flavor_p(i_ptr)) < 0) {
-    offset <<= 6;
-    indexx = i_ptr->sval & (ITEM_SINGLE_STACK_MIN - 1);
-    object_ident[offset + indexx] &= ~OD_TRIED;
-    }
 
     i_ptr->ident |= ID_KNOWN2;
 }
@@ -346,36 +307,65 @@ int store_bought_p(inven_type *i_ptr)
 }
 
 
-/* unquote() is no longer needed */
 
-/* Somethings been sampled -CJS- */
-void sample(inven_type *i_ptr)
+
+/*
+ * Is the player "aware" of the "flavor" of the given object?
+ * The player is always "aware" of objects with no "flavor".
+ * The player is "aware" of any object which he fully "knows".
+ *
+ * Thus, the only things the player can be "unaware of" are Potions, Scrolls,
+ * Food, Amulets, Rings, Staffs, Wands, and Rods, which have unknown effects.
+ */
+bool inven_aware_p(inven_type *i_ptr)
 {
-    s16b offset;
-    byte indexx;
+    /* Hack -- player always knows "bland" objects */
+    if (flavor_p(i_ptr) == -1) return (TRUE);
 
-    if ((offset = flavor_p(i_ptr)) < 0)
-	return;
-    offset <<= 6;
-    indexx = i_ptr->sval & (ITEM_SINGLE_STACK_MIN - 1);
-    object_ident[offset + indexx] |= OD_TRIED;
+    /* Hack -- "known" induces "aware" */
+    if (known2_p(i_ptr)) return (TRUE);
+
+    /* Check the "x_list" */
+    return (x_list[i_ptr->k_idx].aware);
 }
 
-/* Somethings been identified					 */
-void identify(int *item)
+
+/*
+ * The player is now aware of the effects of the given object.
+ */
+void inven_aware(inven_type *i_ptr)
 {
-    register inven_type *i_ptr;
-
-    i_ptr = &inventory[*item];
-
-    if ((i_ptr->flags1 & TR3_CURSED) && (i_ptr->tval != TV_MAGIC_BOOK) &&
-	(i_ptr->tval != TV_PRAYER_BOOK))
-	add_inscribe(i_ptr, ID_DAMD);
-
-    if (!known1_p(i_ptr)) {
-	known1(i_ptr);
-    }
+    /* Fully aware of the effects */
+    x_list[i_ptr->k_idx].aware = TRUE;
 }
+
+
+/*
+ * Has the player "tried" a given object?
+ */
+bool inven_tried_p(inven_type *i_ptr)
+{
+    /* Hack -- "aware" cancels "tried" */
+    if (inven_aware_p(i_ptr)) return (FALSE);
+
+    /* Check the "x_list" */
+    return (x_list[i_ptr->k_idx].tried);
+}
+
+
+/*
+ * Something has been "sampled"
+ */
+void inven_tried(inven_type *i_ptr)
+{
+    /* Mark it as tried (even if "aware") */
+    x_list[i_ptr->k_idx].tried = TRUE;
+}
+
+
+
+
+
 
 
 
@@ -424,7 +414,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
     /* Assume no display of "pval" */
     pval_use = IGNORED;
 
-    modify = (known1_p(i_ptr) ? FALSE : TRUE);
+    modify = (inven_aware_p(i_ptr) ? FALSE : TRUE);
 
     /* Assume we will NOT append the "kind" name */
     append_name = FALSE;
@@ -869,7 +859,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	    indexx = (indexx <<= 6) +
 		(i_ptr->sval & (ITEM_SINGLE_STACK_MIN - 1));
 	/* don't print tried string for store bought items */
-	    if ((object_ident[indexx] & OD_TRIED) && !store_bought_p(i_ptr))
+	    if (x_list[i_ptr->k_idx].tried && !store_bought_p(i_ptr))
 		(void)strcat(tmp_str, "tried ");
 	}
 	if ((i_ptr->ident & (ID_MAGIK | ID_EMPTY | ID_DAMD)) &&

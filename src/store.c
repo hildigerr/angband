@@ -397,16 +397,16 @@ s32b item_value(inven_type *i_ptr)
 				/* Potions, Scrolls, and Food */
     } else if ((i_ptr->tval == TV_SCROLL1) || (i_ptr->tval == TV_SCROLL2) ||
 	       (i_ptr->tval == TV_POTION1) || (i_ptr->tval == TV_POTION2)) {
-	if (!known1_p(i_ptr))
+	if (!inven_aware_p(i_ptr))
 	    value = 20;
     } else if (i_ptr->tval == TV_FOOD) {
 	if ((i_ptr->sval < (ITEM_SINGLE_STACK_MIN + MAX_SHROOM))
-	    && !known1_p(i_ptr))
+	    && !inven_aware_p(i_ptr))
 	    value = 1;
 				/* Rings and amulets */
     } else if ((i_ptr->tval == TV_AMULET) || (i_ptr->tval == TV_RING)) {
 	/* player does not know what type of ring/amulet this is */
-	if (!known1_p(i_ptr))
+	if (!inven_aware_p(i_ptr))
 	    value = 45;
 	else if (!known2_p(i_ptr))
 	/* player knows what type of ring, but does not know whether it is
@@ -416,7 +416,7 @@ s32b item_value(inven_type *i_ptr)
 	    value = k_list[i_ptr->k_idx].cost;
 				/* Wands and staffs */
     } else if ((i_ptr->tval == TV_STAFF) || (i_ptr->tval == TV_WAND)) {
-	if (!known1_p(i_ptr)) {
+	if (!inven_aware_p(i_ptr)) {
 
 	    if (i_ptr->tval == TV_WAND)
 		value = 50;
@@ -904,7 +904,7 @@ static void store_create(void)
 		if ((i_ptr->cost > 0) &&	/* Item must be good	 */
 		    (i_ptr->cost < owners[st_ptr->owner].max_cost)) {
 
-/* equivalent to calling ident_spell(), except will not change the object_ident array */
+/* equivalent to calling ident_spell(), except will not change the object ident (x_list) array */
 		    store_bought(i_ptr);
 		    special_offer(i_ptr);
 		    (void)store_carry(i_ptr);
@@ -920,7 +920,7 @@ static void store_create(void)
 		if (i_ptr->cost > 0) {	/* Item must be good	 */
 		/*
 		 * equivalent to calling ident_spell(), except will not
-		 * change the object_ident array 
+		 * change the object ident (x_list) array 
 		 */
 		    store_bought(i_ptr);
 		    special_offer(i_ptr);
@@ -1961,18 +1961,21 @@ static int store_sell(int *cur_top)
 	    p_ptr->au += price;
 	    store_prt_gold();
 
+	    /* Get the inventory item */
+	    i_ptr = &inventory[item_val];
+
 	    /* Get the "apparent value" */
 	    dummy = item_value(&sold_obj);
 
-	    /* identify object in inventory to set object_ident */
-	    identify(&item_val);
+	    /* Become "aware" of the item */
+	    inven_aware(i_ptr);
+
+	    /* Know the item fully */
+	    known2(i_ptr);
 
 	    /* Re-Create the now-identified object that was sold */
 	    sold_obj = *i_ptr;
 	    sold_obj.number = amt;
-
-	    /* call known2 for store item, so charges/pluses are known */
-	    known2(&sold_obj);
 
 	    /* Get the "actual value" */
 	    value = item_value(&sold_obj);

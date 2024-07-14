@@ -2305,12 +2305,7 @@ bool ident_floor(void)
     if (!get_check(prt)) return (FALSE);
 
     /* Identify it fully */
-    if ((i_ptr->flags3 & TR3_CURSED) && (i_ptr->tval != TV_MAGIC_BOOK) &&
-    (i_ptr->tval != TV_PRAYER_BOOK))
-    add_inscribe(i_ptr, ID_DAMD);
-
-    if (!known1_p(i_ptr))
-    known1(i_ptr);
+    inven_aware(i_ptr);
     known2(i_ptr);
 
     /* Describe it */
@@ -2342,9 +2337,11 @@ int ident_spell()
     /* Get an item to identify */
     if (!get_item(&item_val, pmt, 0, INVEN_ARRAY_SIZE)) return (-1);
 
-    /* Identify it fully */
-    identify(&item_val);
+    /* Get the item */
     i_ptr = &inventory[item_val];
+
+    /* Identify it fully */
+    inven_aware(i_ptr);
     known2(i_ptr);
 
     /* Description */
@@ -2375,10 +2372,11 @@ void identify_pack()
 
     /* Simply identify and know every item */
     for (i = 0; i <= INVEN_AUX; i++) {
-	if (inventory[i].tval != TV_NOTHING)
-	    identify(&i);
 	i_ptr = &inventory[i];
-	known2(i_ptr);
+	if (i_ptr->tval != TV_NOTHING) {
+	    inven_aware(i_ptr);
+	    known2(i_ptr);
+	}
     }
 }
 
