@@ -706,6 +706,7 @@ static int store_carry(inven_type *i_ptr)
 {
     int                 slot;
     s32b               value;
+    register int		i;
     register inven_type *j_ptr;
 
     s32b               icost, dummy;
@@ -766,7 +767,20 @@ static int store_carry(inven_type *i_ptr)
 		      ((i_ptr->level == j_ptr->level) &&
 		       (i_ptr->sval < j_ptr->sval))))) /* and finally by inc sval -CFT */
 		{		/* Insert into list             */
-		    insert_store(slot, icost, i_ptr);
+
+    /* Slide the others up */
+    for (i = st_ptr->store_ctr; i > slot; i--) {
+	st_ptr->store_item[i] = st_ptr->store_item[i-1];
+    }
+
+    /* More stuff now */
+    st_ptr->store_ctr++;
+
+    /* Insert the new item */
+    st_ptr->store_item[slot] = *i_ptr;
+
+    /* Save the "scost" */
+    st_ptr->store_item[slot].scost = (-icost);
 
     /* Return the location */
     return (slot);
@@ -776,26 +790,15 @@ static int store_carry(inven_type *i_ptr)
 	    }
 
 
-	    insert_store((int)st_ptr->store_ctr, icost, i_ptr);
+    for (i = st_ptr->store_ctr; i >= st_ptr->store_ctr; i--)
+	st_ptr->store_item[i] = st_ptr->store_item[i-1];
+    st_ptr->store_item[st_ptr->store_ctr] = *i_ptr;
+    st_ptr->store_item[st_ptr->store_ctr].scost = (-icost);
+    st_ptr->store_ctr++;
 	    slot = st_ptr->store_ctr - 1;
 
     /* Return the location */
     return (slot);
-}
-
-
-/*
- * Insert INVEN_MAX at given location	
- */
-static void insert_store(int pos, s32b icost, inven_type *i_ptr)
-{
-    register int        i;
-
-    for (i = st_ptr->store_ctr - 1; i >= pos; i--)
-	st_ptr->store_item[i + 1] = st_ptr->store_item[i];
-    st_ptr->store_item[pos] = *i_ptr;
-    st_ptr->store_item[pos].scost = (-icost);
-    st_ptr->store_ctr++;
 }
 
 
