@@ -90,6 +90,12 @@
     ((x) >= panel_col_min) && ((x) <= panel_col_max)) ? (TRUE) : (FALSE))
 
 /*
+ * Determine if a given object is "wearable"
+ */
+#define wearable_p(T) \
+	(((T)->tval >= TV_MIN_WEAR) && ((T)->tval <= TV_MAX_WEAR))
+
+/*
  * Artifacts use the "name1" field
  */
 #define artifact_p(T) \

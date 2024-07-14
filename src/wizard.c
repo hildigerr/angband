@@ -920,7 +920,8 @@ again:
     save_screen();
 
     /* Only do TRN_* flags for wearable objects */
-    if ((i_ptr->tval <= TV_MAX_WEAR) && (i_ptr->tval >= TV_MIN_WEAR)) {
+
+    if (wearable_p(i_ptr)) {
 
 	if ((i_ptr->tval == TV_SWORD) ||
 	    (i_ptr->tval == TV_HAFTED) ||
@@ -1228,7 +1229,7 @@ again:
 		i_ptr->flags3 |= TR3_CURSED;
 	} else if (ch == '\033')
 	    goto end;
-    } /* end if TV_MAX_WEAR >= i_ptr->tval >= TV_MIN_WEAR -CFT */
+    }
 
     prt("Cost : ", 0, 0);
     if (!get_string(tmp_str, 0, 9, 8)) {

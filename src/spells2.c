@@ -3284,8 +3284,7 @@ int door_creation()
 				/* if not stairs or a store */
 			 &&(i_list[c_ptr->i_idx].tval != TV_DOWN_STAIR)
 			 && (i_list[c_ptr->i_idx].tval != TV_STORE_DOOR)) ||
-			(i_list[c_ptr->i_idx].tval < TV_MIN_WEAR) ||
-			(i_list[c_ptr->i_idx].tval > TV_MAX_WEAR) ||
+			!wearable_p(&i_list[c_ptr->i_idx]) ||
 			!artifact_p(&i_list[c_ptr->i_idx])) {
 				/* if no artifact here -CFT */
 			door = TRUE;
@@ -3322,8 +3321,7 @@ int trap_creation()
 		     /* if not stairs or a store */
 		     &&(i_list[c_ptr->i_idx].tval != TV_DOWN_STAIR)
 		     && (i_list[c_ptr->i_idx].tval != TV_STORE_DOOR)) ||
-		    (i_list[c_ptr->i_idx].tval < TV_MIN_WEAR) ||
-		    (i_list[c_ptr->i_idx].tval > TV_MAX_WEAR) ||
+		    !wearable_p(&i_list[c_ptr->i_idx]) ||
 		    !artifact_p(&i_list[c_ptr->i_idx])) {
 				/* if no artifact here -CFT */
 		    trap = TRUE;

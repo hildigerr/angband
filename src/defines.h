@@ -829,7 +829,13 @@
 #define ART_MAX			128
 
 
-/* The values for the treasure type (tval) field of various objects.
+/*
+ * The values for the treasure type (tval) field of various objects.
+ * This value is the primary means by which items are sorted in the
+ * player inventory.  It also groups things for MIN_WEAR/MAX_WEAR.
+ *
+ * Note that all items with tval from 10 to 50 are "wearable_p()",
+ * which means that the special "TR#_*" flags apply to them.
  */
 
 #define TV_NEVER        -1	/* used by find_range() for non-search */
@@ -837,11 +843,6 @@
 #define TV_MISC          1
 #define TV_CHEST         2	/* Chests ('~') */
 #define TV_SPIKE         3	/* Spikes ('~') */
-
-/* min tval for wearable items, all items between TV_MIN_WEAR and TV_MAX_WEAR
- * use the same flag bits, see the TR_* defines
- */
-
 #define TV_MIN_WEAR     10	/* Min tval for "wearable" items */
 
 /* items tested for enchantments, i.e. the MAGIK inscription, see the
@@ -1016,7 +1017,7 @@
 /*
  * The "TR_xxx" values apply ONLY to the items with tval's between
  * TV_MIN_WEAR and TV_MAX_WEAR, that is, items which can be wielded
- * or worn.
+ * or worn.  Use the macro "wearable_p()" to check this condition.
  *
  * Note that "flags1" contains all flags dependant on "pval", plus all "extra attack damage"
  * flags (SLAY_XXX and BRAND_XXX).

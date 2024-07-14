@@ -557,9 +557,7 @@ static void br_wall(int cy, int cx)
 	((c_ptr->i_idx == 0) || ((i_list[c_ptr->tptr].tval != TV_UP_STAIR) &&
 			      (i_list[c_ptr->i_idx].tval != TV_DOWN_STAIR) &&
 			      (i_list[c_ptr->i_idx].tval != TV_STORE_DOOR) &&
-			      !((i_list[c_ptr->i_idx].tval >= TV_MIN_WEAR) &&
-				(i_list[c_ptr->i_idx].tval <= TV_MAX_WEAR) &&
-			    artifact_p(&i_list[c_ptr->i_idx]))))) {
+			      !(wearable_p(&i_list[c_ptr->i_idx]) && artifact_p(&i_list[c_ptr->i_idx]))))) {
 	    if (c_ptr->i_idx)
 		delete_object(char_row, char_col);
 	    tmp = randint(10);
@@ -766,8 +764,7 @@ static void shatter_quake(int cy, int cx)
 
 		/* Do not hurt artifacts or stairs */
 		if (c_ptr->i_idx != 0)
-		    if (((i_list[c_ptr->i_idx].tval >= TV_MIN_WEAR) &&
-			 (i_list[c_ptr->i_idx].tval <= TV_MAX_WEAR) &&
+		    if ((wearable_p(&i_list[c_ptr->i_idx]) &&
 			 artifact_p(&i_list[c_ptr->i_idx])) ||
 			(i_list[c_ptr->i_idx].tval == TV_UP_STAIR) ||
 			(i_list[c_ptr->i_idx].tval == TV_DOWN_STAIR) ||

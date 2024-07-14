@@ -1129,7 +1129,7 @@ void dungeon(void)
 	     * list, success 1 out of 10 times, unless you're a priest or
 	     * rogue... 
 	     */
-		if (((i_ptr->tval >= TV_MIN_WEAR) && (i_ptr->tval <= TV_MAX_WEAR)) &&
+		if (wearable_p(i_ptr) &&
 		    special_check(i_ptr) &&
 		    ((p_ptr->pclass == 2 || p_ptr->pclass == 3) ?
 		     (randint(i < 22 ? 5 : 1) == 1) :
