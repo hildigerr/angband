@@ -1658,18 +1658,12 @@ int inven_check_num(inven_type *i_ptr)
  */
 int inven_carry(inven_type *i_ptr)
 {
-    register int         locn = 0, i;
-    register int         typ, subt;
-    register inven_type *t_ptr;
-    int                  known1p, always_known1p;
-    int                  tval_tmp;  /* used to make magic books before pray
-				    * books if magicuser */
+    register int         slot, i;
+    register int         typ = i_ptr->tval;
+    register inven_type *j_ptr;
+    int                  tval_tmp;  /* used to make magic books before pray books if magicuser */
     int                  stacked = FALSE;
 
-    typ = i_ptr->tval;
-    subt = i_ptr->sval;
-    known1p = known1_p(i_ptr);
-    always_known1p = (flavor_p(i_ptr) == -1);
 
     if (inven_ctr >= INVEN_WIELD) /* sanity checking to prevent the inv from */
 	inven_ctr = INVEN_WIELD;  /* running over the equipment list -CWS */
@@ -1678,26 +1672,29 @@ int inven_carry(inven_type *i_ptr)
  * to prevent nasty losses of objects, we first look through entire inven for
  * a place to stack, w/o assuming the inventory is sorted. -CFT 
  */
-    if (subt >= ITEM_SINGLE_STACK_MIN) {
-	for (locn = 0; locn < inven_ctr; locn++) {
-	    t_ptr = &inventory[locn];
-	    if (t_ptr->tval == typ &&
-		t_ptr->sval == subt &&
-	/* make sure the number field doesn't overflow */
-		((int)t_ptr->number + (int)i_ptr->number < 256) &&
-	/* they always stack (sval < 192), or else they have same pval */
-		((subt < ITEM_GROUP_MIN) || (t_ptr->pval == i_ptr->pval))
-	/* only stack if both or neither are identified */
-		&& (known1_p(&inventory[locn]) == known1p)) {
-		stacked = TRUE;	   /* note that we did process the item -CFT */
-		t_ptr->number += i_ptr->number;
+    if (i_ptr->sval >= ITEM_SINGLE_STACK_MIN) {
 
-	/* if player bought at bargin price, then make sure he can't sell back
-	 * for normal value.  This is unfair, since it robs the value from items,
-	 * but it does prevent the player from "milking" the stores for cash.
-	 */
-		if (i_ptr->cost < t_ptr->cost)
-		    t_ptr->cost = i_ptr->cost;
+    for (slot = 0; slot < inven_ctr; slot++) {
+
+	/* Access that inventory item */
+	j_ptr = &inventory[slot];
+
+	    if (j_ptr->tval == typ &&
+		j_ptr->sval == i_ptr->sval &&
+	/* make sure the number field doesn't overflow */
+		((int)j_ptr->number + (int)i_ptr->number < 256) &&
+	/* they always stack (sval < 192), or else they have same pval */
+		((i_ptr->sval < ITEM_GROUP_MIN) || (j_ptr->pval == i_ptr->pval))
+	/* only stack if both or neither are identified */
+		&& (known1_p(&inventory[slot]) == known1_p(i_ptr))) {
+		stacked = TRUE;	   /* note that we did process the item -CFT */
+
+	    /* Add together the item counts */
+	    j_ptr->number += i_ptr->number;
+
+	    /* Hack -- maintain the MINIMUM cost */
+	    if (j_ptr->cost > i_ptr->cost) j_ptr->cost = i_ptr->cost;
+
 		break;
 	    } /* if it stacks here */
 	} /* for loop */
@@ -1707,10 +1704,10 @@ int inven_carry(inven_type *i_ptr)
     /* either it doesn't stack anyway, or it didn't match anything in the inventory.
      * Now try to insert. -CFT */
 
-	for (locn = 0;; locn++) {
-	    t_ptr = &inventory[locn];
+	for (slot = 0;; slot++) {
+	    j_ptr = &inventory[slot];
 
-	/* For items which are always known1p, i.e. never have a 'color',
+	/* For items which are always known1_p, i.e. never have a 'color',
 	 * insert them into the inventory in sorted order.  
 	 */
 	    if ((typ == TV_PRAYER_BOOK) && (class[p_ptr->pclass].spell == MAGE))
@@ -1718,7 +1715,7 @@ int inven_carry(inven_type *i_ptr)
 	/* sort is in descending, so this will be immediately after magic books.
 	 * It helps that there is no tval that uses this. -CFT
 	 */
-	    tval_tmp = t_ptr->tval;
+	    tval_tmp = j_ptr->tval;
 	    if ((tval_tmp == TV_PRAYER_BOOK) &&
 		(class[p_ptr->pclass].spell == MAGE))
 		tval_tmp = TV_MAGIC_BOOK - 1;
@@ -1726,21 +1723,35 @@ int inven_carry(inven_type *i_ptr)
 	 * It helps that there is no tval that uses this. -CFT
 	 */
 	    if ((typ > tval_tmp) ||     /* sort by desc tval */
-		(always_known1p &&      /* if always known, then sort by inc level, */
+		((flavor_p(i_ptr) == -1) &&      /* if always known, then sort by inc level, */
 		 (typ == tval_tmp) &&	/* then by inc sval */
-		 ((i_ptr->level < t_ptr->level) ||
-	     ((i_ptr->level == t_ptr->level) && (subt < t_ptr->sval))))) {
-		for (i = inven_ctr - 1; i >= locn; i--)
-		    inventory[i + 1] = inventory[i];
-		inventory[locn] = *i_ptr;
-		inven_ctr++;
+		 ((i_ptr->level < j_ptr->level) ||
+	     ((i_ptr->level == j_ptr->level) && (i_ptr->sval < j_ptr->sval))))) {
+
+    /* Structure slide (make room) */
+    for (i = inven_ctr; i > slot; i--) {
+	inventory[i] = inventory[i-1];
+    }
+
+    /* Structure copy to insert the new item */
+    inventory[slot] = *i_ptr;
+
+    /* One more item present now */
+    inven_ctr++;
+
 		break;
 	    }
 	}
     }
+
+    /* Increase the weight, prepare to redraw */
     inven_weight += i_ptr->number * i_ptr->weight;
+
+    /* Remember to re-calculate bonuses */
     p_ptr->status |= PY_STR_WGT;
-    return locn;
+
+    /* Say where it went */
+    return slot;
 }
 
 
