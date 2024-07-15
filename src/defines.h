@@ -131,7 +131,6 @@
 #define Q_PLANE          -1
 
 /* Treasure constants                                           */
-#define INVEN_ARRAY_SIZE 34     /* Size of inventory array(Do not change) */
 #define MAX_OBJ_LEVEL   255     /* Maximum level of magic in dungeon      */
 
 /*
@@ -355,6 +354,10 @@
 #define INVEN_LITE      32
 #define INVEN_AUX       33
 
+/*
+ * Total number of inventory slots (22 pack, 12 equip)
+ */
+#define INVEN_TOTAL	34
 
 
 

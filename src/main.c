@@ -344,7 +344,7 @@ static void player_outfit()
     inven_type *i_ptr = &inven_init;
     
     /* this is needed for bash to work right, it can't hurt anyway */
-    for (i = 0; i < INVEN_ARRAY_SIZE; i++)
+    for (i = 0; i < INVEN_TOTAL; i++)
 	invcopy(&inventory[i], OBJ_NOTHING);
 
     /* Give the player five useful objects */

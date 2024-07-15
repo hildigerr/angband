@@ -1068,7 +1068,7 @@ void dungeon(void)
 	/*** Process Inventory ***/
 
 	/* Timeout Artifacts */
-	for (i = 22; i < (INVEN_ARRAY_SIZE - 1); i++) {
+	for (i = 22; i < INVEN_TOTAL; i++) {
 
 	    /* Get the object */
 	    i_ptr = &inventory[i];
@@ -1117,7 +1117,7 @@ void dungeon(void)
 	    ) {
 	    vtype               tmp_str;
 
-	    for (i = 0; i < INVEN_ARRAY_SIZE; i++) {
+	    for (i = 0; i < INVEN_TOTAL; i++) {
 
 		if (i == inven_ctr) i = 22;
 
@@ -1176,7 +1176,7 @@ void dungeon(void)
 	     (randint((int)(80000L / (p_ptr->lev * p_ptr->lev + 40)) + 1) == 1))) {
 	    vtype               tmp_str;
 
-	    for (i = 0; i < INVEN_ARRAY_SIZE; i++) {
+	    for (i = 0; i < INVEN_TOTAL; i++) {
 
 		if (i == inven_ctr) i = 22;
 

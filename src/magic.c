@@ -531,7 +531,7 @@ void calc_mana(int stat)
 
 	/* Weigh the armor */
 	amrwgt = 0;
-	for (i = INVEN_WIELD; i < INVEN_ARRAY_SIZE; i++) {
+	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 	    i_ptr = &inventory[i];
 	    switch (i) {
 	      case INVEN_HEAD:

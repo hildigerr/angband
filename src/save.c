@@ -1094,7 +1094,7 @@ static errr rd_inventory()
     }
 
     /* Old "normal" equipment */
-    for (i = INVEN_WIELD; i < INVEN_ARRAY_SIZE; i++) {
+    for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 
 	/* Read the item */
 	rd_item(&inventory[i]);
@@ -1951,7 +1951,7 @@ static int wr_savefile()
     wr_u16b(inven_ctr);
     for (i = 0; i < inven_ctr; i++)
 	wr_item(&inventory[i]);
-    for (i = INVEN_WIELD; i < INVEN_ARRAY_SIZE; i++)
+    for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
 	wr_item(&inventory[i]);
     wr_u16b(inven_weight);
     wr_u16b(equip_ctr);

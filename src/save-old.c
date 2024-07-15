@@ -1549,7 +1549,7 @@ static errr rd_inventory_old()
     }
 
     /* Old "normal" equipment */
-    for (i = INVEN_WIELD; i < INVEN_ARRAY_SIZE; i++) {
+    for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 
 	/* Read the item */
 	rd_item_old(&inventory[i]);

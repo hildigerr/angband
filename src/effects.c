@@ -2398,7 +2398,7 @@ void do_cmd_activate(void)
     num = 0;
     first = 0;
 
-    for (i = 22; i < (INVEN_ARRAY_SIZE - 1); i++) {
+    for (i = 22; i < INVEN_TOTAL; i++) {
 
 	if ((inventory[i].flags3 & TR3_ACTIVATE) && (known2_p(&(inventory[i])))) {
 	    num++;
@@ -2426,7 +2426,7 @@ void do_cmd_activate(void)
 	    save_screen();
 	    j=0;
 	    if (!redraw) {
-		for (i = first; i < (INVEN_ARRAY_SIZE - 1); i++) {
+		for (i = first; i < (INVEN_TOTAL - 1); i++) {
 		    if ((inventory[i].flags3 & TR3_ACTIVATE) &&
 			known2_p(&(inventory[i]))) {
 			objdes(tmp2, &inventory[i], TRUE);
@@ -2471,7 +2471,7 @@ void do_cmd_activate(void)
 	    if (choice > num) continue;
 	    flag = TRUE;
 	    j = 0;
-	    for (i = first; i < (INVEN_ARRAY_SIZE - 1); i++) {
+	    for (i = first; i < (INVEN_TOTAL - 1); i++) {
 		if ((inventory[i].flags3 & TR3_ACTIVATE) && known2_p(&(inventory[i]))) {
 		    if (j == choice)
 			break;

@@ -584,7 +584,7 @@ void prt_equippy_chars(void)
     out_val[1]='\0';     
 
     /* Analyze the pack */
-    for (i = INVEN_WIELD; i < INVEN_ARRAY_SIZE; i++) {
+    for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 
 	/* Get the item */
 	i_ptr = &inventory[i];                           

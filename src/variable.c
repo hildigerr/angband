@@ -177,8 +177,8 @@ cave_type cave[MAX_HEIGHT][MAX_WIDTH];
 /* Buffer to hold the name of the ghost */
 char ghost_name[128];
 
-/* The player's inventory */
-inven_type inventory[INVEN_ARRAY_SIZE];
+/* The player's inventory (22 pack items, 12 equipment items) */
+inven_type inventory[INVEN_TOTAL];
 
 
 

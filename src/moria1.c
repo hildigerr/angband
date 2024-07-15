@@ -214,12 +214,12 @@ int show_equip(int weight, int col)
     register const char *prt1;
     bigvtype             prt2;
 
-    vtype                out_val[INVEN_ARRAY_SIZE - INVEN_WIELD];
+    vtype                out_val[INVEN_TOTAL - INVEN_WIELD];
 
     len = 79 - col;
     if (weight) lim = 52; else lim = 60;
 
-    for (i = INVEN_WIELD; i < INVEN_ARRAY_SIZE; i++) {
+    for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 
 	i_ptr = &inventory[i];
 
@@ -248,7 +248,7 @@ int show_equip(int weight, int col)
     col = 79 - len; if (col < 0) col = 0;
 
     line = 0;
-    for (i = INVEN_WIELD; i < INVEN_ARRAY_SIZE; i++) {
+    for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 
 	/* Get the item */
 	i_ptr = &inventory[i];

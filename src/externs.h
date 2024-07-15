@@ -396,8 +396,8 @@ extern s16b inven_weight;		/* Total carried weight */
 extern s16b inven_ctr;			/* Number of obj's in inven */
 extern s16b equip_ctr;			/* Number of obj's in equip */
 
-/* Player inventory */
-extern inven_type inventory[INVEN_ARRAY_SIZE];
+/* Player inventory (inven+equip) */
+extern inven_type inventory[INVEN_TOTAL];
 
 
 /*** Item Information ***/

@@ -380,7 +380,7 @@ int file_character(cptr filename1)
 	    (void)fprintf(file1, "  Character has no equipment in use.\n");
 	}
 	else {
-	    for (j = 0, i = INVEN_WIELD; i < INVEN_ARRAY_SIZE; i++) {
+	    for (j = 0, i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 		i_ptr = &inventory[i];
 		if (i_ptr->tval) {
 		    p = mention_use(i);
@@ -638,7 +638,7 @@ static void print_tomb()
     put_str("(ESC to abort, return to print on screen, or file name)", 23, 0);
     put_str("Character record?", 22, 0);
     if (get_string(str, 22, 18, 60)) {
-	for (i = 0; i < INVEN_ARRAY_SIZE; i++) {
+	for (i = 0; i < INVEN_TOTAL; i++) {
 	    inven_type *i_ptr = &inventory[i];
 	    if (i_ptr && i_ptr->tval != TV_NOTHING) {
 	    inven_aware(i_ptr);

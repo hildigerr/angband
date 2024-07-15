@@ -2339,7 +2339,7 @@ int ident_spell()
     cptr pmt = "Item you wish identified?";
 
     /* Get an item to identify */
-    if (!get_item(&item_val, pmt, 0, INVEN_ARRAY_SIZE)) return (-1);
+    if (!get_item(&item_val, pmt, 0, INVEN_TOTAL-1)) return (-1);
 
     /* Get the item */
     i_ptr = &inventory[item_val];
@@ -2375,7 +2375,7 @@ void identify_pack()
     inven_type         *i_ptr;
 
     /* Simply identify and know every item */
-    for (i = 0; i <= INVEN_AUX; i++) {
+    for (i = 0; i < INVEN_TOTAL; i++) {
 	i_ptr = &inventory[i];
 	if (i_ptr->tval != TV_NOTHING) {
 	    inven_aware(i_ptr);
