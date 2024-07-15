@@ -942,23 +942,8 @@ static void store_create(void)
 
     for (tries = 0; tries < 4; tries++) {
 
-	if (store_num != 6) {
-	    i = store_choice[store_num][randint(STORE_CHOICES) - 1];
-	    invcopy(&i_list[cur_pos], i);
-	    apply_magic(&i_list[cur_pos], OBJ_TOWN_LEVEL, FALSE, FALSE, TRUE);
-	    i_ptr = &i_list[cur_pos];
-	    if (store_check_num(i_ptr)) {
-		if ((i_ptr->cost > 0) &&	/* Item must be good	 */
-		    (i_ptr->cost < owners[st_ptr->owner].max_cost)) {
-
-/* equivalent to calling ident_spell(), except will not change the object ident (x_list) array */
-		    store_bought(i_ptr);
-		    special_offer(i_ptr);
-		    (void)store_carry(i_ptr);
-		    tries = 10;
-		}
-	    }
-	} else {
+	/* Black Market */
+	if (store_num == 6) {
 	    i = get_obj_num(40, FALSE);
 	    invcopy(&i_list[cur_pos], i);
 	    apply_magic(&i_list[cur_pos], 40, FALSE, FALSE, TRUE);
@@ -969,6 +954,25 @@ static void store_create(void)
 		 * equivalent to calling ident_spell(), except will not
 		 * change the object ident (x_list) array 
 		 */
+		    store_bought(i_ptr);
+		    special_offer(i_ptr);
+		    (void)store_carry(i_ptr);
+		    tries = 10;
+		}
+	    }
+	}
+
+	/* Normal Store */
+	else {
+	    i = store_choice[store_num][randint(STORE_CHOICES) - 1];
+	    invcopy(&i_list[cur_pos], i);
+	    apply_magic(&i_list[cur_pos], OBJ_TOWN_LEVEL, FALSE, FALSE, TRUE);
+	    i_ptr = &i_list[cur_pos];
+	    if (store_check_num(i_ptr)) {
+		if ((i_ptr->cost > 0) &&	/* Item must be good	 */
+		    (i_ptr->cost < owners[st_ptr->owner].max_cost)) {
+
+/* equivalent to calling ident_spell(), except will not change the object ident (x_list) array */
 		    store_bought(i_ptr);
 		    special_offer(i_ptr);
 		    (void)store_carry(i_ptr);
