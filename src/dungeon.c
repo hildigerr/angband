@@ -1067,8 +1067,8 @@ void dungeon(void)
 
 	/*** Process Inventory ***/
 
-	/* Timeout Artifacts */
-	for (i = 22; i < INVEN_TOTAL; i++) {
+	/* Process equipment */
+	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 
 	    /* Get the object */
 	    i_ptr = &inventory[i];

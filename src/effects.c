@@ -2398,7 +2398,8 @@ void do_cmd_activate(void)
     num = 0;
     first = 0;
 
-    for (i = 22; i < INVEN_TOTAL; i++) {
+    /* Scan for something to activate */
+    for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 
 	if ((inventory[i].flags3 & TR3_ACTIVATE) && (known2_p(&(inventory[i])))) {
 	    num++;
