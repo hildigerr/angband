@@ -277,20 +277,35 @@ s16b  flavor_p(inven_type *i_ptr)
 
 
 
-/* Remove "Secret" symbol for identity of plusses			 */
+/*
+ * Is a given item "fully identified"?
+ */
+bool known2_p(inven_type *i_ptr)
+{
+    /* Some items get "tagged" as known */
+    if (i_ptr->ident & ID_KNOWN) return (TRUE);
+
+    /* Assume not known */
+    return (FALSE);    
+}
+
+
+
+/*
+ * Known2 is true when the "attributes" of an object are "known".
+ * These include tohit, todam, toac, cost, and pval (charges).
+ */
 void known2(inven_type *i_ptr)
 {
     /* Remove an automatically generated inscription.	-CJS- */
     /* used to clear ID_DAMD flag, but I think it should remain set */
-    i_ptr->ident &= ~(ID_MAGIK | ID_EMPTY);
+    i_ptr->ident &= ~ID_MAGIK;
 
-    i_ptr->ident |= ID_KNOWN2;
-}
+    /* Clear the "Empty" info */
+    i_ptr->ident &= ~ID_EMPTY;
 
-
-int known2_p(inven_type *i_ptr)
-{
-    return (i_ptr->ident & ID_KNOWN2);
+    /* Now we know all about it */
+    i_ptr->ident |= ID_KNOWN;
 }
 
 
@@ -728,7 +743,10 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	if (damstr[0] != '\0')
 	    (void)strcat(tmp_val, damstr);
 
-	if (known2_p(i_ptr)) {
+
+    /* We know it, describe it */	
+    if (known2_p(i_ptr)) {
+
 	/* originally used %+d, but several machines don't support it */
 	    if (i_ptr->ident & ID_SHOW_HITDAM)
 		(void)sprintf(tmp_str, " (%c%d,%c%d)",
@@ -748,14 +766,17 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	if (i_ptr->ac != 0 || (i_ptr->tval == TV_HELM)) {
 	    (void)sprintf(tmp_str, " [%d", i_ptr->ac);
 	    (void)strcat(tmp_val, tmp_str);
-	    if (known2_p(i_ptr)) {
+	if (known2_p(i_ptr)) {
 	    /* originally used %+d, but several machines don't support it */
 		(void)sprintf(tmp_str, ",%c%d",
 			   (i_ptr->toac < 0) ? '-' : '+', MY_ABS(i_ptr->toac));
 		(void)strcat(tmp_val, tmp_str);
 	    }
 	    (void)strcat(tmp_val, "]");
-	} else if ((i_ptr->toac != 0) && known2_p(i_ptr)) {
+	}
+
+    /* No base armor, but does increase armor */
+    else if (i_ptr->toac && known2_p(i_ptr)) {
 	/* originally used %+d, but several machines don't support it */
 	    (void)sprintf(tmp_str, " [%c%d]",
 			  (i_ptr->toac < 0) ? '-' : '+', MY_ABS(i_ptr->toac));
@@ -836,8 +857,12 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 		(void)sprintf(out_val, "%d%s", (int)i_ptr->number, &tmp_val[1]);
 	    else if (i_ptr->number < 1)
 		(void)sprintf(out_val, "%s%s", "no more", &tmp_val[1]);
-	    else if (known2_p(i_ptr) && artifact_p(i_ptr))
-		(void)sprintf(out_val, "The%s", &tmp_val[1]);
+
+	/* Hack -- The only one of its kind */
+	else if (known2_p(i_ptr) && artifact_p(i_ptr)) {
+	    (void)sprintf(out_val, "The%s", &tmp_val[1]);
+	}
+
 	    else if (is_a_vowel(tmp_val[2]))
 		(void)sprintf(out_val, "an%s", &tmp_val[1]);
 	    else

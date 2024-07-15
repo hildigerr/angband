@@ -1740,8 +1740,12 @@ void do_cmd_fire()
 	else if ((k_list[t->k_idx].cost <= 0) && inven_aware_p(t) &&
 		 !(known2_p(t) && (t->cost > 0)))
 	    ok_throw = TRUE;
-	else if ((t->cost <= 0) && known2_p(t))
-	    ok_throw = TRUE; /* it's junk, let him throw it */
+
+    /* If the player knows that it is junk, throw it */
+    else if (known2_p(t) && (t->cost <= 0)) {
+	    ok_throw = TRUE;
+    }
+
 	else if ((t->tval >= TV_HAFTED) &&
 		 (t->tval <= TV_DIGGING) && !(t->name2))
 	    ok_throw = TRUE; /* non ego/art weapons are okay to just throw, since

@@ -642,7 +642,7 @@ static void print_tomb()
 	    inven_type *i_ptr = &inventory[i];
 	    if (i_ptr && i_ptr->tval != TV_NOTHING) {
 	    inven_aware(i_ptr);
-		known2(i_ptr);
+	    known2(i_ptr);
 	    }
 	}
 	calc_bonuses();

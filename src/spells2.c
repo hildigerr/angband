@@ -1906,8 +1906,12 @@ int lose_all_info(void)
 	/* Skip non-items */
 	if (i_ptr->tval == TV_NOTHING) continue;
 
+	/* Now forget about the item */
+	if (known2_p(i_ptr)) {
+
 	    /* Clear the "known" flag */
-	    i_ptr->ident &= ~ID_KNOWN2;
+	    i_ptr->ident &= ~ID_KNOWN;
+	}
     }
 
     /* Forget the map */
@@ -2538,8 +2542,12 @@ int recharge(int num)
 	    } else {
 		num = (num / (i_ptr->level + 2)) + 1;
 		i_ptr->pval += 2 + randint(num);
-		if (known2_p(i_ptr)) i_ptr->ident &= ~ID_KNOWN2;
-		i_ptr->ident &= ~ID_EMPTY;
+
+	    /* Hack -- we no longer "know" the item */
+	    i_ptr->ident &= ~ID_KNOWN;
+
+	    /* Hack -- we no longer think the item is empty */
+	    i_ptr->ident &= ~ID_EMPTY;
 	    }
 	}
     }
