@@ -8,6 +8,7 @@ Addition of another flag set for items.
 Reorganization of the flags for items.
 Properly handled "identify" inducing object "awareness" and "combining".
 Made artifacts MUCH more resistant to "death by throwing" :-)
+Added true "object stacking" code, so any items can stack.
 Functions combine() and combine_pack() to maintain inventory.
 Made "store cost" a property of objects
 Rewrote "object feeling" code

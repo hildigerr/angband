@@ -1439,8 +1439,6 @@ int combine(int i)
     /* Allow function chaining with "ident_spell()" */
     if (i < 0) return (-1);
 
-    /* no merging possible */
-    if (i_ptr->sval < ITEM_SINGLE_STACK_MIN || i_ptr->sval >= ITEM_GROUP_MIN) return (i);
 
     /* Get the "base item" */
     i_ptr = &inventory[i];
@@ -1451,11 +1449,11 @@ int combine(int i)
 	/* Get the pack item */
 	j_ptr = &inventory[j];
 
-	if (j_ptr->tval == i_ptr->tval && j_ptr->sval == i_ptr->sval && j != i &&
-	    ((int)j_ptr->number + (int)i_ptr->number < 256)) {
+	/* Are they combinable? */
+	if (item_similar(i_ptr, j_ptr)) {
 
 	    /* Message */
-	    msg_print("You combine similar objects from the shop and dungeon.");
+	    msg_print("You combine similar objects.");
 
 	    /* Add together the item counts */
 	    i_ptr->number += j_ptr->number;
@@ -1503,8 +1501,7 @@ void combine_pack(void)
 	    j_ptr = &inventory[j];
 
 	    /* Can we drop "j_ptr" onto "i_ptr"? */
-	    if (j_ptr->tval == i_ptr->tval && j_ptr->sval == i_ptr->sval &&
-	    ((int)j_ptr->number + (int)i_ptr->number < 256)) {
+	    if (item_similar(i_ptr, j_ptr)) {
 
 		/* Message */
 		msg_print("You combine similar objects.");
@@ -1629,19 +1626,14 @@ int inven_check_num(inven_type *i_ptr)
     /* If there is an empty space, we are fine */
     if (inven_ctr < INVEN_WIELD) return TRUE;
 
-    if (i_ptr->sval >= ITEM_SINGLE_STACK_MIN)
-
     /* Scan every possible match */
     for (i = 0; i < inven_ctr; i++) {
 
-	    if (inventory[i].tval == i_ptr->tval &&
-		inventory[i].sval == i_ptr->sval &&
-	/* make sure the number field doesn't overflow */
-		((int)inventory[i].number + (int)i_ptr->number < 256) &&
-	/* they always stack (sval < 192), or else they have same pval */
-		((i_ptr->sval < ITEM_GROUP_MIN) || (inventory[i].pval == i_ptr->pval))
-	/* only stack if both or neither are identified */
-		&& (inven_aware_p(&inventory[i]) == inven_aware_p(i_ptr))) return TRUE;
+	/* Get that item */
+	inven_type *j_ptr = &inventory[i];
+
+	/* Check if the two items can be combined */
+	if (item_similar(j_ptr, i_ptr)) return TRUE;
     }
 
     /* And there was no room in the inn... */
@@ -1655,6 +1647,10 @@ int inven_check_num(inven_type *i_ptr)
  * rangers, and rogues.  Also, this will make Tenser's book sort after all
  * the mage books except Raals, instead of in the middle of them (which
  * always seemed strange to me). -CFT 
+ *
+ * Note the stacking code below now allows groupable objects to combine.
+ * See item_similar() for more information.  This also prevents the
+ * "reselling discounted item" problems from previous versions.
  */
 int inven_carry(inven_type *i_ptr)
 {
@@ -1662,32 +1658,21 @@ int inven_carry(inven_type *i_ptr)
     register int         typ = i_ptr->tval;
     register inven_type *j_ptr;
     int                  tval_tmp;  /* used to make magic books before pray books if magicuser */
-    int                  stacked = FALSE;
 
 
     if (inven_ctr >= INVEN_WIELD) /* sanity checking to prevent the inv from */
 	inven_ctr = INVEN_WIELD;  /* running over the equipment list -CWS */
 
-/*
- * to prevent nasty losses of objects, we first look through entire inven for
- * a place to stack, w/o assuming the inventory is sorted. -CFT 
- */
-    if (i_ptr->sval >= ITEM_SINGLE_STACK_MIN) {
 
+
+    /* Check all the items in the pack (attempt to combine) */
     for (slot = 0; slot < inven_ctr; slot++) {
 
 	/* Access that inventory item */
 	j_ptr = &inventory[slot];
 
-	    if (j_ptr->tval == typ &&
-		j_ptr->sval == i_ptr->sval &&
-	/* make sure the number field doesn't overflow */
-		((int)j_ptr->number + (int)i_ptr->number < 256) &&
-	/* they always stack (sval < 192), or else they have same pval */
-		((i_ptr->sval < ITEM_GROUP_MIN) || (j_ptr->pval == i_ptr->pval))
-	/* only stack if both or neither are identified */
-		&& (inven_aware_p(&inventory[slot]) == inven_aware_p(i_ptr))) {
-		stacked = TRUE;	   /* note that we did process the item -CFT */
+	/* Check if the two items can be combined */
+	if (item_similar(j_ptr, i_ptr)) {
 
 	    /* Add together the item counts */
 	    j_ptr->number += i_ptr->number;
@@ -1695,17 +1680,22 @@ int inven_carry(inven_type *i_ptr)
 	    /* Hack -- maintain the MINIMUM cost */
 	    if (j_ptr->cost > i_ptr->cost) j_ptr->cost = i_ptr->cost;
 
-		break;
-	    } /* if it stacks here */
-	} /* for loop */
-    } /* if it stacks, try to stack it... */
+	    /* Increase the weight */
+	    inven_weight += i_ptr->number * i_ptr->weight;
 
-    if (!stacked) {
-    /* either it doesn't stack anyway, or it didn't match anything in the inventory.
-     * Now try to insert. -CFT */
+	    /* Remember to recalculate bonuses */
+	    p_ptr->status |= PY_STR_WGT;
 
-	for (slot = 0;; slot++) {
-	    j_ptr = &inventory[slot];
+	    /* All done, report where we put it */
+	    return slot;
+	}
+    }
+
+
+    for (slot = 0;; slot++) {
+
+	/* Get the item already there */
+	j_ptr = &inventory[slot];
 
 	/* For items which are always inven_aware_p, i.e. never have a 'color',
 	 * insert them into the inventory in sorted order.  
@@ -1726,7 +1716,8 @@ int inven_carry(inven_type *i_ptr)
 		((flavor_p(i_ptr) == -1) &&      /* if always known, then sort by inc level, */
 		 (typ == tval_tmp) &&	/* then by inc sval */
 		 ((i_ptr->level < j_ptr->level) ||
-	     ((i_ptr->level == j_ptr->level) && (i_ptr->sval < j_ptr->sval))))) {
+	     ((i_ptr->level == j_ptr->level) && (i_ptr->sval < j_ptr->sval))))) break;
+	}
 
     /* Structure slide (make room) */
     for (i = inven_ctr; i > slot; i--) {
@@ -1738,11 +1729,6 @@ int inven_carry(inven_type *i_ptr)
 
     /* One more item present now */
     inven_ctr++;
-
-		break;
-	    }
-	}
-    }
 
     /* Increase the weight, prepare to redraw */
     inven_weight += i_ptr->number * i_ptr->weight;

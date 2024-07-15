@@ -385,6 +385,165 @@ void inven_tried(inven_type *i_ptr)
 
 
 
+
+
+
+
+
+/*
+ * Helper function.  Compare the "ident" field of two objects.
+ */
+static bool similar_ident(inven_type *i_ptr, inven_type *j_ptr)
+{
+    /* XXX XXX Hack -- no longer possible (???) */
+    if (inven_aware_p(i_ptr) != inven_aware_p(j_ptr)) return (0);
+
+    /* XXX Hack -- force identical "ident" flag sets */
+    if (i_ptr->ident != j_ptr->ident) return (0);
+
+    /* Food, Potions, Scrolls are "simple" objects */
+    if (i_ptr->tval == TV_FOOD) return (1);
+    if (i_ptr->tval == TV_POTION) return (1);
+    if (i_ptr->tval == TV_SCROLL) return (1);
+
+    /* XXX Mega-Hack -- missiles do not have to be identified */
+    if (i_ptr->tval == TV_SHOT) return (1);
+    if (i_ptr->tval == TV_BOLT) return (1);
+    if (i_ptr->tval == TV_ARROW) return (1);
+
+    /* Normally, both items must be fully "known" to stack */
+    if (!known2_p(i_ptr) || !known2_p(j_ptr)) return (0);
+
+    /* Allow match */
+    return (1);
+}
+
+
+
+
+/*
+ * Determine if an item can "absorb" a second item
+ *
+ * No object can absorb itself.  This prevents object replication.
+ *
+ * When an object absorbs another, the second object loses all
+ * of its attributes (except for "number", which gets added in),
+ * so it is important to verify that all important attributes match.
+ *
+ * These fields are ignored: k_idx, ix, iy, scost.
+ *
+ * Note that all "problems" associated with "combining" differently
+ * priced objects have been removed by never combining such objects.
+ *
+ * XXX Currently, we allow identical unidentified "stackables" to
+ * combine.  This includes "arrows", which is a major hack.
+ *
+ * We do not allow chests to combine, it would be annoying.
+ *
+ * We do NOT allow artifacts or ego-items or dragon scale mail to
+ * combine, since the "activation" code would become very messy.
+ */
+int item_similar(inven_type *i_ptr, inven_type *j_ptr)
+{
+    /* Hack -- Identical items cannot be stacked */
+    if (i_ptr == j_ptr) return (0);
+
+    /* Different objects cannot be stacked */
+    if (i_ptr->k_idx != j_ptr->k_idx) return (0);
+
+
+    /* Hack -- refuse weapons/armor */
+    if (
+	(wearable_p(i_ptr)) &&
+        (i_ptr->tval != TV_LITE) &&
+        (i_ptr->tval != TV_RING) &&
+        (i_ptr->tval != TV_AMULET)) return (0);
+        
+    /* Hack -- refuse wands/staffs/rods */
+    if (
+        ((i_ptr->tval == TV_STAFF) ||
+         (i_ptr->tval == TV_WAND) ||
+         (i_ptr->tval == TV_ROD))) return (0);
+        
+
+    /* Different charges (etc) cannot be stacked */
+    if (i_ptr->pval != j_ptr->pval) return (0);
+
+    /* Require matching prices */
+    if ((i_ptr->cost != j_ptr->cost)) return (0);
+
+
+    /* Require many identical values */
+    if ((i_ptr->tohit     != j_ptr->tohit)     ||
+	(i_ptr->todam     != j_ptr->todam)     ||
+	(i_ptr->toac      != j_ptr->toac)      ||
+	(i_ptr->ac        != j_ptr->ac)        ||
+	(i_ptr->damage[0]        != j_ptr->damage[0])        ||
+	(i_ptr->damage[1]        != j_ptr->damage[1])) {
+	return (0);
+    }
+
+    /* Require identical flags */
+    if ((i_ptr->flags1 != j_ptr->flags1) ||
+	(i_ptr->flags2 != j_ptr->flags2) ||
+	(i_ptr->flags3 != j_ptr->flags3)) {
+	return (0);
+    }
+
+    /* Both items must be "fully identified" (see above) */
+    if (!similar_ident(i_ptr, j_ptr)) return (0);
+
+
+    /* Require identical "artifact" names */
+    if (i_ptr->name1 != j_ptr->name1) return (0);
+
+    /* Require identical "ego-item" names */
+    if (i_ptr->name2 != j_ptr->name2) return (0);
+
+
+    /* XXX Hack -- never stack "activatable" items */
+    if (wearable_p(i_ptr) && (i_ptr->flags3 & TR3_ACTIVATE)) return (0);
+    if (wearable_p(j_ptr) && (j_ptr->flags3 & TR3_ACTIVATE)) return (0);
+
+
+    /* Hack -- Never stack chests */
+    if (i_ptr->tval == TV_CHEST) return (0);
+
+
+    /* No stack can grow bigger than a certain size */
+    if (i_ptr->number + j_ptr->number >= MAX_STACK_SIZE) return (0);
+
+
+    /* Require matching "inscriptions" */
+    if (strcmp(i_ptr->inscrip, j_ptr->inscrip)) return (0);
+
+
+    /* Paranoia -- Different types cannot be stacked */
+    if (i_ptr->tval != j_ptr->tval) return (0);
+
+    /* Paranoia -- Different sub-types cannot be stacked */
+    if (i_ptr->sval != j_ptr->sval) return (0);
+
+    /* Paranoia -- Could possibly have objects with "broken" weights */
+    if (i_ptr->weight != j_ptr->weight) return (0);
+
+    /* Paranoia -- Timeout should always be zero (see "TR3_ACTIVATE" above) */
+    if (i_ptr->timeout || j_ptr->timeout) return (0);
+
+
+    /* They match, so they must be similar */
+    return (TRUE);
+}
+
+
+
+
+
+
+
+
+
+
 /*
  * defines for pval_use, determine how the pval field is printed
  */

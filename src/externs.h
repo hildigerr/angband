@@ -721,6 +721,7 @@ void put_misc3(void);
 void display_player(void);
 void get_name(void);
 void change_name(void);
+int item_similar(inven_type *, inven_type *);
 int combine(int);
 void combine_pack(void);
 int weight_limit(void);

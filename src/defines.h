@@ -461,6 +461,16 @@
 #define PY_MANA         0x80000000L
 
 
+
+
+
+/*
+ * No stack can grow to "MAX_STACK_SIZE" items.
+ * This should be a number between 48 and 256.
+ */
+#define MAX_STACK_SIZE			100
+
+
 #define TR_EGO_WEAPON   0x0007E000L
 
 
@@ -514,13 +524,6 @@
 #define CD_MAX_HP       0x4000
 #define CD_ORC          0x8000
 
-
-/* inventory stacking svals
- * these never stack:
- */
-
-#define ITEM_NEVER_STACK_MIN    0
-#define ITEM_NEVER_STACK_MAX    63
 
 /* these items always stack with others of same sval, always treated as
  * single objects, must be power of 2
