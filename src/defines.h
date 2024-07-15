@@ -974,27 +974,22 @@
 #define SV_WAND_ANNIHILATION        29L
 #define SV_WAND_ACID      28L
 
+/* The "sval" codes for TV_ROD */
 #define SV_ROD_LIGHT           1L
 #define SV_ROD_ELEC      2L
 #define SV_ROD_COLD      3L
 #define SV_ROD_FIRE      4L
-#define RD_ST_MUD       5L
 #define SV_ROD_POLYMORPH         6L
 #define SV_ROD_SLOW_MONSTER      7L
-#define RD_CONF_MN      8L
 #define SV_ROD_SLEEP_MONSTER      9L
 #define SV_ROD_DRAIN_LIFE        10L
-#define RD_TR_DEST      11L
-#define RD_MAG_MIS      12L
 #define SV_ROD_TELEPORT_AWAY         13L
 #define SV_ROD_DISARMING       14L
 #define SV_ROD_ELEC_BALL      15L
 #define SV_ROD_COLD_BALL      16L
 #define SV_ROD_FIRE_BALL      17L
-#define RD_ST_CLD       18L
 #define SV_ROD_ACID_BALL      19L
 #define SV_ROD_ACID      20L
-#define RD_ANHIL        21L
 #define SV_ROD_MAPPING      22L
 #define SV_ROD_IDENTIFY        23L
 #define SV_ROD_CURING         24L
