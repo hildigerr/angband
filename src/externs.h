@@ -523,6 +523,7 @@ int look_line(int);
 
 /* desc.c */
 void flavor_init(void);
+bool flavor_p(inven_type *);
 bool inven_aware_p(inven_type *);
 void inven_aware(inven_type *);
 bool inven_tried_p(inven_type *);
@@ -538,7 +539,6 @@ void inscribe(inven_type *, cptr);
 void invcopy(inven_type *, int);
 void inven_item_charges(int);
 void inven_item_describe(int);
-s16b flavor_p(inven_type *);
 
 /* command.c */
 void do_command();

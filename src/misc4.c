@@ -1713,7 +1713,7 @@ int inven_carry(inven_type *i_ptr)
 	 * It helps that there is no tval that uses this. -CFT
 	 */
 	    if ((typ > tval_tmp) ||     /* sort by desc tval */
-		((flavor_p(i_ptr) == -1) &&      /* if always known, then sort by inc level, */
+		((!flavor_p(i_ptr)) &&      /* if always known, then sort by inc level, */
 		 (typ == tval_tmp) &&	/* then by inc sval */
 		 ((i_ptr->level < j_ptr->level) ||
 	     ((i_ptr->level == j_ptr->level) && (i_ptr->sval < j_ptr->sval))))) break;

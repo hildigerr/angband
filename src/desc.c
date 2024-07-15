@@ -243,36 +243,37 @@ void flavor_init(void)
     reset_seed();
 }
 
-s16b  flavor_p(inven_type *i_ptr)
+
+
+
+
+
+/*
+ * Return "TRUE" is the given item has a "flavor"
+ */
+bool flavor_p(inven_type *i_ptr)
 {
     switch (i_ptr->tval) {
 
-      case TV_ROD:
-	return (7);		   /* -CFT */
+      /* The standard "flavored" items */
       case TV_AMULET:
-	return (0);
       case TV_RING:
-	return (1);
       case TV_STAFF:
-	return (2);
       case TV_WAND:
-	return (3);
       case TV_SCROLL1:
       case TV_SCROLL2:
-	return (4);
       case TV_POTION1:
       case TV_POTION2:
-	return (5);
+      case TV_ROD:
+	return (TRUE);
 
       /* Hack -- food SOMETIMES has a flavor */
       case TV_FOOD:
-	if ((i_ptr->sval & (ITEM_SINGLE_STACK_MIN - 1)) < MAX_SHROOM) return (6);
-
-      default:
+	if ((i_ptr->sval & (ITEM_SINGLE_STACK_MIN - 1)) < MAX_SHROOM) return (TRUE);
+    }
 
     /* No flavor */
-    return (-1);
-    }
+    return (FALSE);
 }
 
 
@@ -335,7 +336,7 @@ int store_bought_p(inven_type *i_ptr)
 bool inven_aware_p(inven_type *i_ptr)
 {
     /* Hack -- player always knows "bland" objects */
-    if (flavor_p(i_ptr) == -1) return (TRUE);
+    if (!flavor_p(i_ptr)) return (TRUE);
 
     /* Hack -- "known" induces "aware" */
     if (known2_p(i_ptr)) return (TRUE);
@@ -1039,9 +1040,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	    (void)strcpy(out_val, tmp_val);
 
 	tmp_str[0] = '\0';
-	if ((indexx = flavor_p(i_ptr)) >= 0) {
-	    indexx = (indexx <<= 6) +
-		(i_ptr->sval & (ITEM_SINGLE_STACK_MIN - 1));
+	if (flavor_p(i_ptr)) {
 	/* don't print tried string for store bought items */
 	    if (x_list[i_ptr->k_idx].tried && !store_bought_p(i_ptr))
 		(void)strcat(tmp_str, "tried ");
