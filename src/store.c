@@ -528,6 +528,79 @@ static s32b sell_price(s32b *max_sell, s32b *min_sell, inven_type *i_ptr)
 
 
 
+
+/*
+ * Determine if a store item can "absorb" another item
+ * See "item_similar()" for the same function for the "player"
+ */
+static int store_item_similar(inven_type *i_ptr, inven_type *j_ptr)
+{
+    /* The "home" acts like the player */
+    if (store_num == 7) return (item_similar(i_ptr, j_ptr));
+    
+    /* Hack -- Identical items cannot be stacked */
+    if (i_ptr == j_ptr) return (0);
+
+    /* Different objects cannot be stacked */
+    if (i_ptr->k_idx != j_ptr->k_idx) return (0);
+
+
+    /* Different charges (etc) cannot be stacked */
+    if (i_ptr->pval != j_ptr->pval) return (0);
+
+    /* Require matching prices (prevents "value" loss) */
+    if (i_ptr->cost != j_ptr->cost) return (0);
+
+
+    /* Require many identical values */
+    if ((i_ptr->tohit     != j_ptr->tohit)     ||
+	(i_ptr->todam     != j_ptr->todam)     ||
+	(i_ptr->toac      != j_ptr->toac)      ||
+	(i_ptr->ac        != j_ptr->ac)        ||
+	(i_ptr->damage[0]        != j_ptr->damage[0])        ||
+	(i_ptr->damage[1]        != j_ptr->damage[1])        ||
+	(i_ptr->flags1    != j_ptr->flags1)    ||
+	(i_ptr->flags2    != j_ptr->flags2)    ||
+	(i_ptr->flags3    != j_ptr->flags3)) {
+	return (0);
+    }
+
+
+    /* Require identical "artifact" names */
+    if (i_ptr->name1 != j_ptr->name1) return (0);
+
+    /* Require identical "ego-item" names */
+    if (i_ptr->name2 != j_ptr->name2) return (0);
+
+
+    /* XXX Hack -- never stack "activatable" items */
+    if (wearable_p(i_ptr) && (i_ptr->flags3 & TR3_ACTIVATE)) return (0);
+    if (wearable_p(j_ptr) && (j_ptr->flags3 & TR3_ACTIVATE)) return (0);
+
+
+    /* Hack -- Never stack chests */
+    if (i_ptr->tval == TV_CHEST) return (0);
+
+
+    /* Paranoia -- Different types cannot be stacked */
+    if (i_ptr->tval != j_ptr->tval) return (0);
+
+    /* Paranoia -- Different sub-types cannot be stacked */
+    if (i_ptr->sval != j_ptr->sval) return (0);
+
+    /* Paranoia -- Could possibly have objects with "broken" weights */
+    if (i_ptr->weight != j_ptr->weight) return (0);
+
+    /* Paranoia -- Timeout should always be zero (see "TR3_ACTIVATE" above) */
+    if (i_ptr->timeout || j_ptr->timeout) return (0);
+
+
+    /* They match, so they must be similar */
+    return (TRUE);
+}
+
+
+
 /*
  * Check to see if the shop will be carrying too many objects	-RAK-	 
  */
@@ -540,34 +613,14 @@ static int store_check_num(inven_type *i_ptr)
 
     if (st_ptr->store_ctr < STORE_INVEN_MAX) store_check = TRUE;
 
-    else if (i_ptr->sval >= ITEM_SINGLE_STACK_MIN)
+    /* Check all the items */
 	for (i = 0; i < st_ptr->store_ctr; i++) {
 	    j_ptr = &st_ptr->store_item[i];
 
-	/* note: items with sval of gte ITEM_SINGLE_STACK_MAX only stack if
-	 * their svals match 
-	 */
-	    if (j_ptr->tval == i_ptr->tval && j_ptr->sval == i_ptr->sval
-		&& ((int)j_ptr->number + (int)i_ptr->number < 256)
-		&& (i_ptr->sval < ITEM_GROUP_MIN
-		    || (j_ptr->pval == i_ptr->pval)))
-		store_check = TRUE;
+	/* Can the new object be combined with the old one? */
+	if (store_item_similar(j_ptr, i_ptr)) store_check = TRUE;
 	}
 
-/* But, wait.  If at home, don't let player drop 25th item, or he will lose it. -CFT */
-    if (store_num == 7 && (i_ptr->sval >= ITEM_SINGLE_STACK_MIN))
-	for (i = 0; i < st_ptr->store_ctr; i++) {
-	    j_ptr = &st_ptr->store_item[i];
-	/*
-	 * note: items with sval of gte ITEM_SINGLE_STACK_MAX only stack if
-	 * their svals match 
-	 */
-	    if (j_ptr->tval == i_ptr->tval && j_ptr->sval == i_ptr->sval
-		&& ((int)j_ptr->number + (int)i_ptr->number > 24)
-		&& (i_ptr->sval < ITEM_GROUP_MIN
-		    || (j_ptr->pval == i_ptr->pval)))
-		store_check = FALSE;
-	}
     return (store_check);
 }
 
@@ -726,11 +779,7 @@ static int store_carry(inven_type *i_ptr)
 	j_ptr = &st_ptr->store_item[slot];
 
 	/* Can the existing items be incremented? */
-		if (j_ptr->tval == i_ptr->tval) {
-		    if (i_ptr->sval == j_ptr->sval && /* Adds to other item        */
-			i_ptr->sval >= ITEM_SINGLE_STACK_MIN
-			&& (i_ptr->sval < ITEM_GROUP_MIN || j_ptr->pval == i_ptr->pval))
-		    {
+	if (store_item_similar(j_ptr, i_ptr)) {
 
 			j_ptr->number += i_ptr->number;
 			/* must set new scost for group items, do this only for items
@@ -748,10 +797,8 @@ static int store_carry(inven_type *i_ptr)
 
 	    /* All done */
 	    return (slot);
-
-		    }
-		}
-	    }
+	}
+    }
 
 
 

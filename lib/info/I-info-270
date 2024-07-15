@@ -31,6 +31,7 @@ Fixed a few old bugs based in misplacement of certain flags.
 Reorganized the source to make the files more "self-contained".
 
 Threw out the "Bill Cosby" message.  "Cute" is not "good".
+Put many changes in the "store" code to handle "stacks" logically.
 Added monster race fields for "current/max" population per level.
 Considered using this instead of the old "reproduction limits".
 Cleaned up the use of "hack_monptr" in a BIG way.
