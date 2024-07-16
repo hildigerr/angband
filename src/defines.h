@@ -992,6 +992,10 @@
 #define SV_PAIR_OF_HARD_LEATHER_BOOTS	3
 #define SV_PAIR_OF_METAL_SHOD_BOOTS	6
 
+/* The "sval" codes for TV_CLOAK */
+#define SV_CLOAK			1
+#define SV_SHADOW_CLOAK			6
+
 /* The "sval" codes for TV_DRAG_ARMOR */
 #define SV_DRAGON_BLACK			1
 #define SV_DRAGON_BLUE			2
