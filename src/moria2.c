@@ -1083,7 +1083,7 @@ static void facts(inven_type *i_ptr, \
 	switch (inventory[INVEN_WIELD].sval) {
 
 	  /* Sling and ammo */
-	  case 20:
+	  case SV_SLING:
 	    if (i_ptr->tval != TV_SHOT) break;
 	    *tbth = p_ptr->bthb;
 	    *tpth += 2 * inventory[INVEN_WIELD].tohit;
@@ -1103,7 +1103,7 @@ static void facts(inven_type *i_ptr, \
 	    break;
 
 	  /* Short Bow and Arrow */
-	  case 1:
+	  case SV_SHORT_BOW:
 	    if (i_ptr->tval != TV_ARROW) break;
 	    *tbth = p_ptr->bthb;
 	    *tpth += 2 * inventory[INVEN_WIELD].tohit;
@@ -1112,8 +1112,8 @@ static void facts(inven_type *i_ptr, \
 	    *tdis = 25;
 	    break;
 
-	  /* Long Bow and Arrow	 */
-	  case 2:
+	  /* Long Bow and Arrow */
+	  case SV_LONG_BOW:
 	    if (i_ptr->tval != TV_ARROW) break;
 	    *tbth = p_ptr->bthb;
 	    *tpth += 2 * inventory[INVEN_WIELD].tohit;
@@ -1143,7 +1143,7 @@ static void facts(inven_type *i_ptr, \
 	    break;
 
 	  /* Light Crossbow and Bolt */
-	  case 10:
+	  case SV_LIGHT_XBOW:
 	    if (i_ptr->tval != TV_BOLT) break;
 	    *tbth = p_ptr->bthb;
 	    *tpth += 2 * inventory[INVEN_WIELD].tohit;
@@ -1153,7 +1153,7 @@ static void facts(inven_type *i_ptr, \
 	    break;
 
 	  /* Heavy Crossbow and Bolt */
-	  case 11:
+	  case SV_HEAVY_XBOW:
 	    if (i_ptr->tval != TV_BOLT) break;
 	    *tbth = p_ptr->bthb;
 	    *tpth += 2 * inventory[INVEN_WIELD].tohit;

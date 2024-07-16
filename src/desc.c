@@ -572,7 +572,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
     register cptr basenm, modstr;
     bigvtype             tmp_val;
     vtype                tmp_str, damstr;
-    int indexx, pval_use, modify, append_name;
+    int power, indexx, pval_use, modify, append_name;
 
     /* Hack -- Extract the sub-type "indexx" */
     indexx = i_ptr->sval & (ITEM_SINGLE_STACK_MIN - 1);
@@ -620,28 +620,6 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
       case TV_SPIKE:
 	break;
 
-      case TV_BOW:
-	switch(i_ptr->sval) { /* whole new code -CFT */
-	  case 20: case 1: /* sling, sh. bow */
-	    strcpy(damstr, " (x2)");
-	    break;
-	  case 21: case 2: case 10: /* sling of M, s bow of M, l bow, l xbow */
-	    strcpy(damstr, " (x3)");
-	    break;
-	  case 3: case 11: /* l bow of M, l xbow of M, h xbow, BARD, CUBRAGOL */
-	    strcpy(damstr, " (x4)");
-	    break;
-	  case 4: case 12:        /* h xbow of M, BELEG */
-	    strcpy(damstr, " (x5)");
-	    break;
-	  default:        /* just in case... */
-	    strcpy(damstr, " (unknown mult.)");
-	}
-	if (artifact_p(i_ptr)) {	/* only show pval for artifacts... */
-	    pval_use = FLAGS;
-	}
-	break;
-
       /* Weapons have a damage string, and flags */
       case TV_HAFTED:
       case TV_POLEARM:
@@ -657,6 +635,20 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
       case TV_DIGGING:
 	pval_use = Z_PLUSSES;
 	(void)sprintf(damstr, " (%dd%d)", i_ptr->damage[0], i_ptr->damage[1]);
+	break;
+
+      /* Bows get a special "damage string" */
+      case TV_BOW:
+
+	/* Hack -- Extract the "base power" */
+	power = (i_ptr->sval % 10);
+
+	/* Build the damage string */
+	sprintf(damstr, " (x%d)", power);
+
+	if (artifact_p(i_ptr)) {	/* only show pval for artifacts... */
+	    pval_use = FLAGS;
+	}
 	break;
 
       /* Armour uses flags */

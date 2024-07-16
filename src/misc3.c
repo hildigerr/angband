@@ -1821,7 +1821,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			    good_item_flag = TRUE;
 			i_ptr->name1 = ART_BELTHRONDING;
 			i_ptr->ident |= ID_NOSHOW_TYPE;
-			i_ptr->sval = 4; /* make do x5 damage!! -CFT */
+			i_ptr->sval = 15; /* make do x5 damage!! -CFT */
 			i_ptr->tohit = 20;
 			i_ptr->todam = 22;
 			i_ptr->pval = 3;
@@ -1838,7 +1838,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			else
 			    good_item_flag = TRUE;
 			i_ptr->name1 = ART_BARD;
-			i_ptr->sval = 3; /* make do x4 damage!! -CFT */
+			i_ptr->sval = 14; /* make do x4 damage!! -CFT */
 			i_ptr->tohit = 17;
 			i_ptr->todam = 19;
 			i_ptr->pval = 3;
@@ -1858,7 +1858,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		    if (wizard || peek)
 			msg_print("Cubragol");
 		    i_ptr->name1 = ART_CUBRAGOL;
-		    i_ptr->sval = 11;
+		    i_ptr->sval = 14;
 		    i_ptr->tohit = 10;
 		    i_ptr->todam = 14;
 		    i_ptr->pval = 1;
