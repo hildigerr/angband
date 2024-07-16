@@ -948,18 +948,6 @@ static void store_create(void)
 	    i = get_obj_num(40, FALSE);
 	    invcopy(i_ptr, i);
 	    apply_magic(i_ptr, 40, FALSE, FALSE, TRUE);
-	    if (store_check_num(i_ptr)) {
-		if (i_ptr->cost > 0) {	/* Item must be good	 */
-		/*
-		 * equivalent to calling ident_spell(), except will not
-		 * change the object ident (x_list) array 
-		 */
-		    store_bought(i_ptr);
-		    special_offer(i_ptr);
-		    (void)store_carry(i_ptr);
-		    tries = 10;
-		}
-	    }
 	}
 
 	/* Normal Store */
@@ -967,18 +955,23 @@ static void store_create(void)
 	    i = store_choice[store_num][randint(STORE_CHOICES) - 1];
 	    invcopy(i_ptr, i);
 	    apply_magic(i_ptr, OBJ_TOWN_LEVEL, FALSE, FALSE, TRUE);
-	    if (store_check_num(i_ptr)) {
-		if ((i_ptr->cost > 0) &&	/* Item must be good	 */
-		    (i_ptr->cost < owners[st_ptr->owner].max_cost)) {
-
-/* equivalent to calling ident_spell(), except will not change the object ident (x_list) array */
-		    store_bought(i_ptr);
-		    special_offer(i_ptr);
-		    (void)store_carry(i_ptr);
-		    tries = 10;
-		}
-	    }
 	}
+
+	/* Skip "worthless" items */
+	if (i_ptr->cost <= 0) continue;
+
+	/* Paranoia -- make sure there is room */
+	if (!store_check_num(i_ptr)) continue;
+
+	store_bought(i_ptr);
+
+	special_offer(i_ptr);
+
+	/* Carry the item */
+	(void)store_carry(i_ptr);
+
+	/* Definitely done */
+	break;
     }
 }
 
