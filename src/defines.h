@@ -950,6 +950,26 @@
 #define SV_LOCHABER_AXE		28	/* 3d8 */
 #define SV_SCYTHE_OF_SLICING	30	/* 8d4 */
 
+/* The "sval" codes for TV_SWORD */
+#define SV_BROKEN_DAGGER	1	/* 1d1 */
+#define SV_BROKEN_SWORD		2	/* 1d2 */
+#define SV_DAGGER		4	/* 1d4 */
+#define SV_MAIN_GAUCHE		5	/* 1d5 */
+#define SV_RAPIER		7	/* 1d6 */
+#define SV_SMALL_SWORD		8	/* 1d6 */
+#define SV_SHORT_SWORD		10	/* 1d7 */
+#define SV_SABRE		11	/* 1d7 */
+#define SV_CUTLASS		12	/* 1d7 */
+#define SV_TULWAR		15	/* 2d4 */
+#define SV_BROAD_SWORD		16	/* 2d5 */
+#define SV_LONG_SWORD		17	/* 2d5 */
+#define SV_SCIMITAR		18	/* 2d5 */
+#define SV_KATANA		20	/* 3d4 */
+#define SV_BASTARD_SWORD	21	/* 3d4 */
+#define SV_TWO_HANDED_SWORD	25	/* 3d6 */
+#define SV_EXECUTIONERS_SWORD	28	/* 4d5 */
+#define SV_BLADE_OF_CHAOS	30	/* 6d5 */
+
 /* The "sval" codes for TV_DRAG_ARMOR */
 #define SV_DRAGON_BLACK			1
 #define SV_DRAGON_BLUE			2
