@@ -1505,7 +1505,8 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	    if (great || magik(special)) {
 
 		/* Hack -- Roll for whips of fire */
-		if (!stricmp("& Whip", k_list[i_ptr->k_idx].name) &&
+		if ((i_ptr->tval == TV_HAFTED) &&
+		    (i_ptr->sval == SV_WHIP) &&
 		    (randint(2) == 1)) {
 
 		    i_ptr->flags1 |= (TR1_BRAND_FIRE);

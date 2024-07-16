@@ -920,6 +920,20 @@
 #define SV_ORCISH_PICK		5
 #define SV_DWARVEN_PICK		6
 
+/* The "sval" values for TV_HAFTED */
+#define SV_WHIP			2	/* 1d6 */
+#define SV_QUARTERSTAFF		3	/* 1d9 */
+#define SV_MACE			5	/* 2d4 */
+#define SV_BALL_AND_CHAIN	6	/* 2d4 */
+#define SV_WAR_HAMMER		8	/* 3d3 */
+#define SV_LUCERN_HAMMER	10	/* 2d5 */
+#define SV_MORNING_STAR		12	/* 2d6 */
+#define SV_FLAIL		13	/* 2d6 */
+#define SV_LEAD_FILLED_MACE	15	/* 3d4 */
+#define SV_TWO_HANDED_FLAIL	18	/* 3d6 */
+#define SV_MACE_OF_DISRUPTION	20	/* 5d8 */
+#define SV_GROND		50	/* 3d4 */
+
 /* The "sval" codes for TV_DRAG_ARMOR */
 #define SV_DRAGON_BLACK			1
 #define SV_DRAGON_BLUE			2
