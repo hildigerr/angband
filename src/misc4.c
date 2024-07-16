@@ -1617,7 +1617,7 @@ int weight_limit(void)
 
 
 /*
- * this code must be identical to the inven_carry() code below
+ * Will "inven_carry(i_ptr)" succeed without inducing pack overflow?
  */
 int inven_check_num(inven_type *i_ptr)
 {
@@ -1648,21 +1648,31 @@ int inven_check_num(inven_type *i_ptr)
  * the mage books except Raals, instead of in the middle of them (which
  * always seemed strange to me). -CFT 
  *
+ * We should use the same "stacking" logic as "inven_check_num()" above.
+ *
  * Note the stacking code below now allows groupable objects to combine.
  * See item_similar() for more information.  This also prevents the
  * "reselling discounted item" problems from previous versions.
+ *
+ * The sorting order gives away the "goodness" of "Special Lites"
+ * but not of any of the food, amulets, rings, potions, staffs, etc.
  */
 int inven_carry(inven_type *i_ptr)
 {
     register int         slot, i;
-    register int         typ = i_ptr->tval;
+    s32b		 i_value, j_value;
     register inven_type *j_ptr;
-    int                  tval_tmp;  /* used to make magic books before pray books if magicuser */
 
+
+    /* The tval of readible books */
+    int read_tval = TV_NOTHING;
 
     if (inven_ctr >= INVEN_WIELD) /* sanity checking to prevent the inv from */
 	inven_ctr = INVEN_WIELD;  /* running over the equipment list -CWS */
 
+    /* Acquire the type value of the books that the player can read, if any */
+    if (class[p_ptr->pclass].spell == PRIEST) read_tval = TV_PRAYER_BOOK;
+    else if (class[p_ptr->pclass].spell == MAGE) read_tval = TV_MAGIC_BOOK;
 
 
     /* Check all the items in the pack (attempt to combine) */
@@ -1697,27 +1707,31 @@ int inven_carry(inven_type *i_ptr)
 	/* Get the item already there */
 	j_ptr = &inventory[slot];
 
-	/* For items which are always inven_aware_p, i.e. never have a 'color',
-	 * insert them into the inventory in sorted order.  
-	 */
-	    if ((typ == TV_PRAYER_BOOK) && (class[p_ptr->pclass].spell == MAGE))
-		typ = TV_MAGIC_BOOK - 1;
-	/* sort is in descending, so this will be immediately after magic books.
-	 * It helps that there is no tval that uses this. -CFT
-	 */
-	    tval_tmp = j_ptr->tval;
-	    if ((tval_tmp == TV_PRAYER_BOOK) &&
-		(class[p_ptr->pclass].spell == MAGE))
-		tval_tmp = TV_MAGIC_BOOK - 1;
-	/* sort is in descending, so this will be immediately after magic books.
-	 * It helps that there is no tval that uses this. -CFT
-	 */
-	    if ((typ > tval_tmp) ||     /* sort by desc tval */
-		((!flavor_p(i_ptr)) &&      /* if always known, then sort by inc level, */
-		 (typ == tval_tmp) &&	/* then by inc sval */
-		 ((i_ptr->level < j_ptr->level) ||
-	     ((i_ptr->level == j_ptr->level) && (i_ptr->sval < j_ptr->sval))))) break;
-	}
+	/* Hack -- readable books always come first */
+	if ((i_ptr->tval == read_tval) && (j_ptr->tval != read_tval)) break;
+	if ((j_ptr->tval == read_tval) && (i_ptr->tval != read_tval)) continue;
+
+	/* Objects sort by decreasing type */
+	if (i_ptr->tval > j_ptr->tval) break;
+	if (i_ptr->tval < j_ptr->tval) continue;
+
+	/* Flavored items with Unknown effects come last */
+	if (!inven_aware_p(i_ptr)) continue;
+	if (!inven_aware_p(j_ptr)) break;
+
+	/* Objects sort by increasing sval */
+	if (i_ptr->sval < j_ptr->sval) break;
+	if (i_ptr->sval > j_ptr->sval) continue;
+
+	/* Unidentified objects come last */
+	if (!known2_p(i_ptr)) continue;
+	if (!known2_p(j_ptr)) break;
+
+	/* Objects sort by decreasing value */
+	j_value = item_value(j_ptr);
+	if (i_value > j_value) break;
+	if (i_value < j_value) continue;
+    }
 
     /* Structure slide (make room) */
     for (i = inven_ctr; i > slot; i--) {

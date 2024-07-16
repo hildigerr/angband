@@ -7,6 +7,10 @@ Rewrite of the "known"/"aware" formalism for items/kinds.
 Addition of another flag set for items.
 Reorganization of the flags for items.
 Properly handled "identify" inducing object "awareness" and "combining".
+Rewrote the "inventory sorter" and reassigned "subvals" logically.
+New inventory order uses type, then sub-type, then value.
+And, all "unaware" objects are treated as having "maximal" sub-types.
+And, all unknown items are treated as having "zero" value.
 Made artifacts MUCH more resistant to "death by throwing" :-)
 Added true "object stacking" code, so any items can stack.
 Functions combine() and combine_pack() to maintain inventory.
