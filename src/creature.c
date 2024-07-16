@@ -1585,7 +1585,7 @@ static void make_attack(int m_idx)
 		    m_ptr->hp += j * i_ptr->pval;
 		    i_ptr->pval = 0;
 		    if (!known2_p(i_ptr)) {
-			add_inscribe(i_ptr, ID_EMPTY);
+			i_ptr->ident |= ID_EMPTY;
 		    }
 		    msg_print("Energy drains from your pack!");
 		}

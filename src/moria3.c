@@ -2046,14 +2046,6 @@ void do_cmd_feeling()
 
 
 
-/*
- * Append an additional comment to an object description.	-CJS-
- */
-void add_inscribe(inven_type *i_ptr, int type)
-{
-    i_ptr->ident |= (byte) type;
-}
-
 /* Replace any existing comment in an object description with a new one. CJS */
 void inscribe(inven_type *i_ptr, cptr str)
 {

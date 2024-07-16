@@ -1525,7 +1525,7 @@ void do_cmd_aim_wand(void)
     if (i_ptr->pval <= 0) {
 	msg_print("The wand has no charges left.");
 	if (!known2_p(i_ptr)) {
-	    add_inscribe(i_ptr, ID_EMPTY);
+	    i_ptr->ident |= ID_EMPTY;
 	}
 	return;
     }
@@ -1802,7 +1802,7 @@ void do_cmd_use_staff(void)
 
     if (i_ptr->pval <= 0) {
 	msg_print("The staff has no charges left.");
-	if (!known2_p(i_ptr)) add_inscribe(i_ptr, ID_EMPTY);
+	if (!known2_p(i_ptr)) i_ptr->ident |= ID_EMPTY;
 	return;
     }
 

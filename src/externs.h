@@ -540,7 +540,6 @@ void store_bought(inven_type *);
 int store_bought_p(inven_type *);
 void objdes(char *, struct inven_type *, int);
 void scribe_object(void);
-void add_inscribe(inven_type *, int);
 void inscribe(inven_type *, cptr);
 void invcopy(inven_type *, int);
 void inven_item_charges(int);
