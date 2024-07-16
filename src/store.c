@@ -972,6 +972,12 @@ static void store_create(void)
 	/* Apply some "low-level" magic (no artifacts) */
 	apply_magic(i_ptr, level, FALSE, FALSE, TRUE);
 
+	/* Hack -- General Store lites have "clean" amounts of light */
+	if ((store_num == 0) && (i_ptr->tval == TV_LITE)) {
+	    if (i_ptr->sval == SV_LITE_TORCH) i_ptr->pval = FUEL_TORCH / 2;
+	    if (i_ptr->sval == SV_LITE_LANTERN) i_ptr->pval = FUEL_LAMP / 2;
+	}
+
 	/* Skip "worthless" items */
 	if (i_ptr->cost <= 0) continue;
 

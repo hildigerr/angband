@@ -2218,13 +2218,16 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	break;
 
 
-    /* Subval should be even for store, odd for dungeon */
-    /* Dungeon found ones will be partially charged	 */
       case TV_LITE:
 
-	if ((i_ptr->sval % 2) == 1) {
+	/* Torches -- random fuel */
+	if (i_ptr->sval == SV_LITE_TORCH) {
 	    i_ptr->pval = randint(i_ptr->pval);
-	    i_ptr->sval -= 1;
+	}
+
+	/* Lanterns -- random fuel */            
+	if (i_ptr->sval == SV_LITE_LANTERN) {
+	    i_ptr->pval = randint(i_ptr->pval);
 	}
 
 	break;

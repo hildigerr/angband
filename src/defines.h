@@ -897,6 +897,14 @@
 #define TV_MAX_VISIBLE  110
 
 
+/* The sval codes for TV_LITE */
+#define SV_LITE_TORCH		0
+#define SV_LITE_LANTERN		1
+#define SV_LITE_GALADRIEL	4
+#define SV_LITE_ELENDIL		5
+#define SV_LITE_THRAIN		6
+
+
 /* The "sval" codes for TV_DRAG_ARMOR */
 #define SV_DRAGON_BLACK			1
 #define SV_DRAGON_BLUE			2
