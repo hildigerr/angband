@@ -996,6 +996,11 @@
 #define SV_CLOAK			1
 #define SV_SHADOW_CLOAK			6
 
+/* The "sval" codes for TV_GLOVES */
+#define SV_SET_OF_LEATHER_GLOVES	1
+#define SV_SET_OF_GAUNTLETS		2
+#define SV_SET_OF_CESTI			5
+
 /* The "sval" codes for TV_DRAG_ARMOR */
 #define SV_DRAGON_BLACK			1
 #define SV_DRAGON_BLUE			2
