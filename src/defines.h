@@ -1041,6 +1041,17 @@
 #define SV_DRAGON_BALANCE		20
 #define SV_DRAGON_POWER			30
 
+/* The "sval" codes for TV_AMULET */
+#define SV_AMULET_WISDOM	0
+#define SV_AMULET_CHARISMA	1
+#define SV_AMULET_SEARCHING	2
+
+#define SV_AMULET_THE_MAGI	8
+#define SV_AMULET_DOOM		9
+#define SV_AMULET_CARLAMMAS	10
+#define SV_AMULET_INGWE		11
+#define SV_AMULET_DWARVES	12
+
 
 /* The "sval" codes for TV_STAFF */
 #define SV_STAFF_LITE		0

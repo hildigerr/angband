@@ -2178,7 +2178,8 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 
       case TV_AMULET:
 
-	if (i_ptr->sval < 2) {
+	if ((i_ptr->sval == SV_AMULET_WISDOM) ||
+	    (i_ptr->sval == SV_AMULET_CHARISMA)) {
 	    i_ptr->pval = m_bonus(1, 5, level);
 	    if (magik(cursed)) {
 		i_ptr->flags3 |= TR3_CURSED;
@@ -2188,7 +2189,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		i_ptr->cost += i_ptr->pval * 100;
 	    }
 	}
-	else if (i_ptr->sval == 2) { /* searching */
+	else if (i_ptr->sval == SV_AMULET_SEARCHING) {
 	    i_ptr->pval = 5 * (randint(3) + m_bonus(0, 8, level));
 	    if (magik(cursed)) {
 		i_ptr->flags3 |= TR3_CURSED;
@@ -2197,7 +2198,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	    } else
 		i_ptr->cost += 20 * i_ptr->pval;
 	}
-	else if (i_ptr->sval == 8) {
+	else if (i_ptr->sval == SV_AMULET_THE_MAGI) {
 	    rating += 25;
 	    i_ptr->pval = 5 * (randint(2) + m_bonus(0, 10, level));
 	    i_ptr->toac = randint(4) + m_bonus(0, 8, level) - 2;
@@ -2205,7 +2206,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	    if (i_ptr->toac < 0) /* sort-of cursed...just to be annoying -CWS */
 		i_ptr->flags3 |= TR3_CURSED;
 	}
-	else if (i_ptr->sval == 9) { /* amulet of DOOM */
+	else if (i_ptr->sval == SV_AMULET_DOOM) {
 	    i_ptr->flags3 |= TR3_CURSED;
 	    i_ptr->pval = 0 - randint(5) - m_bonus(2, 10, level);
 	    i_ptr->toac = 0 - randint(3) - m_bonus(0, 6, level);
