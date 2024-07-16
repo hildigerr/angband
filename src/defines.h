@@ -1194,6 +1194,28 @@
 #define SV_FOOD_MIN_FOOD	64+32	/* First Normal Food */
 
 
+/* The "sval" codes for traps */
+#define SV_TRAP_PIT		1
+#define SV_TRAP_ARROW		2
+#define SV_TRAP_COVERED_PIT	3
+#define SV_TRAP_TRAP_DOOR	4
+#define SV_TRAP_GAS_SLEEP	5
+#define SV_TRAP_LOOSE_ROCK	6
+#define SV_TRAP_DART_STR	7
+#define SV_TRAP_TELEPORT	8
+#define SV_TRAP_FALLING_ROCK	9
+#define SV_TRAP_GAS_ACID	10
+#define SV_TRAP_SUMMON		11
+#define SV_TRAP_FIRE		12
+#define SV_TRAP_ACID		13
+#define SV_TRAP_GAS_POISON	14
+#define SV_TRAP_GAS_BLIND	15
+#define SV_TRAP_GAS_CONFUSE	16
+#define SV_TRAP_DART_SLOW	17
+#define SV_TRAP_DART_CON	18
+#define SV_TRAP_GLYPH           63
+
+
 /*
  * The "TR_xxx" values apply ONLY to the items with tval's between
  * TV_MIN_WEAR and TV_MAX_WEAR, that is, items which can be wielded

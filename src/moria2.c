@@ -81,7 +81,7 @@ void hit_trap(int y, int x)
     /* Examine the trap sub-val */
     switch (i_ptr->sval) {
 
-      case 1:			   /* Open pit */
+      case SV_TRAP_PIT:
 	msg_print("You fell into a pit!");
 	if (p_ptr->ffall) {
 	    msg_print("You gently float down.");
@@ -92,7 +92,7 @@ void hit_trap(int y, int x)
 	}
 	break;
 
-      case 2:			   /* Arrow trap */
+      case SV_TRAP_ARROW:
 	if (test_hit(125, 0, 0, p_ptr->pac + p_ptr->ptoac, CLA_MISC_HIT)) {
 	    objdes(tmp, i_ptr, TRUE);
 	    take_hit(dam, tmp);
@@ -103,7 +103,7 @@ void hit_trap(int y, int x)
 	}
 	break;
 
-      case 3:			   /* Covered pit */
+      case SV_TRAP_COVERED_PIT:
 	msg_print("You fell into a covered pit.");
 	if (p_ptr->ffall)
 	    msg_print("You gently float down.");
@@ -114,7 +114,7 @@ void hit_trap(int y, int x)
 	place_trap(y, x, 0);
 	break;
 
-      case 4:			   /* Trap door */
+      case SV_TRAP_TRAP_DOOR:
 	if (!is_quest(dun_level)) {/* that would be too easy... -CFT */
 	    msg_print("You fell through a trap door!");
 	    new_level_flag = TRUE;
@@ -149,7 +149,7 @@ void hit_trap(int y, int x)
 	}
 	break;
 
-      case 5:			   /* Sleep gas */
+      case SV_TRAP_GAS_SLEEP:
 	if (p_ptr->paralysis == 0) {
 	    msg_print("A strange white mist surrounds you!");
 	    if (p_ptr->free_act) {
@@ -162,13 +162,13 @@ void hit_trap(int y, int x)
 	}
 	break;
 
-      case 6:			   /* Hid Obj */
+      case SV_TRAP_LOOSE_ROCK:
 	delete_object(y, x);
 	place_object(y, x);
 	msg_print("Hmmm, there was something under this rock.");
 	break;
 
-      case 7:			   /* STR Dart */
+      case SV_TRAP_DART_STR:
 	if (test_hit(125, 0, 0, p_ptr->pac + p_ptr->ptoac, CLA_MISC_HIT)) {
 	    if (!p_ptr->sustain_str) {
 		(void)dec_stat(A_STR);
@@ -185,14 +185,14 @@ void hit_trap(int y, int x)
 	}
 	break;
 
-      case 8:			   /* Teleport */
+      case SV_TRAP_TELEPORT:
 	teleport_flag = TRUE;
 	msg_print("You hit a teleport trap!");
     /* Light up the teleport trap, before we teleport away.  */
 	move_light(y, x, y, x);
 	break;
 
-      case 9:			   /* Rockfall */
+      case SV_TRAP_FALLING_ROCK:
 	take_hit(dam, "a falling rock");
 	/* XXX XXX XXX Should move the player first! */
 	/* XXX See the "move_player()" code */
@@ -201,12 +201,12 @@ void hit_trap(int y, int x)
 	msg_print("You are hit by falling rock.");
 	break;
 
-      case 10:			   /* Corrode gas */
+      case SV_TRAP_GAS_ACID:
 	msg_print("A strange red gas surrounds you.");
 	corrode_gas("corrosion gas");
 	break;
 
-      case 11:			   /* Summon mon */
+      case SV_TRAP_SUMMON:
 	delete_object(y, x); /* Rune disappears.    */
 	num = 2 + randint(3);
 	for (i = 0; i < num; i++) {
@@ -216,37 +216,38 @@ void hit_trap(int y, int x)
 	}
 	break;
 
-      case 12:			   /* Fire trap */
+      case SV_TRAP_FIRE:
 	msg_print("You are enveloped in flames!");
 	fire_dam(dam, "a fire trap");
 	break;
-      case 13:			   /* Acid trap */
+
+      case SV_TRAP_ACID:
 	msg_print("You are splashed with acid!");
 	acid_dam(dam, "an acid trap");
 	break;
 
-      case 14:			   /* Poison gas */
+      case SV_TRAP_GAS_POISON:
 	if (!(p_ptr->immune_pois || p_ptr->resist_pois ||
 	      p_ptr->oppose_pois))
 	    poison_gas(dam, "a poison gas trap");
 	msg_print("A pungent green gas surrounds you!");
 	break;
 
-      case 15:			   /* Blind Gas */
+      case SV_TRAP_GAS_BLIND:
 	msg_print("A black gas surrounds you!");
 	if (!p_ptr->resist_blind) {
 	    p_ptr->blind += randint(50) + 50;
 	}
 	break;
 
-      case 16:			   /* Confuse Gas */
+      case SV_TRAP_GAS_CONFUSE:
 	msg_print("A gas of scintillating colors surrounds you!");
 	if ((!p_ptr->resist_conf) && (!p_ptr->resist_chaos)) {
 	    p_ptr->confused += randint(15) + 15;
 	}
 	break;
 
-      case 17:			   /* Slow Dart */
+      case SV_TRAP_DART_SLOW:
 	if (test_hit(125, 0, 0, p_ptr->pac + p_ptr->ptoac, CLA_MISC_HIT)) {
 	    objdes(tmp, i_ptr, TRUE);
 	    take_hit(dam, tmp);
@@ -263,7 +264,7 @@ void hit_trap(int y, int x)
 	}
 	break;
 
-      case 18:			   /* CON Dart */
+      case SV_TRAP_DART_CON:
 	if (test_hit(125, 0, 0, p_ptr->pac + p_ptr->ptoac, CLA_MISC_HIT)) {
 	    if (!p_ptr->sustain_con) {
 	    (void)dec_stat(A_CON);
@@ -280,13 +281,11 @@ void hit_trap(int y, int x)
 	}
 	break;
 
-      case 19:			   /* Secret Door */
-	break;
-      case 99:			   /* Scare Mon */
+      case SV_TRAP_GLYPH:
 	break;
 
       default:
-	msg_print("Unknown trap value.");
+	msg_print("Oops. Undefined trap.");
 	break;
     }
 }
