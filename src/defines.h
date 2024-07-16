@@ -970,6 +970,13 @@
 #define SV_EXECUTIONERS_SWORD	28	/* 4d5 */
 #define SV_BLADE_OF_CHAOS	30	/* 6d5 */
 
+/* The "sval" codes for TV_SHIELD */
+#define SV_SMALL_LEATHER_SHIELD		2
+#define SV_SMALL_METAL_SHIELD		3
+#define SV_LARGE_LEATHER_SHIELD		4
+#define SV_LARGE_METAL_SHIELD		5
+#define SV_SHIELD_OF_DEFLECTION		10
+
 /* The "sval" codes for TV_DRAG_ARMOR */
 #define SV_DRAGON_BLACK			1
 #define SV_DRAGON_BLUE			2
