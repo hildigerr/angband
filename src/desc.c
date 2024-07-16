@@ -269,7 +269,7 @@ bool flavor_p(inven_type *i_ptr)
 
       /* Hack -- food SOMETIMES has a flavor */
       case TV_FOOD:
-	if ((i_ptr->sval & (ITEM_SINGLE_STACK_MIN - 1)) < MAX_SHROOM) return (TRUE);
+	if (i_ptr->sval < SV_FOOD_MIN_FOOD) return (TRUE);
     }
 
     /* No flavor */
@@ -769,27 +769,35 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
       case TV_FOOD:
 
+	/* Ordinary food is "boring" */
+	if (i_ptr->sval >= SV_FOOD_MIN_FOOD) break;
+
+	/* The Molds */
+	if (i_ptr->sval >= SV_FOOD_MIN_MOLD) {
 	if (modify || !(plain_descriptions || store_bought_p(i_ptr))) {
 	    if (!modify)
 		append_name = TRUE;
-	    if (indexx <= 15)
-		basenm = "& %s Mushroom~";
-	    else if (indexx <= 20)
 		basenm = "& Hairy %s Mold~";
-	    else
-		append_name = FALSE;	/* Ordinary food has no name appended. */
-	    if (indexx <= 20)
 		modstr = food_adj[indexx];
 	}
 	    else {
 	    append_name = TRUE;
-	    if (indexx <= 15)
-		basenm = "& Mushroom~";
-	    else if (indexx <= 20)
 		basenm = "& Hairy Mold~";
+	    }
+	}
+
+	/* The Mushrooms */
+	else {
+
+	if (modify || !(plain_descriptions || store_bought_p(i_ptr))) {
+	    if (!modify)
+		append_name = TRUE;
+		basenm = "& %s Mushroom~";
+	}
 	    else {
-	    /* Ordinary food does not have a name appended.  */
-		append_name = FALSE;
+	    append_name = TRUE;
+		basenm = "& Mushroom~";
+		modstr = food_adj[indexx];
 	    }
 	}
 	break;

@@ -1187,6 +1187,13 @@
 #define SV_ROD_MK_WALL		26
 
 
+/* Some extra "sval" codes */
+#define SV_BOOK			64	/* First Book */
+#define SV_FOOD_MIN_MUSH	64+0	/* First Flavored Mushroom */
+#define SV_FOOD_MIN_MOLD	64+16	/* First Flavored Mold */
+#define SV_FOOD_MIN_FOOD	64+32	/* First Normal Food */
+
+
 /*
  * The "TR_xxx" values apply ONLY to the items with tval's between
  * TV_MIN_WEAR and TV_MAX_WEAR, that is, items which can be wielded

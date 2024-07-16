@@ -2501,12 +2501,12 @@ void place_good(int y, int x, u32b good)
 	    is_good = TRUE;	   /* nor are rags! -CFT */
 	if ((tv == TV_MAGIC_BOOK) &&	/* if book, good must be one of the
 					 * deeper, special must be Raal's */
-	    (k_list[sorted_objects[tmp]].sval > ((good & MF2_SPECIAL) ? 71 : 67)))
+	    (k_list[sorted_objects[tmp]].sval >= ((good & MF2_SPECIAL) ? (SV_BOOK + 8) : (SV_BOOK + 4))))
 	    is_good = TRUE;
 	if ((tv == TV_PRAYER_BOOK) &&	/* if book, good must be one of the
 					 * deeper, special must be Wrath of
 					 * God */
-	    (k_list[sorted_objects[tmp]].sval > ((good & MF2_SPECIAL) ? 71 : 67)))
+	    (k_list[sorted_objects[tmp]].sval >= ((good & MF2_SPECIAL) ? (SV_BOOK + 8) : (SV_BOOK + 4))))
 	    is_good = TRUE;
     } while (!is_good);
     invcopy(&i_list[cur_pos], sorted_objects[tmp]);
