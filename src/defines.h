@@ -1001,6 +1001,31 @@
 #define SV_SET_OF_GAUNTLETS		2
 #define SV_SET_OF_CESTI			5
 
+/* The "sval" codes for TV_SOFT_ARMOR */
+#define SV_FILTHY_RAG			1
+#define SV_ROBE				2
+#define SV_SOFT_LEATHER_ARMOR		4
+#define SV_SOFT_STUDDED_LEATHER		5
+#define SV_HARD_LEATHER_ARMOR		6
+#define SV_HARD_STUDDED_LEATHER		7
+#define SV_LEATHER_SCALE_MAIL		11
+
+/* The "sval" codes for TV_HARD_ARMOR */
+#define SV_RUSTY_CHAIN_MAIL		1	/* 14- */
+#define SV_METAL_SCALE_MAIL		3	/* 13 */
+#define SV_CHAIN_MAIL			4	/* 14 */
+#define SV_AUGMENTED_CHAIN_MAIL		6	/* 16 */
+#define SV_DOUBLE_CHAIN_MAIL		7	/* 16 */
+#define SV_BAR_CHAIN_MAIL		8	/* 18 */
+#define SV_METAL_BRIGANDINE_ARMOUR	9	/* 19 */
+#define SV_PARTIAL_PLATE_ARMOUR		12	/* 22 */
+#define SV_METAL_LAMELLAR_ARMOUR	13	/* 23 */
+#define SV_FULL_PLATE_ARMOUR		15	/* 25 */
+#define SV_RIBBED_PLATE_ARMOUR		18	/* 28 */
+#define SV_MITHRIL_CHAIN_MAIL		20	/* 28+ */
+#define SV_MITHRIL_PLATE_MAIL		25	/* 35+ */
+#define SV_ADAMANTITE_PLATE_MAIL	30	/* 40+ */
+
 /* The "sval" codes for TV_DRAG_ARMOR */
 #define SV_DRAGON_BLACK			1
 #define SV_DRAGON_BLUE			2

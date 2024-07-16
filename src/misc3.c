@@ -711,8 +711,10 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	    /* Try for artifacts */
 	    if (great || magik(special)) {
 
-	    if (!stricmp(k_list[i_ptr->k_idx].name, "& Robe") &&
-		((magik(special) && randint(30) == 1))) {
+		if ((i_ptr->tval == TV_SOFT_ARMOR) &&
+		    (i_ptr->sval == SV_ROBE) &&
+		    (magik(special)) &&
+		    (randint(30) == 1)) {
 
 		    i_ptr->flags2 |= (TR2_RES_ELEC | TR2_RES_COLD | 
 				      TR2_RES_ACID | TR2_RES_FIRE |
