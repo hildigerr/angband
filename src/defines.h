@@ -912,6 +912,14 @@
 #define SV_LIGHT_XBOW		23	/* (x3) */
 #define SV_HEAVY_XBOW		24	/* (x4) */
 
+/* The "sval" codes for TV_DIGGING */
+#define SV_SHOVEL		1
+#define SV_GNOMISH_SHOVEL	2
+#define SV_DWARVEN_SHOVEL	3
+#define SV_PICK			4
+#define SV_ORCISH_PICK		5
+#define SV_DWARVEN_PICK		6
+
 /* The "sval" codes for TV_DRAG_ARMOR */
 #define SV_DRAGON_BLACK			1
 #define SV_DRAGON_BLUE			2
