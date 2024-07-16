@@ -102,7 +102,7 @@ int set_holy_destroy(inven_type *e)		   /* added -DGK */
     int element = e->tval;
 
     if ((element >= TV_MIN_ENCHANT) && (element <= TV_MAX_WEAR) &&
-	(e->flags3 & TR3_CURSED) && (!artifact_p(e)))
+	cursed_p(e) && (!artifact_p(e)))
 	return (TRUE);
     return (FALSE);
 }

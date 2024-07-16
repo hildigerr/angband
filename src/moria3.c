@@ -1735,7 +1735,7 @@ void do_cmd_fire()
 	else if (!known2_p(t) && (t->ident & ID_DAMD))
 	    ok_throw = TRUE;  /* Not IDed, but user knows it's cursed... */
 	else if (wearable_p(t) &&
-		 (t->flags3 & TR3_CURSED) && known2_p(t))
+		 (cursed_p(t)) && known2_p(t))
 	    ok_throw = TRUE; /* if user wants to throw cursed, let him */
 	else if ((k_list[t->k_idx].cost <= 0) && inven_aware_p(t) &&
 		 !(known2_p(t) && (t->cost > 0)))

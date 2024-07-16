@@ -544,7 +544,7 @@ void calc_bonuses()
     for (i = INVEN_WIELD; i <= INVEN_LITE; i++) {
 	i_ptr = &inventory[i];
 	if (i_ptr->tval != TV_NOTHING) {
-	    if ((TR3_CURSED & i_ptr->flags1) == 0) {
+	    if ((cursed_p(i_ptr)) == 0) {
 		p_ptr->pac += i_ptr->ac;
 		p_ptr->dis_ac += i_ptr->ac;
 	    }
@@ -977,7 +977,7 @@ void inven_command(int command)
 	    if (inventory[INVEN_WIELD].tval == TV_NOTHING &&
 		inventory[INVEN_AUX].tval == TV_NOTHING)
 		msg_print("But you are wielding no weapons.");
-	    else if (TR3_CURSED & inventory[INVEN_WIELD].flags1) {
+	    else if (cursed_p(&inventory[INVEN_WIELD])) {
 		objdes(prt1, &inventory[INVEN_WIELD], FALSE);
 		(void)sprintf(prt2,
 		     "The %s you are wielding appears to be cursed.", prt1);
@@ -1105,7 +1105,7 @@ void inven_command(int command)
 			while (tmp >= 0);
 			if (isupper((int)which) && !verify(prompt, item))
 			    item = (-1);
-			else if (TR3_CURSED & inventory[item].flags1) {
+			else if (cursed_p(&inventory[item])) {
 			    msg_print("Hmmm, it seems to be cursed.");
 			    item = (-1);
 			} else if (command == 't' &&
@@ -1219,7 +1219,7 @@ void inven_command(int command)
 				break;
 			    }
 			if (item >= 0 && inventory[slot].tval != TV_NOTHING) {
-			    if (TR3_CURSED & inventory[slot].flags1) {
+			    if (cursed_p(&inventory[slot])) {
 				objdes(prt1, &inventory[slot], FALSE);
 				(void)sprintf(prt2, "The %s you are ", prt1);
 				if (slot == INVEN_WIELD)	/* changed from
@@ -1293,7 +1293,7 @@ void inven_command(int command)
 			    msg_print(prt1);
 			/* check_str will clear the heavy flag if necessary */
 			    check_strength();
-			    if (i_ptr->flags1 & TR3_CURSED) {
+			    if (cursed_p(i_ptr)) {
 				msg_print("Oops! It feels deathly cold!");
 				add_inscribe(i_ptr, ID_DAMD);
 			    /* To force a cost of 0, even if unidentified. */

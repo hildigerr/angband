@@ -1220,6 +1220,7 @@
  * The "TR_xxx" values apply ONLY to the items with tval's between
  * TV_MIN_WEAR and TV_MAX_WEAR, that is, items which can be wielded
  * or worn.  Use the macro "wearable_p()" to check this condition.
+ * The macros "artifact_p()" and "cursed_p()" call "wearable_p()".
  *
  * Note that "flags1" contains all flags dependant on "pval", plus all "extra attack damage"
  * flags (SLAY_XXX and BRAND_XXX).

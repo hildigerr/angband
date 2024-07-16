@@ -45,7 +45,7 @@ static cptr value_check(inven_type *i_ptr)
     if (i_ptr->inscrip[0] != '\0') return 0;
 
     /* Cursed items (including artifacts/ego-weapons) */
-    if (i_ptr->flags3 & TR3_CURSED ) {
+    if (cursed_p(i_ptr)) {
 
 	/* Cursed artifacts are terrible */
 	if (artifact_p(i_ptr)) return "terrible";
@@ -1444,7 +1444,7 @@ int special_check(inven_type *t_ptr)
 	return 0;
     if (t_ptr->ident & ID_DAMD)
 	return 0;
-    if (t_ptr->flags3 & TR3_CURSED)
+    if (cursed_p(t_ptr))
 	return -1;
     if (t_ptr->tval != TV_HARD_ARMOR && t_ptr->tval != TV_SWORD &&
 	t_ptr->tval != TV_SOFT_ARMOR && t_ptr->tval != TV_SHIELD &&

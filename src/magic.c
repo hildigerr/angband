@@ -1452,12 +1452,12 @@ void pray()
 		if (inventory[INVEN_FEET].tval)  tmp[k++] = INVEN_FEET;
 
 		if (k > 0) l = tmp[randint(k) - 1];
-		if (TR3_CURSED & inventory[INVEN_BODY].flags3) l = INVEN_BODY;
-		else if (TR3_CURSED & inventory[INVEN_ARM].flags3) l = INVEN_ARM;
-		else if (TR3_CURSED & inventory[INVEN_OUTER].flags3) l = INVEN_OUTER;
-		else if (TR3_CURSED & inventory[INVEN_HEAD].flags3) l = INVEN_HEAD;
-		else if (TR3_CURSED & inventory[INVEN_HANDS].flags3) l = INVEN_HANDS;
-		else if (TR3_CURSED & inventory[INVEN_FEET].flags3) l = INVEN_FEET;
+		if (cursed_p(&inventory[INVEN_BODY])) l = INVEN_BODY;
+		else if (cursed_p(&inventory[INVEN_ARM])) l = INVEN_ARM;
+		else if (cursed_p(&inventory[INVEN_OUTER])) l = INVEN_OUTER;
+		else if (cursed_p(&inventory[INVEN_HEAD])) l = INVEN_HEAD;
+		else if (cursed_p(&inventory[INVEN_HANDS])) l = INVEN_HANDS;
+		else if (cursed_p(&inventory[INVEN_FEET])) l = INVEN_FEET;
 
 		if (l > 0) {
 
@@ -1487,7 +1487,7 @@ void pray()
 	    if ((i_ptr->tval) &&
 		(!i_ptr->name1) &&
 		(!i_ptr->name2) &&
-		(!(i_ptr->flags3 & TR3_CURSED))) {
+		(!cursed_p(i_ptr))) {
 
 		char tmp_str[100], out_val[100];
 

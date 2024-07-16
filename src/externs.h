@@ -96,6 +96,12 @@
 	(((T)->tval >= TV_MIN_WEAR) && ((T)->tval <= TV_MAX_WEAR))
 
 /*
+ * Only wearable items can be cursed.
+ */
+#define cursed_p(T) \
+	(wearable_p(T) && ((T)->flags3 & TR3_CURSED))
+
+/*
  * Artifacts use the "name1" field
  */
 #define artifact_p(T) \

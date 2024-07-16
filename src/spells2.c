@@ -1176,7 +1176,7 @@ int enchant(inven_type *i_ptr, int n, byte eflag)
 		res = TRUE;
 
 		/* only when you get it above -1 -CFT */
-		if ((i_ptr->flags3 & TR3_CURSED) &&
+		if (cursed_p(i_ptr) &&
 		    (i_ptr->tohit >= 0) && (randint(4)==1)) {
 		    msg_print("The curse is broken! ");
 		    i_ptr->flags3 &= ~TR3_CURSED;
@@ -1197,7 +1197,7 @@ int enchant(inven_type *i_ptr, int n, byte eflag)
 		res = TRUE;
 
 		/* only when you get it above -1 -CFT */
-		if ((i_ptr->flags3 & TR3_CURSED) &&
+		if (cursed_p(i_ptr) &&
 		    (i_ptr->todam >= 0) && (randint(4)==1)) {
 		    msg_print("The curse is broken! ");
 		    i_ptr->flags3 &= ~TR3_CURSED;
@@ -1218,7 +1218,7 @@ int enchant(inven_type *i_ptr, int n, byte eflag)
 		res = TRUE;
 
 		/* only when you get it above -1 -CFT */
-		if ((i_ptr->flags3 & TR3_CURSED) &&
+		if (cursed_p(i_ptr) &&
 		    (i_ptr->toac >= 0) && (randint(4)==1)) {
 		    msg_print("The curse is broken! ");
 		    i_ptr->flags3 &= ~TR3_CURSED;
@@ -1355,7 +1355,7 @@ int remove_curse()
 
 	i_ptr = &inventory[i];
 
-	if ((TR3_CURSED & i_ptr->flags3) &&
+	if ((cursed_p(i_ptr)) &&
 	    (i_ptr->name2 != EGO_MORGUL) &&
 	    (i_ptr->name2 != ART_CALRIS) &&
 	    (i_ptr->name2 != ART_MORMEGIL)) {
@@ -1381,7 +1381,7 @@ int remove_all_curse()
     result = FALSE;
     for (i = INVEN_WIELD; i <= INVEN_OUTER; i++) {
 	i_ptr = &inventory[i];
-	if (TR3_CURSED & i_ptr->flags3) {
+	if (cursed_p(i_ptr)) {
 	    if (!(!stricmp(k_list[i_ptr->k_idx].name, "Power") &&
 		  (i_ptr->tval == TV_RING))) {
 		i_ptr->flags3 &= ~TR3_CURSED;
