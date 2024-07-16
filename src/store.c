@@ -349,12 +349,12 @@ static owner_type *ot_ptr = NULL;
 s32b item_value(inven_type *i_ptr)
 {
     s32b value;
+    
+    /* Hack -- Felt cursed items are worthless */
+    if ((i_ptr->ident & ID_FELT) && cursed_p(i_ptr)) return (0L);
 
     /* Start with the item's known base cost */
     value = i_ptr->cost;
-
-    /* don't purchase known cursed items */
-    if (i_ptr->ident & ID_DAMD) value = 0;
 
 		/* Weapons and armor	 */
     else if (((i_ptr->tval >= TV_BOW) && (i_ptr->tval <= TV_SWORD)) ||

@@ -1180,7 +1180,7 @@ int enchant(inven_type *i_ptr, int n, byte eflag)
 		    (i_ptr->tohit >= 0) && (randint(4)==1)) {
 		    msg_print("The curse is broken! ");
 		    i_ptr->flags3 &= ~TR3_CURSED;
-		    i_ptr->ident &= ~ID_DAMD;
+		    i_ptr->ident &= ~ID_FELT;
 		}
 	    }
 	}
@@ -1201,7 +1201,7 @@ int enchant(inven_type *i_ptr, int n, byte eflag)
 		    (i_ptr->todam >= 0) && (randint(4)==1)) {
 		    msg_print("The curse is broken! ");
 		    i_ptr->flags3 &= ~TR3_CURSED;
-		    i_ptr->ident &= ~ID_DAMD;
+		    i_ptr->ident &= ~ID_FELT;
 		}
 	    }
 	}
@@ -1222,7 +1222,7 @@ int enchant(inven_type *i_ptr, int n, byte eflag)
 		    (i_ptr->toac >= 0) && (randint(4)==1)) {
 		    msg_print("The curse is broken! ");
 		    i_ptr->flags3 &= ~TR3_CURSED;
-		    i_ptr->ident &= ~ID_DAMD;
+		    i_ptr->ident &= ~ID_FELT;
 		}
 	    }
 	}
@@ -1363,7 +1363,10 @@ int remove_curse()
 		  (i_ptr->tval == TV_RING))) {
 
 		i_ptr->flags3 &= ~TR3_CURSED;
-		i_ptr->ident &= ~ID_DAMD;	/* DGK */
+
+	/* Hack -- assume felt */
+	i_ptr->ident |= ID_FELT;
+
 		i_ptr->inscrip[0] = '\0';
 		calc_bonuses();
 		result = TRUE;
@@ -1385,7 +1388,10 @@ int remove_all_curse()
 	    if (!(!stricmp(k_list[i_ptr->k_idx].name, "Power") &&
 		  (i_ptr->tval == TV_RING))) {
 		i_ptr->flags3 &= ~TR3_CURSED;
-		i_ptr->ident &= ~ID_DAMD;	/* DGK */
+
+	/* Hack -- assume felt */
+	i_ptr->ident |= ID_FELT;
+
 		calc_bonuses();
 		i_ptr->inscrip[0] = '\0';
 		result = TRUE;

@@ -299,8 +299,11 @@ bool known2_p(inven_type *i_ptr)
 void known2(inven_type *i_ptr)
 {
     /* Remove an automatically generated inscription.	-CJS- */
-    /* used to clear ID_DAMD flag, but I think it should remain set */
+
     i_ptr->ident &= ~ID_MAGIK;
+
+    /* Clear the "Felt" info */
+    i_ptr->ident &= ~ID_FELT;
 
     /* Clear the "Empty" info */
     i_ptr->ident &= ~ID_EMPTY;
@@ -1045,13 +1048,13 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	    if (x_list[i_ptr->k_idx].tried && !store_bought_p(i_ptr))
 		(void)strcat(tmp_str, "tried ");
 	}
-	if ((i_ptr->ident & (ID_MAGIK | ID_EMPTY | ID_DAMD)) &&
+	if ((i_ptr->ident & (ID_MAGIK | ID_EMPTY | ID_FELT)) &&
 	    i_ptr->tval != TV_MAGIC_BOOK && i_ptr->tval != TV_PRAYER_BOOK) {
 	    if (i_ptr->ident & ID_MAGIK)
 		(void)strcat(tmp_str, "blessed ");
 	    if (i_ptr->ident & ID_EMPTY)
 		(void)strcat(tmp_str, "empty ");
-	    if (i_ptr->ident & ID_DAMD)
+	    if ((i_ptr->ident & ID_FELT) && (cursed_p(i_ptr)))
 		(void)strcat(tmp_str, "cursed ");
 	}
 	if ((known2_p(i_ptr) || store_bought_p(i_ptr)) &&

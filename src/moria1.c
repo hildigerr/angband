@@ -1295,7 +1295,7 @@ void inven_command(int command)
 			    check_strength();
 			    if (cursed_p(i_ptr)) {
 				msg_print("Oops! It feels deathly cold!");
-				add_inscribe(i_ptr, ID_DAMD);
+				i_ptr->ident |= ID_FELT;
 			    /* To force a cost of 0, even if unidentified. */
 			    /* i_ptr->cost = (-1); Not... */
 			    }

@@ -1732,7 +1732,7 @@ void do_cmd_fire()
 		 (t->damage[0] > 1) && (t->damage[1] > 1))
 	    ok_throw = TRUE; /* if it's a mushroom or potion that does
                                 damage when thrown... */
-	else if (!known2_p(t) && (t->ident & ID_DAMD))
+	else if (!known2_p(t) && (t->ident & ID_FELT))
 	    ok_throw = TRUE;  /* Not IDed, but user knows it's cursed... */
 	else if (wearable_p(t) &&
 		 (cursed_p(t)) && known2_p(t))

@@ -829,6 +829,20 @@ static errr rd_item_old(inven_type *i_ptr)
     }
 
 
+
+    /*** Analyze the old "ident" flags (and friends) ***/
+
+    /* Some of the old "ident" flags only apply to wearable's */    
+    if (wearable_p(i_ptr)) {
+
+    /* Convert old "ID_DAMD" flag into new "ID_FELT" method */
+    if (i_ptr->ident & 0x02) {
+	i_ptr->ident |= ID_FELT;
+	i_ptr->ident &= ~0x02;
+    }
+    }
+
+
     /* Success */
     return (0);
 }

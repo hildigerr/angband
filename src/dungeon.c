@@ -27,11 +27,15 @@
 
 /*
  * Given an item, return a textual "feeling" about the item.
+ * But if the item has already been "felt", return NULL.
  */
 static cptr value_check(inven_type *i_ptr)
 {
     /* Paranoia -- No item */
     if (i_ptr->tval == TV_NOTHING) return (NULL);
+
+    /* Check for previous feelings */
+    if (i_ptr->ident & ID_FELT) return (NULL);
 
     /* Known items need no feeling */
     if (known2_p(i_ptr)) return (NULL);
@@ -39,8 +43,6 @@ static cptr value_check(inven_type *i_ptr)
     if (store_bought_p(i_ptr)) return 0;
 
     if (i_ptr->ident & ID_MAGIK) return 0;
-
-    if (i_ptr->ident & ID_DAMD) return 0;
 
     if (i_ptr->inscrip[0] != '\0') return 0;
 
@@ -1159,8 +1161,10 @@ void dungeon(void)
 				  describe_use(i));
 		    disturb(0, 0);
 		    msg_print(tmp_str);
-		    add_inscribe(i_ptr, (special_check(i_ptr) > 0) ?
-				 ID_MAGIK : ID_DAMD);
+		    if(special_check(i_ptr) > 0) i_ptr->ident |= ID_MAGIK;
+
+    /* We have "felt" it */
+    i_ptr->ident |= ID_FELT;
 		}
 	    }
 	}
@@ -1238,9 +1242,9 @@ void dungeon(void)
 		    disturb(0, 0);
 		    msg_print(tmp_str);
 		    if (!stricmp(value_check(i_ptr), "terrible"))
-			add_inscribe(i_ptr, ID_DAMD);
+			i_ptr->ident |= ID_FELT;
 		    else if (!stricmp(value_check(i_ptr), "worthless"))
-			add_inscribe(i_ptr, ID_DAMD);
+			i_ptr->ident |= ID_FELT;
 		    else
 			inscribe(i_ptr, value_check(i_ptr));
 		}
@@ -1442,7 +1446,7 @@ int special_check(inven_type *t_ptr)
 	return 0;
     if (t_ptr->ident & ID_MAGIK)
 	return 0;
-    if (t_ptr->ident & ID_DAMD)
+    if (t_ptr->ident & ID_FELT)
 	return 0;
     if (cursed_p(t_ptr))
 	return -1;
