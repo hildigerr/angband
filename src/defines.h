@@ -934,6 +934,22 @@
 #define SV_MACE_OF_DISRUPTION	20	/* 5d8 */
 #define SV_GROND		50	/* 3d4 */
 
+/* The "sval" values for TV_POLEARM */
+#define SV_SPEAR		2	/* 1d6 */
+#define SV_AWL_PIKE		4	/* 1d8 */
+#define SV_TRIDENT		5	/* 1d9 */
+#define SV_PIKE			8	/* 2d5 */
+#define SV_BEAKED_AXE		10	/* 2d6 */
+#define SV_BROAD_AXE		11	/* 2d6 */
+#define SV_GLAIVE		13	/* 2d6 */
+#define SV_HALBERD		15	/* 3d4 */
+#define SV_SCYTHE		17	/* 5d3 */
+#define SV_LANCE		20	/* 2d8 */
+#define SV_BATTLE_AXE		22	/* 2d8 */
+#define SV_GREAT_AXE		25	/* 4d4 */
+#define SV_LOCHABER_AXE		28	/* 3d8 */
+#define SV_SCYTHE_OF_SLICING	30	/* 8d4 */
+
 /* The "sval" codes for TV_DRAG_ARMOR */
 #define SV_DRAGON_BLACK			1
 #define SV_DRAGON_BLUE			2
