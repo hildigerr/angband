@@ -932,7 +932,7 @@ static void store_delete(void)
  */
 static void store_create(void)
 {
-    int			i, tries;
+    int			i, tries, level;
     inven_type		*i_ptr;
     inven_type		tmp_obj;
  
@@ -945,17 +945,23 @@ static void store_create(void)
 
 	/* Black Market */
 	if (store_num == 6) {
-	    i = get_obj_num(40, FALSE);
-	    invcopy(i_ptr, i);
-	    apply_magic(i_ptr, 40, FALSE, FALSE, TRUE);
+
+	    level = 40;
+
+	    i = get_obj_num(level, FALSE);
 	}
 
 	/* Normal Store */
 	else {
 	    i = store_choice[store_num][randint(STORE_CHOICES) - 1];
-	    invcopy(i_ptr, i);
-	    apply_magic(i_ptr, OBJ_TOWN_LEVEL, FALSE, FALSE, TRUE);
+	    level = OBJ_TOWN_LEVEL;
 	}
+
+	/* Create a new object of the chosen kind */
+	invcopy(i_ptr, i);
+
+	/* Apply some "low-level" magic (no artifacts) */
+	apply_magic(i_ptr, level, FALSE, FALSE, TRUE);
 
 	/* Skip "worthless" items */
 	if (i_ptr->cost <= 0) continue;
