@@ -809,8 +809,10 @@ I:=:45:11:0:1:2:55:16000
 A:55/0
 F:RES_POIS
 
+# Oops, this ring had an sval of "37" not "12"!
+
 N:144:Free Action
-I:=:45:37:0:1:2:20:1500
+I:=:45:12:0:1:2:20:1500
 A:20/0
 F:FREE_ACT
 
@@ -2588,42 +2590,42 @@ F:0x41800811:0x02000000
 # The Ring of Barahir -- see artifact list
 
 N:506:Barahir
-I:=:45:36:1:1:2:50:65000
+I:=:45:32:1:1:2:50:65000
 A:50/0
 F:0x1000003F:0x02000000
 
 # The Ring of Tulkas -- see artifact list
 
 N:507:Tulkas
-I:=:45:35:4:1:2:90:150000
+I:=:45:33:4:1:2:90:150000
 A:90/0
 F:0x19:0x02000800
 
 # The Ring of Power (Narya) -- see artifact list
 
 N:508:Power named Narya
-I:=:45:31:/*+78*/1:1:2:80:100000
+I:=:45:34:/*+78*/1:1:2:80:100000
 A:80/0
 F:0x1C008BF:0x02000848
 
 # The Ring of Power (Nenya) -- see artifact list
 
 N:509:Power named Nenya
-I:=:45:32:2:1:2:90:200000
+I:=:45:35:2:1:2:90:200000
 A:90/0
 F:0x5C008BF:0x02000888
 
 # The Ring of Power (Vilya) -- see artifact list
 
 N:510:Power named Vilya
-I:=:45:33:3:1:2:100:300000
+I:=:45:36:3:1:2:100:300000
 A:100/0
 F:0x1C008BF:0x02000A08
 
 # The Ring of Power (The One Ring) -- see artifact list
 
 N:511:Power
-I:=:45:34:5:1:2:110:5000000
+I:=:45:37:5:1:2:110:5000000
 A:110/0
 F:0x83B80A3F:0x02000BC0
 

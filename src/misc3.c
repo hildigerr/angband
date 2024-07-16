@@ -2052,10 +2052,10 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	switch (i_ptr->sval) {
 
 	  /* Strength, Constitution, Dexterity, Intelligence */
-	  case 0:
-	  case 1:
-	  case 2:
-	  case 3:		   /* 132-135 */
+	  case SV_RING_STR:
+	  case SV_RING_CON:
+	  case SV_RING_DEX:
+	  case SV_RING_INT:
 	    i_ptr->pval = m_bonus(1, 6, level);
 	    if (magik(cursed)) {
 		i_ptr->pval = -m_bonus(1, 10, level);
@@ -2067,7 +2067,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	    break;
 
 	  /* Ring of Speed! */
-	  case 4:		   /* 136 */
+	  case SV_RING_SPEED:
 
 	    /* Cursed Ring */
 	    if (magik(cursed)) {
@@ -2086,7 +2086,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	    break;
 
 	  /* Searching */
-	  case 5:
+	  case SV_RING_SEARCHING:
 	    i_ptr->pval = 5 * m_bonus(1, 10, level);
 	    i_ptr->cost += i_ptr->pval * 30;
 	    if (magik(cursed)) {
@@ -2097,17 +2097,17 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	    break;
 
 	  /* Flames, Acid, Ice */
-	  case 14:
-	  case 15:
-	  case 16:
+	  case SV_RING_FLAMES:
+	  case SV_RING_ACID:
+	  case SV_RING_ICE:
 	    i_ptr->toac = m_bonus(1, 10, level);
 	    i_ptr->toac += 5 + randint(7);
 	    i_ptr->cost += i_ptr->toac * 100;
 	    break;
 
 	  /* WOE, Stupidity */
-	  case 17:
-	  case 18:
+	  case SV_RING_WOE:
+	  case SV_RING_STUPIDITY:
 	    i_ptr->toac = (-5) - m_bonus(1,10,level);
 	    i_ptr->pval = (-randint(4));
 	    break;

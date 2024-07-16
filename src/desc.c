@@ -683,7 +683,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
       /* Rings (including a few "Specials") */
       case TV_RING:
 
-	if (!stricmp("Power", basenm)) { /* name this "the One Ring" -CWS */
+	if (i_ptr->sval == SV_RING_POWER) {
 	    append_name = FALSE;
 	    if (!known2_p(i_ptr))
 		basenm = "a plain gold Ring";
