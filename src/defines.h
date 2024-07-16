@@ -977,6 +977,16 @@
 #define SV_LARGE_METAL_SHIELD		5
 #define SV_SHIELD_OF_DEFLECTION		10
 
+/* The "sval" codes for TV_HELM */
+#define SV_HARD_LEATHER_CAP		2
+#define SV_METAL_CAP			3
+#define SV_IRON_HELM			5
+#define SV_STEEL_HELM			6
+#define SV_IRON_CROWN			10
+#define SV_GOLDEN_CROWN			11
+#define SV_JEWELED_CROWN		12
+#define SV_MORGOTH			50
+
 /* The "sval" codes for TV_DRAG_ARMOR */
 #define SV_DRAGON_BLACK			1
 #define SV_DRAGON_BLUE			2

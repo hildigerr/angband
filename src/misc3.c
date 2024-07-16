@@ -1025,7 +1025,9 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
       case TV_HELM:
 
 	/* Hack -- crowns are "more magical" */
-	if ((i_ptr->sval >= 6) && (i_ptr->sval <= 8)) {
+	if ((i_ptr->sval == SV_IRON_CROWN) ||
+	    (i_ptr->sval == SV_GOLDEN_CROWN) ||
+	    (i_ptr->sval == SV_JEWELED_CROWN)) {
 
 	    /* Hack -- extra "goodness" based on cost */
 	    chance += i_ptr->cost / 100;
