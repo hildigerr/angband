@@ -929,6 +929,10 @@ static void store_delete(void)
 
 /*
  * Creates a random item and gives it to a store
+ * This algorithm needs to be rethought.  A lot.
+ * Currently, "normal" stores use a pre-built array.
+ *
+ * Should we check for "permission" to have the given item?
  */
 static void store_create(void)
 {
@@ -941,6 +945,7 @@ static void store_create(void)
 
     object_level = OBJ_TOWN_LEVEL;
 
+    /* Hack -- consider up to four items */
     for (tries = 0; tries < 4; tries++) {
 
 	/* Black Market */
@@ -948,12 +953,16 @@ static void store_create(void)
 
 	    level = 40;
 
+	    /* Random item (preferably of the requested level) */
 	    i = get_obj_num(level, FALSE);
 	}
 
 	/* Normal Store */
 	else {
-	    i = store_choice[store_num][randint(STORE_CHOICES) - 1];
+
+	    /* Mega-Hack -- Get a random object kind */
+	    i = store_choice[store_num][rand_int(STORE_CHOICES)];
+
 	    level = OBJ_TOWN_LEVEL;
 	}
 
