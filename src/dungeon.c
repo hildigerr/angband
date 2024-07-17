@@ -104,7 +104,7 @@ static cptr value_check(inven_type *i_ptr)
  */
 static void sense_inventory(void)
 {
-    int i, lev2;
+    int i, lev2, penalty = 0;
 
     inven_type *i_ptr;
 
@@ -116,15 +116,18 @@ static void sense_inventory(void)
     lev2 = p_ptr->lev * p_ptr->lev;
 
 
-    /* Warriors, Rogues and paladins inbuilt ident */
-	if (((p_ptr->pclass == 0) &&
-	 (randint((int)(9000 / (lev2 + 40)) + 1) == 1))
-	    ||
-	    ((p_ptr->pclass == 3) &&
-	(randint((int)(20000 / (lev2 + 40)) + 1) == 1))
-	    ||
-	    ((p_ptr->pclass == 5) &&
-	     (randint((int)(80000L / (lev2 + 40)) + 1) == 1))) {
+    /*** Warriors, Rogues and Paladins get a "great" identifier ***/
+
+    /* Extract a "penalty" */
+    if (p_ptr->pclass == 5) penalty = 80;
+    if (p_ptr->pclass == 3) penalty = 20;
+    if (p_ptr->pclass == 0) penalty = 9;
+
+    /* Warriors, Rogues, Paladins get a "special" identifier */
+    if (penalty) {
+
+	/* The feeling just "kicks in" every one in a while */
+	if (randint((int)(1000L * penalty / (lev2 + 40)) + 1) == 1) {
 
 	    for (i = 0; i < INVEN_TOTAL; i++) {
 
@@ -196,6 +199,7 @@ static void sense_inventory(void)
 		}
 	    }
 	}
+    }
 
 	if (p_ptr->pclass == 2 ?
 	    ((randint((int)(10000 / (lev2 + 40)) + 1) == 1))
