@@ -1078,7 +1078,7 @@ void dungeon(void)
 	    /* Skip fake objects */
 	    if (i_ptr->tval == TV_NOTHING) continue;
 
-	    if (i_ptr->flags3 & TR3_ACTIVATE) {
+	    if (i_ptr->flags3 & TR3_ACTIVATE)
 
 	    /* Let activatable objects recharge */
 	    if (i_ptr->timeout > 0) i_ptr->timeout--;
