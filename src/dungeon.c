@@ -90,6 +90,166 @@ static cptr value_check(inven_type *i_ptr)
 }
 
 
+/*
+ * Sense the inventory
+     * for 1st level char, check once every 2160 turns for 40th level char,
+     * check once every 416 turns 
+ *
+ *   Class 0 = Warrior
+ *   Class 1 = Mage
+ *   Class 2 = Priest
+ *   Class 3 = Rogue
+ *   Class 4 = Ranger
+ *   Class 5 = Paladin
+ */
+static void sense_inventory(void)
+{
+    int i;
+
+    inven_type *i_ptr;
+
+    char tmp_str[160];
+    char out_val[160];
+
+
+    /* Warriors, Rogues and paladins inbuilt ident */
+	if (((p_ptr->pclass == 0) &&
+	 (randint((int)(9000 / (p_ptr->lev * p_ptr->lev + 40)) + 1) == 1))
+	    ||
+	    ((p_ptr->pclass == 3) &&
+	(randint((int)(20000 / (p_ptr->lev * p_ptr->lev + 40)) + 1) == 1))
+	    ||
+	    ((p_ptr->pclass == 5) &&
+	     (randint((int)(80000L / (p_ptr->lev * p_ptr->lev + 40)) + 1) == 1))) {
+
+	    for (i = 0; i < INVEN_TOTAL; i++) {
+
+		if (i == inven_ctr) i = 22;
+
+	    /* Get the object */
+	    i_ptr = &inventory[i];
+
+	    /*
+	     * if in inventory, succeed 1 out of 5 times, if in equipment
+	     * list, always succeed! 
+	     */
+		if (((i_ptr->tval == TV_SOFT_ARMOR) ||
+		     (i_ptr->tval == TV_HARD_ARMOR) ||
+		     (i_ptr->tval == TV_SWORD) ||
+		     (i_ptr->tval == TV_HAFTED) ||
+		     (i_ptr->tval == TV_POLEARM) ||
+		     (i_ptr->tval == TV_SHIELD) ||
+		     (i_ptr->tval == TV_HELM) ||
+		     (i_ptr->tval == TV_BOOTS) ||
+		     (i_ptr->tval == TV_GLOVES) ||
+		     (i_ptr->tval == TV_DIGGING) ||
+		     (i_ptr->tval == TV_SHOT) ||
+		     (i_ptr->tval == TV_BOLT) ||
+		     (i_ptr->tval == TV_ARROW) ||
+		     (i_ptr->tval == TV_BOW) ||
+		     (i_ptr->tval == TV_CLOAK))
+		    && value_check(i_ptr) &&
+		    (randint(i < 22 ? 5 : 1) == 1)) {
+		    char                tmp[100], *ptr;
+		    int                 sp;
+
+		    (void)strcpy(tmp, k_list[i_ptr->k_idx].name);
+
+		    ptr = tmp;
+		    sp = 0;
+		    while (tmp[sp] == ' ' || tmp[sp] == '&')
+			ptr = &tmp[++sp];
+
+		    (void)strcpy(out_val, ptr);
+
+		    ptr = out_val;
+
+		    while (*ptr) {
+			if (*ptr == '~')
+			    *ptr = 's';
+			ptr++;
+		    }
+
+		    (void)sprintf(tmp_str,
+				  "You feel the %s (%c) you are %s %s %s...",
+				  out_val,
+		    ((i < INVEN_WIELD) ? i + 'a' : (i + 'a' - INVEN_WIELD)),
+				  describe_use(i),
+				  ((i_ptr->tval == TV_BOLT) ||
+				   (i_ptr->tval == TV_ARROW) ||
+				   (i_ptr->tval == TV_SHOT) ||
+				   (i_ptr->tval == TV_BOOTS) ||
+				 (i_ptr->tval == TV_GLOVES)) ? "are" : "is",
+				  value_check(i_ptr));
+		    disturb(0, 0);
+		    msg_print(tmp_str);
+		    if (!stricmp(value_check(i_ptr), "terrible"))
+			i_ptr->ident |= ID_FELT;
+		    else if (!stricmp(value_check(i_ptr), "worthless"))
+			i_ptr->ident |= ID_FELT;
+		    else
+			inscribe(i_ptr, value_check(i_ptr));
+		}
+	    }
+	}
+
+	if (p_ptr->pclass == 2 ?
+	    ((randint((int)(10000 / (p_ptr->lev * p_ptr->lev + 40)) + 1) == 1))
+	    :
+	    (((turn & 0xF) == 0)
+	     && (randint((int)(10 + 750 / (5 + p_ptr->lev))) == 1))
+	    ) {
+
+	    for (i = 0; i < INVEN_TOTAL; i++) {
+
+		if (i == inven_ctr) i = 22;
+
+	    /* Get the object */
+	    i_ptr = &inventory[i];
+
+	    /*
+	     * if in inventory, succeed 1 out of 50 times, if in equipment
+	     * list, success 1 out of 10 times, unless you're a priest or
+	     * rogue... 
+	     */
+		if (wearable_p(i_ptr) &&
+		    special_check(i_ptr) &&
+		    ((p_ptr->pclass == 2 || p_ptr->pclass == 3) ?
+		     (randint(i < 22 ? 5 : 1) == 1) :
+		     (randint(i < 22 ? 50 : 10) == 1))) {
+
+		    if (p_ptr->pclass == 0 || p_ptr->pclass == 3 ||
+			p_ptr->pclass == 5)
+			if ((i_ptr->tval == TV_SWORD) ||
+			    (i_ptr->tval == TV_HAFTED) ||
+			    (i_ptr->tval == TV_POLEARM) ||
+			    (i_ptr->tval == TV_BOW) ||
+			    (i_ptr->tval == TV_BOLT) ||
+			    (i_ptr->tval == TV_ARROW) ||
+			    (i_ptr->tval == TV_DIGGING) ||
+			    (i_ptr->tval == TV_SHOT) ||
+			    (i_ptr->tval == TV_SOFT_ARMOR) ||
+			    (i_ptr->tval == TV_HARD_ARMOR) ||
+			    (i_ptr->tval == TV_HELM) ||
+			    (i_ptr->tval == TV_BOOTS) ||
+			    (i_ptr->tval == TV_CLOAK) ||
+			    (i_ptr->tval == TV_GLOVES) ||
+			    (i_ptr->tval == TV_SHIELD))
+			    continue;
+		    (void)sprintf(tmp_str,
+			    "There's something %s about what you are %s...",
+				  special_check(i_ptr) > 0 ? "good" : "bad",
+				  describe_use(i));
+		    disturb(0, 0);
+		    msg_print(tmp_str);
+		    if(special_check(i_ptr) > 0) i_ptr->ident |= ID_MAGIK;
+
+    /* We have "felt" it */
+    i_ptr->ident |= ID_FELT;
+		}
+	    }
+	}
+}
 
 
 
@@ -1105,151 +1265,13 @@ void dungeon(void)
 
 	/*** Auto-Detect-Enchantment ***/
 
-    /* Allow for a slim chance of detect enchantment -CJS- */
-    /*
-     * for 1st level char, check once every 2160 turns for 40th level char,
-     * check once every 416 turns 
-     */
-	if (p_ptr->pclass == 2 ?
-	    ((p_ptr->confused == 0) && (p_ptr->pclass != 0) &&
-	(randint((int)(10000 / (p_ptr->lev * p_ptr->lev + 40)) + 1) == 1))
-	    :
-	    (((turn & 0xF) == 0) && (p_ptr->confused == 0)
-	     && (randint((int)(10 + 750 / (5 + p_ptr->lev))) == 1))
-	    ) {
-	    vtype               tmp_str;
+	/* Have some "feelings" about the inventory */
+	if (!p_ptr->confused && !p_ptr->blind) {
 
-	    for (i = 0; i < INVEN_TOTAL; i++) {
-
-		if (i == inven_ctr) i = 22;
-
-	    /* Get the object */
-	    i_ptr = &inventory[i];
-
-	    /*
-	     * if in inventory, succeed 1 out of 50 times, if in equipment
-	     * list, success 1 out of 10 times, unless you're a priest or
-	     * rogue... 
-	     */
-		if (wearable_p(i_ptr) &&
-		    special_check(i_ptr) &&
-		    ((p_ptr->pclass == 2 || p_ptr->pclass == 3) ?
-		     (randint(i < 22 ? 5 : 1) == 1) :
-		     (randint(i < 22 ? 50 : 10) == 1))) {
-
-		    if (p_ptr->pclass == 0 || p_ptr->pclass == 3 ||
-			p_ptr->pclass == 5)
-			if ((i_ptr->tval == TV_SWORD) ||
-			    (i_ptr->tval == TV_HAFTED) ||
-			    (i_ptr->tval == TV_POLEARM) ||
-			    (i_ptr->tval == TV_BOW) ||
-			    (i_ptr->tval == TV_BOLT) ||
-			    (i_ptr->tval == TV_ARROW) ||
-			    (i_ptr->tval == TV_DIGGING) ||
-			    (i_ptr->tval == TV_SHOT) ||
-			    (i_ptr->tval == TV_SOFT_ARMOR) ||
-			    (i_ptr->tval == TV_HARD_ARMOR) ||
-			    (i_ptr->tval == TV_HELM) ||
-			    (i_ptr->tval == TV_BOOTS) ||
-			    (i_ptr->tval == TV_CLOAK) ||
-			    (i_ptr->tval == TV_GLOVES) ||
-			    (i_ptr->tval == TV_SHIELD))
-			    continue;
-		    (void)sprintf(tmp_str,
-			    "There's something %s about what you are %s...",
-				  special_check(i_ptr) > 0 ? "good" : "bad",
-				  describe_use(i));
-		    disturb(0, 0);
-		    msg_print(tmp_str);
-		    if(special_check(i_ptr) > 0) i_ptr->ident |= ID_MAGIK;
-
-    /* We have "felt" it */
-    i_ptr->ident |= ID_FELT;
-		}
-	    }
+	    /* Feel the inventory */
+	    sense_inventory();
 	}
 
-    /* Warriors, Rogues and paladins inbuilt ident */
-	if (((p_ptr->pclass == 0) && (p_ptr->confused == 0) &&
-	 (randint((int)(9000 / (p_ptr->lev * p_ptr->lev + 40)) + 1) == 1))
-	    ||
-	    ((p_ptr->pclass == 3) && (p_ptr->confused == 0) &&
-	(randint((int)(20000 / (p_ptr->lev * p_ptr->lev + 40)) + 1) == 1))
-	    ||
-	    ((p_ptr->pclass == 5) && (p_ptr->confused == 0) &&
-	     (randint((int)(80000L / (p_ptr->lev * p_ptr->lev + 40)) + 1) == 1))) {
-	    vtype               tmp_str;
-
-	    for (i = 0; i < INVEN_TOTAL; i++) {
-
-		if (i == inven_ctr) i = 22;
-
-	    /* Get the object */
-	    i_ptr = &inventory[i];
-
-	    /*
-	     * if in inventory, succeed 1 out of 5 times, if in equipment
-	     * list, always succeed! 
-	     */
-		if (((i_ptr->tval == TV_SOFT_ARMOR) ||
-		     (i_ptr->tval == TV_HARD_ARMOR) ||
-		     (i_ptr->tval == TV_SWORD) ||
-		     (i_ptr->tval == TV_HAFTED) ||
-		     (i_ptr->tval == TV_POLEARM) ||
-		     (i_ptr->tval == TV_SHIELD) ||
-		     (i_ptr->tval == TV_HELM) ||
-		     (i_ptr->tval == TV_BOOTS) ||
-		     (i_ptr->tval == TV_GLOVES) ||
-		     (i_ptr->tval == TV_DIGGING) ||
-		     (i_ptr->tval == TV_SHOT) ||
-		     (i_ptr->tval == TV_BOLT) ||
-		     (i_ptr->tval == TV_ARROW) ||
-		     (i_ptr->tval == TV_BOW) ||
-		     (i_ptr->tval == TV_CLOAK))
-		    && value_check(i_ptr) &&
-		    (randint(i < 22 ? 5 : 1) == 1)) {
-		    char                out_val[100], tmp[100], *ptr;
-		    int                 sp;
-
-		    (void)strcpy(tmp, k_list[i_ptr->k_idx].name);
-
-		    ptr = tmp;
-		    sp = 0;
-		    while (tmp[sp] == ' ' || tmp[sp] == '&')
-			ptr = &tmp[++sp];
-
-		    (void)strcpy(out_val, ptr);
-
-		    ptr = out_val;
-
-		    while (*ptr) {
-			if (*ptr == '~')
-			    *ptr = 's';
-			ptr++;
-		    }
-
-		    (void)sprintf(tmp_str,
-				  "You feel the %s (%c) you are %s %s %s...",
-				  out_val,
-		    ((i < INVEN_WIELD) ? i + 'a' : (i + 'a' - INVEN_WIELD)),
-				  describe_use(i),
-				  ((i_ptr->tval == TV_BOLT) ||
-				   (i_ptr->tval == TV_ARROW) ||
-				   (i_ptr->tval == TV_SHOT) ||
-				   (i_ptr->tval == TV_BOOTS) ||
-				 (i_ptr->tval == TV_GLOVES)) ? "are" : "is",
-				  value_check(i_ptr));
-		    disturb(0, 0);
-		    msg_print(tmp_str);
-		    if (!stricmp(value_check(i_ptr), "terrible"))
-			i_ptr->ident |= ID_FELT;
-		    else if (!stricmp(value_check(i_ptr), "worthless"))
-			i_ptr->ident |= ID_FELT;
-		    else
-			inscribe(i_ptr, value_check(i_ptr));
-		}
-	    }
-	}
 
 	/*** Compact the Monsters ***/
 
