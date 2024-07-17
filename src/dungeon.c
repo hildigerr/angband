@@ -198,12 +198,15 @@ static void sense_inventory(void)
 	}
     }
 
-	if (p_ptr->pclass == 2 ?
-	    ((randint((int)(10000 / (lev2 + 40)) + 1) == 1))
-	    :
-	    (((turn & 0xF) == 0)
-	     && (randint((int)(10 + 750 / (5 + p_ptr->lev))) == 1))
-	    ) {
+    /* Priests use a calculation like "warriors" above */
+    if (p_ptr->pclass == 2) {
+	if (randint((10000 / (lev2 + 40)) + 1) != 1) return;
+    }
+
+    else {
+	    if ((turn & 0xF) == 0)
+	if (randint(10 + 750 / (5 + p_ptr->lev)) != 1) return;
+    }
 
 	    for (i = 0; i < INVEN_TOTAL; i++) {
 
@@ -253,7 +256,6 @@ static void sense_inventory(void)
     i_ptr->ident |= ID_FELT;
 		}
 	    }
-	}
 }
 
 
