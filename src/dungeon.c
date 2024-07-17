@@ -104,7 +104,7 @@ static cptr value_check(inven_type *i_ptr)
  */
 static void sense_inventory(void)
 {
-    int i;
+    int i, lev2;
 
     inven_type *i_ptr;
 
@@ -112,15 +112,19 @@ static void sense_inventory(void)
     char out_val[160];
 
 
+    /* Square the players level */
+    lev2 = p_ptr->lev * p_ptr->lev;
+
+
     /* Warriors, Rogues and paladins inbuilt ident */
 	if (((p_ptr->pclass == 0) &&
-	 (randint((int)(9000 / (p_ptr->lev * p_ptr->lev + 40)) + 1) == 1))
+	 (randint((int)(9000 / (lev2 + 40)) + 1) == 1))
 	    ||
 	    ((p_ptr->pclass == 3) &&
-	(randint((int)(20000 / (p_ptr->lev * p_ptr->lev + 40)) + 1) == 1))
+	(randint((int)(20000 / (lev2 + 40)) + 1) == 1))
 	    ||
 	    ((p_ptr->pclass == 5) &&
-	     (randint((int)(80000L / (p_ptr->lev * p_ptr->lev + 40)) + 1) == 1))) {
+	     (randint((int)(80000L / (lev2 + 40)) + 1) == 1))) {
 
 	    for (i = 0; i < INVEN_TOTAL; i++) {
 
@@ -194,7 +198,7 @@ static void sense_inventory(void)
 	}
 
 	if (p_ptr->pclass == 2 ?
-	    ((randint((int)(10000 / (p_ptr->lev * p_ptr->lev + 40)) + 1) == 1))
+	    ((randint((int)(10000 / (lev2 + 40)) + 1) == 1))
 	    :
 	    (((turn & 0xF) == 0)
 	     && (randint((int)(10 + 750 / (5 + p_ptr->lev))) == 1))
