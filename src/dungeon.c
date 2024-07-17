@@ -99,8 +99,6 @@ static void sense_item(int i)
     inven_type *i_ptr;
     char tmp_str[160];
     char out_val[160];
-    char tmp[100], *ptr;
-    int sp;
 
     /* Get the item */
     i_ptr = &inventory[i];
@@ -119,26 +117,14 @@ static void sense_item(int i)
     /* Skip non-feelings */
     if (!feel) return;
 
-	    (void)strcpy(tmp, k_list[i_ptr->k_idx].name);
+    /* Stop everything */
+    disturb(0, 0);
 
-	    ptr = tmp;
-	    sp = 0;
-	    while (tmp[sp] == ' ' || tmp[sp] == '&')
-		ptr = &tmp[++sp];
-
-	    (void)strcpy(out_val, ptr);
-
-	    ptr = out_val;
-
-	    while (*ptr) {
-		if (*ptr == '~')
-		    *ptr = 's';
-		ptr++;
-	    }
-
-	    (void)sprintf(tmp_str,
-			  "You feel the %s (%c) you are %s %s %s...",
-			  out_val,
+    /* Get an object description */
+    objdes(tmp_str, i_ptr, FALSE);
+    (void)sprintf(out_val,
+		  "You feel the %s (%c) you are %s %s %s...",
+		  tmp_str,
 	    ((i < INVEN_WIELD) ? i + 'a' : (i + 'a' - INVEN_WIELD)),
 			  describe_use(i),
 			  ((i_ptr->tval == TV_BOLT) ||
@@ -147,8 +133,8 @@ static void sense_item(int i)
 			   (i_ptr->tval == TV_BOOTS) ||
 			 (i_ptr->tval == TV_GLOVES)) ? "are" : "is",
 			  feel);
-	    disturb(0, 0);
-	    msg_print(tmp_str);
+	    msg_print(out_val);
+
 	    if (!stricmp(feel, "terrible"))
 		i_ptr->ident |= ID_FELT;
 	    else if (!stricmp(feel, "worthless"))
