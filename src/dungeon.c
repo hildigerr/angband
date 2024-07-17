@@ -91,6 +91,74 @@ static cptr value_check(inven_type *i_ptr)
 
 
 /*
+ * Acquire a "sense" about an item (fighters, rogues, paladins)
+ */
+static void sense_item(int i)
+{
+    cptr feel;
+    inven_type *i_ptr;
+    char tmp_str[160];
+    char out_val[160];
+    char tmp[100], *ptr;
+    int sp;
+
+    /* Get the item */
+    i_ptr = &inventory[i];
+
+    /* Only wearable items can be sensed */
+    if (!wearable_p(i_ptr)) return;
+
+    /* Rings and Amulets cannot be sensed */
+    if (i_ptr->tval == TV_LITE) return;
+    if (i_ptr->tval == TV_RING) return;
+    if (i_ptr->tval == TV_AMULET) return;
+
+    /* Check it for a feeling */
+    feel = value_check(i_ptr);
+
+    /* Skip non-feelings */
+    if (!feel) return;
+
+	    (void)strcpy(tmp, k_list[i_ptr->k_idx].name);
+
+	    ptr = tmp;
+	    sp = 0;
+	    while (tmp[sp] == ' ' || tmp[sp] == '&')
+		ptr = &tmp[++sp];
+
+	    (void)strcpy(out_val, ptr);
+
+	    ptr = out_val;
+
+	    while (*ptr) {
+		if (*ptr == '~')
+		    *ptr = 's';
+		ptr++;
+	    }
+
+	    (void)sprintf(tmp_str,
+			  "You feel the %s (%c) you are %s %s %s...",
+			  out_val,
+	    ((i < INVEN_WIELD) ? i + 'a' : (i + 'a' - INVEN_WIELD)),
+			  describe_use(i),
+			  ((i_ptr->tval == TV_BOLT) ||
+			   (i_ptr->tval == TV_ARROW) ||
+			   (i_ptr->tval == TV_SHOT) ||
+			   (i_ptr->tval == TV_BOOTS) ||
+			 (i_ptr->tval == TV_GLOVES)) ? "are" : "is",
+			  feel);
+	    disturb(0, 0);
+	    msg_print(tmp_str);
+	    if (!stricmp(feel, "terrible"))
+		i_ptr->ident |= ID_FELT;
+	    else if (!stricmp(feel, "worthless"))
+		i_ptr->ident |= ID_FELT;
+	    else
+		inscribe(i_ptr, feel);
+}
+
+
+/*
  * Sense the inventory
      * for 1st level char, check once every 2160 turns for 40th level char,
      * check once every 416 turns 
@@ -129,74 +197,17 @@ static void sense_inventory(void)
 	/* The feeling just "kicks in" every one in a while */
 	if (randint((int)(1000L * penalty / (lev2 + 40)) + 1) == 1) {
 
+	    /* Check everything */
 	    for (i = 0; i < INVEN_TOTAL; i++) {
 
-		if (i == inven_ctr) i = 22;
+		/* Hack -- Skip "missing" things */
+		if (!inventory[i].tval) continue;
 
-	    /* Get the object */
-	    i_ptr = &inventory[i];
+		/* Inventory items only get felt 1 in 5 times */
+		if ((i < INVEN_WIELD) && (randint(5) != 1)) continue;
 
-	    /*
-	     * if in inventory, succeed 1 out of 5 times, if in equipment
-	     * list, always succeed! 
-	     */
-		if (((i_ptr->tval == TV_SOFT_ARMOR) ||
-		     (i_ptr->tval == TV_HARD_ARMOR) ||
-		     (i_ptr->tval == TV_SWORD) ||
-		     (i_ptr->tval == TV_HAFTED) ||
-		     (i_ptr->tval == TV_POLEARM) ||
-		     (i_ptr->tval == TV_SHIELD) ||
-		     (i_ptr->tval == TV_HELM) ||
-		     (i_ptr->tval == TV_BOOTS) ||
-		     (i_ptr->tval == TV_GLOVES) ||
-		     (i_ptr->tval == TV_DIGGING) ||
-		     (i_ptr->tval == TV_SHOT) ||
-		     (i_ptr->tval == TV_BOLT) ||
-		     (i_ptr->tval == TV_ARROW) ||
-		     (i_ptr->tval == TV_BOW) ||
-		     (i_ptr->tval == TV_CLOAK))
-		    && value_check(i_ptr) &&
-		    (randint(i < 22 ? 5 : 1) == 1)) {
-		    char                tmp[100], *ptr;
-		    int                 sp;
-
-		    (void)strcpy(tmp, k_list[i_ptr->k_idx].name);
-
-		    ptr = tmp;
-		    sp = 0;
-		    while (tmp[sp] == ' ' || tmp[sp] == '&')
-			ptr = &tmp[++sp];
-
-		    (void)strcpy(out_val, ptr);
-
-		    ptr = out_val;
-
-		    while (*ptr) {
-			if (*ptr == '~')
-			    *ptr = 's';
-			ptr++;
-		    }
-
-		    (void)sprintf(tmp_str,
-				  "You feel the %s (%c) you are %s %s %s...",
-				  out_val,
-		    ((i < INVEN_WIELD) ? i + 'a' : (i + 'a' - INVEN_WIELD)),
-				  describe_use(i),
-				  ((i_ptr->tval == TV_BOLT) ||
-				   (i_ptr->tval == TV_ARROW) ||
-				   (i_ptr->tval == TV_SHOT) ||
-				   (i_ptr->tval == TV_BOOTS) ||
-				 (i_ptr->tval == TV_GLOVES)) ? "are" : "is",
-				  value_check(i_ptr));
-		    disturb(0, 0);
-		    msg_print(tmp_str);
-		    if (!stricmp(value_check(i_ptr), "terrible"))
-			i_ptr->ident |= ID_FELT;
-		    else if (!stricmp(value_check(i_ptr), "worthless"))
-			i_ptr->ident |= ID_FELT;
-		    else
-			inscribe(i_ptr, value_check(i_ptr));
-		}
+		/* Attempt to sense it */
+		sense_item(i);
 	    }
 	}
     }
