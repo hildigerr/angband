@@ -345,6 +345,8 @@ static owner_type *ot_ptr = NULL;
 
 /*
  * Returns the value for any given object -RAK-
+ *
+ * This function returns the "value" of ONE of the item's objects.
  */
 s32b item_value(inven_type *i_ptr)
 {
@@ -444,9 +446,8 @@ s32b item_value(inven_type *i_ptr)
 	    }
 	}
     }
-/* multiply value by number of items if it is a group stack item */
-    if (i_ptr->sval > ITEM_GROUP_MIN)	/* do not include torches here */
-	value = value * i_ptr->number;
+
+    /* Return the value */
     return (value);
 }
 
@@ -490,12 +491,14 @@ static void special_offer(inven_type *i_ptr)
 
 /*
  * Asking price for an item			-RAK-
+ * Always take account of the item count
  */
 static s32b sell_price(s32b *max_sell, s32b *min_sell, inven_type *i_ptr)
 {
     register s32b      i;
 
-    i = item_value(i_ptr);
+    /* Get the item value, inflate it per object */
+    i = item_value(i_ptr) * i_ptr->number;
 
     /* check i_ptr->cost in case it is cursed, check i in case it is damaged */
     if ((i_ptr->cost > 0) && (i > 0)) {
@@ -1535,11 +1538,12 @@ static int sell_haggle(s32b *price, inven_type *i_ptr)
     int                 sell, num, final_flag, final = FALSE;
     vtype               out_val;
 
+    /* Get the value of the group of items */
+    cost = item_value(i_ptr) * i_ptr->number;
+
     sell = 0;
     *price = 0;
     final_flag = 0;
-
-    cost = item_value(i_ptr);
 
     /* Instantly react to worthless items */
     if (cost <= 0) return (3);
@@ -2029,7 +2033,7 @@ static int store_sell(int *cur_top)
 	    i_ptr = &inventory[item_val];
 
 	    /* Get the "apparent value" */
-	    dummy = item_value(&sold_obj);
+	    dummy = item_value(&sold_obj) * sold_obj.number;
 
 	    /* Become "aware" of the item */
 	    inven_aware(i_ptr);
@@ -2042,7 +2046,7 @@ static int store_sell(int *cur_top)
 	    sold_obj.number = amt;
 
 	    /* Get the "actual value" */
-	    value = item_value(&sold_obj);
+	    value = item_value(&sold_obj) * sold_obj.number;
 
 	    /* Get the description all over again */
 	    objdes(tmp_str, &sold_obj, TRUE);
