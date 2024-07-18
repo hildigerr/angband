@@ -44,8 +44,6 @@ static cptr value_check(inven_type *i_ptr)
 
     if (i_ptr->ident & ID_MAGIK) return 0;
 
-    if (i_ptr->inscrip[0] != '\0') return 0;
-
     /* Cursed items (including artifacts/ego-weapons) */
     if (cursed_p(i_ptr)) {
 
@@ -141,12 +139,14 @@ static void sense_item(int i)
 			  feel);
 	    msg_print(out_val);
 
-	    if (!stricmp(feel, "terrible"))
-		i_ptr->ident |= ID_FELT;
-	    else if (!stricmp(feel, "worthless"))
-		i_ptr->ident |= ID_FELT;
-	    else
-		inscribe(i_ptr, feel);
+    /* We have "felt" it */
+    i_ptr->ident |= ID_FELT;
+
+    /* Inscribe it textually */
+    inscribe(i_ptr, feel);
+
+    /* Success */
+    return;
 }
 
 
@@ -281,6 +281,14 @@ static void sense_inventory(void)
 
 	/* We have "felt" it */
 	i_ptr->ident |= ID_FELT;
+
+	/* Inscribe a feeling */
+	if (cursed_p(i_ptr)) {
+	    inscribe(i_ptr, "cursed");
+	}
+	else {
+	    inscribe(i_ptr, "blessed");
+	}
     }
 }
 
