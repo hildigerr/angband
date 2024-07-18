@@ -92,6 +92,7 @@ static cptr value_check(inven_type *i_ptr)
 
 /*
  * Acquire a "sense" about an item (fighters, rogues, paladins)
+ * Note that this "sense" will "pre-empt" normal "feelings".
  */
 static void sense_item(int i)
 {
@@ -102,6 +103,11 @@ static void sense_item(int i)
 
     /* Get the item */
     i_ptr = &inventory[i];
+
+    /* Mages, Priests, Rangers lose out */
+    if (p_ptr->pclass == 1) return;
+    if (p_ptr->pclass == 2) return;
+    if (p_ptr->pclass == 4) return;
 
     /* Only wearable items can be sensed */
     if (!wearable_p(i_ptr)) return;
@@ -196,13 +202,20 @@ static void sense_inventory(void)
 		sense_item(i);
 	    }
 	}
+
+	/* Do NOT do the "simpler" identification */
+	return;
     }
+
+
+    /*** Mages, Priests, Rangers ***/
 
     /* Priests use a calculation like "warriors" above */
     if (p_ptr->pclass == 2) {
 	if (randint((10000 / (lev2 + 40)) + 1) != 1) return;
     }
 
+    /* Mages/Rangers use a weird formula */
     else {
 	    if ((turn & 0xF) == 0)
 	if (randint(10 + 750 / (5 + p_ptr->lev)) != 1) return;
@@ -222,28 +235,10 @@ static void sense_inventory(void)
 	     */
 		if (wearable_p(i_ptr) &&
 		    special_check(i_ptr) &&
-		    ((p_ptr->pclass == 2 || p_ptr->pclass == 3) ?
+		    ((p_ptr->pclass == 2) ?
 		     (randint(i < 22 ? 5 : 1) == 1) :
 		     (randint(i < 22 ? 50 : 10) == 1))) {
 
-		    if (p_ptr->pclass == 0 || p_ptr->pclass == 3 ||
-			p_ptr->pclass == 5)
-			if ((i_ptr->tval == TV_SWORD) ||
-			    (i_ptr->tval == TV_HAFTED) ||
-			    (i_ptr->tval == TV_POLEARM) ||
-			    (i_ptr->tval == TV_BOW) ||
-			    (i_ptr->tval == TV_BOLT) ||
-			    (i_ptr->tval == TV_ARROW) ||
-			    (i_ptr->tval == TV_DIGGING) ||
-			    (i_ptr->tval == TV_SHOT) ||
-			    (i_ptr->tval == TV_SOFT_ARMOR) ||
-			    (i_ptr->tval == TV_HARD_ARMOR) ||
-			    (i_ptr->tval == TV_HELM) ||
-			    (i_ptr->tval == TV_BOOTS) ||
-			    (i_ptr->tval == TV_CLOAK) ||
-			    (i_ptr->tval == TV_GLOVES) ||
-			    (i_ptr->tval == TV_SHIELD))
-			    continue;
 		    (void)sprintf(tmp_str,
 			    "There's something %s about what you are %s...",
 				  special_check(i_ptr) > 0 ? "good" : "bad",
