@@ -221,10 +221,11 @@ static void sense_inventory(void)
 	if (randint(10 + 750 / (5 + p_ptr->lev)) != 1) return;
     }
 
-	    for (i = 0; i < INVEN_TOTAL; i++) {
+    /* Scan the inventory */
+    for (i = 0; i < INVEN_TOTAL; i++) {
 
-	    /* Get the object */
-	    i_ptr = &inventory[i];
+	/* Get the item */
+	i_ptr = &inventory[i];
 
 	/* Skip non-wearable items */
 	if (!wearable_p(i_ptr)) continue;
@@ -258,6 +259,7 @@ static void sense_inventory(void)
 	/* Default to normal */
 	i_f = 0;
 
+	/* Always notice cursed items (including Calris) */
 	if (cursed_p(i_ptr)) i_f = -1;
 
 	/* Sometimes an item just "feels" good */
@@ -277,9 +279,9 @@ static void sense_inventory(void)
 		    msg_print(tmp_str);
 		    if(i_f > 0) i_ptr->ident |= ID_MAGIK;
 
-    /* We have "felt" it */
-    i_ptr->ident |= ID_FELT;
-	    }
+	/* We have "felt" it */
+	i_ptr->ident |= ID_FELT;
+    }
 }
 
 
