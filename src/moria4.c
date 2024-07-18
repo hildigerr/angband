@@ -739,7 +739,7 @@ void carry(int y, int x, int pickup)
 		locn = inven_carry(i_ptr);
 		objdes(tmp_str, &inventory[locn], TRUE);
 		(void)sprintf(out_val, "You have %s. (%c)",
-			      tmp_str, locn + 'a');
+			      tmp_str, index_to_label(locn));
 		msg_print(out_val);
 		delete_object(y, x);
 		}

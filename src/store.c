@@ -1781,7 +1781,7 @@ static int store_purchase(int *cur_top)
 		/* Describe the final result */
 		objdes(tmp_str, &inventory[item_new], TRUE);
 		(void)sprintf(out_val, "You have %s (%c)",
-			      tmp_str, item_new + 'a');
+			      tmp_str, index_to_label(item_new));
 		prt(out_val, 0, 0);
 
 		check_strength();
@@ -1834,7 +1834,7 @@ static int store_purchase(int *cur_top)
 	/* Describe just the result */
 	objdes(tmp_str, &inventory[item_new], TRUE);
 	(void)sprintf(out_val, "You have %s (%c)",
-		      tmp_str, item_new + 'a');
+		      tmp_str, index_to_label(item_new));
 	prt(out_val, 0, 0);
 
 	check_strength();
@@ -2008,7 +2008,8 @@ static int store_sell(int *cur_top)
 
 	/* Describe the transaction */
 	objdes(tmp_str, &sold_obj, TRUE);	
-	(void)sprintf(out_val, "Selling %s (%c)", tmp_str, item_val + 'a');
+	(void)sprintf(out_val, "Selling %s (%c).",
+		      tmp_str, index_to_label(item_val));
 	msg_print(out_val);
 
 	/* Haggle for it */

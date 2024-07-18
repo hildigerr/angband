@@ -1363,7 +1363,7 @@ static void make_attack(int m_idx)
 			  ((i_ptr->sval <= ITEM_SINGLE_STACK_MAX) &&
 			   (i_ptr->number > 1))
 			    ? "One of y" : "Y",
-			    t1, i + 'a',
+			    t1, index_to_label(i),
 		    /* stacked group items */
 			    ((i_ptr->sval > ITEM_SINGLE_STACK_MAX) &&
 			     (i_ptr->number > 1))
@@ -1530,11 +1530,11 @@ static void make_attack(int m_idx)
 			    objdes(t1, &inventory[i], FALSE);
 			    if (chance < 3)
 				sprintf(t2, "Your %s (%c) %s disenchanted!", t1,
-					i+'a'-INVEN_WIELD,
+					index_to_label(i),
 					(inventory[i].number != 1) ? "were":"was");
 			    else
 				sprintf(t2, "Your %s (%c) %s disenchantment!", t1,
-					i+'a'-INVEN_WIELD,
+					index_to_label(i),
 					(inventory[i].number != 1) ? "resist":"resists");
 			    msg_print (t2);
 			    calc_bonuses ();

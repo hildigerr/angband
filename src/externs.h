@@ -811,6 +811,7 @@ void do_cmd_check_uniques(void);
 
 /* moria4.c */
 int is_a_vowel(int);
+int index_to_label(int);
 cptr describe_use(int);
 cptr mention_use(int);
 void monster_name(char *, struct monster_type *);

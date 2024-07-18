@@ -2363,7 +2363,7 @@ int ident_spell()
     }
     else {
 	(void)sprintf(out_val, "(%c) %s. ",
-		      item_val + 97, tmp_str);
+		      index_to_label(item_val), tmp_str);
     }
     msg_print(out_val);
 
@@ -4488,11 +4488,11 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
 				objdes(t1, &inventory[t], FALSE);
 				if (chance != 1)
 				    sprintf(t2, "Your %s (%c) %s disenchanted!", t1,
-					    i + 'a' - INVEN_WIELD,
+					    index_to_label(i),
 					    (inventory[i].number != 1) ? "were" : "was");
 				else
 				    sprintf(t2, "Your %s (%c) %s disenchantment!", t1,
-					    i + 'a' - INVEN_WIELD,
+					    index_to_label(i),
 					    (inventory[i].number != 1) ?
 					    "resist" : "resists");
 				msg_print(t2);
@@ -5014,13 +5014,13 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 				    objdes(t1, &inventory[t], FALSE);
 				    if (chance != 1)
 					sprintf(t2, "Your %s (%c) %s disenchanted!", t1,
-						i + 'a' - INVEN_WIELD,
+						index_to_label(i),
 						(inventory[i].number != 1) ?
 						"were" : "was");
 				    else
 					sprintf(t2, "Your %s (%c) %s disenchantment!",
 						t1,
-						i + 'a' - INVEN_WIELD,
+						index_to_label(i),
 						(inventory[i].number != 1) ?
 						"resist" : "resists");
 				    msg_print(t2);

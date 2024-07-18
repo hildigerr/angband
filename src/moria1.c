@@ -41,6 +41,20 @@ int is_a_vowel(int ch)
 }
 
 
+/*
+ * Convert an inventory index into a one character label
+ * Note that the label does NOT distinguish inven/equip.
+ */
+int index_to_label(int i)
+{
+    /* Indexes for "inven" are easy */
+    if (i < INVEN_WIELD) return ('a' + i);
+
+    /* Equipment always has a "constant" location */
+    return ('a' + (i - INVEN_WIELD));
+}
+
+
 
 /*
  * Return a string mentioning how a given item is carried
@@ -145,7 +159,7 @@ int show_inven(int r1, int r2, int weight, int col)
 	objdes(tmp_val, i_ptr, TRUE);
 	tmp_val[lim] = 0;  /* Truncate if too long. */
 
-	(void)sprintf(out_val[i], "  %c) %s", 'a' + i, tmp_val);
+	(void)sprintf(out_val[i], "  %c) %s", index_to_label(i), tmp_val);
 
 	/* Find the predicted "line length" */
 	l = strlen(out_val[i]);
@@ -164,7 +178,7 @@ int show_inven(int r1, int r2, int weight, int col)
 
 	    objdes(tmp_val, &inventory[i], TRUE);
 	    tmp_val[lim] = 0;	   /* Truncate if too long. */
-	    (void)sprintf(out_val[i], "  %c) %s", 'a' + i, tmp_val);
+	    (void)sprintf(out_val[i], "  %c) %s", index_to_label(i), tmp_val);
 	    l = strlen(out_val[i]);
 	    if (weight) l += 9;
 	    if (l > len) len = l;
@@ -231,7 +245,7 @@ int show_equip(int weight, int col)
 	objdes(prt2, &inventory[i], TRUE);
 	prt2[lim] = 0;	   /* Truncate if necessary */
 
-	(void)sprintf(out_val[line], "  %c) %-14s: %s", line + 'a', prt1, prt2);
+	(void)sprintf(out_val[line], "  %c) %-14s: %s", index_to_label(line), prt1, prt2);
 
 	l = strlen(out_val[line]);
 	if (weight) l += 9;
@@ -721,7 +735,7 @@ void inven_takeoff(int item_val, int posn)
 
     objdes(prt2, t_ptr, TRUE);
     if (posn >= 0)
-	(void)sprintf(out_val, "%s%s. (%c)", p, prt2, 'a' + posn);
+	(void)sprintf(out_val, "%s%s. (%c)", p, prt2, index_to_label(posn));
     else if (posn == -1)
 	(void)sprintf(out_val, "%s%s.", p, prt2);
     msg_print(out_val);
@@ -1289,7 +1303,7 @@ void inven_command(int command)
 				    item++;
 
 			    (void)sprintf(prt1, "%s %s. (%c)", string, prt2,
-					  'a' + item);
+					  index_to_label(item));
 			    msg_print(prt1);
 			/* check_str will clear the heavy flag if necessary */
 			    check_strength();

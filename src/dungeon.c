@@ -128,9 +128,7 @@ static void sense_item(int i)
     objdes(tmp_str, i_ptr, FALSE);
     (void)sprintf(out_val,
 		  "You feel the %s (%c) you are %s %s %s...",
-		  tmp_str,
-	    ((i < INVEN_WIELD) ? i + 'a' : (i + 'a' - INVEN_WIELD)),
-			  describe_use(i),
+		  tmp_str, index_to_label(i), describe_use(i),
 			  ((i_ptr->tval == TV_BOLT) ||
 			   (i_ptr->tval == TV_ARROW) ||
 			   (i_ptr->tval == TV_SHOT) ||
