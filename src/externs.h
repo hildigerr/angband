@@ -550,7 +550,6 @@ void do_command();
 
 /* dungeon.c */
 void dungeon(void);
-int special_check(inven_type *);
 void do_cmd_rerate(void);
 
 /* effects.c */

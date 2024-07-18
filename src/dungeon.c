@@ -164,7 +164,7 @@ static void sense_item(int i)
  */
 static void sense_inventory(void)
 {
-    int i, lev2, penalty = 0;
+    int i, i_f, lev2, penalty = 0;
 
     inven_type *i_ptr;
 
@@ -229,25 +229,56 @@ static void sense_inventory(void)
 	/* Skip non-wearable items */
 	if (!wearable_p(i_ptr)) continue;
 
+	/* Paranoia -- No item given */
+	if (!i_ptr->tval) continue;
+
+	/* We know about it already, do not tell us again */
+	if (i_ptr->ident & ID_FELT) continue;
+
+	if (i_ptr->ident & ID_MAGIK) continue;
+	if (store_bought_p(i_ptr)) continue;
+
+	/* It is fully known, no information needed */
+	if (known2_p(i_ptr)) continue;
+
+	/* We can only feel wearable items */
+	if (!wearable_p(i_ptr)) continue;
+
+	/* We cannot "feel" Amulets or Rings or Lites */
+	if (i_ptr->tval == TV_LITE) continue;
+	if (i_ptr->tval == TV_RING) continue;
+	if (i_ptr->tval == TV_AMULET) continue;
+
 	/* Inventory only works 1/50 the time unless you're a priest */
 	if ((i < INVEN_WIELD) && (randint((p_ptr->pclass != 2) ? 50 : 5) != 1)) continue;
 
 	/* Mages/Rangers only have a 1/10 chance of feeling */
 	if ((p_ptr->pclass != 2) && (randint(10) != 1)) continue;
 
-		if special_check(i_ptr) {
+	/* Default to normal */
+	i_f = 0;
+
+	if (cursed_p(i_ptr)) i_f = -1;
+
+	/* Sometimes an item just "feels" good */
+	else if (i_ptr->tohit>0 || i_ptr->todam>0 || i_ptr->toac>0) i_f = 1;
+
+	/* Skip "unfelt" objects */
+	if (!i_f) continue;
+
+	/* digging tools will pseudo ID, either as {good} or {average} -CFT */
+	if ((i_ptr->tval == TV_DIGGING) && (t_ptr->flags1 & TR1_TUNNEL)) i_f = 1;
 
 		    (void)sprintf(tmp_str,
 			    "There's something %s about what you are %s...",
-				  special_check(i_ptr) > 0 ? "good" : "bad",
+				  i_f > 0 ? "good" : "bad",
 				  describe_use(i));
 		    disturb(0, 0);
 		    msg_print(tmp_str);
-		    if(special_check(i_ptr) > 0) i_ptr->ident |= ID_MAGIK;
+		    if(i_f > 0) i_ptr->ident |= ID_MAGIK;
 
     /* We have "felt" it */
     i_ptr->ident |= ID_FELT;
-		}
 	    }
 }
 
@@ -1454,41 +1485,5 @@ void dungeon(void)
     while (!new_level_flag && !eof_flag);
 }
 
-
-/* Is an item an enchanted weapon or armor and we don't know?  -CJS- */
-/* returns positive if it is a good enchantment */
-/* returns negative if a bad enchantment... */
-int special_check(inven_type *t_ptr)
-{
-    if (t_ptr->tval == TV_NOTHING)
-	return 0;
-    if (known2_p(t_ptr))
-	return 0;
-    if (store_bought_p(t_ptr))
-	return 0;
-    if (t_ptr->ident & ID_MAGIK)
-	return 0;
-    if (t_ptr->ident & ID_FELT)
-	return 0;
-    if (cursed_p(t_ptr))
-	return -1;
-    if (t_ptr->tval != TV_HARD_ARMOR && t_ptr->tval != TV_SWORD &&
-	t_ptr->tval != TV_SOFT_ARMOR && t_ptr->tval != TV_SHIELD &&
-	t_ptr->tval != TV_CLOAK && t_ptr->tval != TV_GLOVES &&
-	t_ptr->tval != TV_BOOTS && t_ptr->tval != TV_HELM &&
-	t_ptr->tval != TV_DIGGING && t_ptr->tval != TV_SPIKE &&
-	t_ptr->tval != TV_SHOT && t_ptr->tval != TV_BOLT &&
-	t_ptr->tval != TV_ARROW && t_ptr->tval != TV_BOW &&
-	t_ptr->tval != TV_POLEARM && t_ptr->tval != TV_HAFTED)
-	return 0;
-    if (t_ptr->tohit > 0 || t_ptr->todam > 0 || t_ptr->toac > 0)
-	return 1;
-    if ((t_ptr->tval == TV_DIGGING) && /* digging tools will pseudo ID, either
-					  as {good} or {average} -CFT */
-	(t_ptr->flags1 & TR1_TUNNEL))
-	return 1;
-
-    return 0;
-}
 
 
