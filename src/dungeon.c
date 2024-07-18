@@ -269,12 +269,17 @@ static void sense_inventory(void)
 	/* digging tools will pseudo ID, either as {good} or {average} -CFT */
 	if ((i_ptr->tval == TV_DIGGING) && (t_ptr->flags1 & TR1_TUNNEL)) i_f = 1;
 
-		    (void)sprintf(tmp_str,
-			    "There's something %s about what you are %s...",
-				  i_f > 0 ? "good" : "bad",
-				  describe_use(i));
-		    disturb(0, 0);
-		    msg_print(tmp_str);
+	/* Disturb everything */
+	disturb(0, 0);
+
+	/* Get an object description */
+	objdes(tmp_str, i_ptr, FALSE);
+	sprintf(out_val,
+		"There's something %s about the %s (%c) you are %s...",
+		(i_f > 0 ? "good" : "bad"),
+		tmp_str, index_to_label(i), describe_use(i));
+	msg_print(tmp_str);
+
 		    if(i_f > 0) i_ptr->ident |= ID_MAGIK;
 
 	/* We have "felt" it */
