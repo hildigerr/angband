@@ -386,6 +386,10 @@ static s32b item_value_base(inven_type *i_ptr)
  * Never refuse to buy cursed items that the player does
  * not know are cursed, or he could use that to identify them
  *
+ * Missiles are only worth 5 gold per bonus point, since they
+ * usually appear in groups of 20, and we want the player to get
+ * the same amount of cash for any "equivalent" item.
+ *
  * This function returns the "value" of ONE of the item's objects.
  */
 s32b item_value(inven_type *i_ptr)
@@ -400,6 +404,17 @@ s32b item_value(inven_type *i_ptr)
 
     /* Start with the item's known base cost */
     value = i_ptr->cost;
+
+    /* Ammo -- pay extra for all three bonuses.  Hack -- 1/20 normal weapons */
+    if ((i_ptr->tval == TV_SHOT) ||
+	(i_ptr->tval == TV_SPIKE ||
+	(i_ptr->tval == TV_ARROW) ||
+	(i_ptr->tval == TV_BOLT)) {
+
+	if ((i_ptr->tohit < 0) || (i_ptr->todam < 0) || (i_ptr->toac < 0)) return (0L);
+
+	return (value + (i_ptr->tohit + i_ptr->todam + i_ptr->toac) * 5);
+    }
 
 		/* Weapons and armor	 */
     else if (((i_ptr->tval >= TV_BOW) && (i_ptr->tval <= TV_SWORD)) ||
@@ -419,21 +434,6 @@ s32b item_value(inven_type *i_ptr)
 	    else
 		value = i_ptr->cost + i_ptr->toac * 100;
 	}
-    } else if (((i_ptr->tval >= TV_SHOT) && (i_ptr->tval <= TV_ARROW))
-	       || (i_ptr->tval == TV_SPIKE)) {	/* Ammo			 */
-	    if (i_ptr->tohit < 0)
-		value = 0;
-	    else if (i_ptr->todam < 0)
-		value = 0;
-	    else if (i_ptr->toac < 0)
-		value = 0;
-	    else
-
-	    /* use 5, because missiles generally appear in groups of 20, so
-	     * 20 * 5 == 100, which is comparable to weapon bonus above 
-	     */
-		value = i_ptr->cost + (i_ptr->tohit + i_ptr->todam + i_ptr->toac) * 5;
-				/* Potions, Scrolls, and Food */
     } else if ((i_ptr->tval == TV_STAFF) || (i_ptr->tval == TV_WAND)) {
 
 	    value = i_ptr->cost + (i_ptr->cost / 20) * i_ptr->pval;
