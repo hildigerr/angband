@@ -344,7 +344,47 @@ static owner_type *ot_ptr = NULL;
 
 
 /*
+ * Return the "base value" of an item
+ * If the "sval" is "hidden", use only the "tval"
+ */
+static s32b item_value_base(inven_type *i_ptr)
+{
+    /* If the item is "known", we can use its base cost */
+    if (inven_aware_p(i_ptr)) return (k_list[i_ptr->k_idx].cost);
+
+    /* Unknown food is cheap */
+    if (i_ptr->tval == TV_FOOD) return (1L);
+
+    /* Unknown Scrolls are pretty cheap */
+    if (i_ptr->tval == TV_SCROLL1) return (20L);
+    if (i_ptr->tval == TV_SCROLL2) return (20L);
+
+    /* Unknown Potions are pretty cheap */
+    if (i_ptr->tval == TV_POTION1) return (20L);
+    if (i_ptr->tval == TV_POTION2) return (20L);
+
+    /* Unknown Rings are cheap */
+    if (i_ptr->tval == TV_RING) return (45L);
+
+    /* Unknown Amulets are cheap */
+    if (i_ptr->tval == TV_AMULET) return (45L);
+
+    /* Unknown Wands are Cheap */
+    if (i_ptr->tval == TV_WAND) return (50L);
+
+    /* Unknown Staffs are Cheap */
+    if (i_ptr->tval == TV_STAFF) return (70L);
+
+    /* Hack -- Oops */
+    return (0L);
+}
+
+
+/*
  * Returns the value for any given object -RAK-
+ *
+ * Never refuse to buy cursed items that the player does
+ * not know are cursed, or he could use that to identify them
  *
  * This function returns the "value" of ONE of the item's objects.
  */
@@ -355,15 +395,16 @@ s32b item_value(inven_type *i_ptr)
     /* Hack -- Felt cursed items are worthless */
     if ((i_ptr->ident & ID_FELT) && cursed_p(i_ptr)) return (0L);
 
+    /* Un-identified items use a "default" price */
+    if (!known2_p(i_ptr)) return (item_value_base(i_ptr));
+
     /* Start with the item's known base cost */
     value = i_ptr->cost;
 
 		/* Weapons and armor	 */
     else if (((i_ptr->tval >= TV_BOW) && (i_ptr->tval <= TV_SWORD)) ||
 	     ((i_ptr->tval >= TV_BOOTS) && (i_ptr->tval <= TV_DRAG_ARMOR))) {
-	if (!known2_p(i_ptr))
-	    value = k_list[i_ptr->k_idx].cost;
-	else if ((i_ptr->tval >= TV_BOW) && (i_ptr->tval <= TV_SWORD)) {
+	if ((i_ptr->tval >= TV_BOW) && (i_ptr->tval <= TV_SWORD)) {
 	    if (i_ptr->tohit < 0)
 		value = 0;
 	    else if (i_ptr->todam < 0)
@@ -380,9 +421,6 @@ s32b item_value(inven_type *i_ptr)
 	}
     } else if (((i_ptr->tval >= TV_SHOT) && (i_ptr->tval <= TV_ARROW))
 	       || (i_ptr->tval == TV_SPIKE)) {	/* Ammo			 */
-	if (!known2_p(i_ptr))
-	    value = k_list[i_ptr->k_idx].cost;
-	else {
 	    if (i_ptr->tohit < 0)
 		value = 0;
 	    else if (i_ptr->todam < 0)
@@ -395,43 +433,13 @@ s32b item_value(inven_type *i_ptr)
 	     * 20 * 5 == 100, which is comparable to weapon bonus above 
 	     */
 		value = i_ptr->cost + (i_ptr->tohit + i_ptr->todam + i_ptr->toac) * 5;
-	}
 				/* Potions, Scrolls, and Food */
-    } else if ((i_ptr->tval == TV_SCROLL1) || (i_ptr->tval == TV_SCROLL2) ||
-	       (i_ptr->tval == TV_POTION1) || (i_ptr->tval == TV_POTION2)) {
-	if (!inven_aware_p(i_ptr))
-	    value = 20;
-    } else if (i_ptr->tval == TV_FOOD) {
-	if ((i_ptr->sval < (ITEM_SINGLE_STACK_MIN + MAX_SHROOM))
-	    && !inven_aware_p(i_ptr))
-	    value = 1;
-				/* Rings and amulets */
-    } else if ((i_ptr->tval == TV_AMULET) || (i_ptr->tval == TV_RING)) {
-	/* player does not know what type of ring/amulet this is */
-	if (!inven_aware_p(i_ptr))
-	    value = 45;
-	else if (!known2_p(i_ptr))
-	/* player knows what type of ring, but does not know whether it is
-	 * cursed or not, if refuse to buy cursed objects here, then player
-	 * can use this to 'identify' cursed objects 
-	 */
-	    value = k_list[i_ptr->k_idx].cost;
-				/* Wands and staffs */
     } else if ((i_ptr->tval == TV_STAFF) || (i_ptr->tval == TV_WAND)) {
-	if (!inven_aware_p(i_ptr)) {
 
-	    if (i_ptr->tval == TV_WAND)
-		value = 50;
-	    else
-		value = 70;
-	} else if (known2_p(i_ptr))
 	    value = i_ptr->cost + (i_ptr->cost / 20) * i_ptr->pval;
     }
 				/* picks and shovels */
     else if (i_ptr->tval == TV_DIGGING) {
-	if (!known2_p(i_ptr))
-	    value = k_list[i_ptr->k_idx].cost;
-	else {
 	    if (i_ptr->pval < 0)
 		value = 0;
 	    else {
@@ -444,7 +452,6 @@ s32b item_value(inven_type *i_ptr)
 		if (value < 0)
 		    value = 0;
 	    }
-	}
     }
 
     /* Return the value */
