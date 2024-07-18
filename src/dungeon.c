@@ -223,21 +223,19 @@ static void sense_inventory(void)
 
 	    for (i = 0; i < INVEN_TOTAL; i++) {
 
-		if (i == inven_ctr) i = 22;
-
 	    /* Get the object */
 	    i_ptr = &inventory[i];
 
-	    /*
-	     * if in inventory, succeed 1 out of 50 times, if in equipment
-	     * list, success 1 out of 10 times, unless you're a priest or
-	     * rogue... 
-	     */
-		if (wearable_p(i_ptr) &&
-		    special_check(i_ptr) &&
-		    ((p_ptr->pclass == 2) ?
-		     (randint(i < 22 ? 5 : 1) == 1) :
-		     (randint(i < 22 ? 50 : 10) == 1))) {
+	/* Skip non-wearable items */
+	if (!wearable_p(i_ptr)) continue;
+
+	/* Inventory only works 1/50 the time unless you're a priest */
+	if ((i < INVEN_WIELD) && (randint((p_ptr->pclass != 2) ? 50 : 5) != 1)) continue;
+
+	/* Mages/Rangers only have a 1/10 chance of feeling */
+	if ((p_ptr->pclass != 2) && (randint(10) != 1)) continue;
+
+		if special_check(i_ptr) {
 
 		    (void)sprintf(tmp_str,
 			    "There's something %s about what you are %s...",
