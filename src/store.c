@@ -386,6 +386,7 @@ static s32b item_value_base(inven_type *i_ptr)
  * Never refuse to buy cursed items that the player does
  * not know are cursed, or he could use that to identify them
  *
+ * Wand and staffs get an extra 5% of base cost per charge
  * Missiles are only worth 5 gold per bonus point, since they
  * usually appear in groups of 20, and we want the player to get
  * the same amount of cash for any "equivalent" item.
@@ -404,6 +405,16 @@ s32b item_value(inven_type *i_ptr)
 
     /* Start with the item's known base cost */
     value = i_ptr->cost;
+
+    /* Unknown Wands are Cheap.  Pay extra for identified charges */
+    if (i_ptr->tval == TV_WAND) {
+	return (value + ((value / 20) * i_ptr->pval));
+    }
+
+    /* Unknown Staffs are Cheap.  Pay extra for identified charges */
+    if (i_ptr->tval == TV_STAFF) {
+	return (value + ((value / 20) * i_ptr->pval));
+    }
 
     /* Ammo -- pay extra for all three bonuses.  Hack -- 1/20 normal weapons */
     if ((i_ptr->tval == TV_SHOT) ||
@@ -434,9 +445,6 @@ s32b item_value(inven_type *i_ptr)
 	    else
 		value = i_ptr->cost + i_ptr->toac * 100;
 	}
-    } else if ((i_ptr->tval == TV_STAFF) || (i_ptr->tval == TV_WAND)) {
-
-	    value = i_ptr->cost + (i_ptr->cost / 20) * i_ptr->pval;
     }
 				/* picks and shovels */
     else if (i_ptr->tval == TV_DIGGING) {
