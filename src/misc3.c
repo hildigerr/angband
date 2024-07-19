@@ -2453,8 +2453,8 @@ void place_object(int y, int x)
  */
 void place_good(int y, int x, u32b good)
 {
-    register int cur_pos, tmp;
-    int          tv, is_good = FALSE;
+    register int cur_pos, k_idx;
+    int          tv, sv, is_good = FALSE;
     cave_type *c_ptr;
 
     /* Do not hurt artifacts, stairs, store doors */
@@ -2477,10 +2477,11 @@ void place_good(int y, int x, u32b good)
     do {
 
 	/* Pick a random object, based on "object_level" */
-	tmp = get_obj_num((object_level + 10), TRUE);
+	k_idx = get_obj_num((object_level + 10), TRUE);
 
 	/* Examine the object */
-	tv = k_list[sorted_objects[tmp]].tval;
+	tv = k_list[sorted_objects[k_idx]].tval;
+	sv = k_list[sorted_objects[k_idx]].sval;
 
 	if ((tv == TV_HELM) || (tv == TV_SHIELD) ||
 	    (tv == TV_CLOAK) || (tv == TV_HAFTED) || (tv == TV_POLEARM) ||
@@ -2490,29 +2491,29 @@ void place_good(int y, int x, u32b good)
 	}
 
 	if ((tv == TV_SWORD) &&
-	    strncmp("& Broken", k_list[sorted_objects[tmp]].name, 8))
+	    strncmp("& Broken", k_list[sorted_objects[k_idx]].name, 8))
 	    is_good = TRUE;	   /* broken swords/daggers are NOT good!
 				    * -CFT */
 	if ((tv == TV_HARD_ARMOR) &&
-	    strncmp("Rusty", k_list[sorted_objects[tmp]].name, 5))
+	    strncmp("Rusty", k_list[sorted_objects[k_idx]].name, 5))
 	    is_good = TRUE;	   /* rusty chainmail is NOT good! -CFT */
 	if ((tv == TV_SOFT_ARMOR) &&
-	 stricmp("some filthy rags", k_list[sorted_objects[tmp]].name))
+	 stricmp("some filthy rags", k_list[sorted_objects[k_idx]].name))
 	    is_good = TRUE;	   /* nor are rags! -CFT */
 	if ((tv == TV_MAGIC_BOOK) &&	/* if book, good must be one of the
 					 * deeper, special must be Raal's */
-	    (k_list[sorted_objects[tmp]].sval >= ((good & MF2_SPECIAL) ? (SV_BOOK + 8) : (SV_BOOK + 4))))
+	    (sv >= ((good & MF2_SPECIAL) ? (SV_BOOK + 8) : (SV_BOOK + 4))))
 	    is_good = TRUE;
 	if ((tv == TV_PRAYER_BOOK) &&	/* if book, good must be one of the
 					 * deeper, special must be Wrath of
 					 * God */
-	    (k_list[sorted_objects[tmp]].sval >= ((good & MF2_SPECIAL) ? (SV_BOOK + 8) : (SV_BOOK + 4))))
+	    (sv >= ((good & MF2_SPECIAL) ? (SV_BOOK + 8) : (SV_BOOK + 4))))
 	    is_good = TRUE;
     } while (!is_good);
-    invcopy(&i_list[cur_pos], sorted_objects[tmp]);
+    invcopy(&i_list[cur_pos], sorted_objects[k_idx]);
     apply_magic(&i_list[cur_pos], object_level, TRUE, (good & MF2_SPECIAL), 0);
     if (peek) {
-	if (k_list[sorted_objects[tmp]].level > object_level) {
+	if (k_list[sorted_objects[k_idx]].level > object_level) {
 	    char                buf[200];
 	    byte               t;
 
