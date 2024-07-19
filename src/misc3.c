@@ -2501,15 +2501,10 @@ void place_good(int y, int x, u32b good)
 	    break;
 	}
 
-	if ((tv == TV_MAGIC_BOOK) &&	/* if book, good must be one of the
-					 * deeper, special must be Raal's */
-	    (sv >= ((good & MF2_SPECIAL) ? (SV_BOOK + 8) : (SV_BOOK + 4))))
+	if (((tv == TV_MAGIC_BOOK) || (tv == TV_PRAYER_BOOK)) &&
+	     (sv >= ((good & MF2_SPECIAL) ? (SV_BOOK + 8) : (SV_BOOK + 4)))) {
 	    break;
-	if ((tv == TV_PRAYER_BOOK) &&	/* if book, good must be one of the
-					 * deeper, special must be Wrath of
-					 * God */
-	    (sv >= ((good & MF2_SPECIAL) ? (SV_BOOK + 8) : (SV_BOOK + 4))))
-	    break;
+	}
     }
     invcopy(&i_list[cur_pos], sorted_objects[k_idx]);
     apply_magic(&i_list[cur_pos], object_level, TRUE, (good & MF2_SPECIAL), 0);
