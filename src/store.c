@@ -388,6 +388,7 @@ static s32b item_value_base(inven_type *i_ptr)
  *
  * Wand and staffs get an extra 5% of base cost per charge
  * Armor is worth an extra 100 gold per bonus point to armor class.
+ * Weapons are worth an extra 100 gold per bonus point (AC,TH,TD).
  * Missiles are only worth 5 gold per bonus point, since they
  * usually appear in groups of 20, and we want the player to get
  * the same amount of cash for any "equivalent" item.
@@ -440,6 +441,15 @@ s32b item_value(inven_type *i_ptr)
     return (value + i_ptr->pval);
     }
 
+    /* Weapons -- pay extra for all three bonuses */
+    if ((i_ptr->tval == TV_HAFTED) ||
+	(i_ptr->tval == TV_SWORD) || (i_ptr->tval == TV_POLEARM)) {
+
+	if ((i_ptr->tohit < 0) || (i_ptr->todam < 0) || (i_ptr->toac < 0)) return (0L);
+
+	return (value + (i_ptr->tohit + i_ptr->todam + i_ptr->toac) * 100L);
+    }
+
     /* Bows -- pay extra for all three bonuses */
     if (i_ptr->tval == TV_BOW) {
 
@@ -457,18 +467,6 @@ s32b item_value(inven_type *i_ptr)
 	if ((i_ptr->tohit < 0) || (i_ptr->todam < 0) || (i_ptr->toac < 0)) return (0L);
 
 	return (value + (i_ptr->tohit + i_ptr->todam + i_ptr->toac) * 5);
-    }
-
-		/* Weapons and armor	 */
-    else if (((i_ptr->tval > TV_BOW) && (i_ptr->tval <= TV_SWORD)) ) {
-	    if (i_ptr->tohit < 0)
-		value = 0;
-	    else if (i_ptr->todam < 0)
-		value = 0;
-	    else if (i_ptr->toac < 0)
-		value = 0;
-	    else
-		value = i_ptr->cost + (i_ptr->tohit + i_ptr->todam + i_ptr->toac) * 100;
     }
 
     /* Return the value */
