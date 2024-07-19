@@ -2454,7 +2454,7 @@ void place_object(int y, int x)
 void place_good(int y, int x, u32b good)
 {
     register int cur_pos, k_idx;
-    int          tv, sv, is_good = FALSE;
+    int          tv, sv;
     cave_type *c_ptr;
 
     /* Do not hurt artifacts, stairs, store doors */
@@ -2474,7 +2474,7 @@ void place_good(int y, int x, u32b good)
 
     cur_pos = i_pop();
     c_ptr->i_idx = cur_pos;
-    do {
+    while (1) {
 
 	/* Pick a random object, based on "object_level" */
 	k_idx = get_obj_num((object_level + 10), TRUE);
@@ -2498,19 +2498,19 @@ void place_good(int y, int x, u32b good)
 	    (tv == TV_BOW) || (tv == TV_BOLT) || (tv == TV_ARROW) ||
 	    (tv == TV_HARD_ARMOR) || (tv == TV_SOFT_ARMOR) ||
 	    (tv == TV_DRAG_ARMOR) || (tv == TV_BOOTS) || (tv == TV_GLOVES)) {
-	    is_good = TRUE;
+	    break;
 	}
 
 	if ((tv == TV_MAGIC_BOOK) &&	/* if book, good must be one of the
 					 * deeper, special must be Raal's */
 	    (sv >= ((good & MF2_SPECIAL) ? (SV_BOOK + 8) : (SV_BOOK + 4))))
-	    is_good = TRUE;
+	    break;
 	if ((tv == TV_PRAYER_BOOK) &&	/* if book, good must be one of the
 					 * deeper, special must be Wrath of
 					 * God */
 	    (sv >= ((good & MF2_SPECIAL) ? (SV_BOOK + 8) : (SV_BOOK + 4))))
-	    is_good = TRUE;
-    } while (!is_good);
+	    break;
+    }
     invcopy(&i_list[cur_pos], sorted_objects[k_idx]);
     apply_magic(&i_list[cur_pos], object_level, TRUE, (good & MF2_SPECIAL), 0);
     if (peek) {
