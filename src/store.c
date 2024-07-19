@@ -434,6 +434,14 @@ s32b item_value(inven_type *i_ptr)
 	return (value + (i_ptr->toac * 100));
     }
 
+    /* Bows -- pay extra for all three bonuses */
+    if (i_ptr->tval == TV_BOW) {
+
+	if (i_ptr->tohit < 0) || (i_ptr->todam < 0) || (i_ptr->toac < 0) return (0L);
+
+	return (value + (i_ptr->tohit + i_ptr->todam + i_ptr->toac) * 100L);
+    }
+
     /* Ammo -- pay extra for all three bonuses.  Hack -- 1/20 normal weapons */
     if ((i_ptr->tval == TV_SHOT) ||
 	(i_ptr->tval == TV_SPIKE ||
@@ -446,7 +454,7 @@ s32b item_value(inven_type *i_ptr)
     }
 
 		/* Weapons and armor	 */
-    else if (((i_ptr->tval >= TV_BOW) && (i_ptr->tval <= TV_SWORD)) ) {
+    else if (((i_ptr->tval > TV_BOW) && (i_ptr->tval <= TV_SWORD)) ) {
 	    if (i_ptr->tohit < 0)
 		value = 0;
 	    else if (i_ptr->todam < 0)
