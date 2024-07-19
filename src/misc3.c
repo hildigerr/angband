@@ -2483,23 +2483,24 @@ void place_good(int y, int x, u32b good)
 	tv = k_list[sorted_objects[k_idx]].tval;
 	sv = k_list[sorted_objects[k_idx]].sval;
 
+	/* Rusty Chainmail is not good */
+	if ((tv == TV_HARD_ARMOR) && (sv == SV_RUSTY_CHAIN_MAIL)) continue;
+
+	/* Filthy Rags are not good */
+	if ((tv == TV_SOFT_ARMOR) && (sv == SV_FILTHY_RAG)) continue;
+
+	/* Broken daggers/swords are not good */
+	if ((tv == TV_SWORD) && (sv == SV_BROKEN_DAGGER)) continue;
+	if ((tv == TV_SWORD) && (sv == SV_BROKEN_SWORD)) continue;
+
 	if ((tv == TV_HELM) || (tv == TV_SHIELD) ||
-	    (tv == TV_CLOAK) || (tv == TV_HAFTED) || (tv == TV_POLEARM) ||
+	    (tv == TV_CLOAK) || (tv == TV_SWORD) || (tv == TV_HAFTED) || (tv == TV_POLEARM) ||
 	    (tv == TV_BOW) || (tv == TV_BOLT) || (tv == TV_ARROW) ||
+	    (tv == TV_HARD_ARMOR) || (tv == TV_SOFT_ARMOR) ||
 	    (tv == TV_DRAG_ARMOR) || (tv == TV_BOOTS) || (tv == TV_GLOVES)) {
 	    is_good = TRUE;
 	}
 
-	if ((tv == TV_SWORD) &&
-	    strncmp("& Broken", k_list[sorted_objects[k_idx]].name, 8))
-	    is_good = TRUE;	   /* broken swords/daggers are NOT good!
-				    * -CFT */
-	if ((tv == TV_HARD_ARMOR) &&
-	    strncmp("Rusty", k_list[sorted_objects[k_idx]].name, 5))
-	    is_good = TRUE;	   /* rusty chainmail is NOT good! -CFT */
-	if ((tv == TV_SOFT_ARMOR) &&
-	 stricmp("some filthy rags", k_list[sorted_objects[k_idx]].name))
-	    is_good = TRUE;	   /* nor are rags! -CFT */
 	if ((tv == TV_MAGIC_BOOK) &&	/* if book, good must be one of the
 					 * deeper, special must be Raal's */
 	    (sv >= ((good & MF2_SPECIAL) ? (SV_BOOK + 8) : (SV_BOOK + 4))))
