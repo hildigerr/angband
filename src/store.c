@@ -434,6 +434,12 @@ s32b item_value(inven_type *i_ptr)
 	return (value + (i_ptr->toac * 100));
     }
 
+    /* Picks and Shovels */
+    if (i_ptr->tval == TV_DIGGING) {
+    if (i_ptr->pval < 0) return (0L);
+    return (value + i_ptr->pval);
+    }
+
     /* Bows -- pay extra for all three bonuses */
     if (i_ptr->tval == TV_BOW) {
 
@@ -463,21 +469,6 @@ s32b item_value(inven_type *i_ptr)
 		value = 0;
 	    else
 		value = i_ptr->cost + (i_ptr->tohit + i_ptr->todam + i_ptr->toac) * 100;
-    }
-				/* picks and shovels */
-    else if (i_ptr->tval == TV_DIGGING) {
-	    if (i_ptr->pval < 0)
-		value = 0;
-	    else {
-
-	    /* some digging tools start with non-zero pval values, so only
-	     * multiply the plusses by 100, make sure result is positive 
-	     * no longer; have adjusted costs in treasure.c -CWS
-	     */
-		value = i_ptr->cost + i_ptr->pval;
-		if (value < 0)
-		    value = 0;
-	    }
     }
 
     /* Return the value */
