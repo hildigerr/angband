@@ -2464,16 +2464,12 @@ void place_good(int y, int x, u32b good)
     /* Get the grid */
     c_ptr = &cave[y][x];
 
-    /* Delete anything already there */
-    delete_object(y, x);
 
     /* Hack -- much higher chance of doing "Special Objects" */
     if (randint(10) == 1) {
 	if (special_place_object(y, x) == (-1)) return;
     }
 
-    cur_pos = i_pop();
-    c_ptr->i_idx = cur_pos;
     while (1) {
 
 	/* Pick a random object, based on "object_level" */
@@ -2506,7 +2502,18 @@ void place_good(int y, int x, u32b good)
 	    break;
 	}
     }
+
+
+    /* Delete anything already there */
+    delete_object(y, x);
+
+    /* Make a new object, drop into dungeon */
+    cur_pos = i_pop();
     invcopy(&i_list[cur_pos], sorted_objects[k_idx]);
+
+    /* Drop it into the dungeon */
+    c_ptr->i_idx = cur_pos;
+
     apply_magic(&i_list[cur_pos], object_level, TRUE, (good & MF2_SPECIAL), 0);
     if (peek) {
 	if (k_list[sorted_objects[k_idx]].level > object_level) {
