@@ -2455,6 +2455,8 @@ void place_object(int y, int x)
  * Really only called when MF2_GOOD monster dies, or scroll of
  * acquirement read, or "vault" is constructed.  Perhaps the
  * normal "place_object()" should occasionally call us...
+ *
+ * This routine uses "object_level" for the "generation level".
  */
 void place_good(int y, int x, bool great)
 {
@@ -2475,6 +2477,8 @@ void place_good(int y, int x, bool great)
 	if (special_place_object(y, x) == (-1)) return;
     }
 
+
+    /* Pick a good "base object" */
     while (1) {
 
 	/* Pick a random object, based on "object_level" */
@@ -2494,14 +2498,16 @@ void place_good(int y, int x, bool great)
 	if ((tv == TV_SWORD) && (sv == SV_BROKEN_DAGGER)) continue;
 	if ((tv == TV_SWORD) && (sv == SV_BROKEN_SWORD)) continue;
 
-	if ((tv == TV_HELM) || (tv == TV_SHIELD) ||
-	    (tv == TV_CLOAK) || (tv == TV_SWORD) || (tv == TV_HAFTED) || (tv == TV_POLEARM) ||
+	/* Normal weapons/armour are okay (except "shots" or "shovels") */
+	if ((tv == TV_HELM) || (tv == TV_SHIELD) || (tv == TV_CLOAK) ||
+	    (tv == TV_SWORD) || (tv == TV_HAFTED) || (tv == TV_POLEARM) ||
 	    (tv == TV_BOW) || (tv == TV_BOLT) || (tv == TV_ARROW) ||
 	    (tv == TV_HARD_ARMOR) || (tv == TV_SOFT_ARMOR) ||
 	    (tv == TV_DRAG_ARMOR) || (tv == TV_BOOTS) || (tv == TV_GLOVES)) {
 	    break;
 	}
 
+	/* XXX Hack -- High spell books are good.  Highest is great. */
 	if (((tv == TV_MAGIC_BOOK) || (tv == TV_PRAYER_BOOK)) &&
 	     (sv >= (great ? (SV_BOOK + 8) : (SV_BOOK + 4)))) {
 	    break;
@@ -2519,7 +2525,10 @@ void place_good(int y, int x, bool great)
     /* Drop it into the dungeon */
     c_ptr->i_idx = cur_pos;
 
+    /* Apply some good magic to the item.  Make a great item if requested. */
     apply_magic(&i_list[cur_pos], object_level, TRUE, great, 0);
+
+	/* Hack -- look at it */
     if (peek) {
 	if (k_list[sorted_objects[k_idx]].level > object_level) {
 	    char                buf[200];
