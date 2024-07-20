@@ -26,13 +26,10 @@ static int inven_damage(inven_func typ, int perc)
 	if ((*typ) (&inventory[i]) && (randint(100) < perc)) {
 	    objdes(tmp_str, &inventory[i], FALSE);
 	    sprintf(out_val, "%sour %s (%c) %s destroyed!",
-		    ((inventory[i].sval <= ITEM_SINGLE_STACK_MAX) &&
-		     (inventory[i].number > 1))	/* stacked single items */
-		    ? "One of y" : "Y",
+		    ((inventory[i].number > 1) ? 
+		    "One of y" : "Y"),
 		    tmp_str, index_to_label(i),
-		    ((inventory[i].sval > ITEM_SINGLE_STACK_MAX) &&
-		     (inventory[i].number > 1))	/* stacked group items */
-		    ? "were" : "was");
+		    ((inventory[i].number > 1) ? "were" : "was"));
 	    msg_print(out_val);
 
 		inven_item_increase(i,-1);

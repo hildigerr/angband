@@ -1360,14 +1360,10 @@ static void make_attack(int m_idx)
 
 		    /* stacked single items */
 		    sprintf(t2, "%sour %s (%c) %s stolen!",
-			  ((i_ptr->sval <= ITEM_SINGLE_STACK_MAX) &&
-			   (i_ptr->number > 1))
-			    ? "One of y" : "Y",
+			    ((i_ptr->number > 1) ? 
+			    "One of y" : "Y"),
 			    t1, index_to_label(i),
-		    /* stacked group items */
-			    ((i_ptr->sval > ITEM_SINGLE_STACK_MAX) &&
-			     (i_ptr->number > 1))
-			    ? "were" : "was");
+			    ((amt > 1) ? "were" : "was"));
 		    msg_print(t2);
 
 		    /* Steal the items */

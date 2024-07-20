@@ -929,6 +929,7 @@ static void store_item_optimize(int item_val)
 
 /*
  * Attempt to delete (some of) a random item from the store
+ * Hack -- we attempt to "maintain" piles of items when possible.
  */
 static void store_delete(void)
 {
@@ -937,14 +938,14 @@ static void store_delete(void)
     /* Pick a random slot */
     what = rand_int(st_ptr->store_ctr);
 
-    /* for single stackable objects, only destroy one half on average, this will
-     * help ensure that general store and alchemist have reasonable selection of
-     * objects */
-    if ((i_ptr->sval >= ITEM_SINGLE_STACK_MIN) && (i_ptr->sval <= ITEM_SINGLE_STACK_MAX)) {
-    num = randint(st_ptr->store_item[what].number);
-    }
-    else
+    /* Determine how many items are here */
     num = st_ptr->store_item[what].number;
+
+    /* Hack -- sometimes, only destroy half the items */
+    if (rand_int(100) < 50) num = (num + 1) / 2;
+
+    /* Hack -- sometimes, only destroy a single item */
+    if (rand_int(100) < 50) num = 1;
 
     /* Actually destroy (part of) the item */
     store_item_increase(what, -num);
@@ -1113,7 +1114,6 @@ static void display_entry(int pos)
     register int         i;
     register inven_type *i_ptr;
     bigvtype             out_val1, out_val2;
-    s32b                x;
 
     /* Get the item */
     i_ptr = &st_ptr->store_item[pos];
@@ -1121,14 +1121,7 @@ static void display_entry(int pos)
     /* Get the "offset" */
     i = (pos % 12);
 
-	x = i_ptr->number;
-	if (store_num != 7) {
-	    if ((i_ptr->sval >= ITEM_SINGLE_STACK_MIN)
-		&& (i_ptr->sval <= ITEM_SINGLE_STACK_MAX))
-		i_ptr->number = 1;
-	}
 	objdes(out_val1, i_ptr, TRUE);
-	i_ptr->number = x;
 	(void)sprintf(out_val2, "%c) %s", 'a' + i, out_val1);
 	prt(out_val2, i + 5, 0);
 	if (store_num != 7) {

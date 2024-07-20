@@ -531,14 +531,6 @@
 #define CD_ORC          0x8000
 
 
-/* these items always stack with others of same sval, always treated as
- * single objects, must be power of 2
- */
-
-#define ITEM_SINGLE_STACK_MIN   64
-#define ITEM_SINGLE_STACK_MAX   192     /* see NOTE below */
-
-
 /* these items stack with others only if have same sval and same pval,
  * they are treated as a group for wielding, etc.
  */

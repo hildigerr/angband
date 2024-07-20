@@ -1263,9 +1263,8 @@ void inven_command(int command)
 			    i_ptr = &tmp_obj;
 
 			    wear_high--;
-			/* Fix for torches	   */
-			    if (i_ptr->number > 1
-				&& i_ptr->sval <= ITEM_SINGLE_STACK_MAX) {
+			/* Fix for stacks	   */
+			    if (i_ptr->number > 1) {
 				i_ptr->number = 1;
 				wear_high++;
 			    }
