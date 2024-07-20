@@ -2450,8 +2450,13 @@ void place_object(int y, int x)
 
 /*
  * Places a "GOOD" object at given row, column co-ordinate ~Ludwig 
+ * If "great" is TRUE, place a "GREAT" object
+ *
+ * Really only called when MF2_GOOD monster dies, or scroll of
+ * acquirement read, or "vault" is constructed.  Perhaps the
+ * normal "place_object()" should occasionally call us...
  */
-void place_good(int y, int x, u32b good)
+void place_good(int y, int x, bool great)
 {
     register int cur_pos, k_idx;
     int          tv, sv;
@@ -2498,7 +2503,7 @@ void place_good(int y, int x, u32b good)
 	}
 
 	if (((tv == TV_MAGIC_BOOK) || (tv == TV_PRAYER_BOOK)) &&
-	     (sv >= ((good & MF2_SPECIAL) ? (SV_BOOK + 8) : (SV_BOOK + 4)))) {
+	     (sv >= (great ? (SV_BOOK + 8) : (SV_BOOK + 4)))) {
 	    break;
 	}
     }
@@ -2514,7 +2519,7 @@ void place_good(int y, int x, u32b good)
     /* Drop it into the dungeon */
     c_ptr->i_idx = cur_pos;
 
-    apply_magic(&i_list[cur_pos], object_level, TRUE, (good & MF2_SPECIAL), 0);
+    apply_magic(&i_list[cur_pos], object_level, TRUE, great, 0);
     if (peek) {
 	if (k_list[sorted_objects[k_idx]].level > object_level) {
 	    char                buf[200];
@@ -2603,9 +2608,9 @@ void special_random_object(int y, int x, int num)
 	    /* Perhaps attempt to place a "Special Object" */
 	    if (randint(5) == 1) {
 		if (!special_place_object(j, k))
-			place_good(j, k, MF2_SPECIAL);
+			place_good(j, k, TRUE);
 		} else {
-		    place_good(j, k, MF2_SPECIAL);
+		    place_good(j, k, TRUE);
 		}
 		i = 9;
 	}

@@ -1774,7 +1774,7 @@ static void build_type5(int yval, int xval)
 		place_monster(y1, x1,
 			      get_nmons_num(dun_level + MON_SUMMON_ADJ + 7),
 			      TRUE);
-		place_good(y1, x1, 1);
+		place_good(y1, x1, FALSE);
 		c_ptr->lr = TRUE;
 		break;
 
@@ -1785,7 +1785,7 @@ static void build_type5(int yval, int xval)
 			      get_nmons_num(dun_level + MON_SUMMON_ADJ + 40),
 			      TRUE);
 		object_level = dun_level + MON_SUMMON_ADJ + 20;
-		place_good(y1, x1, MF2_SPECIAL);
+		place_good(y1, x1, TRUE);
 		object_level = dun_level + 7;
 		c_ptr->lr = TRUE;
 		break;

@@ -753,7 +753,7 @@ int player_saves(void);
 int find_range(int, int, int *, int *);
 void teleport(int);
 void check_view(void);
-void place_good(int, int, u32b);
+void place_good(int, int, bool);
 int place_ghost(void);
 void prt_cut(void);
 void prt_stun(void);

@@ -1417,7 +1417,7 @@ void do_cmd_read_scroll(void)
 	    break;
 
 	  case 43:
-	    place_good(char_row, char_col, MF2_SPECIAL);
+	    place_good(char_row, char_col, TRUE);
 	    prt_map();
 	    ident = TRUE;
 	    break;
