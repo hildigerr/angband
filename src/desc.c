@@ -607,7 +607,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
     int power, indexx, pval_use, modify, append_name;
 
     /* Hack -- Extract the sub-type "indexx" */
-    indexx = i_ptr->sval & (ITEM_SINGLE_STACK_MIN - 1);
+    indexx = i_ptr->sval & ITEM_SUBVAL_MASK;
 
     /* Extract the (default) "base name" */
     basenm = k_list[i_ptr->k_idx].name;

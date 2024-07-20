@@ -471,6 +471,12 @@
 #define MAX_STACK_SIZE			100
 
 
+/*
+ * The "sval" mask, used for assigning "flavors"
+ */
+#define ITEM_SUBVAL_MASK (64 - 1)
+
+
 #define TR_EGO_WEAPON   0x0007E000L
 
 
