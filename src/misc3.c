@@ -2347,7 +2347,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
  * XXX Mega-Hack -- attempt to place one of the "Special Objects"
  *
  */
-int special_place_object(int y, int x)
+static int special_place_object(int y, int x)
 {
     register int	cur_pos;
     cave_type		*c_ptr;
@@ -2390,7 +2390,8 @@ int special_place_object(int y, int x)
 	msg_print("You feel something roll beneath your feet.");
     }
 
-    return (-1);
+    /* Success */
+    return TRUE;
 }
 
 
@@ -2413,8 +2414,7 @@ void place_object(int y, int x)
     delete_object(y, x);
     
     if (randint(MAX_K_IDX)>OBJ_SPECIAL && randint(10)==1)
-	if (special_place_object(y,x)==(-1))
-	    return;
+	if (special_place_object(y, x)) return;
 
     /* Make it */
     cur_pos = i_pop();
@@ -2474,7 +2474,7 @@ void place_good(int y, int x, bool great)
 
     /* Hack -- much higher chance of doing "Special Objects" */
     if (randint(10) == 1) {
-	if (special_place_object(y, x) == (-1)) return;
+	if (special_place_object(y, x)) return;
     }
 
 
