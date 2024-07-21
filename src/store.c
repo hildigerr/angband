@@ -803,7 +803,7 @@ static bool store_will_buy(inven_type *i_ptr)
 static int store_carry(inven_type *i_ptr)
 {
     int                 slot;
-    s32b               value, scost = 0L;
+    s32b               value, j_value, scost = 0L;
     register int		i;
     register inven_type *j_ptr;
 
@@ -857,12 +857,19 @@ static int store_carry(inven_type *i_ptr)
 	/* Get that item */
 	j_ptr = &st_ptr->store_item[slot];
 
-		if ((i_ptr->tval > j_ptr->tval) || /* sort by desc tval, */
-		    ((i_ptr->tval == j_ptr->tval) &&
-		     ((i_ptr->level < j_ptr->level) || /* then by inc level, */
-		      ((i_ptr->level == j_ptr->level) &&
-		       (i_ptr->sval < j_ptr->sval))))) /* and finally by inc sval -CFT */
-		{		/* Insert into list             */
+	/* Objects sort by decreasing type */
+	if (i_ptr->tval > j_ptr->tval) break;
+	if (i_ptr->tval < j_ptr->tval) continue;
+
+	/* Objects sort by increasing sval */
+	if (i_ptr->sval < j_ptr->sval) break;
+	if (i_ptr->sval > j_ptr->sval) continue;
+
+	/* Objects sort by decreasing value */
+	j_value = store_item_value(j_ptr);
+	if (value > j_value) break;
+	if (value < j_value) continue;
+    }
 
     /* Slide the others up */
     for (i = st_ptr->store_ctr; i > slot; i--) {
@@ -877,10 +884,6 @@ static int store_carry(inven_type *i_ptr)
 
     /* Save the "scost" */
     st_ptr->store_item[slot].scost = scost;
-
-		}
-
-	    }
 
     /* Return the location */
     return (slot);
