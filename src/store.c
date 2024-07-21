@@ -809,13 +809,11 @@ static int home_carry(inven_type *i_ptr)
 	/* Get the existing item */
 	j_ptr = &st_ptr->store_item[slot];
 
-	/* Can the existing items be incremented? */
+	/* The home acts just like the player */
 	if (store_item_similar(j_ptr, i_ptr)) {
 
-	    int total = j_ptr->number + i_ptr->number;
-	    
-	    /* Hack -- extra items disappear */
-	    j_ptr->number = (total > 99) ? 99 : total;
+	    /* Save the new number of items */
+	    j_ptr->number += i_ptr->number;
 
 	    /* Hack -- maintain the MINIMUM cost */
 	    if (j_ptr->cost > i_ptr->cost) j_ptr->cost = i_ptr->cost;
