@@ -794,6 +794,9 @@ static bool store_will_buy(inven_type *i_ptr)
  * In all cases, return the slot (or -1) where the object was placed
  *
  * Note that this is a hacked up version of "inven_carry()".
+ *
+ * Also note that it may not correctly "adapt" to "knowledge" bacoming
+ * known, the player may have to pick stuff up and drop it again.
  */
 static int home_carry(inven_type *i_ptr)
 {
@@ -852,9 +855,17 @@ static int home_carry(inven_type *i_ptr)
 	if (i_ptr->tval > j_ptr->tval) break;
 	if (i_ptr->tval < j_ptr->tval) continue;
 
+	/* Can happen in the home */
+	if (!inven_aware_p(i_ptr)) continue;
+	if (!inven_aware_p(j_ptr)) break;
+
 	/* Objects sort by increasing sval */
 	if (i_ptr->sval < j_ptr->sval) break;
 	if (i_ptr->sval > j_ptr->sval) continue;
+
+	/* Can happen in the home */
+	if (!known2_p(i_ptr)) continue;
+	if (!known2_p(j_ptr)) break;
 
 	/* Objects sort by decreasing value */
 	j_value = item_value(j_ptr);
