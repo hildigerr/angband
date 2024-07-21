@@ -778,16 +778,22 @@ static bool store_will_buy(inven_type *i_ptr)
  *
  * If the item is "worthless", it is thrown away (except in the home).
  *
+ * If the item cannot be combined with an object already in the inventory,
+ * make a new slot for it, and calculate its "per item" price.  Note that
+ * this price will be negative, since the price will not be "fixed" yet.
+ * Adding an item to a "fixed" price stack will not change the fixed price.
+ *
  * In all cases, return the slot (or -1) where the object was placed
  */
 static int store_carry(inven_type *i_ptr)
 {
     int                 slot;
-    s32b               value;
+    s32b               value, scost = 0L;
     register int		i;
     register inven_type *j_ptr;
 
     s32b               icost, dummy;
+    inven_type		    tmp_obj;
 
 
     /* Determine the "value" of the item */
@@ -795,6 +801,16 @@ static int store_carry(inven_type *i_ptr)
 
     /* Cursed/Worthless items "disappear" when sold */
     if ((value <= 0)&& (store_num != 7)) return (-1);
+
+    /* Create a fake object to acquire the per-object price */
+    tmp_obj = *i_ptr;
+    tmp_obj.number = 1;
+
+    /* Get a good "initial selling price" */
+    dummy = sell_price(&icost, &dummy, &tmp_obj);
+
+    /* Hack -- Save the "store cost" (negative means not "fixed" yet */
+    scost = -icost;
 
 
     /* Check each existing item (try to combine) */
@@ -807,13 +823,8 @@ static int store_carry(inven_type *i_ptr)
 	if (store_item_similar(j_ptr, i_ptr)) {
 
 			j_ptr->number += i_ptr->number;
-			/* must set new scost for group items, do this only for items
-			   strictly greater than group_min, not for torches, this
-			   must be recalculated for entire group */
 			if (i_ptr->sval > ITEM_GROUP_MIN)
 			{
-			    (void) sell_price (&icost, &dummy, j_ptr);
-			    st_ptr->store_item[slot].scost = -icost;
 			}
 			/* must let group objects (except torches) stack over 24
 			   since there may be more than 24 in the group */
@@ -852,7 +863,7 @@ static int store_carry(inven_type *i_ptr)
     st_ptr->store_item[slot] = *i_ptr;
 
     /* Save the "scost" */
-    st_ptr->store_item[slot].scost = (-icost);
+    st_ptr->store_item[slot].scost = scost;
 
     /* Return the location */
     return (slot);
@@ -865,7 +876,7 @@ static int store_carry(inven_type *i_ptr)
     for (i = st_ptr->store_ctr; i >= st_ptr->store_ctr; i--)
 	st_ptr->store_item[i] = st_ptr->store_item[i-1];
     st_ptr->store_item[st_ptr->store_ctr] = *i_ptr;
-    st_ptr->store_item[st_ptr->store_ctr].scost = (-icost);
+    st_ptr->store_item[st_ptr->store_ctr].scost = scost;
     st_ptr->store_ctr++;
 	    slot = st_ptr->store_ctr - 1;
 
