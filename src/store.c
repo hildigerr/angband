@@ -474,6 +474,21 @@ s32b item_value(inven_type *i_ptr)
 }
 
 
+/*
+ * Hack -- same as above but assume the item as "aware"
+ */
+static s32b store_item_value(inven_type *i_ptr)
+{
+    s32b value;
+    bool aware;
+    aware = x_list[i_ptr->k_idx].aware;
+    x_list[i_ptr->k_idx].aware = TRUE;
+    value = item_value(i_ptr);
+    x_list[i_ptr->k_idx].aware = aware;
+    return (value);
+}
+
+
 static void special_offer(inven_type *i_ptr)
 {
     s32b orig_cost = i_ptr->cost;
@@ -520,7 +535,7 @@ static s32b sell_price(s32b *max_sell, s32b *min_sell, inven_type *i_ptr)
     register s32b      i;
 
     /* Get the item value, inflate it per object */
-    i = item_value(i_ptr) * i_ptr->number;
+    i = store_item_value(i_ptr) * i_ptr->number;
 
     /* check i_ptr->cost in case it is cursed, check i in case it is damaged */
     if ((i_ptr->cost > 0) && (i > 0)) {
@@ -797,7 +812,7 @@ static int store_carry(inven_type *i_ptr)
 
 
     /* Determine the "value" of the item */
-    value = sell_price(&icost, &dummy, i_ptr);
+    value = store_item_value(i_ptr);
 
     /* Cursed/Worthless items "disappear" when sold */
     if ((value <= 0)&& (store_num != 7)) return (-1);
@@ -1012,7 +1027,7 @@ static void store_create(void)
 	}
 
 	/* Skip "worthless" items */
-	if (i_ptr->cost <= 0) continue;
+	if (store_item_value(i_ptr) <= 0) continue;
 
 	/* Paranoia -- make sure there is room */
 	if (!store_check_num(i_ptr)) continue;
