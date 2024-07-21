@@ -1118,7 +1118,7 @@ void do_command(char com_val)
 		    int                 temp;
 		    inven_type          inv;
 
-		    for (temp = 0; temp < MAX_DUNGEON_OBJ; temp++) {
+		    for (temp = 0; temp < MAX_K_IDX; temp++) {
 			if (k_list[temp].level <= i) {
 			    invcopy(&inv, temp);
 			    inven_aware(&inv);

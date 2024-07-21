@@ -712,7 +712,7 @@ again:
     restore_screen();
     save_screen();
     prt("Which Item?  : ", 0, 0);
-    for (; i < MAX_DUNGEON_OBJ; i++) {
+    for (; i < MAX_K_IDX; i++) {
 	switch (i_ptr->tval) {
 	  case TV_POTION1:
 	    if ((k_list[i].tval == TV_POTION1) ||
@@ -744,7 +744,7 @@ again:
 	}
     }
     if (j < 21) {
-	for (i = (i - (MAX_DUNGEON_OBJ - 1)) + (OBJ_SPECIAL - 1); i < MAX_K_IDX; i++) {
+	for (i = (i - (MAX_K_IDX - 1)) + (OBJ_SPECIAL - 1); i < MAX_K_IDX; i++) {
 	    switch (i_ptr->tval) {
 	      case TV_POTION1:
 		if ((k_list[i].tval == TV_POTION1) ||
@@ -795,7 +795,7 @@ again:
     k += (ch - 'a' + 1);
 
     j = 0;
-    for (i = 0; i < MAX_DUNGEON_OBJ; i++) {
+    for (i = 0; i < MAX_K_IDX; i++) {
 	switch (i_ptr->tval) {
 	  case TV_POTION1:
 	    if ((k_list[i].tval == TV_POTION1) ||

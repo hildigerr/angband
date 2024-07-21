@@ -141,8 +141,6 @@
  */
 #define GREAT_OBJ        11     /* 1/Chance of item being a Great Item  */
 
-/* Number of dungeon objects */
-#define MAX_DUNGEON_OBJ  423
 
 /*
  * Note that the following constants are all related, if you change one,

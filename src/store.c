@@ -198,7 +198,7 @@ static void prt_comment6(void)
 
 
 
-#define MDO MAX_DUNGEON_OBJ
+
 
 /*
  * Hack -- Kind index objects that may appear in the stores
@@ -209,9 +209,9 @@ static void prt_comment6(void)
 static u16b store_choice[MAX_STORES][STORE_CHOICES] = {
 
 	/* General Store */
-    { MDO, MDO, MDO, MDO, MDO, MDO, MDO, MDO, MDO+21, MDO+21,
-      MDO+21, MDO+21, MDO+22, MDO+22, MDO+22, MDO+1, MDO+2, MDO+3, MDO+4, MDO+22,
-      MDO+20, MDO+21, MDO+5, MDO+6, 84, 84, 123, MDO+22, MDO+22, MDO+21 },
+    { 423, 423, 423, 423, 423, 423, 423, 423, 444, 444,
+      444, 444, 445, 445, 445, 424, 425, 426, 427, 445,
+      443, 444, 428, 429, 84, 84, 123, 445, 445, 444 },
 
 	/* Armoury */
     { 103, 104, 105, 106, 107, 108, 109, 91, 92, 125,
@@ -225,13 +225,13 @@ static u16b store_choice[MAX_STORES][STORE_CHOICES] = {
 
 	/* Temple */
     { 334, 335, 336, 337, 334, 335, 336, 337, 257, 237,
-      261, 262, 233, 233, 240, 241, 260, 260, MDO+14, MDO+15,
-      MDO+15, MDO+15, 53, 54, 55, 52, 335, 180, 237, 240 },
+      261, 262, 233, 233, 240, 241, 260, 260, 437, 438,
+      438, 438, 53, 54, 55, 52, 335, 180, 237, 240 },
 
 	/* Alchemy shop */
     { 227, 227, 230, 230, 236, 206, 252, 252, 253, 253,
-      MDO+7, MDO+7, MDO+7, MDO+8, MDO+8, MDO+8, MDO+9, MDO+10, MDO+11, MDO+12,
-      MDO+13, MDO+15, MDO+15, 173, 174, 175, 185, 185, 185, 206 },
+      430, 430, 430, 431, 431, 431, 432, 433, 434, 435,
+      436, 438, 438, 173, 174, 175, 185, 185, 185, 206 },
 
 	/* Magic-User store*/
     { 330, 331, 332, 333, 330, 331, 332, 333, 326, 293,

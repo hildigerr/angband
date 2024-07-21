@@ -20,7 +20,7 @@ char               *index();
 
 extern int rating;
 
-s16b sorted_objects[MAX_DUNGEON_OBJ];
+s16b sorted_objects[MAX_K_IDX];
 
 
 /*
@@ -2771,13 +2771,13 @@ int get_obj_num(int level, int good)
 	int tmp[MAX_OBJ_LEVEL+1];
 
 	for (i = 0; i <= MAX_OBJ_LEVEL; i++) t_level[i] = 0;
-	for (i = 0; i < MAX_DUNGEON_OBJ; i++) t_level[k_list[i].level]++;
+	for (i = 0; i < MAX_K_IDX; i++) t_level[k_list[i].level]++;
 	for (i = 1; i <= MAX_OBJ_LEVEL; i++) t_level[i] += t_level[i-1];
 	/* now produce an array with object indexes sorted by level, by using
 	the info in t_level, this is an O(n) sort! */
 	/* this is not a stable sort, but that does not matter */
 	for (i = 0; i <= MAX_OBJ_LEVEL; i++) tmp[i] = 1;
-	for (i = 0; i < MAX_DUNGEON_OBJ; i++) {
+	for (i = 0; i < MAX_K_IDX; i++) {
 		int l = k_list[i].level;
 		sorted_objects[t_level[l] - tmp[l]] = i;
 		tmp[l]++;
