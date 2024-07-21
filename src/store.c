@@ -405,9 +405,15 @@ s32b item_value(inven_type *i_ptr)
     /* Un-identified items use a "default" price */
     if (!known2_p(i_ptr)) return (item_value_base(i_ptr));
 
+    /* Known cursed items are worthless */
+    if (cursed_p(i_ptr)) return (0L);
+
     /* Start with the item's known base cost */
     value = i_ptr->cost;
 
+    /* Known worthless items are worthless */
+    if (value <= 0L) return (0L);
+        
     /* Unknown Wands are Cheap.  Pay extra for identified charges */
     if (i_ptr->tval == TV_WAND) {
 	return (value + ((value / 20) * i_ptr->pval));
@@ -537,8 +543,8 @@ static s32b sell_price(s32b *max_sell, s32b *min_sell, inven_type *i_ptr)
     /* Get the item value, inflate it per object */
     i = store_item_value(i_ptr) * i_ptr->number;
 
-    /* check i_ptr->cost in case it is cursed, check i in case it is damaged */
-    if ((i_ptr->cost > 0) && (i > 0)) {
+    /* Cursed/Worthless/Damaged items are worth nothing */
+    if (i <= 0) return (0);
 
     /* Get the "basic value" */
     i = i * rgold_adj[ot_ptr->owner_race][p_ptr->prace] / 100;
@@ -561,9 +567,6 @@ static s32b sell_price(s32b *max_sell, s32b *min_sell, inven_type *i_ptr)
 
     /* Return the price */
     return (i);
-    } else
-    /* don't let the item get into the store inventory */
-	return (0);
 }
 
 
