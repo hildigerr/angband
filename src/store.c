@@ -1158,16 +1158,15 @@ static void store_create(void)
 /*
  * eliminate need to bargain if player has haggled well in the past
  */
-static int noneedtobargain(s32b minprice)
+static bool noneedtobargain(s32b minprice)
 {
-    register int         flagnoneed;
 
     /* Allow haggling to be turned off */
     if (no_haggle_flag) return (TRUE);
 
-    flagnoneed = ((st_ptr->good_buy == MAX_SHORT)
-		  || ((st_ptr->good_buy - 3 * st_ptr->bad_buy) > (5 + (minprice/50))));
-    return (flagnoneed);
+    if ((st_ptr->good_buy == MAX_SHORT)
+		  || ((st_ptr->good_buy - 3 * st_ptr->bad_buy) > (5 + (minprice/50)))) return (TRUE);
+    return (FALSE);
 }
 
 
