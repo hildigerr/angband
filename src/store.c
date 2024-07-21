@@ -847,6 +847,8 @@ static int store_carry(inven_type *i_ptr)
 	}
     }
 
+    /* No space? */
+    if (st_ptr->store_ctr >= STORE_INVEN_MAX) return (-1);
 
 
     /* Check existing slots to see if we must "slide" */
@@ -876,20 +878,9 @@ static int store_carry(inven_type *i_ptr)
     /* Save the "scost" */
     st_ptr->store_item[slot].scost = scost;
 
-    /* Return the location */
-    return (slot);
-
 		}
 
 	    }
-
-
-    for (i = st_ptr->store_ctr; i >= st_ptr->store_ctr; i--)
-	st_ptr->store_item[i] = st_ptr->store_item[i-1];
-    st_ptr->store_item[st_ptr->store_ctr] = *i_ptr;
-    st_ptr->store_item[st_ptr->store_ctr].scost = scost;
-    st_ptr->store_ctr++;
-	    slot = st_ptr->store_ctr - 1;
 
     /* Return the location */
     return (slot);
