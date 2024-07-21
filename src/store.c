@@ -1164,8 +1164,13 @@ static bool noneedtobargain(s32b minprice)
     /* Allow haggling to be turned off */
     if (no_haggle_flag) return (TRUE);
 
-    if ((st_ptr->good_buy == MAX_SHORT)
-		  || ((st_ptr->good_buy - 3 * st_ptr->bad_buy) > (5 + (minprice/50)))) return (TRUE);
+    /* Too good for us */
+    if (st_ptr->good_buy == MAX_SHORT) return (TRUE);
+
+    /* Extract a flag based on how good the player is at buying */
+    if (((st_ptr->good_buy - 3 * st_ptr->bad_buy) > (5 + (minprice/50)))) return (TRUE);
+
+    /* Return the flag */
     return (FALSE);
 }
 
