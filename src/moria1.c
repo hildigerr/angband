@@ -1243,7 +1243,7 @@ void inven_command(int command)
 				    (void)strcat(prt2, "wearing ");
 				msg_print(strcat(prt2, "appears to be cursed."));
 				item = (-1);
-			    } else if (inventory[item].sval == ITEM_GROUP_MIN &&
+			    } else if (
 				       inventory[item].number > 1 &&
 				       !inven_check_num(&inventory[slot])) {
  /* this can happen if try to wield a torch, and have more than one in your inventory */

@@ -529,19 +529,6 @@
 #define CD_ORC          0x8000
 
 
-/* these items stack with others only if have same sval and same pval,
- * they are treated as a group for wielding, etc.
- */
-
-#define ITEM_GROUP_MIN          192
-#define ITEM_GROUP_MAX          255
-
-/* NOTE: items with sval 192 are treated as single objects, but only stack
- * with others of same sval if have the same pval value, only used for
- * torches
- */
-
-
 /* Special "Item Description Flags" */
 
 /* id's used for item description, stored in i_ptr->ident */

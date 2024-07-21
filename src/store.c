@@ -822,14 +822,10 @@ static int store_carry(inven_type *i_ptr)
 	/* Can the existing items be incremented? */
 	if (store_item_similar(j_ptr, i_ptr)) {
 
-			j_ptr->number += i_ptr->number;
-			if (i_ptr->sval > ITEM_GROUP_MIN)
-			{
-			}
-			/* must let group objects (except torches) stack over 24
-			   since there may be more than 24 in the group */
-			else if (j_ptr->number > 24)
-			    j_ptr->number = 24;
+	    int total = j_ptr->number + i_ptr->number;
+	    
+	    /* Hack -- extra items disappear */
+	    j_ptr->number = (total > 99) ? 99 : total;
 
 	    /* All done */
 	    return (slot);
