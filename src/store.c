@@ -653,22 +653,28 @@ static int store_item_similar(inven_type *i_ptr, inven_type *j_ptr)
 
 /*
  * Check to see if the shop will be carrying too many objects	-RAK-	 
+ * Note that the shop, just like a player, will not accept things
+ * it cannot hold.  Before, one could "nuke" potions this way.
  */
 static bool store_check_num(inven_type *i_ptr)
 {
     register int        i;
     register inven_type *j_ptr;
 
+    /* Free space is always usable */
     if (st_ptr->store_ctr < STORE_INVEN_MAX) return TRUE;
 
     /* Check all the items */
-	for (i = 0; i < st_ptr->store_ctr; i++) {
-	    j_ptr = &st_ptr->store_item[i];
+    for (i = 0; i < st_ptr->store_ctr; i++) {
+
+	/* Get the existing item */
+	j_ptr = &st_ptr->store_item[i];
 
 	/* Can the new object be combined with the old one? */
 	if (store_item_similar(j_ptr, i_ptr)) return TRUE;
-	}
+    }
 
+    /* But there was no room at the inn... */
     return (FALSE);
 }
 
