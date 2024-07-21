@@ -540,6 +540,9 @@ static s32b sell_price(s32b *max_sell, s32b *min_sell, inven_type *i_ptr)
 {
     register s32b      i;
 
+    /* Clear the max/min sell values */
+    *max_sell = *min_sell = 0;
+
     /* Get the item value, inflate it per object */
     i = store_item_value(i_ptr) * i_ptr->number;
 
@@ -564,6 +567,10 @@ static s32b sell_price(s32b *max_sell, s32b *min_sell, inven_type *i_ptr)
 
     /* Paranoia */
     if (*min_sell > *max_sell) *min_sell = *max_sell;
+
+    /* Paranoia -- nothing becomes free */
+    if (*min_sell < 1) *min_sell = 1;
+    if (*max_sell < 1) *max_sell = 1;
 
     /* Return the price */
     return (i);
