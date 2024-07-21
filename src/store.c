@@ -798,29 +798,9 @@ static bool store_will_buy(inven_type *i_ptr)
 static int home_carry(inven_type *i_ptr)
 {
     int                 slot;
-    s32b               value, j_value, scost = 0L;
+    s32b               value, j_value;
     register int		i;
     register inven_type *j_ptr;
-
-    s32b               icost, dummy;
-    inven_type		    tmp_obj;
-
-
-    /* Determine the "value" of the item */
-    value = store_item_value(i_ptr);
-
-    /* Cursed/Worthless items "disappear" when sold */
-    if ((value <= 0)&& (store_num != 7)) return (-1);
-
-    /* Create a fake object to acquire the per-object price */
-    tmp_obj = *i_ptr;
-    tmp_obj.number = 1;
-
-    /* Get a good "initial selling price" */
-    dummy = sell_price(&icost, &dummy, &tmp_obj);
-
-    /* Hack -- Save the "store cost" (negative means not "fixed" yet */
-    scost = -icost;
 
 
     /* Check each existing item (try to combine) */
@@ -837,6 +817,9 @@ static int home_carry(inven_type *i_ptr)
 	    /* Hack -- extra items disappear */
 	    j_ptr->number = (total > 99) ? 99 : total;
 
+	    /* Hack -- maintain the MINIMUM cost */
+	    if (j_ptr->cost > i_ptr->cost) j_ptr->cost = i_ptr->cost;
+
 	    /* All done */
 	    return (slot);
 	}
@@ -845,6 +828,9 @@ static int home_carry(inven_type *i_ptr)
     /* No space? */
     if (st_ptr->store_ctr >= STORE_INVEN_MAX) return (-1);
 
+
+    /* Determine the "value" of the item */
+    value = item_value(i_ptr);
 
     /* Check existing slots to see if we must "slide" */
     for (slot = 0; slot < st_ptr->store_ctr; slot++) {
@@ -861,7 +847,7 @@ static int home_carry(inven_type *i_ptr)
 	if (i_ptr->sval > j_ptr->sval) continue;
 
 	/* Objects sort by decreasing value */
-	j_value = store_item_value(j_ptr);
+	j_value = item_value(j_ptr);
 	if (value > j_value) break;
 	if (value < j_value) continue;
     }
@@ -876,9 +862,6 @@ static int home_carry(inven_type *i_ptr)
 
     /* Insert the new item */
     st_ptr->store_item[slot] = *i_ptr;
-
-    /* Save the "scost" */
-    st_ptr->store_item[slot].scost = scost;
 
     /* Return the location */
     return (slot);
