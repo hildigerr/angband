@@ -654,24 +654,22 @@ static int store_item_similar(inven_type *i_ptr, inven_type *j_ptr)
 /*
  * Check to see if the shop will be carrying too many objects	-RAK-	 
  */
-static int store_check_num(inven_type *i_ptr)
+static bool store_check_num(inven_type *i_ptr)
 {
-    register int        store_check, i;
+    register int        i;
     register inven_type *j_ptr;
 
-    store_check = FALSE;
-
-    if (st_ptr->store_ctr < STORE_INVEN_MAX) store_check = TRUE;
+    if (st_ptr->store_ctr < STORE_INVEN_MAX) return TRUE;
 
     /* Check all the items */
 	for (i = 0; i < st_ptr->store_ctr; i++) {
 	    j_ptr = &st_ptr->store_item[i];
 
 	/* Can the new object be combined with the old one? */
-	if (store_item_similar(j_ptr, i_ptr)) store_check = TRUE;
+	if (store_item_similar(j_ptr, i_ptr)) return TRUE;
 	}
 
-    return (store_check);
+    return (FALSE);
 }
 
 
