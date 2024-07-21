@@ -1262,7 +1262,7 @@ cptr pain_message(int m_idx, int dam)
     newhp = m_ptr->hp;
     oldhp = newhp + dam;
 #endif
-    percentage = (newhp * 100) / oldhp;
+    percentage = (newhp * 100L) / oldhp;
 
     /* Non-verbal creatures like molds */
     if (strchr("jmvQ", r_ptr->r_char) ||

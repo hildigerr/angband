@@ -1267,7 +1267,7 @@ void do_cmd_read_scroll(void)
 		    i_ptr->tohit = (-randint(5) - randint(5));
 		    i_ptr->todam = (-randint(5) - randint(5));
 		    i_ptr->flags3 = TR3_CURSED;
-		    i_ptr->flags2 = 0;
+		    i_ptr->flags2 = 0L;
 		    i_ptr->damage[0] = i_ptr->damage[1] = 1;
 		    i_ptr->toac = 0;	/* in case defender... */
 		    i_ptr->cost = (-1);
@@ -1359,7 +1359,7 @@ void do_cmd_read_scroll(void)
 		i_ptr->name1 = 0;
 		i_ptr->name2 = EGO_BLASTED;
 		i_ptr->flags3 = TR3_CURSED;
-		i_ptr->flags2 = 0;
+		i_ptr->flags2 = 0L;
 		i_ptr->toac = (-randint(5) - randint(5));
 		i_ptr->tohit = i_ptr->todam = 0;
 		i_ptr->ac = (i_ptr->ac > 9) ? 1 : 0;

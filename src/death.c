@@ -331,7 +331,7 @@ int file_character(cptr filename1)
 	else {
 	    (void)fprintf(file1, "%7sExp to Adv.:%9ld", blank,
 			  (long) (player_exp[p_ptr->lev - 1] *
-				   p_ptr->expfact / 100));
+				   p_ptr->expfact / 100L));
 	}
 
 	(void)fprintf(file1, "   Cur Mana%8s %6d\n", colon, p_ptr->cmana);

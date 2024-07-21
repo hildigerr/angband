@@ -908,7 +908,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	    i_ptr->toac = 0 - (m_bonus(1, 20, level));
 
 		/* Permanently damaged */
-	    i_ptr->cost = 0;
+	    i_ptr->cost = 0L;
 
 	    /* Permanently damaged */
 	    if (magik(special)) {
@@ -1001,7 +1001,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	    i_ptr->toac = 0 - m_bonus(2, 20, level);
 
 		/* Permanent damage */
-		i_ptr->cost = 0;
+		i_ptr->cost = 0L;
 
 		/* Pick some damage */
 		switch (randint(3)) {
@@ -1032,7 +1032,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	    (i_ptr->sval == SV_JEWELED_CROWN)) {
 
 	    /* Hack -- extra "goodness" based on cost */
-	    chance += i_ptr->cost / 100;
+	    chance += i_ptr->cost / 100L;
 
 	    /* Hack -- improve the chance for "greatness" */
 	    special += special;
@@ -1201,7 +1201,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	    /* Cursed */
 	    i_ptr->flags3 |= TR3_CURSED;
 	    i_ptr->toac -= m_bonus(1, 20, level);
-	    i_ptr->cost = 0;
+	    i_ptr->cost = 0L;
 
 	    /* Permanent damage */
 	    if (magik(special)) {
@@ -1429,7 +1429,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	    i_ptr->flags3 |= TR3_CURSED;
 
 		/* Permanent damage */
-		i_ptr->cost = 0;
+		i_ptr->cost = 0L;
 
 		/* Choose some damage */
 		switch (randint(3)) {
@@ -1647,7 +1647,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 			i_ptr->flags1 |= (TR1_WIS);
 			i_ptr->flags3 |= (TR3_BLESSED);
 			i_ptr->pval = m_bonus(0, 3, level);
-			i_ptr->cost += (200 * i_ptr->pval);
+			i_ptr->cost += (200L * i_ptr->pval);
 		    }
 
 		    rating += 18;
@@ -1666,7 +1666,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 		    /* One in three is also a Life Holder */
 		    if (randint(3) == 1) {
 			i_ptr->flags2 |= (TR2_HOLD_LIFE);
-			i_ptr->cost += 1000;
+			i_ptr->cost += 1000L;
 		    }
 
 		    rating += 18;
@@ -2032,7 +2032,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 	    i_ptr->flags3 |= TR3_CURSED;
 	    i_ptr->tohit = (-randint(10)) - m_bonus(5, 25, level);
 	    i_ptr->todam = (-randint(10)) - m_bonus(5, 25, level);
-	    i_ptr->cost = 0;
+	    i_ptr->cost = 0L;
 
 	    if (randint(5)==1) {
 		i_ptr->name2 = EGO_BACKBITING;
@@ -2243,7 +2243,7 @@ void apply_magic(inven_type *i_ptr, int level, bool good, bool great, int not_un
 
 	switch (randint(level + 4)) {
 	  case 1:
-	    i_ptr->flags1 = 0;
+	    i_ptr->flags1 = 0L;
 	    i_ptr->name2 = EGO_EMPTY;
 	    break;
 	  case 2:

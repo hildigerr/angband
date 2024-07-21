@@ -550,14 +550,14 @@ static s32b sell_price(s32b *max_sell, s32b *min_sell, inven_type *i_ptr)
     if (i <= 0) return (0);
 
     /* Get the "basic value" */
-    i = i * rgold_adj[ot_ptr->owner_race][p_ptr->prace] / 100;
+    i = i * rgold_adj[ot_ptr->owner_race][p_ptr->prace] / 100L;
 
     /* Nothing becomes free */
     if (i < 1) i = 1;
 
     /* Extract min/max sell values */
-    *max_sell = i * ot_ptr->max_inflate / 100;
-    *min_sell = i * ot_ptr->min_inflate / 100;
+    *max_sell = i * ot_ptr->max_inflate / 100L;
+    *min_sell = i * ot_ptr->min_inflate / 100L;
 
     /* Black market is always over-priced */
     if (store_num == 6) {
@@ -1269,7 +1269,7 @@ static void display_entry(int pos)
 	    if (x < 0) {
 		s32b               value = (s32b)(-x);
 		
-		value = value * chr_adj() / 100;
+		value = value * chr_adj() / 100L;
 		if (value <= 0)
 		    value = 1;
 		(void)sprintf(out_val2, "%9ld", (long) value);
@@ -1557,15 +1557,15 @@ static int purchase_haggle(s32b *price, inven_type *i_ptr)
     /* Determine the cost of the group of items */
     cost = sell_price(&max_sell, &min_sell, i_ptr);
 
-    max_sell = max_sell * chr_adj() / 100;
+    max_sell = max_sell * chr_adj() / 100L;
     if (max_sell <= 0) max_sell = 1;
 
-    min_sell = min_sell * chr_adj() / 100;
+    min_sell = min_sell * chr_adj() / 100L;
     if (min_sell <= 0) min_sell = 1;
 
     /* XXX This appears to be a hack.  See sell_price(). */
     /* cast max_inflate to signed so that subtraction works correctly */
-    max_buy = cost * (200 - (int)ot_ptr->max_inflate) / 100;
+    max_buy = cost * (200L - (s32b)(ot_ptr->max_inflate)) / 100L;
     if (max_buy <= 0) max_buy = 1;
 
     min_per = ot_ptr->haggle_per;
@@ -1638,7 +1638,7 @@ static int purchase_haggle(s32b *price, inven_type *i_ptr)
 		if (x1 < max_per) x1 = max_per;
 	    }
 	    x2 = x1 + randint(5) - 3;
-	    x3 = ((cur_ask - offer) * x2 / 100) + 1;
+	    x3 = ((cur_ask - offer) * x2 / 100L) + 1;
 	    /* don't let the price go up */
 	    if (x3 < 0) x3 = 0;
 	    cur_ask -= x3;
@@ -1703,15 +1703,15 @@ static int sell_haggle(s32b *price, inven_type *i_ptr)
     /* Instantly react to worthless items */
     if (cost <= 0) return (3);
 
-    cost = cost * (200 - chr_adj()) / 100;
-    cost = cost * (200 - rgold_adj[ot_ptr->owner_race][p_ptr->prace]) / 100;
+    cost = cost * (200L - chr_adj()) / 100L;
+    cost = cost * (200L - rgold_adj[ot_ptr->owner_race][p_ptr->prace]) / 100L;
 
     if (cost < 1) cost = 1;
-    max_sell = cost * ot_ptr->max_inflate / 100;
+    max_sell = cost * ot_ptr->max_inflate / 100L;
 
     /* cast max_inflate to signed so that subtraction works correctly */
-    max_buy = cost * (200 - (int)ot_ptr->max_inflate) / 100;
-    min_buy = cost * (200 - (int)ot_ptr->min_inflate) / 100;
+    max_buy = cost * (200L - (s32b)ot_ptr->max_inflate) / 100L;
+    min_buy = cost * (200L - (s32b)ot_ptr->min_inflate) / 100L;
     if (min_buy < 1) min_buy = 1;
     if (max_buy < 1)  max_buy = 1;
 
@@ -1802,7 +1802,7 @@ static int sell_haggle(s32b *price, inven_type *i_ptr)
 		if (x1 < max_per) x1 = max_per;
 	    }
 	    x2 = x1 + randint(5) - 3;
-	    x3 = ((offer - cur_ask) * x2 / 100) + 1;
+	    x3 = ((offer - cur_ask) * x2 / 100L) + 1;
 	    /* don't let the price go down */
 	    if (x3 < 0) x3 = 0;
 	    cur_ask += x3;

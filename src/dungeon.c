@@ -386,7 +386,7 @@ static void regen_monsters(void)
 
 	/* Allow regeneration */
 	if (m_list[i].hp < m_list[i].maxhp) {
-	    int frac = 2 * m_list[i].maxhp / 100;
+	    int frac = 2 * m_list[i].maxhp / 100L;
 	    if (!frac) frac = 1;
 	    m_list[i].hp += frac;
 	    if (m_list[i].hp > m_list[i].maxhp) m_list[i].hp = m_list[i].maxhp;
