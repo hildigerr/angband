@@ -803,6 +803,14 @@ static int home_carry(inven_type *i_ptr)
     register inven_type *j_ptr;
 
 
+    /* The tval of readible books */
+    int read_tval = TV_NOTHING;
+
+    /* Acquire the type value of the books that the player can read, if any */
+    if (class[p_ptr->pclass].spell == PRIEST) read_tval = TV_PRAYER_BOOK;
+    else if (class[p_ptr->pclass].spell == MAGE) read_tval = TV_MAGIC_BOOK;
+
+
     /* Check each existing item (try to combine) */
     for (slot = 0; slot < st_ptr->store_ctr; slot++) {
 
@@ -835,6 +843,10 @@ static int home_carry(inven_type *i_ptr)
 
 	/* Get that item */
 	j_ptr = &st_ptr->store_item[slot];
+
+	/* Hack -- readable books always come first */
+	if ((i_ptr->tval == read_tval) && (j_ptr->tval != read_tval)) break;
+	if ((j_ptr->tval == read_tval) && (i_ptr->tval != read_tval)) continue;
 
 	/* Objects sort by decreasing type */
 	if (i_ptr->tval > j_ptr->tval) break;
