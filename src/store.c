@@ -789,6 +789,103 @@ static bool store_will_buy(inven_type *i_ptr)
 
 
 /*
+ * Add the item "i_ptr" to the inventory of the "Home"
+ *
+ * In all cases, return the slot (or -1) where the object was placed
+ *
+ * Note that this is a hacked up version of "inven_carry()".
+ */
+static int home_carry(inven_type *i_ptr)
+{
+    int                 slot;
+    s32b               value, j_value, scost = 0L;
+    register int		i;
+    register inven_type *j_ptr;
+
+    s32b               icost, dummy;
+    inven_type		    tmp_obj;
+
+
+    /* Determine the "value" of the item */
+    value = store_item_value(i_ptr);
+
+    /* Cursed/Worthless items "disappear" when sold */
+    if ((value <= 0)&& (store_num != 7)) return (-1);
+
+    /* Create a fake object to acquire the per-object price */
+    tmp_obj = *i_ptr;
+    tmp_obj.number = 1;
+
+    /* Get a good "initial selling price" */
+    dummy = sell_price(&icost, &dummy, &tmp_obj);
+
+    /* Hack -- Save the "store cost" (negative means not "fixed" yet */
+    scost = -icost;
+
+
+    /* Check each existing item (try to combine) */
+    for (slot = 0; slot < st_ptr->store_ctr; slot++) {
+
+	/* Get the existing item */
+	j_ptr = &st_ptr->store_item[slot];
+
+	/* Can the existing items be incremented? */
+	if (store_item_similar(j_ptr, i_ptr)) {
+
+	    int total = j_ptr->number + i_ptr->number;
+	    
+	    /* Hack -- extra items disappear */
+	    j_ptr->number = (total > 99) ? 99 : total;
+
+	    /* All done */
+	    return (slot);
+	}
+    }
+
+    /* No space? */
+    if (st_ptr->store_ctr >= STORE_INVEN_MAX) return (-1);
+
+
+    /* Check existing slots to see if we must "slide" */
+    for (slot = 0; slot < st_ptr->store_ctr; slot++) {
+
+	/* Get that item */
+	j_ptr = &st_ptr->store_item[slot];
+
+	/* Objects sort by decreasing type */
+	if (i_ptr->tval > j_ptr->tval) break;
+	if (i_ptr->tval < j_ptr->tval) continue;
+
+	/* Objects sort by increasing sval */
+	if (i_ptr->sval < j_ptr->sval) break;
+	if (i_ptr->sval > j_ptr->sval) continue;
+
+	/* Objects sort by decreasing value */
+	j_value = store_item_value(j_ptr);
+	if (value > j_value) break;
+	if (value < j_value) continue;
+    }
+
+    /* Slide the others up */
+    for (i = st_ptr->store_ctr; i > slot; i--) {
+	st_ptr->store_item[i] = st_ptr->store_item[i-1];
+    }
+
+    /* More stuff now */
+    st_ptr->store_ctr++;
+
+    /* Insert the new item */
+    st_ptr->store_item[slot] = *i_ptr;
+
+    /* Save the "scost" */
+    st_ptr->store_item[slot].scost = scost;
+
+    /* Return the location */
+    return (slot);
+}
+
+
+/*
  * Add the item "i_ptr" to a real stores inventory.
  *
  * If the item is "worthless", it is thrown away (except in the home).
@@ -815,7 +912,7 @@ static int store_carry(inven_type *i_ptr)
     value = store_item_value(i_ptr);
 
     /* Cursed/Worthless items "disappear" when sold */
-    if ((value <= 0)&& (store_num != 7)) return (-1);
+    if (value <= 0) return (-1);
 
     /* Create a fake object to acquire the per-object price */
     tmp_obj = *i_ptr;
@@ -2142,7 +2239,7 @@ static int store_sell(int *cur_top)
 	inven_item_optimize(item_val);
 
 	/* Let the store (home) carry it */
-	item_pos = store_carry(&sold_obj);
+	item_pos = home_carry(&sold_obj);
 
 	check_strength();
 
