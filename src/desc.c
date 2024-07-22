@@ -628,7 +628,12 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
     /* Analyze the object */
     switch (i_ptr->tval) {
 
+      /* Some objects are easy to describe */
       case TV_MISC:
+      case TV_SPIKE:
+      case TV_FLASK:
+	break;
+
       case TV_CHEST:
 	break;
 
@@ -646,9 +651,6 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	    basenm = "a Shining Gem";
 	if (!stricmp("The Arkenstone of Thrain", basenm) && !known2_p(i_ptr))
 	    basenm = "a Shining Gem";
-	break;
-
-      case TV_SPIKE:
 	break;
 
       /* Weapons have a damage string, and flags */
@@ -793,9 +795,6 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	    basenm = "& Potion~";
 	    append_name = TRUE;
 	}
-	break;
-
-      case TV_FLASK:
 	break;
 
       case TV_FOOD:
