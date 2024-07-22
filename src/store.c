@@ -497,33 +497,34 @@ static s32b store_item_value(inven_type *i_ptr)
 
 static void special_offer(inven_type *i_ptr)
 {
-    s32b orig_cost = i_ptr->cost;
+    s32b base = i_ptr->cost;
+    cptr note = NULL;
 
     /* Possible discount */    
     if (randint(30) == 1) {
-	i_ptr->cost = (i_ptr->cost * 3) / 4;
-	if (i_ptr->cost < 1)
-	    i_ptr->cost = 1;
-	if (i_ptr->cost < orig_cost)
-	    inscribe(i_ptr, "25% discount");
-    } else if (randint(150) == 1) {
-	i_ptr->cost /= 2;
-	if (i_ptr->cost < 1)
-	    i_ptr->cost = 1;
-	if (i_ptr->cost < orig_cost)
-	    inscribe(i_ptr, "50% discount");
-    } else if (randint(300) == 1) {
-	i_ptr->cost /= 4;
-	if (i_ptr->cost < 1)
-	    i_ptr->cost = 1;
-	if (i_ptr->cost < orig_cost)
-	    inscribe(i_ptr, "75% discount");
-    } else if (randint(500) == 1) {
-	i_ptr->cost /= 10;
-	if (i_ptr->cost < 1)
-	    i_ptr->cost = 1;
-	if (i_ptr->cost < orig_cost)
-	    inscribe(i_ptr, "to clear");
+	base = base * 3 / 4;
+	note = "25% off";
+    }
+    else if (randint(150) == 1) {
+	base = base / 2;
+	note = "50% off";
+    }
+    else if (randint(300) == 1) {
+	base = base / 4;
+	note = "75% off";
+    }
+    else if (randint(500) == 1) {
+	base = base / 10;
+	note = "90% off";
+    }
+
+    /* Prevent under-flow */
+    if (base < 1) base = 1;
+    
+    /* Apply "useful" discounts */
+    if (note && (base != i_ptr->cost)) {
+	i_ptr->cost = base;
+	inscribe(i_ptr, note);
     }
 }
 
