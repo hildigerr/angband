@@ -13,6 +13,15 @@
 #include "angband.h"
 
 
+/*
+ * There is a new metaphor for "store made objects". 
+ *
+ * If an item is in a store, it is guaranteed to be "known".  So perhaps it
+ * should no longer be possible to see an item as "a red potion of death",
+ * since once the potion type is known, all red potions are known.
+ *
+ * Also note that the "aware" predicate returns TRUE if the object is known.
+ */
 
 
 /*
@@ -342,19 +351,6 @@ void known2(inven_type *i_ptr)
 }
 
 
-void store_bought(inven_type *i_ptr)
-{
-    i_ptr->ident |= ID_STOREBOUGHT;
-    known2(i_ptr);
-}
-
-
-int store_bought_p(inven_type *i_ptr)
-{
-    return (i_ptr->ident & ID_STOREBOUGHT);
-}
-
-
 
 
 /*
@@ -602,9 +598,14 @@ int item_similar(inven_type *i_ptr, inven_type *j_ptr)
 void objdes(char *out_val, inven_type *i_ptr, int pref)
 {
     register cptr basenm, modstr;
+    bool aware;
     bigvtype             tmp_val;
     vtype                tmp_str, damstr;
-    int power, indexx, pval_use, modify, append_name;
+    int power, indexx, pval_use, append_name;
+
+
+    /* Is the player "aware" of the object? */
+    aware = (inven_aware_p(i_ptr));
 
     /* Hack -- Extract the sub-type "indexx" */
     indexx = i_ptr->sval & ITEM_SUBVAL_MASK;
@@ -620,8 +621,6 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
     /* Assume no display of "pval" */
     pval_use = IGNORED;
-
-    modify = (inven_aware_p(i_ptr) ? FALSE : TRUE);
 
     /* Assume we will NOT append the "kind" name */
     append_name = FALSE;
@@ -700,10 +699,10 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
 	pval_use = FLAGS;
 
-	if (modify || !(plain_descriptions || store_bought_p(i_ptr))) {
+	if (!aware || !(plain_descriptions)) {
 	    basenm = "& %s Amulet";
 	    modstr = amulet_adj[indexx];
-	    if (!modify) append_name = TRUE;
+	    if (aware) append_name = TRUE;
 	}
 	else {
 	    basenm = "& Amulet";
@@ -721,10 +720,10 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 		basenm = "a plain gold Ring";
 	    else
 		basenm = "The One Ring";
-	} else if (modify || !(plain_descriptions || store_bought_p(i_ptr))) {
+	} else if (!aware || !(plain_descriptions)) {
 	    basenm = "& %s Ring";
 	    modstr = ring_adj[indexx];
-	    if (!modify)
+	    if (aware)
 		append_name = TRUE;
 	} else {
 	    basenm = "& Ring";
@@ -734,10 +733,10 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	break;
 
       case TV_STAFF:
-	if (modify || !(plain_descriptions || store_bought_p(i_ptr))) {
+	if (!aware || !(plain_descriptions)) {
 	    basenm = "& %s Staff";
 	    modstr = staff_adj[indexx];
-	    if (!modify) append_name = TRUE;
+	    if (aware) append_name = TRUE;
 	} else {
 	    basenm = "& Staff";
 	    append_name = TRUE;
@@ -746,10 +745,10 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	break;
 
       case TV_WAND:
-	if (modify || !(plain_descriptions || store_bought_p(i_ptr))) {
+	if (!aware || !(plain_descriptions)) {
 	    basenm = "& %s Wand";
 	    modstr = wand_adj[indexx];
-	    if (!modify) append_name = TRUE;
+	    if (aware) append_name = TRUE;
 	}
 	else {
 	    basenm = "& Wand";
@@ -759,10 +758,10 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	break;
 
       case TV_ROD:
-	if (modify || !(plain_descriptions || store_bought_p(i_ptr))) {
+	if (!aware || !(plain_descriptions)) {
 	    basenm = "& %s Rod";
 	    modstr = wand_adj[indexx];
-	    if (!modify) append_name = TRUE;
+	    if (aware) append_name = TRUE;
 	}
 	else {
 	    basenm = "& Rod";
@@ -772,10 +771,10 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
       case TV_SCROLL1:
       case TV_SCROLL2:
-	if (modify || !(plain_descriptions || store_bought_p(i_ptr))) {
+	if (!aware || !(plain_descriptions)) {
 	    basenm = "& Scroll~ titled \"%s\"";
 	    modstr = scroll_adj[indexx];
-	    if (!modify) append_name = TRUE;
+	    if (aware) append_name = TRUE;
 	}
 	else {
 	    basenm = "& Scroll~";
@@ -785,10 +784,10 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
       case TV_POTION1:
       case TV_POTION2:
-	if (modify || !(plain_descriptions || store_bought_p(i_ptr))) {
+	if (!aware || !(plain_descriptions)) {
 	    basenm = "& %s Potion~";
 	    modstr = potion_adj[indexx];
-	    if (!modify) append_name = TRUE;
+	    if (aware) append_name = TRUE;
 	}
 	else {
 	    basenm = "& Potion~";
@@ -806,8 +805,8 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
 	/* The Molds */
 	if (i_ptr->sval >= SV_FOOD_MIN_MOLD) {
-	if (modify || !(plain_descriptions || store_bought_p(i_ptr))) {
-	    if (!modify)
+	if (!aware || !(plain_descriptions)) {
+	    if (aware)
 		append_name = TRUE;
 		basenm = "& Hairy %s Mold~";
 		modstr = food_adj[indexx];
@@ -821,8 +820,8 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	/* The Mushrooms */
 	else {
 
-	if (modify || !(plain_descriptions || store_bought_p(i_ptr))) {
-	    if (!modify)
+	if (!aware || !(plain_descriptions)) {
+	    if (aware)
 		append_name = TRUE;
 		basenm = "& %s Mushroom~";
 	}
@@ -1074,7 +1073,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	tmp_str[0] = '\0';
 	if (flavor_p(i_ptr)) {
 	/* don't print tried string for store bought items */
-	    if (x_list[i_ptr->k_idx].tried && !store_bought_p(i_ptr))
+	    if (x_list[i_ptr->k_idx].tried && !known2_p(i_ptr))
 		(void)strcat(tmp_str, "tried ");
 	}
 	if ((i_ptr->ident & (ID_MAGIK | ID_EMPTY | ID_FELT)) &&
@@ -1086,7 +1085,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	    if ((i_ptr->ident & ID_FELT) && (cursed_p(i_ptr)))
 		(void)strcat(tmp_str, "cursed ");
 	}
-	if ((known2_p(i_ptr) || store_bought_p(i_ptr)) &&
+	if ((known2_p(i_ptr)) &&
 	    ((!strncmp(i_ptr->inscrip, "average", 7)) ||
 	     (!strncmp(i_ptr->inscrip, "good", 4)) ||
 	     (!strncmp(i_ptr->inscrip, "excellent", 9)) ||

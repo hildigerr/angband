@@ -336,6 +336,8 @@ int main(int argc, char *argv[])
 
 /*
  * Init players with some belongings
+ *
+ * Having an item makes the player "aware" of its purpose.
  */
 static void player_outfit()
 {
@@ -351,7 +353,8 @@ static void player_outfit()
     for (i = 0; i < 5; i++) {
 	j = player_init[p_ptr->pclass][i];
 	invcopy(i_ptr, j);
-	store_bought(i_ptr);
+	inven_aware(i_ptr);
+	known2(i_ptr);
 	if (inven_init.tval == TV_SWORD || inven_init.tval == TV_HAFTED
 	    || inven_init.tval == TV_BOW)
 	    inven_init.ident |= ID_SHOW_HITDAM;

@@ -536,8 +536,6 @@ bool inven_tried_p(inven_type *);
 void inven_tried(inven_type *);
 bool known2_p(inven_type *);
 void known2(inven_type *);
-void store_bought(inven_type *);
-int store_bought_p(inven_type *);
 void objdes(char *, struct inven_type *, int);
 void scribe_object(void);
 void inscribe(inven_type *, cptr);

@@ -1136,13 +1136,14 @@ static void store_create(void)
 	    if (i_ptr->sval == SV_LITE_LANTERN) i_ptr->pval = FUEL_LAMP / 2;
 	}
 
+	/* Mark it as pre-known */
+	known2(i_ptr);
+
 	/* Skip "worthless" items */
 	if (store_item_value(i_ptr) <= 0) continue;
 
 	/* Paranoia -- make sure there is room */
 	if (!store_check_num(i_ptr)) continue;
-
-	store_bought(i_ptr);
 
 	special_offer(i_ptr);
 

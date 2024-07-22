@@ -1292,7 +1292,7 @@ end:
 	if (c_ptr->i_idx != 0)
 	    (void)delete_object(char_row, char_col);
 
-	store_bought(i_ptr);
+	known2(i_ptr);
 	tmp_val = i_pop();
 	i_list[tmp_val] = forge;
 	c_ptr->i_idx = tmp_val;

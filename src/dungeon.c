@@ -40,8 +40,6 @@ static cptr value_check(inven_type *i_ptr)
     /* Known items need no feeling */
     if (known2_p(i_ptr)) return (NULL);
 
-    if (store_bought_p(i_ptr)) return 0;
-
     if (i_ptr->ident & ID_MAGIK) return 0;
 
     /* Cursed items (including artifacts/ego-weapons) */
@@ -235,7 +233,6 @@ static void sense_inventory(void)
 	if (i_ptr->ident & ID_FELT) continue;
 
 	if (i_ptr->ident & ID_MAGIK) continue;
-	if (store_bought_p(i_ptr)) continue;
 
 	/* It is fully known, no information needed */
 	if (known2_p(i_ptr)) continue;
