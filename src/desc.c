@@ -657,16 +657,8 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
       case TV_HAFTED:
       case TV_POLEARM:
       case TV_SWORD:
-	(void)sprintf(damstr, " (%dd%d)", i_ptr->damage[0], i_ptr->damage[1]);
-
-	/* Show flags, if any */
-	pval_use = FLAGS;
-
-	/* All done */
-	break;
-
       case TV_DIGGING:
-	pval_use = Z_PLUSSES;
+	pval_use = (i_ptr->flags1 & TR1_TUNNEL) ? Z_PLUSSES : FLAGS;
 	(void)sprintf(damstr, " (%dd%d)", i_ptr->damage[0], i_ptr->damage[1]);
 	break;
 
