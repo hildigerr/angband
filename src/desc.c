@@ -693,10 +693,14 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
 	pval_use = FLAGS;
 
-	if (!aware || !(plain_descriptions)) {
+	if (!aware) {
 	    basenm = "& %s Amulet";
 	    modstr = amulet_adj[indexx];
-	    if (aware) append_name = TRUE;
+	}
+	else if (!plain_descriptions) {
+	    basenm = "& %s Amulet";
+	    modstr = amulet_adj[indexx];
+	    append_name = TRUE;
 	}
 	else {
 	    basenm = "& Amulet";
@@ -714,12 +718,16 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 		basenm = "a plain gold Ring";
 	    else
 		basenm = "The One Ring";
-	} else if (!aware || !(plain_descriptions)) {
+	} else if (!aware) {
 	    basenm = "& %s Ring";
 	    modstr = ring_adj[indexx];
-	    if (aware)
-		append_name = TRUE;
-	} else {
+	}
+	else if (!plain_descriptions) {
+	    basenm = "& %s Ring";
+	    modstr = ring_adj[indexx];
+	    append_name = TRUE;
+	}
+	else {
 	    basenm = "& Ring";
 	    append_name = TRUE;
 	}
@@ -727,11 +735,16 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	break;
 
       case TV_STAFF:
-	if (!aware || !(plain_descriptions)) {
+	if (!aware) {
 	    basenm = "& %s Staff";
 	    modstr = staff_adj[indexx];
-	    if (aware) append_name = TRUE;
-	} else {
+	}
+	else if (!plain_descriptions) {
+	    basenm = "& %s Staff";
+	    modstr = staff_adj[indexx];
+	    append_name = TRUE;
+	}
+	else {
 	    basenm = "& Staff";
 	    append_name = TRUE;
 	}
@@ -739,10 +752,14 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	break;
 
       case TV_WAND:
-	if (!aware || !(plain_descriptions)) {
+	if (!aware) {
 	    basenm = "& %s Wand";
 	    modstr = wand_adj[indexx];
-	    if (aware) append_name = TRUE;
+	}
+	else if (!plain_descriptions) {
+	    basenm = "& %s Wand";
+	    modstr = wand_adj[indexx];
+	    append_name = TRUE;
 	}
 	else {
 	    basenm = "& Wand";
@@ -752,10 +769,14 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	break;
 
       case TV_ROD:
-	if (!aware || !(plain_descriptions)) {
+	if (!aware) {
 	    basenm = "& %s Rod";
 	    modstr = wand_adj[indexx];
-	    if (aware) append_name = TRUE;
+	}
+	else if (!plain_descriptions) {
+	    basenm = "& %s Rod";
+	    modstr = wand_adj[indexx];
+	    append_name = TRUE;
 	}
 	else {
 	    basenm = "& Rod";
@@ -765,10 +786,14 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
       case TV_SCROLL1:
       case TV_SCROLL2:
-	if (!aware || !(plain_descriptions)) {
+	if (!aware) {
 	    basenm = "& Scroll~ titled \"%s\"";
 	    modstr = scroll_adj[indexx];
-	    if (aware) append_name = TRUE;
+	}
+	else if (!plain_descriptions) {
+	    basenm = "& Scroll~ titled \"%s\"";
+	    modstr = scroll_adj[indexx];
+	    append_name = TRUE;
 	}
 	else {
 	    basenm = "& Scroll~";
@@ -778,10 +803,14 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
       case TV_POTION1:
       case TV_POTION2:
-	if (!aware || !(plain_descriptions)) {
+	if (!aware) {
 	    basenm = "& %s Potion~";
 	    modstr = potion_adj[indexx];
-	    if (aware) append_name = TRUE;
+	}
+	else if (!plain_descriptions) {
+	    basenm = "& %s Potion~";
+	    modstr = potion_adj[indexx];
+	    append_name = TRUE;
 	}
 	else {
 	    basenm = "& Potion~";
@@ -796,30 +825,35 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
 	/* The Molds */
 	if (i_ptr->sval >= SV_FOOD_MIN_MOLD) {
-	if (!aware || !(plain_descriptions)) {
-	    if (aware)
-		append_name = TRUE;
+	    if (!aware) {
 		basenm = "& Hairy %s Mold~";
 		modstr = food_adj[indexx];
-	}
+	    }
+	    else if (!plain_descriptions) {
+		basenm = "& Hairy %s Mold~";
+		modstr = food_adj[indexx];
+		append_name = TRUE;
+	    }
 	    else {
-	    append_name = TRUE;
 		basenm = "& Hairy Mold~";
+		append_name = TRUE;
 	    }
 	}
 
 	/* The Mushrooms */
 	else {
 
-	if (!aware || !(plain_descriptions)) {
-	    if (aware)
-		append_name = TRUE;
+	    if (!aware) {
 		basenm = "& %s Mushroom~";
-	}
+	    }
+	    else if (!plain_descriptions) {
+		basenm = "& %s Mushroom~";
+		append_name = TRUE;
+	    }
 	    else {
-	    append_name = TRUE;
 		basenm = "& Mushroom~";
 		modstr = food_adj[indexx];
+		append_name = TRUE;
 	    }
 	}
 	break;
