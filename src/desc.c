@@ -648,7 +648,9 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	break;
 
       case TV_LITE:
+
 	pval_use = LIGHT;
+
 	if (!stricmp("The Phial of Galadriel", basenm) && !known2_p(i_ptr))
 	    basenm = "a Shining Phial";
 	if (!stricmp("The Star of Elendil", basenm) && !known2_p(i_ptr))
@@ -972,24 +974,26 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
     if (known2_p(i_ptr)) {
 
 	if (i_ptr->ident & ID_SHOW_HITDAM) {
-		(void)sprintf(tmp_str, " (%c%d,%c%d)",
+	    (void)sprintf(tmp_str, " (%c%d,%c%d)",
 			  MY_POM(i_ptr->tohit), MY_ABS(i_ptr->tohit),
 			  MY_POM(i_ptr->todam), MY_ABS(i_ptr->todam));
 	}
 
 	else if (i_ptr->tohit) {
-		(void)sprintf(tmp_str, " (%c%d)",
-			 MY_POM(i_ptr->tohit), MY_ABS(i_ptr->tohit));
+	    (void)sprintf(tmp_str, " (%c%d)",
+			  MY_POM(i_ptr->tohit), MY_ABS(i_ptr->tohit));
 	}
 
 	else if (i_ptr->todam) {
-		(void)sprintf(tmp_str, " (%c%d)",
-			 MY_POM(i_ptr->todam), MY_ABS(i_ptr->todam));
+	    (void)sprintf(tmp_str, " (%c%d)",
+			  MY_POM(i_ptr->todam), MY_ABS(i_ptr->todam));
 	}
 	    else
 		tmp_str[0] = '\0';
 	    (void)strcat(tmp_val, tmp_str);
-	}
+    }
+
+
     /* Crowns have a zero base AC, so make a special test for them. */
 	if (i_ptr->ac != 0 || (i_ptr->tval == TV_HELM)) {
 	    (void)sprintf(tmp_str, " [%d", i_ptr->ac);
@@ -998,21 +1002,21 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 		(void)sprintf(tmp_str, ",%c%d",
 			  MY_POM(i_ptr->toac), MY_ABS(i_ptr->toac));
 		(void)strcat(tmp_val, tmp_str);
-	    }
-	    (void)strcat(tmp_val, "]");
 	}
+	    (void)strcat(tmp_val, "]");
+    }
 
     /* No base armor, but does increase armor */
     else if (i_ptr->toac && known2_p(i_ptr)) {
 	    (void)sprintf(tmp_str, " [%c%d]",
 		      MY_POM(i_ptr->toac), MY_ABS(i_ptr->toac));
 	    (void)strcat(tmp_val, tmp_str);
-	}
+    }
 
 
     if (!known2_p(i_ptr)) pval_use = IGNORED;
 
-	tmp_str[0] = '\0';
+    tmp_str[0] = '\0';
 
     /* override defaults, check for pval flags in the ident field */
 	if (pval_use != IGNORED) {
@@ -1027,26 +1031,26 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
     }
 
     else if ((pval_use == LIGHT) && !artifact_p(i_ptr)) {
-	    (void)sprintf(tmp_str, " with %d turns of light", i_ptr->pval);
+	(void)sprintf(tmp_str, " with %d turns of light", i_ptr->pval);
     }
 
-	    else if (pval_use == CHARGES) {
-		(void)sprintf(tmp_str, " (%d charge%s", i_ptr->pval,
-			      (i_ptr->pval == 1 ? ")" : "s)"));
+    else if (pval_use == CHARGES) {
+	    (void)sprintf(tmp_str, " (%d charge%s",
+			  i_ptr->pval, (i_ptr->pval == 1 ? ")" : "s)"));
     }
 
     /* (+0) digging implements -CWS */
-	    else if (pval_use == Z_PLUSSES) {
-		    (void)sprintf(tmp_str, " (%c%d)",
-				  MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
+    else if (pval_use == Z_PLUSSES) {
+	(void)sprintf(tmp_str, " (%c%d)",
+		      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
     }
 
     else if (i_ptr->pval == 0) {
     }
 
-		else if (pval_use == PLUSSES) {
-		    (void)sprintf(tmp_str, " (%c%d)",
-				  MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
+    else if (pval_use == PLUSSES) {
+	(void)sprintf(tmp_str, " (%c%d)",
+		      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
     }
 
 		else if (i_ptr->ident & ID_NOSHOW_TYPE) {
@@ -1059,29 +1063,29 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
     else if ((i_ptr->flags1 & TR1_SPEED) &&
 	     (i_ptr->name2 != EGO_SPEED)) {
-			(void)sprintf(tmp_str, " (%c%d to speed)",
-				      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
+	(void)sprintf(tmp_str, " (%c%d to speed)",
+		      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
     }
 
     else if (i_ptr->flags1 & TR1_SEARCH) {
 			/*			&& (i_ptr->name2 != EGO_SEARCH)) */
-			(void)sprintf(tmp_str, " (%c%d to searching)",
-				      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
+	(void)sprintf(tmp_str, " (%c%d to searching)",
+		      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
     }
 
-		    else if ((i_ptr->flags1 & TR1_STEALTH) &&
+    else if ((i_ptr->flags1 & TR1_STEALTH) &&
 	     (i_ptr->name2 != EGO_STEALTH)) {
-			(void)sprintf(tmp_str, " (%c%d to stealth)",
-				      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
+	(void)sprintf(tmp_str, " (%c%d to stealth)",
+		      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
     }
 
-		    else if ((i_ptr->flags1 & TR1_INFRA) &&
+    else if ((i_ptr->flags1 & TR1_INFRA) &&
 	     (i_ptr->name2 != EGO_INFRAVISION)) {
-			(void)sprintf(tmp_str, " (%c%d to infravision)",
-				      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
+	(void)sprintf(tmp_str, " (%c%d to infravision)",
+		      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
     }
 
-		    else if (i_ptr->flags1 & TR1_ATTACK_SPD) {
+    else if (i_ptr->flags1 & TR1_ATTACK_SPD) {
 			if (MY_ABS(i_ptr->pval) == 1)
 			    (void)sprintf(tmp_str, " (%c%d attack)",
 					  MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
@@ -1091,21 +1095,22 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 		    } /* attack speed */
 
     else {
-			(void)sprintf(tmp_str, " (%c%d)",
-				      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
+	(void)sprintf(tmp_str, " (%c%d)",
+		      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
     }
 
 	(void)strcat(tmp_val, tmp_str);
 
     /* ampersand is always the first character */
-	if (tmp_val[0] == '&') {
+    if (tmp_val[0] == '&') {
+
 	/* use &tmp_val[1], so that & does not appear in output */
-	    if (i_ptr->number > 1) {
-		(void)sprintf(out_val, "%d%s", (int)i_ptr->number, &tmp_val[1]);
+	if (i_ptr->number > 1) {
+	    (void)sprintf(out_val, "%d%s", (int)i_ptr->number, &tmp_val[1]);
 	}
 
-	    else if (i_ptr->number < 1) {
-		(void)sprintf(out_val, "%s%s", "no more", &tmp_val[1]);
+	else if (i_ptr->number < 1) {
+	    (void)sprintf(out_val, "%s%s", "no more", &tmp_val[1]);
 	}
 
 	/* Hack -- The only one of its kind */
@@ -1132,7 +1137,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 		(void)sprintf(out_val, "no more %s", &tmp_val[5]);
 	/* here if no article */
 	    else
-		(void)sprintf(out_val, "no more %s", tmp_val);
+	    (void)sprintf(out_val, "no more %s", tmp_val);
 	}
 
 	else {
@@ -1166,10 +1171,10 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	else if ((indexx = strlen(tmp_str)) > 0)
 	/* remove the extra blank at the end */
 	    tmp_str[indexx - 1] = '\0';
-	if (tmp_str[0]) {
-	    (void)sprintf(tmp_val, " {%s}", tmp_str);
+    if (tmp_str[0]) {
+	(void)sprintf(tmp_val, " {%s}", tmp_str);
 	    (void)strcat(out_val, tmp_val);
-	}
+    }
     /* (void) strcat(out_val, "."); avoid ".." bug -CWS */
 }
 
