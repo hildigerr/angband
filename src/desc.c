@@ -941,7 +941,10 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	    (void)strcpy(out_val, &tmp_val[2]);
 	else
 	    (void)strcpy(out_val, tmp_val);
-    } else {
+
+	/* Short answer... */
+	return;
+    }
 
 
     /* Hack -- Append "Artifact" or "Special" names */
@@ -1006,6 +1009,9 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	    (void)strcat(tmp_val, tmp_str);
 	}
 
+
+    if (!known2_p(i_ptr)) pval_use = IGNORED;
+
 	tmp_str[0] = '\0';
 
     /* override defaults, check for pval flags in the ident field */
@@ -1024,9 +1030,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	    (void)sprintf(tmp_str, " with %d turns of light", i_ptr->pval);
     }
 
-	else if (known2_p(i_ptr)) {
-
-	    if (pval_use == CHARGES) {
+	    else if (pval_use == CHARGES) {
 		(void)sprintf(tmp_str, " (%d charge%s", i_ptr->pval,
 			      (i_ptr->pval == 1 ? ")" : "s)"));
     }
@@ -1037,7 +1041,8 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 				  MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
     }
 
-    else if (i_ptr->pval != 0) {
+    else if (i_ptr->pval == 0) {
+    }
 
 		else if (pval_use == PLUSSES) {
 		    (void)sprintf(tmp_str, " (%c%d)",
@@ -1049,8 +1054,10 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 				  MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
     }
 
-		else if (pval_use == FLAGS) {
-		    if ((i_ptr->flags1 & TR1_SPEED) &&
+    else if (pval_use != FLAGS) {
+    }
+
+    else if ((i_ptr->flags1 & TR1_SPEED) &&
 	     (i_ptr->name2 != EGO_SPEED)) {
 			(void)sprintf(tmp_str, " (%c%d to speed)",
 				      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
@@ -1087,9 +1094,6 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 			(void)sprintf(tmp_str, " (%c%d)",
 				      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
     }
-		}     /* pval_use == FLAGS */
-	    }         /* pval != 0 */
-	}             /* if known2_p (fully identified) */
 
 	(void)strcat(tmp_val, tmp_str);
 
@@ -1167,7 +1171,6 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	    (void)strcat(out_val, tmp_val);
 	}
     /* (void) strcat(out_val, "."); avoid ".." bug -CWS */
-    }
 }
 
 
