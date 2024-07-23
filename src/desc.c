@@ -601,10 +601,10 @@ int item_similar(inven_type *i_ptr, inven_type *j_ptr)
 void objdes(char *out_val, inven_type *i_ptr, int pref)
 {
     register cptr basenm, modstr;
-    bool aware;
-    bigvtype             tmp_val;
+    bool aware, append_name;
+    int power, indexx, pval_use;
     vtype                tmp_str, damstr;
-    int power, indexx, pval_use, append_name;
+    bigvtype             tmp_val;
 
 
     /* Is the player "aware" of the object? */
@@ -616,6 +616,9 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
     /* Extract the (default) "base name" */
     basenm = k_list[i_ptr->k_idx].name;
 
+    /* Assume we will NOT append the "kind" name */
+    append_name = FALSE;
+
     /* Assume no modifier string */
     modstr = NULL;
 
@@ -625,8 +628,6 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
     /* Assume no display of "pval" */
     pval_use = IGNORED;
 
-    /* Assume we will NOT append the "kind" name */
-    append_name = FALSE;
 
     /* Analyze the object */
     switch (i_ptr->tval) {
@@ -638,25 +639,6 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	break;
 
       case TV_CHEST:
-	break;
-
-      case TV_SHOT:
-      case TV_BOLT:
-      case TV_ARROW:
-	(void)sprintf(damstr, " (%dd%d)", i_ptr->damage[0], i_ptr->damage[1]);
-	break;
-
-      /* Lites (including a few "Specials") */
-      case TV_LITE:
-
-	pval_use = LIGHT;
-
-	if (!stricmp("The Phial of Galadriel", basenm) && !known2_p(i_ptr))
-	    basenm = "a Shining Phial";
-	if (!stricmp("The Star of Elendil", basenm) && !known2_p(i_ptr))
-	    basenm = "a Shining Gem";
-	if (!stricmp("The Arkenstone of Thrain", basenm) && !known2_p(i_ptr))
-	    basenm = "a Shining Gem";
 	break;
 
       /* Weapons have a damage string, and flags */
@@ -684,17 +666,39 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	/* All done */
 	break;
 
+      case TV_SHOT:
+      case TV_BOLT:
+      case TV_ARROW:
+	(void)sprintf(damstr, " (%dd%d)", i_ptr->damage[0], i_ptr->damage[1]);
+	break;
+
+
       /* Armour uses flags */
       case TV_BOOTS:
       case TV_GLOVES:
       case TV_CLOAK:
       case TV_HELM:
       case TV_SHIELD:
-      case TV_HARD_ARMOR:
       case TV_SOFT_ARMOR:
+      case TV_HARD_ARMOR:
       case TV_DRAG_ARMOR:
 	pval_use = FLAGS;
 	break;
+
+
+      /* Lites (including a few "Specials") */
+      case TV_LITE:
+
+	pval_use = LIGHT;
+
+	if (!stricmp("The Phial of Galadriel", basenm) && !known2_p(i_ptr))
+	    basenm = "a Shining Phial";
+	if (!stricmp("The Star of Elendil", basenm) && !known2_p(i_ptr))
+	    basenm = "a Shining Gem";
+	if (!stricmp("The Arkenstone of Thrain", basenm) && !known2_p(i_ptr))
+	    basenm = "a Shining Gem";
+	break;
+
 
       /* Amulets (including a few "Specials") */
       case TV_AMULET:
@@ -720,6 +724,8 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
       /* Rings (including a few "Specials") */
       case TV_RING:
 
+	pval_use = PLUSSES;
+
 	if (i_ptr->sval == SV_RING_POWER) {
 	    append_name = FALSE;
 	    if (!known2_p(i_ptr))
@@ -739,10 +745,10 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	    basenm = "& Ring";
 	    append_name = TRUE;
 	}
-	pval_use = PLUSSES;
 	break;
 
       case TV_STAFF:
+	pval_use = CHARGES;
 	if (!aware) {
 	    basenm = "& %s Staff";
 	    modstr = staff_adj[indexx];
@@ -756,10 +762,10 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	    basenm = "& Staff";
 	    append_name = TRUE;
 	}
-	pval_use = CHARGES;
 	break;
 
       case TV_WAND:
+	pval_use = CHARGES;
 	if (!aware) {
 	    basenm = "& %s Wand";
 	    modstr = wand_adj[indexx];
@@ -773,7 +779,6 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	    basenm = "& Wand";
 	    append_name = TRUE;
 	}
-	pval_use = CHARGES;
 	break;
 
       case TV_ROD:
@@ -1044,6 +1049,12 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	/* Nothing */
     }
 
+    /* Hack -- Boring Shovels */
+    else if (pval_use == Z_PLUSSES) {
+	(void)sprintf(tmp_str, " (%c%d)",
+		      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
+    }
+
     /* Torches and Lanterns have predictable life */
     else if ((pval_use == LIGHT) && !artifact_p(i_ptr)) {
 	(void)sprintf(tmp_str, " with %d turns of light", i_ptr->pval);
@@ -1053,12 +1064,6 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
     else if (pval_use == CHARGES) {
 	    (void)sprintf(tmp_str, " (%d charge%s",
 			  i_ptr->pval, (i_ptr->pval == 1 ? ")" : "s)"));
-    }
-
-    /* Hack -- Boring Shovels */
-    else if (pval_use == Z_PLUSSES) {
-	(void)sprintf(tmp_str, " (%c%d)",
-		      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
     }
 
     /* Nothing to declare */
@@ -1137,14 +1142,14 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
     /* The object "expects" a "number" */
     if (tmp_val[0] == '&') {
 
-	/* Extract the number */
-	if (i_ptr->number > 1) {
-	    (void)sprintf(out_val, "%d%s", (int)i_ptr->number, &tmp_val[1]);
+	/* Hack -- None left */
+	if (i_ptr->number < 1) {
+	    (void)sprintf(out_val, "%s%s", "no more", &tmp_val[1]);
 	}
 
-	/* Hack -- None left */
-	else if (i_ptr->number < 1) {
-	    (void)sprintf(out_val, "%s%s", "no more", &tmp_val[1]);
+	/* Extract the number */
+	else if (i_ptr->number > 1) {
+	    (void)sprintf(out_val, "%d%s", (int)i_ptr->number, &tmp_val[1]);
 	}
 
 	/* Hack -- The only one of its kind */
