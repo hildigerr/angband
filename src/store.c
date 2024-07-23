@@ -1461,7 +1461,7 @@ static int get_haggle(cptr pmt, s32b *poffer,
     flag = TRUE;
     if (last_inc && !final) {
 	(void)sprintf(buf, "%s [%c%ld] ", pmt,
-			(last_inc < 0) ? '-' : '+', (last_inc < 0) ? (long)-last_inc : (long)last_inc);
+			MY_POM(last_inc), (long)MY_ABS(last_inc));
     }
     else {
 	(void)sprintf(buf, "%s [accept] ", pmt);

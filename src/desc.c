@@ -591,6 +591,10 @@ int item_similar(inven_type *i_ptr, inven_type *j_ptr)
  *
  * note that since out_val can easily exceed 80 characters, objdes must
  * always be called with a bigvtype as the first paramter 
+ *
+ * Originally used sprintf(buf, "%+d", val), but several machines don't
+ * support it, so use sprintf(buf, "%c%d", MY_POM(val), MY_ABS(val))
+ *
  *****
  * Note that objdes now never returns a description ending with punctuation
  * (ie, "."'s) -CWS 
@@ -963,17 +967,16 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
     /* We know it, describe it */	
     if (known2_p(i_ptr)) {
 
-	/* originally used %+d, but several machines don't support it */
 	    if (i_ptr->ident & ID_SHOW_HITDAM)
 		(void)sprintf(tmp_str, " (%c%d,%c%d)",
-			  (i_ptr->tohit < 0) ? '-' : '+', MY_ABS( i_ptr->tohit),
-			 (i_ptr->todam < 0) ? '-' : '+', MY_ABS(i_ptr->todam));
+			  MY_POM(i_ptr->tohit), MY_ABS(i_ptr->tohit),
+			  MY_POM(i_ptr->todam), MY_ABS(i_ptr->todam));
 	    else if (i_ptr->tohit != 0)
 		(void)sprintf(tmp_str, " (%c%d)",
-			 (i_ptr->tohit < 0) ? '-' : '+', MY_ABS(i_ptr->tohit));
+			 MY_POM(i_ptr->tohit), MY_ABS(i_ptr->tohit));
 	    else if (i_ptr->todam != 0)
 		(void)sprintf(tmp_str, " (%c%d)",
-			 (i_ptr->todam < 0) ? '-' : '+', MY_ABS(i_ptr->todam));
+			 MY_POM(i_ptr->todam), MY_ABS(i_ptr->todam));
 	    else
 		tmp_str[0] = '\0';
 	    (void)strcat(tmp_val, tmp_str);
@@ -983,9 +986,8 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	    (void)sprintf(tmp_str, " [%d", i_ptr->ac);
 	    (void)strcat(tmp_val, tmp_str);
 	if (known2_p(i_ptr)) {
-	    /* originally used %+d, but several machines don't support it */
 		(void)sprintf(tmp_str, ",%c%d",
-			   (i_ptr->toac < 0) ? '-' : '+', MY_ABS(i_ptr->toac));
+			  MY_POM(i_ptr->toac), MY_ABS(i_ptr->toac));
 		(void)strcat(tmp_val, tmp_str);
 	    }
 	    (void)strcat(tmp_val, "]");
@@ -993,9 +995,8 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
     /* No base armor, but does increase armor */
     else if (i_ptr->toac && known2_p(i_ptr)) {
-	/* originally used %+d, but several machines don't support it */
 	    (void)sprintf(tmp_str, " [%c%d]",
-			  (i_ptr->toac < 0) ? '-' : '+', MY_ABS(i_ptr->toac));
+		      MY_POM(i_ptr->toac), MY_ABS(i_ptr->toac));
 	    (void)strcat(tmp_val, tmp_str);
 	}
 
@@ -1022,44 +1023,44 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
 	    else if (pval_use == Z_PLUSSES) /* (+0) digging implements -CWS */
 		    (void)sprintf(tmp_str, " (%c%d)",
-				  (i_ptr->pval < 0) ? '-' : '+', MY_ABS(i_ptr->pval));
+				  MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
 
 	    else if (i_ptr->pval != 0) {
 		if (pval_use == PLUSSES)
 		    (void)sprintf(tmp_str, " (%c%d)",
-				  (i_ptr->pval < 0) ? '-' : '+', MY_ABS(i_ptr->pval));
+				  MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
 		else if (i_ptr->ident & ID_NOSHOW_TYPE)
 		    (void)sprintf(tmp_str, " (%c%d)",
-				  (i_ptr->pval < 0) ? '-' : '+', MY_ABS(i_ptr->pval));
+				  MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
 
 		else if (pval_use == FLAGS) {
 		    if ((i_ptr->flags1 & TR1_SPEED) &&
 			     (i_ptr->name2 != EGO_SPEED))
 			(void)sprintf(tmp_str, " (%c%d to speed)",
-				      (i_ptr->pval < 0) ? '-' : '+', MY_ABS(i_ptr->pval));
+				      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
 		    else if (i_ptr->flags1 & TR1_SEARCH)
 			/*			&& (i_ptr->name2 != EGO_SEARCH)) */
 			(void)sprintf(tmp_str, " (%c%d to searching)",
-				      (i_ptr->pval < 0) ? '-' : '+', MY_ABS(i_ptr->pval));
+				      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
 		    else if ((i_ptr->flags1 & TR1_STEALTH) &&
 			     (i_ptr->name2 != EGO_STEALTH))
 			(void)sprintf(tmp_str, " (%c%d to stealth)",
-				      (i_ptr->pval < 0) ? '-' : '+', MY_ABS(i_ptr->pval));
+				      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
 		    else if ((i_ptr->flags1 & TR1_INFRA) &&
 			     (i_ptr->name2 != EGO_INFRAVISION))
 			(void)sprintf(tmp_str, " (%c%d to infravision)",
-				      (i_ptr->pval < 0) ? '-' : '+', MY_ABS(i_ptr->pval));
+				      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
 		    else if (i_ptr->flags1 & TR1_ATTACK_SPD) {
 			if (MY_ABS(i_ptr->pval) == 1)
 			    (void)sprintf(tmp_str, " (%c%d attack)",
-					  (i_ptr->pval < 0) ? '-' : '+', MY_ABS(i_ptr->pval));
+					  MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
 			else
 			    (void)sprintf(tmp_str, " (%c%d attacks)",
-					  (i_ptr->pval < 0) ? '-' : '+', MY_ABS(i_ptr->pval));
+					  MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
 		    } /* attack speed */
 		    else
 			(void)sprintf(tmp_str, " (%c%d)",
-				      (i_ptr->pval < 0) ? '-' : '+', MY_ABS(i_ptr->pval));
+				      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
 		}     /* pval_use == FLAGS */
 	    }         /* pval != 0 */
 	}             /* if known2_p (fully identified) */
