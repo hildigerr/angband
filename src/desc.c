@@ -586,18 +586,17 @@ int item_similar(inven_type *i_ptr, inven_type *j_ptr)
 
 
 /*
- * Returns a description of item for inventory
- * pref indicates that there should be an article added (prefix)
+ * Creates a description of the item "i_ptr", and stores it in "out_val".
  *
- * note that since out_val can easily exceed 80 characters, objdes must
- * always be called with a bigvtype as the first paramter 
+ * If "pref" is TRUE, the description is verbose, and has an article (or number,
+ * or "no more") prefixed to the description.
+ *
+ * Note that out_val must be large enough to hold more than 80 characters
+ * (is this true?), but it seems that 160 chars will always be enough
  *
  * Originally used sprintf(buf, "%+d", val), but several machines don't
  * support it, so use sprintf(buf, "%c%d", MY_POM(val), MY_ABS(val))
  *
- *****
- * Note that objdes now never returns a description ending with punctuation
- * (ie, "."'s) -CWS 
  */
 void objdes(char *out_val, inven_type *i_ptr, int pref)
 {
@@ -647,6 +646,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	(void)sprintf(damstr, " (%dd%d)", i_ptr->damage[0], i_ptr->damage[1]);
 	break;
 
+      /* Lites (including a few "Specials") */
       case TV_LITE:
 
 	pval_use = LIGHT;
@@ -680,6 +680,8 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	if (artifact_p(i_ptr)) {	/* only show pval for artifacts... */
 	    pval_use = FLAGS;
 	}
+
+	/* All done */
 	break;
 
       /* Armour uses flags */
@@ -891,7 +893,6 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
       case TV_UP_STAIR:
       case TV_DOWN_STAIR:
 	(void)strcpy(out_val, k_list[i_ptr->k_idx].name);
-    /* (void) strcat(out_val, "."); avoid ".." bug -CWS */
 	return;
 
       case TV_STORE_DOOR:
@@ -965,6 +966,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	}
     }
 
+    /* Append the "damage info", if any */
     if (damstr[0]) {
 	(void)strcat(tmp_val, damstr);
     }
@@ -973,17 +975,20 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
     /* We know it, describe it */	
     if (known2_p(i_ptr)) {
 
+	/* Show the tohit/todam on request */
 	if (i_ptr->ident & ID_SHOW_HITDAM) {
 	    (void)sprintf(tmp_str, " (%c%d,%c%d)",
 			  MY_POM(i_ptr->tohit), MY_ABS(i_ptr->tohit),
 			  MY_POM(i_ptr->todam), MY_ABS(i_ptr->todam));
 	}
-
+	
+	/* Show the tohit if needed */
 	else if (i_ptr->tohit) {
 	    (void)sprintf(tmp_str, " (%c%d)",
 			  MY_POM(i_ptr->tohit), MY_ABS(i_ptr->tohit));
 	}
 
+	/* Show the todam if needed */
 	else if (i_ptr->todam) {
 	    (void)sprintf(tmp_str, " (%c%d)",
 			  MY_POM(i_ptr->todam), MY_ABS(i_ptr->todam));
@@ -994,7 +999,8 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
     }
 
 
-    /* Crowns have a zero base AC, so make a special test for them. */
+    /* Add in the "armor class info", base and magic */
+    /* Hack -- show "zero" ac for crowns */
 	if (i_ptr->ac != 0 || (i_ptr->tval == TV_HELM)) {
 	    (void)sprintf(tmp_str, " [%d", i_ptr->ac);
 	    (void)strcat(tmp_val, tmp_str);
@@ -1014,8 +1020,10 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
     }
 
 
+    /* Unknown things cannot display the charge */
     if (!known2_p(i_ptr)) pval_use = IGNORED;
 
+    /* Erase tmp_str */
     tmp_str[0] = '\0';
 
     /* override defaults, check for pval flags in the ident field */
@@ -1027,27 +1035,34 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 		pval_use = PLUSSES;
 	}
 
+    /* Nothing to add */
     if (pval_use == IGNORED) {
+	/* Nothing */
     }
 
+    /* Torches and Lanterns have predictable life */
     else if ((pval_use == LIGHT) && !artifact_p(i_ptr)) {
 	(void)sprintf(tmp_str, " with %d turns of light", i_ptr->pval);
     }
 
+    /* Wands and Staffs have charges */
     else if (pval_use == CHARGES) {
 	    (void)sprintf(tmp_str, " (%d charge%s",
 			  i_ptr->pval, (i_ptr->pval == 1 ? ")" : "s)"));
     }
 
-    /* (+0) digging implements -CWS */
+    /* Hack -- Boring Shovels */
     else if (pval_use == Z_PLUSSES) {
 	(void)sprintf(tmp_str, " (%c%d)",
 		      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
     }
 
+    /* Nothing to declare */
     else if (i_ptr->pval == 0) {
+	/* Nothing */
     }
 
+    /* Boring objects */        
     else if (pval_use == PLUSSES) {
 	(void)sprintf(tmp_str, " (%c%d)",
 		      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
@@ -1058,33 +1073,40 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 				  MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
     }
 
+    /* Hack -- Everything else is a flag */
     else if (pval_use != FLAGS) {
+	/* Nothing */
     }
 
+    /* Speed */
     else if ((i_ptr->flags1 & TR1_SPEED) &&
 	     (i_ptr->name2 != EGO_SPEED)) {
 	(void)sprintf(tmp_str, " (%c%d to speed)",
 		      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
     }
 
+    /* Search (Hack -- display redundant info?) */
     else if (i_ptr->flags1 & TR1_SEARCH) {
-			/*			&& (i_ptr->name2 != EGO_SEARCH)) */
+	/* && (i_ptr->name2 != EGO_SEARCH) */
 	(void)sprintf(tmp_str, " (%c%d to searching)",
 		      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
     }
 
+    /* Stealth */
     else if ((i_ptr->flags1 & TR1_STEALTH) &&
 	     (i_ptr->name2 != EGO_STEALTH)) {
 	(void)sprintf(tmp_str, " (%c%d to stealth)",
 		      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
     }
 
+    /* Infravision */
     else if ((i_ptr->flags1 & TR1_INFRA) &&
 	     (i_ptr->name2 != EGO_INFRAVISION)) {
 	(void)sprintf(tmp_str, " (%c%d to infravision)",
 		      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
     }
 
+    /* Attack speed */
     else if (i_ptr->flags1 & TR1_ATTACK_SPD) {
 			if (MY_ABS(i_ptr->pval) == 1)
 			    (void)sprintf(tmp_str, " (%c%d attack)",
@@ -1094,6 +1116,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 					  MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
 		    } /* attack speed */
 
+    /* Default to Boring Plusses */
     else {
 	(void)sprintf(tmp_str, " (%c%d)",
 		      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
@@ -1101,14 +1124,16 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
 	(void)strcat(tmp_val, tmp_str);
 
-    /* ampersand is always the first character */
+
+    /* The object "expects" a "number" */
     if (tmp_val[0] == '&') {
 
-	/* use &tmp_val[1], so that & does not appear in output */
+	/* Extract the number */
 	if (i_ptr->number > 1) {
 	    (void)sprintf(out_val, "%d%s", (int)i_ptr->number, &tmp_val[1]);
 	}
 
+	/* Hack -- None left */
 	else if (i_ptr->number < 1) {
 	    (void)sprintf(out_val, "%s%s", "no more", &tmp_val[1]);
 	}
@@ -1118,6 +1143,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	    (void)sprintf(out_val, "The%s", &tmp_val[1]);
 	}
 
+	/* A single one, with a vowel */
 	else if (is_a_vowel(tmp_val[2])) {
 	    (void)sprintf(out_val, "an%s", &tmp_val[1]);
 	}
@@ -1128,9 +1154,10 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	}
     }
 
-    /* handle 'no more' case specially */
+    /* Hack -- objects that never take an article */
     else {
 
+	/* Hack -- all gone */
 	if (i_ptr->number < 1) {
 	/* check for "some" at start */
 	    if (!strncmp("some", tmp_val, 4))
@@ -1140,6 +1167,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	    (void)sprintf(out_val, "no more %s", tmp_val);
 	}
 
+	/* Hack -- single items get no prefix */
 	else {
 	    (void)strcpy(out_val, tmp_val);
 	}
@@ -1171,11 +1199,12 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	else if ((indexx = strlen(tmp_str)) > 0)
 	/* remove the extra blank at the end */
 	    tmp_str[indexx - 1] = '\0';
+
+    /* If we created an inscription, append it */
     if (tmp_str[0]) {
 	(void)sprintf(tmp_val, " {%s}", tmp_str);
 	    (void)strcat(out_val, tmp_val);
     }
-    /* (void) strcat(out_val, "."); avoid ".." bug -CWS */
 }
 
 
