@@ -937,13 +937,15 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
     /* Hack -- No prefixes requested */
     if (!pref) {
 
-	if (!strncmp("some", tmp_val, 4))
-	    (void)strcpy(out_val, &tmp_val[5]);
-	else if (tmp_val[0] == '&')
-	/* eliminate the '& ' at the beginning */
-	    (void)strcpy(out_val, &tmp_val[2]);
-	else
-	    (void)strcpy(out_val, tmp_val);
+	cptr skip = tmp_val;
+
+	if (!strncmp("some", skip, 4)) skip += 5;
+
+	/* Delete the count symbol */
+	else if (skip[0] == '&') skip += 2;
+
+	/* Use the name (without the "&") */
+	(void)strcpy(out_val, skip);
 
 	/* Short answer... */
 	return;
@@ -975,48 +977,50 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
     /* We know it, describe it */	
     if (known2_p(i_ptr)) {
 
+	char *tail = tmp_val + strlen(tmp_val);
+
 	/* Show the tohit/todam on request */
 	if (i_ptr->ident & ID_SHOW_HITDAM) {
-	    (void)sprintf(tmp_str, " (%c%d,%c%d)",
+	    (void)sprintf(tail, " (%c%d,%c%d)",
 			  MY_POM(i_ptr->tohit), MY_ABS(i_ptr->tohit),
 			  MY_POM(i_ptr->todam), MY_ABS(i_ptr->todam));
 	}
 	
 	/* Show the tohit if needed */
 	else if (i_ptr->tohit) {
-	    (void)sprintf(tmp_str, " (%c%d)",
+	    (void)sprintf(tail, " (%c%d)",
 			  MY_POM(i_ptr->tohit), MY_ABS(i_ptr->tohit));
 	}
 
 	/* Show the todam if needed */
 	else if (i_ptr->todam) {
-	    (void)sprintf(tmp_str, " (%c%d)",
+	    (void)sprintf(tail, " (%c%d)",
 			  MY_POM(i_ptr->todam), MY_ABS(i_ptr->todam));
 	}
-	    else
-		tmp_str[0] = '\0';
-	    (void)strcat(tmp_val, tmp_str);
     }
 
 
     /* Add in the "armor class info", base and magic */
     /* Hack -- show "zero" ac for crowns */
-	if (i_ptr->ac != 0 || (i_ptr->tval == TV_HELM)) {
-	    (void)sprintf(tmp_str, " [%d", i_ptr->ac);
-	    (void)strcat(tmp_val, tmp_str);
+    if (i_ptr->ac || (i_ptr->tval == TV_HELM)) {
+	char *tail;
+	char b1 = '[', b2 = ']';
+	tail = tmp_val + strlen(tmp_val);
+	(void)sprintf(tail, " %c%d", b1, i_ptr->ac);
 	if (known2_p(i_ptr)) {
-		(void)sprintf(tmp_str, ",%c%d",
+	    tail = tail + strlen(tail);
+	    (void)sprintf(tail, ",%c%d",
 			  MY_POM(i_ptr->toac), MY_ABS(i_ptr->toac));
-		(void)strcat(tmp_val, tmp_str);
 	}
-	    (void)strcat(tmp_val, "]");
+	tail = tail + strlen(tail);
+	(void)sprintf(tail, "%c", b2);
     }
 
     /* No base armor, but does increase armor */
     else if (i_ptr->toac && known2_p(i_ptr)) {
-	    (void)sprintf(tmp_str, " [%c%d]",
+	char *tail = tmp_val + strlen(tmp_val);
+	(void)sprintf(tail, " [%c%d]",
 		      MY_POM(i_ptr->toac), MY_ABS(i_ptr->toac));
-	    (void)strcat(tmp_val, tmp_str);
     }
 
 
@@ -1122,7 +1126,12 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 		      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
     }
 
-	(void)strcat(tmp_val, tmp_str);
+
+    /* Extract the extra info, if any */
+    if (tmp_str[0]) {
+	char *tail = tmp_val + strlen(tmp_val);
+	(void)sprintf(tail, "%s", tmp_str);
+    }
 
 
     /* The object "expects" a "number" */
@@ -1202,8 +1211,8 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
     /* If we created an inscription, append it */
     if (tmp_str[0]) {
-	(void)sprintf(tmp_val, " {%s}", tmp_str);
-	    (void)strcat(out_val, tmp_val);
+	char *tail = out_val + strlen(out_val);
+	(void)sprintf(tail, " {%s}", tmp_str);
     }
 }
 
