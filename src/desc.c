@@ -960,23 +960,29 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	}
     }
 
-	if (damstr[0] != '\0')
-	    (void)strcat(tmp_val, damstr);
+    if (damstr[0]) {
+	(void)strcat(tmp_val, damstr);
+    }
 
 
     /* We know it, describe it */	
     if (known2_p(i_ptr)) {
 
-	    if (i_ptr->ident & ID_SHOW_HITDAM)
+	if (i_ptr->ident & ID_SHOW_HITDAM) {
 		(void)sprintf(tmp_str, " (%c%d,%c%d)",
 			  MY_POM(i_ptr->tohit), MY_ABS(i_ptr->tohit),
 			  MY_POM(i_ptr->todam), MY_ABS(i_ptr->todam));
-	    else if (i_ptr->tohit != 0)
+	}
+
+	else if (i_ptr->tohit) {
 		(void)sprintf(tmp_str, " (%c%d)",
 			 MY_POM(i_ptr->tohit), MY_ABS(i_ptr->tohit));
-	    else if (i_ptr->todam != 0)
+	}
+
+	else if (i_ptr->todam) {
 		(void)sprintf(tmp_str, " (%c%d)",
 			 MY_POM(i_ptr->todam), MY_ABS(i_ptr->todam));
+	}
 	    else
 		tmp_str[0] = '\0';
 	    (void)strcat(tmp_val, tmp_str);
@@ -1011,45 +1017,63 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 		pval_use = PLUSSES;
 	}
 
-	if (pval_use == IGNORED);
-	else if ((pval_use == LIGHT) && !artifact_p(i_ptr))
+    if (pval_use == IGNORED) {
+    }
+
+    else if ((pval_use == LIGHT) && !artifact_p(i_ptr)) {
 	    (void)sprintf(tmp_str, " with %d turns of light", i_ptr->pval);
+    }
 
 	else if (known2_p(i_ptr)) {
 
-	    if (pval_use == CHARGES)
+	    if (pval_use == CHARGES) {
 		(void)sprintf(tmp_str, " (%d charge%s", i_ptr->pval,
 			      (i_ptr->pval == 1 ? ")" : "s)"));
+    }
 
-	    else if (pval_use == Z_PLUSSES) /* (+0) digging implements -CWS */
+    /* (+0) digging implements -CWS */
+	    else if (pval_use == Z_PLUSSES) {
 		    (void)sprintf(tmp_str, " (%c%d)",
 				  MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
+    }
 
-	    else if (i_ptr->pval != 0) {
-		if (pval_use == PLUSSES)
+    else if (i_ptr->pval != 0) {
+
+		else if (pval_use == PLUSSES) {
 		    (void)sprintf(tmp_str, " (%c%d)",
 				  MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
-		else if (i_ptr->ident & ID_NOSHOW_TYPE)
+    }
+
+		else if (i_ptr->ident & ID_NOSHOW_TYPE) {
 		    (void)sprintf(tmp_str, " (%c%d)",
 				  MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
+    }
 
 		else if (pval_use == FLAGS) {
 		    if ((i_ptr->flags1 & TR1_SPEED) &&
-			     (i_ptr->name2 != EGO_SPEED))
+	     (i_ptr->name2 != EGO_SPEED)) {
 			(void)sprintf(tmp_str, " (%c%d to speed)",
 				      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
-		    else if (i_ptr->flags1 & TR1_SEARCH)
+    }
+
+    else if (i_ptr->flags1 & TR1_SEARCH) {
 			/*			&& (i_ptr->name2 != EGO_SEARCH)) */
 			(void)sprintf(tmp_str, " (%c%d to searching)",
 				      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
+    }
+
 		    else if ((i_ptr->flags1 & TR1_STEALTH) &&
-			     (i_ptr->name2 != EGO_STEALTH))
+	     (i_ptr->name2 != EGO_STEALTH)) {
 			(void)sprintf(tmp_str, " (%c%d to stealth)",
 				      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
+    }
+
 		    else if ((i_ptr->flags1 & TR1_INFRA) &&
-			     (i_ptr->name2 != EGO_INFRAVISION))
+	     (i_ptr->name2 != EGO_INFRAVISION)) {
 			(void)sprintf(tmp_str, " (%c%d to infravision)",
 				      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
+    }
+
 		    else if (i_ptr->flags1 & TR1_ATTACK_SPD) {
 			if (MY_ABS(i_ptr->pval) == 1)
 			    (void)sprintf(tmp_str, " (%c%d attack)",
@@ -1058,9 +1082,11 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 			    (void)sprintf(tmp_str, " (%c%d attacks)",
 					  MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
 		    } /* attack speed */
-		    else
+
+    else {
 			(void)sprintf(tmp_str, " (%c%d)",
 				      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
+    }
 		}     /* pval_use == FLAGS */
 	    }         /* pval != 0 */
 	}             /* if known2_p (fully identified) */
@@ -1070,31 +1096,45 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
     /* ampersand is always the first character */
 	if (tmp_val[0] == '&') {
 	/* use &tmp_val[1], so that & does not appear in output */
-	    if (i_ptr->number > 1)
+	    if (i_ptr->number > 1) {
 		(void)sprintf(out_val, "%d%s", (int)i_ptr->number, &tmp_val[1]);
-	    else if (i_ptr->number < 1)
+	}
+
+	    else if (i_ptr->number < 1) {
 		(void)sprintf(out_val, "%s%s", "no more", &tmp_val[1]);
+	}
 
 	/* Hack -- The only one of its kind */
 	else if (known2_p(i_ptr) && artifact_p(i_ptr)) {
 	    (void)sprintf(out_val, "The%s", &tmp_val[1]);
 	}
 
-	    else if (is_a_vowel(tmp_val[2]))
-		(void)sprintf(out_val, "an%s", &tmp_val[1]);
-	    else
-		(void)sprintf(out_val, "a%s", &tmp_val[1]);
+	else if (is_a_vowel(tmp_val[2])) {
+	    (void)sprintf(out_val, "an%s", &tmp_val[1]);
 	}
+
+	/* A single one, without a vowel */
+	else {
+	    (void)sprintf(out_val, "a%s", &tmp_val[1]);
+	}
+    }
+
     /* handle 'no more' case specially */
-	else if (i_ptr->number < 1) {
+    else {
+
+	if (i_ptr->number < 1) {
 	/* check for "some" at start */
 	    if (!strncmp("some", tmp_val, 4))
 		(void)sprintf(out_val, "no more %s", &tmp_val[5]);
 	/* here if no article */
 	    else
 		(void)sprintf(out_val, "no more %s", tmp_val);
-	} else
+	}
+
+	else {
 	    (void)strcpy(out_val, tmp_val);
+	}
+    }
 
 	tmp_str[0] = '\0';
 	if (flavor_p(i_ptr)) {
