@@ -988,12 +988,6 @@ void do_cmd_open()
 		/* generate based on level chest was found on - dbd */
 		    object_level = i_ptr->pval;
 
-	        /* but let's not get too crazy with storebought chests -CWS */
-		    if (i_ptr->ident & ID_STOREBOUGHT) {
-			if (object_level > 20)
-			    object_level = 20;
-		    }
-
 		    if (object_level < 0) /* perform some sanity checking -CWS */
 			object_level = 0;
 		    if (object_level > MAX_OBJ_LEVEL)

@@ -468,7 +468,7 @@ void wizard_create()
     t_ptr = &t_type;
     i_ptr = &forge;
     i_ptr->name2 = 0;
-    i_ptr->ident = ID_KNOWN | ID_STOREBOUGHT;
+    i_ptr->ident = ID_KNOWN;
 
     save_screen();
     prt("What type of item?    : ", 0, 0);

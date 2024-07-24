@@ -840,6 +840,9 @@ static errr rd_item_old(inven_type *i_ptr)
 	i_ptr->ident |= ID_FELT;
 	i_ptr->ident &= ~0x02;
     }
+
+    /* Forget old "ID_STOREBOUGHT" flag, if any */
+    i_ptr->ident &= ~0x10;
     }
 
 

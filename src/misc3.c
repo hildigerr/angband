@@ -2431,12 +2431,7 @@ void place_object(int y, int x)
     if (peek) {
 	if (k_list[sorted_objects[tmp]].level > dun_level) {
 	    char buf[200];
-	    byte temp;
-	    
-	    temp=i_list[cur_pos].ident;
-	    i_list[cur_pos].ident |= ID_STOREBOUGHT;
 	    objdes_store(buf, &i_list[cur_pos], TRUE);
-	    i_list[cur_pos].ident = temp;
 	    msg_print(buf);
 	}
     }
@@ -2532,12 +2527,7 @@ void place_good(int y, int x, bool great)
     if (peek) {
 	if (k_list[sorted_objects[k_idx]].level > object_level) {
 	    char                buf[200];
-	    byte               t;
-
-	    t = i_list[cur_pos].ident;
-	    i_list[cur_pos].ident |= ID_STOREBOUGHT;
 	    objdes_store(buf, &i_list[cur_pos], TRUE);
-	    i_list[cur_pos].ident = t;
 	    msg_print(buf);
 	}
     }

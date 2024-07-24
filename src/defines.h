@@ -535,7 +535,6 @@
 #define ID_FELT         0x01	/* Item has been "felt" */
 #define ID_EMPTY        0x04	/* Item is now "empty" */
 #define ID_KNOWN        0x08	/* Item is fully "known" */
-#define ID_STOREBOUGHT  0x10
 #define ID_SHOW_HITDAM  0x20
 #define ID_NOSHOW_P1    0x40    /* don't show (+x) even if pval != 0 -CWS   */
 #define ID_NOSHOW_TYPE  0x80    /* don't show (+x of yyy), just (+x) -CWS */
