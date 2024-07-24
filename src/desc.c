@@ -344,7 +344,6 @@ void known2(inven_type *i_ptr)
 	inscribe(i_ptr, "cursed");
     }
 
-    i_ptr->ident &= ~ID_MAGIK;
 
     /* Clear the "Felt" info */
     i_ptr->ident &= ~ID_FELT;

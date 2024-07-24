@@ -40,8 +40,6 @@ static cptr value_check(inven_type *i_ptr)
     /* Known items need no feeling */
     if (known2_p(i_ptr)) return (NULL);
 
-    if (i_ptr->ident & ID_MAGIK) return 0;
-
     /* Cursed items (including artifacts/ego-weapons) */
     if (cursed_p(i_ptr)) {
 
@@ -232,8 +230,6 @@ static void sense_inventory(void)
 	/* We know about it already, do not tell us again */
 	if (i_ptr->ident & ID_FELT) continue;
 
-	if (i_ptr->ident & ID_MAGIK) continue;
-
 	/* It is fully known, no information needed */
 	if (known2_p(i_ptr)) continue;
 
@@ -276,8 +272,6 @@ static void sense_inventory(void)
 		(i_f > 0 ? "good" : "bad"),
 		tmp_str, index_to_label(i), describe_use(i));
 	msg_print(tmp_str);
-
-		    if(i_f > 0) i_ptr->ident |= ID_MAGIK;
 
 	/* We have "felt" it */
 	i_ptr->ident |= ID_FELT;
