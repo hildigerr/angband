@@ -1117,13 +1117,10 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
     /* Attack speed */
     else if (i_ptr->flags1 & TR1_ATTACK_SPD) {
-			if (MY_ABS(i_ptr->pval) == 1)
-			    (void)sprintf(tmp_str, " (%c%d attack)",
-					  MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
-			else
-			    (void)sprintf(tmp_str, " (%c%d attacks)",
-					  MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
-		    } /* attack speed */
+	(void)sprintf(tmp_str, "%c%d attack%s",
+		      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval),
+		      ((MY_ABS(i_ptr->pval) == 1) ? "" : "s"));
+    }
 
     /* Default to Boring Plusses */
     else {
