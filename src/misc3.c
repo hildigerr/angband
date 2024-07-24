@@ -2435,7 +2435,7 @@ void place_object(int y, int x)
 	    
 	    temp=i_list[cur_pos].ident;
 	    i_list[cur_pos].ident |= ID_STOREBOUGHT;
-	    objdes(buf, &i_list[cur_pos], TRUE);
+	    objdes_store(buf, &i_list[cur_pos], TRUE);
 	    i_list[cur_pos].ident = temp;
 	    msg_print(buf);
 	}
@@ -2536,7 +2536,7 @@ void place_good(int y, int x, bool great)
 
 	    t = i_list[cur_pos].ident;
 	    i_list[cur_pos].ident |= ID_STOREBOUGHT;
-	    objdes(buf, &i_list[cur_pos], TRUE);
+	    objdes_store(buf, &i_list[cur_pos], TRUE);
 	    i_list[cur_pos].ident = t;
 	    msg_print(buf);
 	}

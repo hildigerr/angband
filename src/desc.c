@@ -18,7 +18,13 @@
  *
  * If an item is in a store, it is guaranteed to be "known".  So perhaps it
  * should no longer be possible to see an item as "a red potion of death",
- * since once the potion type is known, all red potions are known.
+ * since once the potion type is known, all red potions are known.  Actually,
+ * the "objdes_store()"....
+ *
+ * Summary: the "store_made" flag is now implicit in calls to the special
+ * "objdes_store()" function.  And once an item is bought from a store, the
+ * user instantly becomes aware of its identity.  This will yield combining
+ * when necessary.
  *
  * Also note that the "aware" predicate returns TRUE if the object is known.
  */
@@ -597,6 +603,8 @@ int item_similar(inven_type *i_ptr, inven_type *j_ptr)
  * Originally used sprintf(buf, "%+d", val), but several machines don't
  * support it, so use sprintf(buf, "%c%d", MY_POM(val), MY_ABS(val))
  *
+ * Note that "objdes_store()" forces "plain_descriptions" to appear "true",
+ * so that the "flavors" of "un-aware" objects are not shown.
  *
  * Note that ALL ego-items (when known) append an "Artifact Name", unless
  * the item is also an artifact, which should NEVER happen.
@@ -1244,6 +1252,34 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	char *tail = out_val + strlen(out_val);
 	(void)sprintf(tail, " {%s}", tmp_str);
     }
+}
+
+
+/*
+ * Hack -- describe an item currently in a store's inventory
+ */
+void objdes_store(char *buf, inven_type *i_ptr, int mode)
+{
+    /* Save the "known" flag */
+    bool hack_known = (i_ptr->ident & ID_KNOWN) ? TRUE : FALSE;
+
+    /* Save the actual "plain_descriptions" flag */
+    bool hack_plain = plain_descriptions;
+
+    /* Force plain descriptions of store items */
+    plain_descriptions = TRUE;
+
+    /* Force "known" */
+    i_ptr->ident |= ID_KNOWN;
+
+    /* Describe the (known) object, with no "adjectives" */
+    objdes(buf, i_ptr, mode);
+
+    /* Replace the global option */
+    plain_descriptions = hack_plain;      
+
+    /* Restore the "known" flag */
+    if (!hack_known) i_ptr->ident &= ~ID_KNOWN;
 }
 
 

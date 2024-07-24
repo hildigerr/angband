@@ -413,7 +413,7 @@ int file_character(cptr filename1)
 	else {
 	    for (i = 0; i < store[MAX_STORES-1].store_ctr; i++) {
 		if (i == 12) fprintf(file1, "\n");  
-		objdes(prt2, &store[MAX_STORES-1].store_item[i], TRUE);
+		objdes_store(prt2, &store[MAX_STORES-1].store_item[i], TRUE);
 		(void) fprintf(file1, "%c) %s\n", (i%12)+'a', prt2);
 	    }
 	}

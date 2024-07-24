@@ -1263,7 +1263,17 @@ static void display_entry(int pos)
     /* Get the "offset" */
     i = (pos % 12);
 
+    /* Describe an item in the home */
+    if (store_num == 7) {
 	objdes(out_val1, i_ptr, TRUE);
+    }
+
+    /* Describe an item (fully) in a store */
+    else {
+	/* Describe the object */
+	objdes_store(out_val, i_ptr, TRUE);
+    }
+
 	(void)sprintf(out_val2, "%c) %s", 'a' + i, out_val1);
 	prt(out_val2, i + 5, 0);
 	if (store_num != 7) {
