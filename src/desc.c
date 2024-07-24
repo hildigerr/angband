@@ -918,7 +918,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
       /* Used in the "inventory" routine */
       default:
-	strcpy(out_val, "Error in objdes()");
+	strcpy(out_val, "(nothing)");
 	return;
     }
 
