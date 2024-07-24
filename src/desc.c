@@ -597,6 +597,22 @@ int item_similar(inven_type *i_ptr, inven_type *j_ptr)
  * Originally used sprintf(buf, "%+d", val), but several machines don't
  * support it, so use sprintf(buf, "%c%d", MY_POM(val), MY_ABS(val))
  *
+ *
+ * Note that ALL ego-items (when known) append an "Artifact Name", unless
+ * the item is also an artifact, which should NEVER happen.
+ *
+ * Note that ALL artifacts (when known) append an "Artifact Name", so we
+ * have special processing for "Specials" (artifact Lites, Rings, Amulets).
+ * The "Specials" never use "modifiers" if they are "known".
+ *
+ * Special Lite's use the "k_list" base-name (Phial, Star, or Arkenstone).
+ * Special Ring's and Amulet's, if not "aware", use the same code as normal
+ * rings and amulets, and if "aware", use the "k_list" base-name (Ring or
+ * Amulet or Necklace).  They will NEVER "append" the "k_list" name.
+ * In all three cases above, the "artifact name" is appended if the object
+ * is "known".
+ *
+ * There is extra processing for "The One Ring", though I disapprove...
  */
 void objdes(char *out_val, inven_type *i_ptr, int pref)
 {
@@ -691,12 +707,6 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
 	pval_use = LIGHT;
 
-	if (!stricmp("The Phial of Galadriel", basenm) && !known2_p(i_ptr))
-	    basenm = "a Shining Phial";
-	if (!stricmp("The Star of Elendil", basenm) && !known2_p(i_ptr))
-	    basenm = "a Shining Gem";
-	if (!stricmp("The Arkenstone of Thrain", basenm) && !known2_p(i_ptr))
-	    basenm = "a Shining Gem";
 	break;
 
 
@@ -708,6 +718,9 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	if (!aware) {
 	    basenm = "& %s Amulet~";
 	    modstr = amulet_adj[indexx];
+	}
+	else if (artifact_p(i_ptr)) {
+	    /* Use default values */
 	}
 	else if (!plain_descriptions) {
 	    basenm = "& %s Amulet~";
@@ -726,15 +739,13 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
 	pval_use = PLUSSES;
 
-	if (i_ptr->sval == SV_RING_POWER) {
-	    append_name = FALSE;
-	    if (!known2_p(i_ptr))
-		basenm = "a plain gold Ring";
-	    else
-		basenm = "The One Ring";
-	} else if (!aware) {
+	if (!aware) {
 	    basenm = "& %s Ring~";
 	    modstr = ring_adj[indexx];
+	    if (i_ptr->sval == SV_RING_POWER) modstr = "Plain Gold";
+	}
+	else if (artifact_p(i_ptr)) {
+	    /* Use default values */
 	}
 	else if (!plain_descriptions) {
 	    basenm = "& %s Ring~";
@@ -1178,6 +1189,11 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	/* Prefix a number if required */
 	else if (i_ptr->number > 1) {
 	    (void)sprintf(out_val, "%d %s", (int)i_ptr->number, tmp_val);
+	}
+
+	/* Hack -- The only one of its kind */
+	else if (known2_p(i_ptr) && artifact_p(i_ptr)) {
+	    (void)sprintf(out_val, "The %s", tmp_val);
 	}
 
 	/* Hack -- single items get no prefix */

@@ -2541,10 +2541,23 @@ A:1/0
 
 ##### Objects 500 to 511 are the "Special Artifacts" #####
 
+# These objects do not specify "full names" because the artifact name
+# is added in "desc.c" based on the artifact index ("i_ptr->name1").
+#
+# These objects do specify a "base name", which is used when the object
+# is "aware" (always true except for the Rings and Amulets).
+#
+# Note that the "One Ring" also
+# has a specific check for "unknown" in which it changes its name
+# to "a plain gold ring".  See "desc.c"
+#
+# Note that at some point, it will probably be useful to create "object
+# templates" for some other objects, including the two "Morgoth" items.
+
 
 # The Phial of Galadriel -- see artifact list
 
-N:500:The Phial of Galadriel
+N:500:& Phial~
 I:~:15:4:0:1:10:1:10000
 A:1/0
 P:0:1d1:0:0:0
@@ -2552,7 +2565,7 @@ F:0x:0x02000C00
 
 # The Star of Elendil -- see artifact list
 
-N:501:The Star of Elendil
+N:501:& Star~
 I:~:15:5:0:1:5:25:25000
 A:25/0
 P:0:1d1:0:0:0
@@ -2560,7 +2573,7 @@ F:0x:0x02000C00
 
 # The Arkenstone of Thrain -- see artifact list
 
-N:502:The Arkenstone of Thrain
+N:502:& Arkenstone~
 I:~:15:6:2:1:5:60:60000
 A:60/0
 P:0:1d1:0:0:0
@@ -2569,21 +2582,21 @@ F:0x100000C:0x02000C08
 
 # The Amulet of Carlammas -- see artifact list
 
-N:503:Carlammas
+N:503:& Amulet~
 I:":40:10:2:1:3:50:60000
 A:50/0
 F:0x80010:0x02000800
 
 # The Amulet of Ingwe -- see artifact list
 
-N:504:Ingwe
+N:504:& Amulet~
 I:":40:11:3:1:3:65:90000
 A:65/0
 F:0x43380024:0x02000800
 
 # The Necklace of the Dwarves -- see artifact list
 
-N:505:the Dwarves
+N:505:& Necklace~
 I:":40:12:3:1:3:70:75000
 A:70/0
 F:0x41800811:0x02000000
@@ -2591,42 +2604,42 @@ F:0x41800811:0x02000000
 
 # The Ring of Barahir -- see artifact list
 
-N:506:Barahir
+N:506:& Ring~
 I:=:45:32:1:1:2:50:65000
 A:50/0
 F:0x1000003F:0x02000000
 
 # The Ring of Tulkas -- see artifact list
 
-N:507:Tulkas
+N:507:& Ring~
 I:=:45:33:4:1:2:90:150000
 A:90/0
 F:0x19:0x02000800
 
 # The Ring of Power (Narya) -- see artifact list
 
-N:508:Power named Narya
+N:508:& Ring~
 I:=:45:34:/*+78*/1:1:2:80:100000
 A:80/0
 F:0x1C008BF:0x02000848
 
 # The Ring of Power (Nenya) -- see artifact list
 
-N:509:Power named Nenya
+N:509:& Ring~
 I:=:45:35:2:1:2:90:200000
 A:90/0
 F:0x5C008BF:0x02000888
 
 # The Ring of Power (Vilya) -- see artifact list
 
-N:510:Power named Vilya
+N:510:& Ring~
 I:=:45:36:3:1:2:100:300000
 A:100/0
 F:0x1C008BF:0x02000A08
 
 # The Ring of Power (The One Ring) -- see artifact list
 
-N:511:Power
+N:511:& Ring~
 I:=:45:37:5:1:2:110:5000000
 A:110/0
 F:0x83B80A3F:0x02000BC0
