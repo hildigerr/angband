@@ -898,11 +898,11 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
       case TV_VIS_TRAP:
       case TV_UP_STAIR:
       case TV_DOWN_STAIR:
-	(void)strcpy(out_val, k_list[i_ptr->k_idx].name);
+	strcpy(out_val, basenm);
 	return;
 
       case TV_STORE_DOOR:
-	sprintf(out_val, "the entrance to the %s", k_list[i_ptr->k_idx].name);
+	sprintf(out_val, "the entrance to the %s", basenm);
 	return;
 
       /* Used in the "inventory" routine */
