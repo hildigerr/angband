@@ -706,16 +706,16 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	pval_use = FLAGS;
 
 	if (!aware) {
-	    basenm = "& %s Amulet";
+	    basenm = "& %s Amulet~";
 	    modstr = amulet_adj[indexx];
 	}
 	else if (!plain_descriptions) {
-	    basenm = "& %s Amulet";
+	    basenm = "& %s Amulet~";
 	    modstr = amulet_adj[indexx];
 	    append_name = TRUE;
 	}
 	else {
-	    basenm = "& Amulet";
+	    basenm = "& Amulet~";
 	    append_name = TRUE;
 	}
 	break;
@@ -733,16 +733,16 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	    else
 		basenm = "The One Ring";
 	} else if (!aware) {
-	    basenm = "& %s Ring";
+	    basenm = "& %s Ring~";
 	    modstr = ring_adj[indexx];
 	}
 	else if (!plain_descriptions) {
-	    basenm = "& %s Ring";
+	    basenm = "& %s Ring~";
 	    modstr = ring_adj[indexx];
 	    append_name = TRUE;
 	}
 	else {
-	    basenm = "& Ring";
+	    basenm = "& Ring~";
 	    append_name = TRUE;
 	}
 	break;
@@ -750,16 +750,16 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
       case TV_STAFF:
 	pval_use = CHARGES;
 	if (!aware) {
-	    basenm = "& %s Staff";
+	    basenm = "& %s Staff~";
 	    modstr = staff_adj[indexx];
 	}
 	else if (!plain_descriptions) {
-	    basenm = "& %s Staff";
+	    basenm = "& %s Staff~";
 	    modstr = staff_adj[indexx];
 	    append_name = TRUE;
 	}
 	else {
-	    basenm = "& Staff";
+	    basenm = "& Staff~";
 	    append_name = TRUE;
 	}
 	break;
@@ -767,32 +767,32 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
       case TV_WAND:
 	pval_use = CHARGES;
 	if (!aware) {
-	    basenm = "& %s Wand";
+	    basenm = "& %s Wand~";
 	    modstr = wand_adj[indexx];
 	}
 	else if (!plain_descriptions) {
-	    basenm = "& %s Wand";
+	    basenm = "& %s Wand~";
 	    modstr = wand_adj[indexx];
 	    append_name = TRUE;
 	}
 	else {
-	    basenm = "& Wand";
+	    basenm = "& Wand~";
 	    append_name = TRUE;
 	}
 	break;
 
       case TV_ROD:
 	if (!aware) {
-	    basenm = "& %s Rod";
+	    basenm = "& %s Rod~";
 	    modstr = wand_adj[indexx];
 	}
 	else if (!plain_descriptions) {
-	    basenm = "& %s Rod";
+	    basenm = "& %s Rod~";
 	    modstr = wand_adj[indexx];
 	    append_name = TRUE;
 	}
 	else {
-	    basenm = "& Rod";
+	    basenm = "& Rod~";
 	    append_name = TRUE;
 	}
 	break;
@@ -930,6 +930,9 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
     /* Attempt to pluralize somewhat correctly */
     if (i_ptr->number != 1) {
+	insert_str(tmp_val, "s~", "ses");
+	insert_str(tmp_val, "x~", "xes");
+	insert_str(tmp_val, "sh~", "shes");
 	insert_str(tmp_val, "ch~", "ches");
 	insert_str(tmp_val, "~", "s");
     }
@@ -945,10 +948,8 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
 	cptr skip = tmp_val;
 
-	if (!strncmp("some", skip, 4)) skip += 5;
-
 	/* Delete the count symbol */
-	else if (skip[0] == '&') skip += 2;
+	if (skip[0] == '&') skip += 2;
 
 	/* Use the name (without the "&") */
 	(void)strcpy(out_val, skip);
@@ -1171,12 +1172,12 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
 	/* Hack -- all gone */
 	if (i_ptr->number < 1) {
-	/* check for "some" at start */
-	    if (!strncmp("some", tmp_val, 4))
-		(void)sprintf(out_val, "no more %s", &tmp_val[5]);
-	/* here if no article */
-	    else
 	    (void)sprintf(out_val, "no more %s", tmp_val);
+	}
+
+	/* Prefix a number if required */
+	else if (i_ptr->number > 1) {
+	    (void)sprintf(out_val, "%d %s", (int)i_ptr->number, tmp_val);
 	}
 
 	/* Hack -- single items get no prefix */
