@@ -707,6 +707,11 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
 	pval_use = USE_LITE;
 
+	/* Special Lites do NOT show "turns of light" */
+	if (artifact_p(i_ptr)) {
+	    pval_use = IGNORED;
+	}
+
 	break;
 
 
@@ -1069,7 +1074,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
     }
 
     /* Torches and Lanterns have predictable life */
-    else if ((pval_use == USE_LITE) && !artifact_p(i_ptr)) {
+    else if (pval_use == USE_LITE) {
 	(void)sprintf(tmp_str, " with %d turns of light", i_ptr->pval);
     }
 
