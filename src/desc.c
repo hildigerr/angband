@@ -574,15 +574,15 @@ int item_similar(inven_type *i_ptr, inven_type *j_ptr)
 
 
 /*
- * defines for pval_use, determine how the pval field is printed
+ * defines for pval_use, determine how the pval field is printed 
  */
 
-#define IGNORED     0		/* never show (+x) */
-#define CHARGES     1		/* show pval as charges */
-#define PLUSSES     2		/* show pval as (+x) only */
-#define LIGHT       3		/* show pval as turns of light */
-#define FLAGS       4		/* show pval as (+x of yyy) */
-#define Z_PLUSSES   5		/* always show pval as (+x), even if x==0 -CWS */
+#define IGNORED     0		/* ignore the pval field */
+#define Z_PLUSSES   1		/* show pval as "(+x)" */
+#define PLUSSES     2		/* show pval as "(+x)", unless zero */
+#define FLAGS       3		/* show pval as "(+x to yyy)", or "(+x)" */
+#define CHARGES     5		/* show pval as "(x charges)" */
+#define USE_LITE    7		/* show pval as "with x turns of light" */
 
 
 /*
@@ -705,7 +705,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
       /* Lites (including a few "Specials") */
       case TV_LITE:
 
-	pval_use = LIGHT;
+	pval_use = USE_LITE;
 
 	break;
 
@@ -1050,7 +1050,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
     /* override defaults, check for pval flags in the ident field */
 	if (pval_use != IGNORED) {
-	    if (pval_use == LIGHT);
+	    if (pval_use == USE_LITE);
 	    else if (i_ptr->ident & ID_NOSHOW_P1)
 		pval_use = IGNORED;
 	    else if (i_ptr->ident & ID_NOSHOW_TYPE)
@@ -1069,7 +1069,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
     }
 
     /* Torches and Lanterns have predictable life */
-    else if ((pval_use == LIGHT) && !artifact_p(i_ptr)) {
+    else if ((pval_use == USE_LITE) && !artifact_p(i_ptr)) {
 	(void)sprintf(tmp_str, " with %d turns of light", i_ptr->pval);
     }
 
