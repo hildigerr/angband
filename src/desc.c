@@ -858,14 +858,15 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
 	    if (!aware) {
 		basenm = "& %s Mushroom~";
+		modstr = food_adj[indexx];
 	    }
 	    else if (!plain_descriptions) {
 		basenm = "& %s Mushroom~";
+		modstr = food_adj[indexx];
 		append_name = TRUE;
 	    }
 	    else {
 		basenm = "& Mushroom~";
-		modstr = food_adj[indexx];
 		append_name = TRUE;
 	    }
 	}
