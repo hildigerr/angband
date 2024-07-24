@@ -1069,19 +1069,19 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
     /* Hack -- Boring Shovels */
     else if (pval_use == Z_PLUSSES) {
-	(void)sprintf(tmp_str, " (%c%d)",
+	(void)sprintf(tmp_str, "%c%d",
 		      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
     }
 
     /* Torches and Lanterns have predictable life */
     else if (pval_use == USE_LITE) {
-	(void)sprintf(tmp_str, " with %d turns of light", i_ptr->pval);
+	(void)sprintf(tmp_str, "with %d turns of light", i_ptr->pval);
     }
 
     /* Wands and Staffs have charges */
     else if (pval_use == CHARGES) {
-	    (void)sprintf(tmp_str, " (%d charge%s",
-			  i_ptr->pval, (i_ptr->pval == 1 ? ")" : "s)"));
+	    (void)sprintf(tmp_str, "%d charge%s",
+			  i_ptr->pval, (i_ptr->pval == 1 ? "" : "s"));
     }
 
     /* Nothing to declare */
@@ -1091,12 +1091,12 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
     /* Boring objects */        
     else if (pval_use == PLUSSES) {
-	(void)sprintf(tmp_str, " (%c%d)",
+	(void)sprintf(tmp_str, "%c%d",
 		      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
     }
 
 		else if (i_ptr->ident & ID_NOSHOW_TYPE) {
-		    (void)sprintf(tmp_str, " (%c%d)",
+		    (void)sprintf(tmp_str, " %c%d",
 				  MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
     }
 
@@ -1108,28 +1108,28 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
     /* Speed */
     else if ((i_ptr->flags1 & TR1_SPEED) &&
 	     (i_ptr->name2 != EGO_SPEED)) {
-	(void)sprintf(tmp_str, " (%c%d to speed)",
+	(void)sprintf(tmp_str, "%c%d to speed",
 		      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
     }
 
     /* Search (Hack -- display redundant info?) */
     else if (i_ptr->flags1 & TR1_SEARCH) {
 	/* && (i_ptr->name2 != EGO_SEARCH) */
-	(void)sprintf(tmp_str, " (%c%d to searching)",
+	(void)sprintf(tmp_str, "%c%d to searching",
 		      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
     }
 
     /* Stealth */
     else if ((i_ptr->flags1 & TR1_STEALTH) &&
 	     (i_ptr->name2 != EGO_STEALTH)) {
-	(void)sprintf(tmp_str, " (%c%d to stealth)",
+	(void)sprintf(tmp_str, "%c%d to stealth",
 		      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
     }
 
     /* Infravision */
     else if ((i_ptr->flags1 & TR1_INFRA) &&
 	     (i_ptr->name2 != EGO_INFRAVISION)) {
-	(void)sprintf(tmp_str, " (%c%d to infravision)",
+	(void)sprintf(tmp_str, "%c%d to infravision",
 		      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
     }
 
@@ -1142,7 +1142,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 
     /* Default to Boring Plusses */
     else {
-	(void)sprintf(tmp_str, " (%c%d)",
+	(void)sprintf(tmp_str, "%c%d",
 		      MY_POM(i_ptr->pval), MY_ABS(i_ptr->pval));
     }
 
@@ -1150,7 +1150,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
     /* Extract the extra info, if any */
     if (tmp_str[0]) {
 	char *tail = tmp_val + strlen(tmp_val);
-	(void)sprintf(tail, "%s", tmp_str);
+	(void)sprintf(tail, " (%s)", tmp_str);
     }
 
 
