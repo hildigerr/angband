@@ -1207,32 +1207,37 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	}
     }
 
-	tmp_str[0] = '\0';
-	if (flavor_p(i_ptr)) {
-	/* don't print tried string for store bought items */
-	    if (x_list[i_ptr->k_idx].tried && !known2_p(i_ptr))
-		(void)strcat(tmp_str, "tried ");
+
+    /* Start with the user's inscription */
+    strcpy(tmp_str, i_ptr->inscrip);
+
+
+    /* Hack -- create a "fake" inscription */
+    if (!tmp_str[0]) {
+
+	/* If the item is "known", only inscribe curses */
+	if (known2_p(i_ptr)) {
+	    if (cursed_p(i_ptr)) (void)strcat(tmp_str, "cursed");
 	}
-	if ((i_ptr->ident & (ID_MAGIK | ID_EMPTY | ID_FELT)) &&
-	    i_ptr->tval != TV_MAGIC_BOOK && i_ptr->tval != TV_PRAYER_BOOK) {
-	    if (i_ptr->ident & ID_MAGIK)
-		(void)strcat(tmp_str, "blessed ");
-	    if (i_ptr->ident & ID_EMPTY)
-		(void)strcat(tmp_str, "empty ");
-	    if ((i_ptr->ident & ID_FELT) && (cursed_p(i_ptr)))
-		(void)strcat(tmp_str, "cursed ");
+
+	/* Note "cursed" if any curse has been felt */
+	else if ((i_ptr->ident & ID_FELT) && (cursed_p(i_ptr))) {
+	    (void)strcat(tmp_str, "cursed");
 	}
-	if ((known2_p(i_ptr)) &&
-	    ((!strncmp(i_ptr->inscrip, "average", 7)) ||
-	     (!strncmp(i_ptr->inscrip, "good", 4)) ||
-	     (!strncmp(i_ptr->inscrip, "excellent", 9)) ||
-	     (!strncmp(i_ptr->inscrip, "special", 7))))
-	    i_ptr->inscrip[0] = '\0';
-	if (i_ptr->inscrip[0] != '\0')
-	    (void)strcat(tmp_str, i_ptr->inscrip);
-	else if ((indexx = strlen(tmp_str)) > 0)
-	/* remove the extra blank at the end */
-	    tmp_str[indexx - 1] = '\0';
+
+	/* Note "tried" if the object has been tested */
+	else if (inven_tried_p(i_ptr)) {
+	    (void)strcat(tmp_str, "tried");
+	}
+    }
+
+
+    /* Hack -- note empty wands/staffs */
+    if (!known2_p(i_ptr) && (i_ptr->ident & ID_EMPTY)) {
+	if (tmp_str[0]) strcat(tmp_str, " ");
+	(void)strcat(tmp_str, "empty");
+    }
+
 
     /* If we created an inscription, append it */
     if (tmp_str[0]) {
