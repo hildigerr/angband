@@ -727,6 +727,9 @@ static void chest_death(int y, int x, inven_type *i_ptr)
 		/* Opening a chest */
 		opening_chest = TRUE;
 
+		/* The "pval" of a chest is how "good" it is */
+		object_level = i_ptr->pval;
+
 		    if (typ == 3) {/* typ == 3 -> 50% objects, 50% gold */
 			if (randint(100) < 50) real_typ = 1;
 			else real_typ = 256;
@@ -739,6 +742,9 @@ static void chest_death(int y, int x, inven_type *i_ptr)
 		else {
 		    place_gold(y1, x1);
 		}
+
+		/* Reset the object level */
+		object_level = dun_level;
 		
 		/* No longer opening a chest */
 		opening_chest = FALSE;
@@ -978,14 +984,6 @@ void do_cmd_open()
 		 * can not win by opening a cursed chest 
 		 */
 		    i_ptr->flags3 &= ~TR3_CURSED;
-
-		/* generate based on level chest was found on - dbd */
-		    object_level = i_ptr->pval;
-
-		    if (object_level < 0) /* perform some sanity checking -CWS */
-			object_level = 0;
-		    if (object_level > MAX_OBJ_LEVEL)
-			object_level = MAX_OBJ_LEVEL;
 
 		    coin_type = 0;
 		    chest_death(y, x, i_ptr);
