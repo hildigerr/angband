@@ -478,16 +478,6 @@
 #define TR_EGO_WEAPON   0x0007E000L
 
 
-
-/* definitions for chests */
-#define CH_LOCKED       0x00000001L
-#define CH_TRAPPED      0x000001F0L
-#define CH_LOSE_STR     0x00000010L
-#define CH_POISON       0x00000020L
-#define CH_PARALYSED    0x00000040L
-#define CH_EXPLODE      0x00000080L
-#define CH_SUMMON       0x00000100L
-
 /* creature spell definitions */
 #define CS_SPELLS       0xFF07FFF0L
 #define CS_TEL_SHORT    0x00000010L
@@ -583,16 +573,6 @@
 #define EGO_FIRE		43
 #define EGO_SLAY_EVIL		44
 #define EGO_DRAGON_SLAYING	45
-
-#define EGO_EMPTY                46
-#define EGO_LOCKED               47
-#define EGO_POISON_NEEDLE        48
-#define EGO_GAS_TRAP             49
-#define EGO_EXPLOSION_DEVICE     50
-#define EGO_SUMMONING_RUNES      51
-#define EGO_MULTIPLE_TRAPS       52
-#define EGO_DISARMED             53
-#define EGO_UNLOCKED             54
 
 #define EGO_SLAY_ANIMAL		55
 
@@ -1203,6 +1183,8 @@
  * or worn.  Use the macro "wearable_p()" to check this condition.
  * The macros "artifact_p()" and "cursed_p()" call "wearable_p()".
  *
+ * Note that chests no longer use the "TR_xxx" flags, see "CH2_xxx" below.
+ *
  * Note that "flags1" contains all flags dependant on "pval", plus all "extra attack damage"
  * flags (SLAY_XXX and BRAND_XXX).
  *
@@ -1283,6 +1265,20 @@
 #define TR3_AGGRAVATE		0x08000000L	/* Item aggravates monsters */
 #define TR3_BLESSED		0x10000000L	/* Item is Blessed by the Gods */
 #define TR3_CURSED		0x20000000L	/* Item is Cursed */
+
+/* Mask for chest traps (flags2) */
+#define CH2_TRAP_MASK      0x000001F0L
+
+/* Definitions for chests (flags2) */
+#define CH2_LOCKED		0x00000001L	/* Chest is locked */
+#define CH2_DISARMED		0x00000002L	/* Chest has been disarmed */
+
+/* Chest Trap Flags (flags2) */
+#define CH2_LOSE_STR		0x00000010L
+#define CH2_POISON		0x00000020L
+#define CH2_PARALYSED		0x00000040L
+#define CH2_EXPLODE		0x00000080L
+#define CH2_SUMMON		0x00000100L
 
 
 /*

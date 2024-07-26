@@ -3183,8 +3183,10 @@ int td_destroy2(int dir, int y, int x)
     /* must move into first closed spot, as it might be a secret door */
 	if (c_ptr->i_idx != 0) {
 	    t_ptr = &i_list[c_ptr->i_idx];
-	    if (t_ptr->tval == TV_CHEST) /* let's untrap it instead -CWS */
-		t_ptr->flags1 &= ~(CH_TRAPPED | CH_LOCKED);
+	    if (t_ptr->tval == TV_CHEST) { /* let's untrap it instead -CWS */
+		    i_ptr->flags2 = 0L;
+		    i_ptr->flags2 |= CH2_DISARMED;
+		}
 	    else if ((t_ptr->tval == TV_INVIS_TRAP) || (t_ptr->tval == TV_VIS_TRAP) ||
 		     (t_ptr->tval == TV_OPEN_DOOR) || (t_ptr->tval == TV_CLOSED_DOOR)
 		     || (t_ptr->tval == TV_SECRET_DOOR)) {
@@ -3234,11 +3236,11 @@ int disarm_all(int dir, int y, int x)
 		lite_spot(y, x);
 
 		disarm = TRUE;
-	    } else if ((t_ptr->tval == TV_CHEST) && (t_ptr->flags1 != 0)) {
+	    } else if ((t_ptr->tval == TV_CHEST) && (t_ptr->flags2)) {
 		msg_print("Click!");
-		t_ptr->flags1 &= ~(CH_TRAPPED | CH_LOCKED);
+			i_ptr->flags2 = 0L;
+			i_ptr->flags2 |= CH2_DISARMED;
 		disarm = TRUE;
-		t_ptr->name2 = EGO_UNLOCKED;
 		known2(t_ptr);
 	    }
 	}
@@ -3267,8 +3269,8 @@ int td_destroy()
 			destroy = TRUE;
 		} else if (i_list[c_ptr->i_idx].tval == TV_CHEST) {
 		/* destroy traps on chest and unlock */
-		    i_list[c_ptr->i_idx].flags1 &= ~(CH_TRAPPED | CH_LOCKED);
-		    i_list[c_ptr->i_idx].name2 = EGO_DISARMED;
+			i_ptr->flags2 = 0L;
+			i_ptr->flags2 |= CH2_DISARMED;
 		    msg_print("You have disarmed the chest.");
 		    known2(&i_list[c_ptr->i_idx]);
 		    destroy = TRUE;

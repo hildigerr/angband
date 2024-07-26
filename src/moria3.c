@@ -754,19 +754,20 @@ static void chest_death(int y, int x, inven_type *i_ptr)
 
     /* The chest is "dead" */
     i_ptr->flags1 = 0L;
+    i_ptr->flags2 = 0L;
 }
 
 
 /*
  * Chests have traps too.
- * Note: Chest traps are based on the FLAGS value
+ * Note: Chests now use "flags2" for their traps
  */
 static void chest_trap(int y, int x)
 {
     register int        i, j, k;
     register inven_type *i_ptr = &i_list[cave[y][x].i_idx];
 
-    if (i_ptr->flags1 & CH_LOSE_STR) {
+    if (i_ptr->flags2 & CH2_LOSE_STR) {
 	msg_print("A small needle has pricked you!");
 	if (!p_ptr->sustain_str) {
 	    (void)dec_stat(A_STR);
@@ -778,7 +779,7 @@ static void chest_trap(int y, int x)
 	}
     }
 
-    if (i_ptr->flags1 & CH_POISON) {
+    if (i_ptr->flags2 & CH2_POISON) {
 	msg_print("A small needle has pricked you!");
 	take_hit(damroll(1, 6), "a poison needle");
 	if (!(p_ptr->resist_pois ||
@@ -788,7 +789,7 @@ static void chest_trap(int y, int x)
 	}
     }
 
-    if (i_ptr->flags1 & CH_PARALYSED) {
+    if (i_ptr->flags2 & CH2_PARALYSED) {
 	msg_print("A puff of yellow gas surrounds you!");
 	if (p_ptr->free_act) {
 	    msg_print("You are unaffected.");
@@ -799,7 +800,7 @@ static void chest_trap(int y, int x)
 	}
     }
 
-    if (i_ptr->flags1 & CH_SUMMON) {
+    if (i_ptr->flags2 & CH2_SUMMON) {
 	for (i = 0; i < 3; i++) {
 	    j = y;
 	    k = x;
@@ -807,7 +808,7 @@ static void chest_trap(int y, int x)
 	}
     }
 
-    if (i_ptr->flags1 & CH_EXPLODE) {
+    if (i_ptr->flags2 & CH2_EXPLODE) {
 	msg_print("There is a sudden explosion!");
 	(void)delete_object(y, x);
 	take_hit(damroll(5, 8), "an exploding chest");
@@ -936,7 +937,7 @@ void do_cmd_open()
 	    flag = TRUE;
 
 	    /* Attempt to unlock it */
-	    if (i_ptr->flags1 & CH_LOCKED) {
+	    if (i_ptr->flags2 & CH2_LOCKED) {
 
 		/* Assume locked, and thus not open */
 		flag = FALSE;
@@ -949,6 +950,7 @@ void do_cmd_open()
 		/* Pick the lock, leave the traps */
 		else if ((i - (int)i_ptr->level) > randint(100)) {
 		    msg_print("You have picked the lock.");
+		    i_ptr->flags2 &= ~CH2_LOCKED;
 		    p_ptr->exp += i_ptr->level;
 		    prt_experience();
 		    flag = TRUE;
@@ -962,23 +964,14 @@ void do_cmd_open()
 	    /* Allowed to open */
 	    if (flag) {
 
-		    i_ptr->flags1 &= ~CH_LOCKED;
-		    i_ptr->name2 = EGO_EMPTY;
 		    known2(i_ptr);
 		    i_ptr->cost = 0;
-		}
-		flag = FALSE;
 
 	    /* Was chest still trapped?	 (Snicker)   */
-		if ((i_ptr->flags1 & CH_LOCKED) == 0) {
-		    chest_trap(y, x);
-		    if (c_ptr->i_idx != 0)
-			flag = TRUE;
-		}
+		if (i_ptr->flags2) chest_trap(y, x, i_ptr);
 
 	    /* Chest treasure is allocated as if a creature   */
 	    /* had been killed.				   */
-		if (flag) {
 		/*
 		 * clear the cursed chest/monster win flag, so that people
 		 * can not win by opening a cursed chest 
@@ -1430,18 +1423,15 @@ void do_cmd_disarm()
 		}
 
 		/* No traps to find. */
-		else if (!(i_ptr->flags1 & CH_TRAPPED)) {
+		else if (!(i_ptr->flags2 & CH2_TRAP_MASK)) {
 		    msg_print("The chest was not trapped.");
 		    free_turn_flag = TRUE;
 		}
 
 		/* Successful Disarm */
 		else if ((tot - i_ptr->level) > randint(100)) {
-		    i_ptr->flags1 &= ~CH_TRAPPED;
-		    if (i_ptr->flags1 & CH_LOCKED)
-			    i_ptr->name2 = EGO_LOCKED;
-		    else
-			    i_ptr->name2 = EGO_DISARMED;
+		    i_ptr->flags2 &= ~CH2_TRAP_MASK;
+		    i_ptr->flags2 |= CH2_DISARMED;
 		    msg_print("You have disarmed the chest.");
 		    known2(i_ptr);
 		    p_ptr->exp += i_ptr->level;
@@ -1572,9 +1562,9 @@ void bash()
 		    i_ptr->k_idx = OBJ_RUINED_CHEST;
 		    i_ptr->flags1 = 0;
 		}
-		else if ((CH_LOCKED & i_ptr->flags1) && (randint(10) == 1)) {
+		else if ((i_ptr->flags2 & CH2_LOCKED) && (randint(10) == 1)) {
 		    msg_print("The lock breaks open!");
-		    i_ptr->flags1 &= ~CH_LOCKED;
+		    i_ptr->flags2 &= ~CH2_LOCKED;
 		}
 		else {
 		    count_msg_print("The chest holds firm.");

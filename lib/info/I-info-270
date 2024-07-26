@@ -3,6 +3,7 @@
 Parsing of Item kinds from text files
 Reorganization of Item kind file
 Added field "name1" for artifact identities
+Used "name2" only for "ego-items" (not artifacts or chests)
 Rewrote object description code.
 Rewrite of the "known"/"aware" formalism for items/kinds.
 Auto-awareness of any item bought from or sold to a store.

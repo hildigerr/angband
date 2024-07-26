@@ -187,6 +187,17 @@ static void rd_string(char *str)
  * name1/name2 fields.
  */
 
+#define CHE_EMPTY		1	/* Hack -- see flags1 */
+#define CHE_DISARMED		2	/* Hack -- see below */
+#define CHE_UNLOCKED		3	/* Hack -- see flags2 */
+#define CHE_LOCKED		4	/* Hack -- see flags2 */
+
+#define CHE_POISON_NEEDLE	11	/* Hack -- see flags2 */
+#define CHE_GAS_TRAP		12	/* Hack -- see flags2 */
+#define CHE_EXPLOSION_DEVICE	13	/* Hack -- see flags2 */
+#define CHE_SUMMONING_RUNES	14	/* Hack -- see flags2 */
+#define CHE_MULTIPLE_TRAPS	15	/* Hack -- see flags2 */
+
 static int convert_name2[] = {
 
     0				/* 0 = SN_NULL */,
@@ -235,15 +246,15 @@ static int convert_name2[] = {
     2000+EGO_FIRE		/* 43 = SN_FIRE */,
     2000+EGO_SLAY_EVIL		/* 44 = SN_SLAY_EVIL */,
     2000+EGO_DRAGON_SLAYING	/* 45 = SN_DRAGON_SLAYING */,
-    9000+EGO_EMPTY		/* 46 = SN_EMPTY */,
-    9000+EGO_LOCKED		/* 47 = SN_LOCKED */,
-    9000+EGO_POISON_NEEDLE	/* 48 = SN_POISON_NEEDLE */,
-    9000+EGO_GAS_TRAP		/* 49 = SN_GAS_TRAP */,
-    9000+EGO_EXPLOSION_DEVICE	/* 50 = SN_EXPLOSION_DEVICE */,
-    9000+EGO_SUMMONING_RUNES	/* 51 = SN_SUMMONING_RUNES */,
-    9000+EGO_MULTIPLE_TRAPS	/* 52 = SN_MULTIPLE_TRAPS */,
-    9000+EGO_DISARMED		/* 53 = SN_DISARMED */,
-    9000+EGO_UNLOCKED		/* 54 = SN_UNLOCKED */,
+    9000+CHE_EMPTY		/* 46 = SN_EMPTY */,
+    9000+CHE_LOCKED		/* 47 = SN_LOCKED */,
+    9000+CHE_POISON_NEEDLE	/* 48 = SN_POISON_NEEDLE */,
+    9000+CHE_GAS_TRAP		/* 49 = SN_GAS_TRAP */,
+    9000+CHE_EXPLOSION_DEVICE	/* 50 = SN_EXPLOSION_DEVICE */,
+    9000+CHE_SUMMONING_RUNES	/* 51 = SN_SUMMONING_RUNES */,
+    9000+CHE_MULTIPLE_TRAPS	/* 52 = SN_MULTIPLE_TRAPS */,
+    9000+CHE_DISARMED		/* 53 = SN_DISARMED */,
+    9000+CHE_UNLOCKED		/* 54 = SN_UNLOCKED */,
     2000+EGO_SLAY_ANIMAL	/* 55 = SN_SLAY_ANIMAL */,
     1000+ART_GROND		/* 56 = SN_GROND */,
     1000+ART_RINGIL		/* 57 = SN_RINGIL */,
@@ -742,8 +753,16 @@ static errr rd_item_old(inven_type *i_ptr)
 	/* Analyze the old "special name" */
 	hack = convert_name2[i_ptr->name2];
 
-	/* "Chest" names */
+	/* Old "Chest" names */
 	if (hack > 9000) {
+
+	    /* Extract a couple meaningful names */
+	    if (hack == CHE_DISARMED) {
+		i_ptr->flags2 |= CH2_DISARMED;
+	    }
+
+	    /* Forget the old name */
+	    i_ptr->name2 = 0;
 	}
 
 	/* It is an ego-item */        

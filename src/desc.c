@@ -661,7 +661,45 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
       case TV_FLASK:
 	break;
 
+      /* Hack -- Chests must be described in detail */
       case TV_CHEST:
+
+	/* Empty chests are "obvious" */
+	if (!i_ptr->flags1) {
+	    strcpy(damstr, " (empty)");
+	    break;
+	}
+
+	/* Not searched yet */
+	if (!known2_p(i_ptr)) break;
+
+	/* Describe the traps */
+	switch (i_ptr->flags2 & CH2_TRAP_MASK) {
+	    case CH2_LOSE_STR:  strcpy(damstr, " (Poison Needle)"); break;
+	    case CH2_POISON:    strcpy(damstr, " (Poison Needle)"); break;
+	    case CH2_PARALYSED: strcpy(damstr, " (Gas Trap)"); break;
+	    case CH2_EXPLODE:   strcpy(damstr, " (Explosion Device)"); break;
+	    case CH2_SUMMON:    strcpy(damstr, " (Summoning Runes)"); break;
+	    default:            strcpy(damstr, " (Multiple Traps)"); break;
+	}
+
+	/* Described a trap above */
+	if (i_ptr->flags2 & CH2_TRAP_MASK) break;
+
+	/* Already disarmed */
+	if (i_ptr->flags2 & CH2_DISARMED) {
+	    strcpy(damstr, " (disarmed)");
+	    break;
+	}
+
+	/* Already unlocked */
+	if (!(i_ptr->flags2 & CH2_LOCKED)) {
+	    strcpy(damstr, " (unlocked)");
+	    break;
+	}
+
+	/* Assume it must be locked */
+	strcpy(damstr, " (locked)");
 	break;
 
       /* Weapons have a damage string, and flags */

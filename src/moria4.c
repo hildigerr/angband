@@ -641,7 +641,7 @@ void search(int y, int x, int chance)
 
 		/* Chest?  Trapped?  Known? */
 		else if (i_ptr->tval == TV_CHEST) {
-		    if ((i_ptr->flags1 & CH_TRAPPED) > 1) {
+		    if ((i_ptr->flags2 & CH2_TRAP_MASK)) {
 			if (!known2_p(i_ptr)) {
 			known2(i_ptr);
 			msg_print("You have discovered a trap on the chest!");
