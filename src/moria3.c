@@ -683,9 +683,9 @@ static void chest_death(int y, int x, inven_type *i_ptr)
 {
     int			i, y1, x1, number, typ, real_typ;
 
-    if (i_ptr->flags1 & MF1_CARRY_OBJ) typ = 1;
+    if (i_ptr->flags1 & CH1_CARRY_OBJ) typ = 1;
     else typ = 0;
-    if (i_ptr->flags1 & MF1_CARRY_GOLD) typ += 2;
+    if (i_ptr->flags1 & CH1_CARRY_GOLD) typ += 2;
 
 
     /* Must be a chest */
@@ -693,11 +693,11 @@ static void chest_death(int y, int x, inven_type *i_ptr)
 
     /* Count how many objects */
     number = 0;
-    if ((i_ptr->flags1 & MF1_HAS_60) && (randint(100) < 60)) number++;
-    if ((i_ptr->flags1 & MF1_HAS_90) && (randint(100) < 90)) number++;
-    if (i_ptr->flags1 & MF1_HAS_1D2) number += randint(2);
-    if (i_ptr->flags1 & MF1_HAS_2D2) number += damroll(2, 2);
-    if (i_ptr->flags1 & MF1_HAS_4D2) number += damroll(4, 2);
+    if ((i_ptr->flags1 & CH1_HAS_60) && (randint(100) < 60)) number++;
+    if ((i_ptr->flags1 & CH1_HAS_90) && (randint(100) < 90)) number++;
+    if (i_ptr->flags1 & CH1_HAS_1D2) number += randint(2);
+    if (i_ptr->flags1 & CH1_HAS_2D2) number += damroll(2, 2);
+    if (i_ptr->flags1 & CH1_HAS_4D2) number += damroll(4, 2);
 
     /* Summon some objects */
     if (number > 0) {

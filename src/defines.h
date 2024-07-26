@@ -1280,6 +1280,16 @@
 #define CH2_EXPLODE		0x00000080L
 #define CH2_SUMMON		0x00000100L
 
+/* Chests -- Hack from pre-2.7.0 */
+#define CH1_CARRY_OBJ   	0x01000000L
+#define CH1_CARRY_GOLD		0x02000000L
+#define CH1_HAS_60		0x04000000L
+#define CH1_HAS_90		0x08000000L
+#define CH1_HAS_1D2		0x10000000L
+#define CH1_HAS_2D2		0x20000000L
+#define CH1_HAS_4D2		0x40000000L
+
+
 
 /*
  * Spell types used by get_flags(), breathe(), fire_bolt() and fire_ball()
