@@ -752,7 +752,11 @@ static void chest_death(int y, int x, inven_type *i_ptr)
 	}
     }
 
+    /* The chest is now identified */
+    known2(i_ptr);
+
     /* The chest is "dead" */
+    i_ptr->cost = 0L;
     i_ptr->flags1 = 0L;
     i_ptr->flags2 = 0L;
 }
@@ -963,9 +967,6 @@ void do_cmd_open()
 
 	    /* Allowed to open */
 	    if (flag) {
-
-		    known2(i_ptr);
-		    i_ptr->cost = 0;
 
 	    /* Was chest still trapped?	 (Snicker)   */
 		if (i_ptr->flags2) chest_trap(y, x, i_ptr);
