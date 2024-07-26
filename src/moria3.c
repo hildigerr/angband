@@ -681,11 +681,10 @@ void do_cmd_locate()
  */
 static void chest_death(int y, int x, inven_type *i_ptr)
 {
-    int			i, y1, x1, number, typ, real_typ;
+    int			i, y1, x1, number;
 
-    if (i_ptr->flags1 & CH1_CARRY_OBJ) typ = 1;
-    else typ = 0;
-    if (i_ptr->flags1 & CH1_CARRY_GOLD) typ += 2;
+    bool	do_item = (i_ptr->flags1 & CH1_CARRY_OBJ) ? TRUE : FALSE;
+    bool	do_gold = (i_ptr->flags1 & CH1_CARRY_GOLD) ? TRUE : FALSE;
 
 
     /* Must be a chest */
@@ -701,9 +700,6 @@ static void chest_death(int y, int x, inven_type *i_ptr)
 
     /* Summon some objects */
     if (number > 0) {
-
-    if (typ == 1) real_typ = 1;		   /* typ == 1 -> objects */
-    else real_typ = 256;		   /* typ == 2 -> gold */
 
 	/* Drop some objects (non-chests) */    
 	for ( ; number > 0; --number) {
@@ -730,16 +726,14 @@ static void chest_death(int y, int x, inven_type *i_ptr)
 		/* The "pval" of a chest is how "good" it is */
 		object_level = i_ptr->pval;
 
-		    if (typ == 3) {/* typ == 3 -> 50% objects, 50% gold */
-			if (randint(100) < 50) real_typ = 1;
-			else real_typ = 256;
-		    }
-
 		/* Place an Item or Gold */
-		if (real_typ == 1) {
+		if (do_gold && (randint(2) == 1)) {
+		    place_gold(y1, x1);
+		}
+		else if (do_item) {
 		    place_object(y1, x1);
 		}
-		else {
+		else if (do_gold) {
 		    place_gold(y1, x1);
 		}
 
