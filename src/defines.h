@@ -130,8 +130,6 @@
 #define SAURON_QUEST      0 
 #define Q_PLANE          -1
 
-/* Treasure constants                                           */
-#define MAX_OBJ_LEVEL   255     /* Maximum level of magic in dungeon      */
 
 /*
  * Hack -- this is the chance (1/GREAT_OBJ) that when an item is
@@ -266,6 +264,7 @@
 
 #define MIN_I_IDX           1   /* Minimum i_list index used                */
 #define MAX_I_IDX         400   /* Max objects per level                    */
+#define MAX_K_LEV         125   /* Maximum level of items in dungeon        */
 
 #define MAX_M_IDX         600   /* Max monsters per level                   */
 #define MAX_M_ALLOC_CHANCE 160   /* 1/x chance of new monster each round     */

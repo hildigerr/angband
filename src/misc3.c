@@ -2745,20 +2745,20 @@ int get_obj_num(int level, int good)
 
     static u16b size = 0;
 
-    static u16b t_lev[MAX_OBJ_LEVEL+1];
+    static u16b t_lev[256];
 
     /* Initialize the table */
     if (!size) {
 
-	u16b aux[MAX_OBJ_LEVEL+1];
+	u16b aux[256];
 
-	for (i = 0; i <= MAX_OBJ_LEVEL; i++) t_lev[i] = 0;
+	for (i = 0; i < 256; i++) t_lev[i] = 0;
 	for (i = 0; i < MAX_K_IDX; i++) t_lev[k_list[i].level]++;
-	for (i = 1; i <= MAX_OBJ_LEVEL; i++) t_lev[i] += t_lev[i-1];
+	for (i = 1; i < 256; i++) t_lev[i] += t_lev[i-1];
 	/* now produce an array with object indexes sorted by level, by using
 	the info in t_lev, this is an O(n) sort! */
 	/* this is not a stable sort, but that does not matter */
-	for (i = 0; i <= MAX_OBJ_LEVEL; i++) aux[i] = 1;
+	for (i = 0; i < 256; i++) aux[i] = 1;
 	for (i = 0; i < MAX_K_IDX; i++) {
 		int l = k_list[i].level;
 		sorted_objects[t_lev[l] - aux[l]] = i;
@@ -2772,12 +2772,10 @@ int get_obj_num(int level, int good)
 	if (level == 0)
 	    i = randint(t_lev[0]) - 1;
 	else {
-	    if (level >= MAX_OBJ_LEVEL)
-		level = MAX_OBJ_LEVEL;
+	    if (level > MAX_K_LEV) level = MAX_K_LEV;
 	    else if (randint(GREAT_OBJ) == 1) {
-		level = level * MAX_OBJ_LEVEL / randint(MAX_OBJ_LEVEL) + 1;
-		if (level > MAX_OBJ_LEVEL)
-		    level = MAX_OBJ_LEVEL;
+		level = 1 + (level * MAX_K_LEV / randint(MAX_K_LEV));
+		if (level > MAX_K_LEV) level = MAX_K_LEV;
 	    }
 	/*
 	 * This code has been added to make it slightly more likely to get
