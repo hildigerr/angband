@@ -1255,7 +1255,6 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 
 	/* Apply some magic */
 	if (good || magik(chance)) {
-	    int                 made_art_cloak = 0;
 
 	    /* Make it better */
 	    i_ptr->toac += 1 + m_bonus(0, 20, level);
@@ -1264,146 +1263,7 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 	    if (great || magik(special)) {
 
 		/* Roll for artifact */
-		if (okay &&
-		    !stricmp(k_list[i_ptr->k_idx].name, "& Cloak")
-		    && randint(10) == 1) {
-		    switch (randint(9)) {
-		      case 1:
-		      case 2:
-			if (COLLUIN)
-			    break;
-			if (wizard || peek)
-			    msg_print("Colluin");
-			else
-			    good_item_flag = TRUE;
-			i_ptr->name1 = ART_COLLUIN;
-			i_ptr->toac = 15;
-			i_ptr->flags2 |= (TR2_RES_FIRE | TR2_RES_COLD | TR2_RES_POIS |
-					 TR2_RES_ELEC | TR2_RES_ACID);
-			i_ptr->flags3 |= (TR3_ACTIVATE);
-			i_ptr->cost = 10000L;
-			made_art_cloak = 1;
-			COLLUIN = 1;
-			break;
-		      case 3:
-		      case 4:
-			if (HOLCOLLETH)
-			    break;
-			if (wizard || peek)
-			    msg_print("Holcolleth");
-			else
-			    good_item_flag = TRUE;
-			i_ptr->name1 = ART_HOLCOLLETH;
-			i_ptr->toac = 4;
-			i_ptr->pval = 2;
-			i_ptr->flags1 |= (TR1_INT | TR1_WIS | TR1_STEALTH);
-			i_ptr->flags2 |= (TR2_RES_ACID);
-			i_ptr->flags3 |= (TR3_ACTIVATE);
-			i_ptr->ident |= ID_NOSHOW_TYPE;
-			i_ptr->cost = 13000L;
-			made_art_cloak = 1;
-			HOLCOLLETH = 1;
-			break;
-		      case 5:
-			if (THINGOL)
-			    break;
-			if (wizard || peek)
-			    msg_print("Thingol");
-			else
-			    good_item_flag = TRUE;
-			i_ptr->name1 = ART_THINGOL;
-			i_ptr->toac = 18;
-			i_ptr->flags1 = (TR1_DEX | TR1_CHR);
-			i_ptr->flags2 = (TR2_RES_FIRE |
-				   TR2_RES_ACID | TR2_RES_COLD | TR2_FREE_ACT);
-			i_ptr->flags3 = (TR3_ACTIVATE);
-			i_ptr->pval = 3;
-			i_ptr->cost = 35000L;
-			made_art_cloak = 1;
-			THINGOL = 1;
-			break;
-		      case 6:
-		      case 7:
-			if (THORONGIL)
-			    break;
-			if (wizard || peek)
-			    msg_print("Thorongil");
-			else
-			    good_item_flag = TRUE;
-			i_ptr->name1 = ART_THORONGIL;
-			i_ptr->toac = 10;
-			i_ptr->flags2 = (TR2_FREE_ACT |
-					TR2_RES_ACID);
-			i_ptr->flags3 |= (TR3_SEE_INVIS);
-			i_ptr->cost = 8000L;
-			made_art_cloak = 1;
-			THORONGIL = 1;
-			break;
-		      case 8:
-		      case 9:
-			if (COLANNON)
-			    break;
-			if (wizard || peek)
-			    msg_print("Colannon");
-			else
-			    good_item_flag = TRUE;
-			i_ptr->name1 = ART_COLANNON;
-			i_ptr->toac = 15;
-			i_ptr->flags1 |= (TR1_STEALTH);
-			i_ptr->flags2 |= (TR2_RES_ACID);
-			i_ptr->flags3 |= (TR3_ACTIVATE);
-			i_ptr->pval = 3;
-			i_ptr->cost = 11000L;
-			made_art_cloak = 1;
-			COLANNON = 1;
-			break;
-		    }
-
-		} else if (okay &&
-			   !stricmp(k_list[i_ptr->k_idx].name,
-				    "& Shadow Cloak")
-			   && randint(20) == 1) {
-		    switch (randint(2)) {
-		      case 1:
-			if (LUTHIEN)
-			    break;
-			if (wizard || peek)
-			    msg_print("Luthien");
-			else
-			    good_item_flag = TRUE;
-			i_ptr->name1 = ART_LUTHIEN;
-			i_ptr->toac = 20;
-			i_ptr->flags1 = 
-				    (TR1_INT | TR1_WIS | TR1_CHR);
-			i_ptr->flags2 = (TR2_RES_FIRE | TR2_RES_COLD | TR2_RES_ACID);
-			i_ptr->flags3 = (TR3_ACTIVATE);
-			i_ptr->pval = 2;
-			i_ptr->cost = 45000L;
-			made_art_cloak = 1;
-			LUTHIEN = 1;
-			break;
-		      case 2:
-			if (TUOR)
-			    break;
-			if (wizard || peek)
-			    msg_print("Tuor");
-			else
-			    good_item_flag = TRUE;
-			i_ptr->name1 = ART_TUOR;
-			i_ptr->toac = 12;
-			i_ptr->flags1 = (TR1_STEALTH);
-			i_ptr->flags2 |= (TR2_IM_ACID | 
-				  TR2_FREE_ACT | TR2_RES_ACID);
-			i_ptr->flags3 |= (TR3_SEE_INVIS);
-			i_ptr->pval = 4;
-			i_ptr->cost = 35000L;
-			made_art_cloak = 1;
-			TUOR = 1;
-			break;
-		    }
-		}
-
-		if (!made_art_cloak) {
+		if (okay && ((randint(10) == 1)||(randint(20) == 1)) && make_artifact(i_ptr)) return;
 
 		/* Make it "excellent" */
 		if (randint(2) == 1) {
@@ -1428,7 +1288,6 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 		    i_ptr->name2 = EGO_STEALTH;
 		    i_ptr->cost += 500 + (50 * i_ptr->pval);
 		    rating += 9;
-		}
 		}
 	    }
 	}
@@ -1824,67 +1683,8 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 	    switch (randint(15)) {
 
 		  case 1: case 2: case 3:
-		if (((randint(3)==1)||(great)) && okay &&
-		    !stricmp(k_list[i_ptr->k_idx].name, "& Long Bow") &&
-		    (((i=randint(2))==1 && !BELEG) || (i==2 && !BARD))) {
-		    switch (i) {
-		    case 1:
-			  if (BELEG)
-			    break;
-			if (wizard || peek)
-			    msg_print("Belthronding");
-			else
-			    good_item_flag = TRUE;
-			i_ptr->name1 = ART_BELTHRONDING;
-			i_ptr->ident |= ID_NOSHOW_TYPE;
-			i_ptr->sval = 15; /* make do x5 damage!! -CFT */
-			i_ptr->tohit = 20;
-			i_ptr->todam = 22;
-			i_ptr->pval = 3;
-			i_ptr->flags1 |= (TR1_STEALTH | TR1_DEX);
-			i_ptr->flags2 |= (TR2_RES_DISEN);
-			i_ptr->cost = 35000L;
-			BELEG = 1;
-			break;
-		      case 2:
-			if (BARD)
-			    break;
-			if (wizard || peek)
-			    msg_print("Bard");
-			else
-			    good_item_flag = TRUE;
-			i_ptr->name1 = ART_BARD;
-			i_ptr->sval = 14; /* make do x4 damage!! -CFT */
-			i_ptr->tohit = 17;
-			i_ptr->todam = 19;
-			i_ptr->pval = 3;
-			i_ptr->flags1 |= (TR1_DEX);
-			i_ptr->flags2 |= (TR2_FREE_ACT);
-			i_ptr->cost = 20000L;
-			BARD = 1;
-			break;
-		    }
-		    break;
-		}
-		if (((randint(5) == 1) || (great)) && okay &&
-		    !stricmp(k_list[i_ptr->k_idx].name, "& Light Crossbow")
-		    && !CUBRAGOL) {
-		    if (CUBRAGOL)
-			break;
-		    if (wizard || peek)
-			msg_print("Cubragol");
-		    i_ptr->name1 = ART_CUBRAGOL;
-		    i_ptr->sval = 14;
-		    i_ptr->tohit = 10;
-		    i_ptr->todam = 14;
-		    i_ptr->pval = 1;
-		    i_ptr->flags1 |= (TR1_SPEED);
-		    i_ptr->flags2 |= (TR2_RES_FIRE);
-		    i_ptr->flags3 |= (TR3_ACTIVATE);
-		    i_ptr->cost = 38000L;
-		    CUBRAGOL = 1;
-		    break;
-		}
+		if (((randint(3)==1)||(great)) && okay && make_artifact(i_ptr)) break;
+		if (((randint(5) == 1) || (great)) && okay && make_artifact(i_ptr)) break;
 
 		    i_ptr->sval++; /* make it do an extra multiple of damage */
 		    i_ptr->tohit += 5;

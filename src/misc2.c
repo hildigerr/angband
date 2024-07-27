@@ -3361,6 +3361,191 @@ int unique_artifact(inven_type *t_ptr)
 	t_ptr->cost = 10000L;
 	BERUTHIEL = 1;
 	return 1;
+  } else if (!stricmp("& Cloak", name)) {
+	    switch (randint(9)) {
+	      case 1:
+	      case 2:
+		if (COLLUIN)
+		    return 0;
+		if (wizard || peek)
+		    msg_print("Colluin");
+		else
+		    good_item_flag = TRUE;
+		i_ptr->name1 = ART_COLLUIN;
+		i_ptr->toac = 15;
+		i_ptr->flags2 |= (TR2_RES_FIRE | TR2_RES_COLD | TR2_RES_POIS |
+				 TR2_RES_ELEC | TR2_RES_ACID);
+		i_ptr->flags3 |= (TR3_ACTIVATE);
+		i_ptr->cost = 10000L;
+		made_art_cloak = 1;
+		COLLUIN = 1;
+		return 1;
+	      case 3:
+	      case 4:
+		if (HOLCOLLETH)
+		    return 0;
+		if (wizard || peek)
+		    msg_print("Holcolleth");
+		else
+		    good_item_flag = TRUE;
+		i_ptr->name1 = ART_HOLCOLLETH;
+		i_ptr->toac = 4;
+		i_ptr->pval = 2;
+		i_ptr->flags1 |= (TR1_INT | TR1_WIS | TR1_STEALTH);
+		i_ptr->flags2 |= (TR2_RES_ACID);
+		i_ptr->flags3 |= (TR3_ACTIVATE);
+		i_ptr->ident |= ID_NOSHOW_TYPE;
+		i_ptr->cost = 13000L;
+		made_art_cloak = 1;
+		HOLCOLLETH = 1;
+		return 1;
+	      case 5:
+		if (THINGOL)
+		    return 0;
+		if (wizard || peek)
+		    msg_print("Thingol");
+		else
+		    good_item_flag = TRUE;
+		i_ptr->name1 = ART_THINGOL;
+		i_ptr->toac = 18;
+		i_ptr->flags1 = (TR1_DEX | TR1_CHR);
+		i_ptr->flags2 = (TR2_RES_FIRE |
+			   TR2_RES_ACID | TR2_RES_COLD | TR2_FREE_ACT);
+		i_ptr->flags3 = (TR3_ACTIVATE);
+		i_ptr->pval = 3;
+		i_ptr->cost = 35000L;
+		made_art_cloak = 1;
+		THINGOL = 1;
+		return 1;
+	      case 6:
+	      case 7:
+		if (THORONGIL)
+		    return 0;
+		if (wizard || peek)
+		    msg_print("Thorongil");
+		else
+		    good_item_flag = TRUE;
+		i_ptr->name1 = ART_THORONGIL;
+		i_ptr->toac = 10;
+		i_ptr->flags2 = (TR2_FREE_ACT |
+				TR2_RES_ACID);
+		i_ptr->flags3 |= (TR3_SEE_INVIS);
+		i_ptr->cost = 8000L;
+		made_art_cloak = 1;
+		THORONGIL = 1;
+		return 1;
+	      case 8:
+	      case 9:
+		if (COLANNON)
+		    return 0;
+		if (wizard || peek)
+		    msg_print("Colannon");
+		else
+		    good_item_flag = TRUE;
+		i_ptr->name1 = ART_COLANNON;
+		i_ptr->toac = 15;
+		i_ptr->flags1 |= (TR1_STEALTH);
+		i_ptr->flags2 |= (TR2_RES_ACID);
+		i_ptr->flags3 |= (TR3_ACTIVATE);
+		i_ptr->pval = 3;
+		i_ptr->cost = 11000L;
+		made_art_cloak = 1;
+		COLANNON = 1;
+		return 1;
+	    }
+  } else if (!stricmp("& Shadow Cloak", name)) {
+	    switch (randint(2)) {
+	      case 1:
+		if (LUTHIEN)
+		    return 0;
+		if (wizard || peek)
+		    msg_print("Luthien");
+		else
+		    good_item_flag = TRUE;
+		i_ptr->name1 = ART_LUTHIEN;
+		i_ptr->toac = 20;
+		i_ptr->flags1 = 
+			    (TR1_INT | TR1_WIS | TR1_CHR);
+		i_ptr->flags2 = (TR2_RES_FIRE | TR2_RES_COLD | TR2_RES_ACID);
+		i_ptr->flags3 = (TR3_ACTIVATE);
+		i_ptr->pval = 2;
+		i_ptr->cost = 45000L;
+		made_art_cloak = 1;
+		LUTHIEN = 1;
+		return 1;
+	      case 2:
+		if (TUOR)
+		    return 0;
+		if (wizard || peek)
+		    msg_print("Tuor");
+		else
+		    good_item_flag = TRUE;
+		i_ptr->name1 = ART_TUOR;
+		i_ptr->toac = 12;
+		i_ptr->flags1 = (TR1_STEALTH);
+		i_ptr->flags2 |= (TR2_IM_ACID | 
+			  TR2_FREE_ACT | TR2_RES_ACID);
+		i_ptr->flags3 |= (TR3_SEE_INVIS);
+		i_ptr->pval = 4;
+		i_ptr->cost = 35000L;
+		made_art_cloak = 1;
+		TUOR = 1;
+		return 1;
+	    }
+  } else if (!stricmp("& Long Bow", name)) {
+	    switch (randint(2)) {
+	    case 1:
+		  if (BELEG)
+		    return 0;
+		if (wizard || peek)
+		    msg_print("Belthronding");
+		else
+		    good_item_flag = TRUE;
+		i_ptr->name1 = ART_BELTHRONDING;
+		i_ptr->ident |= ID_NOSHOW_TYPE;
+		i_ptr->sval = 15; /* make do x5 damage!! -CFT */
+		i_ptr->tohit = 20;
+		i_ptr->todam = 22;
+		i_ptr->pval = 3;
+		i_ptr->flags1 |= (TR1_STEALTH | TR1_DEX);
+		i_ptr->flags2 |= (TR2_RES_DISEN);
+		i_ptr->cost = 35000L;
+		BELEG = 1;
+		return 1;
+	      case 2:
+		if (BARD)
+		    return 0;
+		if (wizard || peek)
+		    msg_print("Bard");
+		else
+		    good_item_flag = TRUE;
+		i_ptr->name1 = ART_BARD;
+		i_ptr->sval = 14; /* make do x4 damage!! -CFT */
+		i_ptr->tohit = 17;
+		i_ptr->todam = 19;
+		i_ptr->pval = 3;
+		i_ptr->flags1 |= (TR1_DEX);
+		i_ptr->flags2 |= (TR2_FREE_ACT);
+		i_ptr->cost = 20000L;
+		BARD = 1;
+		return 1;
+	    }
+  } else if (!stricmp("& Light Crossbow", name)) {
+	    if (CUBRAGOL)
+		return 0;
+	    if (wizard || peek)
+		msg_print("Cubragol");
+	    i_ptr->name1 = ART_CUBRAGOL;
+	    i_ptr->sval = 14;
+	    i_ptr->tohit = 10;
+	    i_ptr->todam = 14;
+	    i_ptr->pval = 1;
+	    i_ptr->flags1 |= (TR1_SPEED);
+	    i_ptr->flags2 |= (TR2_RES_FIRE);
+	    i_ptr->flags3 |= (TR3_ACTIVATE);
+	    i_ptr->cost = 38000L;
+	    CUBRAGOL = 1;
+	    return 1;
     }
     return 0;
 }
