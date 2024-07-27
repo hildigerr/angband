@@ -1128,7 +1128,7 @@ static void store_create(void)
 	invcopy(i_ptr, i);
 
 	/* Apply some "low-level" magic (no artifacts) */
-	apply_magic(i_ptr, level, FALSE, FALSE, TRUE);
+	apply_magic(i_ptr, level, FALSE, FALSE, FALSE);
 
 	/* Hack -- General Store lites have "clean" amounts of light */
 	if ((store_num == 0) && (i_ptr->tval == TV_LITE)) {
