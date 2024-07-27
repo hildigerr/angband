@@ -3,6 +3,7 @@
 Parsing of Item kinds from text files
 Reorganization of Item kind file
 Rewrite of item allocation code
+Rewrite of artifact creation code
 Added field "name1" for artifact identities
 Used "name2" only for "ego-items" (not artifacts or chests)
 Rewrote object description code.

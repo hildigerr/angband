@@ -672,6 +672,7 @@ void pusht(int);
 int delete_object(int, int);
 void wipe_i_list(void);
 int magik(int);
+bool make_artifact(inven_type *);
 int m_bonus(int, int, int);
 void apply_magic(inven_type *, int, bool, bool, bool);
 void place_trap(int, int, int);

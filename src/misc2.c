@@ -1714,7 +1714,7 @@ void monster_name(char *m_name, monster_type *m_ptr)
 
 
 
-int unique_weapon(inven_type *t_ptr)
+int unique_artifact(inven_type *t_ptr)
 {
     const char *name;
 
@@ -2796,16 +2796,7 @@ int unique_weapon(inven_type *t_ptr)
 	    OLORIN = 1;
 	    return 1;
 	}
-    }
-    return 0;
-}
-
-int unique_armour(inven_type *t_ptr)
-{
-    const char *name;
-
-    name = k_list[t_ptr->k_idx].name;
-    if (!strncmp("Adamantite", name, 10)) {
+    } else if (!strncmp("Adamantite", name, 10)) {
 	if (SOULKEEPER)
 	    return 0;
 	if (randint(3) > 1)
