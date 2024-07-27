@@ -2745,24 +2745,24 @@ int get_obj_num(int level, int good)
 
     static u16b size = 0;
 
-    static s16b t_level[MAX_OBJ_LEVEL+1];
+    static u16b t_lev[MAX_OBJ_LEVEL+1];
 
     /* Initialize the table */
     if (!size) {
 
-	int tmp[MAX_OBJ_LEVEL+1];
+	u16b aux[MAX_OBJ_LEVEL+1];
 
-	for (i = 0; i <= MAX_OBJ_LEVEL; i++) t_level[i] = 0;
-	for (i = 0; i < MAX_K_IDX; i++) t_level[k_list[i].level]++;
-	for (i = 1; i <= MAX_OBJ_LEVEL; i++) t_level[i] += t_level[i-1];
+	for (i = 0; i <= MAX_OBJ_LEVEL; i++) t_lev[i] = 0;
+	for (i = 0; i < MAX_K_IDX; i++) t_lev[k_list[i].level]++;
+	for (i = 1; i <= MAX_OBJ_LEVEL; i++) t_lev[i] += t_lev[i-1];
 	/* now produce an array with object indexes sorted by level, by using
-	the info in t_level, this is an O(n) sort! */
+	the info in t_lev, this is an O(n) sort! */
 	/* this is not a stable sort, but that does not matter */
-	for (i = 0; i <= MAX_OBJ_LEVEL; i++) tmp[i] = 1;
+	for (i = 0; i <= MAX_OBJ_LEVEL; i++) aux[i] = 1;
 	for (i = 0; i < MAX_K_IDX; i++) {
 		int l = k_list[i].level;
-		sorted_objects[t_level[l] - tmp[l]] = i;
-		tmp[l]++;
+		sorted_objects[t_lev[l] - aux[l]] = i;
+		aux[l]++;
     }
 
     size++;
@@ -2770,7 +2770,7 @@ int get_obj_num(int level, int good)
 
     do {
 	if (level == 0)
-	    i = randint(t_level[0]) - 1;
+	    i = randint(t_lev[0]) - 1;
 	else {
 	    if (level >= MAX_OBJ_LEVEL)
 		level = MAX_OBJ_LEVEL;
@@ -2788,20 +2788,20 @@ int get_obj_num(int level, int good)
 	 */
 
 	    if (randint(2) == 1)
-		i = randint(t_level[level]) - 1;
+		i = randint(t_lev[level]) - 1;
 	    else {		   /* Choose three objects, pick the highest level. */
-		i = randint(t_level[level]) - 1;
-		j = randint(t_level[level]) - 1;
+		i = randint(t_lev[level]) - 1;
+		j = randint(t_lev[level]) - 1;
 		if (i < j)
 		    i = j;
-		j = randint(t_level[level]) - 1;
+		j = randint(t_lev[level]) - 1;
 		if (i < j)
 		    i = j;
 		j = k_list[sorted_objects[i]].level;
 		if (j == 0)
-		    i = randint(t_level[0]) - 1;
+		    i = randint(t_lev[0]) - 1;
 		else
-		    i = randint(t_level[j] - t_level[j - 1]) - 1 + t_level[j - 1];
+		    i = randint(t_lev[j] - t_lev[j - 1]) - 1 + t_lev[j - 1];
 	    }
 	}
     } while (((k_list[sorted_objects[i]].rare ?
