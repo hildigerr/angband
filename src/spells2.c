@@ -2014,34 +2014,6 @@ int detect_magic()
 }
 
 
-
-int detect_enchantment()
-{
-    register int i, j, detect, tv;
-    register cave_type *c_ptr;
-    
-    detect = FALSE;
-    for (i = panel_row_min; i <= panel_row_max; i++)
-	for (j = panel_col_min; j <= panel_col_max; j++) {
-	    c_ptr = &cave[i][j];
-	    tv = i_list[c_ptr->i_idx].tval;
-	    if ((c_ptr->i_idx != 0) && !test_lite(i, j) &&
-		( ((tv > TV_MAX_ENCHANT) && (tv < TV_FLASK)) || /* misc items */
-		 (tv == TV_MAGIC_BOOK) || (tv == TV_PRAYER_BOOK) || /* books */
-		 ((tv >= TV_MIN_WEAR) && (tv <= TV_MAX_ENCHANT) && /* armor/weap */
-		  (artifact_p(&i_list[c_ptr->i_idx]) || /* if Art., or */
-		   (i_list[c_ptr->i_idx].tohit>0) || /* has pluses, then show */
-		   (i_list[c_ptr->i_idx].todam>0) ||
-		   (i_list[c_ptr->i_idx].toac>0))) )){
-		c_ptr->fm = TRUE;
-		lite_spot(i, j);
-		detect = TRUE;
-	    }
-	}
-    return(detect);
-}
-
-
 /*
  * Detect everything
  */

@@ -818,8 +818,6 @@
 #define TV_SOFT_ARMOR   36	/* Soft Armor */
 #define TV_HARD_ARMOR   37	/* Hard Armor */
 #define TV_DRAG_ARMOR	38	/* Dragon Scale Mail */
-/* max tval that uses the TR_* flags */
-#define TV_MAX_ENCHANT  39
 #define TV_AMULET       40
 #define TV_RING         45
 #define TV_MAX_WEAR     50   /* max tval for wearable items */
