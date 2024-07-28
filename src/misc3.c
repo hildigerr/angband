@@ -2809,10 +2809,12 @@ int get_obj_num(int level, int good)
 	 * on level n, and 1/2n are 0th level. 
 	 */
 
-	    if (randint(2) == 1)
-		i = rand_int(t_lev[level]);
-	    else {		   /* Choose three objects, pick the highest level. */
-		i = rand_int(t_lev[level]);
+	    /* Pick any object at or below the given level */
+	    i = rand_int(t_lev[level]);
+
+	    /* Sometimes, try for a "better" item */
+	    if (randint(2) != 1) {
+
 		j = rand_int(t_lev[level]);
 		if (i < j)
 		    i = j;
