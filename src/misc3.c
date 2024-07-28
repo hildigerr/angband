@@ -20,8 +20,6 @@ char               *index();
 
 extern int rating;
 
-s16b sorted_objects[MAX_K_IDX];
-
 
 /*
  * Pushs a record back onto free space list		-RAK-
@@ -2374,7 +2372,7 @@ static int special_place_object(int y, int x)
     i_list[cur_pos].timeout = 0;
     i_list[cur_pos].ident |= ID_NOSHOW_TYPE; /* don't show (+x of yyy) for these */
     if (k_list[tmp].level > object_level) {
-	rating += 2 * (k_list[sorted_objects[tmp]].level - object_level);
+	rating += 2 * (k_list[tmp].level - object_level);
     }
 
     /* Is it on the player? */
@@ -2414,14 +2412,14 @@ void place_object(int y, int x)
 
     do {	   /* don't generate another chest if opening_chest is true -CWS */
 	tmp = get_obj_num(dun_level, FALSE);
-    } while (opening_chest && (k_list[sorted_objects[tmp]].tval == TV_CHEST));
+    } while (opening_chest && (k_list[tmp].tval == TV_CHEST));
 	
-    invcopy(&i_list[cur_pos], sorted_objects[tmp]);
+    invcopy(&i_list[cur_pos], tmp);
     apply_magic(&i_list[cur_pos], dun_level, FALSE, FALSE, 0);
-    if (k_list[sorted_objects[tmp]].level > dun_level)
-	rating += k_list[sorted_objects[tmp]].level - dun_level;
+    if (k_list[tmp].level > dun_level)
+	rating += k_list[tmp].level - dun_level;
     if (peek) {
-	if (k_list[sorted_objects[tmp]].level > dun_level) {
+	if (k_list[tmp].level > dun_level) {
 	    char buf[200];
 	    objdes_store(buf, &i_list[cur_pos], TRUE);
 	    msg_print(buf);
@@ -2472,8 +2470,8 @@ void place_good(int y, int x, bool great)
 	k_idx = get_obj_num((object_level + 10), TRUE);
 
 	/* Examine the object */
-	tv = k_list[sorted_objects[k_idx]].tval;
-	sv = k_list[sorted_objects[k_idx]].sval;
+	tv = k_list[k_idx].tval;
+	sv = k_list[k_idx].sval;
 
 	/* Rusty Chainmail is not good */
 	if ((tv == TV_HARD_ARMOR) && (sv == SV_RUSTY_CHAIN_MAIL)) continue;
@@ -2507,7 +2505,7 @@ void place_good(int y, int x, bool great)
 
     /* Make a new object, drop into dungeon */
     cur_pos = i_pop();
-    invcopy(&i_list[cur_pos], sorted_objects[k_idx]);
+    invcopy(&i_list[cur_pos], k_idx);
 
     /* Drop it into the dungeon */
     c_ptr->i_idx = cur_pos;
@@ -2517,7 +2515,7 @@ void place_good(int y, int x, bool great)
 
 	/* Hack -- look at it */
     if (peek) {
-	if (k_list[sorted_objects[k_idx]].level > object_level) {
+	if (k_list[k_idx].level > object_level) {
 	    char                buf[200];
 	    objdes_store(buf, &i_list[cur_pos], TRUE);
 	    msg_print(buf);
@@ -2745,6 +2743,8 @@ int get_obj_num(int level, int good)
 
     static u16b size = 0;
 
+    static u16b k_sort[MAX_K_IDX];
+
     static u16b t_lev[256];
 
     /* Initialize the table */
@@ -2761,7 +2761,7 @@ int get_obj_num(int level, int good)
 	for (i = 0; i < 256; i++) aux[i] = 1;
 	for (i = 0; i < MAX_K_IDX; i++) {
 		int l = k_list[i].level;
-		sorted_objects[t_lev[l] - aux[l]] = i;
+		k_sort[t_lev[l] - aux[l]] = i;
 		aux[l]++;
     }
 
@@ -2795,17 +2795,17 @@ int get_obj_num(int level, int good)
 		j = randint(t_lev[level]) - 1;
 		if (i < j)
 		    i = j;
-		j = k_list[sorted_objects[i]].level;
+		j = k_list[k_sort[i]].level;
 		if (j == 0)
 		    i = randint(t_lev[0]) - 1;
 		else
 		    i = randint(t_lev[j] - t_lev[j - 1]) - 1 + t_lev[j - 1];
 	    }
 	}
-    } while (((k_list[sorted_objects[i]].rare ?
-	       (randint(k_list[sorted_objects[i]].rare) - 1) : 0) && !good)
-	     || (k_list[sorted_objects[i]].rare == 255));
-    return (i);
+    } while (((k_list[k_sort[i]].rare ?
+	       (randint(k_list[k_sort[i]].rare) - 1) : 0) && !good)
+	     || (k_list[k_sort[i]].rare == 255));
+    return (k_sort[i]);
 }
 
 
