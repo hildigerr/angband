@@ -2783,7 +2783,7 @@ int get_obj_num(int level, int good)
 	if (level == 0) {
 
 	    /* Pick a level 0 entry */
-	    i = randint(t_lev[0]) - 1;
+	    i = rand_int(t_lev[0]);
 	}
 
 	/* Other levels sometimes have great stuff */
@@ -2810,18 +2810,18 @@ int get_obj_num(int level, int good)
 	 */
 
 	    if (randint(2) == 1)
-		i = randint(t_lev[level]) - 1;
+		i = rand_int(t_lev[level]);
 	    else {		   /* Choose three objects, pick the highest level. */
-		i = randint(t_lev[level]) - 1;
-		j = randint(t_lev[level]) - 1;
+		i = rand_int(t_lev[level]);
+		j = rand_int(t_lev[level]);
 		if (i < j)
 		    i = j;
-		j = randint(t_lev[level]) - 1;
+		j = rand_int(t_lev[level]);
 		if (i < j)
 		    i = j;
 		j = k_list[k_sort[i]].level;
 		if (j == 0)
-		    i = randint(t_lev[0]) - 1;
+		    i = rand_int(t_lev[0]);
 		else
 		    i = randint(t_lev[j] - t_lev[j - 1]) - 1 + t_lev[j - 1];
 	    }
