@@ -802,12 +802,6 @@
 #define TV_CHEST         7	/* Chests ('~') */
 #define TV_MIN_WEAR     10	/* Min tval for "wearable" items */
 #define TV_LITE         10	/* Torches, Lanterns, Specials */
-
-/* items tested for enchantments, i.e. the MAGIK inscription, see the
- * enchanted() procedure
- */
-
-#define TV_MIN_ENCHANT  10
 #define TV_SHOT		16	/* Ammo for slings */
 #define TV_ARROW        17	/* Ammo for bows */
 #define TV_BOLT         18	/* Ammo for x-bows */

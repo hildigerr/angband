@@ -87,10 +87,7 @@ int set_meteor_destroy(inven_type *e)		   /* added -DGK */
 
 int set_mana_destroy(inven_type *e)		   /* added -DGK */
 {				   /* destroy everything but artifacts */
-    int element = e->tval;
-
-    if ((element >= TV_MIN_ENCHANT) && (element <= TV_MAX_WEAR) &&
-	artifact_p(e))
+    if (artifact_p(e))
 	return (FALSE);
     return (TRUE);
 }
@@ -100,8 +97,7 @@ int set_holy_destroy(inven_type *e)		   /* added -DGK */
 {
     int element = e->tval;
 
-    if ((element >= TV_MIN_ENCHANT) && (element <= TV_MAX_WEAR) &&
-	cursed_p(e) && (!artifact_p(e)))
+    if (cursed_p(e) && (!artifact_p(e)))
 	return (TRUE);
     return (FALSE);
 }
