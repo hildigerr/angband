@@ -2768,9 +2768,12 @@ int get_obj_num(int level, int good)
     size++;
     }
 
-    do {
-	if (level == 0)
+    while (1) {
+
+	if (level == 0) {
 	    i = randint(t_lev[0]) - 1;
+	}
+
 	else {
 	    if (level > MAX_K_LEV) level = MAX_K_LEV;
 	    else if (randint(GREAT_OBJ) == 1) {
@@ -2802,9 +2805,12 @@ int get_obj_num(int level, int good)
 		    i = randint(t_lev[j] - t_lev[j - 1]) - 1 + t_lev[j - 1];
 	    }
 	}
-    } while (((k_list[k_sort[i]].rare ?
-	       (randint(k_list[k_sort[i]].rare) - 1) : 0) && !good)
-	     || (k_list[k_sort[i]].rare == 255));
+
+    if ((k_list[k_sort[i]].rare ?
+	       (randint(k_list[k_sort[i]].rare) - 1) : 0) && !good) break;
+	     if (k_list[k_sort[i]].rare == 255) break;
+    }
+
     return (k_sort[i]);
 }
 
