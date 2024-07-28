@@ -136,8 +136,13 @@ int set_acid_affect(inven_type *e)		   /* changed -CFT */
 	    ||(e->flags2 & TR2_IM_ACID))	/* used differently in potions/etc */
 	    return (FALSE);
 	return (TRUE);
-      case TV_MISC:
       case TV_CHEST:
+	return (TRUE);
+
+      /* Junk is useless */
+      case TV_SKELETON:
+      case TV_BOTTLE:
+      case TV_JUNK:
 	return (TRUE);
     }
     return (FALSE);

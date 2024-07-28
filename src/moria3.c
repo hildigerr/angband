@@ -1694,7 +1694,8 @@ void do_cmd_fire()
 	
 	if ((t->tval == TV_FLASK) || (t->tval == TV_SHOT) ||
 	    (t->tval == TV_ARROW) || (t->tval == TV_BOLT) ||
-	    (t->tval == TV_SPIKE) || (t->tval == TV_MISC))
+	    (t->tval == TV_SPIKE) || (t->tval == TV_JUNK) ||
+	    (t->tval == TV_BOTTLE) || (t->tval == TV_SKELETON))
 	    ok_throw = TRUE;
 	else if (((t->tval == TV_FOOD) ||
 		  (t->tval == TV_POTION)) && inven_aware_p(t) &&

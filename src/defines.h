@@ -795,7 +795,9 @@
 
 #define TV_NEVER        -1	/* used by find_range() for non-search */
 #define TV_NOTHING       0	/* Nothing (used in OBJ_NOTHING) */
-#define TV_MISC          1
+#define TV_SKELETON      1	/* Skeletons ('s') */
+#define TV_BOTTLE	 2	/* Empty bottles ('!') */
+#define TV_JUNK          3	/* Sticks, Pottery, etc ('~') */
 #define TV_SPIKE         5	/* Spikes ('~') */
 #define TV_CHEST         7	/* Chests ('~') */
 #define TV_MIN_WEAR     10	/* Min tval for "wearable" items */

@@ -654,7 +654,9 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
     switch (i_ptr->tval) {
 
       /* Some objects are easy to describe */
-      case TV_MISC:
+      case TV_SKELETON:
+      case TV_BOTTLE:
+      case TV_JUNK:
       case TV_SPIKE:
       case TV_FLASK:
 	break;

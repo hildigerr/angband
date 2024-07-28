@@ -1284,7 +1284,7 @@ static int stays_when_throw(inven_type *i_ptr)
     case TV_CHEST: case TV_SHOT: case TV_ROD: case TV_FOOD:
     case TV_MAGIC_BOOK: case TV_PRAYER_BOOK:
       return TRUE;
-    case TV_MISC: case TV_SPIKE: case TV_WAND: case TV_BOLT:
+    case TV_SKELETON: case TV_BOTTLE: case TV_JUNK: case TV_SPIKE: case TV_WAND: case TV_BOLT:
     case TV_ARROW: case TV_LITE: case TV_SCROLL:
       return (randint(2)==1);
   }
