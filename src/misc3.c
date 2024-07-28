@@ -2793,7 +2793,7 @@ int get_obj_num(int level, int good)
 	    if (level > MAX_K_LEV) level = MAX_K_LEV;
 
 	    /* Occasionally, get a "better" object */
-	    else if (randint(GREAT_OBJ) == 1) {
+	    if (randint(GREAT_OBJ) == 1) {
 
 		/* What a bizarre calculation */
 		level = 1 + (level * MAX_K_LEV / randint(MAX_K_LEV));
@@ -2813,19 +2813,23 @@ int get_obj_num(int level, int good)
 	    i = rand_int(t_lev[level]);
 
 	    /* Sometimes, try for a "better" item */
-	    if (randint(2) != 1) {
+	    if (randint(3) != 1) {
 
+		/* Pick another object at or below the given level */
 		j = rand_int(t_lev[level]);
-		if (i < j)
-		    i = j;
+
+		/* Keep it if it is "better" */
+		if (i < j) i = j;
+	    }
+
+	    /* Sometimes, try for a "better" item */
+	    if (randint(3) != 1) {
+
+		/* Pick another object at or below the given level */
 		j = rand_int(t_lev[level]);
-		if (i < j)
-		    i = j;
-		j = k_list[k_sort[i]].level;
-		if (j == 0)
-		    i = rand_int(t_lev[0]);
-		else
-		    i = randint(t_lev[j] - t_lev[j - 1]) - 1 + t_lev[j - 1];
+
+		/* Keep it if it is "better" */
+		if (i < j) i = j;
 	    }
 	}
 
