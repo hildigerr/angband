@@ -785,7 +785,7 @@
 
 
 /*
- * The values for the treasure type (tval) field of various objects.
+ * The values for the "tval" field of various objects.
  * This value is the primary means by which items are sorted in the
  * player inventory.  It also groups things for MIN_WEAR/MAX_WEAR.
  *
@@ -796,31 +796,31 @@
 #define TV_NEVER        -1	/* used by find_range() for non-search */
 #define TV_NOTHING       0	/* Nothing (used in OBJ_NOTHING) */
 #define TV_MISC          1
-#define TV_CHEST         2	/* Chests ('~') */
-#define TV_SPIKE         3	/* Spikes ('~') */
+#define TV_SPIKE         5	/* Spikes ('~') */
+#define TV_CHEST         7	/* Chests ('~') */
 #define TV_MIN_WEAR     10	/* Min tval for "wearable" items */
+#define TV_LITE         10	/* Torches, Lanterns, Specials */
 
 /* items tested for enchantments, i.e. the MAGIK inscription, see the
  * enchanted() procedure
  */
 
 #define TV_MIN_ENCHANT  10
-#define TV_SHOT		10	/* Ammo for slings */
-#define TV_BOLT         11	/* Ammo for x-bows */
-#define TV_ARROW        12	/* Ammo for bows */
-#define TV_LITE         15	/* Torches, Lanterns, Specials */
-#define TV_BOW          20	/* Slings/Bows/Xbows */
+#define TV_SHOT		16	/* Ammo for slings */
+#define TV_ARROW        17	/* Ammo for bows */
+#define TV_BOLT         18	/* Ammo for x-bows */
+#define TV_BOW          19	/* Slings/Bows/Xbows */
+#define TV_DIGGING      20	/* Shovels/Picks */
 #define TV_HAFTED       21	/* Priest Weapons */
 #define TV_POLEARM      22	/* Axes and Pikes */
 #define TV_SWORD        23	/* Edged Weapons */
-#define TV_DIGGING      25	/* Shovels/Picks */
 #define TV_BOOTS        30	/* Boots */
 #define TV_GLOVES       31	/* Gloves */
-#define TV_CLOAK        32	/* Cloaks */
 #define TV_HELM         33	/* Helms/Crowns */
 #define TV_SHIELD       34	/* Shields */
-#define TV_HARD_ARMOR   35	/* Hard Armor */
+#define TV_CLOAK        35	/* Cloaks */
 #define TV_SOFT_ARMOR   36	/* Soft Armor */
+#define TV_HARD_ARMOR   37	/* Hard Armor */
 #define TV_DRAG_ARMOR	38	/* Dragon Scale Mail */
 /* max tval that uses the TR_* flags */
 #define TV_MAX_ENCHANT  39
@@ -842,17 +842,17 @@
 #define TV_INVIS_TRAP   101	/* Invisible traps -- see visible traps */
 #define TV_MIN_VISIBLE  102	/* This is the first "visible landmark" */
 #define TV_VIS_TRAP     102     /* Visible traps */
-#define TV_RUBBLE       103	/* Rubble pile -- treated as a "wall" */
 /* following objects are never deleted when trying to create another one
    during level generation */
 #define TV_MIN_DOORS    104
 #define TV_OPEN_DOOR    104	/* Open doorway */
-#define TV_CLOSED_DOOR  105	/* Closed door -- treated as a "wall" */
 #define TV_UP_STAIR     107	/* Staircase up */
 #define TV_DOWN_STAIR   108	/* Staircase down */
-#define TV_SECRET_DOOR  109	/* Secret door -- treated as a "wall" */
 #define TV_STORE_DOOR   110	/* Entrance to store */
-#define TV_MAX_VISIBLE  110
+#define TV_SECRET_DOOR  117	/* Secret door -- treated as a "wall" */
+#define TV_CLOSED_DOOR  118	/* Closed door -- treated as a "wall" */
+#define TV_RUBBLE       119	/* Rubble pile -- treated as a "wall" */
+#define TV_MAX_VISIBLE  119
 
 
 /* The sval codes for TV_LITE */

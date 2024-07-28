@@ -17,6 +17,8 @@ Genericized the "item value" routines, help sort inventory by "value".
 New inventory order uses type, then sub-type, then value.
 And, all "unaware" objects are treated as having "maximal" sub-types.
 And, all unknown items are treated as having "zero" value.
+Made some changes to the "item kind" text file (such as "Restoring").
+Reorganized the "item kind" text file in a major way.
 Made artifacts MUCH more resistant to "death by throwing" :-)
 Added true "object stacking" code, so any items can stack.
 Functions combine() and combine_pack() to maintain inventory.
