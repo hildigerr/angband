@@ -511,6 +511,22 @@ static errr rd_item_old(inven_type *i_ptr)
     /* Clear the timeout */
     i_ptr->timeout = 0;
 
+
+    /* XXX Potions are now a single tval, but use both flags */
+    if (i_ptr->tval == TV_POTION + 1) {
+	i_ptr->tval = TV_POTION;
+	i_ptr->flags2 = i_ptr->flags1;
+	i_ptr->flags1 = 0L;
+    }
+
+    /* XXX Scrolls are now a single tval, but use both flags */
+    if (i_ptr->tval == TV_SCROLL + 1) {
+	i_ptr->tval = TV_SCROLL;
+	i_ptr->flags2 = i_ptr->flags1;
+	i_ptr->flags1 = 0L;
+    }
+
+
     /* Several objects now have new "locations" */
     switch (i_ptr->k_idx) {
 

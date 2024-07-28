@@ -356,12 +356,10 @@ static s32b item_value_base(inven_type *i_ptr)
     if (i_ptr->tval == TV_FOOD) return (1L);
 
     /* Unknown Scrolls are pretty cheap */
-    if (i_ptr->tval == TV_SCROLL1) return (20L);
-    if (i_ptr->tval == TV_SCROLL2) return (20L);
+    if (i_ptr->tval == TV_SCROLL) return (20L);
 
     /* Unknown Potions are pretty cheap */
-    if (i_ptr->tval == TV_POTION1) return (20L);
-    if (i_ptr->tval == TV_POTION2) return (20L);
+    if (i_ptr->tval == TV_POTION) return (20L);
 
     /* Unknown Rings are cheap */
     if (i_ptr->tval == TV_RING) return (45L);
@@ -752,10 +750,8 @@ static bool store_will_buy(inven_type *i_ptr)
 	/* Analyze the type */
 	switch (tval) {
 	  case TV_PRAYER_BOOK:
-	  case TV_SCROLL1:
-	  case TV_SCROLL2:
-	  case TV_POTION1:
-	  case TV_POTION2:
+	  case TV_SCROLL:
+	  case TV_POTION:
 	  case TV_HAFTED:
 	    return (TRUE);
 	  default:
@@ -767,10 +763,8 @@ static bool store_will_buy(inven_type *i_ptr)
 
 	/* Analyze the type */
 	switch (tval) {
-	  case TV_SCROLL1:
-	  case TV_SCROLL2:
-	  case TV_POTION1:
-	  case TV_POTION2:
+	  case TV_SCROLL:
+	  case TV_POTION:
 	    return (TRUE);
 	  default:
 	    return (FALSE);
@@ -787,10 +781,8 @@ static bool store_will_buy(inven_type *i_ptr)
 	  case TV_STAFF:
 	  case TV_WAND:
 	  case TV_ROD:
-	  case TV_SCROLL1:
-	  case TV_SCROLL2:
-	  case TV_POTION1:
-	  case TV_POTION2:
+	  case TV_SCROLL:
+	  case TV_POTION:
 	    return (TRUE);
 	  default:
 	    return (FALSE);

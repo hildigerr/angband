@@ -830,10 +830,8 @@
 #define TV_STAFF        55
 #define TV_WAND         65
 #define TV_ROD          66
-#define TV_SCROLL1      70
-#define TV_SCROLL2      71
-#define TV_POTION1      75
-#define TV_POTION2      76
+#define TV_SCROLL       70   /* Only one tval for scrolls now */
+#define TV_POTION       75   /* Only one tval for potions now */
 #define TV_FLASK        77
 #define TV_FOOD         80
 #define TV_MAGIC_BOOK   90

@@ -608,11 +608,11 @@ void wizard_create()
 	    break;
 
 	  case 'P': case 'p':
-	    i_ptr->tval = TV_POTION1;
+	    i_ptr->tval = TV_POTION;
 	    break;
 
 	  case 'S': case 's':
-	    i_ptr->tval = TV_SCROLL1;
+	    i_ptr->tval = TV_SCROLL;
 	    break;
 
 	  case 'A': case 'a':
@@ -714,17 +714,15 @@ again:
     prt("Which Item?  : ", 0, 0);
     for (; i < MAX_K_IDX; i++) {
 	switch (i_ptr->tval) {
-	  case TV_POTION1:
-	    if ((k_list[i].tval == TV_POTION1) ||
-		(k_list[i].tval == TV_POTION2)) {
+	  case TV_POTION:
+	    if (k_list[i].tval == TV_POTION) {
 		sprintf(tmp_str, "%c) %s", 'a' + j, k_list[i].name);
 		prt(tmp_str, 1 + j, 0);
 		j++;
 	    }
 	    break;
-	  case TV_SCROLL1:
-	    if ((k_list[i].tval == TV_SCROLL1) ||
-		(k_list[i].tval == TV_SCROLL2)) {
+	  case TV_SCROLL:
+	    if (k_list[i].tval == TV_SCROLL) {
 		sprintf(tmp_str, "%c) %s", 'a' + j, k_list[i].name);
 		prt(tmp_str, 1 + j, 0);
 		j++;
@@ -746,17 +744,15 @@ again:
     if (j < 21) {
 	for (i = (i - (MAX_K_IDX - 1)) + (OBJ_SPECIAL - 1); i < MAX_K_IDX; i++) {
 	    switch (i_ptr->tval) {
-	      case TV_POTION1:
-		if ((k_list[i].tval == TV_POTION1) ||
-		    (k_list[i].tval == TV_POTION2)) {
+	      case TV_POTION:
+		if (k_list[i].tval == TV_POTION) {
 		    sprintf(tmp_str, "%c) %s", 'a' + j, k_list[i].name);
 		    prt(tmp_str, 1 + j, 0);
 		    j++;
 		}
 		break;
-	      case TV_SCROLL1:
-		if ((k_list[i].tval == TV_SCROLL1) ||
-		    (k_list[i].tval == TV_SCROLL2)) {
+	      case TV_SCROLL:
+		if (k_list[i].tval == TV_SCROLL) {
 		    sprintf(tmp_str, "%c) %s", 'a' + j, k_list[i].name);
 		    prt(tmp_str, 1 + j, 0);
 		    j++;
@@ -797,15 +793,13 @@ again:
     j = 0;
     for (i = 0; i < MAX_K_IDX; i++) {
 	switch (i_ptr->tval) {
-	  case TV_POTION1:
-	    if ((k_list[i].tval == TV_POTION1) ||
-		(k_list[i].tval == TV_POTION2)) {
+	  case TV_POTION:
+	    if (k_list[i].tval == TV_POTION) {
 		j++;
 	    }
 	    break;
-	  case TV_SCROLL1:
-	    if ((k_list[i].tval == TV_SCROLL1) ||
-		(k_list[i].tval == TV_SCROLL2)) {
+	  case TV_SCROLL:
+	    if ((k_list[i].tval == TV_SCROLL) {
 		j++;
 	    }
 	    break;
@@ -821,15 +815,13 @@ again:
     if (j != k) {
 	for (i = (OBJ_SPECIAL - 1); i < MAX_K_IDX; i++) {
 	    switch (i_ptr->tval) {
-	      case TV_POTION1:
-		if ((k_list[i].tval == TV_POTION1) ||
-		    (k_list[i].tval == TV_POTION2)) {
+	      case TV_POTION:
+		if (k_list[i].tval == TV_POTION) {
 		    j++;
 		}
 		break;
-	      case TV_SCROLL1:
-		if ((k_list[i].tval == TV_SCROLL1) ||
-		    (k_list[i].tval == TV_SCROLL2)) {
+	      case TV_SCROLL:
+		if (k_list[i].tval == TV_SCROLL) {
 		    j++;
 		}
 		break;

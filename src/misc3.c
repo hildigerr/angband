@@ -2117,7 +2117,7 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 	    i_ptr->level = 6;
 	break;
 
-      case TV_SCROLL1:
+      case TV_SCROLL:
     /* give all identify scrolls the same level */
 	if (i_ptr->sval == 67)
 	    i_ptr->level = 1;
@@ -2132,7 +2132,7 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 	    i_ptr->level = 5;
 	break;
 
-      case TV_POTION1:		   /* potions */
+      case TV_POTION:		   /* potions */
     /* cure light */
 	if (i_ptr->sval == 76)
 	    i_ptr->level = 0;

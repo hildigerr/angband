@@ -275,10 +275,8 @@ bool flavor_p(inven_type *i_ptr)
       case TV_RING:
       case TV_STAFF:
       case TV_WAND:
-      case TV_SCROLL1:
-      case TV_SCROLL2:
-      case TV_POTION1:
-      case TV_POTION2:
+      case TV_SCROLL:
+      case TV_POTION:
       case TV_ROD:
 	return (TRUE);
 
@@ -858,8 +856,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	}
 	break;
 
-      case TV_SCROLL1:
-      case TV_SCROLL2:
+      case TV_SCROLL:
 	if (!aware) {
 	    basenm = "& Scroll~ titled \"%s\"";
 	    modstr = scroll_adj[indexx];
@@ -875,8 +872,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	}
 	break;
 
-      case TV_POTION1:
-      case TV_POTION2:
+      case TV_POTION:
 	if (!aware) {
 	    basenm = "& %s Potion~";
 	    modstr = potion_adj[indexx];

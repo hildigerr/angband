@@ -383,6 +383,7 @@ void do_cmd_eat_food(void)
  * Quaff a potion
  * A single potion object disappears.
  * Potions use "pval" for "calories"
+ * Hack -- there are two "types" of potions.
  */
 void do_cmd_quaff_potion(void)
 {
@@ -399,7 +400,7 @@ void do_cmd_quaff_potion(void)
 	return;
     }
 
-    if (!find_range(TV_POTION1, TV_POTION2, &i1, &i2)) {
+    if (!find_range(TV_POTION, TV_NEVER, &i1, &i2)) {
 	msg_print("You are not carrying any potions.");
 	return;
     }
@@ -416,7 +417,7 @@ void do_cmd_quaff_potion(void)
     ident = FALSE;
 
     /* Note potions with no effects */
-    if (i_ptr->flags1 == 0) {
+    if ((i_ptr->flags1 == 0) && (i_ptr->flags2 == 0)) {
 	msg_print("You feel less thirsty.");
 	ident = TRUE;
     }
@@ -426,7 +427,6 @@ void do_cmd_quaff_potion(void)
 
 	/* Extract the next effect bit */
 	j = bit_pos(&flg);
-	if (i_ptr->tval == TV_POTION2) j += 32;
 
 	/* Analyze the effect */
 	switch (j + 1) {
@@ -679,6 +679,18 @@ void do_cmd_quaff_potion(void)
 
 	  case 32:
 	    break;		/* Unused */
+	}
+    }
+
+
+    /* Analyze the second set of effects */
+    for (flg = i_ptr->flags2; flg; ) {
+
+	/* Extract the next effect bit */
+	j = bit_pos(&flg);
+
+	/* Various effects from Potions */
+	switch (j + 32 + 1) {
 
 	  case 33:
 	    break;	/* Unused */
@@ -933,6 +945,9 @@ void do_cmd_quaff_potion(void)
 
 /*
  * Read a scroll (destroy one scroll).
+ *
+ * Currently, no scrolls use effects from both flags1 and flags2, but
+ * we are ready if they ever decide to do so.
  */
 void do_cmd_read_scroll(void)
 {
@@ -966,7 +981,7 @@ void do_cmd_read_scroll(void)
 	return;
     }
 
-    if (!find_range(TV_SCROLL1, TV_SCROLL2, &i1, &i2)) {
+    if (!find_range(TV_SCROLL, TV_NEVER, &i1, &i2)) {
 	msg_print("You are not carrying any scrolls!");
 	return;
     }
@@ -992,8 +1007,7 @@ void do_cmd_read_scroll(void)
 	used_up = TRUE;
 
 	/* Extract the next effect bit-flag */
-	j = bit_pos(&i);
-	if (i_ptr->tval == TV_SCROLL2) j += 32;
+	j = bit_pos(&flg);
 
 	/* Scrolls. */
 	switch (j+1) {
@@ -1222,6 +1236,20 @@ void do_cmd_read_scroll(void)
 	    remove_all_curse();
 	    ident = TRUE;
 	    break;
+	}
+    }
+
+    /* Apply the second set of scroll effects */
+    for (flg = i_ptr->flags2; flg; ) {
+
+	/* XXX Hack -- only "pure" scrolls can be conserved */
+	used_up = TRUE;
+
+	/* Extract the next "bit flag" */
+	j = bit_pos(&flg);
+
+	/* Analyze the effect */
+	switch (j + 32 + 1) {
 
 	  case 33:
 

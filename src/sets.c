@@ -51,8 +51,7 @@ int set_flammable(inven_type *e)		   /* changed -CFT */
 	    return (FALSE);
 	return (TRUE);
       case TV_STAFF:
-      case TV_SCROLL1:
-      case TV_SCROLL2:
+      case TV_SCROLL:
       case TV_FLASK:
 	return (TRUE);
       case TV_LITE:
@@ -69,7 +68,7 @@ int set_frost_destroy(inven_type *e)		   /* changed -CFT */
 {
     int element = e->tval;
 
-    if ((element == TV_POTION1) || (element == TV_POTION2)
+    if ((element == TV_POTION)
 	|| (element == TV_FLASK))
 	return (TRUE);
     return (FALSE);
@@ -190,8 +189,7 @@ int set_acid_destroy(inven_type *e)		   /* changed -CFT */
 	    ||(e->flags2 & TR2_IM_ACID))	/* used differently in potions/etc */
 	    return (FALSE);
 	return (TRUE);
-      case TV_SCROLL1:
-      case TV_SCROLL2:
+      case TV_SCROLL:
       case TV_FOOD:
       case TV_OPEN_DOOR:
       case TV_CLOSED_DOOR:
@@ -221,10 +219,8 @@ int set_fire_destroy(inven_type *e)		   /* changed -CFT */
 	    return (FALSE);
 	return (TRUE);
       case TV_STAFF:
-      case TV_SCROLL1:
-      case TV_SCROLL2:
-      case TV_POTION1:
-      case TV_POTION2:
+      case TV_SCROLL:
+      case TV_POTION:
       case TV_FLASK:
       case TV_FOOD:
       case TV_OPEN_DOOR:

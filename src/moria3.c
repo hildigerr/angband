@@ -1696,8 +1696,8 @@ void do_cmd_fire()
 	    (t->tval == TV_ARROW) || (t->tval == TV_BOLT) ||
 	    (t->tval == TV_SPIKE) || (t->tval == TV_MISC))
 	    ok_throw = TRUE;
-	else if (((t->tval == TV_FOOD) || (t->tval == TV_POTION1) ||
-		  (t->tval == TV_POTION2)) && inven_aware_p(t) &&
+	else if (((t->tval == TV_FOOD) ||
+		  (t->tval == TV_POTION)) && inven_aware_p(t) &&
 		 /* almost all potions do 1d1 damage when thrown.  I want the code
 		    to ask before throwing away potions of DEX, *Healing*, etc.
 		    This also means it will ask before throwing potions of slow
