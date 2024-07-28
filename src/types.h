@@ -213,7 +213,6 @@ struct _inven_kind {
 
   byte level;			/* Object level			*/
   byte number;			/* Number of items	*/
-  byte rare;			/* True if Rare */
   byte tchar;			/* Character representation		*/
 
   s16b tohit;			/* Plusses to hit		*/
@@ -228,6 +227,9 @@ struct _inven_kind {
   u32b flags1;		/* Flags, set 1			*/
   u32b flags2;		/* Flags, set 2			*/
   u32b flags3;		/* Flags, set 3			*/
+
+  byte locale[4];		/* Allocation level(s)		*/
+  byte chance[4];		/* Allocation chance(s)		*/
 };
 
 

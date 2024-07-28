@@ -829,6 +829,12 @@ static errr init_k_list_txt()
 	    /* Simply read each number following a colon */
 	    for (i = 0, s = buf+1; s && (s[0] == ':') && s[1]; ++i) {
 
+		/* Default chance */
+		k_ptr->chance[i] = 1;
+
+		/* Store the attack damage index */
+		k_ptr->locale[i] = atoi(s+1);
+
 		/* Find the slash */
 		t = strchr(s+1, '/');
 
@@ -838,7 +844,7 @@ static errr init_k_list_txt()
 		/* If the slash is "nearby", use it */
 		if (t && (!s || t < s)) {
 		    int chance = atoi(t+1);
-		    if (chance > 0) k_ptr->rare = chance;
+		    if (chance > 0) k_ptr->chance[i] = chance;
 		}
 	    }
 

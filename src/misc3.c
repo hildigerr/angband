@@ -2735,7 +2735,18 @@ void place_gold(int y, int x)
 
 
 /*
- * Returns the array number of a random object -RAK-
+ * An entry for the object allocator below
+ */
+typedef struct _kind_entry {
+    u16b k_idx;		/* Object kind index */
+    byte locale;		/* Base dungeon level */
+    byte chance;		/* Rarity of occurance */
+} kind_entry;
+
+
+/*
+ * Returns the array number of a random object
+ * Uses the locale/chance info for distribution.
  */
 int get_obj_num(int level, int good)
 {
@@ -2745,7 +2756,7 @@ int get_obj_num(int level, int good)
     static u16b size = 0;
 
     /* The actual table of entries */
-    static u16b k_sort[MAX_K_IDX];
+    static kind_entry *table = NULL;
 
     /* Number of entries at each locale */
     static u16b t_lev[256];
@@ -2753,26 +2764,74 @@ int get_obj_num(int level, int good)
     /* Initialize the table */
     if (!size) {
 
+	inven_kind *k_ptr;
+
 	u16b aux[256];
 
-	/* Clear the level counter */
-	for (i = 0; i < 256; i++) t_lev[i] = 0;
+	/* Clear the level counter and the aux array */
+	for (i = 0; i < 256; i++) t_lev[i] = aux[i] = 0;
 
 	/* Scan all of the objects */
-	for (i = 0; i < MAX_K_IDX; i++) t_lev[k_list[i].level]++;
+	for (i = 0; i < MAX_K_IDX; i++) {
+
+	    /* Get the i'th object */
+	    k_ptr = &k_list[i];
+
+	    /* Scan all of the locale/chance pairs */
+	    for (j = 0; j < 4; j++) {
+
+		/* Count valid pairs */
+		if (k_ptr->chance[j]) {
+
+		    /* Count the total entries */
+		    size++;
+
+		    /* Count the entries at each level */
+		    t_lev[k_ptr->locale[j]]++;
+		}
+	    }
+	}
 
 	/* Combine the "t_lev" entries */
 	for (i = 1; i < 256; i++) t_lev[i] += t_lev[i-1];
 
-	/* Initialize the table */
-	for (i = 0; i < 256; i++) aux[i] = 1;
-	for (i = 0; i < MAX_K_IDX; i++) {
-		int l = k_list[i].level;
-		k_sort[t_lev[l] - aux[l]] = i;
-		aux[l]++;
-    }
+	/* Allocate the table */
+	C_MAKE(table, size, kind_entry);
 
-    size++;
+	/* Initialize the table */
+	for (i = 0; i < MAX_K_IDX; i++) {
+
+	    /* Get the i'th object */
+	    k_ptr = &k_list[i];
+
+	    /* Scan all of the locale/chance pairs */
+	    for (j = 0; j < 4; j++) {
+
+		/* Count valid pairs */
+		if (k_ptr->chance[j]) {
+
+		    int r, x, y, z;
+
+		    /* Extract the chance/locale */                    
+		    r = k_ptr->chance[j];
+		    x = k_ptr->locale[j];
+
+		    /* Skip entries preceding our locale */
+		    y = (x > 0) ? t_lev[x-1] : 0;
+
+		    /* Skip previous entries at this locale */
+		    z = y + aux[x];
+
+		    /* Load the table entry */
+		    table[z].k_idx = i;
+		    table[z].locale = x;
+		    table[z].chance = r;
+
+		    /* Another entry complete for this locale */
+		    aux[x]++;
+		}
+	    }
+	}
     }
 
 
@@ -2819,7 +2878,7 @@ int get_obj_num(int level, int good)
 		j = rand_int(t_lev[level]);
 
 		/* Keep it if it is "better" */
-		if (i < j) i = j;
+		if (table[i].locale < table[j].locale) i = j;
 	    }
 
 	    /* Sometimes, try for a "better" item */
@@ -2829,16 +2888,18 @@ int get_obj_num(int level, int good)
 		j = rand_int(t_lev[level]);
 
 		/* Keep it if it is "better" */
-		if (i < j) i = j;
+		if (table[i].locale < table[j].locale) i = j;
 	    }
 	}
 
 	/* Access the "k_idx" of the chosen item */
-	j = k_sort[i];
+	j = table[i].k_idx;
 
-    if ((k_list[k_sort[i]].rare ?
-	       (randint(k_list[k_sort[i]].rare) - 1) : 0) && !good) break;
-	     if (k_list[k_sort[i]].rare == 255) break;
+	/* The "good" parameter overwhelms "chance" requirements */
+	if (good) break;
+
+	/* Play the "chance game" */
+	if (randint(table[i].chance) == 1) break;
     }
 
     /* Accept that object */
