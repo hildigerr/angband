@@ -2741,10 +2741,13 @@ int get_obj_num(int level, int good)
 {
     register int i, j;
 
+    /* Number of entries in the "k_sort" table */
     static u16b size = 0;
 
+    /* The actual table of entries */
     static u16b k_sort[MAX_K_IDX];
 
+    /* Number of entries at each locale */
     static u16b t_lev[256];
 
     /* Initialize the table */
@@ -2752,12 +2755,16 @@ int get_obj_num(int level, int good)
 
 	u16b aux[256];
 
+	/* Clear the level counter */
 	for (i = 0; i < 256; i++) t_lev[i] = 0;
+
+	/* Scan all of the objects */
 	for (i = 0; i < MAX_K_IDX; i++) t_lev[k_list[i].level]++;
+
+	/* Combine the "t_lev" entries */
 	for (i = 1; i < 256; i++) t_lev[i] += t_lev[i-1];
-	/* now produce an array with object indexes sorted by level, by using
-	the info in t_lev, this is an O(n) sort! */
-	/* this is not a stable sort, but that does not matter */
+
+	/* Initialize the table */
 	for (i = 0; i < 256; i++) aux[i] = 1;
 	for (i = 0; i < MAX_K_IDX; i++) {
 		int l = k_list[i].level;
@@ -2768,18 +2775,32 @@ int get_obj_num(int level, int good)
     size++;
     }
 
+
+    /* Pick an object */
     while (1) {
 
+	/* Town level is easy */
 	if (level == 0) {
+
+	    /* Pick a level 0 entry */
 	    i = randint(t_lev[0]) - 1;
 	}
 
+	/* Other levels sometimes have great stuff */
 	else {
+
+	    /* Never exceed a given level */
 	    if (level > MAX_K_LEV) level = MAX_K_LEV;
+
+	    /* Occasionally, get a "better" object */
 	    else if (randint(GREAT_OBJ) == 1) {
+
+		/* What a bizarre calculation */
 		level = 1 + (level * MAX_K_LEV / randint(MAX_K_LEV));
 		if (level > MAX_K_LEV) level = MAX_K_LEV;
 	    }
+
+
 	/*
 	 * This code has been added to make it slightly more likely to get
 	 * the higher level objects.	Originally a uniform distribution
@@ -2811,6 +2832,7 @@ int get_obj_num(int level, int good)
 	     if (k_list[k_sort[i]].rare == 255) break;
     }
 
+    /* Accept that object */
     return (k_sort[i]);
 }
 
