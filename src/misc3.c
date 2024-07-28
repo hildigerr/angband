@@ -2827,13 +2827,16 @@ int get_obj_num(int level, int good)
 	    }
 	}
 
+	/* Access the "k_idx" of the chosen item */
+	j = k_sort[i];
+
     if ((k_list[k_sort[i]].rare ?
 	       (randint(k_list[k_sort[i]].rare) - 1) : 0) && !good) break;
 	     if (k_list[k_sort[i]].rare == 255) break;
     }
 
     /* Accept that object */
-    return (k_sort[i]);
+    return (j);
 }
 
 
