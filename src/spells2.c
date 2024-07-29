@@ -2530,21 +2530,21 @@ int recharge(int num)
     /* Recharge a rod */
     if (i_ptr->tval == TV_ROD) {
 
-	u16b t, t_o = i_ptr->timeout;
+	u16b t, t_p = i_ptr->pval;
 
 	/* Back-fire */
 	if (randint((100 - lev + num) / 5) == 1) {
 	    msg_print("The recharge backfires, and drains the rod further!");
 	    /* don't overflow... */
-	    if (t_o < 32000) i_ptr->timeout = (t_o + 100) * 2;
+	    if (t_p < 32000) i_ptr->pval = (t_p + 100) * 2;
 	}
 
 	/* Recharge */
 	else {
 	    /* rechange amount */
 	    t = (u16b) (num * damroll(2, 4));
-	    if (t_o < t) i_ptr->timeout = 0;
-	    else i_ptr->timeout = t_o - t;
+	    if (t_p < t) i_ptr->pval = 0;
+	    else i_ptr->pval = t_p - t;
 	}
     }
 

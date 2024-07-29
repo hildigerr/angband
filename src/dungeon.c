@@ -1292,8 +1292,16 @@ void dungeon(void)
 
 	    i_ptr = &inventory[i];
 
-	    if (i_ptr->tval == TV_ROD && (i_ptr->flags3 & TR3_ACTIVATE)) {
-		if (i_ptr->timeout > 0) i_ptr->timeout--;
+	    /* Examine ALL rods */
+	    if (i_ptr->tval == TV_ROD) {
+
+		/* Charge it a little */
+		if (i_ptr->pval > 0) {
+
+		    /* Charge it */
+		    i_ptr->pval--;
+
+		}
 	    }
 	}
 

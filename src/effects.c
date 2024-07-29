@@ -2133,7 +2133,7 @@ void do_cmd_zap_rod(void)
     }
 
     /* Still charging */
-    if (i_ptr->timeout) {
+    if (i_ptr->pval) {
 	msg_print("The rod is currently exhausted.");
 	return;
     }
@@ -2150,13 +2150,13 @@ void do_cmd_zap_rod(void)
 	msg_print("A line of blue shimmering light appears.");
 	lite_line(dir, char_row, char_col);
 	ident = TRUE;
-	i_ptr->timeout = 9;
+	i_ptr->pval = 9;
 	break;
 
       case SV_ROD_ILLUMINATION:
 	lite_area(y, x, damroll(2, 8), 2);
 	ident = TRUE;
-	i_ptr->timeout = 30;
+	i_ptr->pval = 30;
 	break;
 
       case SV_ROD_ACID:
@@ -2164,7 +2164,7 @@ void do_cmd_zap_rod(void)
 	if (randint(10)==1) line_spell(GF_ACID, dir, y, x, damroll(6,8));
 	else fire_bolt(GF_ACID, dir, y, x, damroll(6,8));
 	ident = TRUE;
-	i_ptr->timeout = 12;
+	i_ptr->pval = 12;
 	break;
 
       case SV_ROD_ELEC:
@@ -2172,7 +2172,7 @@ void do_cmd_zap_rod(void)
 	if (randint(12)==1) line_spell(GF_ELEC, dir, y, x, damroll(3,8));
 	else fire_bolt(GF_ELEC, dir, y, x, damroll(3,8));
 	ident = TRUE;
-	i_ptr->timeout = 11;
+	i_ptr->pval = 11;
 	break;
 
       case SV_ROD_COLD:
@@ -2180,7 +2180,7 @@ void do_cmd_zap_rod(void)
 	if (randint(10)==1) line_spell(GF_COLD, dir, y, x, damroll(5,8));
 	else fire_bolt(GF_COLD, dir, y, x, damroll(5,8));
 	ident = TRUE;
-	i_ptr->timeout = 13;
+	i_ptr->pval = 13;
 	break;
 
       case SV_ROD_FIRE:
@@ -2188,77 +2188,77 @@ void do_cmd_zap_rod(void)
 	if (randint(8)==1) line_spell(GF_FIRE, dir, y, x, damroll(8,8));
 	else fire_bolt(GF_FIRE, dir, y, x, damroll(8,8));
 	ident = TRUE;
-	i_ptr->timeout = 15;
+	i_ptr->pval = 15;
 	break;
 
       case SV_ROD_POLYMORPH:
 	if (!get_dir_c(NULL, &dir)) return;
 	ident = poly_monster(dir, y, x);
-	i_ptr->timeout = 25;
+	i_ptr->pval = 25;
 	break;
 
       case SV_ROD_SLOW_MONSTER:
 	if (!get_dir_c(NULL, &dir)) return;
 	ident = speed_monster(dir, y, x, -1);
-	i_ptr->timeout = 20;
+	i_ptr->pval = 20;
 	break;
 
       case SV_ROD_SLEEP_MONSTER:
 	if (!get_dir_c(NULL, &dir)) return;
 	ident = sleep_monster(dir, y, x);
-	i_ptr->timeout = 18;
+	i_ptr->pval = 18;
 	break;
 
       case SV_ROD_DRAIN_LIFE:
 	if (!get_dir_c(NULL, &dir)) return;
 	ident = drain_life(dir, y, x, 75);
-	i_ptr->timeout = 23;
+	i_ptr->pval = 23;
 	break;
 
       case SV_ROD_TELEPORT_AWAY:
 	if (!get_dir_c(NULL, &dir)) return;
 	ident = teleport_monster(dir, y, x);
-	i_ptr->timeout = 25;
+	i_ptr->pval = 25;
 	break;
 
       case SV_ROD_DISARMING:
 	if (!get_dir_c(NULL, &dir)) return;
 	ident = disarm_all(dir, y, x);
-	i_ptr->timeout = 30;
+	i_ptr->pval = 30;
 	break;
 
       case SV_ROD_ELEC_BALL:
 	if (!get_dir_c(NULL, &dir)) return;
 	fire_ball(GF_ELEC, dir, y, x, 32, 2);
 	ident = TRUE;
-	i_ptr->timeout = 23;
+	i_ptr->pval = 23;
 	break;
 
       case SV_ROD_COLD_BALL:
 	if (!get_dir_c(NULL, &dir)) return;
 	fire_ball(GF_COLD, dir, y, x, 48, 2);
 	ident = TRUE;
-	i_ptr->timeout = 25;
+	i_ptr->pval = 25;
 	break;
 
       case SV_ROD_FIRE_BALL:
 	if (!get_dir_c(NULL, &dir)) return;
 	fire_ball(GF_FIRE, dir, y, x, 72, 2);
 	ident = TRUE;
-	i_ptr->timeout = 30;
+	i_ptr->pval = 30;
 	break;
 
       case SV_ROD_ACID_BALL:
 	if (!get_dir_c(NULL, &dir)) return;
 	fire_ball(GF_ACID, dir, y, x, 60, 2);
 	ident = TRUE;
-	i_ptr->timeout = 27;
+	i_ptr->pval = 27;
 	break;
 
       case SV_ROD_MAPPING:
 	map_area();
 	ident = TRUE;
-	i_ptr->timeout = 99;
+	i_ptr->pval = 99;
 	break;
 
       case SV_ROD_IDENTIFY:
@@ -2274,7 +2274,7 @@ void do_cmd_zap_rod(void)
 	}
 
 	/* For now, decharge */
-	i_ptr->timeout = 10;
+	i_ptr->pval = 10;
 	break;
 
       case SV_ROD_CURING:
@@ -2298,7 +2298,7 @@ void do_cmd_zap_rod(void)
 	    p_ptr->cut = 0;
 	    ident = TRUE;
 	}
-	i_ptr->timeout = 888;
+	i_ptr->pval = 888;
 	break;
 
       case SV_ROD_HEALING:
@@ -2320,7 +2320,7 @@ void do_cmd_zap_rod(void)
 	    p_ptr->cut = 0;
 	    ident = TRUE;
 	}
-	i_ptr->timeout = 888;
+	i_ptr->pval = 888;
 	break;
 
       case SV_ROD_RECALL:
@@ -2333,19 +2333,19 @@ void do_cmd_zap_rod(void)
 	    p_ptr->word_recall = 0;
 	}
 	ident = TRUE;
-	i_ptr->timeout = 60;
+	i_ptr->pval = 60;
 	break;
 
       case SV_ROD_PROBING:
 	probing();
 	ident = TRUE;
-	i_ptr->timeout = 50;
+	i_ptr->pval = 50;
 	break;
 
       case SV_ROD_DETECTION:
 	detection();
 	ident = TRUE;
-	i_ptr->timeout = 99;
+	i_ptr->pval = 99;
 	break;
 
       case SV_ROD_RESTORATION:
@@ -2356,18 +2356,18 @@ void do_cmd_zap_rod(void)
 	if (res_stat(A_DEX)) ident = TRUE;
 	if (res_stat(A_CON)) ident = TRUE;
 	if (res_stat(A_CHR)) ident = TRUE;
-	i_ptr->timeout = 999;
+	i_ptr->pval = 999;
 	break;
 
       case SV_ROD_SPEED:
 	if (p_ptr->fast == 0) ident = TRUE;
 	p_ptr->fast += randint(30) + 15;
-	i_ptr->timeout = 99;
+	i_ptr->pval = 99;
 	break;
 
       case SV_ROD_TRAP_LOC:
 	if (detect_trap()) ident = TRUE;
-	i_ptr->timeout = 99;
+	i_ptr->pval = 99;
 	break;
 
 #if 0
@@ -2375,7 +2375,7 @@ void do_cmd_zap_rod(void)
 	if (!get_dir_c(NULL, &dir)) return;
 	ident = build_wall(dir, y, x);
 	/* don't want people to abuse this -JLS */
-	i_ptr->timeout = 999;
+	i_ptr->pval = 999;
 	break;
 #endif
 

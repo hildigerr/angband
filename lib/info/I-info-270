@@ -25,6 +25,7 @@ Functions combine() and combine_pack() to maintain inventory.
 Made "store cost" a property of objects
 Rewrote "object feeling" code
 Combined "POTION*" and "SCROLL*" and used true flags for them.
+Used "pval" (not "timeout") for rods, which are NOT activated.
 
 Parsing of monster race info from a text file.
 Functions floor_grid(), clean_grid(), and valid_grid().
