@@ -2508,7 +2508,7 @@ int recharge(int num)
 	(i_ptr->tval != TV_STAFF) &&
 	(i_ptr->tval != TV_ROD)) {
 
-		msg_print("Oops.  That item cannot be recharged.");
+	msg_print("Oops.  That item cannot be recharged.");
 	return (FALSE);
     }
 
@@ -2525,43 +2525,41 @@ int recharge(int num)
     lev = i_ptr->level;
 
     /* Recharge a rod */
-	if (i_ptr->tval == TV_ROD) {
+    if (i_ptr->tval == TV_ROD) {
 	    /* now allow players to speed up recharge time of rods -CFT */
-	    u16b              t_o = i_ptr->timeout, t;
+	u16b t, t_o = i_ptr->timeout;
 
-	    if (randint((100 - lev + num) / 5) == 1) {	/* not today... */
-		msg_print("The recharge backfires, and drains the rod further!");
-		if (t_o < 32000)   /* don't overflow... */
-		    i_ptr->timeout = (t_o + 100) * 2;
-	    } else {
-		t = (u16b) (num * damroll(2, 4));	/* rechange amount */
-		if (t_o < t)
-		    i_ptr->timeout = 0;
-		else
-		    i_ptr->timeout = t_o - t;
-	    }
+	if (randint((100 - lev + num) / 5) == 1) {
+	    msg_print("The recharge backfires, and drains the rod further!");
+	    if (t_o < 32000) i_ptr->timeout = (t_o + 100) * 2;
+	} else {
+	    t = (u16b) (num * damroll(2, 4));
+	    if (t_o < t) i_ptr->timeout = 0;
+	    else i_ptr->timeout = t_o - t;
 	}
-	 /* if recharge rod... */ 
-	else {			   /* recharge wand/staff */
+    }
+    else {			   /* recharge wand/staff */
 	/* recharge I = recharge(20) = 1/6 failure for empty 10th level wand   */
 	/* recharge II = recharge(60) = 1/10 failure for empty 10th level wand */
 	/* make it harder to recharge high level, and highly charged wands     */
 
-	    if (randint((num + 100 - lev - (10 * i_ptr->pval)) / 15) == 1) {
-		msg_print("There is a bright flash of light.");
-		inven_item_increase(item_val, -1);
-		inven_item_optimize(item_val);
-	    } else {
-		num = (num / (lev + 2)) + 1;
-		i_ptr->pval += 2 + randint(num);
+	if (randint((num + 100 - lev - (10 * i_ptr->pval)) / 15) == 1) {
+	    msg_print("There is a bright flash of light.");
+	    inven_item_increase(item_val, -1);
+	    inven_item_optimize(item_val);
+	}
+
+	else {
+	    num = (num / (lev + 2)) + 1;
+	    i_ptr->pval += 2 + randint(num);
 
 	    /* Hack -- we no longer "know" the item */
 	    i_ptr->ident &= ~ID_KNOWN;
 
 	    /* Hack -- we no longer think the item is empty */
 	    i_ptr->ident &= ~ID_EMPTY;
-	    }
 	}
+    }
 
     /* Something was done */
     return (TRUE);
