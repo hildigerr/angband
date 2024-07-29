@@ -2461,6 +2461,10 @@ void starlite(int y, int x)
 
 
 
+/*
+ * Recharge a wand/staff/rod.  Does not work on stacked items.
+ *
+ */
 int recharge(int num)
 {
     int                 i, j, i1, i2, item_val;
@@ -2508,6 +2512,15 @@ int recharge(int num)
 	return (FALSE);
     }
 
+
+    /* Hack -- refuse to recharge stacked items */
+    if (i_ptr->number > 1) {
+
+	msg_print("Oops.  You cannot recharge stacked items.");
+	return (FALSE);
+    }
+
+    /* Recharge a rod */
 	if (i_ptr->tval == TV_ROD) {
 	    /* now allow players to speed up recharge time of rods -CFT */
 	    u16b              t_o = i_ptr->timeout, t;
