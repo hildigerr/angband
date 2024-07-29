@@ -2467,7 +2467,7 @@ void starlite(int y, int x)
  */
 int recharge(int num)
 {
-    int                 i, j, i1, i2, item_val;
+    int                 i, j, i1, i2, item_val, lev;
     inven_type		*i_ptr;
 
     /* No range found yet */
@@ -2520,12 +2520,16 @@ int recharge(int num)
 	return (FALSE);
     }
 
+
+    /* Extract the object "level" */
+    lev = i_ptr->level;
+
     /* Recharge a rod */
 	if (i_ptr->tval == TV_ROD) {
 	    /* now allow players to speed up recharge time of rods -CFT */
 	    u16b              t_o = i_ptr->timeout, t;
 
-	    if (randint((100 - i_ptr->level + num) / 5) == 1) {	/* not today... */
+	    if (randint((100 - lev + num) / 5) == 1) {	/* not today... */
 		msg_print("The recharge backfires, and drains the rod further!");
 		if (t_o < 32000)   /* don't overflow... */
 		    i_ptr->timeout = (t_o + 100) * 2;
@@ -2543,12 +2547,12 @@ int recharge(int num)
 	/* recharge II = recharge(60) = 1/10 failure for empty 10th level wand */
 	/* make it harder to recharge high level, and highly charged wands     */
 
-	    if (randint((num + 100 - (int)i_ptr->level - (10 * i_ptr->pval)) / 15) == 1) {
+	    if (randint((num + 100 - lev - (10 * i_ptr->pval)) / 15) == 1) {
 		msg_print("There is a bright flash of light.");
 		inven_item_increase(item_val, -1);
 		inven_item_optimize(item_val);
 	    } else {
-		num = (num / (i_ptr->level + 2)) + 1;
+		num = (num / (lev + 2)) + 1;
 		i_ptr->pval += 2 + randint(num);
 
 	    /* Hack -- we no longer "know" the item */
