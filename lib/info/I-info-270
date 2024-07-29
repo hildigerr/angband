@@ -21,6 +21,7 @@ Made some changes to the "item kind" text file (such as "Restoring").
 Reorganized the "item kind" text file in a major way.
 Made artifacts MUCH more resistant to "death by throwing" :-)
 Added true "object stacking" code, so any items can stack.
+Wrote code for "unstacking" objects (ie wands) for use.
 Functions combine() and combine_pack() to maintain inventory.
 Added "(charging)" to rod descriptions.
 Made "store cost" a property of objects

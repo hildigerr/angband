@@ -19,11 +19,32 @@
  * reading scrolls, aiming wands, using staffs, zapping rods,
  * and activating artifacts.
  *
+ * This code now correctly handles the unstacking of wands, staffs,
+ * and rods.  Note the overly paranoid warning about potential pack
+ * overflow, which allows the player to use and drop a stacked item.
+ *
+ * In all "unstacking" scenarios, the "used" object is "carried" as if
+ * the player had just picked it up.  In particular, this means that if
+ * the use of an item induces pack overflow, that item will be dropped.
+ *
  * For simplicity, these routines induce a full "pack recombination"
  * so we do not have to deal with tracking item movement.  This is not
  * really that inefficient, since at most we do 400 item similarity tests,
  * and in most cases, each of these requires one integer compare.  It might
  * make more sense to actually require the user to recombine by hand.
+ *
+ * There may be a BIG problem with any "effect" that can cause "changes"
+ * to the inventory.  For example, a "scroll of recharging" can cause
+ * a wand/staff to "disappear", moving the inventory up.  Luckily, the
+ * scrolls all appear BEFORE the staffs/wands, so this is not a problem.
+ * But, for example, a "staff of recharging" could cause MAJOR problems.
+ * In such a case, it will be best to either (1) "postpone" the effect
+ * until the end of the function, or (2) "change" the effect, say, into
+ * giving a staff "negative" charges, or "turning a staff into a stick".
+ * It seems as though a "rod of recharging" might in fact cause problems.
+ * The basic problem is that the act of recharging (and destroying) an
+ * item causes the inducer of that action to "move", causing "i_ptr" to
+ * no longer point at the correct item, with horrifying results.
  *
  * XXX XXX XXX XXX Someone needs to verify all of these effects.
  */
@@ -1495,6 +1516,7 @@ void do_cmd_read_scroll(void)
 
 /*
  * Aim a wand (use a single charge).
+ * Handle "unstacking" in a logical manner.
  */
 void do_cmd_aim_wand(void)
 {
@@ -1523,6 +1545,13 @@ void do_cmd_aim_wand(void)
 
     /* Get the level */
     lev =i_ptr->level;
+
+    /* Hack -- verify potential overflow */
+    if ((i_ptr->number > 1) && (inven_ctr >= INVEN_PACK)) {
+
+	/* Verify with the player */
+	if (!get_check("Your pack might overflow.  Continue?")) return;
+    }
 
     /* The turn is not free */
     free_turn_flag = FALSE;
@@ -1560,7 +1589,6 @@ void do_cmd_aim_wand(void)
 
 	i = i_ptr->flags1;
 	done_effect = 0;
-	(i_ptr->pval)--;
 	while (!done_effect) {
 
     /* Start at the player */
@@ -1766,7 +1794,28 @@ void do_cmd_aim_wand(void)
 	inven_aware(i_ptr);
     }
 
-	inven_item_charges(item_val);
+    /* Use a single charge */
+    i_ptr->pval--;
+
+    /* XXX Hack -- unstack if necessary */
+    if (i_ptr->number > 1) {
+
+	/* Make a fake item */
+	inven_type tmp_obj;
+	tmp_obj = *i_ptr;
+	tmp_obj.number = 1;
+
+	/* Restore the charges */
+	i_ptr->pval++;
+
+	/* Unstack the used item */
+	i_ptr->number--;
+	inven_weight -= tmp_obj.weight;
+	item_val = inven_carry(&tmp_obj);
+    }
+
+    /* Describe the remaining charges */
+    inven_item_charges(item_val);
 
     /* Hack -- combine the pack */
     combine_pack();
@@ -1809,6 +1858,13 @@ void do_cmd_use_staff(void)
     /* Extract the item level */
     lev = i_ptr->level;
 
+    /* Hack -- verify potential overflow */
+    if ((i_ptr->number > 1) && (inven_ctr >= INVEN_PACK)) {
+
+	/* Verify with the player */
+	if (!get_check("Your pack might overflow.  Continue?")) return;
+    }
+
 	free_turn_flag = FALSE;
 
     /* Chance of success */
@@ -1835,8 +1891,6 @@ void do_cmd_use_staff(void)
     }
 
     ident = FALSE;
-
-    (i_ptr->pval)--;
 
     switch (i_ptr->flags1) {
 
@@ -2068,6 +2122,28 @@ void do_cmd_use_staff(void)
 	inven_aware(i_ptr);
     }
 
+
+    /* Use a single charge */
+    i_ptr->pval--;
+
+    /* XXX Hack -- unstack if necessary */
+    if (i_ptr->number > 1) {
+
+	/* Make a fake item */
+	inven_type tmp_obj;
+	tmp_obj = *i_ptr;
+	tmp_obj.number = 1;
+
+	/* Restore the charges */
+	i_ptr->pval++;
+
+	/* Unstack the used item */
+	i_ptr->number--;
+	inven_weight -= tmp_obj.weight;
+	item_val = inven_carry(&tmp_obj);
+    }
+
+    /* Describe the remaining charges */
     inven_item_charges(item_val);
 
     /* Hack -- combine the pack */
@@ -2080,6 +2156,8 @@ void do_cmd_use_staff(void)
 
 /*
  * Activate (zap) a Rod
+ *
+ * Unstack fully charged rods as needed.
  */
 void do_cmd_zap_rod(void)
 {
@@ -2108,6 +2186,13 @@ void do_cmd_zap_rod(void)
 
     /* Extract the item level */
     lev = i_ptr->level;
+
+    /* Hack -- verify potential overflow */
+    if ((i_ptr->number > 1) && (inven_ctr >= INVEN_PACK)) {
+
+	/* Verify with the player */
+	if (!get_check("Your pack might overflow.  Continue?")) return;
+    }
 
 	free_turn_flag = FALSE;
 	ident = FALSE;
@@ -2396,6 +2481,23 @@ void do_cmd_zap_rod(void)
 	inven_aware(i_ptr);
     }
 
+
+    /* XXX Hack -- unstack if necessary */
+    if (i_ptr->number > 1) {
+
+	/* Make a fake item */
+	inven_type tmp_obj;
+	tmp_obj = *i_ptr;
+	tmp_obj.number = 1;
+
+	/* Restore "charge" */
+	i_ptr->pval = 0;
+
+	/* Unstack the used item */
+	i_ptr->number--;
+	inven_weight -= tmp_obj.weight;
+	item_val = inven_carry(&tmp_obj);
+    }
 
     /* Hack -- combine the pack */
     combine_pack();

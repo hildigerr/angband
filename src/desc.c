@@ -470,6 +470,9 @@ static bool similar_ident(inven_type *i_ptr, inven_type *j_ptr)
  * XXX Currently, we allow identical unidentified "stackables" to
  * combine.  This includes "arrows", which is a major hack.
  *
+ * We allow wands (and staffs) to combine if they are known to have
+ * equivalent charges.  They are unstacked as they are used.
+ *
  * We do not allow chests to combine, it would be annoying.
  *
  * We do NOT allow artifacts or ego-items or dragon scale mail to
