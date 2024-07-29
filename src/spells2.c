@@ -2464,6 +2464,9 @@ void starlite(int y, int x)
 /*
  * Recharge a wand/staff/rod.  Does not work on stacked items.
  *
+ * recharge I = recharge(20) = 1/6 failure for empty 10th level wand  
+ * recharge II = recharge(60) = 1/10 failure for empty 10th level wand
+ * make it harder to recharge high level, and highly charged wands    
  */
 int recharge(int num)
 {
@@ -2526,29 +2529,36 @@ int recharge(int num)
 
     /* Recharge a rod */
     if (i_ptr->tval == TV_ROD) {
-	    /* now allow players to speed up recharge time of rods -CFT */
+
 	u16b t, t_o = i_ptr->timeout;
 
+	/* Back-fire */
 	if (randint((100 - lev + num) / 5) == 1) {
 	    msg_print("The recharge backfires, and drains the rod further!");
+	    /* don't overflow... */
 	    if (t_o < 32000) i_ptr->timeout = (t_o + 100) * 2;
-	} else {
+	}
+
+	/* Recharge */
+	else {
+	    /* rechange amount */
 	    t = (u16b) (num * damroll(2, 4));
 	    if (t_o < t) i_ptr->timeout = 0;
 	    else i_ptr->timeout = t_o - t;
 	}
     }
-    else {			   /* recharge wand/staff */
-	/* recharge I = recharge(20) = 1/6 failure for empty 10th level wand   */
-	/* recharge II = recharge(60) = 1/10 failure for empty 10th level wand */
-	/* make it harder to recharge high level, and highly charged wands     */
 
+    /* recharge wand/staff */
+    else {
+
+	/* Back-fire */
 	if (randint((num + 100 - lev - (10 * i_ptr->pval)) / 15) == 1) {
 	    msg_print("There is a bright flash of light.");
 	    inven_item_increase(item_val, -1);
 	    inven_item_optimize(item_val);
 	}
 
+	/* Recharge */
 	else {
 	    num = (num / (lev + 2)) + 1;
 	    i_ptr->pval += 2 + randint(num);
