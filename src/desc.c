@@ -585,6 +585,7 @@ int item_similar(inven_type *i_ptr, inven_type *j_ptr)
 #define PLUSSES     2		/* show pval as "(+x)", unless zero */
 #define FLAGS       3		/* show pval as "(+x to yyy)", or "(+x)" */
 #define CHARGES     5		/* show pval as "(x charges)" */
+#define CHARGING    6		/* show pval as "(charging)", unless zero */
 #define USE_LITE    7		/* show pval as "with x turns of light" */
 
 
@@ -843,6 +844,7 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	break;
 
       case TV_ROD:
+	pval_use = CHARGING;
 	if (!aware) {
 	    basenm = "& %s Rod~";
 	    modstr = wand_adj[indexx];
@@ -1130,6 +1132,11 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
     /* Nothing to declare */
     else if (i_ptr->pval == 0) {
 	/* Nothing */
+    }
+
+    /* Rods, if not charged yet */
+    else if (pval_use == CHARGING) {
+	(void)strcpy(tmp_str, "charging");
     }
 
     /* Boring objects */        

@@ -22,6 +22,7 @@ Reorganized the "item kind" text file in a major way.
 Made artifacts MUCH more resistant to "death by throwing" :-)
 Added true "object stacking" code, so any items can stack.
 Functions combine() and combine_pack() to maintain inventory.
+Added "(charging)" to rod descriptions.
 Made "store cost" a property of objects
 Rewrote "object feeling" code
 Combined "POTION*" and "SCROLL*" and used true flags for them.
