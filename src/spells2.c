@@ -2463,34 +2463,51 @@ void starlite(int y, int x)
 
 int recharge(int num)
 {
-    int                 i, j, k, l, item_val;
-    register int        res;
+    int                 i, j, i1, i2, item_val;
     inven_type		*i_ptr;
-    int                 found = FALSE;
 
     /* No range found yet */
-    res = FALSE;
+    i1 = 999, i2 = -1;
 
     /* Check for wands */
-    if (find_range(TV_STAFF, TV_WAND, &i, &j))
-	found = TRUE;
+    if (find_range(TV_WAND, TV_NEVER, &i, &j)) {
+	if (i < i1) i1 = i;
+	if (j > i2) i2 = j;
+    }
+
+    /* Check for staffs */
+    if (find_range(TV_STAFF, TV_NEVER, &i, &j)) {
+	if (i < i1) i1 = i;
+	if (j > i2) i2 = j;
+    }
 
     /* Hack -- Check for rods */
-    if (find_range(TV_ROD, TV_NEVER, &k, &l))
-	found = TRUE;
+    if (find_range(TV_ROD, TV_NEVER, &i, &j)) {
+	if (i < i1) i1 = i;
+	if (j > i2) i2 = j;
+    }
 
     /* Quick check */
-    if (!found)
+    if (i1 > i2) {
 	msg_print("You have nothing to recharge.");
+	return (FALSE);
+    }
 
     /* Ask for it */
-    else if (get_item(&item_val, "Recharge which item?",
-		      (k > -1) ? k : i, (j > -1) ? j : l)) {
+    if (!get_item(&item_val, "Recharge which item?", i1, i2)) return (FALSE);
 
     /* Get the item */
     i_ptr = &inventory[item_val];
 
-	res = TRUE;
+    /* Verify item */
+    if ((i_ptr->tval != TV_WAND) &&
+	(i_ptr->tval != TV_STAFF) &&
+	(i_ptr->tval != TV_ROD)) {
+
+		msg_print("Oops.  That item cannot be recharged.");
+	return (FALSE);
+    }
+
 	if (i_ptr->tval == TV_ROD) {
 	    /* now allow players to speed up recharge time of rods -CFT */
 	    u16b              t_o = i_ptr->timeout, t;
@@ -2528,8 +2545,9 @@ int recharge(int num)
 	    i_ptr->ident &= ~ID_EMPTY;
 	    }
 	}
-    }
-    return (res);
+
+    /* Something was done */
+    return (TRUE);
 }
 
 
