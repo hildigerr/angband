@@ -1683,14 +1683,32 @@ void self_knowledge()
 	    info[i++] = "Your weapon is accursed.";
     }
     }
-    if (f1 & TR1_TUNNEL) {
-	info[i++] = "Your weapon is an effective digging tool.";
-    }
     if (f3 & TR3_BLESSED) {
 	info[i++] = "Your weapon has been blessed by the gods.";
     }
+    if (f1 & TR1_TUNNEL) {
+	info[i++] = "Your weapon is an effective digging tool.";
+    }
     if (f1 & TR1_ATTACK_SPD) {
 	info[i++] = "Your weapon strikes with uncommon speed.";
+    }
+    if (f1 & TR1_BRAND_COLD) {
+	info[i++] = "Your frigid weapon freezes your foes.";
+    }
+    if (f1 & TR1_BRAND_FIRE) {
+	info[i++] = "Your flaming weapon burns your foes.";
+    }
+    if (f1 & TR1_BRAND_ELEC) {
+	info[i++] = "Your weapon electrocutes your foes.";
+    }
+    if (f1 & TR1_IMPACT) {
+	info[i++] = "The unbelievable impact of your weapon can cause earthquakes.";
+    }
+    if (f1 & TR1_KILL_DRAGON) {
+	info[i++] = "Your weapon is a great bane of dragons.";
+    }
+    else if (f1 & TR1_SLAY_DRAGON) {
+	info[i++] = "Your weapon is especially deadly against dragons.";
     }
     if (f1 & TR1_SLAY_ORC) {
 	info[i++] = "Your weapon is especially deadly against orcs.";
@@ -1704,12 +1722,6 @@ void self_knowledge()
     if (f1 & TR1_SLAY_ANIMAL) {
 	info[i++] = "Your weapon is especially deadly against natural creatures.";
     }
-    if (f1 & TR1_KILL_DRAGON) {
-	info[i++] = "Your weapon is a great bane of dragons.";
-    }
-    else if (f1 & TR1_SLAY_DRAGON) {
-	info[i++] = "Your weapon is especially deadly against dragons.";
-    }
     if (f1 & TR1_SLAY_DEMON) {
 	info[i++] = "Your weapon strikes at demons with holy wrath.";
     }
@@ -1719,17 +1731,6 @@ void self_knowledge()
     if (f1 & TR1_SLAY_EVIL) {
 	info[i++] = "Your weapon fights against evil with holy fury.";
     }
-    if (f1 & TR1_BRAND_COLD) {
-	info[i++] = "Your frigid weapon freezes your foes."info[i++] = ;
-    }
-    if (f1 & TR1_BRAND_FIRE) {
-	info[i++] = "Your flaming weapon burns your foes.";
-    }
-    if (f1 & TR1_BRAND_ELEC) {
-	info[i++] = "Your weapon electrocutes your foes.";
-    }
-    if (f1 & TR1_IMPACT)
-	info[i++] = "The unbelievable impact of your weapon can cause earthquakes.";
     }
 
 
