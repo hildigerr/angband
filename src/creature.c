@@ -1352,16 +1352,20 @@ static void make_attack(int m_idx)
 		    /* Don't steal artifacts  -CFT */
 		    if (artifact_p(i_ptr)) break;
 
+		    /* Steal some of the items */
+		    amt = randint(i_ptr->number);
+
 		    /* XXX Hack -- only one item at a time */
 		    amt = 1;
 
 		    /* Get a description */
 		    objdes(t1, i_ptr, FALSE);
 
-		    /* stacked single items */
+		    /* Message */
 		    sprintf(t2, "%sour %s (%c) %s stolen!",
 			    ((i_ptr->number > 1) ? 
-			    "One of y" : "Y"),
+			     ((amt == i_ptr->number) ? "All of y" :
+			     (amt > 1 ? "Some of y" : "One of y")) : "Y"),
 			    t1, index_to_label(i),
 			    ((amt > 1) ? "were" : "was"));
 		    msg_print(t2);

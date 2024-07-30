@@ -196,6 +196,7 @@ typedef int (*inven_func)(inven_type *);
 /*
  * Destroys a type of item on a given percent chance	-RAK-	 
  * Note that missiles are no longer necessarily all destroyed
+ * Destruction taken from "creature.c" code for "stealing".
  * Returns TRUE if anything was damaged.
  */
 static int inven_damage(inven_func typ, int perc)
