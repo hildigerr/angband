@@ -18,25 +18,6 @@
 /* Now included are creature spells also.		       -RAK    */
 
 
-/* this fn only exists to avoid duplicating this code in the selfknowledge fn. -CFT */
-static void pause_if_screen_full(int *i, int j)
-{
-    int t;
-
-    if (*i == 22) {		   /* is screen full? */
-	prt("-- more --", *i, j);
-	inkey();
-	for (t = 2; t < 23; t++)
-	    erase_line(t, j);	   /* don't forget to erase extra */
-	prt("Your Attributes: (continued)", 1, j + 5);
-	*i = 2;
-    }
-}
-
-
-
-
-
 
 /*
  * polymorph is now uniform for poly/mass poly/choas poly, and only
@@ -1433,12 +1414,15 @@ int restore_level()
  * attributes, a screenful at a time.  (There are a LOT of attributes to
  * list.  It will probably take 2 or 3 screens for a powerful character whose
  * using several artifacts...) -CFT 
+ *
+ * It is now a lot more efficient. -BEN-
  */
 void self_knowledge()
 {
-    int    i, j, k;
+    int    i = 0, j, k;
     u32b f1 = 0L, f2 = 0L, f3 = 0L;
     inven_type *i_ptr;
+    cptr info[128];
 
 
     /* Acquire item flags (from worn items) */
@@ -1458,218 +1442,171 @@ void self_knowledge()
 	}
     }
 
-    save_screen();
-
-/* map starts at 13, but I want a couple of spaces.
- * This means must start by erasing map...
- */
-    j = 15;
-    for (i = 1; i < 23; i++)
-	erase_line(i, j - 2);	   /* erase a couple of spaces to left */
-
-    i = 1;
-    prt("Your Attributes:", i++, j + 5);
 
     if (p_ptr->blind > 0) {
-	prt("You cannot see.", i++, j);
+	info[i++] = "You cannot see.";
     }
     if (p_ptr->confused > 0) {
-	prt("You are confused.", i++, j);
+	info[i++] = "You are confused.";
     }
     if (p_ptr->afraid > 0) {
-	prt("You are terrified.", i++, j);
+	info[i++] = "You are terrified.";
     }
     if (p_ptr->cut > 0) {
-	prt("You are bleeding.", i++, j);
+	info[i++] = "You are bleeding.";
     }
     if (p_ptr->stun > 0) {
-	prt("You are stunned and reeling.", i++, j);
+	info[i++] = "You are stunned and reeling.";
     }
     if (p_ptr->poisoned > 0) {
-	prt("You are poisoned.", i++, j);
+	info[i++] = "You are poisoned.";
     }
     if (p_ptr->image > 0) {
-	prt("You are hallucinating.", i++, j);
+	info[i++] = "You are hallucinating.";
     }
     if (p_ptr->aggravate) {
-	prt("You aggravate monsters.", i++, j);
+	info[i++] = "You aggravate monsters.";
     }
     if (p_ptr->teleport) {
-	prt("Your position is very uncertain.", i++, j);
+	info[i++] = "Your position is very uncertain.";
     }
     if (p_ptr->blessed > 0) {
-	prt("You feel rightous.", i++, j);
+	info[i++] = "You feel rightous.";
     }
     if (p_ptr->hero > 0) {
-	prt("You feel heroic.", i++, j);
+	info[i++] = "You feel heroic.";
     }
     if (p_ptr->shero > 0) {
-	prt("You are in a battle rage.", i++, j);
+	info[i++] = "You are in a battle rage.";
     }
     if (p_ptr->protevil > 0) {
-	prt("You are protected from evil.", i++, j);
+	info[i++] = "You are protected from evil.";
     }
     if (p_ptr->shield > 0) {
-	prt("You are protected by a mystic shield.", i++, j);
+	info[i++] = "You are protected by a mystic shield.";
     }
     if (p_ptr->invuln > 0) {
-	prt("You are temporarily invulnerable.", i++, j);
+	info[i++] = "You are temporarily invulnerable.";
     }
     if (p_ptr->confusing) {
-	prt("Your hands are glowing dull red.", i++, j);
+	info[i++] = "Your hands are glowing dull red.";
     }
     if (p_ptr->new_spells > 0) {
-	prt("You can learn some more spells.", i++, j);
+	info[i++] = "You can learn some more spells.";
     }
     if (p_ptr->word_recall > 0) {
-	prt("You will soon be recalled.", i++, j);
+	info[i++] = "You will soon be recalled.";
     }
     if (f1 & TR1_STEALTH) {
-	prt("You are magically stealthy.", i++, j);
+	info[i++] = "You are magically stealthy.";
     }
     if (f1 & TR1_SEARCH) {
-	prt("You are magically perceptive.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are magically perceptive.";
     }
     if ((p_ptr->see_infra) || (p_ptr->tim_infra)) {
-	prt("Your eyes are sensitive to infrared light.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "Your eyes are sensitive to infrared light.";
     }
     if ((p_ptr->see_inv) || (p_ptr->detect_inv)) {
-	prt("You can see invisible creatures.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You can see invisible creatures.";
     }
     if (p_ptr->ffall) {
-	prt("You land gently.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You land gently.";
     }
     if (p_ptr->free_act) {
-	prt("You have free action.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You have free action.";
     }
     if (p_ptr->regenerate) {
-	prt("You regenerate quickly.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You regenerate quickly.";
     }
     if (p_ptr->slow_digest) {
-	prt("Your appetite is small.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "Your appetite is small.";
     }
     if (p_ptr->telepathy) {
-	prt("You have ESP.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You have ESP.";
     }
     if (p_ptr->hold_life) {
-	prt("You have a firm hold on your life force.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You have a firm hold on your life force.";
     }
     if (p_ptr->lite) {
-	prt("You are carrying a permanent light.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are carrying a permanent light.";
     }
     if (p_ptr->resist_fear) {
-	prt("You are completely fearless.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are completely fearless.";
     }
     if (p_ptr->resist_blind) {
-	prt("Your eyes are resistant to blindness.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "Your eyes are resistant to blindness.";
     }
     if (p_ptr->immune_fire) {
-	prt("You are completely immune to fire.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are completely immune to fire.";
     }
     else if ((p_ptr->resist_fire) && (p_ptr->oppose_fire)) {
-	prt("You resist fire exceptionally well.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You resist fire exceptionally well.";
     }
     else if ((p_ptr->resist_fire) || (p_ptr->oppose_fire)) {
-	prt("You are resistant to fire.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are resistant to fire.";
     }
     if (p_ptr->immune_cold) {
-	prt("You are completely immune to cold.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are completely immune to cold.";
     }
     else if ((p_ptr->resist_cold) && (p_ptr->oppose_cold)) {
-	prt("You resist cold exceptionally well.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You resist cold exceptionally well.";
     }
     else if ((p_ptr->resist_cold) || (p_ptr->oppose_cold)) {
-	prt("You are resistant to cold.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are resistant to cold.";
     }
     if (p_ptr->immune_acid) {
-	prt("You are completely immune to acid.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are completely immune to acid.";
     }
     else if ((p_ptr->resist_acid) && (p_ptr->oppose_acid)) {
-	prt("You resist acid exceptionally well.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You resist acid exceptionally well.";
     }
     else if ((p_ptr->resist_acid) || (p_ptr->oppose_acid)) {
-	prt("You are resistant to acid.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are resistant to acid.";
     }
     if (p_ptr->immune_pois) {
-	prt("You are completely immune to poison.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are completely immune to poison.";
     }
     else if ((p_ptr->resist_pois) && (p_ptr->oppose_pois)) {
-	prt("You resist poison exceptionally well.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You resist poison exceptionally well.";
     }
     else if ((p_ptr->resist_pois) || (p_ptr->oppose_pois)) {
-	prt("You are resistant to poison.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are resistant to poison.";
     }
     if (p_ptr->immune_elec) {
-	prt("You are completely immune to lightning.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are completely immune to lightning.";
     }
     else if ((p_ptr->resist_elec) && (p_ptr->oppose_elec)) {
-	prt("You resist lightning exceptionally well.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You resist lightning exceptionally well.";
     }
     else if ((p_ptr->resist_elec) || (p_ptr->oppose_elec)) {
-	prt("You are resistant to lightning.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are resistant to lightning.";
     }
     if (p_ptr->resist_lite) {
-	prt("You are resistant to bright light.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are resistant to bright light.";
     }
     if (p_ptr->resist_dark) {
-	prt("You are resistant to darkness.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are resistant to darkness.";
     }
     if (p_ptr->resist_conf) {
-	prt("You are resistant to confusion.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are resistant to confusion.";
     }
     if (p_ptr->resist_sound) {
-	prt("You are resistant to sonic attacks.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are resistant to sonic attacks.";
     }
     if (p_ptr->resist_disen) {
-	prt("You are resistant to disenchantment.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are resistant to disenchantment.";
     }
     if (p_ptr->resist_chaos) {
-	prt("You are resistant to chaos.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are resistant to chaos.";
     }
     if (p_ptr->resist_shards) {
-	prt("You are resistant to blasts of shards.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are resistant to blasts of shards.";
     }
     if (p_ptr->resist_nexus) {
-	prt("You are resistant to nexus attacks.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are resistant to nexus attacks.";
     }
     if (p_ptr->resist_nether) {
-	prt("You are resistant to nether forces.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are resistant to nether forces.";
     }
 
 #if 0
@@ -1677,60 +1614,47 @@ void self_knowledge()
  * completeness... -CFT 
  */
     if (f1 & TR1_STR) {
-	prt("You are magically strong.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are magically strong.";
     }
     if (f1 & TR1_INT) {
-	prt("You are magically intelligent.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are magically intelligent.";
     }
     if (f1 & TR1_WIS) {
-	prt("You are magically wise.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are magically wise.";
     }
     if (f1 & TR1_DEX) {
-	prt("You are magically agile.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are magically agile.";
     }
     if (f1 & TR1_CON) {
-	prt("You are magically tough.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are magically tough.";
     }
     if (f1 & TR1_CHR) {
-	prt("You are magically popular.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You are magically popular.";
     }
 
 #endif
 
     if (p_ptr->sustain_str) {
-	prt("You will not become weaker.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You will not become weaker.";
     }
     if (p_ptr->sustain_int) {
-	prt("You will not become dumber.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You will not become dumber.";
     }
     if (p_ptr->sustain_wis) {
-	prt("You will not become less wise.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You will not become less wise.";
     }
     if (p_ptr->sustain_con) {
-	prt("You will not become out of shape.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You will not become out of shape.";
     }
     if (p_ptr->sustain_dex) {
-	prt("You will not become clumsy.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You will not become clumsy.";
     }
     if (p_ptr->sustain_chr) {
-	prt("You will not become less popular.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You will not become less popular.";
     }
     if (inventory[INVEN_LEFT].flags1 & TR1_ATTACK_SPD ||
 	inventory[INVEN_RIGHT].flags1 & TR1_ATTACK_SPD) {
-	prt("You can strike at your foes with uncommon speed.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "You can strike at your foes with uncommon speed.";
     }
 
 /* this IS a bit redundant, but it prevents flags1 from other items from
@@ -1745,81 +1669,90 @@ void self_knowledge()
 
     if (f3 & TR3_CURSED) {
 	if (inventory[INVEN_WIELD].name2 == EGO_MORGUL) {
-	    prt("Your weapon is truly foul.", i++, j);
+	    info[i++] = "Your weapon is truly foul.";
     }
 	else if (inventory[INVEN_WIELD].name2 == ART_CALRIS) {
-	    prt("Your bastard sword is wickedly accursed.", i++, j);
+	    info[i++] = "Your bastard sword is wickedly accursed.";
     }
 	else if (inventory[INVEN_WIELD].name2 == ART_MORMEGIL) {
-	    prt("Your two-handed sword radiates an aura of unspeakable evil.", i++, j);
+	    info[i++] = "Your two-handed sword radiates an aura of unspeakable evil.";
     }
 	else {
-	    prt("Your weapon is accursed.", i++, j);
+	    info[i++] = "Your weapon is accursed.";
     }
-	pause_if_screen_full(&i, j);
     }
     if (f1 & TR1_TUNNEL) {
-	prt("Your weapon is an effective digging tool.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "Your weapon is an effective digging tool.";
     }
     if (f3 & TR3_BLESSED) {
-	prt("Your weapon has been blessed by the gods.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "Your weapon has been blessed by the gods.";
     }
     if (f1 & TR1_ATTACK_SPD) {
-	prt("Your weapon strikes with uncommon speed.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "Your weapon strikes with uncommon speed.";
     }
     if (f1 & TR1_SLAY_ORC) {
-	prt("Your weapon is especially deadly against orcs.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "Your weapon is especially deadly against orcs.";
     }
     if (f1 & TR1_SLAY_TROLL) {
-	prt("Your weapon is especially deadly against trolls.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "Your weapon is especially deadly against trolls.";
     }
     if (f1 & TR1_SLAY_GIANT) {
-	prt("Your weapon is especially deadly against giants.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "Your weapon is especially deadly against giants.";
     }
     if (f1 & TR1_SLAY_ANIMAL) {
-	prt("Your weapon is especially deadly against natural creatures.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "Your weapon is especially deadly against natural creatures.";
     }
     if (f1 & TR1_KILL_DRAGON) {
-	prt("Your weapon is a great bane of dragons.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "Your weapon is a great bane of dragons.";
     }
     else if (f1 & TR1_SLAY_DRAGON) {
-	prt("Your weapon is especially deadly against dragons.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "Your weapon is especially deadly against dragons.";
     }
     if (f1 & TR1_SLAY_DEMON) {
-	prt("Your weapon strikes at demons with holy wrath.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "Your weapon strikes at demons with holy wrath.";
     }
     if (f1 & TR1_SLAY_UNDEAD) {
-	prt("Your weapon strikes at undead with holy wrath.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "Your weapon strikes at undead with holy wrath.";
     }
     if (f1 & TR1_SLAY_EVIL) {
-	prt("Your weapon fights against evil with holy fury.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "Your weapon fights against evil with holy fury.";
     }
     if (f1 & TR1_BRAND_COLD) {
-	prt("Your frigid weapon freezes your foes.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "Your frigid weapon freezes your foes."info[i++] = ;
     }
     if (f1 & TR1_BRAND_FIRE) {
-	prt("Your flaming weapon burns your foes.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "Your flaming weapon burns your foes.";
     }
     if (f1 & TR1_BRAND_ELEC) {
-	prt("Your weapon electrocutes your foes.", i++, j);
-	pause_if_screen_full(&i, j);
+	info[i++] = "Your weapon electrocutes your foes.";
     }
     if (f1 & TR1_IMPACT)
-	prt("The unbelievable impact of your weapon can cause earthquakes.", i++, j);
+	info[i++] = "The unbelievable impact of your weapon can cause earthquakes.";
+    }
+
+
+    /* Save the screen */
+    save_screen();
+
+    /* Erase the screen */
+    for (k = 1; k < 23; k++) erase_line(k, 13);
+
+    /* Label the information */
+    prt("Your Attributes:", 1, 20);
+
+    /* We will print on top of the map (column 13) */
+    for (k = 2, j = 0; j < i; j++) {
+
+	/* Show the info */
+	prt(info[j], k++, 15);
+
+	/* Every 20 entries (lines 2 to 21), start over */
+	if ((k == 22) && (j+1 < i)) {
+	    prt("-- more --", k, 15);
+	    inkey();
+	    for ( ; k > 2; k--) erase_line(k, 15);
+	    prt("Your Attributes: (continued)", 1, 20);
+	}
     }
 
     /* Pause */
