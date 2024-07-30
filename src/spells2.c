@@ -1429,8 +1429,8 @@ void self_knowledge()
     for (k = INVEN_WIELD; k <= INVEN_LITE; k++) {
 	i_ptr = &inventory[k];
 
-	/* Only examine real items */   
-	if (i_ptr->tval != TV_NOTHING) {
+	/* Only examine real items */        
+	if (i_ptr->tval) {
 
 	    /* Certain fields depend on a positive "pval" */
 	    if (i_ptr->pval < 0) /* don't adjust TR_STATS if pval is negative -CWS */
@@ -1659,16 +1659,17 @@ void self_knowledge()
 	info[i++] = "You can strike at your foes with uncommon speed.";
     }
 
-/* this IS a bit redundant, but it prevents flags1 from other items from
- * affecting the weapon stats... -CFT
- */
+
+    /* Access the current weapon */
     i_ptr = &inventory[INVEN_WIELD];
 
+    /* Analyze the weapon */
     if (i_ptr->tval != TV_NOTHING) {
 	f1 = i_ptr->flags1;
 	f2 = i_ptr->flags2;
 	f3 = i_ptr->flags3;
 
+	/* Indicate various curses */
     if (f3 & TR3_CURSED) {
 	if (inventory[INVEN_WIELD].name2 == EGO_MORGUL) {
 	    info[i++] = "Your weapon is truly foul.";
@@ -1683,9 +1684,13 @@ void self_knowledge()
 	    info[i++] = "Your weapon is accursed.";
     }
     }
+
+	/* Indicate Blessing */
     if (f3 & TR3_BLESSED) {
 	info[i++] = "Your weapon has been blessed by the gods.";
     }
+
+	/* Special "Attack Bonuses" */
     if (f1 & TR1_TUNNEL) {
 	info[i++] = "Your weapon is an effective digging tool.";
     }
