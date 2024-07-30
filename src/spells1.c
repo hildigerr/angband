@@ -227,14 +227,15 @@ static int inven_damage(inven_func typ, int perc)
 
 
 /*
- * AC gets worse					-RAK-
+ * Acid has hit the player, attempt to affect some armor.
+ *
  * Note: This routine affects magical AC bonuses so that stores
  * can detect the damage.
  */
-static int minus_ac(u32b typ_dam)
+static int minus_ac(void)
 {
     register int         i, j;
-    int                  tmp[6], minus, do_damage;
+    int                  tmp[6], minus;
     inven_type		*i_ptr;
     bigvtype		out_val, tmp_str;
 
@@ -268,18 +269,8 @@ static int minus_ac(u32b typ_dam)
     if (i > 0) {
 	j = tmp[randint(i) - 1];
 	i_ptr = &inventory[j];
-	switch (typ_dam) {
-	  case TR2_RES_ACID:
 	    if ((i_ptr->flags2 & TR2_RES_ACID) || (i_ptr->flags2 & TR2_IM_ACID) ||
-		(artifact_p(i_ptr) && (randint(5)>2)))
-		do_damage = FALSE;
-	    else
-		do_damage = TRUE;
-	    break;
-	  default:		   /* unknown damage type... */
-	    do_damage = FALSE;
-	}
-	if (do_damage == FALSE) {
+		(artifact_p(i_ptr) && (randint(5)>2))) {
 	    objdes(tmp_str, &inventory[j], FALSE);
 	    (void)sprintf(out_val, "Your %s resists damage!", tmp_str);
 	    msg_print(out_val);
@@ -303,7 +294,7 @@ static int minus_ac(u32b typ_dam)
 void corrode_gas(const cptr kb_str)
 {
     if (!p_ptr->immune_acid)
-	if (!minus_ac((u32b) TR2_RES_ACID))
+	if (!minus_ac())
 	    take_hit(randint(8), kb_str);
     inven_damage(set_acid_destroy, 5);
 }
@@ -321,7 +312,7 @@ void acid_dam(int dam, cptr kb_str)
     if (p_ptr->immune_acid) dam = 1;
     flag = 0;
     if (!p_ptr->oppose_acid)
-	if (minus_ac((u32b) TR2_RES_ACID)) flag = 1;
+	if (minus_ac()) flag = 1;
     if (p_ptr->resist_acid) flag += 2;
     inven_damage(set_acid_destroy, 3);
 }
