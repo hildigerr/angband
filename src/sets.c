@@ -151,39 +151,3 @@ int set_null(inven_type *e)
 }
 
 
-int set_fire_destroy(inven_type *e)		   /* changed -CFT */
-{
-    int element = e->tval;
-
-    switch (element) {
-      case TV_ARROW:
-      case TV_BOW:
-      case TV_HAFTED:
-      case TV_POLEARM:
-      case TV_BOOTS:
-      case TV_GLOVES:
-      case TV_CLOAK:
-      case TV_SOFT_ARMOR:
-	if (artifact_p(e)	/* shouldn't kill artifacts -CFT */
-	    ||(e->flags2 & TR2_RES_FIRE)	/* can't check outside, because flags1 */
-	    ||(e->flags2 & TR2_IM_FIRE))	/* used differently in potions/etc */
-	    return (FALSE);
-	return (TRUE);
-      case TV_STAFF:
-      case TV_SCROLL:
-      case TV_POTION:
-      case TV_FLASK:
-      case TV_FOOD:
-      case TV_OPEN_DOOR:
-      case TV_CLOSED_DOOR:
-	return (TRUE);
-      case TV_LITE:
-	if (e->sval >= 192)	   /* only torches... -CFT */
-	    return (TRUE);
-	else
-	    return (FALSE);
-    }
-    return (FALSE);
-}
-
-

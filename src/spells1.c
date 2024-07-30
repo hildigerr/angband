@@ -65,6 +65,50 @@ static bool hates_elec(inven_type *i_ptr)
 
 
 /*
+ * Does a given object (usually) hate fire?
+ * Hafted/Polearm weapons have wooden shafts.
+ * Arrows/Bows are mostly wooden.
+ */
+static bool hates_fire(inven_type *i_ptr)
+{
+    /* Analyze the type */    
+    switch (i_ptr->tval) {
+
+      /* Wearable items */
+      case TV_ARROW:
+      case TV_BOW:
+      case TV_HAFTED:
+      case TV_POLEARM:
+      case TV_BOOTS:
+      case TV_GLOVES:
+      case TV_CLOAK:
+      case TV_SOFT_ARMOR:
+	return (TRUE);
+
+      /* Staffs/Scrolls burn */
+      case TV_STAFF:
+      case TV_SCROLL:
+	return (TRUE);
+
+      case TV_POTION:
+      case TV_FLASK:
+      case TV_FOOD:
+
+      /* Doors are made of wood */
+      case TV_OPEN_DOOR:
+      case TV_CLOSED_DOOR:
+	return (TRUE);
+
+      case TV_LITE:
+	if (e->sval >= 192)	   /* only torches... -CFT */
+	    return (TRUE);
+    }
+
+    return (FALSE);
+}
+
+
+/*
  * Melt something
  */
 int set_acid_destroy(inven_type *i_ptr)
@@ -84,6 +128,18 @@ int set_elec_destroy(inven_type *i_ptr)
     if (!hates_elec(i_ptr)) return (FALSE);
     if (artifact_p(i_ptr)) return (FALSE);
     if (wearable_p(i_ptr) && ((i_ptr->flags2 & TR2_RES_ELEC)||(i_ptr->flags2 & TR2_IM_ELEC))) return (FALSE);
+    return (TRUE);
+}
+
+
+/*
+ * Burn something
+ */
+int set_fire_destroy(inven_type *i_ptr)
+{
+    if (!hates_fire(i_ptr)) return (FALSE);
+    if (artifact_p(i_ptr)) return (FALSE);
+    if (wearable_p(i_ptr) && ((e->flags2 & TR2_RES_FIRE)||(e->flags2 & TR2_IM_FIRE))) return (FALSE);
     return (TRUE);
 }
 
