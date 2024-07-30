@@ -48,6 +48,7 @@ static int inven_damage(inven_func typ, int perc)
  * AC gets worse					-RAK-
  * Note: This routine affects magical AC bonuses so that stores
  * can detect the damage.
+ */
 static int minus_ac(u32b typ_dam)
 {
     register int         i, j;
