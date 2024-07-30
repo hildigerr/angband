@@ -465,6 +465,16 @@ static char bolt_char(int y, int x, int ny, int nx)
  * Only 256 grids can be affected per projection, limiting the effective
  * "radius" of standard ball attacks to nine units (diameter nineteen).
  *
+ * One can project in a given "direction" by combining PROJECT_THRU with small
+ * offsets (like those from mmove()) to the initial location (see "line_spell()").
+ *
+ * One can also use PROJECT_THRU to send a beam/bolt along an angled path,
+ * continuing until it actually hits somethings (useful for "stone to mud").
+ *
+ * When targetting an actual monster, be sure to verify visibility (and perhaps
+ * reachability) of the monster by the player, even if PROJECT_THRU is off, or
+ * the player will be able to "seek" for invisible/teleported monsters.
+ *
  * Bolts and Beams explode INSIDE walls, so that they can destroy doors.
  *
  * Balls must explode BEFORE hitting walls, or they would "pass through" walls.
@@ -550,6 +560,14 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 
     /* Default "destination" */
     y2 = y; x2 = x;
+
+    /* XXX Apply "offset" mode */
+
+    /* Apply "travel through" mode by "sliding" target location */
+    if (flg & PROJECT_THRU) {
+	y2 = y1 + 99 * (y2 - y1);
+	x2 = x1 + 99 * (x2 - x1);
+    }
 
 
     /* Start at the source */
