@@ -2521,9 +2521,41 @@ int recharge(int num)
 
 
 
+/*
+ * Hack -- hooks for the old "beam"/"bolt"/"ball"/"breath" functions
+ * These variables help convert "directions" into "destinations".
+ */
+
+static int dx[10] = { 0, -1, 0, 1, -1, 0, 1, -1, 0, 1 };
+static int dy[10] = { 0, 1, 1, 1, 0, 0, 0, -1, -1, -1 };
 
 
+/*
+ * Hooks for the old "player spells"
+ */
 
+static bool project_hook(int typ, int dir, int dam, int flg)
+{
+    int tx, ty;
+
+    /* Pass through the target if needed */
+    flg |= (PROJECT_THRU);
+
+    /* Check for "target request" */
+    if ((dir == 0) && target_okay()) {
+	tx = target_col;
+	ty = target_row;
+    }
+
+    /* Just use the direction, go until something gets hit */
+    else {
+	tx = char_col + dx[dir];
+	ty = char_row + dy[dir];
+    }
+
+    /* Analyze the "dir" and the "target", do NOT explode */
+    return (project(1, 0, ty, tx, dam, typ, flg));
+}
 
 /* Shoot a ball in a given direction.  Note that balls have an  */
 /* area affect.                                       -RAK-   */

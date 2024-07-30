@@ -817,6 +817,7 @@ cptr mention_use(int);
 void monster_name(char *, struct monster_type *);
 int target_set(void); /* target fns stolen from Morgul -CFT */
 int target_at(int, int); /* target fns stolen from Morgul -CFT */
+int target_okay(void);
 void mmove2(int *, int *, int, int, int, int);
 void confuse_dir(int *, int);
 int get_a_dir(cptr, int *, int);
