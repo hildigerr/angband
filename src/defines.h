@@ -1313,6 +1313,32 @@
 #define GF_ICE          25
 
 
+/*
+ * Bit flags for the "project()" function
+ *
+ *   BEAM: Work as a beam weapon -- affect every grid passed through
+ *   HIDE: Do not "show" our progress (no visual feedback to player)
+ *   STOP: Stop as soon as we hit a monster (used for "bolts")
+ *   THRU: Continue "through" the targer (used for "bolts"/"beams")
+ *   GRID: Affect each grid in the "blast area" in some way
+ *   ITEM: Affect each item in the "blast area" in some way
+ *   ONLY: Only affect the grid/item if there is no monster there
+ *   XTRA: Do "extra" damage to player if he is in the "blast area"
+ *
+ * Notes:
+ *   THRU, without STOP, means "go until we hit a wall or something"
+ *   
+ */
+#define PROJECT_BEAM	0x01
+#define PROJECT_HIDE	0x02
+#define PROJECT_STOP	0x04
+#define PROJECT_THRU	0x08
+#define PROJECT_GRID	0x10
+#define PROJECT_ITEM	0x20
+#define PROJECT_ONLY	0x40
+#define PROJECT_XTRA	0x80
+
+
 
 
 /* bit flags used in my revamped enchant() code -CFT */

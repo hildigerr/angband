@@ -427,3 +427,191 @@ static char bolt_char(int y, int x, int ny, int nx)
 }
 
 
+
+/*
+ * Generic "beam"/"bolt"/"ball" projection routine.  -BEN-
+ *
+ * Allows a monster (or player) to project a beam/bolt/ball of a given kind towards
+ * a given location (optionally passing over the heads of interposing monsters),
+ * and have it do a given amount of damage to the monsters (and optionally objects)
+ * within the given radius of the final location.
+ *
+ * A "bolt" travels from the source to target and affects only the target grid.
+ * A "beam" travels from the source to target, affecting all grids passed through.
+ * A "ball" travels from the source to the target, exploding at the target, and
+ *   affecting everything within the given radius of the target location.
+ *
+ * Traditionally, a "bolt" does not affect anything on the ground, and does not
+ * pass over the heads of interposing monsters, much like a traditional missile,
+ * and will "stop" abruptly at the "target" even if no monster is positioned there.
+ * A "ball", on the other hand, traditionally passes over the heads of monsters
+ * between the source and target, and affects everything except the source monster
+ * which lies within the final radius.  Traditionally, a "beam" affects every
+ * monster between the source and target, except for the casting monster (or player),
+ * and only affects things on the ground in special cases (light, disarm, walls).
+ *
+ * Returns TRUE if the player saw anything "useful" happen.
+ *
+ * Input:
+ *   who: Index of "source" monster (one for "player")
+ *   rad: Radius of explosion (0 = beam/bolt, 1 to 9 = ball)
+ *   y,x: Target location (or location to travel "towards")
+ *   dam: Base damage roll to apply to affected monsters (or player)
+ *   typ: Type of damage to apply to monsters (and objects) 
+ *   flg: Extra flags, see below
+ *
+ * The available "flags" are described where "PROJECT_xxxx" are defined
+ *
+ * Only 256 grids can be affected per projection, limiting the effective
+ * "radius" of standard ball attacks to nine units (diameter nineteen).
+ *
+ * Bolts and Beams explode INSIDE walls, so that they can destroy doors.
+ *
+ * Balls must explode BEFORE hitting walls, or they would "pass through" walls.
+ *
+ * The array "gy[],gx[]" with "current" size "grids" is used to hold the
+ * collected locations of all grids in the "blast area" plus "beam path".
+ *
+ * Note the rather complex usage of the "gm[]" array.
+ *
+ * Note that once the projection is complete, (y2,x2) holds the final location
+ * of bolts/beams, and the "epicenter" of balls.
+ *
+ * Note also that "rad" specifies the "inclusive" radius of projection blast,
+ * so that a "rad" of "one" actually covers 5 or 9 grids, depending on the
+ * implementation of the "distance" function.  Also, a bolt can be properly
+ * viewed as a "ball" with a "rad" of "zero".
+ *
+ * We attempt to return "true" if any "effects" of the projection were observed.
+ */
+bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
+{
+    int			i, t;
+    int                 y1, x1, y2, x2;
+    int			y0, x0, y9, x9;
+    int			dist;
+
+    /* Affected location(s) */
+    register cave_type *c_ptr;
+
+    /* Assume the player sees nothing */
+    bool notice = FALSE;
+
+    /* Is the player blind? */    
+    int blind = FALSE;
+
+    /* Number of "blast grids" visible to the player */
+    int drawn = 0;
+
+    /* Number of grids in the "blast area" (including the "beam" path) */
+    int grids = 0;
+
+    /* Coordinates of the affected grids */
+    byte gx[256], gy[256];
+
+    /* Encoded "radius" info (see above) */
+    byte gm[16];
+
+
+    /* The source is a monster */
+    if (who > 1) {
+	x1 = m_list[who].fx;
+	y1 = m_list[who].fy;
+    }
+
+    /* The source is a player */
+    else {
+	x1 = char_col;
+	y1 = char_row;
+    }
+
+
+    /* Location of player */
+    y0 = char_row;
+    x0 = char_col;
+
+    /* Check player blind-ness */
+    if (p_ptr->blind) blind = TRUE;
+
+
+    /* Hack -- Assume there will be no blast (max radius 16) */
+    for (dist = 0; dist < 16; dist++) gm[dist] = 0;
+
+
+    /* Default "destination" */
+    y2 = y; x2 = x;
+
+
+    /* Start at the source */
+    x = x9 = x1;
+    y = y9 = y1;
+    dist = 0;
+
+    /* Project until done */
+    while (1) {
+
+	/* Gather beam grids */
+	if (flg & PROJECT_BEAM) {
+	    gy[grids] = y;
+	    gx[grids] = x;
+	    grids++;
+	}
+
+	/* Check the grid */
+	c_ptr = &cave[y][x];
+
+	/* Never pass BEYOND a wall or door */
+	if (!floor_grid_bold(y, x)) break;
+
+	/* Check for arrival at "final target" */
+	if ((x == x2) && (y == y2)) break;
+
+	/* If allowed, and we have moved at all, stop when we hit anybody */
+	if ((c_ptr->m_idx > 0) && (dist > 0) && (flg & PROJECT_STOP)) break;
+
+
+	/* Calculate the new location */
+	y9 = y;
+	x9 = x;
+	(void)mmove2(&y9, &x9, y1, x1, y2, x2);
+
+	/* Hack -- Balls explode BEFORE reaching walls or doors */
+	if (!floor_grid_bold(y9, x9) && (rad > 0)) break;
+
+	/* Keep track of the distance traveled */
+	dist++;
+
+	/* Nothing can travel furthur than the maximal distance */
+	if (dist > OBJ_BOLT_RANGE) break;
+
+	/* Save the new location */
+	y = y9;
+	x = x9;        
+    }
+
+
+    /* Save the "blast epicenter" */
+    y2 = y;
+    x2 = x;
+
+    /* Start the "explosion" */
+    gm[0] = 0;
+
+    /* Hack -- make sure beams get to "explode" */
+    gm[1] = grids;
+
+
+    /* Speed -- ignore "non-explosions" */
+    if (!grids) return (FALSE);
+
+
+    /* Start with "dist" of zero */
+    dist = 0;
+
+
+
+    /* Return "something was noticed" */
+    return (notice);
+}
+
+
