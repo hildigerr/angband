@@ -1524,24 +1524,7 @@ void self_knowledge()
     if (p_ptr->lite) {
 	info[i++] = "You are carrying a permanent light.";
     }
-    if (p_ptr->immune_fire) {
-	info[i++] = "You are completely immune to fire.";
-    }
-    else if ((p_ptr->resist_fire) && (p_ptr->oppose_fire)) {
-	info[i++] = "You resist fire exceptionally well.";
-    }
-    else if ((p_ptr->resist_fire) || (p_ptr->oppose_fire)) {
-	info[i++] = "You are resistant to fire.";
-    }
-    if (p_ptr->immune_cold) {
-	info[i++] = "You are completely immune to cold.";
-    }
-    else if ((p_ptr->resist_cold) && (p_ptr->oppose_cold)) {
-	info[i++] = "You resist cold exceptionally well.";
-    }
-    else if ((p_ptr->resist_cold) || (p_ptr->oppose_cold)) {
-	info[i++] = "You are resistant to cold.";
-    }
+
     if (p_ptr->immune_acid) {
 	info[i++] = "You are completely immune to acid.";
     }
@@ -1551,15 +1534,7 @@ void self_knowledge()
     else if ((p_ptr->resist_acid) || (p_ptr->oppose_acid)) {
 	info[i++] = "You are resistant to acid.";
     }
-    if (p_ptr->immune_pois) {
-	info[i++] = "You are completely immune to poison.";
-    }
-    else if ((p_ptr->resist_pois) && (p_ptr->oppose_pois)) {
-	info[i++] = "You resist poison exceptionally well.";
-    }
-    else if ((p_ptr->resist_pois) || (p_ptr->oppose_pois)) {
-	info[i++] = "You are resistant to poison.";
-    }
+
     if (p_ptr->immune_elec) {
 	info[i++] = "You are completely immune to lightning.";
     }
@@ -1569,6 +1544,37 @@ void self_knowledge()
     else if ((p_ptr->resist_elec) || (p_ptr->oppose_elec)) {
 	info[i++] = "You are resistant to lightning.";
     }
+
+    if (p_ptr->immune_fire) {
+	info[i++] = "You are completely immune to fire.";
+    }
+    else if ((p_ptr->resist_fire) && (p_ptr->oppose_fire)) {
+	info[i++] = "You resist fire exceptionally well.";
+    }
+    else if ((p_ptr->resist_fire) || (p_ptr->oppose_fire)) {
+	info[i++] = "You are resistant to fire.";
+    }
+
+    if (p_ptr->immune_cold) {
+	info[i++] = "You are completely immune to cold.";
+    }
+    else if ((p_ptr->resist_cold) && (p_ptr->oppose_cold)) {
+	info[i++] = "You resist cold exceptionally well.";
+    }
+    else if ((p_ptr->resist_cold) || (p_ptr->oppose_cold)) {
+	info[i++] = "You are resistant to cold.";
+    }
+
+    if (p_ptr->immune_pois) {
+	info[i++] = "You are completely immune to poison.";
+    }
+    else if ((p_ptr->resist_pois) && (p_ptr->oppose_pois)) {
+	info[i++] = "You resist poison exceptionally well.";
+    }
+    else if ((p_ptr->resist_pois) || (p_ptr->oppose_pois)) {
+	info[i++] = "You are resistant to poison.";
+    }
+
     if (p_ptr->resist_lite) {
 	info[i++] = "You are resistant to bright light.";
     }
