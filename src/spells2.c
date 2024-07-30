@@ -1742,11 +1742,7 @@ void self_knowledge()
 	f1 = i_ptr->flags1;
 	f2 = i_ptr->flags2;
 	f3 = i_ptr->flags3;
-    } else {
-	f1 = 0L;
-	f2 = 0L;
-	f3 = 0L;
-    }
+
     if (f3 & TR3_CURSED) {
 	if (inventory[INVEN_WIELD].name2 == EGO_MORGUL) {
 	    prt("Your weapon is truly foul.", i++, j);
@@ -1824,6 +1820,7 @@ void self_knowledge()
     }
     if (f1 & TR1_IMPACT)
 	prt("The unbelievable impact of your weapon can cause earthquakes.", i++, j);
+    }
 
     /* Pause */
     pause_line(i);
