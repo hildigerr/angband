@@ -277,14 +277,14 @@ static int minus_ac(void)
     /* Object resists? */
     if ((i_ptr->flags2 & TR2_RES_ACID) || (i_ptr->flags2 & TR2_IM_ACID) ||
 		(artifact_p(i_ptr) && (randint(5)>2))) {
-	objdes(tmp_str, &inventory[j], FALSE);
+	objdes(tmp_str, i_ptr, FALSE);
 	(void)sprintf(out_val, "Your %s resists damage!", tmp_str);
 	msg_print(out_val);
 	return (FALSE);
     }
 
     /* Describe the damage */
-    objdes(tmp_str, &inventory[j], FALSE);
+    objdes(tmp_str, i_ptr, FALSE);
     (void)sprintf(out_val, "Your %s is damaged!", tmp_str);
     msg_print(out_val);
 
