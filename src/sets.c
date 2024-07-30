@@ -169,38 +169,6 @@ int set_null(inven_type *e)
 }
 
 
-int set_acid_destroy(inven_type *e)		   /* changed -CFT */
-{
-    int element = e->tval;
-
-    switch (element) {
-      case TV_ARROW:
-      case TV_BOW:
-      case TV_HAFTED:
-      case TV_POLEARM:
-      case TV_BOOTS:
-      case TV_GLOVES:
-      case TV_CLOAK:
-      case TV_HELM:
-      case TV_SHIELD:
-      case TV_HARD_ARMOR:
-      case TV_SOFT_ARMOR:
-	if (artifact_p(e)	/* shouldn't kill artifacts -CFT */
-	    ||(e->flags2 & TR2_RES_ACID)	/* can't check outside, because flags1 */
-	    ||(e->flags2 & TR2_IM_ACID))	/* used differently in potions/etc */
-	    return (FALSE);
-	return (TRUE);
-      case TV_SCROLL:
-      case TV_FOOD:
-      case TV_OPEN_DOOR:
-      case TV_CLOSED_DOOR:
-      case TV_STAFF:
-	return (TRUE);
-    }
-    return (FALSE);
-}
-
-
 int set_fire_destroy(inven_type *e)		   /* changed -CFT */
 {
     int element = e->tval;

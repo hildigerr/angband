@@ -6,6 +6,58 @@
 
 
 
+/*
+ * Does a given class of objects (usually) hate acid?
+ */
+static bool hates_acid(inven_type *i_ptr)
+{
+    /* Analyze the type */
+    switch (i_ptr->tval) {
+
+      /* Wearable items */
+      case TV_ARROW:
+      case TV_BOW:
+      case TV_HAFTED:
+      case TV_POLEARM:
+      case TV_HELM:
+      case TV_SHIELD:
+      case TV_BOOTS:
+      case TV_GLOVES:
+      case TV_CLOAK:
+      case TV_SOFT_ARMOR:
+      case TV_HARD_ARMOR:
+	return (TRUE);
+
+      /* Staffs/Scrolls are wood/paper */
+      case TV_STAFF:
+      case TV_SCROLL:
+	return (TRUE);
+
+      /* Doors are wood */
+      case TV_OPEN_DOOR:
+      case TV_CLOSED_DOOR:
+	return (TRUE);
+
+      case TV_FOOD:
+	return (TRUE);
+    }
+
+    return (FALSE);
+}
+
+/*
+ * Melt something
+ */
+int set_acid_destroy(inven_type *i_ptr)
+{
+    if (!hates_acid(i_ptr)) return (FALSE);
+    if (artifact_p(i_ptr)) return (FALSE);
+    if (wearable_p(i_ptr) && ((i_ptr->flags2 & TR2_RES_ACID) || (e->flags2 & TR2_IM_ACID)) return (FALSE);
+    return (TRUE);
+}
+
+
+
 
 /* This seems like a pretty standard "typedef" */
 /* For some reason, it was not being used on Unix */
