@@ -1497,12 +1497,6 @@ void self_knowledge()
     if (p_ptr->word_recall > 0) {
 	info[i++] = "You will soon be recalled.";
     }
-    if (f1 & TR1_STEALTH) {
-	info[i++] = "You are magically stealthy.";
-    }
-    if (f1 & TR1_SEARCH) {
-	info[i++] = "You are magically perceptive.";
-    }
     if ((p_ptr->see_infra) || (p_ptr->tim_infra)) {
 	info[i++] = "Your eyes are sensitive to infrared light.";
     }
@@ -1529,12 +1523,6 @@ void self_knowledge()
     }
     if (p_ptr->lite) {
 	info[i++] = "You are carrying a permanent light.";
-    }
-    if (p_ptr->resist_fear) {
-	info[i++] = "You are completely fearless.";
-    }
-    if (p_ptr->resist_blind) {
-	info[i++] = "Your eyes are resistant to blindness.";
     }
     if (p_ptr->immune_fire) {
 	info[i++] = "You are completely immune to fire.";
@@ -1608,6 +1596,12 @@ void self_knowledge()
     if (p_ptr->resist_nether) {
 	info[i++] = "You are resistant to nether forces.";
     }
+    if (p_ptr->resist_fear) {
+	info[i++] = "You are completely fearless.";
+    }
+    if (p_ptr->resist_blind) {
+	info[i++] = "Your eyes are resistant to blindness.";
+    }
 
     if (p_ptr->sustain_str) {
 	info[i++] = "You will not become weaker.";
@@ -1648,6 +1642,12 @@ void self_knowledge()
 	info[i++] = "You are magically popular.";
     }
 
+    if (f1 & TR1_STEALTH) {
+	info[i++] = "You are magically stealthy.";
+    }
+    if (f1 & TR1_SEARCH) {
+	info[i++] = "You are magically perceptive.";
+    }
     if (inventory[INVEN_LEFT].flags1 & TR1_ATTACK_SPD ||
 	inventory[INVEN_RIGHT].flags1 & TR1_ATTACK_SPD) {
 	info[i++] = "You can strike at your foes with uncommon speed.";
