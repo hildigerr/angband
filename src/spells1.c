@@ -199,19 +199,24 @@ typedef int (*inven_func)(inven_type *);
 static int inven_damage(inven_func typ, int perc)
 {
     register int index, i, j, offset;
+    register inven_type *i_ptr;
     vtype	tmp_str, out_val;
 
     j = 0;
     offset = randint(inven_ctr);
     for (index = 0; index < inven_ctr; index++) {
 	i = (index + offset) % inven_ctr; /* be clever and not destroy the first item */
-	if ((*typ) (&inventory[i]) && (randint(100) < perc)) {
-	    objdes(tmp_str, &inventory[i], FALSE);
+
+	/* Get the item in that slot */
+	i_ptr = &inventory[i];
+
+	if ((*typ)(i_ptr) && (randint(100) < perc)) {
+	    objdes(tmp_str, i_ptr, FALSE);
 	    sprintf(out_val, "%sour %s (%c) %s destroyed!",
-		    ((inventory[i].number > 1) ? 
+		    ((i_ptr->number > 1) ? 
 		    "One of y" : "Y"),
 		    tmp_str, index_to_label(i),
-		    ((inventory[i].number > 1) ? "were" : "was"));
+		    ((i_ptr->number > 1) ? "were" : "was"));
 	    msg_print(out_val);
 
 		inven_item_increase(i,-1);
