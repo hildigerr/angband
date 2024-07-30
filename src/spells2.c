@@ -1436,23 +1436,25 @@ int restore_level()
  */
 void self_knowledge()
 {
-    int    i, j;
+    int    i, j, k;
     u32b f1 = 0L, f2 = 0L, f3 = 0L;
+    inven_type *i_ptr;
 
 
     /* Acquire item flags (from worn items) */
-    for (i = INVEN_WIELD; i <= INVEN_LITE; i++) {
+    for (k = INVEN_WIELD; k <= INVEN_LITE; k++) {
+	i_ptr = &inventory[k];
 
 	/* Only examine real items */   
-	if (inventory[i].tval != TV_NOTHING) {
+	if (i_ptr->tval != TV_NOTHING) {
 
 	    /* Certain fields depend on a positive "pval" */
-	    if (inventory[i].pval < 0) /* don't adjust TR_STATS if pval is negative -CWS */
-		f1 |= (inventory[i].flags1 & ~(TR_STATS | TR1_SEARCH | TR1_STEALTH) );
+	    if (i_ptr->pval < 0) /* don't adjust TR_STATS if pval is negative -CWS */
+		f1 |= (i_ptr->flags1 & ~(TR_STATS | TR1_SEARCH | TR1_STEALTH) );
 	    else
-		f1 |= inventory[i].flags1;
-	    f2 |= inventory[i].flags2;
-	    f3 |= inventory[i].flags3;
+		f1 |= i_ptr->flags1;
+	    f2 |= i_ptr->flags2;
+	    f3 |= i_ptr->flags3;
 	}
     }
 
@@ -1734,10 +1736,12 @@ void self_knowledge()
 /* this IS a bit redundant, but it prevents flags1 from other items from
  * affecting the weapon stats... -CFT
  */
-    if (inventory[INVEN_WIELD].tval != TV_NOTHING) {
-	f1 = inventory[INVEN_WIELD].flags1;
-	f2 = inventory[INVEN_WIELD].flags2;
-	f3 = inventory[INVEN_WIELD].flags3;
+    i_ptr = &inventory[INVEN_WIELD];
+
+    if (i_ptr->tval != TV_NOTHING) {
+	f1 = i_ptr->flags1;
+	f2 = i_ptr->flags2;
+	f3 = i_ptr->flags3;
     } else {
 	f1 = 0L;
 	f2 = 0L;
