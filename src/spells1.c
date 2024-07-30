@@ -198,11 +198,12 @@ typedef int (*inven_func)(inven_type *);
  */
 static int inven_damage(inven_func typ, int perc)
 {
-    register int index, i, j, offset;
+    register int index, i, offset;
     register inven_type *i_ptr;
+    int		k;
     vtype	tmp_str, out_val;
 
-    j = 0;
+    k = 0;
     offset = randint(inven_ctr);
     for (index = 0; index < inven_ctr; index++) {
 	i = (index + offset) % inven_ctr; /* be clever and not destroy the first item */
@@ -222,10 +223,10 @@ static int inven_damage(inven_func typ, int perc)
 		inven_item_increase(i,-1);
 		inven_item_optimize(i);
 
-	    j++;
+	    k++;
 	}
     }
-    return (j);
+    return (k);
 }
 
 
