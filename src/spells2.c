@@ -1609,10 +1609,26 @@ void self_knowledge()
 	info[i++] = "You are resistant to nether forces.";
     }
 
-#if 0
-/* Are these needed?  The player can see this...  For now, in here for
- * completeness... -CFT 
- */
+    if (p_ptr->sustain_str) {
+	info[i++] = "You will not become weaker.";
+    }
+    if (p_ptr->sustain_int) {
+	info[i++] = "You will not become dumber.";
+    }
+    if (p_ptr->sustain_wis) {
+	info[i++] = "You will not become less wise.";
+    }
+    if (p_ptr->sustain_con) {
+	info[i++] = "You will not become out of shape.";
+    }
+    if (p_ptr->sustain_dex) {
+	info[i++] = "You will not become clumsy.";
+    }
+    if (p_ptr->sustain_chr) {
+	info[i++] = "You will not become less popular.";
+    }
+
+
     if (f1 & TR1_STR) {
 	info[i++] = "You are magically strong.";
     }
@@ -1632,26 +1648,6 @@ void self_knowledge()
 	info[i++] = "You are magically popular.";
     }
 
-#endif
-
-    if (p_ptr->sustain_str) {
-	info[i++] = "You will not become weaker.";
-    }
-    if (p_ptr->sustain_int) {
-	info[i++] = "You will not become dumber.";
-    }
-    if (p_ptr->sustain_wis) {
-	info[i++] = "You will not become less wise.";
-    }
-    if (p_ptr->sustain_con) {
-	info[i++] = "You will not become out of shape.";
-    }
-    if (p_ptr->sustain_dex) {
-	info[i++] = "You will not become clumsy.";
-    }
-    if (p_ptr->sustain_chr) {
-	info[i++] = "You will not become less popular.";
-    }
     if (inventory[INVEN_LEFT].flags1 & TR1_ATTACK_SPD ||
 	inventory[INVEN_RIGHT].flags1 & TR1_ATTACK_SPD) {
 	info[i++] = "You can strike at your foes with uncommon speed.";
