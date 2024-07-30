@@ -469,6 +469,12 @@ static char bolt_char(int y, int x, int ny, int nx)
  *
  * Balls must explode BEFORE hitting walls, or they would "pass through" walls.
  *
+ * We "pre-calculate" the blast area only in part for efficiency.
+ * More importantly, this lets us do "explosions" from the "inside" out.
+ * The algorithm is not necessarily the most efficient that one could write.
+ * Walls and doors are included in the blast area, so that they can be "burned".
+ * Permanent rock is NEVER included in the blast area, nor are undefined locations.
+ *
  * The array "gy[],gx[]" with "current" size "grids" is used to hold the
  * collected locations of all grids in the "blast area" plus "beam path".
  *
@@ -481,6 +487,10 @@ static char bolt_char(int y, int x, int ny, int nx)
  * so that a "rad" of "one" actually covers 5 or 9 grids, depending on the
  * implementation of the "distance" function.  Also, a bolt can be properly
  * viewed as a "ball" with a "rad" of "zero".
+ *
+ * Note that if no "target" is reached before the beam/bolt/ball travels the
+ * maximum distance allowed (OBJ_BOLT_RANGE), no "blast" will be induced.  This
+ * may be relevant even for bolts, since they have a "1x1" mini-blast.
  *
  * We attempt to return "true" if any "effects" of the projection were observed.
  */
@@ -599,6 +609,40 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 
     /* Hack -- make sure beams get to "explode" */
     gm[1] = grids;
+
+    /* If we found a "target", explode there */
+    if (dist <= OBJ_BOLT_RANGE) {
+
+	/* Hack -- remove the final "beam" grid */
+	if ((flg & PROJECT_BEAM) && (grids > 0)) grids--;
+
+	/* Determine the blast area, work from the inside out */
+	for (dist = 0; dist <= rad; dist++) {
+
+	    /* Scan the maximal blast area of radius "dist" */
+	    for (y = y2 - dist; y <= y2 + dist; y++) {
+		for (x = x2 - dist; x <= x2 + dist; x++) {
+
+		    /* Note that we DO add perma-rock to the blast */
+		    if (!in_bounds2(y, x)) continue;
+
+		    /* Enforce a "circular" explosion */
+		    if (distance(y2, x2, y, x) != dist) continue;
+
+		    /* Ball explosions are stopped by walls */
+		    if (!los(y2, x2, y, x)) continue;
+
+		    /* Save this grid */        
+		    gy[grids] = y;
+		    gx[grids] = x;
+		    grids++;
+		}
+	    }
+
+	    /* Encode some more "radius" info */
+	    gm[dist+1] = grids;        
+	}
+    }
 
 
     /* Speed -- ignore "non-explosions" */
