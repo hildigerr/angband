@@ -415,6 +415,195 @@ void poison_gas(int dam, cptr kb_str)
 
 
 
+
+
+/*
+ * We are called from "project()" to "damage" cave grids
+ * and the inventory items which may be contained inside them
+ *
+ * We are called both for "beam" effects and "ball" effects.
+ *
+ * Perhaps we should only SOMETIMES damage things on the ground.
+ *
+ * The "dist" parameter is the "distance from ground zero". 
+ *
+ * We must return "TRUE" if the player saw anything "useful" happen.
+ */
+static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg)
+{
+
+    register cave_type *c_ptr;
+    register inven_type *i_ptr;
+
+    int note = 0;
+
+    bool	seen = FALSE;
+    bool	plural = FALSE;
+    bool	do_kill = FALSE;
+
+    bool	old_floor = FALSE;
+
+
+    /* XXX Determine if the player can "see" anything happen (set "seen") */
+    /* XXX This should take into account: blindness, los, and illumination */
+
+    /* Help determine if the grid is visible to the player */
+    if (test_lite(y, x)) seen = TRUE;
+
+
+    /* Get the grid */    
+    c_ptr = &cave[y][x];
+
+    /* Get the object */
+    i_ptr = &i_list[c_ptr->i_idx];
+
+    /* Check for "floor" before we function */
+    old_floor = (floor_grid_bold(y, x));
+
+
+    /* Get the "plural"-ness */
+    if (i_ptr->number > 1) plural = TRUE;
+
+    /* Affect the object */
+    if (c_ptr->i_idx && (flg & PROJECT_ITEM)) {
+
+	/* Analyze the type */        
+	switch (typ) {
+	}
+
+
+	/* Attempt to destroy the object */
+	if (do_kill) {
+
+	    /* Effect "observed" */
+	    if (seen) note++;
+
+	    /* Kill it */
+
+		/* Delete the object */
+		delete_object(y,x);
+
+		/* Redraw */
+		lite_spot(y,x);
+	}
+    }
+
+
+    /* Then, affect the grid itself */
+    if (flg & PROJECT_GRID) {
+
+	switch (typ) {
+	}
+    }
+
+    /* Return "Anything seen?" */
+    return (note);
+}
+
+
+
+
+
+
+
+/*
+ * Helper function for "project()" below.
+ *
+ * Handle a beam/bolt/ball causing damage to a monster.
+ *
+ * We attempt to return "TRUE" if the player saw anything "useful" happen.
+ */
+static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
+{
+
+    /* Cave grid */
+    register cave_type *c_ptr = &cave[y][x];
+
+    /* Monster info */
+    register monster_type *m_ptr = &m_list[c_ptr->m_idx];
+    register monster_race *r_ptr = &r_list[m_ptr->r_idx];
+
+
+    /* Player blind-ness */
+    bool blind = (p_ptr->blind);
+
+    /* Monster visibility */
+    bool seen = (!blind && m_ptr->ml);
+
+    /* Were the "effects" obvious (if seen)? */
+    bool obvious = TRUE;
+
+
+    /* Analyze the damage type */
+    switch (typ) {
+    }
+
+	/* Hurt the monster, display fear msg's */
+	if (mon_take_hit(c_ptr->m_idx, dam, TRUE)) {
+
+	    /* Give experience if killed */
+	    prt_experience();
+	}
+
+    /* "Fix" the monster, and redraw him (or erase him) */
+    update_mon(c_ptr->m_idx);
+
+
+    /* Return TRUE if the player saw anything */
+    return (seen && obvious);
+}
+
+
+
+
+
+
+/*
+ * Helper function for "project()" below.
+ *
+ * Handle a beam/bolt/ball causing damage to the player.
+ *
+ * This routine takes a "source monster" (by index), a "distance", a default
+ * "damage", and a "damage type".  See "project_m()" above.
+ *
+ * Although unused, we return "TRUE" if any "useful" effects were observed.
+ *
+ */
+static bool project_p(int who, int rad, int y, int x, int dam, int typ, int flg)
+{
+
+    /* Source monster */
+    register monster_type *m_ptr;
+
+
+    /* Get the source monster */
+    m_ptr = &m_list[who];
+
+
+    /* Analyze the damage */
+    switch (typ) {
+
+	default:
+	    msg_print("Oops.  Undefined beam/bolt/ball hit player.");
+    }
+
+
+    /* Disturb */
+    disturb(1, 0);
+
+
+    /* Hack -- Assume something happened */
+    return (TRUE);
+}
+
+
+
+
+
+
+
+
+
 /*
  * this assumes only 1 move apart -CFT
  */
@@ -481,9 +670,17 @@ static char bolt_char(int y, int x, int ny, int nx)
  *
  * We "pre-calculate" the blast area only in part for efficiency.
  * More importantly, this lets us do "explosions" from the "inside" out.
+ * This results in a more logical distribution of "blast" treasure.
+ * It could be (but is not) used to have the treasure dropped by monsters
+ * in the middle of the explosion fall "outwards", and then be damaged by
+ * the blast as it spreads outwards towards the treasure drop location.
  * The algorithm is not necessarily the most efficient that one could write.
  * Walls and doors are included in the blast area, so that they can be "burned".
  * Permanent rock is NEVER included in the blast area, nor are undefined locations.
+ *
+ * Objects in the blast area when the blast occurs are (potentially) destroyed,
+ * even if they are "under" monsters.  But objects dropped by monsters
+ * who are destroyed by the blast are "shielded" by the monsters corpse.
  *
  * The array "gy[],gx[]" with "current" size "grids" is used to hold the
  * collected locations of all grids in the "blast area" plus "beam path".
@@ -501,6 +698,8 @@ static char bolt_char(int y, int x, int ny, int nx)
  * Note that if no "target" is reached before the beam/bolt/ball travels the
  * maximum distance allowed (OBJ_BOLT_RANGE), no "blast" will be induced.  This
  * may be relevant even for bolts, since they have a "1x1" mini-blast.
+ *
+ * It is rather important that the grids are processed from ground-zero outward.
  *
  * We attempt to return "true" if any "effects" of the projection were observed.
  */
@@ -670,6 +869,72 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
     /* Start with "dist" of zero */
     dist = 0;
 
+    /* Now hurt the cave grids (and objects) from the inside out */
+    for (i = 0; i < grids; i++) {
+
+	/* Hack -- Notice new "dist" values */
+	if (gm[dist+1] == i) dist++;
+
+	/* Get the grid location */        
+	y = gy[i];
+	x = gx[i];
+
+	/* Allow the beam/ball to "damage" the grid itself */
+	if (project_i(who, dist, y, x, dam, typ, flg)) notice = TRUE;
+    }
+
+
+    /* Now hurt the monsters, from inside out */
+    for (i = 0; i < grids; i++) {
+
+	/* Hack -- Notice new "dist" values */
+	if (gm[dist+1] == i) dist++;
+
+	/* Get the grid location */
+	y = gy[i];
+	x = gx[i];
+
+	/* Walls protect monsters */
+	if (!floor_grid_bold(y,x)) continue;
+
+	/* Get the cave grid */
+	c_ptr = &cave[y][x];
+
+	/* Affect real monsters (excluding the caster) */
+	if ((c_ptr->m_idx > 1) && (c_ptr->m_idx != who)) {
+
+	    /* Damage the monster */
+	    if (project_m(who, dist, y, x, dam, typ, flg)) notice = TRUE;
+	}
+    }
+
+
+    /* Start with "dist" of zero */
+    dist = 0;
+
+    /* Now see if the player gets hurt */
+    for (i = 0; i < grids; i++) {
+
+	/* Hack -- Notice new "dist" values */
+	if (gm[dist+1] == i) dist++;
+
+	/* Get the grid location */
+	y = gy[i];
+	x = gx[i];
+
+	/* Hack -- Walls protect the player (never happens) */
+	if (!floor_grid_bold(y,x)) continue;
+
+	/* Get the cave grid */
+	c_ptr = &cave[y][x];
+
+	/* The player is here */
+	if ((c_ptr->m_idx == 1) && (c_ptr->m_idx != who)) {
+
+	    /* Damage the player */
+	    if (project_p(who, dist, y, x, dam, typ, flg)) notice = TRUE;
+	}
+    }
 
 
     /* Return "something was noticed" */
