@@ -229,8 +229,7 @@ static int inven_damage(inven_func typ, int perc)
 /*
  * Acid has hit the player, attempt to affect some armor.
  *
- * Note: This routine affects magical AC bonuses so that stores
- * can detect the damage.
+ * Note that the "base armor" of an object never changes.
  */
 static int minus_ac(void)
 {
@@ -260,11 +259,12 @@ static int minus_ac(void)
 	tmp[i] = INVEN_HEAD;
 	i++;
     }
-/* also affect boots */
     if (inventory[INVEN_FEET].tval != TV_NOTHING) {
 	tmp[i] = INVEN_FEET;
 	i++;
     }
+
+    /* Nothing to damage */
     if (i == 0)  return (FALSE);
 
 	j = tmp[randint(i) - 1];
@@ -273,6 +273,8 @@ static int minus_ac(void)
     /* No damage left to be done */
     if (i_ptr->ac + i_ptr->toac <= 0) return (FALSE);
 
+
+    /* Object resists? */
 	    if ((i_ptr->flags2 & TR2_RES_ACID) || (i_ptr->flags2 & TR2_IM_ACID) ||
 		(artifact_p(i_ptr) && (randint(5)>2))) {
 	    objdes(tmp_str, &inventory[j], FALSE);
@@ -281,11 +283,16 @@ static int minus_ac(void)
 	    return (FALSE);
 	}
 
+    /* Describe the damage */
 	    objdes(tmp_str, &inventory[j], FALSE);
 	    (void)sprintf(out_val, "Your %s is damaged!", tmp_str);
 	    msg_print(out_val);
+
+    /* Damage the item */
 	    i_ptr->toac--;
 	    calc_bonuses();
+
+    /* Item was damaged */
 	    return (TRUE);
 }
 
