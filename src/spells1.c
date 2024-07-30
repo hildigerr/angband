@@ -207,6 +207,7 @@ static int inven_damage(inven_func typ, int perc)
 
     /* Count the casualties */
     k = 0;
+
     offset = randint(inven_ctr);
     for (index = 0; index < inven_ctr; index++) {
 	i = (index + offset) % inven_ctr; /* be clever and not destroy the first item */
@@ -226,16 +227,16 @@ static int inven_damage(inven_func typ, int perc)
 	    if (amt) {
 
 		/* Get a description */
-	    objdes(tmp_str, i_ptr, FALSE);
+		objdes(tmp_str, i_ptr, FALSE);
 
 		/* Message */
-	    sprintf(out_val, "%sour %s (%c) %s destroyed!",
-		    ((i_ptr->number > 1) ? 
+		sprintf(out_val, "%sour %s (%c) %s destroyed!",
+			((i_ptr->number > 1) ? 
 			((amt == i_ptr->number) ? "All of y" :
 			 (amt > 1 ? "Some of y" : "One of y")) : "Y"),
-		    tmp_str, index_to_label(i),
-		    ((amt > 1) ? "were" : "was"));
-	    msg_print(out_val);
+			tmp_str, index_to_label(i),
+			((amt > 1) ? "were" : "was"));
+		msg_print(out_val);
 
 		/* Destroy "amt" items */
 		inven_item_increase(i,-amt);
