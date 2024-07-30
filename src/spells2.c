@@ -2554,7 +2554,7 @@ void fire_ball(int typ, int dir, int y, int x, int dam_hp, int max_dis)
       case GF_ICE:
       case GF_FORCE:
       case GF_SOUND:
-	destroy = set_frost_destroy;	/* just potions and flasks -DGK */
+	destroy = set_cold_destroy;	/* just potions and flasks -DGK */
 	break;
       case GF_ELEC:
 	destroy = set_elec_destroy;
@@ -4648,7 +4648,7 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
       case GF_ICE:
       case GF_FORCE:
       case GF_SOUND:
-	destroy = set_frost_destroy;	/* just potions and flasks -DGK */
+	destroy = set_cold_destroy;	/* just potions and flasks -DGK */
 	break;
       case GF_ELEC:
 	destroy = set_elec_destroy;

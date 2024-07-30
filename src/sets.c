@@ -64,23 +64,12 @@ int set_flammable(inven_type *e)		   /* changed -CFT */
 }
 
 
-int set_frost_destroy(inven_type *e)		   /* changed -CFT */
-{
-    int element = e->tval;
-
-    if ((element == TV_POTION)
-	|| (element == TV_FLASK))
-	return (TRUE);
-    return (FALSE);
-}
-
-
 int set_meteor_destroy(inven_type *e)		   /* added -DGK */
 {
     byte fi, fo;
 
     fi = set_fire_destroy(e);
-    fo = set_frost_destroy(e);
+    fo = set_cold_destroy(e);
     return (fi | fo);
 }
 

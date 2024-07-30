@@ -109,6 +109,28 @@ static bool hates_fire(inven_type *i_ptr)
 
 
 /*
+ * Does a given object (usually) hate cold?
+ */
+static bool hates_cold(inven_type *i_ptr)
+{
+    switch (i_ptr->tval) {
+      case TV_POTION:
+      case TV_FLASK:
+	return (TRUE);
+    }
+
+    return (FALSE);
+}
+
+
+
+
+
+
+
+
+
+/*
  * Melt something
  */
 int set_acid_destroy(inven_type *i_ptr)
@@ -140,6 +162,16 @@ int set_fire_destroy(inven_type *i_ptr)
     if (!hates_fire(i_ptr)) return (FALSE);
     if (artifact_p(i_ptr)) return (FALSE);
     if (wearable_p(i_ptr) && ((e->flags2 & TR2_RES_FIRE)||(e->flags2 & TR2_IM_FIRE))) return (FALSE);
+    return (TRUE);
+}
+
+
+/*
+ * Freeze things
+ */
+int set_cold_destroy(inven_type *i_ptr)
+{
+    if (!hates_cold(i_ptr)) return (FALSE);
     return (TRUE);
 }
 
@@ -321,7 +353,7 @@ void cold_dam(int dam, cptr kb_str)
     if (p_ptr->oppose_cold > 0) dam = dam / 3;
     if (p_ptr->immune_cold) dam = 1;
     take_hit(dam, kb_str);
-    inven_damage(set_frost_destroy, 5);
+    inven_damage(set_cold_destroy, 5);
 }
 
 
