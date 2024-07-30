@@ -195,12 +195,13 @@ typedef int (*inven_func)(inven_type *);
 
 /*
  * Destroys a type of item on a given percent chance	-RAK-	 
+ * Note that missiles are no longer necessarily all destroyed
  */
 static int inven_damage(inven_func typ, int perc)
 {
     register int index, i, offset;
     register inven_type *i_ptr;
-    int		k;
+    int		j, k, amt;
     vtype	tmp_str, out_val;
 
     k = 0;
@@ -211,19 +212,31 @@ static int inven_damage(inven_func typ, int perc)
 	/* Get the item in that slot */
 	i_ptr = &inventory[i];
 
-	if ((*typ)(i_ptr) && (randint(100) < perc)) {
+	if ((*typ)(i_ptr)) {
+
+	    /* Count the casualties */
+	    for (amt = j = 0; j < i_ptr->number; ++j) {
+		if (randint(100) < perc) amt++;
+	    }
+
+	    /* Some casualities */
+	    if (amt) {
+
 	    objdes(tmp_str, i_ptr, FALSE);
 	    sprintf(out_val, "%sour %s (%c) %s destroyed!",
 		    ((i_ptr->number > 1) ? 
-		    "One of y" : "Y"),
+			((amt == i_ptr->number) ? "All of y" :
+			 (amt > 1 ? "Some of y" : "One of y")) : "Y"),
 		    tmp_str, index_to_label(i),
-		    ((i_ptr->number > 1) ? "were" : "was"));
+		    ((amt > 1) ? "were" : "was"));
 	    msg_print(out_val);
 
-		inven_item_increase(i,-1);
+		inven_item_increase(i,-amt);
 		inven_item_optimize(i);
 
-	    k++;
+		/* Count the casualties */
+		k += amt;
+	    }
 	}
     }
     return (k);
