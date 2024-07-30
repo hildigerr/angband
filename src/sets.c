@@ -11,59 +11,6 @@
 #include "angband.h"
 
 
-int set_corrodes(inven_type *e)			   /* changed -CFT */
-{
-    int element = e->tval;
-
-    switch (element) {
-      case TV_SWORD:
-      case TV_HELM:
-      case TV_SHIELD:
-      case TV_HARD_ARMOR:
-	if (artifact_p(e)	/* shouldn't kill artifacts -CFT */
-	    ||(e->flags2 & TR2_RES_ACID)	/* can't check outside, because flags1 */
-	    ||(e->flags2 & TR2_IM_ACID))	/* used differently in potions/etc */
-	    return (FALSE);
-	return (TRUE);
-      case TV_WAND:
-	return (TRUE);
-    }
-    return (FALSE);
-}
-
-
-int set_flammable(inven_type *e)		   /* changed -CFT */
-{
-    int element = e->tval;
-
-    switch (element) {
-      case TV_ARROW:
-      case TV_BOW:
-      case TV_HAFTED:
-      case TV_POLEARM:
-      case TV_BOOTS:
-      case TV_GLOVES:
-      case TV_CLOAK:
-      case TV_SOFT_ARMOR:
-	if (artifact_p(e)	/* shouldn't kill artifacts -CFT */
-	    ||(e->flags2 & TR2_RES_FIRE)	/* can't check outside, because flags1 */
-	    ||(e->flags2 & TR2_IM_FIRE))	/* used differently in potions/etc */
-	    return (FALSE);
-	return (TRUE);
-      case TV_STAFF:
-      case TV_SCROLL:
-      case TV_FLASK:
-	return (TRUE);
-      case TV_LITE:
-	if (e->sval >= 192)	   /* only torches... -CFT */
-	    return (TRUE);
-	else
-	    return (FALSE);
-    }
-    return (FALSE);
-}
-
-
 int set_meteor_destroy(inven_type *e)		   /* added -DGK */
 {
     byte fi, fo;
@@ -99,38 +46,6 @@ int set_plasma_destroy(inven_type *e)		   /* added -DGK */
     fi = set_fire_destroy(e);
     li = set_elec_destroy(e);
     return (fi | li);
-}
-
-
-int set_acid_affect(inven_type *e)		   /* changed -CFT */
-{
-    int element = e->tval;
-
-    switch (element) {
-      case TV_BOLT:
-      case TV_ARROW:
-      case TV_BOW:
-      case TV_HAFTED:
-      case TV_POLEARM:
-      case TV_BOOTS:
-      case TV_GLOVES:
-      case TV_CLOAK:
-      case TV_SOFT_ARMOR:
-	if (artifact_p(e)	/* shouldn't kill artifacts -CFT */
-	    ||(e->flags2 & TR2_RES_ACID)	/* can't check outside, because flags1 */
-	    ||(e->flags2 & TR2_IM_ACID))	/* used differently in potions/etc */
-	    return (FALSE);
-	return (TRUE);
-      case TV_CHEST:
-	return (TRUE);
-
-      /* Junk is useless */
-      case TV_SKELETON:
-      case TV_BOTTLE:
-      case TV_JUNK:
-	return (TRUE);
-    }
-    return (FALSE);
 }
 
 

@@ -8,6 +8,7 @@
 
 /*
  * Does a given class of objects (usually) hate acid?
+ * Note that acid can either melt or corrode something.
  */
 static bool hates_acid(inven_type *i_ptr)
 {
@@ -16,7 +17,9 @@ static bool hates_acid(inven_type *i_ptr)
 
       /* Wearable items */
       case TV_ARROW:
+      case TV_BOLT:
       case TV_BOW:
+      case TV_SWORD:
       case TV_HAFTED:
       case TV_POLEARM:
       case TV_HELM:
@@ -38,6 +41,14 @@ static bool hates_acid(inven_type *i_ptr)
       case TV_CLOSED_DOOR:
 	return (TRUE);
 
+      /* Ouch */
+      case TV_CHEST:
+	return (TRUE);
+
+      /* Junk is useless */
+      case TV_SKELETON:
+      case TV_BOTTLE:
+      case TV_JUNK:
       case TV_FOOD:
 	return (TRUE);
     }
@@ -294,7 +305,7 @@ void corrode_gas(const cptr kb_str)
     if (!p_ptr->immune_acid)
 	if (!minus_ac((u32b) TR2_RES_ACID))
 	    take_hit(randint(8), kb_str);
-    inven_damage(set_corrodes, 5);
+    inven_damage(set_acid_destroy, 5);
 }
 
 
@@ -312,7 +323,7 @@ void acid_dam(int dam, cptr kb_str)
     if (!p_ptr->oppose_acid)
 	if (minus_ac((u32b) TR2_RES_ACID)) flag = 1;
     if (p_ptr->resist_acid) flag += 2;
-    inven_damage(set_acid_affect, 3);
+    inven_damage(set_acid_destroy, 3);
 }
 
 
@@ -340,7 +351,7 @@ void fire_dam(int dam, cptr kb_str)
     if (p_ptr->oppose_fire > 0) dam = dam / 3;
     if (p_ptr->immune_fire) dam = 1;
     take_hit(dam, kb_str);
-    inven_damage(set_flammable, 3);
+    inven_damage(set_fire_destroy, 3);
 }
 
 

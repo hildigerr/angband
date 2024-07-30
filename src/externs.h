@@ -860,10 +860,7 @@ int _save_player(char *);
 int load_player(int *);
 
 /* sets.c */
-int set_corrodes(inven_type *);
-int set_flammable(inven_type *);
 int set_cold_destroy(inven_type *);
-int set_acid_affect(inven_type *);
 int set_elec_destroy(inven_type *);
 int set_null(inven_type *);
 int set_acid_destroy(inven_type *);
