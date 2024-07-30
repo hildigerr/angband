@@ -45,6 +45,25 @@ static bool hates_acid(inven_type *i_ptr)
     return (FALSE);
 }
 
+
+/*
+ * Does a given object (usually) hate electricity?
+ */
+static bool hates_elec(inven_type *i_ptr)
+{
+    switch (i_ptr->tval) {
+
+      case TV_RING:
+	return (TRUE);
+	
+      case TV_WAND:
+	return (TRUE);
+    }
+
+    return (FALSE);
+}
+
+
 /*
  * Melt something
  */
@@ -53,6 +72,18 @@ int set_acid_destroy(inven_type *i_ptr)
     if (!hates_acid(i_ptr)) return (FALSE);
     if (artifact_p(i_ptr)) return (FALSE);
     if (wearable_p(i_ptr) && ((i_ptr->flags2 & TR2_RES_ACID) || (e->flags2 & TR2_IM_ACID)) return (FALSE);
+    return (TRUE);
+}
+
+
+/*
+ * Electrical damage
+ */
+int set_elec_destroy(inven_type *i_ptr)
+{
+    if (!hates_elec(i_ptr)) return (FALSE);
+    if (artifact_p(i_ptr)) return (FALSE);
+    if (wearable_p(i_ptr) && ((i_ptr->flags2 & TR2_RES_ELEC)||(i_ptr->flags2 & TR2_IM_ELEC))) return (FALSE);
     return (TRUE);
 }
 
@@ -206,7 +237,7 @@ void light_dam(int dam, cptr kb_str)
     if (p_ptr->resist_elec) dam = dam / 3;
     if (p_ptr->immune_elec) dam = 1;
     take_hit(dam, kb_str);
-    inven_damage(set_lightning_destroy, 3);
+    inven_damage(set_elec_destroy, 3);
 }
 
 

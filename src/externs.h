@@ -864,7 +864,7 @@ int set_corrodes(inven_type *);
 int set_flammable(inven_type *);
 int set_frost_destroy(inven_type *);
 int set_acid_affect(inven_type *);
-int set_lightning_destroy(inven_type *);
+int set_elec_destroy(inven_type *);
 int set_null(inven_type *);
 int set_acid_destroy(inven_type *);
 int set_fire_destroy(inven_type *);

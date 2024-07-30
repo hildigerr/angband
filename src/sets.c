@@ -108,7 +108,7 @@ int set_plasma_destroy(inven_type *e)		   /* added -DGK */
     byte fi, li;
 
     fi = set_fire_destroy(e);
-    li = set_lightning_destroy(e);
+    li = set_elec_destroy(e);
     return (fi | li);
 }
 
@@ -139,24 +139,6 @@ int set_acid_affect(inven_type *e)		   /* changed -CFT */
       case TV_SKELETON:
       case TV_BOTTLE:
       case TV_JUNK:
-	return (TRUE);
-    }
-    return (FALSE);
-}
-
-
-int set_lightning_destroy(inven_type *e)	   /* changed -CFT */
-{
-    int element = e->tval;
-
-    switch (element) {
-      case TV_RING:
-	if (artifact_p(e)	/* shouldn't kill artifacts -CFT */
-	    ||(e->flags2 & TR2_RES_ELEC)	/* can't check outside, because flags1 */
-	    ||(e->flags2 & TR2_IM_ELEC))	/* used differently in potions/etc */
-	    return (FALSE);
-	return (TRUE);
-      case TV_WAND:
 	return (TRUE);
     }
     return (FALSE);

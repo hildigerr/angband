@@ -2557,7 +2557,7 @@ void fire_ball(int typ, int dir, int y, int x, int dam_hp, int max_dis)
 	destroy = set_frost_destroy;	/* just potions and flasks -DGK */
 	break;
       case GF_ELEC:
-	destroy = set_lightning_destroy;
+	destroy = set_elec_destroy;
 	break;
       case GF_PLASMA:		   /* DGK */
 	destroy = set_plasma_destroy;	/* fire+lightning -DGK */
@@ -4651,7 +4651,7 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 	destroy = set_frost_destroy;	/* just potions and flasks -DGK */
 	break;
       case GF_ELEC:
-	destroy = set_lightning_destroy;
+	destroy = set_elec_destroy;
 	break;
       case GF_PLASMA:		   /* DGK */
 	destroy = set_plasma_destroy;	/* fire+lightning -DGK */
