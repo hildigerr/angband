@@ -433,10 +433,11 @@ static bool similar_ident(inven_type *i_ptr, inven_type *j_ptr)
     /* XXX Hack -- force identical "ident" flag sets */
     if (i_ptr->ident != j_ptr->ident) return (0);
 
-    /* Food, Potions, Scrolls are "simple" objects */
+    /* Food, Potions, Scrolls, and Rods are "simple" objects */
     if (i_ptr->tval == TV_FOOD) return (1);
     if (i_ptr->tval == TV_POTION) return (1);
     if (i_ptr->tval == TV_SCROLL) return (1);
+    if (i_ptr->tval == TV_ROD) return (1);
 
     /* XXX Mega-Hack -- missiles do not have to be identified */
     if (i_ptr->tval == TV_SHOT) return (1);
@@ -472,6 +473,9 @@ static bool similar_ident(inven_type *i_ptr, inven_type *j_ptr)
  *
  * We allow wands (and staffs) to combine if they are known to have
  * equivalent charges.  They are unstacked as they are used.
+ *
+ * We allow rods to combine when they are fully charged, and again,
+ * we unstack them as they are used.
  *
  * We do not allow chests to combine, it would be annoying.
  *

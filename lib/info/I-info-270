@@ -24,6 +24,7 @@ Added true "object stacking" code, so any items can stack.
 Wrote code for "unstacking" objects (ie wands) for use.
 Functions combine() and combine_pack() to maintain inventory.
 Added "(charging)" to rod descriptions.
+Made auto-restackers for charged rods.
 Made "store cost" a property of objects
 Rewrote "object feeling" code
 Combined "POTION*" and "SCROLL*" and used true flags for them.
