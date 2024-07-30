@@ -235,7 +235,7 @@ static int inven_damage(inven_func typ, int perc)
 static int minus_ac(void)
 {
     register int         i, j;
-    int                  tmp[6], minus;
+    int                  tmp[6];
     inven_type		*i_ptr;
     bigvtype		out_val, tmp_str;
 
@@ -265,26 +265,28 @@ static int minus_ac(void)
 	tmp[i] = INVEN_FEET;
 	i++;
     }
-    minus = FALSE;
-    if (i > 0) {
+    if (i == 0)  return (FALSE);
+
 	j = tmp[randint(i) - 1];
 	i_ptr = &inventory[j];
+
+    /* No damage left to be done */
+    if (i_ptr->ac + i_ptr->toac <= 0) return (FALSE);
+
 	    if ((i_ptr->flags2 & TR2_RES_ACID) || (i_ptr->flags2 & TR2_IM_ACID) ||
 		(artifact_p(i_ptr) && (randint(5)>2))) {
 	    objdes(tmp_str, &inventory[j], FALSE);
 	    (void)sprintf(out_val, "Your %s resists damage!", tmp_str);
 	    msg_print(out_val);
-	    minus = FALSE;
-	} else if ((i_ptr->ac + i_ptr->toac) > 0) {
+	    return (FALSE);
+	}
+
 	    objdes(tmp_str, &inventory[j], FALSE);
 	    (void)sprintf(out_val, "Your %s is damaged!", tmp_str);
 	    msg_print(out_val);
 	    i_ptr->toac--;
 	    calc_bonuses();
-	    minus = TRUE;
-	}
-    }
-    return (minus);
+	    return (TRUE);
 }
 
 
