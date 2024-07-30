@@ -1670,72 +1670,73 @@ void self_knowledge()
 	f3 = i_ptr->flags3;
 
 	/* Indicate various curses */
-    if (f3 & TR3_CURSED) {
+	if (f3 & TR3_CURSED) {
 	if (inventory[INVEN_WIELD].name2 == EGO_MORGUL) {
 	    info[i++] = "Your weapon is truly foul.";
-    }
+	}
 	else if (inventory[INVEN_WIELD].name2 == ART_CALRIS) {
 	    info[i++] = "Your bastard sword is wickedly accursed.";
-    }
+	}
 	else if (inventory[INVEN_WIELD].name2 == ART_MORMEGIL) {
 	    info[i++] = "Your two-handed sword radiates an aura of unspeakable evil.";
-    }
+	}
 	else {
 	    info[i++] = "Your weapon is accursed.";
-    }
-    }
+	}
+	}
 
 	/* Indicate Blessing */
-    if (f3 & TR3_BLESSED) {
-	info[i++] = "Your weapon has been blessed by the gods.";
-    }
+	if (f3 & TR3_BLESSED) {
+	    info[i++] = "Your weapon has been blessed by the gods.";
+	}
 
 	/* Special "Attack Bonuses" */
-    if (f1 & TR1_TUNNEL) {
-	info[i++] = "Your weapon is an effective digging tool.";
-    }
-    if (f1 & TR1_ATTACK_SPD) {
-	info[i++] = "Your weapon strikes with uncommon speed.";
-    }
-    if (f1 & TR1_BRAND_COLD) {
-	info[i++] = "Your frigid weapon freezes your foes.";
-    }
-    if (f1 & TR1_BRAND_FIRE) {
-	info[i++] = "Your flaming weapon burns your foes.";
-    }
-    if (f1 & TR1_BRAND_ELEC) {
-	info[i++] = "Your weapon electrocutes your foes.";
-    }
-    if (f1 & TR1_IMPACT) {
-	info[i++] = "The unbelievable impact of your weapon can cause earthquakes.";
-    }
-    if (f1 & TR1_KILL_DRAGON) {
-	info[i++] = "Your weapon is a great bane of dragons.";
-    }
-    else if (f1 & TR1_SLAY_DRAGON) {
-	info[i++] = "Your weapon is especially deadly against dragons.";
-    }
-    if (f1 & TR1_SLAY_ORC) {
-	info[i++] = "Your weapon is especially deadly against orcs.";
-    }
-    if (f1 & TR1_SLAY_TROLL) {
-	info[i++] = "Your weapon is especially deadly against trolls.";
-    }
-    if (f1 & TR1_SLAY_GIANT) {
-	info[i++] = "Your weapon is especially deadly against giants.";
-    }
-    if (f1 & TR1_SLAY_ANIMAL) {
-	info[i++] = "Your weapon is especially deadly against natural creatures.";
-    }
-    if (f1 & TR1_SLAY_DEMON) {
-	info[i++] = "Your weapon strikes at demons with holy wrath.";
-    }
-    if (f1 & TR1_SLAY_UNDEAD) {
-	info[i++] = "Your weapon strikes at undead with holy wrath.";
-    }
-    if (f1 & TR1_SLAY_EVIL) {
-	info[i++] = "Your weapon fights against evil with holy fury.";
-    }
+	if (f1 & TR1_TUNNEL) {
+	    info[i++] = "Your weapon is an effective digging tool.";
+	}
+	if (f1 & TR1_ATTACK_SPD) {
+	    info[i++] = "Your weapon strikes with uncommon speed.";
+	}
+	if (f1 & TR1_BRAND_COLD) {
+	    info[i++] = "Your frigid weapon freezes your foes.";
+	}
+	if (f1 & TR1_BRAND_FIRE) {
+	    info[i++] = "Your flaming weapon burns your foes.";
+	}
+	if (f1 & TR1_BRAND_ELEC) {
+	    info[i++] = "Your weapon electrocutes your foes.";
+	}
+	if (f1 & TR1_IMPACT) {
+	    info[i++] = "The unbelievable impact of your weapon can cause earthquakes.";
+	}
+
+	if (f1 & TR1_KILL_DRAGON) {
+	    info[i++] = "Your weapon is a great bane of dragons.";
+	}
+	else if (f1 & TR1_SLAY_DRAGON) {
+	    info[i++] = "Your weapon is especially deadly against dragons.";
+	}
+	if (f1 & TR1_SLAY_ORC) {
+	    info[i++] = "Your weapon is especially deadly against orcs.";
+	}
+	if (f1 & TR1_SLAY_TROLL) {
+	    info[i++] = "Your weapon is especially deadly against trolls.";
+	}
+	if (f1 & TR1_SLAY_GIANT) {
+	    info[i++] = "Your weapon is especially deadly against giants.";
+	}
+	if (f1 & TR1_SLAY_ANIMAL) {
+	    info[i++] = "Your weapon is especially deadly against natural creatures.";
+	}
+	if (f1 & TR1_SLAY_DEMON) {
+	    info[i++] = "Your weapon strikes at demons with holy wrath.";
+	}
+	if (f1 & TR1_SLAY_UNDEAD) {
+	    info[i++] = "Your weapon strikes at undead with holy wrath.";
+	}
+	if (f1 & TR1_SLAY_EVIL) {
+	    info[i++] = "Your weapon fights against evil with holy fury.";
+	}
     }
 
 
