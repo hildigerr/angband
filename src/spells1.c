@@ -608,6 +608,9 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
     /* Polymorph setting (true or false) */
     int do_poly = 0;
 
+    /* Teleport setting (max distance) */
+    int do_dist = 0;
+
     /* Confusion setting (amount to confuse) */
     int do_conf = 0;
 
@@ -868,9 +871,11 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 
       /* Gravity -- breathers resist */
       case GF_GRAVITY:
+	do_dist = 5;
 	if (r_ptr->spells3 & MS3_BR_GRAV) {
 	    note = " resists.";
 	    dam *= 3; dam /= (randint(6)+6);
+	    do_dist = 0;
 	}
 	break;
 
@@ -933,6 +938,20 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 	    r_ptr = &r_list[m_ptr->r_idx];
 	    l_ptr = &l_list[m_ptr->r_idx];
 	}
+    }
+
+    /* Handle "teleport" */
+    else if (do_dist) {
+
+	/* Teleport */
+	teleport_away(c_ptr->m_idx, do_dist);
+
+	/* Re-extract location */
+	y = m_ptr->fy;
+	x = m_ptr->fx;
+
+	/* Re-extract cave */
+	c_ptr = &cave[y][x];
     }
 
     /* Sound and Impact breathers never stun */

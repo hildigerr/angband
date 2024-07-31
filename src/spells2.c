@@ -3679,16 +3679,6 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 
     res = NO_RES;		/* assume until we know different -CFT */
     switch ( typ ){		/* check for resists... */
-	break;
-      case GF_GRAVITY:
-	if (!(r_ptr->spells3 & MS3_BR_GRAV)){ /* breathers resist -CFT */
-	    if (*dam <= m_ptr->hp) {
-		teleport_away(cave[m_ptr->fy][m_ptr->fx].m_idx, 5);
-		*y = m_ptr->fy; /* teleported, so let outside world know monster moved! */
-		*x = m_ptr->fx; 
-	    }
-        }
-	break;
       default:
 	msg_print("Unknown typ in spell_hit_monster.  This may mean trouble.");
     } /* end switch for saving throws and extra effects */
