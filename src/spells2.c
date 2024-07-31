@@ -19,6 +19,49 @@
 
 
 
+
+
+/*
+ * Helper function -- return a "nearby" race for polymorphing
+ */
+int poly_r_idx(int r_idx)
+{
+    register monster_race *r_ptr;
+
+    int lev1, lev2;
+
+    /* Get that monster race */
+    r_ptr = &r_list[r_idx];
+
+    /* Uniques never polymorph */
+    if (r_ptr->cflags2 & MF2_UNIQUE) return (r_idx);
+
+
+    /* Allowable range of "levels" for resulting monster */
+    r_idx = (randint(20)/randint(9))+1;
+    lev1 = lev2 = r_ptr->level;
+    if ((lev1 -=r_idx)<0) lev1 = 0;
+    if ((lev2 +=r_idx)>MAX_R_LEV) lev2 = MAX_R_LEV;
+
+
+    /* Pick a (possibly new) non-unique race */
+    while (1) {
+
+	/* Pick a random race */
+	r_idx = randint(r_level[lev2]-r_level[lev1])-1+r_level[lev1];
+
+	/* Extract that monster */
+	r_ptr = &r_list[r_idx];
+
+	/* Skip uniques */
+	if (r_ptr->cflags2 & MF2_UNIQUE) continue;
+    }
+
+    /* Return the result */
+    return (r_idx);
+}
+
+
 /*
  * polymorph is now uniform for poly/mass poly/choas poly, and only
  * as deadly as chaos poly is.  This still makes polymorphing a bad
@@ -29,30 +72,24 @@ static int poly(int mnum)
     register monster_type *m_ptr;
     register monster_race *r_ptr;
 
-    int y, x, r_idx, j, k;
+    int y, x, r_idx;
 
     /* Get the initial monster and race */
     m_ptr = &m_list[mnum];
     r_ptr = &r_list[m_ptr->r_idx];
 
-    /* Uniques never polymorph */
-    if (r_ptr->cflags2 & MF2_UNIQUE) return (FALSE);
+    /* Pick a "polymorph" destination */
+    r_idx = poly_r_idx(m_ptr->r_idx);
+
+    /* Sometimes nothing happens (see above) */
+    if (r_idx == m_ptr->r_idx) return (FALSE);
 
     /* Save the monster location */
     y = m_ptr->fy;
     x = m_ptr->fx;
 
-    r_idx = (randint(20)/randint(9))+1;
-    k = j = r_ptr->level;
-    if ((j -=r_idx)<0) j = 0;
-    if ((k +=r_idx)>MAX_R_LEV) k = MAX_R_LEV;
-
     /* "Kill" the monster */
     delete_monster_idx(mnum);
-
-    do {
-	r_idx = randint(r_level[k]-r_level[j])-1+r_level[j];  /* new creature index */
-    } while (r_list[r_idx].cflags2 & MF2_UNIQUE);
 
     /* Place the new monster where the old one was */
     place_monster(y,x,r_idx,FALSE);

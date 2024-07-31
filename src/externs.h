@@ -648,6 +648,7 @@ int place_monster(int, int, int, int);
 int place_win_monster(void);
 void place_group(int, int, int, int);
 int get_mons_num(int);
+int poly_r_idx(int);
 void alloc_monster(int, int, int);
 int summon_monster(int * ,int *, int);
 int summon_undead(int *, int *);
