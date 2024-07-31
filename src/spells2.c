@@ -2569,7 +2569,6 @@ void fire_ball(int typ, int dir, int y, int x, int dam_hp, int max_dis)
     register monster_type *m_ptr;
     register monster_race *r_ptr;
     int                 ny, nx;
-    char                bolt_char;
 
     tkill = 0;
 
@@ -2592,16 +2591,6 @@ void fire_ball(int typ, int dir, int y, int x, int dam_hp, int max_dis)
  */
 	if (dir || !target_at(y,x))	    
 	    (void)mmove(dir, &y, &x);
-
-    /* choose the right shape for the bolt... -CFT */
-	if (ny == y)
-	    bolt_char = '-';
-	else if (nx == x)
-	    bolt_char = '|';
-	else if ((ny - y) == (nx - x))
-	    bolt_char = '\\';
-	else
-	    bolt_char = '/';
 
 	dist++;
 	lite_spot(oldy, oldx);
@@ -2748,7 +2737,7 @@ void fire_ball(int typ, int dir, int y, int x, int dam_hp, int max_dis)
 		if (!no_color_flag)
 		    textcolor(bolt_color(typ));
 #endif
-		print(bolt_char, y, x);
+		print(bolt_char(y,x,ny,nx), y, x);
 		put_qio();
 #ifdef TC_COLOR
 		if (!no_color_flag)
@@ -2781,7 +2770,6 @@ void fire_bolt(int typ, int dir, int y, int x, int dam_hp)
     vtype               out_val, m_name;
     int                 dam = dam_hp;
     int                 ny, nx;
-    char                bolt_char;
 
     flag = FALSE;
     oldy = y;
@@ -2791,15 +2779,6 @@ void fire_bolt(int typ, int dir, int y, int x, int dam_hp)
 	ny = y;
 	nx = x;
 	(void)mmove(dir, &y, &x);
-    /* choose the right shape for the bolt... -CFT */
-	if (ny == y)
-	    bolt_char = '-';
-	else if (nx == x)
-	    bolt_char = '|';
-	else if ((ny - y) == (nx - x))
-	    bolt_char = '\\';
-	else
-	    bolt_char = '/';
 
 	dist++;
 	c_ptr = &cave[y][x];
@@ -2841,7 +2820,7 @@ void fire_bolt(int typ, int dir, int y, int x, int dam_hp)
 		    prt_experience();
 
 	    } else if (panel_contains(y, x) && (p_ptr->blind < 1)) {
-		print(bolt_char, y, x);
+		print(bolt_char(y,x,ny,nx), y, x);
 	    /* show the bolt */
 		put_qio();
 #ifdef MSDOS
@@ -4163,7 +4142,6 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
     register cave_type     *c_ptr;
     register monster_type  *m_ptr;
     register monster_race *r_ptr;
-    char                bolt_char;
     int                 blind = (p_ptr->status & PY_BLIND) ? 1 : 0;
     int                 ny, nx, sourcey, sourcex, dist;
     vtype               m_name, out_val;
@@ -4178,21 +4156,12 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
 	mmove2(&i, &j, sourcey, sourcex, char_row, char_col);
 	dist++;
 
-    /* choose the right shape for the bolt... -CFT */
-	if (ny == i)
-	    bolt_char = '-';
-	else if (nx == j)
-	    bolt_char = '|';
-	else if ((ny - i) == (nx - j))
-	    bolt_char = '\\';
-	else
-	    bolt_char = '/';
 
 	if (in_bounds(i, j) && los(y, x, i, j)) {
 	    c_ptr = &cave[i][j];
 	    if (floor_grid_bold(i, j)) {
 		if (panel_contains(i, j) && !(p_ptr->status & PY_BLIND)) {
-		    print(bolt_char, i, j);
+		    print(bolt_char(i,j,ny,nx), i, j);
 		    put_qio();
 #ifdef MSDOS
 		    delay(8 * delay_spd);	/* milliseconds */
