@@ -3679,39 +3679,6 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 
     res = NO_RES;		/* assume until we know different -CFT */
     switch ( typ ){		/* check for resists... */
-      case GF_SOUND:
-	if ((*dam <= m_ptr->hp) && /* don't bother if it's dead */
-	    !(r_ptr->spells2 & MS2_BR_SOUN) &&
-	    !(r_ptr->spells3 & MS3_BR_WALL)) { /* sound and impact breathers
-	  					should not stun -CFT */
-	    if (m_ptr->confused > 0) { 
-		res = MORE_DAZED;
-		if (m_ptr->confused < 220){ /* make sure not to overflow -CFT */
-		    m_ptr->confused += (randint(5)*2)/(rad>0 ? rad : 1);
-		}
-	    }
-	    else {
-		res = DAZED;
-		m_ptr->confused = (randint(15)+10)/(rad>0 ? rad : 1);
-	    }
-  	}
-	break;
-      case GF_FORCE:
-	if ((*dam <= m_ptr->hp) &&
-	    !(r_ptr->spells2 & MS2_BR_SOUN) &&
-	    !(r_ptr->spells3 & MS3_BR_WALL)){ /* sound and impact breathers
-					       should not stun -CFT */
-	    if (m_ptr->confused > 0) { 
-		res = MORE_DAZED;
-		if (m_ptr->confused < 220){ /* make sure not to overflow -CFT */
-		    m_ptr->confused += (randint(5)+1)/(rad>0 ? rad : 1);
-		}
-	    }
-	    else {
-		res = DAZED;
-		m_ptr->confused = randint(15)/(rad>0 ? rad : 1);
-	    }
-	}
 	break;
       case GF_GRAVITY:
 	if (!(r_ptr->spells3 & MS3_BR_GRAV)){ /* breathers resist -CFT */
@@ -3721,23 +3688,6 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 		*x = m_ptr->fx; 
 	    }
         }
-	break;
-      case GF_ICE: /* ice is basically frost + cuts + stun -CFT */
-	if ((*dam <= m_ptr->hp) &&
-	    !(r_ptr->spells2 & MS2_BR_SOUN) &&
-	    !(r_ptr->spells3 & MS3_BR_WALL)){  /* sound and impact breathers
-	  					should not stun -CFT */
-	    if (m_ptr->confused > 0) { 
-		res += MORE_DAZED;
-		if (m_ptr->confused < 220){ /* make sure not to overflow -CFT */
-		    m_ptr->confused += (randint(5)+1)/(rad>0 ? rad : 1);
-		}
-	    }
-	    else {
-		res += DAZED;
-		m_ptr->confused = randint(15)/(rad>0 ? rad : 1);
-	    }
-	}
 	break;
       default:
 	msg_print("Unknown typ in spell_hit_monster.  This may mean trouble.");
@@ -3750,12 +3700,6 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
     else switch (res) {
       case NO_RES:
 	sprintf(outval, "%sis hit.",cdesc);
-	break;
-      case DAZED:
-	sprintf(outval, "%sis dazed.",cdesc);
-	break;
-      case MORE_DAZED:
-	sprintf(outval, "%sis more dazed.",cdesc);
 	break;
       case (DAZED+RESIST):
 	  sprintf(outval, "%sresists, but is dazed anyway.",cdesc);

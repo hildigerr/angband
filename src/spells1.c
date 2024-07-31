@@ -611,6 +611,9 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
     /* Confusion setting (amount to confuse) */
     int do_conf = 0;
 
+    /* Stunning setting (amount to stun) */
+    int do_stun = 0;
+
 
     /* "Damage" factor.  Multiply by "mul/div" */
     int mul = 1, div = 1;
@@ -769,6 +772,7 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 
       /* Sound -- Sound breathers resist */
       case GF_SOUND:
+	do_stun = (10 + randint(15)) * mul / div;
 	if (r_ptr->spells2 & MS2_BR_SOUN) {
 	    note = " resists.";
 	    dam *= 2; dam /= (randint(6)+6);
@@ -808,6 +812,7 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 
       /* Force */
       case GF_FORCE:
+	do_stun = randint(15) * mul / div;
 	if (r_ptr->spells3 & MS3_BR_WALL) {
 	    note = " resists.";
 	    dam *= 3; dam /= (randint(6)+6);
@@ -879,6 +884,7 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 
       /* Ice -- Cold + Cuts + Stun */
       case GF_ICE:
+	do_stun = randint(15) * mul / div;
 	if (r_ptr->cflags2 & MF2_IM_COLD) {
 	    note = " resists.";
 	    dam /= 9;
@@ -926,6 +932,22 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 	    m_ptr = &m_list[cave[y][x].m_idx];
 	    r_ptr = &r_list[m_ptr->r_idx];
 	    l_ptr = &l_list[m_ptr->r_idx];
+	}
+    }
+
+    /* Sound and Impact breathers never stun */
+    else if (do_stun &&
+	     !(r_ptr->spells2 & MS2_BR_SOUN) &&
+	     !(r_ptr->spells3 & MS3_BR_WALL)) {
+	if (m_ptr->confused > 0) { 
+	    note = " is more dazed.";
+	    if (m_ptr->confused < 220) {
+		m_ptr->confused += (1 + randint(5) * 2 / div);
+	    }
+	}
+	else {
+	    note = " is dazed.";
+	    m_ptr->confused = do_stun;
 	}
     }
 
