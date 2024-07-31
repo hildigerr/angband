@@ -603,6 +603,32 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
     bool obvious = TRUE;
 
 
+    /* Hold the monster name */
+    char m_name[80];
+
+    /* Assume no note */
+    cptr note = NULL;
+
+    /* Assume a default death */
+    cptr note_dies = " dies.";
+
+
+    /* Get the monster name (BEFORE polymorphing) */
+    sprintf(m_name, (r_ptr->cflags2 & MF2_UNIQUE)? "%s":"The %s",r_ptr->name);
+
+
+
+    /* Some monsters are not "living" */
+    if ((r_ptr->cflags2 & MF2_DEMON) ||
+	(r_ptr->cflags2 & MF2_UNDEAD) ||
+	(r_ptr->cflags2 & MF2_MINDLESS) ||
+	(strchr("EvgX", r_ptr->r_char))) {
+
+	/* Special note at death */
+	note_dies = " is destroyed.";
+    }
+
+
     /* Analyze the damage type */
     switch (typ) {
 
@@ -646,6 +672,22 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
       case GF_ICE:
 	break;
     }
+
+
+    /* Check for death */
+    if (dam > m_ptr->hp) {
+
+	/* Extract method of death */
+	note = note_dies;
+    }
+
+
+
+    /* Give detailed messages if visible or destroyed */
+    if (note && (seen || (dam > m_ptr->hp))) {
+	msg_print(m_name);
+	msg_print(note);
+    }	
 
 	/* Hurt the monster, display fear msg's */
 	if (mon_take_hit(c_ptr->m_idx, dam, TRUE)) {

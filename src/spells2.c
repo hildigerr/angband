@@ -3642,14 +3642,6 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
     *y = m_ptr->fy;		/* these only change if mon gets teleported */
     *x = m_ptr->fx; 
     r_ptr = &r_list[m_ptr->r_idx];
-    if (m_ptr->ml){
-	if (r_ptr->cflags2 & MF2_UNIQUE)
-	    sprintf(cdesc, "%s ", r_ptr->name);
-	else
-	    sprintf(cdesc, "The %s ", r_ptr->name);
-    }
-    else
-	strcpy(cdesc, "It ");
 
     res = NO_RES;		/* assume until we know different -CFT */
     switch ( typ ){		/* check for resists... */
@@ -3970,14 +3962,6 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
     else if ((*dam > m_ptr->hp) &&
 	     (by_player || !(r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE))) {
 	res = DEAD;
-	if ((r_list[m_ptr->r_idx].cflags2 & (MF2_DEMON|MF2_UNDEAD|MF2_MINDLESS)) ||
-	    (r_list[m_ptr->r_idx].r_char == 'E') ||
-	    (r_list[m_ptr->r_idx].r_char == 'v') ||
-	    (r_list[m_ptr->r_idx].r_char == 'g') ||
-	    (r_list[m_ptr->r_idx].r_char == 'X'))
-	    sprintf(outval, "%sis destroyed.", cdesc);
-	else
-	    sprintf(outval, "%sdies.", cdesc);
     }
     else switch (res) {
       case NO_RES:
