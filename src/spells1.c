@@ -469,6 +469,75 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
 
 	/* Analyze the type */        
 	switch (typ) {
+
+	    /* Acid -- Lots of things */
+	    case GF_ACID:
+		if (hates_acid(i_ptr)) {
+		    do_kill = TRUE;
+		}
+		break;
+
+	    /* Elec -- Rings and Wands */
+	    case GF_ELEC:
+		if (hates_elec(i_ptr)) {
+		    do_kill = TRUE;
+		}
+		break;
+
+	    /* Fire -- Flammable objects */
+	    case GF_FIRE:
+		if (hates_fire(i_ptr)) {
+		    do_kill = TRUE;
+		}
+		break;
+
+	    /* Cold -- potions and flasks */
+	    case GF_COLD:
+		if (hates_cold(i_ptr)) {
+		    do_kill = TRUE;
+		}
+		break;
+
+	    /* Fire + Elec */
+	    case GF_PLASMA:
+		if (hates_fire(i_ptr)) {
+		    do_kill = TRUE;
+		}
+		if (hates_elec(i_ptr)) {
+		    do_kill = TRUE;
+		}
+		break;
+
+	    /* Fire + Cold */
+	    case GF_METEOR:
+		if (hates_fire(i_ptr)) {
+		    do_kill = TRUE;
+		}
+		if (hates_cold(i_ptr)) {
+		    do_kill = TRUE;
+		}
+		break;
+
+	    /* Hack -- break potions and such */		
+	    case GF_ICE:
+	    case GF_SHARDS:
+	    case GF_FORCE:
+	    case GF_SOUND:
+		if (hates_cold(i_ptr)) {
+		    do_kill = TRUE;
+		}
+		break;
+
+	    /* Mana -- destroys everything */
+	    case GF_MANA:
+		do_kill = TRUE;
+
+	    /* Holy Orb -- destroys cursed non-artifacts */
+	    case GF_HOLY_ORB:
+		if (cursed_p(i_ptr)) {
+		    do_kill = TRUE;
+		}
+		break;
 	}
 
 
@@ -536,6 +605,46 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 
     /* Analyze the damage type */
     switch (typ) {
+
+      /* Acid */
+      case GF_ACID:
+	break;
+
+      /* Electricity */
+      case GF_ELEC:
+	break;
+
+      /* Fire damage */
+      case GF_FIRE:
+	break;
+
+      /* Cold */
+      case GF_COLD:
+	break;
+
+      /* Holy Orb -- hurts Evil */
+      case GF_HOLY_ORB:
+	break;
+
+      /* Plasma */
+      case GF_PLASMA:
+	break;
+
+      /* Shards */
+      case GF_SHARDS:
+	break;
+
+      /* Pure damage */
+      case GF_MANA:
+	break;
+
+      /* Meteor -- powerful magic missile */
+      case GF_METEOR:
+	break;
+
+      /* Ice -- Cold + Cuts + Stun */
+      case GF_ICE:
+	break;
     }
 
 	/* Hurt the monster, display fear msg's */
@@ -582,6 +691,53 @@ static bool project_p(int who, int rad, int y, int x, int dam, int typ, int flg)
 
     /* Analyze the damage */
     switch (typ) {
+
+	/* Standard damage -- hurts inventory too */
+	case GF_ACID:
+	    break;
+
+	/* Standard damage -- hurts inventory too */
+	case GF_FIRE:
+	    break;
+
+	/* Standard damage -- hurts inventory too */
+	case GF_COLD:
+	    break;
+
+	/* Standard damage -- hurts inventory too */
+	case GF_ELEC:
+	    break;
+
+	/* Hold Orb -- Player only takes partial damage, cause he is "good" */
+	case GF_HOLY_ORB:
+	    break;
+
+	/* Plasma -- XXX No resist */
+	case GF_PLASMA:
+	    break;
+
+	/* Shards -- mostly cutting */
+	case GF_SHARDS:
+	    break;
+
+	/* Sound -- mostly stunning */
+	case GF_SOUND:
+	    break;
+
+	/* Force -- mostly stun */
+	case GF_FORCE:
+	    break;
+
+	/* Pure damage */
+	case GF_MANA:
+	    break;
+
+	/* Pure damage */
+	case GF_METEOR:
+	    break;
+
+	/* Ice -- cold plus stun plus cuts */
+	case GF_ICE:
 
 	default:
 	    msg_print("Oops.  Undefined beam/bolt/ball hit player.");

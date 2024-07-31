@@ -2574,34 +2574,6 @@ void fire_ball(int typ, int dir, int y, int x, int dam_hp, int max_dis)
     tkill = 0;
 
     switch (typ) {
-      case GF_FIRE:
-	destroy = set_fire_destroy;
-	break;
-      case GF_ACID:
-	destroy = set_acid_destroy;
-	break;
-      case GF_COLD:
-      case GF_SHARDS:
-      case GF_ICE:
-      case GF_FORCE:
-      case GF_SOUND:
-	destroy = set_cold_destroy;	/* just potions and flasks -DGK */
-	break;
-      case GF_ELEC:
-	destroy = set_elec_destroy;
-	break;
-      case GF_PLASMA:		   /* DGK */
-	destroy = set_plasma_destroy;	/* fire+lightning -DGK */
-	break;
-      case GF_METEOR:		   /* DGK */
-	destroy = set_meteor_destroy;	/* fire+shards -DGK */
-	break;
-      case GF_MANA:		   /* DGK */
-	destroy = set_mana_destroy;	/* everything -DGK */
-	break;
-      case GF_HOLY_ORB:	   /* DGK */
-	destroy = set_holy_destroy;	/* cursed stuff -DGK */
-	break;
       default:
 	destroy = set_null;
 	break;
@@ -4666,34 +4638,6 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 	max_dis = 2;
 
     switch (typ) {
-      case GF_FIRE:
-	destroy = set_fire_destroy;
-	break;
-      case GF_ACID:
-	destroy = set_acid_destroy;
-	break;
-      case GF_COLD:
-      case GF_SHARDS:
-      case GF_ICE:
-      case GF_FORCE:
-      case GF_SOUND:
-	destroy = set_cold_destroy;	/* just potions and flasks -DGK */
-	break;
-      case GF_ELEC:
-	destroy = set_elec_destroy;
-	break;
-      case GF_PLASMA:		   /* DGK */
-	destroy = set_plasma_destroy;	/* fire+lightning -DGK */
-	break;
-      case GF_METEOR:		   /* DGK */
-	destroy = set_meteor_destroy;	/* fire+shards -DGK */
-	break;
-      case GF_MANA:		   /* DGK */
-	destroy = set_mana_destroy;	/* everything -DGK */
-	break;
-      case GF_HOLY_ORB:	   /* DGK */
-	destroy = set_holy_destroy;	/* cursed stuff -DGK */
-	break;
       default:
 	destroy = set_null;
 	break;

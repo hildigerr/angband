@@ -866,10 +866,6 @@ int set_elec_destroy(inven_type *);
 int set_null(inven_type *);
 int set_acid_destroy(inven_type *);
 int set_fire_destroy(inven_type *);
-int set_plasma_destroy(inven_type *);
-int set_meteor_destroy(inven_type *);
-int set_holy_destroy(inven_type *);
-int set_mana_destroy(inven_type *);
 
 /* signals.c */
 void signals_ignore_tstp(void);
