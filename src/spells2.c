@@ -2708,8 +2708,6 @@ void fire_ball(int typ, int dir, int y, int x, int dam_hp, int max_dis)
 				    c_ptr->pl = TRUE;
 				    update_mon((int)c_ptr->m_idx);
 
-				    if (dam < 1)
-					dam = 1;	/* protect vs neg damage -CFT */
 				    k = mon_take_hit((int)c_ptr->m_idx, dam, TRUE);
 				    if (k >= 0)
 					tkill++;
@@ -3754,8 +3752,6 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
 		    r_ptr = &r_list[m_ptr->r_idx];
 		    monster_name(m_name, m_ptr);
 
-		    if (dam < 1)
-			dam = 1;   /* protect vs neg damage -CFT */
 		    } else {
 			(void)sprintf(out_val, pain_message((int)c_ptr->m_idx, dam),
 				      m_name);
@@ -4194,8 +4190,6 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 							 * monster if chaos polymorphed */
 			r_ptr = &r_list[m_ptr->r_idx];
 
-			if (dam < 1)
-			    dam = 1;
 		    } else if (c_ptr->m_idx == 1) {
 			dam = (dam_hp / (distance(i, j, y, x) + 1));
 			m_ptr = &m_list[monptr];

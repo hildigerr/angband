@@ -1010,6 +1010,9 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
     /* If another monster did the damage, hurt the monster by hand */
     if (who > 1) {
 
+	/* Paranoia -- No negative damage */
+	if (dam < 0) dam = 0;
+
 	/* Wake the monster up */
 	m_ptr->csleep = 0;
 
