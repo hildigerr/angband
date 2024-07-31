@@ -2630,45 +2630,6 @@ void fire_ball(int typ, int dir, int y, int x, int dam_hp, int max_dis)
 	        }
 #endif
 	    /* The ball hits and explodes.               */
-	    /* The explosion.                            */
-		for (i = y - max_dis; i <= y + max_dis; i++)
-		    for (j = x - max_dis; j <= x + max_dis; j++)
-			if (in_bounds(i, j) && (distance(y, x, i, j) <= max_dis) &&
-			 los(char_row, char_col, i, j) && los(y, x, i, j) &&
-			    floor_grid_bold(i, j) &&
-			    panel_contains(i, j) && (p_ptr->blind < 1)) {
-#ifdef TC_COLOR
-			    if (!no_color_flag)
-				textcolor(bolt_color(typ));
-#endif
-			    print('*', i, j);
-#ifdef TC_COLOR
-			    /* prob don't need here, but... -CFT */
-			    if (!no_color_flag)
-				textcolor(LIGHTGRAY);
-#endif
-			}
-		if (p_ptr->blind < 1) {
-		    put_qio();
-#ifdef MSDOS
-		    delay(25 * delay_spd);	/* milliseconds */
-#else
-		    usleep(25000 * delay_spd);	/* useconds */
-#endif
-		}
-
-	    /* now erase the ball, since effects below may use msg_print, and
-	     * pause indefinitely, so we want ball gone before then -CFT 
-	     */
-		for (i = y - max_dis; i <= y + max_dis; i++)
-		    for (j = x - max_dis; j <= x + max_dis; j++)
-			if (in_bounds(i, j) && (distance(y, x, i, j) <= max_dis) &&
-			 los(char_row, char_col, i, j) && los(y, x, i, j) &&
-			    floor_grid_bold(i, j) &&
-			    panel_contains(i, j) && (p_ptr->blind < 1)) {
-			    lite_spot(i, j);	/* draw what is below the '*' */
-			}
-		put_qio();
 
 	    /* First go over the area of effect, and destroy items...  Any
 	     * preexisting items will be affected, but items dropped by
@@ -2717,11 +2678,8 @@ void fire_ball(int typ, int dir, int y, int x, int dam_hp, int max_dis)
 					tkill++;
 				    c_ptr->pl = tmp;
 				}
-				lite_spot(i, j);	/* erase the ball... */
 			    }
 			}
-	    /* show ball of whatever */
-		put_qio();
 
 	    /* End  explosion.                   */
 		if (tkill == 1) {
@@ -2732,22 +2690,6 @@ void fire_ball(int typ, int dir, int y, int x, int dam_hp, int max_dis)
 		if (tkill >= 0)
 		    prt_experience();
 	    /* End ball hitting.                 */
-	    } else if (panel_contains(y, x) && (p_ptr->blind < 1)) {
-#ifdef TC_COLOR
-		if (!no_color_flag)
-		    textcolor(bolt_color(typ));
-#endif
-		print(bolt_char(y,x,ny,nx), y, x);
-		put_qio();
-#ifdef TC_COLOR
-		if (!no_color_flag)
-		    textcolor(LIGHTGRAY);
-#endif
-#ifdef MSDOS
-		delay(8 * delay_spd);	/* milliseconds */
-#else
-		usleep(8000 * delay_spd);	/* useconds */
-#endif
 	    }
 	    oldy = y;
 	    oldx = x;
@@ -2819,15 +2761,6 @@ void fire_bolt(int typ, int dir, int y, int x, int dam_hp)
 		if (i >= 0)
 		    prt_experience();
 
-	    } else if (panel_contains(y, x) && (p_ptr->blind < 1)) {
-		print(bolt_char(y,x,ny,nx), y, x);
-	    /* show the bolt */
-		put_qio();
-#ifdef MSDOS
-		delay(8 * delay_spd);	/* milliseconds */
-#else
-		usleep(8000 * delay_spd);	/* useconds */
-#endif
 	    }
 	}
 	oldy = y;
@@ -2891,51 +2824,9 @@ void line_spell(int typ, int dir, int y, int x, int dam)
 
 		(void) mon_take_hit((int)c_ptr->m_idx, tdam, TRUE); /* hurt it */
 	    }
-	    if (!(p_ptr->status & PY_BLIND)) {
-		for(t=1;t<=dis;t++)
-		    if (panel_contains(path[t][0],path[t][1])){
-#ifdef TC_COLOR
-			if (!no_color_flag) textcolor(bolt_color(typ));
-#endif
-			print(bolt_char(path[t][0],path[t][1],path[t-1][0], path[t-1][1]),
-			      path[t][0], path[t][1]);
-#ifdef TC_COLOR
-			if (!no_color_flag) textcolor(LIGHTGRAY);
-#endif
-		    }
-		put_qio();	/* show line */
-#ifdef MSDOS
-		delay(8 * delay_spd);
-#else
-		usleep(8000 * delay_spd);
-#endif      
-	    } /* if !blind */
 	} /* if hit monster */
     } while (!flag);		/* end of effects loop */
   
-    if (!(p_ptr->status & PY_BLIND)) { /* now erase it -CFT */
-	for(t=1;t<=dis;t++){	/* erase piece-by-piece... */
-	    lite_spot(path[t][0], path[t][1]);
-	    for(tdam=t+1;tdam<dis;tdam++){
-		if (panel_contains(path[tdam][0], path[tdam][1])){
-#ifdef TC_COLOR
-		    if (!no_color_flag) textcolor(bolt_color(typ));
-#endif
-		    print(bolt_char(path[tdam][0],path[tdam][1],path[tdam-1][0],
-				    path[tdam-1][1]), path[tdam][0], path[tdam][1]);
-#ifdef TC_COLOR
-		    if (!no_color_flag) textcolor(LIGHTGRAY);
-#endif
-		}
-	    }
-	    put_qio();
-#ifdef MSDOS
-	    delay(8 * delay_spd);
-#else
-	    usleep(8000 * delay_spd);
-#endif      
-	} /* for each piece */
-    } /* if !blind */
 }
 
 
@@ -4612,40 +4503,6 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 	break;
     }
 
-    if (!(p_ptr->status & PY_BLIND)) { /* only bother if the player can see */
-	for (i = y - max_dis; i <= y + max_dis; i++)
-	    for (j = x - max_dis; j <= x + max_dis; j++)
-		if (in_bounds(i, j) && (distance(y, x, i, j) <= max_dis) &&
-		    los(y, x, i, j) && floor_grid_bold(i, j) &&
-		    panel_contains(i, j)) {
-#ifdef TC_COLOR
-		    if (!no_color_flag)
-			textcolor(bolt_color(typ));
-#endif
-		    print('*', i, j);
-#ifdef TC_COLOR
-		    if (!no_color_flag)
-			textcolor(LIGHTGRAY);	/* prob don't need here, but... -CFT */
-#endif
-		}
-	put_qio();
-#ifdef MSDOS
-	delay(25 * delay_spd);	   /* milliseconds */
-#else
-	usleep(25000 * delay_spd); /* useconds */
-#endif
- 
-/* now erase the ball, since effects below may use msg_print, and pause
- * indefinitely, so we want ball gone before then -CFT 
- */
-	for (i = y - max_dis; i <= y + max_dis; i++)
-	    for (j = x - max_dis; j <= x + max_dis; j++)
-		if (in_bounds(i, j) && (distance(y, x, i, j) <= max_dis) &&
-		    los(y, x, i, j) && floor_grid_bold(i, j) &&
-		    panel_contains(i, j))
-		    lite_spot(i, j);   /* draw what is below the '*' */
-	put_qio();
-    }
 
 /* first, go over area of affect and destroy preexisting items. This change
  * means that any treasure dropped by killed monsters is safe from the effects
@@ -5147,14 +5004,5 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 		    }
 		}
 	    }
-/* show the ball of gas */
-    put_qio();
-
-/* erase ball and redraw */
-    for (i = (y - max_dis); i <= (y + max_dis); i++)
-	for (j = (x - max_dis); j <= (x + max_dis); j++)
-	    if (in_bounds(i, j) && panel_contains(i, j) &&
-		(distance(y, x, i, j) <= max_dis))
-		lite_spot(i, j);
 }
 

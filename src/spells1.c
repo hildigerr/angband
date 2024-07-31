@@ -827,6 +827,7 @@ static char bolt_char(int y, int x, int ny, int nx)
  * We "pre-calculate" the blast area only in part for efficiency.
  * More importantly, this lets us do "explosions" from the "inside" out.
  * This results in a more logical distribution of "blast" treasure.
+ * It also produces a better (in my opinion) animation of the explosion.
  * It could be (but is not) used to have the treasure dropped by monsters
  * in the middle of the explosion fall "outwards", and then be damaged by
  * the blast as it spreads outwards towards the treasure drop location.
@@ -940,6 +941,21 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 	    grids++;
 	}
 
+	/* XXX XXX Hack -- Display "beam" grids */
+	if (!blind && !(flg & PROJECT_HIDE) &&
+	    (dist > 0) && (flg & PROJECT_BEAM) &&
+	    panel_contains(y, x) && los(char_row, char_col, y, x)) {
+
+	    /* Hack -- Visual effect -- "explode" the grids */
+#ifdef TC_COLOR
+	    if (!no_color_flag) textcolor(bolt_color(typ));
+#endif
+	    print('*', y, x);
+#ifdef TC_COLOR
+	    if (!no_color_flag) textcolor(LIGHTGRAY);
+#endif
+	}
+
 	/* Check the grid */
 	c_ptr = &cave[y][x];
 
@@ -966,6 +982,28 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 
 	/* Nothing can travel furthur than the maximal distance */
 	if (dist > OBJ_BOLT_RANGE) break;
+
+	/* Hack -- Visual effects -- Display, Highlight, Flush, Pause, Erase */
+	/* Note that we consider the "bolt" to be "self illuminating" */
+	if (!blind && !(flg & PROJECT_HIDE) &&
+	    panel_contains(y9, x9) && los(char_row, char_col, y9, x9)) {
+
+#ifdef TC_COLOR
+	    if (!no_color_flag) textcolor(bolt_color(typ));
+#endif
+	    print(bolt_char(y, x, y9, x9), y9, x9);
+#ifdef TC_COLOR
+	    if (!no_color_flag) textcolor(LIGHTGRAY);
+#endif
+	    move_cursor_relative(y9, x9);
+	    put_qio();
+#ifdef MSDOS
+	    delay(8 * delay_spd);
+#else
+	    usleep(8000 * delay_spd);
+#endif
+	    lite_spot(y9, x9);
+	}
 
 	/* Save the new location */
 	y = y9;
@@ -1022,6 +1060,54 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
     if (!grids) return (FALSE);
 
 
+    /* Scan the "blast area" for visible locations, and display them */
+    if (!blind && !(flg & PROJECT_HIDE)) {
+
+	/* Then do the "blast", from inside out */
+	for (t = 0; t <= rad; t++) {
+
+	    /* Dump everything with this radius */
+	    for (i = gm[t]; i < gm[t+1]; i++) {        
+		if (panel_contains(gy[i], gx[i])) {
+		    drawn++;
+#ifdef TC_COLOR
+		    if (!no_color_flag) textcolor(bolt_color(typ));
+#endif
+		    print('*', gy[i], gx[i]);
+#ifdef TC_COLOR
+		    if (!no_color_flag) textcolor(LIGHTGRAY);
+#endif
+		}
+	    }
+
+	    /* Flush each "radius" seperately */
+	    /* Note that the cursor may go offscreen */
+	    if (gm[t+1] > gm[t]) {
+		move_cursor_relative(y2, x2);
+		put_qio();
+#ifdef MSDOS
+		delay(10 * delay_spd);
+#else
+		usleep(10000 * delay_spd);
+#endif
+	    }
+	}
+
+	/* Erase the explosion drawn above */
+	for (i = 0; i < grids; i++) {
+	    if (panel_contains(gy[i], gx[i])) {
+		lite_spot(gy[i], gx[i]);
+	    }
+	}
+
+	/* Flush the erasing */
+	if (drawn) {
+	    move_cursor_relative(y2, x2);
+	    put_qio();
+	}
+    }
+
+
     /* Start with "dist" of zero */
     dist = 0;
 
@@ -1059,6 +1145,8 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 	/* Affect real monsters (excluding the caster) */
 	if ((c_ptr->m_idx > 1) && (c_ptr->m_idx != who)) {
 
+	    /* XXX Perhaps hilite the monster in some way */
+	    
 	    /* Damage the monster */
 	    if (project_m(who, dist, y, x, dam, typ, flg)) notice = TRUE;
 	}
