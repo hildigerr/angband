@@ -3642,107 +3642,7 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 
     res = NO_RES;		/* assume until we know different -CFT */
     switch ( typ ){		/* check for resists... */
-      case GF_MISSILE:	/* pure damage, no resist possible */
-	break;
-      case GF_ELEC:
-	if (r_ptr->cflags2 & MF2_IM_ELEC) {
-	    res = RESIST;
-	    *dam /= 9;
-	    if (m_ptr->ml)
-		l_list[m_ptr->r_idx].r_cflags2 |= MF2_IM_ELEC;
-        }
-	break;
-      case GF_POIS:
-	if (r_ptr->cflags2 & MF2_IM_POIS) {
-	    res = RESIST;
-	    *dam /= 9;
-	    if (m_ptr->ml)
-		l_list[m_ptr->r_idx].r_cflags2 |= MF2_IM_POIS;
-        }
-	break;
-      case GF_ACID:
-	if (r_ptr->cflags2 & MF2_IM_ACID) {
-	    res = RESIST;
-	    *dam /= 9;
-	    if (m_ptr->ml)
-		l_list[m_ptr->r_idx].r_cflags2 |= MF2_IM_ACID;
-        }
-	break;
-      case GF_COLD:
-	if (r_ptr->cflags2 & MF2_IM_COLD) {
-	    res = RESIST;
-	    *dam /= 9;
-	    if (m_ptr->ml)
-		l_list[m_ptr->r_idx].r_cflags2 |= MF2_IM_COLD;
-        }
-	break;
-      case GF_FIRE:
-	if (r_ptr->cflags2 & MF2_IM_FIRE) {
-	    res = RESIST;
-	    *dam /= 9;
-	    if (m_ptr->ml)
-		l_list[m_ptr->r_idx].r_cflags2 |= MF2_IM_FIRE;
-        }
-	break;
-      case GF_HOLY_ORB:
-	if (r_ptr->cflags2 & MF2_EVIL) {
-	    *dam *= 2;
-	    res = SUSCEPT;
-	    if (m_ptr->ml)
-		l_list[m_ptr->r_idx].r_cflags2 |= MF2_EVIL;
-        }
-	break;
-      case GF_ARROW:		/* for now, no defense... maybe it should have a
-				   chance of missing? -CFT */
-	break;
-      case GF_PLASMA:		/* maybe MF2_IM_ELEC (ball lightning is supposed
-				   to be plasma) or MF2_IM_FIRE (since it's hot)? -CFT */
-	if (!strncmp("Plasma", r_ptr->name, 6) ||
-	    (r_ptr->spells3 & MS3_BR_PLAS)){ /* if is a "plasma" monster,
-					      or can breathe plasma, then
-					      we assume it should be immune.
-					      plasma bolts don't count, since
-					      mage-types could have them, and
-					      not deserve plasma-resist -CFT */
-	    res = RESIST;
-	    *dam *= 3;		/* these 2 lines give avg dam of .33, ranging */
-	    *dam /= (randint(6)+6); /* from .427 to .25 -CFT */
-	}
-	break;
-      case GF_NETHER:		/* I assume nether is an evil, necromantic force,
-				   so it doesn't hurt undead, and hurts evil less -CFT */
-	if (r_ptr->cflags2 & MF2_UNDEAD) {
-	    res = IMMUNE;
-	    *dam = 0;
-	    if (m_ptr->ml)
-		l_list[m_ptr->r_idx].r_cflags2 |= MF2_UNDEAD;
-        }
-	else if (r_ptr->spells2 & MS2_BR_LIFE) { /* if can breath nether, should get
-						  good resist to damage -CFT */
-	    res = RESIST;
-	    *dam *= 3;  /* these 2 lines give avg dam of .33, ranging */
-	    *dam /= (randint(6)+6); /* from .427 to .25 -CFT */
-	}
-	else if (r_ptr->cflags2 & MF2_EVIL) {
-	    *dam /= 2;	/* evil takes *2 for holy, so /2 for this... -CFT */
-	    res = SOME_RES;
-	    if (m_ptr->ml)
-		l_list[m_ptr->r_idx].r_cflags2 |= MF2_EVIL;
-        }
-	break;
-      case GF_WATER:	/* water elementals should resist.  anyone else? -CFT */
-	if ((r_ptr->r_char == 'E') && (r_ptr->name[0] == 'W')){
-	    res = IMMUNE;
-	    *dam = 0; /* water spirit, water ele, and Waldern -CFT */
-        }
-	break;
       case GF_CHAOS:
-	if (r_ptr->spells2 & MS2_BR_CHAO){ /* assume anything that breathes
-					    choas is chaotic enough to deserve resistance... -CFT */
-	    res = RESIST;
-	    *dam *= 3;  /* these 2 lines give avg dam of .33, ranging */
-	    *dam /= (randint(6)+6); /* from .427 to .25 -CFT */
-        }
 	if ((*dam <= m_ptr->hp) && /* don't bother if it's gonna die */
 	    !(r_ptr->spells2 & MS2_BR_CHAO) &&
 	    !(r_ptr->cflags2 & MF2_UNIQUE) &&
@@ -3768,19 +3668,7 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 	    }
 	}
 	break;
-      case GF_SHARDS:
-	if (r_ptr->spells2 & MS2_BR_SHAR){ /* shard breathers resist -CFT */
-	    res = RESIST;
-	    *dam *= 3;  /* these 2 lines give avg dam of .33, ranging */
-	    *dam /= (randint(6)+6); /* from .427 to .25 -CFT */
-        }
-	break;
       case GF_SOUND:
-      if (r_ptr->spells2 & MS2_BR_SOUN){ /* ditto for sound -CFT */
-	  res = RESIST;
-	  *dam *= 2;
-	  *dam /= (randint(6)+6);
-      }
 	if ((*dam <= m_ptr->hp) && /* don't bother if it's dead */
 	    !(r_ptr->spells2 & MS2_BR_SOUN) &&
 	    !(r_ptr->spells3 & MS3_BR_WALL)) { /* sound and impact breathers
@@ -3798,15 +3686,6 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
   	}
 	break;
       case GF_CONFUSION:
-	if (r_ptr->spells2 & MS2_BR_CONF){ 
-	    res = RESIST;
-	    *dam *= 2;
-	    *dam /= (randint(6)+6);
-        }
-	else if (r_ptr->cflags2 & MF2_CHARM_SLEEP){
-	    res = SOME_RES;
-	    *dam /= 2; /* only some resist, but they also avoid confuse -CFT */
-        }
 	if ((*dam <= m_ptr->hp) && /* don't bother if it's dead */
 	    !(r_ptr->cflags2 & MF2_CHARM_SLEEP) &&
 	    !(r_ptr->spells2 & MS2_BR_CHAO) && /* choatics hard to confuse */
@@ -3823,29 +3702,7 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 	    }
 	}
         break;
-      case GF_DISENCHANT:
-	if ((r_ptr->spells2 & MS2_BR_DISE) ||
-	    !strncmp("Disen", r_ptr->name, 5)) {
-	    res = RESIST;
-	    *dam *= 3;  /* these 2 lines give avg dam of .33, ranging */
-	    *dam /= (randint(6)+6); /* from .427 to .25 -CFT */
-        }
-	break;
-      case GF_NEXUS:
-	if ((r_ptr->spells2 & MS2_BR_NETH) ||
-	    !strncmp("Nexus", r_ptr->name, 5)) {
-	    res = RESIST;
-	    *dam *= 3;  /* these 2 lines give avg dam of .33, ranging */
-	    *dam /= (randint(6)+6); /* from .427 to .25 -CFT */
-        }
-	break;
       case GF_FORCE:
-	if (r_ptr->spells3 & MS3_BR_WALL){ /* breath ele force resists
-					    ele force -CFT */
-	    res = RESIST;
-	    *dam *= 3;  /* these 2 lines give avg dam of .33, ranging */
-	    *dam /= (randint(6)+6); /* from .427 to .25 -CFT */
-        }
 	if ((*dam <= m_ptr->hp) &&
 	    !(r_ptr->spells2 & MS2_BR_SOUN) &&
 	    !(r_ptr->spells3 & MS3_BR_WALL)){ /* sound and impact breathers
@@ -3862,58 +3719,8 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 	    }
 	}
 	break;
-      case GF_INERTIA:
-	if (r_ptr->spells3 & MS3_BR_SLOW){ /* if can breath inertia, then
-					    resist it. */
-	    res = RESIST;
-	    *dam *= 3;  /* these 2 lines give avg dam of .33, ranging */
-	    *dam /= (randint(6)+6); /* from .427 to .25 -CFT */
-        }
-	break;
-      case GF_LITE:
-	if (r_ptr->spells3 & MS3_BR_LITE){ /* breathe light to res light */
-	    res = RESIST;
-	    *dam *= 2;
-	    *dam /= (randint(6)+6);
-        }
-	else if (r_ptr->cflags2 & MF2_HURT_LITE){
-	    res = SUSCEPT;
-	    *dam *= 2; /* hurt bad by light */
-        }
-	else if (r_ptr->spells3 & MS3_BR_DARK){ /* breathe dark gets hurt */
-	    res = SUSCEPT;
-	    *dam = (*dam * 3)/2;
-        }
-	break;
-      case GF_DARK:
-	if (r_ptr->spells2 & MS3_BR_DARK){ /* shard breathers resist -CFT */
-	    res = RESIST;
-	    *dam *= 2;
-	    *dam /= (randint(6)+6);
-        }
-	else if (r_ptr->cflags2 & MF2_HURT_LITE){
-	    res = SOME_RES;
-	    *dam /= 2; /* hurt bad by light, so not hurt bad by dark */
-        }
-	else if (r_ptr->spells3 & MS3_BR_LITE){ /* breathe light gets hurt */
-	    res = SUSCEPT;
-	    *dam = (*dam * 3)/2;
-        }
-	break;
-      case GF_TIME:
-	if (r_ptr->spells3 & MS3_BR_TIME){ /* time breathers resist -CFT */
-	    res = RESIST;
-	    *dam *= 3;  /* these 2 lines give avg dam of .33, ranging */
-	    *dam /= (randint(6)+6); /* from .427 to .25 -CFT */
-        }
-	break;
       case GF_GRAVITY:
-	if (r_ptr->spells3 & MS3_BR_GRAV){ /* breathers resist -CFT */
-	    res = RESIST;
-	    *dam *= 3;  /* these 2 lines give avg dam of .33, ranging */
-	    *dam /= (randint(6)+6); /* from .427 to .25 -CFT */
-        }
-	else {
+	if (!(r_ptr->spells3 & MS3_BR_GRAV)){ /* breathers resist -CFT */
 	    if (*dam <= m_ptr->hp) {
 		teleport_away(cave[m_ptr->fy][m_ptr->fx].m_idx, 5);
 		*y = m_ptr->fy; /* teleported, so let outside world know monster moved! */
@@ -3921,19 +3728,7 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 	    }
         }
 	break;
-      case GF_MANA: /* raw blast of power. no way to resist, is there? */
-	break;
-      case GF_METEOR: /* GF_METEOR is basically a powerful magic-missile
-			 ball spell.  I only made it a different type
-			 so I could make it a different color -CFT */
-	break;
       case GF_ICE: /* ice is basically frost + cuts + stun -CFT */
-	if (r_ptr->cflags2 & MF2_IM_COLD) {
-	    res = RESIST;
-	    *dam /= 9;
-	    if (m_ptr->ml)
-		l_list[m_ptr->r_idx].r_cflags2 |= MF2_IM_COLD;
-        }
 	if ((*dam <= m_ptr->hp) &&
 	    !(r_ptr->spells2 & MS2_BR_SOUN) &&
 	    !(r_ptr->spells3 & MS3_BR_WALL)){  /* sound and impact breathers
@@ -3963,18 +3758,6 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
     else switch (res) {
       case NO_RES:
 	sprintf(outval, "%sis hit.",cdesc);
-	break;
-      case SOME_RES:
-	sprintf(outval, "%sresists somewhat.",cdesc);
-	break;
-      case RESIST:
-	sprintf(outval, "%sresists.",cdesc);
-	break;
-      case IMMUNE:
-	sprintf(outval, "%sis immune.",cdesc);
-	break;
-      case SUSCEPT:
-	sprintf(outval, "%sis hit hard.",cdesc);
 	break;
       case CONFUSED:
 	sprintf(outval, "%sis confused.",cdesc);

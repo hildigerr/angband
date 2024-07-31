@@ -591,6 +591,7 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
     /* Monster info */
     register monster_type *m_ptr = &m_list[c_ptr->m_idx];
     register monster_race *r_ptr = &r_list[m_ptr->r_idx];
+    register monster_lore *l_ptr = &l_list[m_ptr->r_idx];
 
 
     /* Player blind-ness */
@@ -642,32 +643,218 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
     /* Analyze the damage type */
     switch (typ) {
 
+      /* Magic Missile -- pure damage */
+      case GF_MISSILE:
+	break;
+
       /* Acid */
       case GF_ACID:
+	if (r_ptr->cflags2 & MF2_IM_ACID) {
+	    note = " resists.";
+	    dam /= 9;
+	    if (seen) l_ptr->r_cflags2 |= MF2_IM_ACID;
+	}
 	break;
 
       /* Electricity */
       case GF_ELEC:
+	if (r_ptr->cflags2 & MF2_IM_ELEC) {
+	    note = " resists.";
+	    dam /= 9;
+	    if (seen) l_ptr->r_cflags2 |= MF2_IM_ELEC;
+	}
 	break;
 
       /* Fire damage */
       case GF_FIRE:
+	if (r_ptr->cflags2 & MF2_IM_FIRE) {
+	    note = " resists.";
+	    dam /= 9;
+	    if (seen) l_ptr->r_cflags2 |= MF2_IM_FIRE;
+	}
 	break;
 
       /* Cold */
       case GF_COLD:
+	if (r_ptr->cflags2 & MF2_IM_COLD) {
+	    note = " resists.";
+	    dam /= 9;
+	    if (seen) l_ptr->r_cflags2 |= MF2_IM_COLD;
+	}
+	break;
+
+      /* Poison */
+      case GF_POIS:
+	if (r_ptr->cflags2 & MF2_IM_POIS) {
+	    note = " resists.";
+	    dam /= 9;
+	    if (seen) l_ptr->r_cflags2 |= MF2_IM_POIS;
+	}
 	break;
 
       /* Holy Orb -- hurts Evil */
       case GF_HOLY_ORB:
+	if (r_ptr->cflags2 & MF2_EVIL) {
+	    dam *= 2;
+	    note = " is hit hard."
+	    if (seen) l_ptr->r_cflags2 |= MF2_EVIL;
+	}
 	break;
 
-      /* Plasma */
+      /* Arrow -- XXX no defense */
+      case GF_ARROW:
+	break;
+
+      /* Plasma -- XXX perhaps check ELEC or FIRE */
       case GF_PLASMA:
+	if (!strncmp("Plasma", r_ptr->name, 6) ||
+	    (r_ptr->spells3 & MS3_BR_PLAS)) {
+	    note = " resists.";
+	    dam *= 3; dam /= (randint(6)+6);
+	}
 	break;
 
-      /* Shards */
+      /* Nether -- see above */
+      case GF_NETHER:
+	if (r_ptr->cflags2 & MF2_UNDEAD) {
+	    note = " is immune.";
+	    dam = 0;
+	    if (seen) l_ptr->r_cflags2 |= MF2_UNDEAD;
+	}
+	else if (r_ptr->spells2 & MS2_BR_LIFE) {
+	    note = " resists.";
+	    dam *= 3; dam /= (randint(6)+6);
+	}
+	else if (r_ptr->cflags2 & MF2_EVIL) {
+	    dam /= 2;
+	    note = " resists somewhat."
+	    if (seen) l_ptr->r_cflags2 |= MF2_EVIL;
+	}
+	break;
+
+      /* Water (acid) damage -- Water spirits/elementals and "Waldern" are immune */
+      case GF_WATER:
+	if ((r_ptr->r_char == 'E') && (r_ptr->name[0] == 'W')) {
+	    note = " is immune.";
+	    dam = 0;
+	}
+	break;
+
+      /* Chaos -- Chaos breathers resist */
+      case GF_CHAOS:
+	if (r_ptr->spells2 & MS2_BR_CHAO) {
+	    note = " resists.";
+	    dam *= 3; dam /= (randint(6)+6);
+	}
+	break;
+
+      /* Shards -- Shard breathers resist */
       case GF_SHARDS:
+	if (r_ptr->spells2 & MS2_BR_SHAR) {
+	    note = " resists.";
+	    dam *= 3; dam /= (randint(6)+6);
+	}
+	break;
+
+      /* Sound -- Sound breathers resist */
+      case GF_SOUND:
+	if (r_ptr->spells2 & MS2_BR_SOUN) {
+	    note = " resists.";
+	    dam *= 2; dam /= (randint(6)+6);
+	}
+	break;
+
+      /* Confusion */
+      case GF_CONFUSION:
+	if (r_ptr->spells2 & MS2_BR_CONF) { 
+	    note = " resists.";
+	    dam *= 2; dam /= (randint(6)+6);
+	}
+	else if (r_ptr->cflags2 & MF2_CHARM_SLEEP) {
+	    note = " resists somewhat.";
+	    dam /= 2;
+	}
+	break;
+
+      /* Disenchantment -- Breathers and Disenchanters resist */
+      case GF_DISENCHANT:
+	if ((r_ptr->spells2 & MS2_BR_DISE) ||
+	    !strncmp("Disen", r_ptr->name, 5)) {
+	    note = " resists.";
+	    dam *= 3; dam /= (randint(6)+6);
+	}
+	break;
+
+      /* Nexus -- Breathers and Existers resist */
+      case GF_NEXUS:
+	if ((r_ptr->spells2 & MS2_BR_NETH) ||
+	    !strncmp("Nexus", r_ptr->name, 5)) {
+	    note = " resists.";
+	    dam *= 3; dam /= (randint(6)+6);
+	}
+	break;
+
+      /* Force */
+      case GF_FORCE:
+	if (r_ptr->spells3 & MS3_BR_WALL) {
+	    note = " resists.";
+	    dam *= 3; dam /= (randint(6)+6);
+	}
+	break;
+
+      /* Inertia -- breathers resist */
+      case GF_INERTIA:
+	if (r_ptr->spells3 & MS3_BR_SLOW) {
+	    note = " resists.";
+	    dam *= 3; dam /= (randint(6)+6);
+	}
+
+      /* Lite -- opposite of Dark */
+      case GF_LITE:
+	if (r_ptr->spells3 & MS3_BR_LITE) {
+	    note = " resists.";
+	    dam *= 2; dam /= (randint(6)+6);
+	}
+	else if (r_ptr->cflags2 & MF2_HURT_LITE) {
+	    note = " is hit hard.";
+	    dam *= 2;
+	}
+	else if (r_ptr->spells3 & MS3_BR_DARK) {
+	    note = " is hit hard.";
+	    dam = dam * 3 / 2;
+	}
+	break;
+
+      /* Dark -- opposite of Lite */
+      case GF_DARK:
+	if (r_ptr->spells2 & MS3_BR_DARK) {
+	    note = " resists.";
+	    dam *= 2; dam /= (randint(6)+6);
+	}
+	else if (r_ptr->cflags2 & MF2_HURT_LITE) {
+	    note = " resists somewhat.";
+	    dam /= 2;
+	}
+	else if (r_ptr->spells3 & MS3_BR_LITE) {
+	    note = " is hit hard.";
+	    dam = dam * 3 / 2;
+	}
+	break;
+
+      /* Time -- breathers resist */
+      case GF_TIME:
+	if (r_ptr->spells3 & MS3_BR_TIME) {
+	    note = " resists.";
+	    dam *= 3; dam /= (randint(6)+6);
+	}
+	break;
+
+      /* Gravity -- breathers resist */
+      case GF_GRAVITY:
+	if (r_ptr->spells3 & MS3_BR_GRAV) {
+	    note = " resists.";
+	    dam *= 3; dam /= (randint(6)+6);
+	}
 	break;
 
       /* Pure damage */
@@ -680,6 +867,11 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 
       /* Ice -- Cold + Cuts + Stun */
       case GF_ICE:
+	if (r_ptr->cflags2 & MF2_IM_COLD) {
+	    note = " resists.";
+	    dam /= 9;
+	    if (seen) l_ptr->r_cflags2 |= MF2_IM_COLD;
+	}
 	break;
     }
 
