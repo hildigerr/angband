@@ -3684,10 +3684,6 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 	    !(r_ptr->spells2 & MS2_BR_CHAO) &&
 	    !(r_ptr->cflags2 & MF2_UNIQUE) &&
 	    (randint(90) > r_ptr->level)) { /* then we'll polymorph it -CFT */
-	    res = CHANGED;
-	    if (poly(cave[*y][*x].m_idx))
-		*dam = 0; /* new monster was not hit by choas breath.  This also
-			     makes things easier to handle */
 	} /* end of choas-poly.  If was poly-ed don't bother confuse... it's
 	     too hectic to keep track of... -CFT */
 	else if (!(r_ptr->cflags2 & MF2_CHARM_SLEEP) &&
@@ -3786,9 +3782,7 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 	msg_print("Unknown typ in spell_hit_monster.  This may mean trouble.");
     } /* end switch for saving throws and extra effects */
     
-    if (res == CHANGED)
-	sprintf(outval, "%schanges!",cdesc);
-    else if ((*dam > m_ptr->hp) &&
+    if ((*dam > m_ptr->hp) &&
 	     (by_player || !(r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE))) {
 	res = DEAD;
     }

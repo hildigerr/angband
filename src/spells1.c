@@ -584,6 +584,7 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
  */
 static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 {
+    register int i;
 
     /* Cave grid */
     register cave_type *c_ptr = &cave[y][x];
@@ -602,6 +603,10 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 
     /* Were the "effects" obvious (if seen)? */
     bool obvious = TRUE;
+
+
+    /* Polymorph setting (true or false) */
+    int do_poly = 0;
 
 
     /* "Damage" factor.  Multiply by "mul/div" */
@@ -742,9 +747,11 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 
       /* Chaos -- Chaos breathers resist */
       case GF_CHAOS:
+	do_poly = TRUE;
 	if (r_ptr->spells2 & MS2_BR_CHAO) {
 	    note = " resists.";
 	    dam *= 3; dam /= (randint(6)+6);
+	    do_poly = FALSE;
 	}
 	break;
 
@@ -876,12 +883,47 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
     }
 
 
+
+
+    /* "Unique" monsters cannot be polymorphed */
+    if (r_ptr->cflags2 & MF2_UNIQUE) do_poly = FALSE;
+
+
     /* Check for death */
     if (dam > m_ptr->hp) {
 
 	/* Extract method of death */
 	note = note_dies;
     }
+
+    /* Handle "polymorph" -- monsters get a saving throw */
+    else if (do_poly && (randint(90) > r_ptr->level)) {
+
+	/* Pick a "new" monster race */
+	i = poly_r_idx(m_ptr->r_idx);
+
+	/* Handle polymorh */
+	if (i != m_ptr->r_idx) {
+
+	    /* Monster polymorphs */
+	    note = " changes!";
+
+	    /* Turn off the damage */
+	    dam = 0;
+
+	    /* "Kill" the "old" monster */
+	    delete_monster_idx(c_ptr->m_idx);
+
+	    /* Place the new monster where the old one was */
+	    place_monster(y, x, i, FALSE);
+
+	    /* Get new monster */
+	    m_ptr = &m_list[cave[y][x].m_idx];
+	    r_ptr = &r_list[m_ptr->r_idx];
+	    l_ptr = &l_list[m_ptr->r_idx];
+	}
+    }
+
 
 
 
