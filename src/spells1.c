@@ -1007,12 +1007,39 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 	msg_print(note);
     }	
 
+    /* If another monster did the damage, hurt the monster by hand */
+    if (who > 1) {
+
+	/* Wake the monster up */
+	m_ptr->csleep = 0;
+
+	/* Hurt the monster */
+	m_ptr->hp -= dam;
+
+	/* Dead monster */
+	if (m_ptr->hp < 0) {
+
+ 	    /* Generate treasure (Hack -- handle creeping coins) */
+	    coin_type = 0;
+	    get_coin_type(r_ptr);
+	    monster_death(m_ptr);
+	    coin_type = 0;
+
+	    /* Delete the monster */
+	    delete_monster_idx(c_ptr->m_idx);
+	}
+    }
+
+    /* If the player did it, give him experience */
+    else {
+
 	/* Hurt the monster, display fear msg's */
 	if (mon_take_hit(c_ptr->m_idx, dam, TRUE)) {
 
 	    /* Give experience if killed */
 	    prt_experience();
 	}
+    }
 
     /* "Fix" the monster, and redraw him (or erase him) */
     update_mon(c_ptr->m_idx);
@@ -1167,6 +1194,7 @@ static char bolt_char(int y, int x, int ny, int nx)
  *
  * The available "flags" are described where "PROJECT_xxxx" are defined
  *
+ * The player will only get "experience" for monsters killed by himself
  * Unique monsters can only be destroyed by attacks from the player
  *
  * Only 256 grids can be affected per projection, limiting the effective

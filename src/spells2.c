@@ -3756,25 +3756,6 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
 
 		    if (dam < 1)
 			dam = 1;   /* protect vs neg damage -CFT */
-		    m_ptr->hp = m_ptr->hp - dam;
-		    m_ptr->csleep = 0;
-
-
-		    if (m_ptr->hp < 0) {
-			object_level = (dun_level + r_ptr->level) >> 1;
-			coin_type = 0;
-			get_coin_type(r_ptr);
-			treas = monster_death(m_ptr);
-			coin_type = 0;
-			if (m_ptr->ml || (r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE)) {
-			    tmp = (l_list[m_ptr->r_idx].r_cflags1 & CM1_TREASURE)
-				>> CM1_TR_SHIFT;
-			    if (tmp > ((treas & CM1_TREASURE) >> CM1_TR_SHIFT))
-				treas = (treas & ~CM1_TREASURE) | (tmp << CM1_TR_SHIFT);
-			    l_list[m_ptr->r_idx].r_cflags1 = treas |
-				(l_list[m_ptr->r_idx].r_cflags1 & ~CM1_TREASURE);
-			}
-			delete_monster_idx(c_ptr->m_idx);
 		    } else {
 			(void)sprintf(out_val, pain_message((int)c_ptr->m_idx, dam),
 				      m_name);
@@ -4213,33 +4194,8 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 							 * monster if chaos polymorphed */
 			r_ptr = &r_list[m_ptr->r_idx];
 
-		    /*
-		     * can not call mon_take_hit here, since player does not
-		     * get experience for kill 
-		     */
 			if (dam < 1)
 			    dam = 1;
-			m_ptr->hp = m_ptr->hp - dam;
-			m_ptr->csleep = 0;
-
-
-			if (m_ptr->hp < 0) {
-			    object_level = (dun_level + r_ptr->level) >> 1;
-				coin_type = 0;
-				get_coin_type(r_ptr);
-			    treas = monster_death(m_ptr);
-				coin_type = 0;
-				/* recall even invisible uniques -CWS */
-			    if (m_ptr->ml || (r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE)) {
-				tmp = (l_list[m_ptr->r_idx].r_cflags1 & CM1_TREASURE)
-				    >> CM1_TR_SHIFT;
-				if (tmp > ((treas & CM1_TREASURE) >> CM1_TR_SHIFT))
-				    treas = (treas & ~CM1_TREASURE) | (tmp << CM1_TR_SHIFT);
-				l_list[m_ptr->r_idx].r_cflags1 = treas |
-				    (l_list[m_ptr->r_idx].r_cflags1 & ~CM1_TREASURE);
-			    }
-				delete_monster_idx(c_ptr->m_idx);
-			}
 		    } else if (c_ptr->m_idx == 1) {
 			dam = (dam_hp / (distance(i, j, y, x) + 1));
 			m_ptr = &m_list[monptr];
