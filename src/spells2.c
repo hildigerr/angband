@@ -3683,10 +3683,6 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 	msg_print("Unknown typ in spell_hit_monster.  This may mean trouble.");
     } /* end switch for saving throws and extra effects */
     
-    if ((*dam > m_ptr->hp) &&
-	     (by_player || !(r_list[m_ptr->r_idx].cflags2 & MF2_UNIQUE))) {
-	res = DEAD;
-    }
     else switch (res) {
       case NO_RES:
 	sprintf(outval, "%sis hit.",cdesc);
@@ -3763,12 +3759,6 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
 		    m_ptr->hp = m_ptr->hp - dam;
 		    m_ptr->csleep = 0;
 
-/* prevent unique monster from death by other monsters.  It causes trouble
- * (monster not marked as dead, quest monsters don't satisfy quest, etc).
- * So, we let them live, but extremely wimpy. -CFT
- */
-		    if ((r_ptr->cflags2 & MF2_UNIQUE) && (m_ptr->hp < 0))
-			m_ptr->hp = 0;
 
 		    if (m_ptr->hp < 0) {
 			object_level = (dun_level + r_ptr->level) >> 1;
@@ -4232,13 +4222,6 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 			m_ptr->hp = m_ptr->hp - dam;
 			m_ptr->csleep = 0;
 
-/* prevent unique monster from death by other monsters.  It causes trouble (monster not
- * marked as dead, quest monsters don't satisfy quest, etc).  So, we let
- * them live, but extremely wimpy.  This isn't great, because monster might heal
- * itself before player's next swing... -CFT
- */
-			if ((r_ptr->cflags2 & MF2_UNIQUE) && (m_ptr->hp < 0))
-			    m_ptr->hp = 0;
 
 			if (m_ptr->hp < 0) {
 			    object_level = (dun_level + r_ptr->level) >> 1;

@@ -905,6 +905,14 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
     if (r_ptr->cflags2 & MF2_UNIQUE) do_poly = FALSE;
 
 
+    /* "Unique" monsters can only be "killed" by the player */
+    if (r_ptr->cflags2 & MF2_UNIQUE) {
+
+	/* Uniques may only be killed by the player */
+	if ((who > 1) && (dam > m_ptr->hp)) dam = m_ptr->hp;
+    }
+
+
     /* Check for death */
     if (dam > m_ptr->hp) {
 
@@ -1158,6 +1166,8 @@ static char bolt_char(int y, int x, int ny, int nx)
  *   flg: Extra flags, see below
  *
  * The available "flags" are described where "PROJECT_xxxx" are defined
+ *
+ * Unique monsters can only be destroyed by attacks from the player
  *
  * Only 256 grids can be affected per projection, limiting the effective
  * "radius" of standard ball attacks to nine units (diameter nineteen).
