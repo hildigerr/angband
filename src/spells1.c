@@ -608,6 +608,9 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
     /* Polymorph setting (true or false) */
     int do_poly = 0;
 
+    /* Confusion setting (amount to confuse) */
+    int do_conf = 0;
+
 
     /* "Damage" factor.  Multiply by "mul/div" */
     int mul = 1, div = 1;
@@ -748,6 +751,7 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
       /* Chaos -- Chaos breathers resist */
       case GF_CHAOS:
 	do_poly = TRUE;
+	do_conf = (5 + randint(11)) * mul / div;
 	if (r_ptr->spells2 & MS2_BR_CHAO) {
 	    note = " resists.";
 	    dam *= 3; dam /= (randint(6)+6);
@@ -773,6 +777,7 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 
       /* Confusion */
       case GF_CONFUSION:
+	do_conf = (5 + randint(11)) * mul / div;
 	if (r_ptr->spells2 & MS2_BR_CONF) { 
 	    note = " resists.";
 	    dam *= 2; dam /= (randint(6)+6);
@@ -924,6 +929,26 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 	}
     }
 
+    /* Confusion and Chaos breathers (and sleepers) never confuse */
+    else if (do_conf &&
+	    !(r_ptr->cflags2 & MF2_CHARM_SLEEP) &&
+	    !(r_ptr->spells2 & MS2_BR_CONF) &&
+	    !(r_ptr->spells2 & MS2_BR_CHAO)) {
+
+	/* Already partially confused */
+	if (m_ptr->confused > 0) { 
+	    note = " is more confused.";
+	    if (m_ptr->confused < 240) {
+		m_ptr->confused += (7 * mul / div);
+	    }
+	}
+
+	/* Was not confused */
+	else {
+	    note = " is confused."
+	    m_ptr->confused = do_conf;
+	}
+    }
 
 
 

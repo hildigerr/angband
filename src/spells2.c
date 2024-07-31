@@ -3679,28 +3679,6 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 
     res = NO_RES;		/* assume until we know different -CFT */
     switch ( typ ){		/* check for resists... */
-      case GF_CHAOS:
-	if ((*dam <= m_ptr->hp) && /* don't bother if it's gonna die */
-	    !(r_ptr->spells2 & MS2_BR_CHAO) &&
-	    !(r_ptr->cflags2 & MF2_UNIQUE) &&
-	    (randint(90) > r_ptr->level)) { /* then we'll polymorph it -CFT */
-	} /* end of choas-poly.  If was poly-ed don't bother confuse... it's
-	     too hectic to keep track of... -CFT */
-	else if (!(r_ptr->cflags2 & MF2_CHARM_SLEEP) &&
-		 !(r_ptr->spells2 & MS2_BR_CHAO) && /* choatics hard to confuse */
-		 !(r_ptr->spells2 & MS2_BR_CONF)){   /* so are bronze dragons */
-	    if (m_ptr->confused > 0) { 
-		res = MORE_CONF;
-		if (m_ptr->confused < 240){ /* make sure not to overflow -CFT */
-		    m_ptr->confused += 7/(rad>0 ? rad : 1);
-		}
-	    }
-	    else {
-		res = CONFUSED;
-		m_ptr->confused = (randint(11)+5)/(rad>0 ? rad : 1);
-	    }
-	}
-	break;
       case GF_SOUND:
 	if ((*dam <= m_ptr->hp) && /* don't bother if it's dead */
 	    !(r_ptr->spells2 & MS2_BR_SOUN) &&
@@ -3718,23 +3696,6 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 	    }
   	}
 	break;
-      case GF_CONFUSION:
-	if ((*dam <= m_ptr->hp) && /* don't bother if it's dead */
-	    !(r_ptr->cflags2 & MF2_CHARM_SLEEP) &&
-	    !(r_ptr->spells2 & MS2_BR_CHAO) && /* choatics hard to confuse */
-	    !(r_ptr->spells2 & MS2_BR_CONF)) {  /* so are bronze dragons */
-	    if (m_ptr->confused > 0) { 
-		res = MORE_CONF;
-		if (m_ptr->confused < 240){ /* make sure not to overflow -CFT */
-		    m_ptr->confused += 7/(rad>0 ? rad : 1);
-		}
-	    }
-	    else {
-		res = CONFUSED;
-		m_ptr->confused = (randint(11)+5)/(rad>0 ? rad : 1);
-	    }
-	}
-        break;
       case GF_FORCE:
 	if ((*dam <= m_ptr->hp) &&
 	    !(r_ptr->spells2 & MS2_BR_SOUN) &&
@@ -3789,12 +3750,6 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
     else switch (res) {
       case NO_RES:
 	sprintf(outval, "%sis hit.",cdesc);
-	break;
-      case CONFUSED:
-	sprintf(outval, "%sis confused.",cdesc);
-	break;
-      case MORE_CONF:
-	sprintf(outval, "%sis more confused.",cdesc);
 	break;
       case DAZED:
 	sprintf(outval, "%sis dazed.",cdesc);
