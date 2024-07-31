@@ -2608,54 +2608,6 @@ void fire_bolt(int typ, int dir, int y, int x, int dam)
    for damage.  It should look pretty neat, too... -CFT */
 void line_spell(int typ, int dir, int y, int x, int dam)
 {
-    int ny,nx, dis = 0, flag = FALSE;
-    int t, tdam;
-    monster_type *m_ptr;
-    cave_type *c_ptr;
-    byte path[OBJ_BOLT_RANGE+5][3]; /* pre calculate "flight" path, makes bolt
-					calc faster because fns more likely to be in mem.
-					Also allows redraw at reasonable spd -CFT */  
-
-    path[0][0] = y;  path[0][1] = x; /* orig point */
-    do {
-	(void)mmove(dir, &y, &x);
-	dis++;
-	path[dis][0] = y;  path[dis][1] = x;
-	if ((dis>OBJ_BOLT_RANGE) || (cave[y][x].fval >= MIN_CLOSED_SPACE))
-	    flag = TRUE;
-    } while (!flag);
-
-    flag = FALSE;
-    dis = 0;
-    do {
-	dis++;
-	y = path[dis][0];  x = path[dis][1];
-	c_ptr = &cave[y][x];
-	if ((dis > OBJ_BOLT_RANGE) || c_ptr->fval >= MIN_CLOSED_SPACE)
-	    flag = TRUE;	/* then stop */
-	else {
-	    if (c_ptr->m_idx > 1) { /* hit a monster! */
-		tdam = dam;
-		m_ptr = &m_list[c_ptr->m_idx];
-
-		if (!(p_ptr->status & PY_BLIND) && panel_contains(y,x)){
-		    /* temp light monster to show it... */
-		    t = c_ptr->pl;
-		    c_ptr->pl = TRUE;
-		    update_mon((int)c_ptr->m_idx);
-		    c_ptr->pl = t;
-		    put_qio();	/* draw monster */
-		}
-
-		/* check resists */
-		spell_hit_monster(m_ptr, typ, &tdam, 1, &ny, &nx, TRUE);
-		c_ptr = &cave[ny][nx]; /* may be new loc if tele by grav warp */
-
-		(void) mon_take_hit((int)c_ptr->m_idx, tdam, TRUE); /* hurt it */
-	    }
-	} /* if hit monster */
-    } while (!flag);		/* end of effects loop */
-  
 }
 
 
