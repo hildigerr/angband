@@ -2562,7 +2562,7 @@ static bool project_hook(int typ, int dir, int dam, int flg)
 void fire_ball(int typ, int dir, int y, int x, int dam_hp, int max_dis)
 {
     register int        i, j;
-    int                 dam, thit, tkill, k, tmp, monptr;
+    int                 dam, tkill, k, tmp;
     int                 oldy, oldx, dist, flag;
     int                 (*destroy) ();
     register cave_type *c_ptr;
@@ -2571,7 +2571,6 @@ void fire_ball(int typ, int dir, int y, int x, int dam_hp, int max_dis)
     int                 ny, nx;
     char                bolt_char;
 
-    thit = 0;
     tkill = 0;
 
     switch (typ) {
@@ -2741,7 +2740,6 @@ void fire_ball(int typ, int dir, int y, int x, int dam_hp, int max_dis)
 				    m_ptr = &m_list[c_ptr->m_idx];
 			/* and even if not, may be new monster if chaos polymorphed */
 				    r_ptr = &r_list[m_ptr->r_idx];
-				    monptr = c_ptr->m_idx;
 
 				/*
 				 * lite up creature if visible, temp set pl
@@ -2751,7 +2749,6 @@ void fire_ball(int typ, int dir, int y, int x, int dam_hp, int max_dis)
 				    c_ptr->pl = TRUE;
 				    update_mon((int)c_ptr->m_idx);
 
-				    thit++;
 				    if (dam < 1)
 					dam = 1;	/* protect vs neg damage -CFT */
 				    k = mon_take_hit((int)c_ptr->m_idx, dam, TRUE);
@@ -3628,7 +3625,7 @@ int clone_monster(int dir, int y, int x)
 	    flag = TRUE;
 	else if (c_ptr->m_idx > 1) {
 	    m_list[c_ptr->m_idx].csleep = 0;
-	/* monptr of 0 is safe here, since can't reach here from creatures */
+	/* m_idx of 0 is safe here, since can't reach here from creatures */
 	    return multiply_monster(y, x, (int)m_list[c_ptr->m_idx].r_idx, 0);
 	}
     }
