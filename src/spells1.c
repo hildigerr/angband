@@ -603,6 +603,9 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
     bool obvious = TRUE;
 
 
+    /* "Damage" factor.  Multiply by "mul/div" */
+    int mul = 1, div = 1;
+
     /* Hold the monster name */
     char m_name[80];
 
@@ -627,6 +630,13 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 	/* Special note at death */
 	note_dies = " is destroyed.";
     }
+
+
+    /* Hack -- decrease power over distance */
+    if (rad) div = rad + 1;
+
+    /* Adjust damage */
+    dam = dam * mul / div;
 
 
     /* Analyze the damage type */
@@ -880,6 +890,9 @@ static char bolt_char(int y, int x, int ny, int nx)
  * Objects in the blast area when the blast occurs are (potentially) destroyed,
  * even if they are "under" monsters.  But objects dropped by monsters
  * who are destroyed by the blast are "shielded" by the monsters corpse.
+ *
+ * Note that the damage done by "ball" explosions decreases with distance.
+ * This decrease is rapid, grids at radius "dist" take "1/dist" damage.
  *
  * The array "gy[],gx[]" with "current" size "grids" is used to hold the
  * collected locations of all grids in the "blast area" plus "beam path".

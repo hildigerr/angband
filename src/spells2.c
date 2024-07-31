@@ -3636,9 +3636,6 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
     int res;			/* controls messages, using above #defines -CFT */
     vtype cdesc, outval;
 
-    if (rad)
-	*dam /= rad;		/* adjust damage for range... */
-
     *y = m_ptr->fy;		/* these only change if mon gets teleported */
     *x = m_ptr->fx; 
     r_ptr = &r_list[m_ptr->r_idx];
