@@ -2785,12 +2785,6 @@ void fire_bolt(int typ, int dir, int y, int x, int dam_hp)
 						 * polymorphed */
 		monster_name(m_name, m_ptr);
 
-		if ((dam > 0) && (m_ptr->hp >= dam)) {
-		    (void)sprintf(out_val,
-			       pain_message((int)c_ptr->m_idx, dam), m_name);
-		    msg_print(out_val);
-		}
-
 		i = mon_take_hit((int)c_ptr->m_idx, dam, TRUE);
 
 		if (i >= 0)

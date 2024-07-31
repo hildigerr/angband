@@ -1007,6 +1007,13 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 	msg_print(note);
     }	
 
+    /* Hack -- Pain message */
+    else if ((dam > 0) && (dam <= m_ptr->hp)) {
+	char out_val[160];
+	(void)sprintf(out_val, pain_message(c_ptr->m_idx, dam), m_name);
+	message(out_val, 0x01);
+    }
+
     /* If another monster did the damage, hurt the monster by hand */
     if (who > 1) {
 
