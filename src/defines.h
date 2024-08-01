@@ -392,7 +392,6 @@
 #define BLOCKED_FLOOR   6       /* a corridor space with cl/st/se door or rubble */
 #define MAX_CAVE_FLOOR  6
 
-#define MAX_OPEN_SPACE  5
 #define MIN_CLOSED_SPACE 6
 
 #define TMP1_WALL	8

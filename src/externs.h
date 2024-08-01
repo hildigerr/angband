@@ -61,7 +61,7 @@
  * Determine if a "legal" grid is a "floor" grid
  */
 #define floor_grid_bold(Y,X) \
-    (cave[Y][X].fval <= MAX_OPEN_SPACE)
+    (cave[Y][X].fval < MIN_CLOSED_SPACE)
     
 /*
  * Determine if a "legal" grid is a "clean floor" grid
