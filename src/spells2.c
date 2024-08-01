@@ -3471,12 +3471,11 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 
     m_ptr = &m_list[monptr];
     r_ptr = &r_list[m_ptr->r_idx];
-    ch = r_ptr->r_char;
-    if ((ch == 'v' || ch == 'D' || ch == 'E' || ch == '&' || ch == 'A') ||
-	((ch == 'd' || ch == 'R') && r_ptr->cflags2 & MF2_UNIQUE))
-	max_dis = 3;
-    else
-	max_dis = 2;
+
+    /* Determine the radius of the blast */
+    max_dis = 2;
+    if (strchr("vDEA&", r_ptr->r_char)) max_dis = 3;
+    if ((strchr("dR", r_ptr->r_char) && (r_ptr->cflags2 & MF2_UNIQUE))) max_dis = 3;
 
     switch (typ) {
       default:
