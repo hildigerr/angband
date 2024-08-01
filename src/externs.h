@@ -884,6 +884,7 @@ void light_dam(int, cptr);
 void acid_dam(int, cptr);
 void poison_gas(int, cptr);
 bool project(int, int, int, int, int, int, int);
+bool apply_disenchant(int);
 int sleep_monsters1(int, int);
 int detect_treasure(void);
 int detect_object(void);

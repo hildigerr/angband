@@ -3647,75 +3647,7 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
 						 * of .655, ranging from */
 			    dam_hp /= (randint(6) + 6);	/* .858 to .5 -CFT */
 			} else {
-			    byte               disenchant = FALSE;
-			    byte               chance;
-			    int                 t = 0;
-			    inven_type         *i_ptr;
-
-			    switch (randint(7)) {
-			      case 1:
-				t = INVEN_BODY;
-				break;
-			      case 2:
-				t = INVEN_BODY;
-				break;
-			      case 3:
-				t = INVEN_ARM;
-				break;
-			      case 4:
-				t = INVEN_OUTER;
-				break;
-			      case 5:
-				t = INVEN_HANDS;
-				break;
-			      case 6:
-				t = INVEN_HEAD;
-				break;
-			      case 7:
-				t = INVEN_FEET;
-				break;
-			    }
-			    i_ptr = &inventory[t];
-			    chance = 1;
-			    if artifact_p(i_ptr)	/* Artifacts have 2/3 */
-				chance = randint(3);	/* chance to resist -DGK */
-			    if ((i_ptr->tohit > 0) && (chance == 1)) {
-				i_ptr->tohit -= randint(2);
-			    /* don't send it below zero */
-				if (i_ptr->tohit < 0)
-				    i_ptr->tohit = 0;
-				disenchant = TRUE;
-			    }
-			    if ((i_ptr->todam > 0) && (chance == 1)) {
-				i_ptr->todam -= randint(2);
-			    /* don't send it below zero */
-				if (i_ptr->todam < 0)
-				    i_ptr->todam = 0;
-				disenchant = TRUE;
-			    }
-			    if ((i_ptr->toac > 0) && (chance == 1)) {
-				i_ptr->toac -= randint(2);
-			    /* don't send it below zero */
-				if (i_ptr->toac < 0)
-				    i_ptr->toac = 0;
-				disenchant = TRUE;
-			    }
-			    if (disenchant || (chance != 1)) {
-				vtype               t1, t2;
-
-				objdes(t1, &inventory[t], FALSE);
-				if (chance != 1)
-				    sprintf(t2, "Your %s (%c) %s disenchanted!", t1,
-					    index_to_label(i),
-					    (inventory[i].number != 1) ? "were" : "was");
-				else
-				    sprintf(t2, "Your %s (%c) %s disenchantment!", t1,
-					    index_to_label(i),
-					    (inventory[i].number != 1) ?
-					    "resist" : "resists");
-				msg_print(t2);
-				calc_bonuses();
-			    }
+			    (void)apply_disenchant(0);
 			}
 			take_hit(dam_hp, ddesc);
 			break;
@@ -4076,78 +4008,7 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 						 * of .655, ranging from */
 				dam /= (randint(6) + 6);	/* .858 to .5 -CFT */
 			    } else {
-				byte               disenchant = FALSE;
-				byte               chance;
-				int                 t = 0;
-				inven_type         *i_ptr;
-
-				switch (randint(7)) {
-				  case 1:
-				    t = INVEN_BODY;
-				    break;
-				  case 2:
-				    t = INVEN_BODY;
-				    break;
-				  case 3:
-				    t = INVEN_ARM;
-				    break;
-				  case 4:
-				    t = INVEN_OUTER;
-				    break;
-				  case 5:
-				    t = INVEN_HANDS;
-				    break;
-				  case 6:
-				    t = INVEN_HEAD;
-				    break;
-				  case 7:
-				    t = INVEN_FEET;
-				    break;
-				}
-				i_ptr = &inventory[t];
-				chance = 1;
-				/* Artifacts have 2/3 chance to resist -DGK */
-				if artifact_p(i_ptr)
-				    chance = randint(3);
-				if ((i_ptr->tohit > 0) && (chance == 1)) {
-				    i_ptr->tohit -= randint(2);
-				/* don't send it below zero */
-				    if (i_ptr->tohit < 0)
-					i_ptr->tohit = 0;
-				    disenchant = TRUE;
-				}
-				if ((i_ptr->todam > 0) && (chance == 1)) {
-				    i_ptr->todam -= randint(2);
-				/* don't send it below zero */
-				    if (i_ptr->todam < 0)
-					i_ptr->todam = 0;
-				    disenchant = TRUE;
-				}
-				if ((i_ptr->toac > 0) && (chance == 1)) {
-				    i_ptr->toac -= randint(2);
-				/* don't send it below zero */
-				    if (i_ptr->toac < 0)
-					i_ptr->toac = 0;
-				    disenchant = TRUE;
-				}
-				if (disenchant || (chance != 1)) {
-				    vtype               t1, t2;
-
-				    objdes(t1, &inventory[t], FALSE);
-				    if (chance != 1)
-					sprintf(t2, "Your %s (%c) %s disenchanted!", t1,
-						index_to_label(i),
-						(inventory[i].number != 1) ?
-						"were" : "was");
-				    else
-					sprintf(t2, "Your %s (%c) %s disenchantment!",
-						t1,
-						index_to_label(i),
-						(inventory[i].number != 1) ?
-						"resist" : "resists");
-				    msg_print(t2);
-				    calc_bonuses();
-				}
+				(void)apply_disenchant(0);
 			    }
 			    take_hit(dam, ddesc);
 			    break;

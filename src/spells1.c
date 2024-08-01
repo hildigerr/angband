@@ -6,6 +6,103 @@
 
 
 
+
+/*
+ * Apply disenchantment to the player's stuff
+ *
+ * The "mode" is currently unused.
+ *
+ * Return "TRUE" if the player notices anything
+ */
+bool apply_disenchant(int mode)
+{
+    bool disenchant = FALSE:
+    int                t = 0;
+    inven_type         *i_ptr;
+    vtype               t1, t2;
+
+
+    /* Pick a random slot */
+    switch (randint(7)) {
+	 case 1: t = INVEN_WIELD; break;
+	 case 2: t = INVEN_BODY; break;
+	 case 3: t = INVEN_ARM; break;
+	 case 4: t = INVEN_OUTER; break;
+	 case 5: t = INVEN_HANDS; break;
+	 case 6: t = INVEN_HEAD; break;
+	 case 7: t = INVEN_FEET; break;
+    }
+
+    /* Get the item */                                
+    i_ptr = &inventory[t];
+
+    /* No item, nothing happens */
+    if (i_ptr->tval == TV_NOTHING) return (FALSE);
+
+
+    /* Nothing to disenchant */
+    if ((i_ptr->tohit <= 0) && (i_ptr->todam <= 0) && (i_ptr->toac <= 0)) {
+
+	/* Nothing to notice */
+	return (FALSE);
+    }
+
+
+    /* Describe the object */
+    objdes(t1, i_ptr, FALSE);
+
+
+    /* Artifacts have 2/3 chance to resist */
+    if (artifact_p(i_ptr) && (randint(3) != 1)) {
+
+	/* Message */
+	sprintf(t2, "Your %s (%c) %s disenchantment!",
+		t1, index_to_label(t),
+		(i_ptr->number != 1) ? "resist" : "resists");
+	msg_print(t2);
+
+	/* Notice */
+	return (TRUE);
+    }
+
+
+    /* Disenchant tohit */
+    if (i_ptr->tohit > 0) {
+    i_ptr->tohit -= randint(2);
+    if (i_ptr->tohit < 0) i_ptr->tohit = 0;
+    disenchant = TRUE;
+    }
+
+    /* Disenchant todam */
+    if (i_ptr->todam > 0) {
+    i_ptr->todam -= randint(2);
+    if (i_ptr->todam < 0) i_ptr->todam = 0;
+    disenchant = TRUE;
+    }
+
+    /* Disenchant toac */
+    if (i_ptr->toac > 0) {
+    i_ptr->toac -= randint(2);
+    if (i_ptr->toac < 0) i_ptr->toac = 0;
+    disenchant = TRUE;
+    }
+
+
+    if( disenchant ) {
+    sprintf(t2, "Your %s (%c) %s disenchanted!",
+	    t1, index_to_label(t),
+	    (i_ptr->number != 1) ? "were" : "was");
+    msg_print(t2);
+
+    /* Recalculate bonuses */
+    calc_bonuses();
+    }
+
+    /* Notice */
+    return (TRUE);
+}
+
+
 /*
  * Does a given class of objects (usually) hate acid?
  * Note that acid can either melt or corrode something.
