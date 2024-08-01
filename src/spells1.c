@@ -709,6 +709,54 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
 		}
 		break;
 
+	    /* Destroy Traps (and Locks) */
+	    case GF_KILL_TRAP:
+
+		/* Destroy traps */
+		if ((i_ptr->tval == TV_INVIS_TRAP) ||
+		    (i_ptr->tval == TV_VIS_TRAP)) {
+
+		    /* Destroy it */
+		    do_kill = TRUE;
+		}
+
+		/* Chests are noticed only if trapped or locked */
+		else if (i_ptr->tval == TV_CHEST) {
+		    if (i_ptr->flags2) {
+			i_ptr->flags2 = 0L;
+			i_ptr->flags2 |= CH2_DISARMED;
+			known2(i_ptr);
+			if (seen) {
+			    msg_print("Click!");
+			    note++;
+			}
+		    }
+		}
+
+		/* Doors are unlocked (without being seen) */
+		else if (i_ptr->tval == TV_CLOSED_DOOR) {
+		    i_ptr->pval = 0;
+		}
+
+		/* Secret doors are found and unlocked, and seen if visible */
+		else if (i_ptr->tval == TV_SECRET_DOOR) {
+
+		    /* Hack -- make a closed door */
+		    invcopy(i_ptr, OBJ_CLOSED_DOOR);
+
+		    /* Place it in the dungeon */
+		    i_ptr->iy = y;
+		    i_ptr->ix = x;
+
+		    /* Hack -- if seen, notice and memorize */
+		    if (seen) note++;
+
+		    /* Redraw */
+		    lite_spot(y, x);
+		}
+
+		break;
+
 	    /* Destroy Doors (and traps) */
 	    case GF_KILL_DOOR:	    
 

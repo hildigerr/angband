@@ -2766,49 +2766,8 @@ int td_destroy2(int dir, int y, int x)
 /* Disarms all traps/chests in a given direction	-RAK-	 */
 int disarm_all(int dir, int y, int x)
 {
-    register cave_type  *c_ptr;
-    register inven_type *t_ptr;
-    register int         disarm, dist;
-
-    disarm = FALSE;
-    dist = (-1);
-    do {
-    /* put mmove at end, in case standing on a trap */
-	dist++;
-	c_ptr = &cave[y][x];
-
-    /* note, must continue upto and including the first non open space,
-     * because secret doors have fval greater than MAX_OPEN_SPACE 
-     */
-	if (c_ptr->i_idx != 0) {
-	    t_ptr = &i_list[c_ptr->i_idx];
-	    if ((t_ptr->tval == TV_INVIS_TRAP) || (t_ptr->tval == TV_VIS_TRAP)) {
-		if (delete_object(y, x))
-		    disarm = TRUE;
-	    } else if (t_ptr->tval == TV_CLOSED_DOOR)
-		t_ptr->pval = 0;	   /* Locked or jammed doors become merely closed. */
-	    else if (t_ptr->tval == TV_SECRET_DOOR) {
-		c_ptr->fm = TRUE;
-
-		/* change secret door to closed door */
-		i_list[c_ptr->i_idx].k_idx = OBJ_CLOSED_DOOR;
-		i_list[c_ptr->i_idx].tval = k_list[OBJ_CLOSED_DOOR].tval;
-		i_list[c_ptr->i_idx].tchar = k_list[OBJ_CLOSED_DOOR].tchar;
-		lite_spot(y, x);
-
-		disarm = TRUE;
-	    } else if ((t_ptr->tval == TV_CHEST) && (t_ptr->flags2)) {
-		msg_print("Click!");
-			i_ptr->flags2 = 0L;
-			i_ptr->flags2 |= CH2_DISARMED;
-		disarm = TRUE;
-		known2(t_ptr);
-	    }
-	}
-	(void)mmove(dir, &y, &x);
-    }
-    while ((dist <= OBJ_BOLT_RANGE) && floor_grid_bold(y, x));
-    return (disarm);
+    int flg = PROJECT_BEAM | PROJECT_ITEM | PROJECT_HIDE;
+    return (project_hook(GF_KILL_TRAP, dir, 0, flg));
 }
 
 /* Destroys any adjacent door(s)/trap(s)		-RAK-	 */
