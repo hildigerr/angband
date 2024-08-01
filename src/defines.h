@@ -1283,7 +1283,7 @@
 
 
 /*
- * Spell types used by get_flags(), breathe(), fire_bolt() and fire_ball()
+ * Spell types used by breathe(), fire_bolt() and fire_ball()
  */
 #define GF_MISSILE		0
 #define GF_ELEC         1

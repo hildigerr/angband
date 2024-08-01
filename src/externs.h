@@ -908,7 +908,6 @@ void starlite(int, int);
 int disarm_all(int, int, int);
 void bolt(int, int, int);
 void breath(int, int, int);
-void get_flags(int, u32b *, u32b *, int (**)());
 void fire_bolt(int, int, int, int, int);
 void fire_ball(int, int, int, int, int, int);
 int recharge(int);
