@@ -1242,6 +1242,9 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
  * This routine takes a "source monster" (by index), a "distance", a default
  * "damage", and a "damage type".  See "project_m()" above.
  *
+ * If the source monster is "breathing" (as opposed to "casting a bolt"),
+ * then PROJECT_XTRA will be set, and we can do a little "extra" damage.
+ *
  * Although unused, we return "TRUE" if any "useful" effects were observed.
  *
  * While it is no longer true that "rad" must equal "zero", currently, it
@@ -1249,13 +1252,16 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
  */
 static bool project_p(int who, int rad, int y, int x, int dam, int typ, int flg)
 {
-    register int k = 0;
+    register int i, k = 0;
 
     /* Player blind-ness */
     int blind = FALSE;
 
     /* Player needs a "description" (he is blind) */
     int fuzzy = FALSE;
+
+    /* Player should take "extra" effects from "breath" */
+    int extra = (flg & PROJECT_XTRA) ? TRUE : FALSE;
 
     /* "Damage" factor.  Multiply by "mul/div" */
     int mul = 1, div = 1;
@@ -1350,6 +1356,9 @@ static bool project_p(int who, int rad, int y, int x, int dam, int typ, int flg)
 	case GF_PLASMA:
 	    if (fuzzy) msg_print("You are hit by something!");
 	    take_hit(dam, killer);
+	    if (extra && !p_ptr->resist_sound) {
+		stun_player(randint((dam > 40) ? 35 : (dam * 3 / 4 + 5)));
+	    }
 	    break;
 
 	case GF_NETHER:
@@ -1358,7 +1367,10 @@ static bool project_p(int who, int rad, int y, int x, int dam, int typ, int flg)
 		dam *= 6; dam /= (randint(6) + 6);
 	    }
 	    else {
-		if (p_ptr->hold_life && randint(5) > 1) {
+		if (!extra && p_ptr->hold_life && randint(5) > 1) {
+		    msg_print("You keep hold of your life force!");
+		}
+		else if (extra && p_ptr->hold_life && randint(3) > 1) {
 		    msg_print("You keep hold of your life force!");
 		}
 		else if (p_ptr->hold_life) {
@@ -1376,7 +1388,20 @@ static bool project_p(int who, int rad, int y, int x, int dam, int typ, int flg)
 	/* Water -- stun/confuse */
 	case GF_WATER:
 	    if (fuzzy) msg_print("You are hit by a jet of water!");
+	    if (!extra) {
 		if (!p_ptr->resist_sound) stun_player(randint(15));
+	    }
+	    else {
+		if (!p_ptr->resist_sound) stun_player(randint(55));
+		if (!player_saves() &&
+		    !p_ptr->resist_conf &&
+		    !p_ptr->resist_chaos) {
+
+		    if ((p_ptr->confused < 32000) &&
+		    (p_ptr->confused > 0)) p_ptr->confused += 6;
+		    else p_ptr->confused = randint(8) + 6;
+		}
+	    }
 	    take_hit(dam, killer);
 	    break;
 
@@ -1392,6 +1417,19 @@ static bool project_p(int who, int rad, int y, int x, int dam, int typ, int flg)
 	    }
 	    if (!p_ptr->resist_chaos) {
 		p_ptr->image += randint(10);
+	    }
+	    if (extra && !p_ptr->resist_nether && !p_ptr->resist_chaos) {
+		if (p_ptr->hold_life && randint(3) > 1) {
+		    msg_print("You keep hold of your life force!");
+		}
+		else if (p_ptr->hold_life) {
+		    msg_print("You feel your life slipping away!");
+		    lose_exp(500 + (p_ptr->exp/1000) * MON_DRAIN_LIFE);
+		}
+		else {
+		    msg_print("You feel your life draining away!");
+		    lose_exp(5000 + (p_ptr->exp/100) * MON_DRAIN_LIFE);
+		}
 	    }
 	    take_hit(dam, killer);
 	    break;
@@ -1414,6 +1452,9 @@ static bool project_p(int who, int rad, int y, int x, int dam, int typ, int flg)
 	    if (p_ptr->resist_sound) {
 		dam *= 5; dam /= (randint(6) + 6);
 	    }
+	    else if (extra) {
+		stun_player(randint((dam > 90) ? 35 : (dam / 3 + 5)));
+	    }
 	    else {
 		stun_player(randint((dam > 60) ? 25 : (dam / 3 + 5)));
 	    }
@@ -1426,7 +1467,11 @@ static bool project_p(int who, int rad, int y, int x, int dam, int typ, int flg)
 	    if (p_ptr->resist_conf) {
 		dam *= 5; dam /= (randint(6) + 6);
 	    }
-	    if (!p_ptr->resist_conf && !p_ptr->resist_chaos) {
+	    if (extra && !p_ptr->resist_conf && !p_ptr->resist_chaos) {
+		if (p_ptr->confused > 0) p_ptr->confused += 12;
+		else p_ptr->confused = randint(20) + 10;
+	    }
+	    else if (!extra && !p_ptr->resist_conf && !p_ptr->resist_chaos) {
 		if (p_ptr->confused > 0) p_ptr->confused += 8;
 		else p_ptr->confused = randint(15) + 5;
 	    }
@@ -1451,13 +1496,21 @@ static bool project_p(int who, int rad, int y, int x, int dam, int typ, int flg)
 	    if (p_ptr->resist_nexus) {
 		dam *= 6; dam /= (randint(6) + 6);
 	    }
+	    else if (extra) {
+		apply_nexus(m_ptr);
+	    }
 	    take_hit(dam, killer);
 	    break;
 
 	/* Force -- mostly stun */
 	case GF_FORCE:
 	    if (fuzzy) msg_print("You are hit hard by a sudden force!");
+	    if (extra) {
+		if (!p_ptr->resist_sound) stun_player(randint(20));
+	    }
+	    else {
 		if (!p_ptr->resist_sound) stun_player(randint(15) + 1);
+	    }
 	    take_hit(dam, killer);
 	    break;
 
@@ -1484,6 +1537,7 @@ static bool project_p(int who, int rad, int y, int x, int dam, int typ, int flg)
 		msg_print("You are blinded by the flash!");
 		p_ptr->blind += randint(5) + 2;
 	    }
+	    if( extra ) lite_area(char_row, char_col, 0, rad);
 	    take_hit(dam, killer);
 	    break;
 
@@ -1497,16 +1551,21 @@ static bool project_p(int who, int rad, int y, int x, int dam, int typ, int flg)
 		msg_print("The darkness prevents you from seeing!");
 		p_ptr->blind += randint(5) + 2;
 	    }
+	    if( extra ) unlite_area(char_row, char_col);
 	    take_hit(dam, killer);
 	    break;
 
 	/* Time -- bolt fewer effects XXX */
 	case GF_TIME:
 	    if (fuzzy) msg_print("You are hit by something!");
-	    if (randint(2) == 1) {
+	    i = randint(10);
+	    if (!extra && (i == 10)) i = 9;
+	    switch (i) {
+		case 1: case 2: case 3: case 4: case 5:
 		    msg_print("You feel life has clocked back.");
 		    lose_exp(m_ptr->hp + (p_ptr->exp / 300) * MON_DRAIN_LIFE);
-	    } else {
+		    break;
+		case 6: case 7: case 8: case 9:
 		    switch (randint(6)) {
 			case 1: k = A_STR; msg_print("You're not as strong as you used to be..."); break;
 			case 2: k = A_INT; msg_print("You're not as bright as you used to be..."); break;
@@ -1520,8 +1579,25 @@ static bool project_p(int who, int rad, int y, int x, int dam, int typ, int flg)
 		    if (p_ptr->cur_stat[k] < 3) p_ptr->cur_stat[k] = 3;
 		    set_use_stat(k);
 		    prt_stat(k);
-		    take_hit(dam, killer);
 		    break;
+		    
+		case 10:
+		    for (k = 0; k < 6; k++) {
+			p_ptr->cur_stat[k] = (p_ptr->cur_stat[k] * 3) / 4;
+			if (p_ptr->cur_stat[k] < 3) p_ptr->cur_stat[k] = 3;
+			set_use_stat(k);
+			prt_stat(k);
+		    }
+		    msg_print("You're not as strong as you used to be...");
+		    msg_print("You're not as bright as you used to be...");
+		    msg_print("You're not as wise as you used to be...");
+		    msg_print("You're not as agile as you used to be...");
+		    msg_print("You're not as hale as you used to be...");
+		    msg_print("You're not as beautiful as you used to be...");
+		    break;
+	    }
+	    take_hit(dam, killer);
+	    break;
 
 	/* Gravity -- stun or slowness, plus teleport */
 	case GF_GRAVITY:
@@ -1531,7 +1607,8 @@ static bool project_p(int who, int rad, int y, int x, int dam, int typ, int flg)
 	    }
 	    else {
 		if (!p_ptr->resist_sound) {
-		    stun_player(randint(15) + 1);
+		    if (extra) stun_player(randint((dam > 90) ? 35 : (dam / 3 + 5)));
+		    else stun_player(randint(15) + 1);
 		}
 		else {
 		    if ((p_ptr->slow > 0) && (p_ptr->slow < 32000)) p_ptr->slow += randint(5);
@@ -1540,6 +1617,10 @@ static bool project_p(int who, int rad, int y, int x, int dam, int typ, int flg)
 			p_ptr->slow = randint(5) + 3;
 		    }
 		}
+	    }
+	    if (extra) {
+	    msg_print("Gravity warps around you.");
+	    teleport(5);
 	    }
 	    take_hit(dam, killer);
 	    break;
@@ -1561,7 +1642,12 @@ static bool project_p(int who, int rad, int y, int x, int dam, int typ, int flg)
 	    if (fuzzy) msg_print("You are hit by something cold and sharp!");
 	    cold_dam(dam, killer);
 	    if (!p_ptr->resist_shards) cut_player(damroll(8, 10));
+	    if (extra) {
+		if (!p_ptr->resist_sound) stun_player(randint(25));
+	    }
+	    else {
 		if (!p_ptr->resist_sound) stun_player(randint(15) + 1);
+	    }
 	    break;
 
 	default:
