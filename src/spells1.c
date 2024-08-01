@@ -1187,6 +1187,36 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 	/* No "real" damage */
 	dam = 0;
 	break;
+
+
+      /* Confusion (Use "dam" as "power") */
+      case GF_OLD_CONF:
+
+	/* Get confused later */
+	do_conf = damroll(3, (dam / 2)) + 1;
+
+	/* Attempt a saving throw */
+	if ((r_ptr->cflags2 & MF2_UNIQUE) ||
+	    (r_ptr->cflags2 & (MS2_BR_CONF | MS2_BR_CHAO) ||
+	    (r_ptr->level > 10 + randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10)) {
+
+	    /* Hack -- memorize a flag (does it DO anything?) */
+	    if (seen && (r_ptr->cflags2 & MF2_CHARM_SLEEP)) {
+		l_ptr->r_cflags2 |= MF2_CHARM_SLEEP;
+	    }
+
+	    /* Resist */
+	    do_conf = 0;
+
+	    note = " is unaffected.";
+	}
+
+	/* Wake the monster up */
+	else m_ptr->csleep = 0;
+
+	/* No "real" damage */
+	dam = 0;
+	break;
     }
 
 
@@ -1285,7 +1315,7 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 
 	/* Was not confused */
 	else {
-	    note = " is confused."
+	    note = " appears confused."
 	    m_ptr->confused = do_conf;
 	}
     }
