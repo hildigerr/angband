@@ -69,7 +69,7 @@
  * Second test -- catch all normal objects
  */
 #define clean_grid_bold(Y,X) \
-    ((cave[Y][X].fval <= MAX_CAVE_FLOOR) && \
+    ((cave[Y][X].fval <= MIN_CLOSED_SPACE) && \
      (cave[Y][X].i_idx == 0))
     
 /*

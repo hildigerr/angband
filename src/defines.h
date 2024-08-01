@@ -390,7 +390,6 @@
 #define MAX_CAVE_ROOM   4
 #define CORR_FLOOR      5	/* Floor, in a corridor */
 #define BLOCKED_FLOOR   6       /* a corridor space with cl/st/se door or rubble */
-#define MAX_CAVE_FLOOR  6
 
 #define MIN_CLOSED_SPACE 6
 

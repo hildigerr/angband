@@ -362,7 +362,7 @@ unsigned char loc_symbol(int y, int x)
     if ((cave_ptr->i_idx != 0)
 	&& (i_list[cave_ptr->i_idx].tval != TV_INVIS_TRAP))
 	return i_list[cave_ptr->i_idx].tchar;
-    if (cave_ptr->fval <= MAX_CAVE_FLOOR)
+    if (cave_ptr->fval <= MIN_CLOSED_SPACE)
 	return '.';
     if (cave_ptr->fval == GRANITE_WALL || cave_ptr->fval == BOUNDARY_WALL
 	|| notice_seams == FALSE) {

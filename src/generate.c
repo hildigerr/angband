@@ -234,7 +234,7 @@ static void alloc_object(int set, int typ, int num)
 	    if ((set == ALLOC_SET_ROOM) && ((cave[y][x].fval == DARK_FLOOR) || (cave[y][x].fval == LIGHT_FLOOR) ||
 	    (cave[y][x].fval == NT_DARK_FLOOR) || (cave[y][x].fval == NT_LIGHT_FLOOR))) continue;
 
-	    if ((set == ALLOC_SET_BOTH) && (cave[y][x].fval <= MAX_CAVE_FLOOR)) continue;
+	    if ((set == ALLOC_SET_BOTH) && (cave[y][x].fval <= MIN_CLOSED_SPACE)) continue;
 
 	    if ((cave[y][x].i_idx != 0) || (y == char_row && x == char_col)) continue;
 
@@ -757,7 +757,7 @@ static void vault_trap(int y, int x, int yd, int xd, int num)
 	    } while (!in_bounds(y1, x1));
 
 	    c_ptr = &cave[y1][x1];
-	    if ((c_ptr->fval != NULL_WALL) && (c_ptr->fval <= MAX_CAVE_FLOOR)
+	    if ((c_ptr->fval != NULL_WALL) && (c_ptr->fval <= MIN_CLOSED_SPACE)
 		&& (c_ptr->i_idx == 0)) {
 
 	/* Place the trap */

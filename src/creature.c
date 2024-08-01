@@ -553,7 +553,7 @@ static void br_wall(int cy, int cx)
 	move_rec(char_row, char_col, y, x);
 
 	/* Destroy location (unless artifact or stairs) */
-	if ((c_ptr->fval <= MAX_CAVE_FLOOR) &&
+	if ((c_ptr->fval <= MIN_CLOSED_SPACE) &&
 	((c_ptr->i_idx == 0) || ((i_list[c_ptr->tptr].tval != TV_UP_STAIR) &&
 			      (i_list[c_ptr->i_idx].tval != TV_DOWN_STAIR) &&
 			      (i_list[c_ptr->i_idx].tval != TV_STORE_DOOR) &&
@@ -779,7 +779,7 @@ static void shatter_quake(int cy, int cx)
 		    c_ptr->fm = FALSE;
 		}
 
-		else if ((c_ptr->fval <= MAX_CAVE_FLOOR) && (c_ptr->i_idx == 0)
+		else if ((c_ptr->fval <= MIN_CLOSED_SPACE) && (c_ptr->i_idx == 0)
 			   && (c_ptr->m_idx != 1)) {
 		    /* don't bury player, it made him unattackable -CFT */
 		    tmp = randint(10);

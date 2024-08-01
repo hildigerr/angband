@@ -736,7 +736,7 @@ void earthquake(void)
 		    c_ptr->fval = CORR_FLOOR;
 		    c_ptr->pl = FALSE;
 		    c_ptr->fm = FALSE;
-		} else if (c_ptr->fval <= MAX_CAVE_FLOOR) {
+		} else if (c_ptr->fval <= MIN_CLOSED_SPACE) {
 		    tmp = randint(10);
 		    if (tmp < 6) c_ptr->fval = QUARTZ_WALL;
 		    else if (tmp < 9) c_ptr->fval = MAGMA_WALL;
@@ -2789,7 +2789,7 @@ int door_creation()
 	for (j = char_col - 1; j <= char_col + 1; j++)
 	    if ((i != char_row) || (j != char_col)) {
 		c_ptr = &cave[i][j];
-		if (c_ptr->fval <= MAX_CAVE_FLOOR) {
+		if (c_ptr->fval <= MIN_CLOSED_SPACE) {
 		    if ((c_ptr->i_idx == 0) ||
 			((i_list[c_ptr->i_idx].tval != TV_UP_STAIR) 
 				/* if not stairs or a store */
@@ -2826,7 +2826,7 @@ int trap_creation()
 	    if ((i == char_row) && (j == char_col))
 		continue;	   /* no trap under player, from um55 -CFT */
 	    c_ptr = &cave[i][j];
-	    if (c_ptr->fval <= MAX_CAVE_FLOOR) {
+	    if (c_ptr->fval <= MIN_CLOSED_SPACE) {
 		if ((c_ptr->i_idx == 0) ||
 		    ((i_list[c_ptr->i_idx].tval != TV_UP_STAIR)
 		     /* if not stairs or a store */
