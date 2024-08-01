@@ -3390,54 +3390,6 @@ int unlite_area(int y, int x)
 }
 
 
-#define NO_RES 0
-#define SOME_RES 1
-#define RESIST 2
-#define IMMUNE 3
-#define SUSCEPT 4
-#define CHANGED 5
-#define CONFUSED 6
-#define MORE_CONF 7
-#define DAZED 8
-#define MORE_DAZED 16
-#define DEAD 32
-
-
-static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, int *y, int *x, byte by_player)
-{
-    register monster_race *r_ptr;
-    int blind = (p_ptr->status & PY_BLIND) ? 1 : 0;
-    int res;			/* controls messages, using above #defines -CFT */
-    vtype cdesc, outval;
-
-    *y = m_ptr->fy;		/* these only change if mon gets teleported */
-    *x = m_ptr->fx; 
-    r_ptr = &r_list[m_ptr->r_idx];
-
-    res = NO_RES;		/* assume until we know different -CFT */
-    switch ( typ ){		/* check for resists... */
-      default:
-	msg_print("Unknown typ in spell_hit_monster.  This may mean trouble.");
-    } /* end switch for saving throws and extra effects */
-    
-    else switch (res) {
-      case NO_RES:
-	sprintf(outval, "%sis hit.",cdesc);
-	break;
-      case (DAZED+RESIST):
-	  sprintf(outval, "%sresists, but is dazed anyway.",cdesc);
-	break;
-      case (MORE_DAZED+RESIST):
-	  sprintf(outval, "%sresists, but still is more dazed.",cdesc);
-	break;
-      default:
-	sprintf(outval,"%sis affected in a mysterious way.",cdesc);
-    }
-    if (rad || (res != NO_RES)) { /* don't show normal hit msgs for bolts -CFT */
-	if (!blind)
-	    msg_print(outval);
-    }	
-}
 
 
 /* Shoot a bolt in a given direction                    -RAK-   */
@@ -3451,71 +3403,15 @@ void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int
 /* Note the area affect.                              -RAK-   */
 void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 {
-    register int        i, j;
-    int                 dam, max_dis;
-    u32b              tmp, treas;
-    int                 (*destroy) ();
-    register cave_type     *c_ptr;
-    register monster_type  *m_ptr;
-    register monster_race *r_ptr;
-    int                 ny, nx;
-    int                 blind = (p_ptr->status & PY_BLIND) ? 1 : 0;
-    char                ch;
+    int max_dis;
 
-    m_ptr = &m_list[monptr];
-    r_ptr = &r_list[m_ptr->r_idx];
+    monster_type *m_ptr = &m_list[monptr];
+    monster_race *r_ptr = &r_list[m_ptr->r_idx];
 
     /* Determine the radius of the blast */
     max_dis = 2;
     if (strchr("vDEA&", r_ptr->r_char)) max_dis = 3;
     if ((strchr("dR", r_ptr->r_char) && (r_ptr->cflags2 & MF2_UNIQUE))) max_dis = 3;
 
-    switch (typ) {
-      default:
-	destroy = set_null;
-	break;
-    }
-
-
-/* first, go over area of affect and destroy preexisting items. This change
- * means that any treasure dropped by killed monsters is safe from the effects
- * of this ball (but not from any later balls/breathes, even if they happen
- * before the player gets a chance to pick up that scroll of *Acquirement*). 
- * The assumption is made that this treasure was shielded from the effects by
- * the corpse of the killed monster. -CFT 
- */
-    for (i = y - max_dis; i <= y + max_dis; i++)
-	for (j = x - max_dis; j <= x + max_dis; j++)
-	    if (in_bounds(i, j) && (distance(y, x, i, j) <= max_dis)
-		&& los(y, x, i, j) && (cave[i][j].i_idx != 0)
-		&& (*destroy) (&i_list[cave[i][j].i_idx]))
-		delete_object(i, j);
-
-/* now go over area of affect and DO something to monsters */
-    for (i = y - max_dis; i <= y + max_dis; i++)
-	for (j = x - max_dis; j <= x + max_dis; j++)
-	    if (in_bounds(i, j) && (distance(y, x, i, j) <= max_dis)
-		&& los(y, x, i, j)) {
-
-		c_ptr = &cave[i][j];
-		if ((c_ptr->i_idx != 0) && (*destroy) (&i_list[c_ptr->tptr]))
-		    (void)delete_object(i, j);
-		if (floor_grid_bold(i, j)) {
-		    if ((c_ptr->m_idx > 1) && (c_ptr->m_idx != monptr)) {
-			dam = dam_hp;
-			m_ptr = &m_list[c_ptr->m_idx];
-			spell_hit_monster(m_ptr, typ, &dam, distance(i, j, y, x) + 1,
-					  &ny, &nx, FALSE);
-			c_ptr = &cave[ny][nx];	/* may be new location if teleported
-                                                 * by gravity warp... */
-			m_ptr = &m_list[c_ptr->m_idx];	/* and even if not, may be new
-							 * monster if chaos polymorphed */
-			r_ptr = &r_list[m_ptr->r_idx];
-
-		    } else if (c_ptr->m_idx == 1) {
-			m_ptr = &m_list[monptr];
-		    }
-		}
-	    }
 }
 
