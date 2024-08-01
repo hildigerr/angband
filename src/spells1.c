@@ -708,6 +708,35 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
 		    do_kill = TRUE;
 		}
 		break;
+
+	    /* Destroy Doors (and traps) */
+	    case GF_KILL_DOOR:	    
+
+		if (i_ptr->tval == TV_CHEST) {
+		    i_ptr->flags2 = 0L;
+		    i_ptr->flags2 |= CH2_DISARMED;
+		    if (seen) {
+			note++;
+			msg_print("You have disarmed the chest.");
+		    }
+		    break;
+		}
+
+		/* Explode doors/traps */
+		if ((i_ptr->tval == TV_INVIS_TRAP) ||
+		    (i_ptr->tval == TV_VIS_TRAP) ||
+		    (i_ptr->tval == TV_OPEN_DOOR) ||
+		    (i_ptr->tval == TV_CLOSED_DOOR) ||
+		    (i_ptr->tval == TV_SECRET_DOOR)) {
+
+		    /* Destroy it */
+		    do_kill = TRUE;
+
+		    /* Hack -- special message */
+		    if (seen) msg_print("There is a bright flash of light!");
+		}
+
+		break;
 	}
 
 

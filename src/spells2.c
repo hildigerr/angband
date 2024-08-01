@@ -2758,35 +2758,8 @@ int wall_to_mud(int dir, int y, int x)
 /* Destroy all traps and doors in a given direction	-RAK-	 */
 int td_destroy2(int dir, int y, int x)
 {
-    register int         destroy2, dist;
-    register cave_type  *c_ptr;
-    register inven_type *t_ptr;
-
-    destroy2 = FALSE;
-    dist = 0;
-    do {
-	(void)mmove(dir, &y, &x);
-	dist++;
-	c_ptr = &cave[y][x];
-    /* must move into first closed spot, as it might be a secret door */
-	if (c_ptr->i_idx != 0) {
-	    t_ptr = &i_list[c_ptr->i_idx];
-	    if (t_ptr->tval == TV_CHEST) { /* let's untrap it instead -CWS */
-		    i_ptr->flags2 = 0L;
-		    i_ptr->flags2 |= CH2_DISARMED;
-		}
-	    else if ((t_ptr->tval == TV_INVIS_TRAP) || (t_ptr->tval == TV_VIS_TRAP) ||
-		     (t_ptr->tval == TV_OPEN_DOOR) || (t_ptr->tval == TV_CLOSED_DOOR)
-		     || (t_ptr->tval == TV_SECRET_DOOR)) {
-		if (delete_object(y, x)) {
-		    msg_print("There is a bright flash of light!");
-		    destroy2 = TRUE;
-		}
-	    }
-	}
-    }
-    while ((dist <= OBJ_BOLT_RANGE) || floor_grid_bold(y, x));
-    return (destroy2);
+    int flg = PROJECT_BEAM | PROJECT_ITEM | PROJECT_HIDE;
+    return (project_hook(GF_KILL_DOOR, dir, 0, flg));
 }
 
 
@@ -2841,31 +2814,8 @@ int disarm_all(int dir, int y, int x)
 /* Destroys any adjacent door(s)/trap(s)		-RAK-	 */
 int td_destroy()
 {
-    register int        i, j, destroy;
-    register cave_type *c_ptr;
-
-    destroy = FALSE;
-    for (i = char_row - 1; i <= char_row + 1; i++)
-	for (j = char_col - 1; j <= char_col + 1; j++) {
-	    c_ptr = &cave[i][j];
-	    if (c_ptr->i_idx != 0) {
-		if (((i_list[c_ptr->i_idx].tval >= TV_INVIS_TRAP) &&
-		     (i_list[c_ptr->i_idx].tval <= TV_CLOSED_DOOR) &&
-		     (i_list[c_ptr->i_idx].tval != TV_RUBBLE)) ||
-		    (i_list[c_ptr->i_idx].tval == TV_SECRET_DOOR)) {
-		    if (delete_object(i, j))
-			destroy = TRUE;
-		} else if (i_list[c_ptr->i_idx].tval == TV_CHEST) {
-		/* destroy traps on chest and unlock */
-			i_ptr->flags2 = 0L;
-			i_ptr->flags2 |= CH2_DISARMED;
-		    msg_print("You have disarmed the chest.");
-		    known2(&i_list[c_ptr->i_idx]);
-		    destroy = TRUE;
-		}
-	    }
-	}
-    return (destroy);
+    int flg = PROJECT_ITEM | PROJECT_HIDE;
+    return (project(1, 1, char_row, char_col, 0, GF_KILL_DOOR, flg));
 }
 
 /* Surround the player with doors.			-RAK-	 */

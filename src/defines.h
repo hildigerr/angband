@@ -1312,6 +1312,8 @@
 #define GF_TIME         34
 #define GF_GRAVITY      35
 
+#define GF_KILL_DOOR	41
+
 #define GF_OLD_DRAIN	59
 
 
