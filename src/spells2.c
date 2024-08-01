@@ -2668,51 +2668,8 @@ void lite_line(int dir, int y, int x)
 /* Drains life; note it must be living.		-RAK-	 */
 int drain_life(int dir, int y, int x, int dam)
 {
-    register int            i;
-    int                     flag, dist, drain;
-    register cave_type     *c_ptr;
-    register monster_type  *m_ptr;
-    register monster_race *r_ptr;
-    vtype                   out_val, m_name;
-
-    drain = FALSE;
-    flag = FALSE;
-    dist = 0;
-    do {
-	(void)mmove(dir, &y, &x);
-	dist++;
-	c_ptr = &cave[y][x];
-	if ((dist > OBJ_BOLT_RANGE) || c_ptr->fval >= MIN_CLOSED_SPACE)
-	    flag = TRUE;
-	else if (c_ptr->m_idx > 1) {
-	    flag = TRUE;
-	    m_ptr = &m_list[c_ptr->m_idx];
-	    r_ptr = &r_list[m_ptr->r_idx];
-	    if (((r_ptr->cflags2 & MF2_UNDEAD) == 0) &&
-		((r_ptr->cflags2 & MF2_DEMON) == 0) &&
-		(r_ptr->r_char != 'E' && r_ptr->r_char != 'g' && r_ptr->r_char != 'v')) {
-		drain = TRUE;
-		monster_name(m_name, m_ptr);
-		i = mon_take_hit((int)c_ptr->m_idx, dam, TRUE);
-		if (i >= 0) {
-		    (void)sprintf(out_val, "%s dies in a fit of agony.", m_name);
-		    msg_print(out_val);
-		    prt_experience();
-		} else {
-		    (void)sprintf(out_val,
-			       pain_message((int)c_ptr->m_idx, dam), m_name);
-		    msg_print(out_val);
-		}
-	    } else {
-		if (r_ptr->cflags2 & MF2_UNDEAD)
-		    l_list[m_ptr->r_idx].r_cflags2 |= MF2_UNDEAD;
-		else
-		    l_list[m_ptr->r_idx].r_cflags2 |= MF2_DEMON;
-	    }
-	}
-    }
-    while (!flag);
-    return (drain);
+    int flg = PROJECT_STOP;
+    return (project_hook(GF_OLD_DRAIN, dir, dam, flg));
 }
 
 

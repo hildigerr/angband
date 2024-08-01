@@ -1066,6 +1066,21 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 	    if (seen) l_ptr->r_cflags2 |= MF2_IM_COLD;
 	}
 	break;
+
+
+      /* Drain Life */
+      case GF_OLD_DRAIN:
+	if ((r_ptr->cflags2 & MF2_UNDEAD) ||
+	    (r_ptr->cflags2 & MF2_DEMON) ||
+	    (strchr("Egv", r_ptr->r_char))) {
+
+	    if (r_ptr->cflags2 & MF2_UNDEAD) l_ptr->r_cflags2 |= MF2_UNDEAD;
+	    if (r_ptr->cflags2 & MF2_DEMON) l_ptr->r_cflags2 |= MF2_DEMON;
+	    obvious = FALSE;
+	    dam = 0;
+	}
+	else note_dies = " dies in a fit of agony.";
+	break;
     }
 
 
