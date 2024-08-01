@@ -104,6 +104,79 @@ bool apply_disenchant(int mode)
 
 
 /*
+ * Apply Nexus
+ */
+static void apply_nexus(monster_type *m_ptr)
+{
+    int k = dun_level;
+    int max1, cur1, max2, cur2, ii, jj;
+
+    switch (randint(7)) {
+
+	case 1: case 2: case 3:
+
+	    teleport(200);
+	    break;
+
+	case 4: case 5:
+
+	    teleport_to((int)m_ptr->fy, (int)m_ptr->fx);
+	    break;
+
+	case 6:
+
+	    if (player_saves()) {
+		msg_print("You resist the effects.");
+		break;
+	    }            
+
+	    /* Teleport Level */
+	    if (dun_level == Q_PLANE) dun_level = 0;
+	    else if (is_quest(dun_level)) dun_level -= 1;
+	    else dun_level += (-3) + 2 * randint(2);
+	    if (dun_level < 0) dun_level = 0;
+	    if (k == Q_PLANE) msg_print("You warp through a cross-dimension gate.");
+	    else if (k < dun_level) msg_print("You sink through the floor.");
+	    else msg_print("You rise up through the ceiling.");
+	    new_level_flag = TRUE;
+	    break;
+
+	case 7:
+
+	    if (player_saves() && randint(2) == 1) {
+		msg_print("You resist the effects.");
+		break;
+	    }
+
+	    msg_print("Your body starts to scramble...");
+
+	    /* Pick a pair of stats */
+	    ii = rand_int(6);
+	    for (jj = ii; jj == ii; jj = rand_int(6));
+
+	    max1 = p_ptr->max_stat[ii];
+	    cur1 = p_ptr->cur_stat[ii];
+	    max2 = p_ptr->max_stat[jj];
+	    cur2 = p_ptr->cur_stat[jj];
+
+	    p_ptr->max_stat[ii] = max2;
+	    p_ptr->cur_stat[ii] = cur2;
+	    p_ptr->max_stat[jj] = max1;
+	    p_ptr->cur_stat[jj] = cur1;
+
+	    set_use_stat(ii);
+	    set_use_stat(jj);
+	    prt_stat(ii);
+	    prt_stat(jj);
+
+	    break;
+    }
+}
+
+
+
+
+/*
  * Does a given class of objects (usually) hate acid?
  * Note that acid can either melt or corrode something.
  */

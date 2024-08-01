@@ -3656,64 +3656,7 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 						 * of .655, ranging from */
 				dam /= (randint(6) + 6);	/* .858 to .5 -CFT */
 			    } else {	/* special effects */
-				switch (randint(7)) {
-				  case 1:
-				  case 2:
-				  case 3:
-				    teleport(200);
-				    break;
-				  case 4:
-				  case 5:
-				    teleport_to((int)m_ptr->fy, (int)m_ptr->fx);
-				    break;
-				  case 6:
-				    if (player_saves())
-					msg_print("You resist the effects.");
-				    else {
-					int                 k = dun_level;
-
-					if (dun_level == Q_PLANE)
-					    dun_level = 0;
-					else if (is_quest(dun_level))
-					    dun_level -= 1;
-					else
-					    dun_level += (-3) + 2 * randint(2);
-					if (dun_level < 0)
-					    dun_level = 0;
-					if (k == Q_PLANE)
-			    msg_print("You warp through a cross-dimension gate.");
-					else if (k < dun_level)
-					    msg_print("You sink through the floor.");
-					else
-				    msg_print("You rise up through the ceiling.");
-					new_level_flag = TRUE;
-				    }
-				    break;
-				  case 7:
-				    if (player_saves() && randint(2) == 1)
-					msg_print("You resist the effects.");
-				    else {
-					int      max1, cur1, max2, cur2, ii, jj;
-
-					msg_print("Your body starts to scramble...");
-					ii = randint(6) - 1;
-					do {
-					    jj = randint(6) - 1;
-					} while (ii == jj);
-					max1 = p_ptr->max_stat[ii];
-					cur1 = p_ptr->cur_stat[ii];
-					max2 = p_ptr->max_stat[jj];
-					cur2 = p_ptr->cur_stat[jj];
-					p_ptr->max_stat[ii] = max2;
-					p_ptr->cur_stat[ii] = cur2;
-					p_ptr->max_stat[jj] = max1;
-					p_ptr->cur_stat[jj] = cur1;
-					set_use_stat(ii);
-					set_use_stat(jj);
-					prt_stat(ii);
-					prt_stat(jj);
-				    }
-				} /* switch for effects */
+				apply_nexus(m_ptr);
 			    }
 			    take_hit(dam, ddesc);
 			    break;
