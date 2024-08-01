@@ -3391,21 +3391,15 @@ int unlite_area(int y, int x)
 
 
 
-
-/* Shoot a bolt in a given direction                    -RAK-   */
-/* heavily modified to include exotic bolts -CFT */
-void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int monptr)
+void bolt(int m_idx, int typ, int dam_hp)
 {
 }
 
-
-/* Breath weapon works like a fire_ball, but affects the player. */
-/* Note the area affect.                              -RAK-   */
-void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
+void breath(int m_idx, int typ, int dam_hp)
 {
     int max_dis;
 
-    monster_type *m_ptr = &m_list[monptr];
+    monster_type *m_ptr = &m_list[m_idx];
     monster_race *r_ptr = &r_list[m_ptr->r_idx];
 
     /* Determine the radius of the blast */

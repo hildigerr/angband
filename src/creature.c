@@ -2354,80 +2354,72 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    if (!blind) strcat(cdesc, "breathes lightning.");
 	    else strcat(cdesc, "breathes, and you get zapped.");
 	    msg_print(cdesc);
-	    breath(GF_ELEC, char_row, char_col,
-		   ((m_ptr->hp / 3) > 1600 ? 1600 : (m_ptr->hp / 3)),
-		   ddesc, m_idx);
+	    breath(m_idx, GF_ELEC,
+		   ((m_ptr->hp / 3) > 1600 ? 1600 : (m_ptr->hp / 3)));
 	    break;
 
 	  case 21:		   /* Breath Gas	 */
 	    if (!blind) strcat(cdesc, "breathes gas.");
 	    else strcat(cdesc, "breathes, and you inhale noxious gases.");
 	    msg_print(cdesc);
-	    breath(GF_POIS, char_row, char_col,
-		((m_ptr->hp / 3) > 800 ? 800 : (m_ptr->hp / 3)), ddesc, m_idx);
+	    breath(m_idx, GF_POIS,
+		((m_ptr->hp / 3) > 800 ? 800 : (m_ptr->hp / 3)));
 	    break;
 
 	  case 22:		   /* Breath Acid	 */
 	    if (!blind) strcat(cdesc, "breathes acid.");
 	    else strcat(cdesc, "breathes, and your skin is burning.");
 	    msg_print(cdesc);
-	    breath(GF_ACID, char_row, char_col,
-		   ((m_ptr->hp / 3) > 1600 ? 1600 : (m_ptr->hp / 3)),
-		   ddesc, m_idx);
+	    breath(m_idx, GF_ACID, 
+		   ((m_ptr->hp / 3) > 1600 ? 1600 : (m_ptr->hp / 3)));
 	    break;
 
 	  case 23:		   /* Breath Frost */
 	    if (!blind) strcat(cdesc, "breathes frost.");
 	    else strcat(cdesc, "breathes, and feel a frigid blast.");
 	    msg_print(cdesc);
-	    breath(GF_COLD, char_row, char_col,
-		   ((m_ptr->hp / 3) > 1600 ? 1600 : (m_ptr->hp / 3)),
-		   ddesc, m_idx);
+	    breath(m_idx, GF_COLD,
+		   ((m_ptr->hp / 3) > 1600 ? 1600 : (m_ptr->hp / 3)));
 	    break;
 
 	  case 24:		   /* Breath Fire	 */
 	    if (!blind) strcat(cdesc, "breathes fire.");
 	    else strcat(cdesc, "breathes, and you're on fire.");
 	    msg_print(cdesc);
-	    breath(GF_FIRE, char_row, char_col,
-		   ((m_ptr->hp / 3) > 1600 ? 1600 : (m_ptr->hp / 3)),
-		   ddesc, m_idx);
+	    breath(m_idx, GF_FIRE,
+		   ((m_ptr->hp / 3) > 1600 ? 1600 : (m_ptr->hp / 3)));
 	    break;
 
 	  case 25:		   /* Fire Bolt */
 	    if (!blind) strcat(cdesc, "casts a Fire bolt.");
 	    else strcat(cdesc, "mumbles.");
 	    msg_print(cdesc);
-	    bolt(GF_FIRE, char_row, char_col,
-		 damroll(9, 8) + (r_list[m_ptr->r_idx].level / 3)
-		 ,ddesc, m_ptr, m_idx);
+	    bolt(m_idx, GF_FIRE,
+		 damroll(9, 8) + (r_list[m_ptr->r_idx].level / 3));
 	    break;
 
 	  case 26:		   /* Frost Bolt */
 	    if (!blind) strcat(cdesc, "casts a Frost bolt.");
 	    else strcat(cdesc, "mumbles, and you feel a frigid blast .");
 	    msg_print(cdesc);
-	    bolt(GF_COLD, char_row, char_col,
-		 damroll(6, 8) + (r_list[m_ptr->r_idx].level / 3)
-		 ,ddesc, m_ptr, m_idx);
+	    bolt(m_idx, GF_COLD,
+		 damroll(6, 8) + (r_list[m_ptr->r_idx].level / 3));
 	    break;
 
 	  case 27:		   /* Acid Bolt */
 	    if (!blind) strcat(cdesc, "casts a Acid bolt.");
 	    else strcat(cdesc, "mumbles, and your skin burns.");
 	    msg_print(cdesc);
-	    bolt(GF_ACID, char_row, char_col,
-		 damroll(7, 8) + (r_list[m_ptr->r_idx].level / 3)
-		 ,ddesc, m_ptr, m_idx);
+	    bolt(m_idx, GF_ACID,
+		 damroll(7, 8) + (r_list[m_ptr->r_idx].level / 3));
 	    break;
 
 	  case 28:		   /* Magic Missiles */
 	    if (!blind) strcat(cdesc, "casts a Magic missile.");
 	    else strcat(cdesc, "mumbles, and you feel an arrow hit you.");
 	    msg_print(cdesc);
-	    bolt(GF_MISSILE, char_row, char_col,
-		 damroll(2, 6) + (r_list[m_ptr->r_idx].level / 3)
-		 ,ddesc, m_ptr, m_idx);
+	    bolt(m_idx, GF_MISSILE,
+		 damroll(2, 6) + (r_list[m_ptr->r_idx].level / 3));
 	    break;
 
 	  case 29:		   /* Critical Wound	 */
@@ -2446,100 +2438,96 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    if (!blind) strcat(cdesc, "casts a Fire ball.");
 	    else strcat(cdesc, "mumbles, and you're on fire.");
 	    msg_print(cdesc);
-	    breath(GF_FIRE, char_row, char_col,
-		   randint((r_list[m_ptr->r_idx].level * 7) / 2) + 10,
-		   ddesc, m_idx);
+	    breath(m_idx, GF_FIRE,
+		   randint((r_list[m_ptr->r_idx].level * 7) / 2) + 10);
 	    break;
 
 	  case 31:		   /* Frost Ball */
 	    if (!blind) strcat(cdesc, "casts a Frost ball.");
 	    else strcat(cdesc, "mumbles, and you feel a frigid blast.");
 	    msg_print(cdesc);
-	    breath(GF_COLD, char_row, char_col,
-		   randint((r_list[m_ptr->r_idx].level * 3) / 2) + 10,
-		   ddesc, m_idx);
+	    breath(m_idx, GF_COLD,
+		   randint((r_list[m_ptr->r_idx].level * 3) / 2) + 10);
 	    break;
 
 	  case 32:		   /* Mana Bolt */
 	    if (!blind) strcat(cdesc, "casts a Mana bolt.");
 	    else strcat(cdesc, "mumbles, and you feel a magical blast.");
 	    msg_print(cdesc);
-	    bolt(GF_MISSILE, char_row, char_col,
-	    randint((r_list[m_ptr->r_idx].level * 7) / 2) + 50, ddesc, m_ptr,
-		 m_idx);
+	    bolt(m_idx, GF_MISSILE,
+		 randint((r_list[m_ptr->r_idx].level * 7) / 2) + 50);
 	    break;
 
 	  case 33:
 	    if (!blind) strcat(cdesc, "breathes chaos.");
 	    else strcat(cdesc, "breathes, and you feel a strange flux.");
 	    msg_print(cdesc);
-	    breath(GF_CHAOS, char_row, char_col,
-	    ((m_ptr->hp / 6) > 600 ? 600 : (m_ptr->hp / 6)), ddesc, m_idx);
+	    breath(m_idx, GF_CHAOS,
+		   ((m_ptr->hp / 6) > 600 ? 600 : (m_ptr->hp / 6)));
 	    break;
 
 	  case 34:
 	    if (!blind) strcat(cdesc, "breathes shards.");
 	    else strcat(cdesc, "breathes, and sharp fragments cut you.");
 	    msg_print(cdesc);
-	    breath(GF_SHARDS, char_row, char_col,
-	    ((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), ddesc, m_idx);
+	    breath(m_idx, GF_SHARDS,
+		((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)));
 	    break;
 
 	  case 35:
 	    if (!blind) strcat(cdesc, "breathes sound.");
 	    else strcat(cdesc, "breathes, and you are deafened.");
 	    msg_print(cdesc);
-	    breath(GF_SOUND, char_row, char_col,
-		((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), ddesc, m_idx);
+	    breath(m_idx, GF_SOUND,
+		((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)));
 	    break;
 
 	  case 36:
 	    if (!blind) strcat(cdesc, "breathes confusion.");
 	    else strcat(cdesc, "breathes, and you feel dizzy.");
 	    msg_print(cdesc);
-	    breath(GF_CONFUSION, char_row, char_col,
-		((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), ddesc, m_idx);
+	    breath(m_idx, GF_CONFUSION,
+		((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)));
 	    break;
 
 	  case 37:
 	    if (!blind) strcat(cdesc, "breathes disenchantment.");
 	    else strcat(cdesc, "breathes, and your equipment seems less powerful.");
 	    msg_print(cdesc);
-	    breath(GF_DISENCHANT, char_row, char_col,
-		((m_ptr->hp / 6) > 500 ? 500 : (m_ptr->hp / 6)), ddesc, m_idx);
+	    breath(m_idx, GF_DISENCHANT,
+		((m_ptr->hp / 6) > 500 ? 500 : (m_ptr->hp / 6)));
 	    break;
 
 	  case 38:
 	    if (!blind) strcat(cdesc, "breathes nether.");
 	    else strcat(cdesc, "breathes, and you feel an unholy aura.");
 	    msg_print(cdesc);
-	    breath(GF_NETHER, char_row, char_col,
-		   ((m_ptr->hp / 6) > 550 ? 550 : (m_ptr->hp / 6)), ddesc, m_idx);
+	    breath(m_idx, GF_NETHER,
+		   ((m_ptr->hp / 6) > 550 ? 550 : (m_ptr->hp / 6)) );
 	    break;
 
 	  case 39:
 	    if (!blind) strcat(cdesc, "casts a Lightning bolt.");
 	    else strcat(cdesc, "mumbles.");
 	    msg_print(cdesc);
-	    bolt(GF_ELEC, char_row, char_col,
-		 damroll(4, 8) + (r_list[m_ptr->r_idx].level / 3)
-		 ,ddesc, m_ptr, m_idx);
+	    bolt(m_idx, GF_ELEC, 
+		 damroll(4, 8) + (r_list[m_ptr->r_idx].level / 3));
 	    break;
 
 	  case 40:
 	    if (!blind) strcat(cdesc, "casts a Lightning Ball.");
 	    else strcat(cdesc, "mumbles, and you get zapped.");
 	    msg_print(cdesc);
-	    breath(GF_ELEC, char_row, char_col,
-		randint((r_list[m_ptr->r_idx].level * 3) / 2) + 8, ddesc, m_idx);
+	    breath(m_idx, GF_ELEC,
+		randint((r_list[m_ptr->r_idx].level * 3) / 2) + 8);
 	    break;
 
 	  case 41:
 	    if (!blind) strcat(cdesc, "casts an Acid Ball.");
 	    else strcat(cdesc, "mumbles, and your skin is burning.");
 	    msg_print(cdesc);
-	    breath(GF_ACID, char_row, char_col,
-		   randint(r_list[m_ptr->r_idx].level * 3) + 15, ddesc, m_idx);
+	    breath(m_idx, GF_ACID,
+		   randint(r_list[m_ptr->r_idx].level * 3) + 15 );
 	    break;
 
 	  case 42:
@@ -2696,16 +2684,15 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    if (!blind) strcat(cdesc, "fires missiles at you.");
 	    else strcat(cdesc, "sounds like it threw something.");
 	    msg_print(cdesc);
-	    bolt(GF_ARROW, char_row, char_col, damroll(6, 7), ddesc, m_ptr, m_idx);
+	    bolt(m_idx, GF_ARROW, damroll(6, 7));
 	    break;
 
 	  case 49:
 	    if (!blind) strcat(cdesc, "casts a Plasma Bolt.");
 	    else strcat(cdesc, "mumbles, and you are hit with a hellish blast.");
 	    msg_print(cdesc);
-	    bolt(GF_PLASMA, char_row, char_col,
-		 10 + damroll(8, 7) + (r_list[m_ptr->r_idx].level),
-		 ddesc, m_ptr, m_idx);
+	    bolt(m_idx, GF_PLASMA,
+		 10 + damroll(8, 7) + (r_list[m_ptr->r_idx].level));
 	    break;
 
 	  case 50:
@@ -2721,18 +2708,16 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    if (!blind) strcat(cdesc, "casts a Nether Bolt.");
 	    else strcat(cdesc, "mumbles.");
 	    msg_print(cdesc);
-	    bolt(GF_NETHER, char_row, char_col,
-		 30 + damroll(5, 5) + (r_list[m_ptr->r_idx].level * 3) / 2,
-		 ddesc, m_ptr, m_idx);
+	    bolt(m_idx, GF_NETHER,
+		 30 + damroll(5, 5) + (r_list[m_ptr->r_idx].level * 3) / 2);
 	    break;
 
 	  case 52:
 	    if (!blind) strcat(cdesc, "casts an Ice Bolt.");
 	    else strcat(cdesc, "mumbles.");
 	    msg_print(cdesc);
-	    bolt(GF_COLD, char_row, char_col,
-		 damroll(6, 6) + (r_list[m_ptr->r_idx].level)
-		 ,ddesc, m_ptr, m_idx);
+	    bolt(m_idx, GF_COLD,
+		 damroll(6, 6) + (r_list[m_ptr->r_idx].level));
 	    break;
 
 	  case 53:
@@ -2808,8 +2793,8 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    if (!blind) strcat(cdesc, "casts a Stinking Cloud.");
 	    else strcat(cdesc, "mumbles, and you smell a foul odor.");
 	    msg_print(cdesc);
-	    breath(GF_POIS, char_row, char_col,
-		   damroll(12, 2), ddesc, m_idx);
+	    breath(m_idx, GF_POIS,
+		   damroll(12, 2));
 	    break;
 
 	  case 57:
@@ -2847,9 +2832,8 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    if (!blind) strcat(cdesc, "casts a Water Bolt.");
 	    else strcat(cdesc, "mumbles.");
 	    msg_print(cdesc);
-	    bolt(GF_WATER, char_row, char_col,
-		 damroll(10, 10) + (r_list[m_ptr->r_idx].level)
-		 ,ddesc, m_ptr, m_idx);
+	    bolt(m_idx, GF_WATER,
+		 damroll(10, 10) + (r_list[m_ptr->r_idx].level));
 	    break;
 
 	  case 59:
@@ -2857,18 +2841,16 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    else strcat(cdesc, "mumbles.");
 	    msg_print(cdesc);
 	    msg_print("You are engulfed in a whirlpool.");
-	    breath(GF_WATER, char_row, char_col,
-		   randint((r_list[m_ptr->r_idx].level * 5) / 2) + 50,
-		   ddesc, m_idx);
+	    breath(m_idx, GF_WATER,
+		   randint((r_list[m_ptr->r_idx].level * 5) / 2) + 50);
 	    break;
 
 	  case 60:
 	    if (!blind) strcat(cdesc, "casts a Nether Ball.");
 	    else strcat(cdesc, "mumbles, and you feel an unholy aura.");
 	    msg_print(cdesc);
-	    breath(GF_NETHER, char_row, char_col,
-		   (50 + damroll(10, 10) + (r_list[m_ptr->r_idx].level)),
-		   ddesc, m_idx);
+	    breath(m_idx, GF_NETHER,
+		   (50 + damroll(10, 10) + (r_list[m_ptr->r_idx].level)));
 	    break;
 
 	  case 61:
@@ -2902,8 +2884,8 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    if (!blind) strcat(cdesc, "breathes Nexus.");
 	    else strcat(cdesc, "breathes, and you feel strange.");
 	    msg_print(cdesc);
-	    breath(GF_NEXUS, char_row, char_col,
-		((m_ptr->hp / 3) > 250 ? 250 : (m_ptr->hp / 3)), ddesc, m_idx);
+	    breath(m_idx, GF_NEXUS,
+		((m_ptr->hp / 3) > 250 ? 250 : (m_ptr->hp / 3)));
 	    break;
 
 	  case 65:
@@ -2918,9 +2900,8 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 
 	    /* Normal breath */
 	    else {
-		breath(GF_FORCE, char_row, char_col,
-		       ((m_ptr->hp / 6) > 200 ? 200 : (m_ptr->hp / 6)),
-		       ddesc, m_idx);
+		breath(m_idx, GF_FORCE,
+		       ((m_ptr->hp / 6) > 200 ? 200 : (m_ptr->hp / 6)));
 	    }
 	    break;
 
@@ -2928,48 +2909,48 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    if (!blind) strcat(cdesc, "breathes inertia.");
 	    else strcat(cdesc, "breathes.");
 	    msg_print(cdesc);
-	    breath(GF_INERTIA, char_row, char_col,
-		   ((m_ptr->hp / 6) > 200 ? 200 : (m_ptr->hp / 6)), ddesc, m_idx);
+	    breath(m_idx, GF_INERTIA,
+		   ((m_ptr->hp / 6) > 200 ? 200 : (m_ptr->hp / 6)));
 	    break;
 
 	  case 67:
 	    if (!blind) strcat(cdesc, "breathes light.");
 	    else strcat(cdesc, "breathes.");
 	    msg_print(cdesc);
-	    breath(GF_LITE, char_row, char_col,
-		((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), ddesc, m_idx);
+	    breath(m_idx, GF_LITE,
+		((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)));
 	    break;
 
 	  case 68:
 	    if (!blind) strcat(cdesc, "breathes time.");
 	    else strcat(cdesc, "breathes.");
 	    msg_print(cdesc);
-	    breath(GF_TIME, char_row, char_col,
-		((m_ptr->hp / 3) > 150 ? 150 : (m_ptr->hp / 3)), ddesc, m_idx);
+	    breath(m_idx, GF_TIME,
+		((m_ptr->hp / 3) > 150 ? 150 : (m_ptr->hp / 3)));
 	    break;
 
 	  case 69:		   /* gravity */
 	    if (!blind) strcat(cdesc, "breathes gravity.");
 	    else strcat(cdesc, "breathes, and you feel heavy.");
 	    msg_print(cdesc);
-	    breath(GF_GRAVITY, char_row, char_col,
-		((m_ptr->hp / 3) > 200 ? 200 : (m_ptr->hp / 3)), ddesc, m_idx);
+	    breath(m_idx, GF_GRAVITY,
+		((m_ptr->hp / 3) > 200 ? 200 : (m_ptr->hp / 3)));
 	    break;
 
 	  case 70:		   /* darkness */
 	    if (!blind) strcat(cdesc, "breathes darkness.");
 	    else strcat(cdesc, "breathes.");
 	    msg_print(cdesc);
-	    breath(GF_DARK, char_row, char_col,
-		((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), ddesc, m_idx);
+	    breath(m_idx, GF_DARK,
+		((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)));
 	    break;
 
 	  case 71:		   /* plasma */
 	    if (!blind) strcat(cdesc, "breathes plasma.");
 	    else strcat(cdesc, "breathes.");
 	    msg_print(cdesc);
-	    breath(GF_PLASMA, char_row, char_col,
-		((m_ptr->hp / 6) > 150 ? 150 : (m_ptr->hp / 6)), ddesc, m_idx);
+	    breath(m_idx, GF_PLASMA,
+		((m_ptr->hp / 6) > 150 ? 150 : (m_ptr->hp / 6)));
 	    break;
 
 	  case 72:
@@ -2980,7 +2961,7 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    else {
 		msg_print("You hear the 'twang' of a bowstring.");
 	    }
-	    bolt(GF_ARROW, char_row, char_col, damroll(1, 6), ddesc, m_ptr, m_idx);
+	    bolt(m_idx, GF_ARROW, damroll(1, 6));
 	    break;
 
 	  case 73:
@@ -2997,17 +2978,16 @@ static void mon_cast_spell(int m_idx, int *took_turn)
 	    if (!blind) strcat(cdesc, "casts a Darkness Storm.");
 	    else strcat(cdesc, "mumbles powerfully.");
 	    msg_print(cdesc);
-	    breath(GF_DARK, char_row, char_col,
-		((m_ptr->hp / 6) > 500 ? 500 : (m_ptr->hp / 6)), ddesc, m_idx);
+	    breath(m_idx, GF_DARK,
+		((m_ptr->hp / 6) > 500 ? 500 : (m_ptr->hp / 6)));
 	    break;
 
 	  case 75:		   /* Mana storm */
 	    if (!blind) strcat(cdesc, "invokes a Mana Storm.");
 	    else strcat(cdesc, "mumbles, and you are hit by a storm of power.");
 	    msg_print(cdesc);
-	    breath(GF_MANA, char_row, char_col,
-		   (r_list[m_ptr->r_idx].level * 5) + damroll(10, 10),
-		   ddesc, m_idx);
+	    breath(m_idx, GF_MANA,
+		   (r_list[m_ptr->r_idx].level * 5) + damroll(10, 10));
 	    break;
 
 	  case 76:		   /* Summon reptiles */
