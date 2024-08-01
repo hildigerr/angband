@@ -1200,6 +1200,12 @@ static bool project_p(int who, int rad, int y, int x, int dam, int typ, int flg)
     /* Adjust damage */
     dam = dam * mul / div;
 
+    /* Hack -- always do at least one point of damage */
+    if (dam <= 0) dam = 1;
+
+    /* Hack -- Never do excessive damage */
+    if (dam > 1600) dam = 1600;
+
 
     /* Get "blind" */
     if (p_ptr->blind > 0) blind = TRUE;

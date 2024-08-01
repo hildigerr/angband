@@ -3514,12 +3514,6 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 
 		    } else if (c_ptr->m_idx == 1) {
 			m_ptr = &m_list[monptr];
-		    /* let's do at least one point of damage */
-		    /* prevents randint(0) problem with poison_gas, also */
-			if (dam <= 0)
-			    dam = 1;
-			if (dam > 1600)
-			    dam = 1600;
 			switch (typ) {
 			  case GF_ELEC:
 			    light_dam(dam, ddesc);
