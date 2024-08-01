@@ -1174,13 +1174,33 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
  */
 static bool project_p(int who, int rad, int y, int x, int dam, int typ, int flg)
 {
+    register int k = 0;
+
+    /* Player blind-ness */
+    int blind = FALSE;
+
+    /* Player needs a "description" (he is blind) */
+    int fuzzy = FALSE;
 
     /* Source monster */
     register monster_type *m_ptr;
 
+    /* Monster name (for damage) */
+    char killer[80];
+
+
+    /* Get "blind" */
+    if (p_ptr->blind > 0) blind = TRUE;
+
+    /* If the player is blind, be more descriptive */
+    if (blind) fuzzy = TRUE;
+
 
     /* Get the source monster */
     m_ptr = &m_list[who];
+
+    /* Get the monster's real name */
+    monster_name(killer, m_ptr);
 
 
     /* Analyze the damage */
@@ -1188,50 +1208,270 @@ static bool project_p(int who, int rad, int y, int x, int dam, int typ, int flg)
 
 	/* Standard damage -- hurts inventory too */
 	case GF_ACID:
+	    if (fuzzy) msg_print("You are hit by a jet of acidic fluid!");
+	    acid_dam(dam, killer);
 	    break;
 
 	/* Standard damage -- hurts inventory too */
 	case GF_FIRE:
+	    if (fuzzy) msg_print("You are hit by something hot!");
+	    fire_dam(dam, killer);
 	    break;
 
 	/* Standard damage -- hurts inventory too */
 	case GF_COLD:
+	    if (fuzzy) msg_print("You are hit by something cold!");
+	    cold_dam(dam, killer);
 	    break;
 
 	/* Standard damage -- hurts inventory too */
 	case GF_ELEC:
+	    if (fuzzy) msg_print("You are hit by electricity!");
+	    light_dam(dam, killer);
+	    break;
+
+	/* Standard damage */
+	case GF_POIS:
+	    if (fuzzy) msg_print("You are hit by a blast of noxious gases!");
+	    poison_gas(dam, killer);
+	    break;
+
+	/* Standard damage */
+	case GF_MISSILE:
+	    if (fuzzy) msg_print("You are hit by something!");
+	    take_hit(dam, killer);
 	    break;
 
 	/* Hold Orb -- Player only takes partial damage, cause he is "good" */
 	case GF_HOLY_ORB:
+	    if (fuzzy) msg_print("You are hit by something!");
+	    dam /= 2;
+	    take_hit(dam, killer);
+	    break;
+
+	/* Arrow -- XXX no dodging */
+	case GF_ARROW:
+	    if (fuzzy) msg_print("You are hit by something!");
+	    take_hit(dam, killer);
 	    break;
 
 	/* Plasma -- XXX No resist */
 	case GF_PLASMA:
+	    if (fuzzy) msg_print("You are hit by something!");
+	    take_hit(dam, killer);
+	    break;
+
+	case GF_NETHER:
+	    if (fuzzy) msg_print("You are hit by an unholy blast!");
+	    if (p_ptr->resist_nether) {
+		dam *= 6; dam /= (randint(6) + 6);
+	    }
+	    else {
+		if (p_ptr->hold_life && randint(5) > 1) {
+		    msg_print("You keep hold of your life force!");
+		}
+		else if (p_ptr->hold_life) {
+		    msg_print("You feel your life slipping away!");
+		    lose_exp(200 + (p_ptr->exp/1000) * MON_DRAIN_LIFE);
+		}
+		else {
+		    msg_print("You feel your life draining away!");
+		    lose_exp(200 + (p_ptr->exp/100) * MON_DRAIN_LIFE);
+		}
+	    }
+	    take_hit(dam, killer);
+	    break;
+
+	/* Water -- stun/confuse */
+	case GF_WATER:
+	    if (fuzzy) msg_print("You are hit by a jet of water!");
+		if (!p_ptr->resist_sound) stun_player(randint(15));
+	    take_hit(dam, killer);
+	    break;
+
+	/* Chaos -- many effects */
+	case GF_CHAOS:
+	    if (fuzzy) msg_print("You are hit by wave of entropy!");
+	    if (p_ptr->resist_chaos) {
+		dam *= 6; dam /= (randint(6) + 6);
+	    }
+	    if ((!p_ptr->resist_conf) && (!p_ptr->resist_chaos)) {
+		if (p_ptr->confused > 0) p_ptr->confused += 12;
+		else p_ptr->confused = randint(20) + 10;
+	    }
+	    if (!p_ptr->resist_chaos) {
+		p_ptr->image += randint(10);
+	    }
+	    take_hit(dam, killer);
 	    break;
 
 	/* Shards -- mostly cutting */
 	case GF_SHARDS:
+	    if (fuzzy) msg_print("You are cut by sharp fragments!");
+	    if (p_ptr->resist_shards) {
+		dam *= 6; dam /= (randint(6) + 6);
+	    }
+	    else {
+		cut_player(dam);
+	    }
+	    take_hit(dam, killer);
 	    break;
 
 	/* Sound -- mostly stunning */
 	case GF_SOUND:
+	    if (fuzzy) msg_print("You are deafened by a blast of noise!");
+	    if (p_ptr->resist_sound) {
+		dam *= 5; dam /= (randint(6) + 6);
+	    }
+	    else {
+		stun_player(randint((dam > 60) ? 25 : (dam / 3 + 5)));
+	    }
+	    take_hit(dam, killer);
+	    break;
+
+	/* Pure confusion */
+	case GF_CONFUSION:
+	    if (fuzzy) msg_print("You are hit by a wave of dizziness!");
+	    if (p_ptr->resist_conf) {
+		dam *= 5; dam /= (randint(6) + 6);
+	    }
+	    if (!p_ptr->resist_conf && !p_ptr->resist_chaos) {
+		if (p_ptr->confused > 0) p_ptr->confused += 8;
+		else p_ptr->confused = randint(15) + 5;
+	    }
+	    take_hit(dam, killer);
+	    break;
+
+	/* Disenchantment -- see above */
+	case GF_DISENCHANT:
+	    if (fuzzy) msg_print("You are hit by something!");
+	    if (p_ptr->resist_disen) {
+		dam *= 6; dam /= (randint(6) + 6);
+	    }
+	    else {
+		(void)apply_disenchant(0);
+	    }
+	    take_hit(dam, killer);
+	    break;
+
+	/* Nexus -- see above XXX No Bolt Effects? */
+	case GF_NEXUS:
+	    if (fuzzy) msg_print("You are hit by something strange!");
+	    if (p_ptr->resist_nexus) {
+		dam *= 6; dam /= (randint(6) + 6);
+	    }
+	    take_hit(dam, killer);
 	    break;
 
 	/* Force -- mostly stun */
 	case GF_FORCE:
+	    if (fuzzy) msg_print("You are hit hard by a sudden force!");
+		if (!p_ptr->resist_sound) stun_player(randint(15) + 1);
+	    take_hit(dam, killer);
+	    break;
+
+	/* Inertia -- slowness */
+	case GF_INERTIA:
+	    if (fuzzy) msg_print("You are hit by something!");
+	    if (p_ptr->slow > 0) && (p_ptr->slow < 32000)) {
+		p_ptr->slow += randint(5);
+	    }
+	    else {
+		msg_print("You feel less able to move.");
+		p_ptr->slow = randint(5) + 3;
+	    }
+	    take_hit(dam, killer);
+	    break;
+
+	/* Lite -- blinding */
+	case GF_LITE:
+	    if (fuzzy) msg_print("You are hit by something!");
+	    if (p_ptr->resist_lite) {
+		dam *= 4; dam /= (randint(6) + 6);
+	    }
+	    else if (!blind && !p_ptr->resist_blind) {
+		msg_print("You are blinded by the flash!");
+		p_ptr->blind += randint(5) + 2;
+	    }
+	    take_hit(dam, killer);
+	    break;
+
+	/* Dark -- blinding */
+	case GF_DARK:
+	    if (fuzzy) msg_print("You are hit by something!");
+	    if (p_ptr->resist_dark) {
+	       dam *= 4; dam /= (randint(6) + 6);
+	    }
+	    else if (!blind && !p_ptr->resist_blind) {
+		msg_print("The darkness prevents you from seeing!");
+		p_ptr->blind += randint(5) + 2;
+	    }
+	    take_hit(dam, killer);
+	    break;
+
+	/* Time -- bolt fewer effects XXX */
+	case GF_TIME:
+	    if (fuzzy) msg_print("You are hit by something!");
+	    if (randint(2) == 1) {
+		    msg_print("You feel life has clocked back.");
+		    lose_exp(m_ptr->hp + (p_ptr->exp / 300) * MON_DRAIN_LIFE);
+	    } else {
+		    switch (randint(6)) {
+			case 1: k = A_STR; msg_print("You're not as strong as you used to be..."); break;
+			case 2: k = A_INT; msg_print("You're not as bright as you used to be..."); break;
+			case 3: k = A_WIS; msg_print("You're not as wise as you used to be..."); break;
+			case 4: k = A_DEX; msg_print("You're not as agile as you used to be..."); break;
+			case 5: k = A_CON; msg_print("You're not as hale as you used to be..."); break;
+			case 6: k = A_CHR; msg_print("You're not as beautiful as you used to be..."); break;
+		    }
+
+		    p_ptr->cur_stat[k] = (p_ptr->cur_stat[k] * 3) / 4;
+		    if (p_ptr->cur_stat[k] < 3) p_ptr->cur_stat[k] = 3;
+		    set_use_stat(k);
+		    prt_stat(k);
+		    take_hit(dam, killer);
+		    break;
+
+	/* Gravity -- stun or slowness, plus teleport */
+	case GF_GRAVITY:
+	    if (fuzzy) msg_print("You are hit by a surge of gravity!");
+	    if (p_ptr->ffall) {
+		dam *= 3; dam /= (randint(6) + 6);
+	    }
+	    else {
+		if (!p_ptr->resist_sound) {
+		    stun_player(randint(15) + 1);
+		}
+		else {
+		    if ((p_ptr->slow > 0) && (p_ptr->slow < 32000)) p_ptr->slow += randint(5);
+		    else {
+			msg_print("You feel less able to move.");
+			p_ptr->slow = randint(5) + 3;
+		    }
+		}
+	    }
+	    take_hit(dam, killer);
 	    break;
 
 	/* Pure damage */
 	case GF_MANA:
+	    if (fuzzy) msg_print("You are hit by a beam of power!");
+	    take_hit(dam, killer);
 	    break;
 
 	/* Pure damage */
 	case GF_METEOR:
+	    if (fuzzy) msg_print("You are hit by something!");
+	    take_hit(dam, killer);
 	    break;
 
 	/* Ice -- cold plus stun plus cuts */
 	case GF_ICE:
+	    if (fuzzy) msg_print("You are hit by something cold and sharp!");
+	    cold_dam(dam, killer);
+	    if (!p_ptr->resist_shards) cut_player(damroll(8, 10));
+		if (!p_ptr->resist_sound) stun_player(randint(15) + 1);
+	    break;
 
 	default:
 	    msg_print("Oops.  Undefined beam/bolt/ball hit player.");
