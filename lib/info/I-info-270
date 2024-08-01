@@ -33,7 +33,7 @@ Used "pval" (not "timeout") for rods, which are NOT activated.
 
 Parsing of monster race info from a text file.
 Functions floor_grid(), clean_grid(), and valid_grid().
-Function project()
+Function project() and its use by most ball/beam/bolt spells.
 Rewrote store "maintainance" code.
 Major rewrite of the "savefile" code, plus "parser" for old files.
 Addition of a generic method for "machine dependant savefile info".

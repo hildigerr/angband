@@ -2596,15 +2596,39 @@ static bool project_hook(int typ, int dir, int dam, int flg)
 
 void fire_ball(int typ, int dir, int py, int px, int dam_hp, int max_dis)
 {
-}
+    int tx, ty;
 
+    int flg = PROJECT_GRID | PROJECT_ITEM;
+
+    /* Check for "target request" */
+    if ((dir == 0) && target_okay()) {
+	tx = target_col;
+	ty = target_row;
+    }
+
+    /* Just use the direction, go until something gets hit */
+    else {
+	flg |= (PROJECT_STOP | PROJECT_THRU);
+	tx = char_col + dx[dir];
+	ty = char_row + dy[dir];
+    }
+
+    /* Analyze the "dir" and the "target".  Hurt items on floor. */
+    project(1, max_dis, ty, tx, dam_hp, typ, flg);
+}
 
 void fire_bolt(int typ, int dir, int y, int x, int dam)
 {
+    int flg = PROJECT_STOP;
+    project_hook(typ, dir, dam, flg);
 }
 
 int line_spell(int typ, int dir, int y, int x, int dam)
 {
+    /* Go until we have to stop, do "beam" damage to everyone */
+    /* Also, affect all objects and grids we pass through */
+    int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM;
+    return (project_hook(typ, dir, dam, flg));
 }
 
 
@@ -3388,13 +3412,24 @@ int unlite_area(int y, int x)
 
 
 
+
+
+/*
+ * Hooks for the old "monster attacks"
+ */
+
 void bolt(int m_idx, int typ, int dam_hp)
 {
+    int flg = PROJECT_STOP;
+
+    /* Go towards player, hit people in the way */
+    (void)project(m_idx, 0, char_row, char_col, dam_hp, typ, flg);
 }
 
 void breath(int m_idx, int typ, int dam_hp)
 {
     int max_dis;
+    int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_XTRA;
 
     monster_type *m_ptr = &m_list[m_idx];
     monster_race *r_ptr = &r_list[m_ptr->r_idx];
@@ -3404,5 +3439,7 @@ void breath(int m_idx, int typ, int dam_hp)
     if (strchr("vDEA&", r_ptr->r_char)) max_dis = 3;
     if ((strchr("dR", r_ptr->r_char) && (r_ptr->cflags2 & MF2_UNIQUE))) max_dis = 3;
 
+    /* Go towards player, do not hit anyone else, hurt items on ground. */
+    (void)project(m_idx, max_dis, char_row, char_col, dam_hp, typ, flg);
 }
 
