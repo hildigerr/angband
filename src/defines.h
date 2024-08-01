@@ -1316,6 +1316,7 @@
 #define GF_KILL_TRAP	42
 
 #define GF_OLD_CONF	56
+#define GF_OLD_SCARE	57
 #define GF_OLD_SLEEP	58
 #define GF_OLD_DRAIN	59
 

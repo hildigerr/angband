@@ -2958,48 +2958,10 @@ int confuse_monster(int dir, int y, int x, int plev)
 
 
 /* Scare a creature -DGK */
-int fear_monster(int dir, int y, int x, int lvl)
+int fear_monster(int dir, int y, int x, int plev)
 {
-    int                     flag, dist, fear;
-    register cave_type     *c_ptr;
-    register monster_type  *m_ptr;
-    register monster_race *r_ptr;
-    vtype                   out_val, m_name;
-
-    fear = FALSE;
-    flag = FALSE;
-    dist = 0;
-    do {
-	(void)mmove(dir, &y, &x);
-	dist++;
-	c_ptr = &cave[y][x];
-	if ((dist > OBJ_BOLT_RANGE) || c_ptr->fval >= MIN_CLOSED_SPACE)
-	    flag = TRUE;
-	else if (c_ptr->m_idx > 1) {
-	    m_ptr = &m_list[c_ptr->m_idx];
-	    r_ptr = &r_list[m_ptr->r_idx];
-	    monster_name(m_name, m_ptr);
-	    flag = TRUE;
-	    if ((r_ptr->level >
-	    randint((p_ptr->lev - 10) < 1 ? 1 : (p_ptr->lev - 10)) + 10) ||
-		(r_ptr->cflags2 & MF2_UNIQUE)) {
-		if (m_ptr->ml && (r_ptr->cflags2 & MF2_CHARM_SLEEP))
-		    l_list[m_ptr->r_idx].r_cflags2 |= MF2_CHARM_SLEEP;
-		(void)sprintf(out_val, "%s is unaffected.", m_name);
-		msg_print(out_val);
-		m_ptr->csleep = 0;
-	    } else {
-		if (m_ptr->monfear < 175)
-		    m_ptr->monfear += (byte) (damroll(3, (lvl / 2)) + 1);
-		fear = TRUE;
-		m_ptr->csleep = 0;
-		(void)sprintf(out_val, "%s flees in terror!", m_name);
-		msg_print(out_val);
-	    }
-	}
-    }
-    while (!flag);
-    return (fear);
+    int flg = PROJECT_STOP;
+    return (project_hook(GF_OLD_SCARE, dir, plev, flg));
 }
 
 

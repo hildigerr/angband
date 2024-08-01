@@ -1217,6 +1217,38 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 	/* No "real" damage */
 	dam = 0;
 	break;
+
+
+      /* Confusion (Use "dam" as "power") */
+      case GF_OLD_SCARE:
+
+	/* Attempt a saving throw */
+	if ((r_ptr->cflags2 & MF2_UNIQUE) ||
+	    (r_ptr->level > 10 + randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10)) {
+
+	    /* Hack -- memorize a flag (does it DO anything?) */
+	    if (seen && (r_ptr->cflags2 & MF2_CHARM_SLEEP)) {
+		l_ptr->r_cflags2 |= MF2_CHARM_SLEEP;
+	    }
+
+	    note = " is unaffected.";
+	}
+
+	/* Get scared */
+	else {
+
+	    /* Don't overflow */
+	    if (m_ptr->monfear < 175) {
+		m_ptr->monfear += (byte)(damroll(3, (dam / 2)) + 1);
+	    }
+
+	    /* Message */
+	    note = " flees in terror!";
+	}
+
+	/* No "real" damage */
+	dam = 0;
+	break;
     }
 
 
