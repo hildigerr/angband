@@ -1508,6 +1508,21 @@ void do_cmd_read_scroll(void)
 
     /* Hack -- combine the pack */
     combine_pack();
+}
+
+
+
+/*
+ * Hack -- fire a bolt, or a beam if lucky
+ * There is another copy of this in "magic.c"
+ */
+static void bolt_or_beam(int prob, int typ, int dir, int dam)
+{
+    if (randint(100) < prob) {
+	line_spell(typ, dir, char_row, char_col, dam);
+    }
+    else {
+	fire_bolt(typ, dir, char_row, char_col, dam);
     }
 }
 
@@ -1605,23 +1620,20 @@ void do_cmd_aim_wand(void)
 	    done_effect = 1;
 	    break;
 
-	case SV_WAND_ACID:	/* Acid , New */
-	    if (randint(5)==1) line_spell(GF_ACID,dir,y,x,damroll(5,8));
-	    else fire_bolt(GF_ACID,dir,y,x,damroll(5,8));
+	case SV_WAND_ACID:
+	    bolt_or_beam(20, GF_ACID, dir, damroll(5,8));
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
 
-	case SV_WAND_ELEC:	/* Lightning */
-	    if (randint(6)==1) line_spell(GF_ELEC,dir,y,x,damroll(3,8));
-	    else fire_bolt(GF_ELEC, dir, y, x, damroll(3, 8));
+	case SV_WAND_ELEC:
+	    bolt_or_beam(15, GF_ELEC, dir, damroll(3,8));
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
 
-	case SV_WAND_COLD:	/* Frost */
-	    if (randint(6)==1) line_spell(GF_ELEC,dir,y,x,damroll(3,8));
-	else fire_bolt(GF_ELEC, dir, y, x, damroll(3, 8));
+	case SV_WAND_COLD:
+	    bolt_or_beam(15, GF_COLD, dir, damroll(3,8));
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
@@ -1631,9 +1643,8 @@ void do_cmd_aim_wand(void)
 	    done_effect = 1;
 	    break;
 
-	case SV_WAND_FIRE:	/* Fire */
-	    if (randint(4)==1) line_spell(GF_FIRE,dir,y,x,damroll(6,8));
-	else fire_bolt(GF_FIRE, dir, y, x, damroll(6, 8));
+	case SV_WAND_FIRE:
+	    bolt_or_beam(25, GF_FIRE, dir, damroll(6,8));
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
@@ -1689,8 +1700,7 @@ void do_cmd_aim_wand(void)
 	    break;
 
 	case SV_WAND_MAGIC_MISSILE:
-	    if (randint(6)==1) line_spell(GF_MISSILE,dir,y,x,damroll(2,6));
-	    else fire_bolt(GF_MISSILE, dir,y,x, damroll(2,6));
+	    bolt_or_beam(15, GF_MISSILE, dir, damroll(2,6));
 	    ident = TRUE;
 	    done_effect = 1;
 	    break;
@@ -2246,32 +2256,28 @@ void do_cmd_zap_rod(void)
 
       case SV_ROD_ACID:
 	if (!get_dir_c(NULL, &dir)) return;
-	if (randint(10)==1) line_spell(GF_ACID, dir, y, x, damroll(6,8));
-	else fire_bolt(GF_ACID, dir, y, x, damroll(6,8));
+	bolt_or_beam(10, GF_ACID, dir, damroll(6,8));
 	ident = TRUE;
 	i_ptr->pval = 12;
 	break;
 
       case SV_ROD_ELEC:
 	if (!get_dir_c(NULL, &dir)) return;
-	if (randint(12)==1) line_spell(GF_ELEC, dir, y, x, damroll(3,8));
-	else fire_bolt(GF_ELEC, dir, y, x, damroll(3,8));
+	bolt_or_beam(8, GF_ELEC, dir, damroll(3,8));
 	ident = TRUE;
 	i_ptr->pval = 11;
 	break;
 
       case SV_ROD_COLD:
 	if (!get_dir_c(NULL, &dir)) return;
-	if (randint(10)==1) line_spell(GF_COLD, dir, y, x, damroll(5,8));
-	else fire_bolt(GF_COLD, dir, y, x, damroll(5,8));
+	bolt_or_beam(10, GF_COLD, dir, damroll(5,8));
 	ident = TRUE;
 	i_ptr->pval = 13;
 	break;
 
       case SV_ROD_FIRE:
 	if (!get_dir_c(NULL, &dir)) return;
-	if (randint(8)==1) line_spell(GF_FIRE, dir, y, x, damroll(8,8));
-	else fire_bolt(GF_FIRE, dir, y, x, damroll(8,8));
+	bolt_or_beam(12, GF_ELEC, dir, damroll(8,8));
 	ident = TRUE;
 	i_ptr->pval = 15;
 	break;
@@ -2897,10 +2903,7 @@ void do_cmd_activate(void)
 	    case ART_PAURHACH:
 		    msg_print("Your gauntlets are covered in fire...");
 		    get_dir_c(NULL, &dir);
-			if (randint(4)==1)
-			    line_spell(GF_FIRE, dir, char_row, char_col, damroll(9,8));
-			else
-			    fire_bolt(GF_FIRE, dir, char_row, char_col, damroll(9,8));
+		bolt_or_beam(25, GF_FIRE, dir, damroll(9,8));
 			inventory[i].timeout = 5 + randint(10);
 		break;
 
