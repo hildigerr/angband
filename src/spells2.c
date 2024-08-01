@@ -2970,39 +2970,8 @@ int fear_monster(int dir, int y, int x, int plev)
 /* NOTE: cannot polymorph a winning creature (BALROG)            */
 int poly_monster(int dir, int y, int x)
 {
-    int                     dist, flag, flag2, p;
-    register cave_type     *c_ptr;
-    register monster_race *r_ptr;
-    register monster_type  *m_ptr;
-    vtype                   out_val, m_name;
-    
-    p = FALSE;
-    flag = FALSE;
-    flag2= FALSE;
-    dist = 0;
-    do {
-	(void) mmove(dir, &y, &x);
-	dist++;
-	c_ptr = &cave[y][x];
-	if ((dist > OBJ_BOLT_RANGE) || c_ptr->fval >= MIN_CLOSED_SPACE)
-	    flag = TRUE;
-	else if (c_ptr->m_idx > 1) {
-	    m_ptr = &m_list[c_ptr->m_idx];
-	    r_ptr = &r_list[m_ptr->r_idx];
-	    if ((r_ptr->level < randint((p_ptr->lev-10)<1?1:(p_ptr->lev-10))+10)
-                && !(r_ptr->cflags2 & MF2_UNIQUE)) {
-		poly(c_ptr->m_idx);
-		if (panel_contains(y, x) && (c_ptr->tl || c_ptr->pl))
-		    p = TRUE;
-	    } else {
-		monster_name (m_name, m_ptr);
-		(void) sprintf(out_val, "%s is unaffected.", m_name);
-		msg_print(out_val);
-	    }
-	}
-    }
-    while (!flag);
-    return(p);
+    int flg = PROJECT_BEAM;
+    return (project_hook(GF_OLD_POLY, dir, p_ptr->lev, flg));
 }
 
 

@@ -1162,6 +1162,24 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 	else note_dies = " dies in a fit of agony.";
 	break;
 
+      /* Polymorph monster (Use "dam" as "power") */	
+      case GF_OLD_POLY:
+
+	/* Attempt to polymorph (see below) */
+	do_poly = TRUE;
+
+	/* Powerful monsters can resist */
+	if ((r_ptr->cflags2 & MF2_UNIQUE) ||
+	    (r_ptr->level > 10 + randint((dam - 10) < 1 ? 1 : (dam - 10)))) {
+	    do_poly = FALSE;
+	    note = " is unaffected.";
+	}
+
+	/* No "real" damage */
+	dam = 0;	
+
+	break;
+
 
       /* Sleep (Use "dam" as "power") */
       case GF_OLD_SLEEP:
