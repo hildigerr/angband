@@ -1171,6 +1171,8 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
  *
  * Although unused, we return "TRUE" if any "useful" effects were observed.
  *
+ * While it is no longer true that "rad" must equal "zero", currently, it
+ * always does.  We would need "confused monsters" or something to do otherwise.
  */
 static bool project_p(int who, int rad, int y, int x, int dam, int typ, int flg)
 {
@@ -1182,11 +1184,21 @@ static bool project_p(int who, int rad, int y, int x, int dam, int typ, int flg)
     /* Player needs a "description" (he is blind) */
     int fuzzy = FALSE;
 
+    /* "Damage" factor.  Multiply by "mul/div" */
+    int mul = 1, div = 1;
+
     /* Source monster */
     register monster_type *m_ptr;
 
     /* Monster name (for damage) */
     char killer[80];
+
+
+    /* Hack -- decrease power over distance */
+    if (rad) div = rad;
+
+    /* Adjust damage */
+    dam = dam * mul / div;
 
 
     /* Get "blind" */

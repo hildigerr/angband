@@ -3402,13 +3402,6 @@ int unlite_area(int y, int x)
 #define MORE_DAZED 16
 #define DEAD 32
 
-/* This function will process a bolt/ball/breath spell hitting a monster.
- * It checks for resistances, and reduces damage accordingly, and also
- * adds in what "special effects" apply to the monsters.  'rad' is used to
- * indicate the distance from "ground 0" for ball spells.  For bolts, rad
- * should be a 0 (this flags1 off some of the messages).  dam is changed
- * to reflect resistances and range. -CFT
- */
 
 static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, int *y, int *x, byte by_player)
 {
@@ -3520,7 +3513,6 @@ void breath(int typ, int y, int x, int dam_hp, char *ddesc, int monptr)
 			r_ptr = &r_list[m_ptr->r_idx];
 
 		    } else if (c_ptr->m_idx == 1) {
-			dam = (dam_hp / (distance(i, j, y, x) + 1));
 			m_ptr = &m_list[monptr];
 		    /* let's do at least one point of damage */
 		    /* prevents randint(0) problem with poison_gas, also */
