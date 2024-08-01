@@ -964,7 +964,7 @@ int banish_creature(u32b, int);
 int remove_all_curse(void);
 void darken_room(int, int);
 cptr pain_message(int, int);
-void line_spell(int, int, int, int, int);
+int line_spell(int, int, int, int, int);
 
 /* store.c */
 s32b item_value(inven_type *i_ptr);

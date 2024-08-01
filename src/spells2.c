@@ -2603,10 +2603,7 @@ void fire_bolt(int typ, int dir, int y, int x, int dam)
 {
 }
 
-
-/* This fn provides the ability to have a spell blast a line of creatures
-   for damage.  It should look pretty neat, too... -CFT */
-void line_spell(int typ, int dir, int y, int x, int dam)
+int line_spell(int typ, int dir, int y, int x, int dam)
 {
 }
 
