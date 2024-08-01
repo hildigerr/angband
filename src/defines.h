@@ -1283,34 +1283,34 @@
 
 
 /*
- * Spell types used by breathe(), fire_bolt() and fire_ball()
+ * Spell types used by project(), and related functions.
  */
-#define GF_MISSILE		0
 #define GF_ELEC         1
 #define GF_POIS         2
 #define GF_ACID         3
 #define GF_COLD         4
 #define GF_FIRE         5
-#define GF_HOLY_ORB     6
-#define GF_ARROW        7
-#define GF_PLASMA       8
-#define GF_NETHER       9
-#define GF_WATER        10
-#define GF_CHAOS        11
-#define GF_SHARDS       12
-#define GF_SOUND        13
-#define GF_CONFUSION    14
-#define GF_DISENCHANT   15
-#define GF_NEXUS        16
-#define GF_FORCE        17
-#define GF_INERTIA      18
-#define GF_LITE        19
-#define GF_DARK         20
-#define GF_TIME         21
-#define GF_GRAVITY      22
-#define GF_MANA         23
-#define GF_METEOR       24
-#define GF_ICE          25
+#define GF_MISSILE      10
+#define GF_ARROW        11
+#define GF_PLASMA       12
+#define GF_HOLY_ORB     13
+#define GF_WATER        14
+#define GF_LITE         15
+#define GF_DARK         16
+#define GF_SHARDS       20
+#define GF_SOUND        21
+#define GF_CONFUSION    22
+#define GF_FORCE        23
+#define GF_INERTIA      24
+#define GF_MANA         26
+#define GF_METEOR       27
+#define GF_ICE          28
+#define GF_CHAOS        30
+#define GF_NETHER       31
+#define GF_DISENCHANT   32
+#define GF_NEXUS        33
+#define GF_TIME         34
+#define GF_GRAVITY      35
 
 
 /*
