@@ -3003,26 +3003,8 @@ int clone_monster(int dir, int y, int x)
 /* Teleport all creatures in a given direction away	-RAK-	 */
 int teleport_monster(int dir, int y, int x)
 {
-    register int        flag, result, dist;
-    register cave_type *c_ptr;
-
-    flag = FALSE;
-    result = FALSE;
-    dist = 0;
-    do {
-	(void)mmove(dir, &y, &x);
-	dist++;
-	c_ptr = &cave[y][x];
-	if ((dist > OBJ_BOLT_RANGE) || c_ptr->fval >= MIN_CLOSED_SPACE)
-	    flag = TRUE;
-	else if (c_ptr->m_idx > 1) {
-	    m_list[c_ptr->m_idx].csleep = 0;	/* wake it up */
-	    teleport_away((int)c_ptr->m_idx, MAX_SIGHT * 5);
-	    result = TRUE;
-	}
-    }
-    while (!flag);
-    return (result);
+    int flg = PROJECT_BEAM;
+    return (project_hook(GF_OLD_TPORT, dir, MAX_SIGHT * 5, flg));
 }
 
 

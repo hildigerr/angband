@@ -1267,6 +1267,22 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 	/* No "real" damage */
 	dam = 0;
 	break;
+
+
+
+
+      /* Teleport monster (Use "dam" as "power") */
+      case GF_OLD_TPORT:
+
+	/* Wake the monster up */
+	m_ptr->csleep = 0;
+
+	/* Prepare to teleport */      	
+	do_dist = dam;
+
+	/* No "real" damage */
+	dam = 0;
+	break;
     }
 
 
