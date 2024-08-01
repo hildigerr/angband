@@ -2944,44 +2944,8 @@ int speed_monster(int dir, int y, int x, int spd)
 /* Sleep a creature.					-RAK-	 */
 int sleep_monster(int dir, int y, int x)
 {
-    int                     flag, dist, sleep;
-    register cave_type     *c_ptr;
-    register monster_type  *m_ptr;
-    register monster_race *r_ptr;
-    vtype                   out_val, m_name;
-
-    sleep = FALSE;
-    flag = FALSE;
-    dist = 0;
-    do {
-	(void)mmove(dir, &y, &x);
-	dist++;
-	c_ptr = &cave[y][x];
-	if ((dist > OBJ_BOLT_RANGE) || c_ptr->fval >= MIN_CLOSED_SPACE)
-	    flag = TRUE;
-	else if (c_ptr->m_idx > 1) {
-	    m_ptr = &m_list[c_ptr->m_idx];
-	    r_ptr = &r_list[m_ptr->r_idx];
-
-	    flag = TRUE;
-	    monster_name(m_name, m_ptr);
-	    if ((r_ptr->level >
-	    randint((p_ptr->lev - 10) < 1 ? 1 : (p_ptr->lev - 10)) + 10) ||
-	    (r_ptr->cflags2 & MF2_UNIQUE) || (r_ptr->cflags2 & MF2_CHARM_SLEEP)) {
-		if (m_ptr->ml && (r_ptr->cflags2 & MF2_CHARM_SLEEP))
-		    l_list[m_ptr->r_idx].r_cflags2 |= MF2_CHARM_SLEEP;
-		(void)sprintf(out_val, "%s is unaffected.", m_name);
-		msg_print(out_val);
-	    } else {
-		m_ptr->csleep = 500;
-		sleep = TRUE;
-		(void)sprintf(out_val, "%s falls asleep.", m_name);
-		msg_print(out_val);
-	    }
-	}
-    }
-    while (!flag);
-    return (sleep);
+    int flg = PROJECT_STOP;
+    return (project_hook(GF_OLD_SLEEP, dir, p_ptr->lev, flg));
 }
 
 

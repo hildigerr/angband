@@ -1315,6 +1315,7 @@
 #define GF_KILL_DOOR	41
 #define GF_KILL_TRAP	42
 
+#define GF_OLD_SLEEP	58
 #define GF_OLD_DRAIN	59
 
 

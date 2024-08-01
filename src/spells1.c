@@ -864,6 +864,9 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
     /* Stunning setting (amount to stun) */
     int do_stun = 0;
 
+    /* Sleep amount (amount to sleep) */
+    int do_sleep = 0;
+
 
     /* "Damage" factor.  Multiply by "mul/div" */
     int mul = 1, div = 1;
@@ -1158,6 +1161,32 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 	}
 	else note_dies = " dies in a fit of agony.";
 	break;
+
+
+      /* Sleep (Use "dam" as "power") */
+      case GF_OLD_SLEEP:
+
+	/* Attempt a saving throw */
+	if ((r_ptr->cflags2 & MF2_UNIQUE) ||
+	    (r_ptr->cflags2 & MF2_CHARM_SLEEP) ||
+	    (r_ptr->level > 10 + randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10)) {
+
+	    /* Hack -- memorize a flag (does it DO anything?) */
+	    if (seen && (r_ptr->cflags2 & MF2_CHARM_SLEEP)) {
+		l_ptr->r_cflags2 |= MF2_CHARM_SLEEP;
+	    }
+	    note = " is unaffected.";
+	}
+	else {
+
+	    /* Go to sleep (much) later */
+	    note = " falls asleep!";
+	    do_sleep = 500;
+	}
+
+	/* No "real" damage */
+	dam = 0;
+	break;
     }
 
 
@@ -1276,8 +1305,16 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 	message(out_val, 0x01);
     }
 
+
+    /* Hack -- sleep is done INSTEAD of damage */
+    if (do_sleep) {
+
+	/* Just set the "sleep" field */
+	m_ptr->csleep = do_sleep;
+    }
+
     /* If another monster did the damage, hurt the monster by hand */
-    if (who > 1) {
+    else if (who > 1) {
 
 	/* Paranoia -- No negative damage */
 	if (dam < 0) dam = 0;
