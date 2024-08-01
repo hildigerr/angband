@@ -3451,69 +3451,6 @@ static void spell_hit_monster(monster_type *m_ptr, int typ, int *dam, int rad, i
 /* heavily modified to include exotic bolts -CFT */
 void bolt(int typ, int y, int x, int dam_hp, char *ddesc, monster_type *ptr, int monptr)
 {
-    int                 i = ptr->fy, j = ptr->fx;
-    int                 dam;
-    u32b              tmp, treas;
-    register cave_type     *c_ptr;
-    register monster_type  *m_ptr;
-    register monster_race *r_ptr;
-    int                 blind = (p_ptr->status & PY_BLIND) ? 1 : 0;
-    int                 ny, nx, sourcey, sourcex, dist;
-    vtype               m_name, out_val;
-
-    sourcey = i;
-    sourcex = j;
-    dist = 0;
-    do {
-    /* This is going along a badly angled line so call mmove2 direct */
-	ny = i;
-	nx = j;
-	mmove2(&i, &j, sourcey, sourcex, char_row, char_col);
-	dist++;
-
-
-	if (in_bounds(i, j) && los(y, x, i, j)) {
-	    c_ptr = &cave[i][j];
-	    if (floor_grid_bold(i, j)) {
-		if (panel_contains(i, j) && !(p_ptr->status & PY_BLIND)) {
-		    print(bolt_char(i,j,ny,nx), i, j);
-		    put_qio();
-#ifdef MSDOS
-		    delay(8 * delay_spd);	/* milliseconds */
-#else
-		    usleep(8000 * delay_spd);	/* useconds */
-#endif
-		    lite_spot(i, j);
-		}
-		if (c_ptr->m_idx > 1 && c_ptr->m_idx != monptr) {
-		    m_ptr = &m_list[c_ptr->m_idx];
-		    dam = dam_hp;
-
-		    spell_hit_monster(m_ptr, typ, &dam, 0, &ny, &nx, FALSE);
-				/* process hit effects */
-		    /* may be new location if teleported by gravity warp... */
-		    c_ptr = &cave[ny][nx];
-		    /* and even if not, may be new monster if chaos polymorphed */
-		    m_ptr = &m_list[c_ptr->m_idx];
-		    r_ptr = &r_list[m_ptr->r_idx];
-		    monster_name(m_name, m_ptr);
-
-		    } else {
-			(void)sprintf(out_val, pain_message((int)c_ptr->m_idx, dam),
-				      m_name);
-			msg_print(out_val);
-		    }
-		    break;
-		} else if (c_ptr->m_idx == 1) {
-		    if (dam_hp < 1)
-			dam_hp = 1;
-		    m_ptr = &m_list[monptr];
-		    disturb(1, 0);
-		    break;
-		}
-	    }
-	}
-    } while ((i != char_row) || (j != char_col));
 }
 
 
