@@ -915,7 +915,6 @@ int trap_creation(void);
 int door_creation(void);
 int td_destroy(void);
 int detect_monsters(void);
-void mon_light_dam(int, int, int);
 void lite_line(int, int, int);
 void frost_line(int, int, int, int);
 void starlite(int, int);

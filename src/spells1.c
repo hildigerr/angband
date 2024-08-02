@@ -595,7 +595,10 @@ void poison_gas(int dam, cptr kb_str)
  *
  * Perhaps we should only SOMETIMES damage things on the ground.
  *
- * The "dist" parameter is the "distance from ground zero". 
+ * The "dist" parameter is the "distance from ground zero".  Some
+ * projections (such as "GF_LITE") have special effects at "ground
+ * zero" (like "lite_a_dark_room()").  Note that ground zero is always
+ * first of all the grids to be affected, unless the weapon was a beam.
  *
  * We must return "TRUE" if the player saw anything "useful" happen.
  */
@@ -809,6 +812,24 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
     if (flg & PROJECT_GRID) {
 
 	switch (typ) {
+
+	    /* Lite up the grid */
+	    case GF_LITE_WEAK:
+
+		/* If the grid is visible, notice it */
+		if (seen) note++;
+
+		/* Ground zero -- lite the room */
+		if (!dist)
+		if (c_ptr->fval == LIGHT_FLOOR) light_room(y, x);
+
+		/* Turn on the light */
+		c_ptr->pl = TRUE;
+
+		/* Draw (and perhaps memorize) the grid */
+		lite_spot(y, x);
+
+		break;
 	}
     }
 
@@ -1078,6 +1099,20 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 	    note = " resists.";
 	    dam *= 3; dam /= (randint(6)+6);
 	}
+
+      /* Lite, but only hurts susceptible creatures */
+      case GF_LITE_WEAK:
+	m_ptr->csleep = 0;
+	if (r_ptr->cflags2 & MF2_HURT_LITE) {
+	    if (seen) l_ptr->r_cflags2 |= MF2_HURT_LITE;
+	    note = " cringes from the light!";
+	    note_dies = " shrivels away in the light!";
+	}
+	else {
+	    obvious = FALSE;
+	    dam = 0;
+	}
+	break;
 
       /* Lite -- opposite of Dark */
       case GF_LITE:

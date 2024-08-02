@@ -2637,32 +2637,7 @@ int line_spell(int typ, int dir, int y, int x, int dam)
 /* hurt creatures.				       -RAK-   */
 void lite_line(int dir, int y, int x)
 {
-    register cave_type *c_ptr;
-    int                 dist, flag;
-
-    dist = (-1);
-    flag = FALSE;
-    do {
-    /* put mmove at end because want to light up current spot */
-	dist++;
-	c_ptr = &cave[y][x];
-	if ((dist > OBJ_BOLT_RANGE) || c_ptr->fval >= BLOCKED_FLOOR)
-	    flag = TRUE;
-	if (!c_ptr->pl && !c_ptr->tl) {
-	/* set pl so that lite_spot will work */
-	    c_ptr->pl = TRUE;
-	    if (c_ptr->fval == LIGHT_FLOOR) {
-		if (panel_contains(y, x))
-		    light_room(y, x);
-	    } else
-		lite_spot(y, x);
-	}
-    /* set pl in case tl was true above */
-	c_ptr->pl = TRUE;
-	mon_light_dam(y, x, damroll(6, 8));
-	(void)mmove(dir, &y, &x);
-    }
-    while (!flag);
+    (void)line_spell(GF_LITE_WEAK, dir, y, x, damroll(6, 8));
 }
 
 
@@ -3008,71 +2983,13 @@ int teleport_monster(int dir, int y, int x)
     return (project_hook(GF_OLD_TPORT, dir, MAX_SIGHT * 5, flg));
 }
 
-
-/* Split out of lite_line.       -DGK */
-void mon_light_dam(int y, int x, int dam)
-{
-    register cave_type     *c_ptr;
-    register monster_type  *m_ptr;
-    register monster_race *r_ptr;
-    vtype                   out_val, m_name;
-    int                     i;
-
-    c_ptr = &cave[y][x];
-    if (c_ptr->m_idx > 1) {
-	m_ptr = &m_list[c_ptr->m_idx];
-	r_ptr = &r_list[m_ptr->r_idx];
-	monster_name(m_name, m_ptr);
-	m_ptr->csleep = 0;
-	if (MF2_HURT_LITE & r_ptr->cflags2) {
-	    if (m_ptr->ml)
-		l_list[m_ptr->r_idx].r_cflags2 |= MF2_HURT_LITE;
-	    i = mon_take_hit((int)c_ptr->m_idx, dam, FALSE);
-	    if (i >= 0) {
-		(void)sprintf(out_val, "%s shrivels away in the light!", m_name);
-		msg_print(out_val);
-		prt_experience();
-	    } else {
-		(void)sprintf(out_val, "%s cringes from the light!", m_name);
-		msg_print(out_val);
-	    }
-	}
-    }
-}
-
-
 int lite_area(int y, int x, int dam, int rad)	   /* Expanded -DGK */
 {
-    register int i, j;
-    int          min_i, max_i, min_j, max_j;
-
-    if (rad < 1) rad = 1;	/* sanity check -CWS */
     if (p_ptr->blind < 1)
 	msg_print("You are surrounded by a white light.");
 
-    if ((cave[y][x].fval == LIGHT_FLOOR) && (panel_contains(y, x)))
-	light_room(y, x);
-
-    if (cave[y][x].lr && (dun_level > 0) && !(cave[y][x].pl))
-		light_room(y, x); /* dbd - fix lighting radius */
-
-    /* replace a check for in_bounds2 every loop with 4 quick computations -CWS */
-    min_i = MY_MAX(0, (y - rad));
-    max_i = MY_MIN(cur_height - 1, (y + rad));
-    min_j = MY_MAX(0, (x - rad));
-    max_j = MY_MIN(cur_width - 1, (x + rad));
-
-    for (i = min_i; i <= max_i; i++)
-	for (j = min_j; j <= max_j; j++)
-	    if (los(y, x, i, j) && (distance(y, x, i, j) <= rad)) {
-		if (cave[i][j].lr && (dun_level > 0))
-		    light_room(i, j);
-		cave[i][j].pl = TRUE;
-		lite_spot(i, j);
-		if (dam)
-		    mon_light_dam(i, j, dam / (rad == 0 ? 1 : rad));
-	    }
-    return (TRUE);
+    /* Hook into the "project()" function */
+    return (project(1, rad, char_row, char_col, dam, GF_LITE_WEAK, PROJECT_GRID));
 }
 
 
