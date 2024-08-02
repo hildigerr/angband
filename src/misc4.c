@@ -2480,9 +2480,11 @@ void teleport(int dis)
 		y += ((char_row - y) / 2);
 		x += ((char_col - x) / 2);
 	    }
+
+	    /* Require "naked" floor space */
+	    if (!naked_grid_bold(y, x)) continue;
 	}
-	while (((cave[y][x].fval >= BLOCKED_FLOOR) ||
-		(cave[y][x].m_idx >= 2) ||
+	while ((
 		(i_list[cave[y][x].i_idx].k_idx == OBJ_OPEN_DOOR) ||
 		(cave[y][x].fval == NT_DARK_FLOOR) ||
 		(cave[y][x].fval == NT_LIGHT_FLOOR)) && count < 1000);

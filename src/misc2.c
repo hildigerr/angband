@@ -510,10 +510,11 @@ int place_win_monster()
 	do {
 	    y = randint(cur_height - 2);
 	    x = randint(cur_width - 2);
+
+	/* Require "naked" floor grid */
+	if (!naked_grid_bold(y,x)) continue;
 	}
-	while ((cave[y][x].fval >= BLOCKED_FLOOR) || (cave[y][x].m_idx != 0)
-	       || (cave[y][x].i_idx != 0) ||
-	       (distance(y, x, char_row, char_col) <= MAX_SIGHT));
+	while ((distance(y, x, char_row, char_col) <= MAX_SIGHT));
 
 	mon_ptr->fy = y;
 	mon_ptr->fx = x;
@@ -1059,9 +1060,11 @@ int place_ghost()
 	/* Pick a location */
 	y = randint(cur_height - 2);
 	x = randint(cur_width - 2);
-    } while ((cave[y][x].fval >= BLOCKED_FLOOR) || (cave[y][x].m_idx != 0)
-	     || (cave[y][x].i_idx != 0) ||
-	     (distance(y, x, char_row, char_col) <= MAX_SIGHT));
+
+	/* Require "naked" floor grid */
+        if (!naked_grid_bold(y,x)) continue;
+
+    } while ((distance(y, x, char_row, char_col) <= MAX_SIGHT));
 
     /*** Place the Ghost by Hand (so no-one else does it accidentally) ***/
 
@@ -1349,9 +1352,11 @@ void alloc_monster(int num, int dis, int slp)
 	    /* Pick a location */
 	    y = randint(cur_height - 2);
 	    x = randint(cur_width - 2);
+
+	    /* Require "naked" floor grid */
+	    if (!naked_grid_bold(y,x)) continue;
 	}
-	while (cave[y][x].fval >= BLOCKED_FLOOR || (cave[y][x].m_idx != 0) ||
-	       (distance(y, x, char_row, char_col) <= dis));
+	while ((distance(y, x, char_row, char_col) <= dis));
 
 	do {
 	/* Get a monster of the given level */

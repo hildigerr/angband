@@ -82,6 +82,17 @@
      (cave[Y][X].m_idx == 0))
     
 /*
+ * Determine if a "legal" grid is an "naked floor" grid
+ * First test -- catch normal granite/quartz/magma walls
+ * Second test -- catch all objects, monsters, and players
+ */
+#define naked_grid_bold(Y,X) \
+    ((cave[Y][X].fval < BLOCKED_FLOOR) && \
+     (cave[Y][X].m_idx == 0) && (cave[Y][X].i_idx == 0))
+    
+    
+    
+/*
  * Determines if a map location is currently "on screen" -RAK-
  * Note that "panel_contains(y,x)" always implies "in_bounds2(y,x)".
  */

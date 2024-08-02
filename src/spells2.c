@@ -245,7 +245,8 @@ void teleport_to(int ny, int nx)
 	    if (in_bounds(y, x)) break;
 	}
 
-	if ((cave[y][x].fval < BLOCKED_FLOOR) && (cave[y][x].m_idx < 2)) break;
+	/* Accept "naked" floor grids */
+	if (naked_grid_bold(y, x)) break;
 
 	/* Count */
 	ctr++;

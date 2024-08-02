@@ -123,11 +123,13 @@ static void new_spot(s16b *y, s16b *x)
     do {
 	i = randint(cur_height - 2);
 	j = randint(cur_width - 2);
+
+	/* Must be a "naked" floor grid */
+	if (!naked_grid_bold(i, j)) continue;
+
 	c_ptr = &cave[i][j];
     }
-    while (c_ptr->fval >= BLOCKED_FLOOR || (c_ptr->m_idx != 0)
-	   || (c_ptr->i_idx != 0) || (c_ptr->fval == NT_LIGHT_FLOOR)
-	   || (c_ptr->fval == NT_DARK_FLOOR));
+    while ((c_ptr->fval == NT_LIGHT_FLOOR) || (c_ptr->fval == NT_DARK_FLOOR));
     *y = i;
     *x = j;
 }
