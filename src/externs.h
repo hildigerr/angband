@@ -61,7 +61,7 @@
  * Determine if a "legal" grid is a "floor" grid
  */
 #define floor_grid_bold(Y,X) \
-    (cave[Y][X].fval < MIN_CLOSED_SPACE)
+    (cave[Y][X].fval < BLOCKED_FLOOR)
     
 /*
  * Determine if a "legal" grid is a "clean floor" grid
@@ -69,7 +69,7 @@
  * Second test -- catch all normal objects
  */
 #define clean_grid_bold(Y,X) \
-    ((cave[Y][X].fval <= MIN_CLOSED_SPACE) && \
+    ((cave[Y][X].fval <= BLOCKED_FLOOR) && \
      (cave[Y][X].i_idx == 0))
     
 /*
@@ -78,7 +78,7 @@
  * Second test -- catch all normal monsters (and players)
  */
 #define empty_grid_bold(Y,X) \
-    ((cave[Y][X].fval < MIN_CLOSED_SPACE) && \
+    ((cave[Y][X].fval < BLOCKED_FLOOR) && \
      (cave[Y][X].m_idx == 0))
     
 /*

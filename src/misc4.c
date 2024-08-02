@@ -2481,7 +2481,7 @@ void teleport(int dis)
 		x += ((char_col - x) / 2);
 	    }
 	}
-	while (((cave[y][x].fval >= MIN_CLOSED_SPACE) ||
+	while (((cave[y][x].fval >= BLOCKED_FLOOR) ||
 		(cave[y][x].m_idx >= 2) ||
 		(i_list[cave[y][x].i_idx].k_idx == OBJ_OPEN_DOOR) ||
 		(cave[y][x].fval == NT_DARK_FLOOR) ||

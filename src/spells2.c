@@ -245,7 +245,7 @@ void teleport_to(int ny, int nx)
 	    if (in_bounds(y, x)) break;
 	}
 
-	if ((cave[y][x].fval < MIN_CLOSED_SPACE) && (cave[y][x].m_idx < 2)) break;
+	if ((cave[y][x].fval < BLOCKED_FLOOR) && (cave[y][x].m_idx < 2)) break;
 
 	/* Count */
 	ctr++;
@@ -736,7 +736,7 @@ void earthquake(void)
 		    c_ptr->fval = CORR_FLOOR;
 		    c_ptr->pl = FALSE;
 		    c_ptr->fm = FALSE;
-		} else if (c_ptr->fval <= MIN_CLOSED_SPACE) {
+		} else if (c_ptr->fval <= BLOCKED_FLOOR) {
 		    tmp = randint(10);
 		    if (tmp < 6) c_ptr->fval = QUARTZ_WALL;
 		    else if (tmp < 9) c_ptr->fval = MAGMA_WALL;
@@ -2645,7 +2645,7 @@ void lite_line(int dir, int y, int x)
     /* put mmove at end because want to light up current spot */
 	dist++;
 	c_ptr = &cave[y][x];
-	if ((dist > OBJ_BOLT_RANGE) || c_ptr->fval >= MIN_CLOSED_SPACE)
+	if ((dist > OBJ_BOLT_RANGE) || c_ptr->fval >= BLOCKED_FLOOR)
 	    flag = TRUE;
 	if (!c_ptr->pl && !c_ptr->tl) {
 	/* set pl so that lite_spot will work */
@@ -2706,7 +2706,7 @@ int wall_to_mud(int dir, int y, int x)
 		check_view();
 		wall = TRUE;
 	    }
-	} else if ((c_ptr->i_idx != 0) && (c_ptr->fval >= MIN_CLOSED_SPACE)) {
+	} else if ((c_ptr->i_idx != 0) && (c_ptr->fval >= BLOCKED_FLOOR)) {
 	    flag = TRUE;
 	    if (panel_contains(y, x) && test_lite(y, x)) {		
 		objdes(tmp_str, &i_list[c_ptr->i_idx], FALSE);
@@ -2789,7 +2789,7 @@ int door_creation()
 	for (j = char_col - 1; j <= char_col + 1; j++)
 	    if ((i != char_row) || (j != char_col)) {
 		c_ptr = &cave[i][j];
-		if (c_ptr->fval <= MIN_CLOSED_SPACE) {
+		if (c_ptr->fval <= BLOCKED_FLOOR) {
 		    if ((c_ptr->i_idx == 0) ||
 			((i_list[c_ptr->i_idx].tval != TV_UP_STAIR) 
 				/* if not stairs or a store */
@@ -2826,7 +2826,7 @@ int trap_creation()
 	    if ((i == char_row) && (j == char_col))
 		continue;	   /* no trap under player, from um55 -CFT */
 	    c_ptr = &cave[i][j];
-	    if (c_ptr->fval <= MIN_CLOSED_SPACE) {
+	    if (c_ptr->fval <= BLOCKED_FLOOR) {
 		if ((c_ptr->i_idx == 0) ||
 		    ((i_list[c_ptr->i_idx].tval != TV_UP_STAIR)
 		     /* if not stairs or a store */
@@ -2867,7 +2867,7 @@ int hp_monster(int dir, int y, int x, int dam)
 	(void)mmove(dir, &y, &x);
 	dist++;
 	c_ptr = &cave[y][x];
-	if ((dist > OBJ_BOLT_RANGE) || c_ptr->fval >= MIN_CLOSED_SPACE)
+	if ((dist > OBJ_BOLT_RANGE) || c_ptr->fval >= BLOCKED_FLOOR)
 	    flag = TRUE;
 	else if (c_ptr->m_idx > 1) {
 	    flag = TRUE;
@@ -2908,7 +2908,7 @@ int speed_monster(int dir, int y, int x, int spd)
 	(void)mmove(dir, &y, &x);
 	dist++;
 	c_ptr = &cave[y][x];
-	if ((dist > OBJ_BOLT_RANGE) || c_ptr->fval >= MIN_CLOSED_SPACE)
+	if ((dist > OBJ_BOLT_RANGE) || c_ptr->fval >= BLOCKED_FLOOR)
 	    flag = TRUE;
 	else if (c_ptr->m_idx > 1) {
 	    flag = TRUE;
@@ -2987,7 +2987,7 @@ int clone_monster(int dir, int y, int x)
 	(void)mmove(dir, &y, &x);
 	dist++;
 	c_ptr = &cave[y][x];
-	if ((dist > OBJ_BOLT_RANGE) || c_ptr->fval >= MIN_CLOSED_SPACE)
+	if ((dist > OBJ_BOLT_RANGE) || c_ptr->fval >= BLOCKED_FLOOR)
 	    flag = TRUE;
 	else if (c_ptr->m_idx > 1) {
 	    m_list[c_ptr->m_idx].csleep = 0;

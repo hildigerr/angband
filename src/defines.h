@@ -391,7 +391,6 @@
 #define CORR_FLOOR      5	/* Floor, in a corridor */
 #define BLOCKED_FLOOR   6       /* a corridor space with cl/st/se door or rubble */
 
-#define MIN_CLOSED_SPACE 6
 
 #define TMP1_WALL	8
 #define TMP2_WALL	9

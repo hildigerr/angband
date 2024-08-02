@@ -1460,7 +1460,7 @@ static void flood_light(int y, int x)
     if (c_ptr->lr) {
 	temp=c_ptr->tl;
 	c_ptr->tl = TRUE;
-	if (c_ptr->fval<MIN_CLOSED_SPACE && temp==FALSE) {
+	if (c_ptr->fval<BLOCKED_FLOOR && temp==FALSE) {
 	    flood_light(y+1,x);
 	    flood_light(y-1,x);
 	    flood_light(y,x+1);
@@ -1491,7 +1491,7 @@ static void flood_permanent(int y, int x)
 	    (x-panel_col_prt)>12 && (x-panel_col_prt)<80)
 	    print(loc_symbol(y, x), y, x);
 #endif
-	if (c_ptr->fval<MIN_CLOSED_SPACE) {
+	if (c_ptr->fval<BLOCKED_FLOOR) {
 	    flood_permanent(y+1,x);
       flood_permanent(y-1,x);
 	    flood_permanent(y,x+1);
@@ -1516,7 +1516,7 @@ static void flood_permanent_dark(int y, int x)
 	    c_ptr->fval=DARK_FLOOR;
 #ifdef MSDOS
 	if (panel_contains(y,x)) {
-	    if (c_ptr->fval < MIN_CLOSED_SPACE){
+	    if (c_ptr->fval < BLOCKED_FLOOR){
 		c_ptr->pl = FALSE;
 		flood_permanent_dark(y+1,x);
 		flood_permanent_dark(y-1,x);
@@ -1532,7 +1532,7 @@ static void flood_permanent_dark(int y, int x)
 #else
 	if ((y-panel_row_prt)<23 && (y-panel_row_prt)>0 &&
 	    (x-panel_col_prt)>12 && (x-panel_col_prt)<80)
-	    if (c_ptr->fval<MIN_CLOSED_SPACE) {
+	    if (c_ptr->fval<BLOCKED_FLOOR) {
 		c_ptr->pl = FALSE;
 		flood_permanent_dark(y+1,x);
 		flood_permanent_dark(y-1,x);
@@ -1578,7 +1578,7 @@ void light_room(int y, int x)
 	    print(loc_symbol(y, x), y, x);
 #endif
     
-	if (c_ptr->fval < MIN_CLOSED_SPACE) {
+	if (c_ptr->fval < BLOCKED_FLOOR) {
 	    c_ptr = &cave[y + 1][x];
 	    if ((!c_ptr->pl) && (c_ptr->lr))
 		light_room(y + 1, x);
@@ -1627,11 +1627,11 @@ void darken_room(int y, int x)
 	    c_ptr->fval = DARK_FLOOR;
 #ifdef MSDOS
 	if (panel_contains(y, x))
-	    if (c_ptr->fval < MIN_CLOSED_SPACE) {
+	    if (c_ptr->fval < BLOCKED_FLOOR) {
 #else
 	if ((y - panel_row_prt) < 23 && (y - panel_row_prt) > 0 &&
 	    (x - panel_col_prt) > 12 && (x - panel_col_prt) < 80)
-	    if (c_ptr->fval < MIN_CLOSED_SPACE) {
+	    if (c_ptr->fval < BLOCKED_FLOOR) {
 #endif
 		c_ptr->pl = FALSE;
 		darken_room(y + 1, x);

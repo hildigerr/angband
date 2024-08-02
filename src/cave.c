@@ -453,7 +453,7 @@ void map_area(void)
     for (y = y1; y <= y2; y++) {
 	for (x = x1; x <= x2; x++) {
 
-	    if (in_bounds(y, x) && (cave[y][x].fval <= MIN_CLOSED_SPACE))
+	    if (in_bounds(y, x) && (cave[y][x].fval <= BLOCKED_FLOOR))
 
 		for (i7 = y - 1; i7 <= y + 1; i7++) {
 		    for (i8 = x - 1; i8 <= x + 1; i8++) {
@@ -499,7 +499,7 @@ void wiz_lite(int light)
 	for (x = 0; x < cur_width; x++) {
 
 	    /* Process all non-walls */
-	    if (cave[y][x].fval <= MIN_CLOSED_SPACE) {
+	    if (cave[y][x].fval <= BLOCKED_FLOOR) {
 
 		/* Perma-lite all grids touching those grids */
 		for (yy = y - 1; yy <= y + 1; yy++) {

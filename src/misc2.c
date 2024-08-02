@@ -511,7 +511,7 @@ int place_win_monster()
 	    y = randint(cur_height - 2);
 	    x = randint(cur_width - 2);
 	}
-	while ((cave[y][x].fval >= MIN_CLOSED_SPACE) || (cave[y][x].m_idx != 0)
+	while ((cave[y][x].fval >= BLOCKED_FLOOR) || (cave[y][x].m_idx != 0)
 	       || (cave[y][x].i_idx != 0) ||
 	       (distance(y, x, char_row, char_col) <= MAX_SIGHT));
 
@@ -1059,7 +1059,7 @@ int place_ghost()
 	/* Pick a location */
 	y = randint(cur_height - 2);
 	x = randint(cur_width - 2);
-    } while ((cave[y][x].fval >= MIN_CLOSED_SPACE) || (cave[y][x].m_idx != 0)
+    } while ((cave[y][x].fval >= BLOCKED_FLOOR) || (cave[y][x].m_idx != 0)
 	     || (cave[y][x].i_idx != 0) ||
 	     (distance(y, x, char_row, char_col) <= MAX_SIGHT));
 
@@ -1350,7 +1350,7 @@ void alloc_monster(int num, int dis, int slp)
 	    y = randint(cur_height - 2);
 	    x = randint(cur_width - 2);
 	}
-	while (cave[y][x].fval >= MIN_CLOSED_SPACE || (cave[y][x].m_idx != 0) ||
+	while (cave[y][x].fval >= BLOCKED_FLOOR || (cave[y][x].m_idx != 0) ||
 	       (distance(y, x, char_row, char_col) <= dis));
 
 	do {

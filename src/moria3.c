@@ -246,7 +246,7 @@ static int look_see(int x, int y, int *transparent)
 	}
 
 	/* Examine rocks. */
-	if ((gl_rock || out_val[0]) && c_ptr->fval >= MIN_CLOSED_SPACE) {
+	if ((gl_rock || out_val[0]) && c_ptr->fval >= BLOCKED_FLOOR) {
 	    switch (c_ptr->fval) {
 	      case BOUNDARY_WALL:
 	      case GRANITE_WALL:
