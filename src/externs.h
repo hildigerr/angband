@@ -59,9 +59,12 @@
 
 /*
  * Determine if a "legal" grid is a "floor" grid
+ * First test -- catch normal granite/quartz/magma walls
+ * Second test -- catch rubble and closed/secret doors
  */
 #define floor_grid_bold(Y,X) \
-    (cave[Y][X].fval < BLOCKED_FLOOR)
+    ((cave[Y][X].fval < MIN_WALL) && \
+     (cave[Y][X].fval < BLOCKED_FLOOR))
     
 /*
  * Determine if a "legal" grid is a "clean floor" grid
@@ -69,7 +72,7 @@
  * Second test -- catch all normal objects
  */
 #define clean_grid_bold(Y,X) \
-    ((cave[Y][X].fval <= BLOCKED_FLOOR) && \
+    ((cave[Y][X].fval < MIN_WALL) && \
      (cave[Y][X].i_idx == 0))
     
 /*
