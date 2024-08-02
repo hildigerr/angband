@@ -377,8 +377,7 @@
 /*
  * Fval definitions: various types of dungeon floors and walls
  * Note that numbers above "15" will cause all kinds of problems.
- * The "savefiles" in particular, will be totally trashed
- * and MIN_WALL will have to be changed
+ * The "savefiles" in particular, will be totally trashed...
  */
 
 #define NULL_WALL	0	/* Temp value for "generate.c" */
@@ -391,11 +390,10 @@
 #define CORR_FLOOR      5	/* Floor, in a corridor */
 #define BLOCKED_FLOOR   6       /* a corridor space with cl/st/se door or rubble */
 
+#define MIN_WALL	8	/* Hack -- minimum "wall" fval */
 
 #define TMP1_WALL	8
 #define TMP2_WALL	9
-
-#define MIN_WALL	12	/* Hack -- minimum "wall" fval */
 
 #define GRANITE_WALL	12	/* Granite */
 #define MAGMA_WALL	13	/* Magma */
