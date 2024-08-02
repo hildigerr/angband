@@ -830,6 +830,22 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
 		lite_spot(y, x);
 
 		break;
+
+	    /* Darken the grid */            
+	    case GF_DARK_WEAK:
+
+		/* Notice */
+		if (seen) note++;
+
+		/* Darken the room. */
+		if (!dist) darken_room(y, x);
+
+		/* Turn off the light. */
+		c_ptr->pl = FALSE;
+		c_ptr->tl = FALSE;
+
+		/* All done */
+		break;
 	}
     }
 
@@ -2034,6 +2050,8 @@ static char bolt_char(int y, int x, int ny, int nx)
  * may be relevant even for bolts, since they have a "1x1" mini-blast.
  *
  * It is rather important that the grids are processed from ground-zero outward.
+ * For example, this is used by the "GF_LITE" / "GF_DARK" ball weapons to do
+ * "correct" room darkening.
  *
  * We attempt to return "true" if any "effects" of the projection were observed.
  */

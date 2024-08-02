@@ -2996,40 +2996,13 @@ int lite_area(int y, int x, int dam, int rad)	   /* Expanded -DGK */
 /* Darken an area, opposite of light area		-RAK-	 */
 int unlite_area(int y, int x)
 {
-    register int        i, j, unlight;
-    register cave_type *c_ptr;
-    int                 min_i, max_i, min_j, max_j;
-
-    unlight = FALSE;
-    if (cave[y][x].lr && (dun_level > 0)) {
-	darken_room(y, x);
-	unlight = TRUE;
-/* this isn't really good, as it returns true, even if rm was already dark, but
- * at least scrolls of darkness will be IDed when used -CFT
- */
-    } else {
-	min_i = MY_MAX(0, (y - 3));
-	max_i = MY_MIN(cur_height - 1, (y + 3));
-	min_j = MY_MAX(0, (x - 3));
-	max_j = MY_MIN(cur_width - 1, (x + 3));
-	
-	/* replace a check for in_bounds2 every loop with 4 quick computations -CWS */
-	
-	for (i = min_i; i <= max_i; i++)
-	    for (j = min_j; j <= max_j; j++) {
-		c_ptr = &cave[i][j];
-		if ((c_ptr->fval == CORR_FLOOR) && (c_ptr->pl || c_ptr->lr)) {
-		    /* pl could have been set by star-lite wand, etc */
-		    c_ptr->pl = FALSE;
-		    c_ptr->tl = FALSE;
-		    unlight = TRUE;
-		}
-	    }
-    }
-    if (unlight && p_ptr->blind <= 0)
+    /* Hack -- Message */
+    if (p_ptr->blind < 1) {
 	msg_print("Darkness surrounds you.");
+    }
 
-    return (unlight);
+    /* Simple "unlite_area" attack centered on player */
+    return (project(1, 3, char_row, char_col, 0, GF_DARK_WEAK, PROJECT_GRID));
 }
 
 

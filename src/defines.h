@@ -1293,6 +1293,7 @@
 #define GF_LITE         15
 #define GF_DARK         16
 #define GF_LITE_WEAK	17
+#define GF_DARK_WEAK	18
 #define GF_SHARDS       20
 #define GF_SOUND        21
 #define GF_CONFUSION    22
