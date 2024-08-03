@@ -1087,7 +1087,6 @@ int twall(int y, int x, int t1, int t2)
 
 	if (panel_contains(y, x))
 	    if ((c_ptr->tl || c_ptr->pl) && c_ptr->i_idx != 0) {
-		msg_print("You have found something!");
 		c_ptr->fm = TRUE;
 	    }
 
@@ -1231,6 +1230,10 @@ void tunnel(int dir)
 
 		i = randint(1200) + 80;
 		if (twall(y, x, tabil, i)) {
+		    if (c_ptr->i_idx && (c_ptr->tl || c_ptr->pl)) {
+			msg_print("You have found something!");
+		    }
+		    else {
 			msg_print("You have finished the tunnel.");
 			check_view();
 		}
@@ -1243,6 +1246,10 @@ void tunnel(int dir)
 
 		i = randint(600) + 10;
 		if (twall(y, x, tabil, i)) {
+		    if (c_ptr->i_idx && (c_ptr->tl || c_ptr->pl)) {
+			msg_print("You have found something!");
+		    }
+		    else {
 			msg_print("You have finished the tunnel.");
 			check_view();
 		}
@@ -1255,6 +1262,10 @@ void tunnel(int dir)
 
 		i = randint(400) + 10;
 		if (twall(y, x, tabil, i)) {
+		    if (c_ptr->i_idx && (c_ptr->tl || c_ptr->pl)) {
+			msg_print("You have found something!");
+		    }
+		    else {
 			msg_print("You have finished the tunnel.");
 			check_view();
 		}

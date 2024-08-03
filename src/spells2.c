@@ -2679,6 +2679,7 @@ int wall_to_mud(int dir, int y, int x)
 	    (void)twall(y, x, 1, 0);
 	    if (test_lite(y, x)) {
 		msg_print("The wall turns into mud.");
+		if (c_ptr->i_idx) msg_print("You have found something!");
 		check_view();
 		wall = TRUE;
 	    }
