@@ -1079,8 +1079,6 @@ int twall(int y, int x, int t1, int t2)
 		    place_object(y,x); /* and drop a goodie! */
 		}
 	    }
-	    else if (i_list[c_ptr->i_idx].tval >= TV_MIN_DOORS)
-		delete_object(y,x); /* no more door... */
 	} /* if object there.... */
 
 	c_ptr->fm = FALSE;
