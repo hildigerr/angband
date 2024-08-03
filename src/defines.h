@@ -1309,6 +1309,7 @@
 #define GF_TIME         34
 #define GF_GRAVITY      35
 
+#define GF_KILL_WALL	40
 #define GF_KILL_DOOR	41
 #define GF_KILL_TRAP	42
 

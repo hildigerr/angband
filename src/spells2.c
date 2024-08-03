@@ -2652,83 +2652,8 @@ int drain_life(int dir, int y, int x, int dam)
 /* Turn stone to mud, delete wall.			-RAK-	 */
 int wall_to_mud(int dir, int y, int x)
 {
-    int                     i, wall, dist;
-    bigvtype                out_val, tmp_str;
-    register int            flag;
-    register cave_type     *c_ptr;
-    register monster_type  *m_ptr;
-    register monster_race *r_ptr;
-    vtype                   m_name;
-
-    wall = FALSE;
-    flag = FALSE;
-    dist = 0;
-    do {
-	(void)mmove(dir, &y, &x);
-	dist++;
-	c_ptr = &cave[y][x];
-    /* note, this ray can move through walls as it turns them to mud */
-	if (dist == OBJ_BOLT_RANGE)
-	    flag = TRUE;
-	if (c_ptr->fval == BOUNDARY_WALL) {
-	    flag = TRUE;
-	    if (test_lite(y, x))
-		msg_print("The wall resists your spell.");
-	} else if ((c_ptr->fval >= MIN_WALL)) {
-	    flag = TRUE;
-	    (void)twall(y, x, 1, 0);
-	    if (test_lite(y, x)) {
-		msg_print("The wall turns into mud.");
-		if (c_ptr->i_idx) msg_print("You have found something!");
-		check_view();
-		wall = TRUE;
-	    }
-	} else if ((c_ptr->i_idx != 0) && (c_ptr->fval >= BLOCKED_FLOOR)) {
-	    flag = TRUE;
-	    if (panel_contains(y, x) && test_lite(y, x)) {		
-		objdes(tmp_str, &i_list[c_ptr->i_idx], FALSE);
-		if ((i_list[c_ptr->i_idx].tval == TV_RUBBLE) && (randint(10)==1)) {
-		    delete_object(y,x);
-		    place_object(y,x);
-		    lite_spot(y,x);
-		    (void) sprintf(out_val,
-				   "The %s turns into mud, revealing an object!",\
-				   tmp_str);
-		}
-		else {
-		    (void) delete_object(y, x);
-		    (void) sprintf(out_val, "The %s turns into mud.", tmp_str);
-		}
-		msg_print(out_val);
-		wall = TRUE;
-	    }
-	}
-	
-	if (c_ptr->m_idx > 1) {
-	    m_ptr = &m_list[c_ptr->m_idx];
-	    r_ptr = &r_list[m_ptr->r_idx];
-	    if (MF2_HURT_ROCK & r_ptr->cflags2) {
-		monster_name(m_name, m_ptr);
-		flag = m_ptr->ml;
-		i = mon_take_hit((int)c_ptr->m_idx, (20 + randint(30)), TRUE);
-		if (flag) {
-		    if (i >= 0) {
-			l_list[i].r_cflags2 |= MF2_HURT_ROCK;
-			(void)sprintf(out_val, "%s dissolves!", m_name);
-			msg_print(out_val);
-			prt_experience();	/* print msg before calling prt_exp */
-		    } else {
-			l_list[m_ptr->r_idx].r_cflags2 |= MF2_HURT_ROCK;
-			(void)sprintf(out_val, "%s grunts in pain!", m_name);
-			msg_print(out_val);
-		    }
-		}
-		flag = TRUE;
-	    }
-	}
-    }
-    while (!flag);
-    return (wall);
+    int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
+    return (project_hook(GF_KILL_WALL, dir, 20 + randint(30), flg));
 }
 
 

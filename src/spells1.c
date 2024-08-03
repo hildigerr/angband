@@ -613,6 +613,7 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
     bool	seen = FALSE;
     bool	plural = FALSE;
     bool	do_kill = FALSE;
+    bool	do_make = FALSE;
 
     bool	old_floor = FALSE;
 
@@ -629,6 +630,10 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
 
     /* Get the object */
     i_ptr = &i_list[c_ptr->i_idx];
+
+
+    /* XXX Perma-Walls need to "resist" GF_KILL_WALL below */
+
 
     /* Check for "floor" before we function */
     old_floor = (floor_grid_bold(y, x));
@@ -788,6 +793,27 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
 		}
 
 		break;
+
+
+	    /* Turn walls and doors into Mud */
+	    case GF_KILL_WALL:	    
+
+		/* Hack -- allow rubble to hide objects */
+		if ((i_ptr->tval == TV_RUBBLE) && (randint(10)==1)) {
+
+		    do_kill = do_make = TRUE;
+		    note_kill = " turns into mud, revealing an object!";
+		    break;
+		}
+
+		/* Rubble, and (closed) doors go away */
+		if (c_ptr->fval == BLOCKED_FLOOR) {
+
+		    do_kill = TRUE;
+		    note_kill = " turns into mud.";
+		}
+
+		break;
 	}
 
 
@@ -804,6 +830,15 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
 
 		/* Redraw */
 		lite_spot(y,x);
+	    }
+	}
+
+
+	/* Create a new object if possible and requested */
+	if (do_make && clean_grid_bold(y, x)) {
+	    if (seen) note++;
+	    place_object(y,x);
+	    lite_spot(y,x);
 	}
     }
 
@@ -846,8 +881,37 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
 
 		/* All done */
 		break;
+
+	    /* Turn walls into Mud */
+	    case GF_KILL_WALL:
+
+		/* No wall here */
+		if (c_ptr->fval < MIN_WALL) break;
+
+		/* Note */
+		if (seen) note++;
+
+		/* Permanent wall */
+		if (c_ptr->fval == BOUNDARY_WALL) {
+		    if (seen) msg_print("The wall resists your spell.");
+		    break;
+		}
+
+		/* Tunnel, note things uncovered */
+		if (twall(y, x, 1, 0)) {
+		    if (seen) {
+			msg_print("The wall turns into mud.");
+			if (c_ptr->i_idx) msg_print("You have found something!");
+		    }
+		}
+
+		break;
 	}
     }
+
+
+    check_view();
+
 
     /* Return "Anything seen?" */
     return (note);
@@ -1196,6 +1260,28 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 	    dam /= 9;
 	    if (seen) l_ptr->r_cflags2 |= MF2_IM_COLD;
 	}
+	break;
+
+
+      /* Stone to Mud (Only damage Stone Golems) */
+      case GF_KILL_WALL:
+
+	/* Damage the monster if possible */
+	if (r_ptr->cflags2 & MF2_HURT_ROCK) {
+
+	    /* Memorize the effects */
+	    if (seen) l_ptr->r_cflags2 |= MF2_HURT_ROCK;
+
+	    note = " grunts in pain!";
+	    note_dies = " dissolves!";
+	}
+
+	/* Usually, ignore the effects */
+	else {
+	    obvious = FALSE;
+	    dam = 0;
+	}
+
 	break;
 
 
