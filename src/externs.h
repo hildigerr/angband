@@ -875,9 +875,6 @@ int save_player(void);
 int _save_player(char *);
 int load_player(int *);
 
-/* sets.c */
-int set_null(inven_type *);
-
 /* signals.c */
 void signals_ignore_tstp(void);
 void signals(void);
