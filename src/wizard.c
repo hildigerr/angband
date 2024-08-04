@@ -742,6 +742,30 @@ static void wizard_create_aux2(inven_type *i_ptr)
 		i_ptr->flags2 |= TR2_RES_BLIND;
 	}     
 
+	if (!get_com("Immune to Anything? ", &ch)) return;
+	if (ch == 'y' || ch == 'Y') {
+
+	if (!get_com("Immune to Acid? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y')
+		i_ptr->flags2 |= TR2_IM_ACID;
+
+	if (!get_com("Immune to Lightning? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y')
+		i_ptr->flags2 |= TR2_IM_ELEC;
+
+	if (!get_com("Immune to Fire? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y')
+		i_ptr->flags2 |= TR2_IM_FIRE;
+
+	if (!get_com("Immune to Cold? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y')
+		i_ptr->flags2 |= TR2_IM_COLD;
+
+	if (!get_com("Immune to Poison? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y')
+		i_ptr->flags2 |= TR2_IM_POIS;
+	}
+
 	if (!get_com("Sustain Any Stats? ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y') {
 	    if (!get_com("Sustain strength? ", &ch)) return;
@@ -790,30 +814,6 @@ static void wizard_create_aux2(inven_type *i_ptr)
 	if (!get_com("Telepathy? [yn]: ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y')
 		i_ptr->flags3 |= TR3_TELEPATHY;
-
-	if (!get_com("Immune to Anything? ", &ch)) return;
-	if (ch == 'y' || ch == 'Y') {
-
-	if (!get_com("Immune to Fire? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_IM_FIRE;
-
-	if (!get_com("Immune to Cold? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_IM_COLD;
-
-	if (!get_com("Immune to Acid? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_IM_ACID;
-
-	if (!get_com("Immune to Lightning? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_IM_ELEC;
-
-	if (!get_com("Immune to Poison? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_IM_POIS;
-	}
 
 	if (!get_com("Give off Light? [yn]: ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y')
