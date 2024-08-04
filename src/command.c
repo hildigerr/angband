@@ -979,10 +979,6 @@ void do_command(char com_val)
 #ifdef ALLOW_ARTIFACT_CHECK /* -CWS */
 	/* Check artifacts */
 	case '~':
-	if ((!wizard) && (dun_level != 0)) {
-	    msg_print("You need to be on the town level to check artifacts!");
-	    msg_print(NULL);		/* make sure can see the message -CWS */
-	} else
 	    do_cmd_check_artifacts(); break;
 #endif
 

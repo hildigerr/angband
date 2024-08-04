@@ -2079,6 +2079,13 @@ void do_cmd_check_artifacts(void)
 {
     int i, j;
 
+    /* Hack -- no checking in the dungeon */
+    if (dun_level && !wizard) {
+	msg_print("You need to be in town to check artifacts!");
+	return;
+    }
+
+
     /* Save the screen */
     save_screen();
 
