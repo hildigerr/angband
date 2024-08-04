@@ -924,7 +924,7 @@ void breath(int, int, int);
 void fire_bolt(int, int, int, int, int);
 void fire_ball(int, int, int, int, int, int);
 int recharge(int);
-int hp_monster(int, int, int, int);
+int heal_monster(int, int, int);
 int drain_life(int, int, int, int);
 int speed_monster(int, int, int, int);
 int confuse_monster(int, int, int, int);

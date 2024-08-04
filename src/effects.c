@@ -1665,7 +1665,7 @@ void do_cmd_aim_wand(void)
 	    break;
 
 	case SV_WAND_HEAL_MONSTER:
-	    ident = hp_monster(dir,y,x, -damroll(4, 6));
+	    ident = heal_monster(dir,y,x);
 	    done_effect = 1;
 	    break;
 

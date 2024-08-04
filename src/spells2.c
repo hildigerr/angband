@@ -2694,44 +2694,10 @@ int trap_creation()
     return (project(1, 1, char_row, char_col, 0, GF_MAKE_TRAP, flg));
 }
 
-
-/* Increase or decrease a creatures hit points		-RAK-	 */
-int hp_monster(int dir, int y, int x, int dam)
+int heal_monster(int dir, int y, int x)
 {
-    register int        i;
-    int                 flag, dist, monster;
-    register cave_type *c_ptr;
-    register monster_type *m_ptr;
-    vtype               out_val, m_name;
-
-    monster = FALSE;
-    flag = FALSE;
-    dist = 0;
-    do {
-	(void)mmove(dir, &y, &x);
-	dist++;
-	c_ptr = &cave[y][x];
-	if ((dist > OBJ_BOLT_RANGE) || c_ptr->fval >= BLOCKED_FLOOR)
-	    flag = TRUE;
-	else if (c_ptr->m_idx > 1) {
-	    flag = TRUE;
-	    m_ptr = &m_list[c_ptr->m_idx];
-	    monster_name(m_name, m_ptr);
-	    monster = TRUE;
-	    i = mon_take_hit((int)c_ptr->m_idx, dam, TRUE);
-	    if (i >= 0) {
-		(void)sprintf(out_val, "%s dies in a fit of agony.", m_name);
-		msg_print(out_val);
-		prt_experience();
-	    } else if (dam > 0) {
-		(void)sprintf(out_val,
-			      pain_message((int)c_ptr->m_idx, dam), m_name);
-		msg_print(out_val);
-	    }
-	}
-    }
-    while (!flag);
-    return (monster);
+    int flg = PROJECT_STOP;
+    return (project_hook(GF_OLD_HEAL, dir, damroll(4, 6), flg));
 }
 
 

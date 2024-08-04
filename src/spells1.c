@@ -1418,6 +1418,20 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 	break;
 
 
+      /* Heal Monster (use "dam" as amount of healing) */
+      case GF_OLD_HEAL:
+
+	/* Wake up */
+	m_ptr->csleep = 0;
+
+	/* Heal */
+	m_ptr->hp += dam;
+
+	/* No "real" damage */
+	dam = 0;
+	break;
+
+
       /* Sleep (Use "dam" as "power") */
       case GF_OLD_SLEEP:
 
