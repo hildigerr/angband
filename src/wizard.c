@@ -209,9 +209,9 @@ static void wizard_create_aux1(inven_type *i_ptr)
 {
     int                  i, j, k;
     int			 tval = 0;
-    char                 tmp_str[100];
-    char                 ch;
     int                  more = FALSE;
+    char                 ch;
+    char                 tmp_str[100];
 
     prt("What type of item?    : ", 0, 0);
     prt("[W]eapon, [A]rmour, [O]thers.", 1, 0);
@@ -233,12 +233,13 @@ static void wizard_create_aux1(inven_type *i_ptr)
 	    tval = TV_SWORD;
 	    break;
 
+	  case 'P': case 'p':
+	    tval = TV_POLEARM;
+	    break;
+
 	  case 'H': case 'h':
 	    tval = TV_HAFTED;
 	    break;
-
-	  case 'P': case 'p':
-	    tval = TV_POLEARM;
 
 	    break;
 	  case 'B': case 'b':
@@ -404,7 +405,7 @@ static void wizard_create_aux1(inven_type *i_ptr)
 	      case 'S': case 's':
 		tval = TV_SPIKE;
 		break;
-	      case 'd': case 'D':
+	      case 'D': case 'd':
 		tval = TV_DIGGING;
 		break;
 	      case 'C': case 'c':
