@@ -604,6 +604,7 @@ void poison_gas(int dam, cptr kb_str)
  */
 static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg)
 {
+    int i;
 
     register cave_type *c_ptr;
     register inven_type *i_ptr;
@@ -814,6 +815,25 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
 		}
 
 		break;
+
+	    /* Kill everything, make doors later */
+	    case GF_MAKE_DOOR:
+
+		if (c_ptr->fval >= MIN_WALL) break;
+
+		if ((i_ptr->tval == TV_UP_STAIR)
+		|| (i_ptr->tval == TV_DOWN_STAIR)
+		|| (i_ptr->tval == TV_STORE_DOOR)
+		|| (wearable_p(i_ptr))
+		|| (artifact_p(i_ptr))) {
+		msg_print("The object resists the spell.");
+		break;
+		}
+
+		/* Kill it, make a door below */
+		do_kill = TRUE;
+
+		break;
 	}
 
 
@@ -904,6 +924,30 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
 			if (c_ptr->i_idx) msg_print("You have found something!");
 		    }
 		}
+
+		break;
+
+	    /* Build doors, if nothing there */
+	    case GF_MAKE_DOOR:
+
+		/* Require a "naked" floor grid */
+		if (!naked_grid_bold(y, x)) break;
+
+		/* Observe */
+		if (seen) note++;
+
+		/* Make a door */
+		i = i_pop();
+
+		/* Make a closed door */
+		c_ptr->fval = BLOCKED_FLOOR;
+		invcopy(&i_list[i], OBJ_CLOSED_DOOR);
+
+		/* Put the door in the cave */
+		c_ptr->i_idx = i;
+
+		/* Light the spot */
+		lite_spot(y, x);
 
 		break;
 	}
