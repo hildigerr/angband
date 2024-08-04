@@ -1314,6 +1314,7 @@
 #define GF_KILL_TRAP	42
 
 #define GF_MAKE_DOOR	46
+#define GF_MAKE_TRAP	47
 
 #define GF_OLD_TPORT	51
 #define GF_OLD_POLY	52

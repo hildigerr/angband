@@ -834,6 +834,28 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
 		do_kill = TRUE;
 
 		break;
+
+
+	    /* Kill everything, make doors later */
+	    case GF_MAKE_TRAP:
+
+		if (c_ptr->fval >= MIN_WALL) break;
+
+		/* Never under the player */
+		if (c_ptr->m_idx == 1) break;
+
+		if ((i_ptr->tval == TV_UP_STAIR)
+		|| (i_ptr->tval == TV_DOWN_STAIR)
+		|| (i_ptr->tval == TV_STORE_DOOR)
+		|| (wearable_p(i_ptr))
+		|| (artifact_p(i_ptr))) {
+		msg_print("The object resists the spell.");
+		break;
+		}
+
+		/* Kill it, make a trap below */
+		do_kill = TRUE;
+		break;
 	}
 
 
@@ -947,6 +969,29 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
 		c_ptr->i_idx = i;
 
 		/* Light the spot */
+		lite_spot(y, x);
+
+		break;
+
+	    /* Make traps */
+	    case GF_MAKE_TRAP:
+
+		/* Require a "clean" floor grid */
+		if (!clean_grid_bold(y, x)) break;
+
+		/* Never under the player */
+		if (cave[y][x].m_idx == 1) break;
+		
+		/* Observe */
+		if (seen) note++;
+
+		/* Place a trap */
+		place_trap(y, x, randint(MAX_TRAP) - 1);
+
+		/* don't let player gain exp from the newly created traps */
+		i_list[c_ptr->i_idx].pval = 0;
+
+		/* Redisplay */
 		lite_spot(y, x);
 
 		break;

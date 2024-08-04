@@ -2690,37 +2690,8 @@ int door_creation()
 /* Surround the fool with traps (chuckle)		-RAK-	 */
 int trap_creation()
 {
-    register int        i, j, trap;
-    register cave_type *c_ptr;
-
-    trap = FALSE;
-    for (i = char_row - 1; i <= char_row + 1; i++)
-	for (j = char_col - 1; j <= char_col + 1; j++) {
-	    if ((i == char_row) && (j == char_col))
-		continue;	   /* no trap under player, from um55 -CFT */
-	    c_ptr = &cave[i][j];
-	    if (c_ptr->fval < MIN_WALL) {
-		if ((c_ptr->i_idx == 0) ||
-		    ((i_list[c_ptr->i_idx].tval != TV_UP_STAIR)
-		     /* if not stairs or a store */
-		     &&(i_list[c_ptr->i_idx].tval != TV_DOWN_STAIR)
-		     && (i_list[c_ptr->i_idx].tval != TV_STORE_DOOR)) ||
-		    !wearable_p(&i_list[c_ptr->i_idx]) ||
-		    !artifact_p(&i_list[c_ptr->i_idx])) {
-				/* if no artifact here -CFT */
-		    trap = TRUE;
-		    if (c_ptr->i_idx != 0)
-			(void)delete_object(i, j);
-		    place_trap(i, j, randint(MAX_TRAP) - 1);
-		/* don't let player gain exp from the newly created traps */
-		    i_list[c_ptr->i_idx].pval = 0;
-		/* open pits are immediately visible, so call lite_spot */
-		    lite_spot(i, j);
-		} else
-		    msg_print("The object resists the spell.");
-	    }
-	}
-    return (trap);
+    int flg = PROJECT_ITEM | PROJECT_GRID | PROJECT_HIDE;
+    return (project(1, 1, char_row, char_col, 0, GF_MAKE_TRAP, flg));
 }
 
 
