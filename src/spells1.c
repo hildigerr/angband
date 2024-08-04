@@ -1418,6 +1418,22 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 	break;
 
 
+      /* Clone monsters (Ignore "dam") */
+      case GF_OLD_CLONE:
+
+	m_ptr->csleep = 0;
+
+	/* Attempt to clone. */
+	if (!multiply_monster(y, x, m_ptr->r_idx, 0)) {
+	    obvious = FALSE;
+	}
+
+	/* No "real" damage */
+	dam = 0;	
+
+	break;
+
+
       /* Heal Monster (use "dam" as amount of healing) */
       case GF_OLD_HEAL:
 

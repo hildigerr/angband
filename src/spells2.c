@@ -2750,25 +2750,8 @@ int poly_monster(int dir, int y, int x)
 /* Replicate a creature					-RAK-	 */
 int clone_monster(int dir, int y, int x)
 {
-    register cave_type *c_ptr;
-    register int        dist, flag;
-
-    dist = 0;
-    flag = FALSE;
-    do {
-	(void)mmove(dir, &y, &x);
-	dist++;
-	c_ptr = &cave[y][x];
-	if ((dist > OBJ_BOLT_RANGE) || c_ptr->fval >= BLOCKED_FLOOR)
-	    flag = TRUE;
-	else if (c_ptr->m_idx > 1) {
-	    m_list[c_ptr->m_idx].csleep = 0;
-	/* m_idx of 0 is safe here, since can't reach here from creatures */
-	    return multiply_monster(y, x, (int)m_list[c_ptr->m_idx].r_idx, 0);
-	}
-    }
-    while (!flag);
-    return (FALSE);
+    int flg = PROJECT_STOP;
+    return (project_hook(GF_OLD_CLONE, dir, 0, flg));
 }
 
 
