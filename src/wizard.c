@@ -788,10 +788,9 @@ static void wizard_create_aux2(inven_type *i_ptr)
     }
 
     prt("Cost [escape=make, return=default]: ", 0, 0);
-    if (!get_string(tmp_str, 0, 9, 8)) {
-	return;
-    }
+    if (!get_string(tmp_str, 0, 9, 8)) return;
     tmp_lval = atol(tmp_str);
+    if (tmp_lval < 0) tmp_lval = 0;
     if (tmp_val) i_ptr->cost = tmp_lval;
 
     prt("Dungeon Level on which it is found : ", 0, 0);
