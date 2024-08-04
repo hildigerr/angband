@@ -2072,20 +2072,26 @@ void scribe_object(void)
 
 
 /*
- * Print out the artifacts seen without using a file - cba
+ * Print out the artifacts seen.
+ * This can be used to notice "missed" artifacts.
  */
 void do_cmd_check_artifacts(void)
 {
     int i, j;
 
+    /* Save the screen */
     save_screen();
 
+    /* Use column 15 */
     j = 15;
 
+    /* Erase some lines */    
     for (i = 1; i < 23; i++) erase_line(i, j - 2);
 
+    /* Start in line 1 */
     i = 1;
 
+    /* Title the screen */
     prt("Artifacts Seen:", i++, j + 5);
 
     /* weapons */
@@ -2552,8 +2558,11 @@ void do_cmd_check_artifacts(void)
 	artifact_screen_full(&i, j);
     }
 
+    /* Pause */
     pause_line(i);
 
+
+    /* Restore the screen */
     restore_screen();
 }
 
