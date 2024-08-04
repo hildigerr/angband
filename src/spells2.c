@@ -2731,8 +2731,10 @@ int teleport_monster(int dir, int y, int x)
 
 int lite_area(int y, int x, int dam, int rad)
 {
-    if (p_ptr->blind < 1)
+    /* Hack -- Message */
+    if (p_ptr->blind < 1) {
 	msg_print("You are surrounded by a white light.");
+    }
 
     /* Hook into the "project()" function */
     return (project(1, rad, char_row, char_col, dam, GF_LITE_WEAK, PROJECT_GRID));
