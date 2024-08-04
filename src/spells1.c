@@ -1049,6 +1049,9 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
     /* Monster visibility */
     bool seen = (!blind && m_ptr->ml);
 
+    /* Is the monster "living"? */
+    bool living = TRUE;
+
     /* Were the "effects" obvious (if seen)? */
     bool obvious = TRUE;
 
@@ -1092,6 +1095,9 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 	(r_ptr->cflags2 & MF2_UNDEAD) ||
 	(r_ptr->cflags2 & MF2_MINDLESS) ||
 	(strchr("EvgX", r_ptr->r_char))) {
+
+	/* Somebody may care */
+	living = FALSE;
 
 	/* Special note at death */
 	note_dies = " is destroyed.";
