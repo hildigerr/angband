@@ -208,6 +208,7 @@ static void change_character()
 static void wizard_create_aux1(inven_type *i_ptr)
 {
     int                  i, j, k;
+    int			 tval = 0;
     char                 tmp_str[100];
     char                 ch;
     int                  more = FALSE;
@@ -229,19 +230,19 @@ static void wizard_create_aux1(inven_type *i_ptr)
 
 	switch (ch) {
 	  case 'S': case 's':
-	    i_ptr->tval = TV_SWORD;
+	    tval = TV_SWORD;
 	    break;
 
 	  case 'H': case 'h':
-	    i_ptr->tval = TV_HAFTED;
+	    tval = TV_HAFTED;
 	    break;
 
 	  case 'P': case 'p':
-	    i_ptr->tval = TV_POLEARM;
+	    tval = TV_POLEARM;
 
 	    break;
 	  case 'B': case 'b':
-	    i_ptr->tval = TV_BOW;
+	    tval = TV_BOW;
 	    break;
 
 	  case 'A': case 'a':
@@ -253,13 +254,13 @@ static void wizard_create_aux1(inven_type *i_ptr)
 
 	    switch (ch) {
 	      case 'A': case 'a':
-		i_ptr->tval = TV_ARROW;
+		tval = TV_ARROW;
 		break;
 	      case 'B': case 'b':
-		i_ptr->tval = TV_BOLT;
+		tval = TV_BOLT;
 		break;
 	      case 'P': case 'p':
-		i_ptr->tval = TV_SHOT;
+		tval = TV_SHOT;
 		break;
 	      default:
 		break;
@@ -281,23 +282,23 @@ static void wizard_create_aux1(inven_type *i_ptr)
 	switch (ch) {
 
 	  case 'S': case 's':
-	    i_ptr->tval = TV_SHIELD;
+	    tval = TV_SHIELD;
 	    break;
 
 	  case 'H': case 'h':
-	    i_ptr->tval = TV_HELM;
+	    tval = TV_HELM;
 	    break;
 
 	  case 'G': case 'g':
-	    i_ptr->tval = TV_GLOVES;
+	    tval = TV_GLOVES;
 	    break;
 
 	  case 'B': case 'b':
-	    i_ptr->tval = TV_BOOTS;
+	    tval = TV_BOOTS;
 	    break;
 
 	  case 'C': case 'c':
-	    i_ptr->tval = TV_CLOAK;
+	    tval = TV_CLOAK;
 	    break;
 
 	  case 'A': case 'a':
@@ -309,13 +310,13 @@ static void wizard_create_aux1(inven_type *i_ptr)
 
 	    switch (ch) {
 	      case 'D': case 'd':
-		i_ptr->tval = TV_DRAG_ARMOR;
+		tval = TV_DRAG_ARMOR;
 		break;
 	      case 'H': case 'h':
-		i_ptr->tval = TV_HARD_ARMOR;
+		tval = TV_HARD_ARMOR;
 		break;
 	      case 'S': case 's':
-		i_ptr->tval = TV_SOFT_ARMOR;
+		tval = TV_SOFT_ARMOR;
 		break;
 	      default:
 		break;
@@ -337,19 +338,19 @@ static void wizard_create_aux1(inven_type *i_ptr)
 	switch (ch) {
 
 	  case 'R': case 'r':
-	    i_ptr->tval = TV_RING;
+	    tval = TV_RING;
 	    break;
 
 	  case 'P': case 'p':
-	    i_ptr->tval = TV_POTION;
+	    tval = TV_POTION;
 	    break;
 
 	  case 'S': case 's':
-	    i_ptr->tval = TV_SCROLL;
+	    tval = TV_SCROLL;
 	    break;
 
 	  case 'A': case 'a':
-	    i_ptr->tval = TV_AMULET;
+	    tval = TV_AMULET;
 	    break;
 
 	  case 'W': case 'w':
@@ -360,13 +361,13 @@ static void wizard_create_aux1(inven_type *i_ptr)
 	    }
 	    switch (ch) {
 	      case 'W': case 'w':
-		i_ptr->tval = TV_WAND;
+		tval = TV_WAND;
 		break;
 	      case 'S': case 's':
-		i_ptr->tval = TV_STAFF;
+		tval = TV_STAFF;
 		break;
 	      case 'R': case 'r':
-		i_ptr->tval = TV_ROD;
+		tval = TV_ROD;
 		break;
 	      default:
 		return;
@@ -382,10 +383,10 @@ static void wizard_create_aux1(inven_type *i_ptr)
 
 	    switch (ch) {
 	      case 'P': case 'p':
-		i_ptr->tval = TV_PRAYER_BOOK;
+		tval = TV_PRAYER_BOOK;
 		break;
 	      case 'S': case 's':
-		i_ptr->tval = TV_MAGIC_BOOK;
+		tval = TV_MAGIC_BOOK;
 		break;
 	      default:
 		return;
@@ -401,22 +402,22 @@ static void wizard_create_aux1(inven_type *i_ptr)
 
 	    switch (ch) {
 	      case 'S': case 's':
-		i_ptr->tval = TV_SPIKE;
+		tval = TV_SPIKE;
 		break;
 	      case 'd': case 'D':
-		i_ptr->tval = TV_DIGGING;
+		tval = TV_DIGGING;
 		break;
 	      case 'C': case 'c':
-		i_ptr->tval = TV_CHEST;
+		tval = TV_CHEST;
 		break;
 	      case 'L': case 'l':
-		i_ptr->tval = TV_LITE;
+		tval = TV_LITE;
 		break;
 	      case 'F': case 'f':
-		i_ptr->tval = TV_FOOD;
+		tval = TV_FOOD;
 		break;
 	      case 'O': case 'o':
-		i_ptr->tval = TV_FLASK;
+		tval = TV_FLASK;
 		break;
 	      default:
 		return;
@@ -438,7 +439,7 @@ again:
     save_screen();
     prt("Which Item?  : ", 0, 0);
     for (; i < MAX_K_IDX; i++) {
-	switch (i_ptr->tval) {
+	switch (tval) {
 	  case TV_POTION:
 	    if (k_list[i].tval == TV_POTION) {
 		sprintf(tmp_str, "%c) %s", 'a' + j, k_list[i].name);
@@ -454,7 +455,7 @@ again:
 	    }
 	    break;
 	  default:
-	    if (k_list[i].tval == i_ptr->tval) {
+	    if (k_list[i].tval == tval) {
 		sprintf(tmp_str, "%c) %s", 'a' + j, k_list[i].name);
 		prt(tmp_str, 1 + j, 0);
 		j++;
@@ -468,7 +469,7 @@ again:
     }
     if (j < 21) {
 	for (i = (i - (MAX_K_IDX - 1)) + (OBJ_SPECIAL - 1); i < MAX_K_IDX; i++) {
-	    switch (i_ptr->tval) {
+	    switch (tval) {
 	      case TV_POTION:
 		if (k_list[i].tval == TV_POTION) {
 		    sprintf(tmp_str, "%c) %s", 'a' + j, k_list[i].name);
@@ -484,7 +485,7 @@ again:
 		}
 		break;
 	      default:
-		if (k_list[i].tval == i_ptr->tval) {
+		if (k_list[i].tval == tval) {
 		    sprintf(tmp_str, "%c) %s", 'a' + j, k_list[i].name);
 		    prt(tmp_str, 1 + j, 0);
 		    j++;
@@ -516,7 +517,7 @@ again:
 
     j = 0;
     for (i = 0; i < MAX_K_IDX; i++) {
-	switch (i_ptr->tval) {
+	switch (tval) {
 	  case TV_POTION:
 	    if (k_list[i].tval == TV_POTION) {
 		j++;
@@ -528,7 +529,7 @@ again:
 	    }
 	    break;
 	  default:
-	    if (k_list[i].tval == i_ptr->tval) {
+	    if (k_list[i].tval == tval) {
 		j++;
 	    }
 	    break;
@@ -538,7 +539,7 @@ again:
     }
     if (j != k) {
 	for (i = (OBJ_SPECIAL - 1); i < MAX_K_IDX; i++) {
-	    switch (i_ptr->tval) {
+	    switch (tval) {
 	      case TV_POTION:
 		if (k_list[i].tval == TV_POTION) {
 		    j++;
@@ -550,7 +551,7 @@ again:
 		}
 		break;
 	      default:
-		if (k_list[i].tval == i_ptr->tval) {
+		if (k_list[i].tval == tval) {
 		    j++;
 		}
 		break;
@@ -983,6 +984,10 @@ void wizard_create()
 
     /* Restore the screen */
     restore_screen();
+
+    /* Nothing made */
+    if (forge.tval == TV_NOTHING) return;
+
 
     /* Save the screen */
     save_screen();
