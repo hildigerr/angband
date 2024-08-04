@@ -1314,6 +1314,7 @@
 #define GF_KILL_DOOR	41
 #define GF_KILL_TRAP	42
 
+#define GF_MAKE_WALL	45
 #define GF_MAKE_DOOR	46
 #define GF_MAKE_TRAP	47
 

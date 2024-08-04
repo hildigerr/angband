@@ -98,6 +98,8 @@ static int poly(int mnum)
 
 /*
  * Create a wall.		-RAK-	 
+ *
+ * XXX COnvert this to "project()" function.
  */
 int build_wall(int dir, int y, int x)
 {
@@ -1833,6 +1835,7 @@ void tele_level()
 
 /*
  * Sleep creatures adjacent to player			-RAK-	 
+ * Could be done as a "radius one" ball attack via "project()".
  */
 int sleep_monsters1(int y, int x)
 {
