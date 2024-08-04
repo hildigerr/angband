@@ -209,10 +209,11 @@ static void change_character()
 
 static void wizard_create_aux1(inven_type *i_ptr)
 {
-    int                  i, j, k;
+    int                  i, j, k_idx;
     int			 tval = 0;
-    int                  more = FALSE;
+    int			 page, num;
     char                 ch;
+    int			 option[24];
     char                 tmp_str[100];
 
 
@@ -425,73 +426,54 @@ static void wizard_create_aux1(inven_type *i_ptr)
 
     /*** Base object type chosen ***/
 
-    j = 0;
-    i = 0;
-    k = 0;
-again:
-    restore_screen();
-    save_screen();
-    prt("Choose an item (%sESC to cancel): ", 0, 0);
-    for (; i < MAX_K_IDX; i++) {
-	    if (k_list[i].tval == tval) {
-		sprintf(tmp_str, "%c) %s", 'a' + j, k_list[i].name);
-		prt(tmp_str, 1 + j, 0);
-		j++;
-	    }
-	if (j == 21) {
-	    more = TRUE;
-	    break;
+    /* Show pages until a legal value is chosen for "k" */
+    for (page = i = 0, k_idx = -1; k_idx < 0; ) {
+
+	/* Clear the screen */
+	clear_screen();
+
+	/* Show up to twenty options at a time.  Hack -- wrap when legal */
+	for (num = 0; (num < 20) && (page || (i < MAX_K_IDX)); i++) {
+
+	    /* Hack -- reset on "overflow" */
+	    if (i == MAX_K_IDX) i = 0;
+
+	    /* Save (and count) this option */
+	    if (k_list[i].tval == tval) option[num++] = i;
 	}
-    }
-    if (j < 21) {
-	for (i = (i - (MAX_K_IDX - 1)) + (OBJ_SPECIAL - 1); i < MAX_K_IDX; i++) {
-		if (k_list[i].tval == tval) {
-		    sprintf(tmp_str, "%c) %s", 'a' + j, k_list[i].name);
-		    prt(tmp_str, 1 + j, 0);
-		    j++;
-		}
-	    if (j == 21) {
-		more = TRUE;
-		break;
-	    }
+
+	/* Notice a full page */
+	if (num >= 20) page++;
+
+	/* List the options extracted above */
+	for (j = 0; j < num; j++) {
+
+	    char /* p1 = '(', */ p2 = ')';
+	    int opt = option[j];
+
+	    sprintf(tmp_str, "  %c%c [%d] %s",
+		   'a' + j, p2, opt, k_list[opt].name);
+
+	    prt(tmp_str, j+1, 0);
 	}
-    }
-    if (more)
-	prt("v) NEXT PAGE", 22, 0);
-    do {
-	if (!get_com(NULL, &ch)) return;
-    } while ((ch < 'a' && ch > ('a' + j)) || (more && ch < 'a' && ch > ('a' + j + 1)));
-    if ((ch == 'v') && more) {
-	more = FALSE;
-	k += (j - 1);
-	j = 0;
-	goto again;
-    }
-    k += (ch - 'a' + 1);
-    j = 0;
-    for (i = 0; i < MAX_K_IDX; i++) {
-	    if (k_list[i].tval == tval) {
-		j++;
-	    }
-	if (j == k)
-	    break;
-    }
-    if (j != k) {
-	for (i = (OBJ_SPECIAL - 1); i < MAX_K_IDX; i++) {
-		if (k_list[i].tval == tval) {
-		    j++;
-		}
-	    if (j == k)
-		break;
-	}
-    }
-    if (j != k) {
-	return;
+
+	/* Build a prompt */
+	sprintf(tmp_str, "Choose an item (%sESC to cancel): ",
+		(num<20) ? "" : "Space for more choices, ");
+
+	/* Get a command */
+	if (!get_com(tmp_str, &ch)) return;
+
+	/* Analyze the choice */
+	j = (ch - 'a');
+
+	/* Process "Legal" Answers */
+	if ((j >= 0) && (j < num)) k_idx = option[j];
     }
 
 
     /* Build an object using that template */
-    invcopy(i_ptr, i);
+    invcopy(i_ptr, k_idx);
     i_ptr->timeout = 0;
 }
 
