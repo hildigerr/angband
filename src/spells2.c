@@ -379,9 +379,10 @@ int genocide(int spell)
 }
 
 
-/* Change speed of any creature .			-RAK-	 */
-/* NOTE: cannot slow a winning creature (BALROG)		 */
-int speed_monsters(int spd)
+/*
+ * Speed nearby creatures.
+ */
+int speed_monsters()
 {
     register int        i, speed;
     register monster_type *m_ptr;
@@ -400,19 +401,47 @@ int speed_monsters(int spd)
 	r_ptr = &r_list[m_ptr->r_idx];
 	monster_name(m_name, m_ptr);
 
-	if (spd > 0) {
-	    m_ptr->mspeed += spd;
+	    m_ptr->mspeed += 1;
 	    m_ptr->csleep = 0;
 	    if (m_ptr->ml) {
 		speed = TRUE;
 		(void)sprintf(out_val, "%s starts moving faster.", m_name);
 		msg_print(out_val);
 	    }
-	} else if ((r_ptr->level <
+    }
+
+    return (speed);
+}
+
+
+/*
+ * Slow all nearby creatures.
+ * NOTE: cannot slow a winning creature (BALROG)
+ */
+int slow_monsters()
+{
+    register int        i, speed;
+    register monster_type *m_ptr;
+    register monster_race *r_ptr;
+    vtype               out_val;
+    char		m_name[80];
+
+    speed = FALSE;
+
+    for (i = m_max - 1; i >= MIN_M_IDX; i--) {
+
+	m_ptr = &m_list[i];
+
+	if (!los(char_row, char_col, (int)m_ptr->fy, (int)m_ptr->fx)) continue;
+
+	r_ptr = &r_list[m_ptr->r_idx];
+	monster_name(m_name, m_ptr);
+
+	if ((r_ptr->level <
 	    randint((p_ptr->lev - 10) < 1 ? 1 : (p_ptr->lev - 10)) + 10) &&
 		   !(r_ptr->cflags2 & MF2_UNIQUE)) {
 
-	    m_ptr->mspeed += spd;
+	    m_ptr->mspeed -= 1;
 
 	    m_ptr->csleep = 0;
 

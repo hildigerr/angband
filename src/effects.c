@@ -2043,11 +2043,11 @@ void do_cmd_use_staff(void)
 	break;
 
       case SV_STAFF_HASTE_MONSTERS:
-	ident = speed_monsters(1);
+	ident = speed_monsters();
 	break;
 
       case SV_STAFF_SLOW_MONSTERS:
-	ident = speed_monsters(-1);
+	ident = slow_monsters();
 	break;
 
       case SV_STAFF_SLEEP_MONSTERS:
