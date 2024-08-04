@@ -568,6 +568,9 @@ static void wizard_create_aux2(inven_type *i_ptr)
 	    (i_ptr->tval == TV_SHOT) ||
 	    (i_ptr->tval == TV_DIGGING)) {
 
+	    if (!get_com("Slay Something?", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') {
+
 	    if (!get_com("Slay Evil? [yn]: ", &ch)) return;
 		if (ch == 'y' || ch == 'Y')
 		    i_ptr->flags1 |= TR1_SLAY_EVIL;
@@ -603,6 +606,7 @@ static void wizard_create_aux2(inven_type *i_ptr)
 	    if (!get_com("Execute Dragon? [yn]: ", &ch)) return;
 		if (ch == 'y' || ch == 'Y')
 		    i_ptr->flags1 |= TR1_KILL_DRAGON;
+	    }
 
 	    if (!get_com("Frost Brand? [yn]: ", &ch)) return;
 		if (ch == 'y' || ch == 'Y')
@@ -621,6 +625,10 @@ static void wizard_create_aux2(inven_type *i_ptr)
 		    i_ptr->flags1 |= TR1_IMPACT;
 
 	}
+
+	if (!get_com("Affect Any Stat (via 'pval')? ", &ch)) return;
+	if (ch == 'y' || ch == 'Y') {
+
 	if (!get_com("Affect Strength? [yn]: ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y')
 		i_ptr->flags1 |= TR1_STR;
@@ -644,6 +652,7 @@ static void wizard_create_aux2(inven_type *i_ptr)
 	if (!get_com("Affect Charisma? [yn]: ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y')
 		i_ptr->flags1 |= TR1_CHR;
+	}
 
 	if (!get_com("Automatic Searching? [yn]: ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y')
@@ -668,6 +677,9 @@ static void wizard_create_aux2(inven_type *i_ptr)
 	if (!get_com("Speed? [yn]: ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y')
 		i_ptr->flags1 |= TR1_SPEED;
+
+	if (!get_com("Resist Anything? ", &ch)) return;
+	if (ch == 'y' || ch == 'Y') {
 
 	if (!get_com("Resist Fire? [yn]: ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y')
@@ -728,6 +740,7 @@ static void wizard_create_aux2(inven_type *i_ptr)
 	if (!get_com("Resist Blindness? [yn]: ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y')
 		i_ptr->flags2 |= TR2_RES_BLIND;
+	}     
 
 	if (!get_com("Sustain Any Stats? ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y') {
@@ -778,6 +791,9 @@ static void wizard_create_aux2(inven_type *i_ptr)
 	    if (ch == 'y' || ch == 'Y')
 		i_ptr->flags3 |= TR3_TELEPATHY;
 
+	if (!get_com("Immune to Anything? ", &ch)) return;
+	if (ch == 'y' || ch == 'Y') {
+
 	if (!get_com("Immune to Fire? [yn]: ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y')
 		i_ptr->flags2 |= TR2_IM_FIRE;
@@ -797,6 +813,7 @@ static void wizard_create_aux2(inven_type *i_ptr)
 	if (!get_com("Immune to Poison? [yn]: ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y')
 		i_ptr->flags2 |= TR2_IM_POIS;
+	}
 
 	if (!get_com("Give off Light? [yn]: ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y')
