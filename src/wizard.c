@@ -223,7 +223,7 @@ static void wizard_create_aux1(inven_type *i_ptr)
 
       case 'W': case 'w':
 	prt("What type of Weapon?    : ", 0, 0);
-	prt("[S]word, [H]afted, [P]olearm, [B]ow, [A]mmo.", 1, 0);
+	prt("[S]word, [P]olearm, [H]afted, [D]igger, [B]ow, [A]mmo.", 1, 0);
 	if (!get_com((char *)0, &ch)) {
 	    return;
 	}
@@ -241,7 +241,10 @@ static void wizard_create_aux1(inven_type *i_ptr)
 	    tval = TV_HAFTED;
 	    break;
 
+	  case 'D': case 'd':
+	    tval = TV_DIGGING;
 	    break;
+
 	  case 'B': case 'b':
 	    tval = TV_BOW;
 	    break;
