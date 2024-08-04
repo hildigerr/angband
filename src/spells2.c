@@ -12,10 +12,6 @@
 
 #include "angband.h"
 
-/* Following are spell procedure/functions			-RAK-	 */
-/* These routines are commonly used in the scroll, potion, wands, and	 */
-/* staves routines, and are occasionally called from other areas.	  */
-/* Now included are creature spells also.		       -RAK    */
 
 
 
@@ -2632,62 +2628,47 @@ int line_spell(int typ, int dir, int y, int x, int dam)
     return (project_hook(typ, dir, dam, flg));
 }
 
-
-/* Leave a line of light in given dir, blue light can sometimes	 */
-/* hurt creatures.				       -RAK-   */
 void lite_line(int dir, int y, int x)
 {
     (void)line_spell(GF_LITE_WEAK, dir, y, x, damroll(6, 8));
 }
 
-
-/* Drains life; note it must be living.		-RAK-	 */
 int drain_life(int dir, int y, int x, int dam)
 {
     int flg = PROJECT_STOP;
     return (project_hook(GF_OLD_DRAIN, dir, dam, flg));
 }
 
-
-/* Turn stone to mud, delete wall.			-RAK-	 */
 int wall_to_mud(int dir, int y, int x)
 {
     int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
     return (project_hook(GF_KILL_WALL, dir, 20 + randint(30), flg));
 }
 
-
-/* Destroy all traps and doors in a given direction	-RAK-	 */
 int td_destroy2(int dir, int y, int x)
 {
     int flg = PROJECT_BEAM | PROJECT_ITEM | PROJECT_HIDE;
     return (project_hook(GF_KILL_DOOR, dir, 0, flg));
 }
 
-
-/* Disarms all traps/chests in a given direction	-RAK-	 */
 int disarm_all(int dir, int y, int x)
 {
     int flg = PROJECT_BEAM | PROJECT_ITEM | PROJECT_HIDE;
     return (project_hook(GF_KILL_TRAP, dir, 0, flg));
 }
 
-/* Destroys any adjacent door(s)/trap(s)		-RAK-	 */
 int td_destroy()
 {
     int flg = PROJECT_ITEM | PROJECT_HIDE;
     return (project(1, 1, char_row, char_col, 0, GF_KILL_DOOR, flg));
 }
 
-/* Surround the player with doors.			-RAK-	 */
 int door_creation()
 {
     int flg = PROJECT_ITEM | PROJECT_GRID | PROJECT_HIDE;
     return (project(1, 1, char_row, char_col, 0, GF_MAKE_DOOR, flg));
 }
 
-
-/* Surround the fool with traps (chuckle)		-RAK-	 */
 int trap_creation()
 {
     int flg = PROJECT_ITEM | PROJECT_GRID | PROJECT_HIDE;
@@ -2712,57 +2693,43 @@ int slow_monster(int dir, int y, int x)
     return (project_hook(GF_OLD_SLOW, dir, p_ptr->lev, flg));
 }
 
-
-/* Sleep a creature.					-RAK-	 */
 int sleep_monster(int dir, int y, int x)
 {
     int flg = PROJECT_STOP;
     return (project_hook(GF_OLD_SLEEP, dir, p_ptr->lev, flg));
 }
 
-
-/* Confuse a creature					-RAK-	 */
 int confuse_monster(int dir, int y, int x, int plev)
 {
     int flg = PROJECT_STOP;
     return (project_hook(GF_OLD_CONF, dir, plev, flg));
 }
 
-
-/* Scare a creature -DGK */
 int fear_monster(int dir, int y, int x, int plev)
 {
     int flg = PROJECT_STOP;
     return (project_hook(GF_OLD_SCARE, dir, plev, flg));
 }
 
-
-/* polymorph now safer.  not safe, just safer -CFT */
-/* Polymorph a monster                                  -RAK-   */
-/* NOTE: cannot polymorph a winning creature (BALROG)            */
 int poly_monster(int dir, int y, int x)
 {
     int flg = PROJECT_BEAM;
     return (project_hook(GF_OLD_POLY, dir, p_ptr->lev, flg));
 }
 
-
-/* Replicate a creature					-RAK-	 */
 int clone_monster(int dir, int y, int x)
 {
     int flg = PROJECT_STOP;
     return (project_hook(GF_OLD_CLONE, dir, 0, flg));
 }
 
-
-/* Teleport all creatures in a given direction away	-RAK-	 */
 int teleport_monster(int dir, int y, int x)
 {
     int flg = PROJECT_BEAM;
     return (project_hook(GF_OLD_TPORT, dir, MAX_SIGHT * 5, flg));
 }
 
-int lite_area(int y, int x, int dam, int rad)	   /* Expanded -DGK */
+int lite_area(int y, int x, int dam, int rad)
 {
     if (p_ptr->blind < 1)
 	msg_print("You are surrounded by a white light.");
@@ -2771,8 +2738,6 @@ int lite_area(int y, int x, int dam, int rad)	   /* Expanded -DGK */
     return (project(1, rad, char_row, char_col, dam, GF_LITE_WEAK, PROJECT_GRID));
 }
 
-
-/* Darken an area, opposite of light area		-RAK-	 */
 int unlite_area(int y, int x)
 {
     /* Hack -- Message */
@@ -2816,4 +2781,10 @@ void breath(int m_idx, int typ, int dam_hp)
     /* Go towards player, do not hit anyone else, hurt items on ground. */
     (void)project(m_idx, max_dis, char_row, char_col, dam_hp, typ, flg);
 }
+
+
+
+
+
+
 
