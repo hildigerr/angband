@@ -1802,6 +1802,9 @@ static bool project_p(int who, int rad, int y, int x, int dam, int typ, int flg)
     /* Source monster */
     register monster_type *m_ptr;
 
+    /* Monster name (for attacks) */
+    char m_name[80];
+
     /* Monster name (for damage) */
     char killer[80];
 
@@ -1828,6 +1831,9 @@ static bool project_p(int who, int rad, int y, int x, int dam, int typ, int flg)
 
     /* Get the source monster */
     m_ptr = &m_list[who];
+
+    /* Get the monster name */
+    monster_name(m_name, m_ptr);
 
     /* Get the monster's real name */
     monster_name(killer, m_ptr);
