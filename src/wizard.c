@@ -654,6 +654,9 @@ static void wizard_create_aux2(inven_type *i_ptr)
 		i_ptr->flags1 |= TR1_CHR;
 	}
 
+	if (!get_com("Affect Anything Else (via 'pval')? ", &ch)) return;
+	if (ch == 'y' || ch == 'Y') {
+
 	if (!get_com("Automatic Searching? [yn]: ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y')
 		i_ptr->flags1 |= TR1_SEARCH;
@@ -673,6 +676,7 @@ static void wizard_create_aux2(inven_type *i_ptr)
 	if (!get_com("Infra-vision? [yn]: ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y')
 		i_ptr->flags1 |= TR1_INFRA;
+	}          
 
 	if (!get_com("Resist Anything? ", &ch)) return;
 	if (ch == 'y' || ch == 'Y') {
