@@ -2070,6 +2070,494 @@ void scribe_object(void)
 }
 
 
+
+/*
+ * Print out the artifacts seen without using a file - cba
+ */
+void do_cmd_check_artifacts(void)
+{
+    int i, j;
+
+    save_screen();
+
+    j = 15;
+
+    for (i = 1; i < 23; i++) erase_line(i, j - 2);
+
+    i = 1;
+
+    prt("Artifacts Seen:", i++, j + 5);
+
+    /* weapons */
+    if (AEGLIN) {
+	prt("The Broadsword 'Aeglin'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (AEGLOS) {
+	prt("The Spear 'Aeglos'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (AGLARANG) {
+	prt("The Katana 'Aglarang'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (ANDURIL) {
+	prt("The Longsword 'Anduril'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (ANGRIST) {
+	prt("The Dagger 'Angrist'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (ANGUIREL) {
+	prt("The Longsword 'Anguirel'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (ARUNRUTH) {
+	prt("The Broadsword 'Arunruth'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (AULE) {
+	prt("The War Hammer of Aule", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (AVAVIR) {
+	prt("The Scythe 'Avavir'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (BALLI) {
+	prt("The Battle Axe of Balli Stonehand", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (BARUKKHELED) {
+	prt("The Broad Axe 'Barukkheled'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (BELANGIL) {
+	prt("The Dagger 'Belangil'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (BLOODSPIKE) {
+	prt("The Morningstar 'Bloodspike'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (CALRIS) {
+	prt("The Bastard Sword 'Calris'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (CARETH) {
+	prt("The Saber 'Careth Asdriag'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (CRISDURIAN) {
+	prt("The Executioner's Sword 'Crisdurian'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (DEATHWREAKER) {
+	prt("The Mace of Disruption 'Deathwreaker'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (DETHANC) {
+	prt("The Dagger 'Dethanc'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (DOOMCALLER) {
+	prt("The Blade of Chaos 'Doomcaller'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (DURIN) {
+	prt("The Great Axe of Durin", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (ELVAGIL) {
+	prt("The Longsword 'Elvagil'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (EONWE) {
+	prt("The Great Axe of Eonwe", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (EORLINGAS) {
+	prt("The Lance of Eorlingas", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (ERIRIL) {
+	prt("The Quarterstaff 'Eriril'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (FIRESTAR) {
+	prt("The Morningstar 'Firestar'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (FORASGIL) {
+	prt("The Rapier 'Forasgil'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (GILETTAR) {
+	prt("The Short Sword 'Gilettar'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (GLAMDRING) {
+	prt("The Broadsword 'Glamdring'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (GONDRICAM) {
+	prt("The Cutlass 'Gondricam'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (GURTHANG) {
+	prt("The Two-Handed Sword 'Gurthang'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (HARADEKKET) {
+	prt("The Scimitar 'Haradekket'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (LOTHARANG) {
+	prt("The Battle Axe 'Lotharang'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (MAEDHROS) {
+	prt("The Main Gauche of Maedhros", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (MORMEGIL) {
+	prt("The Two-Handed Sword 'Mormegil'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (MUNDWINE) {
+	prt("The Lochaber Axe 'Mundwine'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (NAR) {
+	prt("The Quarterstaff 'Nar-i-vagil'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (NARTHANC) {
+	prt("The Dagger 'Narthanc'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (NIMLOTH) {
+	prt("The Spear 'Nimloth'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (NIMTHANC) {
+	prt("The Dagger 'Nimthanc'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (OLORIN) {
+	prt("The Quarterstraff of Olorin", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (ORCRIST) {
+	prt("The Broadsword 'Orcrist'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (OROME) {
+	prt("The Spear 'Orome'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (OSONDIR) {
+	prt("The Halberd 'Osondir'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (PAIN) {
+	prt("The Glaive of Pain", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (RILIA) {
+	prt("The Dagger of Rilia", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (RINGIL) {
+	prt("The Longsword 'Ringil'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (STING) {
+	prt("The Short Sword 'Sting'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (TARATOL) {
+	prt("The Mace 'Taratol'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (THEODEN) {
+	prt("The Beaked Axe of Theoden", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (THUNDERFIST) {
+	prt("The Two-Handed Great Flail 'Thunderfist'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (TIL) {
+	prt("The Pike 'Til-i-arc'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (TOTILA) {
+	prt("The Flail 'Totila'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (TURMIL) {
+	prt("The Lucerne Hammer 'Turmil'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (ULMO) {
+	prt("The Trident of Ulmo", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (WRATH) {
+	prt("The Trident of Wrath", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (ZARCUTHRA) {
+	prt("The Two-Handed Sword 'Zarcuthra'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+
+    /* missle weapons */
+    if (BARD) {
+	prt("The Longbow of Bard", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (BELEG) {
+	prt("The Longbow of Beleg Cuthalion", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (CUBRAGOL) {
+	prt("The Light Crossbow 'Cubragol'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+
+    /* cloaks */
+    if (COLANNON) {
+	prt("The Cloak 'Colannon'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (COLLUIN) {
+	prt("The Cloak 'Colluin'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (HOLCOLLETH) {
+	prt("The Cloak 'Holcolleth'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (LUTHIEN) {
+	prt("The Shadow Cloak of Luthien", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (THINGOL) {
+	prt("The Cloak of Thingol", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (THORONGIL) {
+	prt("The Cloak of Thorongil", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (TUOR) {
+	prt("The Shadow Cloak of Tuor", i++, j);
+	artifact_screen_full(&i, j);
+    }
+
+    /* armor */
+    if (ANARION) {
+	prt("The Large Metal Shield of Anarion", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (ARVEDUI) {
+	prt("The Chain Mail of Arvedui", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (BELEGENNON) {
+	prt("The Mithril Chain Mail 'Belegennon'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (BERUTHIEL) {
+	prt("The Iron Crown of Beruthiel", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (BLADETURNER) {
+	prt("The Power Dragon Scale Mail 'Bladeturner'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (CAMBELEG) {
+	prt("The Leather Gloves 'Cambeleg'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (CAMLOST) {
+	prt("The Gauntlets 'Camlost'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (CAMMITHRIM) {
+	prt("The Leather Gloves 'Cammithrin'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (CASPANION) {
+	prt("The Augmented Chain Mail of Caspanion", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (CELEBORN) {
+	prt("The Mithril Plate Mail of Celeborn", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (CELEGORM) {
+	prt("The Large Leather Shield of Celegorm", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (DAL) {
+	prt("The Soft Leather Boots 'Dal-i-thalion'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (DOR_LOMIN) {
+	prt("The Iron Helm of Dor-Lomin", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (FEANOR) {
+	prt("The Hard Leather Boots of Feanor", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (FINGOLFIN) {
+	prt("The Set of Cesti of Fingolfin", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (GONDOR) {
+	prt("The Golden Crown of Gondor", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (GORLIM) {
+	prt("The Iron Helm of Gorlim", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (HAMMERHAND) {
+	prt("The Steel Helm 'Hammerhand'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (HITHLOMIR) {
+	prt("The Soft Leather Armour 'Hithlomir'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (HOLHENNETH) {
+	prt("The Iron Helm 'Holhenneth'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (ISILDUR) {
+	prt("The Full Plate Armour of Isildur", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (PAURAEGEN) {
+	prt("The Gauntlets 'Pauraegen'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (PAURHACH) {
+	prt("The Gauntlets 'Paurhach'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (PAURNEN) {
+	prt("The Gauntlets 'Paurnen'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (PAURNIMMEN) {
+	prt("The Gauntlets 'Paurnimmen'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (RAZORBACK) {
+	prt("The Multi-Hued Dragon Scale Mail 'Razorback'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (ROHAN) {
+	prt("The Metal Brigandine Armor of the Rohirrim", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (SOULKEEPER) {
+	prt("The Adamantine Plate Mail 'Soulkeeper'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (THALKETTOTH) {
+	prt("The Leather Scale Mail 'Thalkettoth'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (THENGEL) {
+	prt("The Metal Cap of Thengel", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (THORIN) {
+	prt("The Small Metal Shield of Thorin", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (THRANDUIL) {
+	prt("The Hard Leather Cap of Thranduil", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (THROR) {
+	prt("The Pair of Metal Shod Boots of Thror", i++, j);
+	artifact_screen_full(&i, j);
+    }
+
+    /* amulets and necklaces */
+    if (CARLAMMAS) {
+	prt("The Amulet of Carlammas", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (INGWE) {
+	prt("The Amulet of Ingwe", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (NECKLACE) {
+	prt("The Amulet of the Dwarves", i++, j);
+	artifact_screen_full(&i, j);
+    }
+
+    /* light sources */
+    if (PHIAL) {
+	prt("The Phial of Galadriel", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (ELENDIL) {
+	prt("The Star of Elendil", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (THRAIN) {
+	prt("The Arkenstone of Thrain", i++, j);
+	artifact_screen_full(&i, j);
+    }
+
+    /* rings */
+    if (BARAHIR) {
+	prt("The Ring of Barahir", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (TULKAS) {
+	prt("The Ring of Tulkas", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (NARYA) {
+	prt("The Ring of Power 'Narya'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (NENYA) {
+	prt("The Ring of Power 'Nenya'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (VILYA) {
+	prt("The Ring of Power 'Vilya'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+    if (POWER) {
+	prt("The One Ring", i++, j);
+	artifact_screen_full(&i, j);
+    }
+
+    /* morgoth's stuff */
+    if (GROND) {
+	prt("The Lead-Filled Mace 'Grond'", i++, j);
+	artifact_screen_full(&i, j);
+    }
+
+    pause_line(i);
+
+    restore_screen();
+}
+
+
 /*
  * print out the status of uniques - cba 
  *

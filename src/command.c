@@ -983,7 +983,7 @@ void do_command(char com_val)
 	    msg_print("You need to be on the town level to check artifacts!");
 	    msg_print(NULL);		/* make sure can see the message -CWS */
 	} else
-	    artifact_check_no_file(); break;
+	    do_cmd_check_artifacts(); break;
 #endif
 
 #ifdef ALLOW_CHECK_UNIQUES /* -CWS */
@@ -1087,7 +1087,7 @@ void do_command(char com_val)
 		map_area();
 		break;
 	      case '~':
-		artifact_check_no_file();
+		do_cmd_check_artifacts();
 		break;
 	      case '|':
 		do_cmd_check_uniques();

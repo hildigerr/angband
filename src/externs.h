@@ -822,6 +822,7 @@ void do_cmd_stay(int);
 void do_cmd_search(void);
 void do_cmd_rest(void);
 void do_cmd_feeling(void);
+void do_cmd_check_artifacts(void);
 void do_cmd_check_uniques(void);
 
 /* moria4.c */
@@ -1000,7 +1001,7 @@ FILE *my_tfopen(cptr, cptr);
 void change_character(void);
 void wizard_create(void);
 void artifact_check(void);
-void artifact_check_no_file(void);
+void artifact_screen_full(int*, int);
 
 #endif      /* __STDC__ */
 
