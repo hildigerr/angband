@@ -666,6 +666,14 @@ static void wizard_create_aux2(inven_type *i_ptr)
 	    if (ch == 'y' || ch == 'Y')
 		i_ptr->flags1 |= TR1_SPEED;
 
+	if (!get_com("Tunneling? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y')
+		i_ptr->flags1 |= TR1_TUNNEL;
+
+	if (!get_com("Infra-vision? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y')
+		i_ptr->flags1 |= TR1_INFRA;
+
 	if (!get_com("Resist Anything? ", &ch)) return;
 	if (ch == 'y' || ch == 'Y') {
 
@@ -798,14 +806,6 @@ static void wizard_create_aux2(inven_type *i_ptr)
 	if (!get_com("Feather Falling? [yn]: ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y')
 		i_ptr->flags3 |= TR3_FEATHER;
-
-	if (!get_com("Tunneling? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags1 |= TR1_TUNNEL;
-
-	if (!get_com("Infra-vision? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags1 |= TR1_INFRA;
 
 	if (!get_com("Resist life level loss? [yn]: ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y')
