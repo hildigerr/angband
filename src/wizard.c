@@ -412,10 +412,12 @@ static void wizard_create_aux1(inven_type *i_ptr)
 		return;
 	    }
 	    break;
+
 	  default:
 	    return;
 	}
 	break;
+
       default:
 	return;
     }
@@ -456,11 +458,9 @@ again:
     }
     if (more)
 	prt("v) NEXT PAGE", 22, 0);
-
     do {
 	if (!get_com(NULL, &ch)) return;
     } while ((ch < 'a' && ch > ('a' + j)) || (more && ch < 'a' && ch > ('a' + j + 1)));
-
     if ((ch == 'v') && more) {
 	more = FALSE;
 	k += (j - 1);
@@ -468,7 +468,6 @@ again:
 	goto again;
     }
     k += (ch - 'a' + 1);
-
     j = 0;
     for (i = 0; i < MAX_K_IDX; i++) {
 	    if (k_list[i].tval == tval) {
