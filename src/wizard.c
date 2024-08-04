@@ -207,9 +207,7 @@ static void change_character()
 
 static void wizard_create_aux1(inven_type *i_ptr)
 {
-    register int         tmp_val;
     int                  i, j, k;
-    s32b                tmp_lval;
     char                 tmp_str[100];
     char                 ch;
     int                  more = FALSE;
@@ -566,8 +564,19 @@ again:
     }
     invcopy(i_ptr, i);
     i_ptr->timeout = 0;
-    restore_screen();
-    save_screen();
+}
+
+
+static void wizard_create_aux2(inven_type *i_ptr)
+{
+    int                  tmp_val;
+    s32b                tmp_lval;
+
+    int			 i, j, k, more = FALSE;
+
+    char                 ch;
+
+    char                 tmp_str[100];
 
     prt("Number of items? [return=1]: ", 0, 0);
     if (!get_string(tmp_str, 0, 33, 5)) return;
@@ -971,6 +980,15 @@ void wizard_create()
 
     /* Make an object */
     wizard_create_aux1(&forge);
+
+    /* Restore the screen */
+    restore_screen();
+
+    /* Save the screen */
+    save_screen();
+
+    /* Make an object */
+    wizard_create_aux2(&forge);
 
     /* Restore the screen */
     restore_screen();
