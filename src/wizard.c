@@ -439,29 +439,11 @@ again:
     save_screen();
     prt("Which Item?  : ", 0, 0);
     for (; i < MAX_K_IDX; i++) {
-	switch (tval) {
-	  case TV_POTION:
-	    if (k_list[i].tval == TV_POTION) {
-		sprintf(tmp_str, "%c) %s", 'a' + j, k_list[i].name);
-		prt(tmp_str, 1 + j, 0);
-		j++;
-	    }
-	    break;
-	  case TV_SCROLL:
-	    if (k_list[i].tval == TV_SCROLL) {
-		sprintf(tmp_str, "%c) %s", 'a' + j, k_list[i].name);
-		prt(tmp_str, 1 + j, 0);
-		j++;
-	    }
-	    break;
-	  default:
 	    if (k_list[i].tval == tval) {
 		sprintf(tmp_str, "%c) %s", 'a' + j, k_list[i].name);
 		prt(tmp_str, 1 + j, 0);
 		j++;
 	    }
-	    break;
-	}
 	if (j == 21) {
 	    more = TRUE;
 	    break;
@@ -469,29 +451,11 @@ again:
     }
     if (j < 21) {
 	for (i = (i - (MAX_K_IDX - 1)) + (OBJ_SPECIAL - 1); i < MAX_K_IDX; i++) {
-	    switch (tval) {
-	      case TV_POTION:
-		if (k_list[i].tval == TV_POTION) {
-		    sprintf(tmp_str, "%c) %s", 'a' + j, k_list[i].name);
-		    prt(tmp_str, 1 + j, 0);
-		    j++;
-		}
-		break;
-	      case TV_SCROLL:
-		if (k_list[i].tval == TV_SCROLL) {
-		    sprintf(tmp_str, "%c) %s", 'a' + j, k_list[i].name);
-		    prt(tmp_str, 1 + j, 0);
-		    j++;
-		}
-		break;
-	      default:
 		if (k_list[i].tval == tval) {
 		    sprintf(tmp_str, "%c) %s", 'a' + j, k_list[i].name);
 		    prt(tmp_str, 1 + j, 0);
 		    j++;
 		}
-		break;
-	    }
 	    if (j == 21) {
 		more = TRUE;
 		break;
@@ -517,45 +481,17 @@ again:
 
     j = 0;
     for (i = 0; i < MAX_K_IDX; i++) {
-	switch (tval) {
-	  case TV_POTION:
-	    if (k_list[i].tval == TV_POTION) {
-		j++;
-	    }
-	    break;
-	  case TV_SCROLL:
-	    if ((k_list[i].tval == TV_SCROLL) {
-		j++;
-	    }
-	    break;
-	  default:
 	    if (k_list[i].tval == tval) {
 		j++;
 	    }
-	    break;
-	}
 	if (j == k)
 	    break;
     }
     if (j != k) {
 	for (i = (OBJ_SPECIAL - 1); i < MAX_K_IDX; i++) {
-	    switch (tval) {
-	      case TV_POTION:
-		if (k_list[i].tval == TV_POTION) {
-		    j++;
-		}
-		break;
-	      case TV_SCROLL:
-		if (k_list[i].tval == TV_SCROLL) {
-		    j++;
-		}
-		break;
-	      default:
 		if (k_list[i].tval == tval) {
 		    j++;
 		}
-		break;
-	    }
 	    if (j == k)
 		break;
 	}
