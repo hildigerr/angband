@@ -314,7 +314,7 @@ static bool hates_cold(inven_type *i_ptr)
 /*
  * Melt something
  */
-int set_acid_destroy(inven_type *i_ptr)
+static int set_acid_destroy(inven_type *i_ptr)
 {
     if (!hates_acid(i_ptr)) return (FALSE);
     if (artifact_p(i_ptr)) return (FALSE);
@@ -326,7 +326,7 @@ int set_acid_destroy(inven_type *i_ptr)
 /*
  * Electrical damage
  */
-int set_elec_destroy(inven_type *i_ptr)
+static int set_elec_destroy(inven_type *i_ptr)
 {
     if (!hates_elec(i_ptr)) return (FALSE);
     if (artifact_p(i_ptr)) return (FALSE);
@@ -338,7 +338,7 @@ int set_elec_destroy(inven_type *i_ptr)
 /*
  * Burn something
  */
-int set_fire_destroy(inven_type *i_ptr)
+static int set_fire_destroy(inven_type *i_ptr)
 {
     if (!hates_fire(i_ptr)) return (FALSE);
     if (artifact_p(i_ptr)) return (FALSE);
@@ -350,7 +350,7 @@ int set_fire_destroy(inven_type *i_ptr)
 /*
  * Freeze things
  */
-int set_cold_destroy(inven_type *i_ptr)
+static int set_cold_destroy(inven_type *i_ptr)
 {
     if (!hates_cold(i_ptr)) return (FALSE);
     return (TRUE);
