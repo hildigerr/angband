@@ -612,6 +612,8 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
     int note = 0;
 
     bool	seen = FALSE;
+    bool	is_art = FALSE;
+    bool	ignore = FALSE;
     bool	plural = FALSE;
     bool	do_kill = FALSE;
     bool	do_make = FALSE;
@@ -643,7 +645,20 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
     /* Get the "plural"-ness */
     if (i_ptr->number > 1) plural = TRUE;
 
-    /* Affect the object */
+
+    /* Never "hurt" stairs (but see GF_LITE/GF_DARK) */
+    if (i_ptr->tval == TV_UP_STAIR) flg &= ~PROJECT_ITEM;
+    if (i_ptr->tval == TV_DOWN_STAIR) flg &= ~PROJECT_ITEM;
+
+    /* Never "hurt" store doors (but see GF_LITE/GF_DARK) */
+    if (i_ptr->tval == TV_STORE_DOOR) flg &= ~PROJECT_ITEM;
+
+
+    /* Check for artifact */
+    if (artifact_p(i_ptr)) is_art = TRUE;
+
+
+    /* Affect the object, unless stairs */
     if (c_ptr->i_idx && (flg & PROJECT_ITEM)) {
 
 	/* Analyze the type */        
@@ -821,14 +836,7 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
 
 		if (c_ptr->fval >= MIN_WALL) break;
 
-		if ((i_ptr->tval == TV_UP_STAIR)
-		|| (i_ptr->tval == TV_DOWN_STAIR)
-		|| (i_ptr->tval == TV_STORE_DOOR)
-		|| (wearable_p(i_ptr))
-		|| (artifact_p(i_ptr))) {
-		msg_print("The object resists the spell.");
-		break;
-		}
+		if (wearable_p(i_ptr)) ignore = TRUE:
 
 		/* Kill it, make a door below */
 		do_kill = TRUE;
@@ -844,14 +852,7 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
 		/* Never under the player */
 		if (c_ptr->m_idx == 1) break;
 
-		if ((i_ptr->tval == TV_UP_STAIR)
-		|| (i_ptr->tval == TV_DOWN_STAIR)
-		|| (i_ptr->tval == TV_STORE_DOOR)
-		|| (wearable_p(i_ptr))
-		|| (artifact_p(i_ptr))) {
-		msg_print("The object resists the spell.");
-		break;
-		}
+		if (wearable_p(i_ptr)) ignore = TRUE:
 
 		/* Kill it, make a trap below */
 		do_kill = TRUE;
@@ -865,7 +866,17 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
 	    /* Effect "observed" */
 	    if (seen) note++;
 
+	    /* Artifacts, and other objects, get to resist */
+	    if (is_art || ignore) {
+
+		/* Observe the resist */
+		if (seen) {
+		    msg_print("The object resists the spell.");
+		}
+	    }
+
 	    /* Kill it */
+	    else {
 
 		/* Delete the object */
 		delete_object(y,x);
