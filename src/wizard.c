@@ -203,6 +203,8 @@ static void change_character()
 
 /*
  * Wizard routine for creating objects		-RAK-	 
+ *
+ * Note that wizards can nuke artifacts / stairs this way
  */
 
 static void wizard_create_aux1(inven_type *i_ptr)
@@ -418,6 +420,9 @@ static void wizard_create_aux1(inven_type *i_ptr)
 	return;
     }
 
+
+    /*** Base object type chosen ***/
+
     j = 0;
     i = 0;
     k = 0;
@@ -484,6 +489,9 @@ again:
     if (j != k) {
 	return;
     }
+
+
+    /* Build an object using that template */
     invcopy(i_ptr, i);
     i_ptr->timeout = 0;
 }
