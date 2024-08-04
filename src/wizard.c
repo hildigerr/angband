@@ -658,21 +658,9 @@ static void wizard_create_aux2(inven_type *i_ptr)
 	    if (ch == 'y' || ch == 'Y')
 		i_ptr->flags1 |= TR1_SEARCH;
 
-	if (!get_com("Slow Digestion? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags3 |= TR3_SLOW_DIGEST;
-
 	if (!get_com("Stealth? [yn]: ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y')
 		i_ptr->flags1 |= TR1_STEALTH;
-
-	if (!get_com("Aggravate Monsters? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags3 |= TR3_AGGRAVATE;
-
-	if (!get_com("Regeneration? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags3 |= TR3_REGEN;
 
 	if (!get_com("Speed? [yn]: ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y')
@@ -794,6 +782,18 @@ static void wizard_create_aux2(inven_type *i_ptr)
 	if (!get_com("Free Action? [yn]: ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y')
 		i_ptr->flags2 |= TR2_FREE_ACT;
+
+	if (!get_com("Slow Digestion? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y')
+		i_ptr->flags3 |= TR3_SLOW_DIGEST;
+
+	if (!get_com("Aggravate Monsters? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y')
+		i_ptr->flags3 |= TR3_AGGRAVATE;
+
+	if (!get_com("Regeneration? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y')
+		i_ptr->flags3 |= TR3_REGEN;
 
 	if (!get_com("Feather Falling? [yn]: ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y')
