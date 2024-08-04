@@ -401,13 +401,15 @@ int speed_monsters()
 	r_ptr = &r_list[m_ptr->r_idx];
 	monster_name(m_name, m_ptr);
 
-	    m_ptr->mspeed += 1;
-	    m_ptr->csleep = 0;
-	    if (m_ptr->ml) {
-		speed = TRUE;
-		(void)sprintf(out_val, "%s starts moving faster.", m_name);
-		msg_print(out_val);
-	    }
+	m_ptr->mspeed += 1;
+
+	m_ptr->csleep = 0;
+
+	if (m_ptr->ml) {
+	    speed = TRUE;
+	    (void)sprintf(out_val, "%s starts moving faster.", m_name);
+	    msg_print(out_val);
+	}
     }
 
     return (speed);
