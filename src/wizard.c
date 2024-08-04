@@ -204,29 +204,20 @@ static void change_character()
 /*
  * Wizard routine for creating objects		-RAK-	 
  */
-void wizard_create()
+
+static void wizard_create_aux1(inven_type *i_ptr)
 {
     register int         tmp_val;
     int                  i, j, k;
     s32b                tmp_lval;
     char                 tmp_str[100];
-    register inven_type *i_ptr;
-    inven_kind        t_type, *t_ptr;
-    inven_type           forge;
     register cave_type  *c_ptr;
     char                 ch;
     int                  more = FALSE;
 
-    t_ptr = &t_type;
-    i_ptr = &forge;
-    i_ptr->name2 = 0;
-    i_ptr->ident = ID_KNOWN;
-
-    save_screen();
     prt("What type of item?    : ", 0, 0);
     prt("[W]eapon, [A]rmour, [O]thers.", 1, 0);
     if (!get_com((char *)0, &ch)) {
-	restore_screen();
 	return;
     }
 
@@ -236,7 +227,6 @@ void wizard_create()
 	prt("What type of Weapon?    : ", 0, 0);
 	prt("[S]word, [H]afted, [P]olearm, [B]ow, [A]mmo.", 1, 0);
 	if (!get_com((char *)0, &ch)) {
-	    restore_screen();
 	    return;
 	}
 
@@ -261,7 +251,6 @@ void wizard_create()
 	    prt("What type of Ammo?    : ", 0, 0);
 	    prt("[A]rrow, [B]olt, [P]ebble.", 1, 0);
 	    if (!get_com((char *)0, &ch)) {
-		restore_screen();
 		return;
 	    }
 
@@ -281,7 +270,6 @@ void wizard_create()
 	    break;
 
 	  default:
-	    restore_screen();
 	    return;
 	}
 	break;
@@ -290,7 +278,6 @@ void wizard_create()
 	prt("What type of Armour?    : ", 0, 0);
 	prt("[A]rmour, [G]loves, [B]oots, [S]hields, [H]elms, [C]loaks.", 1, 0);
 	if (!get_com((char *)0, &ch)) {
-	    restore_screen();
 	    return;
 	}
 
@@ -320,7 +307,6 @@ void wizard_create()
 	    prt("What type of Armour?    : ", 0, 0);
 	    prt("[D]ragon Scale, [H]ard armour, [S]oft armour.", 1, 0);
 	    if (!get_com((char *)0, &ch)) {
-		restore_screen();
 		return;
 	    }
 
@@ -340,7 +326,6 @@ void wizard_create()
 	    break;
 
 	  default:
-	    restore_screen();
 	    return;
 	}
 	break;
@@ -349,7 +334,6 @@ void wizard_create()
 	prt("What type of Object?    : ", 0, 0);
 	prt("[R]ing, [P]otion, [W]and/staff, [S]croll, [M]agicbook, [A]mulet, [T]ool.", 1, 0);
 	if (!get_com((char *)0, &ch)) {
-	    restore_screen();
 	    return;
 	}
 
@@ -375,7 +359,6 @@ void wizard_create()
 	    prt("Wand, Staff or Rod?    : ", 0, 0);
 	    prt("[W]and, [S]taff, [R]od.", 1, 0);
 	    if (!get_com((char *)0, &ch)) {
-		restore_screen();
 		return;
 	    }
 	    switch (ch) {
@@ -389,7 +372,6 @@ void wizard_create()
 		i_ptr->tval = TV_ROD;
 		break;
 	      default:
-		restore_screen();
 		return;
 	    }
 	    break;
@@ -398,7 +380,6 @@ void wizard_create()
 	    prt("Spellbook or Prayerbook?    : ", 0, 0);
 	    prt("[S]pellbook, [P]rayerbook.", 1, 0);
 	    if (!get_com((char *)0, &ch)) {
-		restore_screen();
 		return;
 	    }
 
@@ -410,7 +391,6 @@ void wizard_create()
 		i_ptr->tval = TV_MAGIC_BOOK;
 		break;
 	      default:
-		restore_screen();
 		return;
 	    }
 	    break;
@@ -419,7 +399,6 @@ void wizard_create()
 	    prt("Which Tool etc...?  : ", 0, 0);
 	    prt("[S]pike, [D]igger, [C]hest, [L]ight, [F]ood, [O]il.", 1, 0);
 	    if (!get_com((char *)0, &ch)) {
-		restore_screen();
 		return;
 	    }
 
@@ -443,17 +422,14 @@ void wizard_create()
 		i_ptr->tval = TV_FLASK;
 		break;
 	      default:
-		restore_screen();
 		return;
 	    }
 	    break;
 	  default:
-	    restore_screen();
 	    return;
 	}
 	break;
       default:
-	restore_screen();
 	return;
     }
 
@@ -529,7 +505,6 @@ again:
 
     do {
 	if (!get_com((char *)0, &ch)) {
-	    restore_screen();
 	    return;
 	}
     } while ((ch < 'a' && ch > ('a' + j)) || (more && ch < 'a' && ch > ('a' + j + 1)));
@@ -588,7 +563,6 @@ again:
 	}
     }
     if (j != k) {
-	restore_screen();
 	return;
     }
     invcopy(i_ptr, i);
@@ -977,7 +951,6 @@ again:
 
     prt("Cost : ", 0, 0);
     if (!get_string(tmp_str, 0, 9, 8)) {
-	restore_screen();
 	return;
     }
     tmp_lval = atol(tmp_str);
@@ -985,7 +958,6 @@ again:
 
     prt("Dungeon Level on which it is found : ", 0, 0);
     if (!get_string(tmp_str, 0, 39, 3)) {
-	restore_screen();
 	return;
     }
     tmp_val = atoi(tmp_str);
@@ -1013,7 +985,6 @@ SNagain:
 
     do {
 	if (!get_com("Please choose a secondary name for the item : ", &ch)) {
-	    restore_screen();
 	    return;
 	}
     } while ((ch < 'a' && ch > ('a' + j)) || (more && ch < 'a' && ch > ('a' + j + 1)));
@@ -1043,6 +1014,34 @@ end:
 	msg_print("Allocated.");
     } else
 	msg_print("Aborted.");
+}
+
+
+
+
+
+/*
+ * Wizard routine for creating objects		-RAK-	 
+ *
+ * Note that wizards can nuke artifacts / stairs this way
+ *
+ * Assume that player can never be inside a blocked grid.
+ */
+void wizard_create()
+{
+    inven_type forge;
+
+
+    /* Save the screen */
+    save_screen();
+
+    /* Wipe the object */
+    invcopy(&forge, TV_NOTHING);
+
+    /* Make an object */
+    wizard_create_aux1(&forge);
+
+    /* Restore the screen */
     restore_screen();
 }
 
