@@ -1280,6 +1280,7 @@
 /*
  * Spell types used by project(), and related functions.
  */
+#define GF_NONE		0
 #define GF_ELEC         1
 #define GF_POIS         2
 #define GF_ACID         3
