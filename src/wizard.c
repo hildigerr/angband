@@ -213,14 +213,15 @@ static void wizard_create_aux1(inven_type *i_ptr)
     char                 ch;
     char                 tmp_str[100];
 
-    prt("What type of item?    : ", 0, 0);
+
+    prt("What type of item?", 0, 0);
     prt("[W]eapon, [A]rmour, [O]thers.", 1, 0);
     if (!get_com(NULL, &ch)) return;
 
     switch (ch) {
 
       case 'W': case 'w':
-	prt("What type of Weapon?    : ", 0, 0);
+	prt("What type of Weapon?", 0, 0);
 	prt("[S]word, [P]olearm, [H]afted, [D]igger, [B]ow, [A]mmo.", 1, 0);
 	if (!get_com(NULL, &ch)) return;
 
@@ -246,7 +247,7 @@ static void wizard_create_aux1(inven_type *i_ptr)
 	    break;
 
 	  case 'A': case 'a':
-	    prt("What type of Ammo?    : ", 0, 0);
+	    prt("What type of Ammo?", 0, 0);
 	    prt("[A]rrow, [B]olt, [P]ebble.", 1, 0);
 	    if (!get_com(NULL, &ch)) return;
 
@@ -271,7 +272,7 @@ static void wizard_create_aux1(inven_type *i_ptr)
 	break;
 
       case 'A': case 'a':
-	prt("What type of Armour?    : ", 0, 0);
+	prt("What type of Armour?", 0, 0);
 	prt("[A]rmour, [G]loves, [B]oots, [S]hields, [H]elms, [C]loaks.", 1, 0);
 	if (!get_com(NULL, &ch)) return;
 
@@ -323,8 +324,8 @@ static void wizard_create_aux1(inven_type *i_ptr)
 	break;
 
       case 'O': case 'o':
-	prt("What type of Object?    : ", 0, 0);
-	prt("[R]ing, [P]otion, [W]and/staff, [S]croll, [M]agicbook, [A]mulet, [T]ool.", 1, 0);
+	prt("What type of Object?", 0, 0);
+	prt("[R]ing, [P]otion, [W]and, [S]croll, [B]ook, [A]mulet, [T]ool.", 1, 0);
 	if (!get_com(NULL, &ch)) return;
 
 	switch (ch) {
@@ -346,7 +347,7 @@ static void wizard_create_aux1(inven_type *i_ptr)
 	    break;
 
 	  case 'W': case 'w':
-	    prt("Wand, Staff or Rod?    : ", 0, 0);
+	    prt("Wand, Staff or Rod?", 0, 0);
 	    prt("[W]and, [S]taff, [R]od.", 1, 0);
 	    if (!get_com(NULL, &ch)) return;
 	    switch (ch) {
@@ -364,8 +365,8 @@ static void wizard_create_aux1(inven_type *i_ptr)
 	    }
 	    break;
 
-	  case 'M': case 'm':
-	    prt("Spellbook or Prayerbook?    : ", 0, 0);
+	  case 'B': case 'b':
+	    prt("Spellbook or Prayerbook?", 0, 0);
 	    prt("[S]pellbook, [P]rayerbook.", 1, 0);
 	    if (!get_com(NULL, &ch)) return;
 
@@ -382,7 +383,7 @@ static void wizard_create_aux1(inven_type *i_ptr)
 	    break;
 
 	  case 'T': case 't':
-	    prt("Which Tool etc...?  : ", 0, 0);
+	    prt("Which Type of Tool?", 0, 0);
 	    prt("[S]pike, [D]igger, [C]hest, [L]ight, [F]ood, [O]il.", 1, 0);
 	    if (!get_com(NULL, &ch)) return;
 
@@ -423,7 +424,7 @@ static void wizard_create_aux1(inven_type *i_ptr)
 again:
     restore_screen();
     save_screen();
-    prt("Which Item?  : ", 0, 0);
+    prt("Choose an item (%sESC to cancel): ", 0, 0);
     for (; i < MAX_K_IDX; i++) {
 	    if (k_list[i].tval == tval) {
 		sprintf(tmp_str, "%c) %s", 'a' + j, k_list[i].name);
