@@ -787,13 +787,13 @@ static void wizard_create_aux2(inven_type *i_ptr)
 	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_SUST_CHR;
 	    }
 
-	if (!get_com("See invisible? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags3 |= TR3_SEE_INVIS;
-
 	if (!get_com("Free Action? [yn]: ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y')
 		i_ptr->flags2 |= TR2_FREE_ACT;
+
+	if (!get_com("Resist life level loss? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y')
+		i_ptr->flags2 |= TR2_HOLD_LIFE;
 
 	if (!get_com("Slow Digestion? [yn]: ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y')
@@ -811,13 +811,13 @@ static void wizard_create_aux2(inven_type *i_ptr)
 	    if (ch == 'y' || ch == 'Y')
 		i_ptr->flags3 |= TR3_FEATHER;
 
-	if (!get_com("Resist life level loss? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_HOLD_LIFE;
-
 	if (!get_com("Telepathy? [yn]: ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y')
 		i_ptr->flags3 |= TR3_TELEPATHY;
+
+	if (!get_com("See invisible? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y')
+		i_ptr->flags3 |= TR3_SEE_INVIS;
 
 	if (!get_com("Give off Light? [yn]: ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y')
