@@ -1000,7 +1000,6 @@ FILE *my_tfopen(cptr, cptr);
 /* wizard.c */
 void change_character(void);
 void wizard_create(void);
-void artifact_check(void);
 void artifact_screen_full(int*, int);
 
 #endif      /* __STDC__ */
