@@ -506,11 +506,14 @@ static void wizard_create_aux2(inven_type *i_ptr)
 	(i_ptr->tval == TV_BOLT) ||
 	(i_ptr->tval == TV_SHOT) ||
 	(i_ptr->tval == TV_DIGGING)) {
+
 	i_ptr->ident |= ID_SHOW_HITDAM;
+
 	prt("Damage (dice): ", 0, 0);
 	if (!get_string(tmp_str, 0, 15, 3)) return;
 	tmp_val = atoi(tmp_str);
 	if (tmp_val) i_ptr->damage[0] = tmp_val;
+
 	prt("Damage (sides): ", 0, 0);
 	if (!get_string(tmp_str, 0, 16, 3)) return;
 	tmp_val = atoi(tmp_str);
@@ -571,203 +574,159 @@ static void wizard_create_aux2(inven_type *i_ptr)
 	    if (!get_com("Slay Something?", &ch)) return;
 	    if (ch == 'y' || ch == 'Y') {
 
-	    if (!get_com("Slay Evil? [yn]: ", &ch)) return;
-		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags1 |= TR1_SLAY_EVIL;
+		if (!get_com("Slay Evil? [yn]: ", &ch)) return;
+		if (ch == 'y' || ch == 'Y') i_ptr->flags1 |= TR1_SLAY_EVIL;
 
-	    if (!get_com("Slay Animal? [yn]: ", &ch)) return;
-		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags1 |= TR1_SLAY_ANIMAL;
+		if (!get_com("Slay Animal? [yn]: ", &ch)) return;
+		if (ch == 'y' || ch == 'Y') i_ptr->flags1 |= TR1_SLAY_ANIMAL;
 
-	    if (!get_com("Slay Undead? [yn]: ", &ch)) return;
-		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags1 |= TR1_SLAY_UNDEAD;
+		if (!get_com("Slay Undead? [yn]: ", &ch)) return;
+		if (ch == 'y' || ch == 'Y') i_ptr->flags1 |= TR1_SLAY_UNDEAD;
 
-	    if (!get_com("Slay Giant? [yn]: ", &ch)) return;
-		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags1 |= TR1_SLAY_GIANT;
+		if (!get_com("Slay Giant? [yn]: ", &ch)) return;
+		if (ch == 'y' || ch == 'Y') i_ptr->flags1 |= TR1_SLAY_GIANT;
 
-	    if (!get_com("Slay Demon? [yn]: ", &ch)) return;
-		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags1 |= TR1_SLAY_DEMON;
+		if (!get_com("Slay Demon? [yn]: ", &ch)) return;
+		if (ch == 'y' || ch == 'Y') i_ptr->flags1 |= TR1_SLAY_DEMON;
 
-	    if (!get_com("Slay Troll? [yn]: ", &ch)) return;
-		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags1 |= TR1_SLAY_TROLL;
+		if (!get_com("Slay Troll? [yn]: ", &ch)) return;
+		if (ch == 'y' || ch == 'Y') i_ptr->flags1 |= TR1_SLAY_TROLL;
 
-	    if (!get_com("Slay Orc? [yn]: ", &ch)) return;
-		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags1 |= TR1_SLAY_ORC;
+		if (!get_com("Slay Orc? [yn]: ", &ch)) return;
+		if (ch == 'y' || ch == 'Y') i_ptr->flags1 |= TR1_SLAY_ORC;
 
-	    if (!get_com("Slay Dragon? [yn]: ", &ch)) return;
-		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags1 |= TR1_SLAY_DRAGON;
+		if (!get_com("Slay Dragon? [yn]: ", &ch)) return;
+		if (ch == 'y' || ch == 'Y') i_ptr->flags1 |= TR1_SLAY_DRAGON;
 
-	    if (!get_com("Execute Dragon? [yn]: ", &ch)) return;
-		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags1 |= TR1_KILL_DRAGON;
+		if (!get_com("Execute Dragon? [yn]: ", &ch)) return;
+		if (ch == 'y' || ch == 'Y') i_ptr->flags1 |= TR1_KILL_DRAGON;
 	    }
 
 	    if (!get_com("Frost Brand? [yn]: ", &ch)) return;
-		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags1 |= TR1_BRAND_COLD;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags1 |= TR1_BRAND_COLD;
 
 	    if (!get_com("Fire Brand? [yn]: ", &ch)) return;
-		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags1 |= TR1_BRAND_FIRE;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags1 |= TR1_BRAND_FIRE;
 
 	    if (!get_com("Lightning Brand? [yn]: ", &ch)) return;
-		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags1 |= TR1_BRAND_ELEC;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags1 |= TR1_BRAND_ELEC;
 
 	    if (!get_com("Earthquake Brand? [yn]: ", &ch)) return;
-		if (ch == 'y' || ch == 'Y')
-		    i_ptr->flags1 |= TR1_IMPACT;
-
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags1 |= TR1_IMPACT;
 	}
 
 	if (!get_com("Affect Any Stat (via 'pval')? ", &ch)) return;
 	if (ch == 'y' || ch == 'Y') {
 
-	if (!get_com("Affect Strength? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags1 |= TR1_STR;
+	    if (!get_com("Affect Strength? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags1 |= TR1_STR;
 
-	if (!get_com("Affect Intelligence? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags1 |= TR1_INT;
+	    if (!get_com("Affect Intelligence? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags1 |= TR1_INT;
 
-	if (!get_com("Affect Wisdom? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags1 |= TR1_WIS;
+	    if (!get_com("Affect Wisdom? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags1 |= TR1_WIS;
 
-	if (!get_com("Affect Dexterity? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags1 |= TR1_DEX;
+	    if (!get_com("Affect Dexterity? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags1 |= TR1_DEX;
 
-	if (!get_com("Affect Constitution? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags1 |= TR1_CON;
+	    if (!get_com("Affect Constitution? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags1 |= TR1_CON;
 
-	if (!get_com("Affect Charisma? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags1 |= TR1_CHR;
+	    if (!get_com("Affect Charisma? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags1 |= TR1_CHR;
 	}
 
 	if (!get_com("Affect Anything Else (via 'pval')? ", &ch)) return;
 	if (ch == 'y' || ch == 'Y') {
 
-	if (!get_com("Automatic Searching? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags1 |= TR1_SEARCH;
+	    if (!get_com("Automatic Searching? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags1 |= TR1_SEARCH;
 
-	if (!get_com("Stealth? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags1 |= TR1_STEALTH;
+	    if (!get_com("Stealth? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags1 |= TR1_STEALTH;
 
-	if (!get_com("Speed? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags1 |= TR1_SPEED;
+	    if (!get_com("Speed? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags1 |= TR1_SPEED;
 
-	if (!get_com("Tunneling? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags1 |= TR1_TUNNEL;
+	    if (!get_com("Tunneling? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags1 |= TR1_TUNNEL;
 
-	if (!get_com("Infra-vision? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags1 |= TR1_INFRA;
+	    if (!get_com("Infra-vision? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags1 |= TR1_INFRA;
 	}          
 
 	if (!get_com("Resist Anything? ", &ch)) return;
 	if (ch == 'y' || ch == 'Y') {
 
-	if (!get_com("Resist Fire? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_RES_FIRE;
+	    if (!get_com("Resist Fire? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_RES_FIRE;
 
-	if (!get_com("Resist Cold? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_RES_COLD;
+	    if (!get_com("Resist Cold? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_RES_COLD;
 
-	if (!get_com("Resist Acid? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_RES_ACID;
+	    if (!get_com("Resist Acid? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_RES_ACID;
 
-	if (!get_com("Resist Lightning? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_RES_ELEC;
+	    if (!get_com("Resist Lightning? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_RES_ELEC;
 
-	if (!get_com("Resist Poison? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_RES_POIS;
+	    if (!get_com("Resist Poison? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_RES_POIS;
 
-	if (!get_com("Resist Confusion? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_RES_CONF;
+	    if (!get_com("Resist Confusion? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_RES_CONF;
 
-	if (!get_com("Resist Sound? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_RES_SOUND;
+	    if (!get_com("Resist Sound? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_RES_SOUND;
 
-	if (!get_com("Resist Light? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_RES_LITE;
+	    if (!get_com("Resist Light? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_RES_LITE;
 
-	if (!get_com("Resist Dark? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_RES_DARK;
+	    if (!get_com("Resist Dark? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_RES_DARK;
 
-	if (!get_com("Resist Chaos? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_RES_CHAOS;
+	    if (!get_com("Resist Chaos? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_RES_CHAOS;
 
-	if (!get_com("Resist Disenchantment? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_RES_DISEN;
+	    if (!get_com("Resist Disenchantment? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_RES_DISEN;
 
-	if (!get_com("Resist Shards? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_RES_SHARDS;
+	    if (!get_com("Resist Shards? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_RES_SHARDS;
 
-	if (!get_com("Resist Nexus? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_RES_NEXUS;
+	    if (!get_com("Resist Nexus? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_RES_NEXUS;
 
-	if (!get_com("Resist Nether? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_RES_NETHER;
+	    if (!get_com("Resist Nether? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_RES_NETHER;
 
-	if (!get_com("Resist Blindness? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_RES_BLIND;
+	    if (!get_com("Resist Blindness? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_RES_BLIND;
 	}     
 
 	if (!get_com("Immune to Anything? ", &ch)) return;
 	if (ch == 'y' || ch == 'Y') {
 
-	if (!get_com("Immune to Acid? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_IM_ACID;
+	    if (!get_com("Immune to Acid? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_IM_ACID;
 
-	if (!get_com("Immune to Lightning? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_IM_ELEC;
+	    if (!get_com("Immune to Lightning? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_IM_ELEC;
 
-	if (!get_com("Immune to Fire? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_IM_FIRE;
+	    if (!get_com("Immune to Fire? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_IM_FIRE;
 
-	if (!get_com("Immune to Cold? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_IM_COLD;
+	    if (!get_com("Immune to Cold? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_IM_COLD;
 
-	if (!get_com("Immune to Poison? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_IM_POIS;
+	    if (!get_com("Immune to Poison? [yn]: ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_IM_POIS;
 	}
 
 	if (!get_com("Sustain Any Stats? ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y') {
+	if (ch == 'y' || ch == 'Y') {
+
 	    if (!get_com("Sustain strength? ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_SUST_STR;
 
@@ -785,52 +744,40 @@ static void wizard_create_aux2(inven_type *i_ptr)
 
 	    if (!get_com("Sustain charisma? ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_SUST_CHR;
-	    }
+	}
 
 	if (!get_com("Free Action? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_FREE_ACT;
+	if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_FREE_ACT;
 
 	if (!get_com("Resist life level loss? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags2 |= TR2_HOLD_LIFE;
+	if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_HOLD_LIFE;
 
 	if (!get_com("Slow Digestion? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags3 |= TR3_SLOW_DIGEST;
+	if (ch == 'y' || ch == 'Y') i_ptr->flags3 |= TR3_SLOW_DIGEST;
 
 	if (!get_com("Aggravate Monsters? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags3 |= TR3_AGGRAVATE;
+	if (ch == 'y' || ch == 'Y') i_ptr->flags3 |= TR3_AGGRAVATE;
 
 	if (!get_com("Regeneration? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags3 |= TR3_REGEN;
+	if (ch == 'y' || ch == 'Y') i_ptr->flags3 |= TR3_REGEN;
 
 	if (!get_com("Feather Falling? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags3 |= TR3_FEATHER;
+	if (ch == 'y' || ch == 'Y') i_ptr->flags3 |= TR3_FEATHER;
 
 	if (!get_com("Telepathy? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags3 |= TR3_TELEPATHY;
+	if (ch == 'y' || ch == 'Y') i_ptr->flags3 |= TR3_TELEPATHY;
 
 	if (!get_com("See invisible? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags3 |= TR3_SEE_INVIS;
+	if (ch == 'y' || ch == 'Y') i_ptr->flags3 |= TR3_SEE_INVIS;
 
 	if (!get_com("Give off Light? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags3 |= TR3_LITE;
+	if (ch == 'y' || ch == 'Y') i_ptr->flags3 |= TR3_LITE;
 
 	if (!get_com("Activatable Item? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags3 |= TR3_ACTIVATE;
+	if (ch == 'y' || ch == 'Y') i_ptr->flags3 |= TR3_ACTIVATE;
 
 	if (!get_com("Cursed? [yn]: ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y')
-		i_ptr->flags3 |= TR3_CURSED;
-
+	if (ch == 'y' || ch == 'Y') i_ptr->flags3 |= TR3_CURSED;
     }
 
     prt("Cost : ", 0, 0);
