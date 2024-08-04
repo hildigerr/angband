@@ -1028,6 +1028,52 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
  *
  * Handle a beam/bolt/ball causing damage to a monster.
  *
+ * We check for resistances and suspectibilities, modifying the damage accordingly,
+ * and making notes in the monster lore when the monster is visible, which it almost
+ * always is, due to a hack in "project()" below involving lighting up monsters.
+ *
+ * This routine takes a "source monster" (by index) which is mostly used to
+ * determine if the player is causing the damage, and a "distance" (see project()),
+ * which is used to decrease the power of explosions with distance, and a location,
+ * via integers which are modified by certain types of attacks (polymorph and
+ * teleport being the obvious ones), a default damage, which is modified as needed
+ * based on various properties, and finally a "damage type" (see below).
+ *
+ * Note that this routine can handle "no damage" attacks (like teleport) by taking
+ * a "zero" damage, and can even take "parameters" to attacks (like confuse) by
+ * accepting a "damage", using it to calculate the effect, and then setting the
+ * damage to zero.  Note that the "damage" parameter is divided by the radius, so
+ * monsters not at the "epicenter" will not take as much damage (or whatever)...
+ *
+ * Various messages are produced, and damage is applied.
+ *
+ * Just "casting" a substance (i.e. plasma) does not make you immune, you must
+ * actually be "made" of that substance, or "breathe" big balls of it.
+ *
+ * We assume that "Plasma" monsters, and "Plasma" breathers, are immune to plasma.
+ *
+ * We assume "Nether" is an evil, necromantic force, so it doesn't hurt undead,
+ * and hurts evil less.  If can breath nether, then it resists it as well.
+ *
+ * Note that this routine (like most) does NOT correctly handle "plural" monsters.
+ *
+ * Damage reductions use the following formulas:
+ *   Note that "dam = dam * 6 / (randint(6) + 6);"
+ *     gives avg damage of .655, ranging from .858 to .500
+ *   Note that "dam = dam * 5 / (randint(6) + 6);"
+ *     gives avg damage of .544, ranging from .714 to .417
+ *   Note that "dam = dam * 4 / (randint(6) + 6);"
+ *     gives avg damage of .444, ranging from .556 to .333
+ *   Note that "dam = dam * 3 / (randint(6) + 6);"
+ *     gives avg damage of .327, ranging from .427 to .250
+ *   Note that "dam = dam * 2 / (randint(6) + 6);"
+ *     gives something simple.
+ *
+ * In this function, "result" messages are postponed until the end, where
+ * the "note" string is appended to the monster name, if not NULL.  So,
+ * to make a spell have "no effect" just set "note" to NULL.  You should
+ * also set "notice" to FALSE, or the player will learn what the spell does.
+ *
  * We attempt to return "TRUE" if the player saw anything "useful" happen.
  */
 static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
@@ -2295,10 +2341,19 @@ static char bolt_char(int y, int x, int ny, int nx)
  * Note that the damage done by "ball" explosions decreases with distance.
  * This decrease is rapid, grids at radius "dist" take "1/dist" damage.
  *
+ * Notice the "napalm" effect of "beam" weapons.  First they "project" to
+ * the target, and then the damage "flows" along this beam of destruction.
+ * The damage at every grid is the same as at the "center" of a ball explosion.
+ * In fact, the "beam" grids are treated as if they ARE at the center of explosions.
+ *
  * The array "gy[],gx[]" with "current" size "grids" is used to hold the
  * collected locations of all grids in the "blast area" plus "beam path".
  *
- * Note the rather complex usage of the "gm[]" array.
+ * Note the rather complex usage of the "gm[]" array.  First, gm[0] is always
+ * zero.  Second, for N>1, gm[N] is always the index (in gy[],gx[]) of the first
+ * blast grid (see above) with radius "N" from the blast center.  Note that only
+ * the first gm[1] grids in the blast area thus take full damage.  Also, note that
+ * gm[rad+1] is always equal to "grids", which is the total number of blast grids.
  *
  * Note that once the projection is complete, (y2,x2) holds the final location
  * of bolts/beams, and the "epicenter" of balls.
@@ -2307,6 +2362,16 @@ static char bolt_char(int y, int x, int ny, int nx)
  * so that a "rad" of "one" actually covers 5 or 9 grids, depending on the
  * implementation of the "distance" function.  Also, a bolt can be properly
  * viewed as a "ball" with a "rad" of "zero".
+ *
+ * Currently, specifying "beam" plus "ball" means that locations which are
+ * covered by the initial "beam", and also covered by the final "ball", except
+ * for the final grid (the epicenter of the ball), will be "hit twice", that is,
+ * hit by the initial beam, and also by the exploding ball.  For the grid right
+ * next to the epicenter, this results in 150% damage being done.  The epicenter
+ * does not have this problem, for the same reason the final grid in a "beam"
+ * plus "bolt" does not -- it is explicitly removed.  Note that simply removing
+ * "beam" grids which are covered by the "ball" will NOT work, as then they will
+ * receive LESS damage than they should.  So do not combine "beam" with "ball".
  *
  * Note that if no "target" is reached before the beam/bolt/ball travels the
  * maximum distance allowed (OBJ_BOLT_RANGE), no "blast" will be induced.  This
