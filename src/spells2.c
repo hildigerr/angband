@@ -2700,54 +2700,16 @@ int heal_monster(int dir, int y, int x)
     return (project_hook(GF_OLD_HEAL, dir, damroll(4, 6), flg));
 }
 
-
-/* Increase or decrease a creatures speed		-RAK-	 */
-/* NOTE: cannot slow a winning creature (BALROG)		 */
-int speed_monster(int dir, int y, int x, int spd)
+int speed_monster(int dir, int y, int x)
 {
-    int                    flag, dist, speed;
-    register cave_type     *c_ptr;
-    register monster_type  *m_ptr;
-    register monster_race *r_ptr;
-    vtype                   out_val, m_name;
+    int flg = PROJECT_STOP;
+    return (project_hook(GF_OLD_SPEED, dir, 0, flg));
+}
 
-    speed = FALSE;
-    flag = FALSE;
-    dist = 0;
-    do {
-	(void)mmove(dir, &y, &x);
-	dist++;
-	c_ptr = &cave[y][x];
-	if ((dist > OBJ_BOLT_RANGE) || c_ptr->fval >= BLOCKED_FLOOR)
-	    flag = TRUE;
-	else if (c_ptr->m_idx > 1) {
-	    flag = TRUE;
-	    m_ptr = &m_list[c_ptr->m_idx];
-	    r_ptr = &r_list[m_ptr->r_idx];
-	    monster_name(m_name, m_ptr);
-	    if (spd > 0) {
-		m_ptr->mspeed += spd;
-		m_ptr->csleep = 0;
-		(void)sprintf(out_val, "%s starts moving faster.", m_name);
-		msg_print(out_val);
-		speed = TRUE;
-	    } else if ((r_ptr->level >
-			randint((p_ptr->lev - 10) < 1 ? 1 : (p_ptr->lev - 10)) + 10) ||
-		       (r_ptr->cflags2 & MF2_UNIQUE)) {
-		(void)sprintf(out_val, "%s is unaffected.", m_name);
-		msg_print(out_val);
-		m_ptr->csleep = 0;
-	    } else {
-		m_ptr->mspeed += spd;
-		m_ptr->csleep = 0;
-		(void)sprintf(out_val, "%s starts moving slower.", m_name);
-		msg_print(out_val);
-		speed = TRUE;
-	    }
-	}
-    }
-    while (!flag);
-    return (speed);
+int slow_monster(int dir, int y, int x)
+{
+    int flg = PROJECT_STOP;
+    return (project_hook(GF_OLD_SLOW, dir, p_ptr->lev, flg));
 }
 
 

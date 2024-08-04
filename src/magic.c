@@ -830,7 +830,7 @@ void cast()
 	    
 	  case 26:
 	    if (!get_dir(NULL, &dir)) return;
-	    (void)speed_monster(dir, char_row, char_col, -1);
+	    (void)slow_monster(dir, char_row, char_col);
 	    break;
 
 	  case 27:

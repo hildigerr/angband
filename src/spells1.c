@@ -1432,6 +1432,41 @@ static bool project_m(int who, int rad, int y, int x, int dam, int typ, int flg)
 	break;
 
 
+      /* Speed Monster (Ignore "dam") */
+      case GF_OLD_SPEED:
+
+	/* Speed up */
+	m_ptr->mspeed += 1;
+	m_ptr->csleep = 0;
+	note = " starts moving faster.";
+
+	/* No "real" damage */
+	dam = 0;
+	break;
+
+
+      /* Slow Monster (Use "dam" as "power") */
+      case GF_OLD_SLOW:
+
+	m_ptr->csleep = 0;
+	
+	/* Powerful monsters can resist */
+	if ((r_ptr->cflags2 & MF2_UNIQUE) ||
+	    (r_ptr->level > 10 + randint((dam - 10) < 1 ? 1 : (dam - 10)))) {
+	    note = " is unaffected.";
+	}
+
+	/* Normal monsters slow down */
+	else {
+	    m_ptr->mspeed -= 1;
+	    note = " starts moving slower.";
+	}
+
+	/* No "real" damage */
+	dam = 0;
+	break;
+
+
       /* Sleep (Use "dam" as "power") */
       case GF_OLD_SLEEP:
 

@@ -1670,12 +1670,12 @@ void do_cmd_aim_wand(void)
 	    break;
 
 	case SV_WAND_HASTE_MONSTER:
-	    ident = speed_monster(dir,y,x,1);
+	    ident = speed_monster(dir,y,x);
 	    done_effect = 1;
 	    break;
 
 	case SV_WAND_SLOW_MONSTER:
-	    ident = speed_monster(dir,y,x,-1);
+	    ident = slow_monster(dir,y,x);
 	    done_effect = 1;
 	    break;
 
@@ -2290,7 +2290,7 @@ void do_cmd_zap_rod(void)
 
       case SV_ROD_SLOW_MONSTER:
 	if (!get_dir_c(NULL, &dir)) return;
-	ident = speed_monster(dir, y, x, -1);
+	ident = slow_monster(dir, y, x);
 	i_ptr->pval = 20;
 	break;
 

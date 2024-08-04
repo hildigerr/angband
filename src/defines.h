@@ -1319,6 +1319,8 @@
 #define GF_OLD_TPORT	51
 #define GF_OLD_POLY	52
 #define GF_OLD_HEAL	53
+#define GF_OLD_SPEED	54
+#define GF_OLD_SLOW	55
 #define GF_OLD_CONF	56
 #define GF_OLD_SCARE	57
 #define GF_OLD_SLEEP	58
