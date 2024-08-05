@@ -483,10 +483,11 @@ static void wizard_create_aux2(inven_type *i_ptr)
     int                  tmp_val;
     s32b                tmp_lval;
 
-    int			 i, j, k, more = FALSE;
+    int			 i, j, page, num;
 
     char                 ch;
 
+    int			 option[24];
     char                 tmp_str[100];
 
 
@@ -794,41 +795,46 @@ static void wizard_create_aux2(inven_type *i_ptr)
     if (tmp_val) i_ptr->cost = tmp_lval;
 
 
-    j = 0;
-    i = 0;
-    k = 0;
-    more = FALSE;
-SNagain:
-    restore_screen();
-    save_screen();
-    for (; i < EGO_MAX; i++) {
-	sprintf(tmp_str, "%c) %s", 'a' + j, ego_names[i]);
-	prt(tmp_str, 1 + j, 0);
-	j++;
-	if (j == 21) {
-	    more = TRUE;
-	    break;
-	}
-    }
-    if (more)
-	prt("v) NEXT PAGE", 22, 0);
+    /*** Special Name ***/
 
-    do {
-	if (!get_com("Choose a special name (%sESCAPE for none): ", &ch)) {
-	    return;
-	}
-    } while ((ch < 'a' && ch > ('a' + j)) || (more && ch < 'a' && ch > ('a' + j + 1)));
+    /* Show pages until a legal value is chosen for "k" */
+    for (page = i = 0; !i_ptr->name2; ) {
 
-    if ((ch == 'v') && more) {
-	more = FALSE;
-	k += (j - 1);
-	j = 0;
-	goto SNagain;
-    } else {
-	i_ptr->name2 = k + (ch - 'a');
+	/* Clear the screen */
+	clear_screen();
+
+	/* Show up to twenty options at a time.  Hack -- wrap when legal */
+	for (num = 0; (num < 20) && (page || (i < EGO_MAX)); i++) {
+	    if (i == EGO_MAX) i = 0;
+	    if (!ego_names[i]) continue;
+	    option[num++] = i;
+	}
+
+	/* Display the options */
+	for (j = 0; j < num; j++) {
+	    char /* p1 = '(', */ p2 = ')';
+	    int opt = option[j];
+	    sprintf(tmp_str, "%c%c [%d] %s",
+		    'a' + j, p2, opt, ego_names[opt]);
+	    prt(tmp_str, j+1, 0);
+	}
+
+	/* Notice a full page */
+	if (num>=20) page++;
+
+	/* Build a prompt */
+	sprintf(tmp_str, "Choose a special name (%sESCAPE for none): ",
+		(num<20) ? "" : "Space for more choices, ");
+
+	/* Get a command */
+	if (!get_com(tmp_str, &ch)) return;
+
+	/* Extract the index */
+	j = ch - 'a';
+
+	/* Extract the special name */
+	if ((j >= 0) && (j < num)) i_ptr->name2 = option[j];
     }
-    restore_screen();
-    save_screen();
 }
 
 
