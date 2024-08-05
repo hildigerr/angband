@@ -667,17 +667,17 @@ static void wizard_create_aux2(inven_type *i_ptr)
 	if (!get_com("Resist Anything? ", &ch)) return;
 	if (ch == 'y' || ch == 'Y') {
 
-	    if (!get_com("Resist Fire? ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_RES_FIRE;
-
-	    if (!get_com("Resist Cold? ", &ch)) return;
-	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_RES_COLD;
-
 	    if (!get_com("Resist Acid? ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_RES_ACID;
 
 	    if (!get_com("Resist Lightning? ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_RES_ELEC;
+
+	    if (!get_com("Resist Fire? ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_RES_FIRE;
+
+	    if (!get_com("Resist Cold? ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_RES_COLD;
 
 	    if (!get_com("Resist Poison? ", &ch)) return;
 	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_RES_POIS;
