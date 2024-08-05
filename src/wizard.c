@@ -797,6 +797,10 @@ static void wizard_create_aux2(inven_type *i_ptr)
 
     /*** Special Name ***/
 
+    /* Get a "ego-name" */
+    if (!get_com("Choose a (possibly fatal) Ego-Item Name? ", &ch)) return;
+    if (ch != 'y' && ch != 'Y') return;
+
     /* Show pages until a legal value is chosen for "k" */
     for (page = i = 0; !i_ptr->name2; ) {
 
