@@ -256,6 +256,7 @@ static bool hates_fire(inven_type *i_ptr)
     switch (i_ptr->tval) {
 
       /* Wearable items */
+      case TV_LITE:
       case TV_ARROW:
       case TV_BOW:
       case TV_HAFTED:
@@ -279,10 +280,6 @@ static bool hates_fire(inven_type *i_ptr)
       case TV_OPEN_DOOR:
       case TV_CLOSED_DOOR:
 	return (TRUE);
-
-      case TV_LITE:
-	if (e->sval >= 192)	   /* only torches... -CFT */
-	    return (TRUE);
     }
 
     return (FALSE);
@@ -318,7 +315,7 @@ static int set_acid_destroy(inven_type *i_ptr)
 {
     if (!hates_acid(i_ptr)) return (FALSE);
     if (artifact_p(i_ptr)) return (FALSE);
-    if (wearable_p(i_ptr) && ((i_ptr->flags2 & TR2_RES_ACID) || (e->flags2 & TR2_IM_ACID)) return (FALSE);
+    if (wearable_p(i_ptr) && (i_ptr->flags3 & TR3_IGNORE_ACID)) return (FALSE);
     return (TRUE);
 }
 
@@ -330,7 +327,7 @@ static int set_elec_destroy(inven_type *i_ptr)
 {
     if (!hates_elec(i_ptr)) return (FALSE);
     if (artifact_p(i_ptr)) return (FALSE);
-    if (wearable_p(i_ptr) && ((i_ptr->flags2 & TR2_RES_ELEC)||(i_ptr->flags2 & TR2_IM_ELEC))) return (FALSE);
+    if (wearable_p(i_ptr) && (i_ptr->flags3 & TR3_IGNORE_ELEC)) return (FALSE);
     return (TRUE);
 }
 
@@ -342,7 +339,7 @@ static int set_fire_destroy(inven_type *i_ptr)
 {
     if (!hates_fire(i_ptr)) return (FALSE);
     if (artifact_p(i_ptr)) return (FALSE);
-    if (wearable_p(i_ptr) && ((e->flags2 & TR2_RES_FIRE)||(e->flags2 & TR2_IM_FIRE))) return (FALSE);
+    if (wearable_p(i_ptr) && (i_ptr->flags3 & TR3_IGNORE_FIRE)) return (FALSE);
     return (TRUE);
 }
 
@@ -353,6 +350,7 @@ static int set_fire_destroy(inven_type *i_ptr)
 static int set_cold_destroy(inven_type *i_ptr)
 {
     if (!hates_cold(i_ptr)) return (FALSE);
+    if (wearable_p(i_ptr) && (i_ptr->flags3 & TR3_IGNORE_COLD)) return (FALSE);
     return (TRUE);
 }
 
@@ -475,8 +473,7 @@ static int minus_ac(void)
 
 
     /* Object resists? */
-    if ((i_ptr->flags2 & TR2_RES_ACID) || (i_ptr->flags2 & TR2_IM_ACID) ||
-		(artifact_p(i_ptr) && (randint(5)>2))) {
+    if (i_ptr->flags3 & TR3_IGNORE_ACID) {
 	objdes(tmp_str, i_ptr, FALSE);
 	(void)sprintf(out_val, "Your %s resists damage!", tmp_str);
 	msg_print(out_val);
@@ -668,6 +665,8 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
 	    case GF_ACID:
 		if (hates_acid(i_ptr)) {
 		    do_kill = TRUE;
+		    if (!wearable_p(i_ptr)) break;
+		    if (i_ptr->flags3 & TR3_IGNORE_ACID) ignore = TRUE;
 		}
 		break;
 
@@ -675,6 +674,8 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
 	    case GF_ELEC:
 		if (hates_elec(i_ptr)) {
 		    do_kill = TRUE;
+		    if (!wearable_p(i_ptr)) break;
+		    if (i_ptr->flags3 & TR3_IGNORE_ELEC) ignore = TRUE;
 		}
 		break;
 
@@ -682,6 +683,8 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
 	    case GF_FIRE:
 		if (hates_fire(i_ptr)) {
 		    do_kill = TRUE;
+		    if (!wearable_p(i_ptr)) break;
+		    if (i_ptr->flags3 & TR3_IGNORE_FIRE) ignore = TRUE;
 		}
 		break;
 
@@ -689,6 +692,8 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
 	    case GF_COLD:
 		if (hates_cold(i_ptr)) {
 		    do_kill = TRUE;
+		    if (!wearable_p(i_ptr)) break;
+		    if (i_ptr->flags3 & TR3_IGNORE_COLD) ignore = TRUE;
 		}
 		break;
 
@@ -696,9 +701,14 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
 	    case GF_PLASMA:
 		if (hates_fire(i_ptr)) {
 		    do_kill = TRUE;
+		    if (!wearable_p(i_ptr)) break;
+		    if (i_ptr->flags3 & TR3_IGNORE_FIRE) ignore = TRUE;
 		}
 		if (hates_elec(i_ptr)) {
+		    ignore = FALSE;
 		    do_kill = TRUE;
+		    if (!wearable_p(i_ptr)) break;
+		    if (i_ptr->flags3 & TR3_IGNORE_ELEC) ignore = TRUE;
 		}
 		break;
 
@@ -706,9 +716,14 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
 	    case GF_METEOR:
 		if (hates_fire(i_ptr)) {
 		    do_kill = TRUE;
+		    if (!wearable_p(i_ptr)) break;
+		    if (i_ptr->flags3 & TR3_IGNORE_FIRE) ignore = TRUE;
 		}
 		if (hates_cold(i_ptr)) {
+		    ignore = FALSE;
 		    do_kill = TRUE;
+		    if (!wearable_p(i_ptr)) break;
+		    if (i_ptr->flags3 & TR3_IGNORE_COLD) ignore = TRUE;
 		}
 		break;
 

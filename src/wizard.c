@@ -752,6 +752,22 @@ static void wizard_create_aux2(inven_type *i_ptr)
 	    if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_SUST_CHR;
 	}
 
+	if (!get_com("Ignore Anything? ", &ch)) return;
+	if (ch == 'y' || ch == 'Y') {
+
+	    if (!get_com("Ignore Acid? ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags3 |= TR3_IGNORE_ACID;
+
+	    if (!get_com("Ignore Lightning? ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags3 |= TR3_IGNORE_ELEC;
+
+	    if (!get_com("Ignore Fire? ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags3 |= TR3_IGNORE_FIRE;
+
+	    if (!get_com("Ignore Cold? ", &ch)) return;
+	    if (ch == 'y' || ch == 'Y') i_ptr->flags3 |= TR3_IGNORE_COLD;
+    }
+
 	if (!get_com("Free Action? ", &ch)) return;
 	if (ch == 'y' || ch == 'Y') i_ptr->flags2 |= TR2_FREE_ACT;
 

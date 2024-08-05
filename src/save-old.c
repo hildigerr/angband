@@ -881,6 +881,25 @@ static errr rd_item_old(inven_type *i_ptr)
     }
 
 
+    /*** Analyze wearable items some more ***/
+
+    /* Stop processing unless wearable */
+    if (!wearable_p(i_ptr)) return (0);
+
+
+    /* Extract new "ignore" settings */
+	/* Extract new "ignore" settings from "Resist" */
+	if (i_ptr->flags2 & TR2_RES_ACID) i_ptr->flags3 |= TR3_IGNORE_ACID;
+	if (i_ptr->flags2 & TR2_RES_ELEC) i_ptr->flags3 |= TR3_IGNORE_ELEC;
+	if (i_ptr->flags2 & TR2_RES_FIRE) i_ptr->flags3 |= TR3_IGNORE_FIRE;
+	if (i_ptr->flags2 & TR2_RES_COLD) i_ptr->flags3 |= TR3_IGNORE_COLD;
+
+	/* Extract new "ignore" settings from "Immune" */
+	if (i_ptr->flags2 & TR2_IM_ACID) i_ptr->flags3 |= TR3_IGNORE_ACID;
+	if (i_ptr->flags2 & TR2_IM_ELEC) i_ptr->flags3 |= TR3_IGNORE_ELEC;
+	if (i_ptr->flags2 & TR2_IM_FIRE) i_ptr->flags3 |= TR3_IGNORE_FIRE;
+	if (i_ptr->flags2 & TR2_IM_COLD) i_ptr->flags3 |= TR3_IGNORE_COLD;
+
     /* Success */
     return (0);
 }

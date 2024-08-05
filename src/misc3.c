@@ -733,6 +733,8 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 				      TR2_SUST_STR | TR2_SUST_DEX |
 				      TR2_SUST_CON | TR2_SUST_INT |
 				      TR2_SUST_WIS | TR2_SUST_CHR);
+		    i_ptr->flags3 |= (TR3_IGNORE_FIRE | TR3_IGNORE_COLD |
+				      TR3_IGNORE_ELEC | TR3_IGNORE_ACID);
 		    i_ptr->ident |= ID_NOSHOW_P1;
 		    i_ptr->pval = 10;
 		    i_ptr->toac += 10 + randint(5);
@@ -755,6 +757,8 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 			break;
 		    i_ptr->flags2 |= (TR2_RES_ELEC | TR2_RES_COLD |
 				      TR2_RES_ACID | TR2_RES_FIRE);
+		    i_ptr->flags3 |= (TR3_IGNORE_ELEC | TR3_IGNORE_COLD |
+				      TR3_IGNORE_ACID | TR3_IGNORE_FIRE);
 		    if (randint(3) == 1) {
 			i_ptr->flags1 |= TR1_STEALTH;
 			i_ptr->pval = randint(3);
@@ -784,6 +788,7 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 				 "Adamantite", 10))
 			break;
 		    i_ptr->flags2 |= (TR2_RES_ACID);
+		    i_ptr->flags3 |= (TR3_IGNORE_ACID);
 		    i_ptr->cost += 1000L;
 		    i_ptr->name2 = EGO_RESIST_A;
 		    rating += 15;
@@ -795,6 +800,7 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 			make_artifact(i_ptr))
 			break;
 		    i_ptr->flags2 |= (TR2_RES_FIRE);
+		    i_ptr->flags3 |= (TR3_IGNORE_FIRE);
 		    i_ptr->cost += 600L;
 		    i_ptr->name2 = EGO_RESIST_F;
 		    rating += 17;
@@ -806,6 +812,7 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 			make_artifact(i_ptr))
 			break;
 		    i_ptr->flags2 |= (TR2_RES_COLD);
+		    i_ptr->flags3 |= (TR3_IGNORE_COLD);
 		    i_ptr->cost += 600L;
 		    i_ptr->name2 = EGO_RESIST_C;
 		    rating += 16;
@@ -817,6 +824,7 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 			make_artifact(i_ptr))
 			break;
 		    i_ptr->flags2 |= (TR2_RES_ELEC);
+		    i_ptr->flags3 |= (TR3_IGNORE_ELEC);
 		    i_ptr->cost += 500L;
 		    i_ptr->name2 = EGO_RESIST_E;
 		    rating += 15;
@@ -1168,6 +1176,8 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 			i_ptr->flags1 |= (TR1_INT);
 			i_ptr->flags2 |= (TR2_RES_ELEC | TR2_RES_COLD |
 					  TR2_RES_ACID | TR2_RES_FIRE);
+			i_ptr->flags3 |= (TR3_IGNORE_ELEC | TR3_IGNORE_COLD |
+					  TR3_IGNORE_ACID | TR3_IGNORE_FIRE);
 			i_ptr->pval = randint(3);	/* +N INT */
 			i_ptr->cost += 3000 + i_ptr->pval * 500;
 			i_ptr->name2 = EGO_MAGI;
@@ -1267,6 +1277,7 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 
 		/* Make it "excellent" */
 		if (randint(2) == 1) {
+		    i_ptr->flags3 |= (TR3_IGNORE_ACID);
 		    i_ptr->toac += m_bonus(0, 10, level) + (5 + randint(3));
 		    i_ptr->cost += 250L;
 		    i_ptr->name2 = EGO_PROTECTION;
@@ -1277,6 +1288,7 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 		    i_ptr->pval = randint(3);
 		    i_ptr->flags1 |= (TR1_STEALTH);
 		    i_ptr->flags2 |= (TR2_RES_ACID);
+		    i_ptr->flags3 |= (TR3_IGNORE_ACID);
 		    i_ptr->name2 = EGO_AMAN;
 		    i_ptr->cost += 4000 + (100 * i_ptr->toac);
 		    rating += 16;
@@ -1384,7 +1396,7 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 		    (randint(2) == 1)) {
 
 		    i_ptr->flags1 |= (TR1_BRAND_FIRE);
-		    i_ptr->flags2 |= (TR2_RES_FIRE);
+		    i_ptr->flags3 |= (TR3_IGNORE_FIRE);
 
 		    /* Better stats */
 		    i_ptr->tohit += 5;
@@ -1444,7 +1456,9 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 		    i_ptr->flags2 |= (TR2_FREE_ACT |
 				      TR2_RES_FIRE | TR2_RES_COLD |
 				      TR2_RES_ELEC | TR2_RES_ACID);
-		    i_ptr->flags3 |= (TR3_FEATHER | TR3_REGEN | TR3_SEE_INVIS );
+		    i_ptr->flags3 |= (TR3_FEATHER | TR3_REGEN | TR3_SEE_INVIS |
+				      TR3_IGNORE_FIRE | TR3_IGNORE_COLD |
+				      TR3_IGNORE_ELEC | TR3_IGNORE_ACID);
 		    i_ptr->tohit += 3;
 		    i_ptr->todam += 3;
 		    i_ptr->toac += 5 + randint(5);
@@ -1463,6 +1477,7 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 			    break;
 		    i_ptr->flags1 |= (TR1_BRAND_FIRE);
 		    i_ptr->flags2 |= (TR2_RES_FIRE);
+		    i_ptr->flags2 |= (TR3_IGNORE_FIRE);
 		    i_ptr->tohit += 2;
 		    i_ptr->todam += 3;
 		    i_ptr->cost += 3000L;
@@ -1477,6 +1492,7 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 			    break;
 		    i_ptr->flags1 |= (TR1_BRAND_COLD);
 		    i_ptr->flags2 |= (TR2_RES_COLD);
+		    i_ptr->flags3 |= (TR3_IGNORE_COLD);
 		    i_ptr->tohit += 2;
 		    i_ptr->todam += 2;
 		    i_ptr->cost += 2200L;
@@ -1787,7 +1803,7 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 
 		  case 4: case 5:
 		    i_ptr->flags1 |= (TR1_BRAND_FIRE);
-		    i_ptr->flags2 |= (TR2_RES_FIRE); /* RF so won't burn */
+		    i_ptr->flags3 |= (TR3_IGNORE_FIRE);
 		    i_ptr->tohit += 2;
 		    i_ptr->todam += 4;
 		    i_ptr->name2 = EGO_FIRE;

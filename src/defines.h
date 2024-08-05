@@ -1177,7 +1177,10 @@
  * Note that "flags2" contains all "resistances" Note that "Hold Life" is really an
  * "immunity" to ExpLoss, and "Free Action" is "immunity to paralysis".
  *
- * Note that "flags3" contains everything else.  Also "FEATHER" floating.
+ * Note that "flags3" contains everything else -- including four new flags
+ * called "ITEM_IGNORE_XXX" which lets an item specify that it can not be
+ * affected by various forms of destruction.  This is NOT as powerful as
+ * actually granting resistance to the wearer.  Also "FEATHER" floating.
  */
 #define TR_STATS        0x0000003FL /* the stats must be the low 6 bits */
 #define TR1_STR			0x00000001L	/* Uses "pval" */
@@ -1246,6 +1249,10 @@
 #define TR3_TELEPATHY		0x00008000L	/* Telepathy */
 #define TR3_SLOW_DIGEST		0x00010000L	/* Item slows down digestion */
 #define TR3_REGEN		0x00020000L	/* Item induces regeneration */
+#define TR3_IGNORE_ACID		0x00100000L	/* Item ignores Acid Damage */
+#define TR3_IGNORE_ELEC		0x00200000L	/* Item ignores Elec Damage */
+#define TR3_IGNORE_FIRE		0x00400000L	/* Item ignores Fire Damage */
+#define TR3_IGNORE_COLD		0x00800000L	/* Item ignores Cold Damage */
 #define TR3_ACTIVATE		0x01000000L	/* Item can be activated */
 #define TR3_TELEPORT		0x04000000L	/* Item teleports player */
 #define TR3_AGGRAVATE		0x08000000L	/* Item aggravates monsters */

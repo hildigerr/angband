@@ -2796,7 +2796,7 @@ void do_cmd_activate(void)
 			msg_print("Your bolts are covered in a fiery aura!");
 			i_ptr->name2 = EGO_FIRE;
 			i_ptr->flags1 |= TR1_BRAND_FIRE;
-			i_ptr->flags2 |= TR2_RES_FIRE;
+			i_ptr->flags3 |= TR3_IGNORE_FIRE;
 			i_ptr->cost += 25;
 			enchant(i_ptr, 3+randint(3), ENCH_TOHIT|ENCH_TODAM);
 			calc_bonuses();
