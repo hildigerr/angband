@@ -795,6 +795,20 @@ static void wizard_create_aux2(inven_type *i_ptr)
     if (tmp_val) i_ptr->cost = tmp_lval;
 
 
+    /*** Magic/Artifact ***/
+
+    /* Ask permission */
+    if (!get_com("Apply dungeon magic to the object? ", &ch)) return;
+    if (ch == 'y' || ch == 'Y') apply_magic(i_ptr, dun_level, FALSE, FALSE, FALSE);
+
+    /* Ask permission (may interact badly with "dungeon magic") */
+    if (!get_com("Attempt to turn the item into an artifact? ", &ch)) return;
+    while (ch == 'y' || ch == 'Y') {
+	if (make_artifact(i_ptr)) return;
+	if (!get_com("Attempt failed.  Try again? ", &ch)) return;
+    }
+
+
     /*** Special Name ***/
 
     /* Get a "ego-name" */
