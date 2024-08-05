@@ -2182,7 +2182,6 @@ static int special_place_object(int y, int x)
     i_list[cur_pos] = hack;
 
     c_ptr->i_idx = cur_pos;
-    i_list[cur_pos].timeout = 0;
     i_list[cur_pos].ident |= ID_NOSHOW_TYPE; /* don't show (+x of yyy) for these */
     if (k_list[tmp].level > object_level) {
 	rating += 2 * (k_list[tmp].level - object_level);

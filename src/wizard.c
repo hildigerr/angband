@@ -474,7 +474,6 @@ static void wizard_create_aux1(inven_type *i_ptr)
 
     /* Build an object using that template */
     invcopy(i_ptr, k_idx);
-    i_ptr->timeout = 0;
 }
 
 

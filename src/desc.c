@@ -1385,6 +1385,9 @@ void invcopy(inven_type *i_ptr, int k_idx)
 
     i_ptr->tchar = k_ptr->tchar;
     i_ptr->level = k_ptr->level;
+
+    /* Fully "primed" */
+    i_ptr->timeout = 0;
 }
 
 
