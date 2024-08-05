@@ -793,13 +793,6 @@ static void wizard_create_aux2(inven_type *i_ptr)
     if (tmp_lval < 0) tmp_lval = 0;
     if (tmp_val) i_ptr->cost = tmp_lval;
 
-    prt("Dungeon Level on which it is found : ", 0, 0);
-    if (!get_string(tmp_str, 0, 39, 3)) {
-	return;
-    }
-    tmp_val = atoi(tmp_str);
-    if (tmp_val != 0)
-	i_ptr->level = tmp_val;
 
     j = 0;
     i = 0;
