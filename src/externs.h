@@ -405,6 +405,7 @@ extern int (*store_buy[MAX_STORES])();
 #endif
 
 
+extern cptr ego_names[EGO_MAX];		/* Ego-item Names */
 
 extern char ghost_name[128];		/* Writable ghost name */
 
@@ -438,7 +439,6 @@ extern inven_kind k_list[MAX_K_IDX];
 /* The "xtra" array ("extra" object info) */
 extern inven_xtra *x_list;
 
-extern cptr special_names[SN_ARRAY_SIZE];
 
 /* Following are creature arrays and variables			*/
 

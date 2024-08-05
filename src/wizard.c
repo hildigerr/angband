@@ -801,8 +801,8 @@ static void wizard_create_aux2(inven_type *i_ptr)
 SNagain:
     restore_screen();
     save_screen();
-    for (; i < SN_ARRAY_SIZE; i++) {
-	sprintf(tmp_str, "%c) %s", 'a' + j, special_names[i]);
+    for (; i < EGO_MAX; i++) {
+	sprintf(tmp_str, "%c) %s", 'a' + j, ego_names[i]);
 	prt(tmp_str, 1 + j, 0);
 	j++;
 	if (j == 21) {
