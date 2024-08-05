@@ -21,7 +21,6 @@ static void change_character()
 {
     register int          tmp_val;
     register s32b        tmp_lval;
-    u16b               *a_ptr = p_ptr->max_stat;
 
     vtype                 tmp_str;
 
@@ -30,7 +29,7 @@ static void change_character()
 
     tmp_val = atoi(tmp_str);
     if ((tmp_val > 2) && (tmp_val < 119)) {
-	a_ptr[A_STR] = tmp_val;
+	p_ptr->max_stat[A_STR] = tmp_val;
 	(void)res_stat(A_STR);
     }
 
@@ -39,7 +38,7 @@ static void change_character()
 
     tmp_val = atoi(tmp_str);
     if ((tmp_val > 2) && (tmp_val < 119)) {
-	a_ptr[A_INT] = tmp_val;
+	p_ptr->max_stat[A_INT] = tmp_val;
 	(void)res_stat(A_INT);
     }
 
@@ -47,7 +46,7 @@ static void change_character()
     if (!get_string(tmp_str, 0, 25, 3)) return;
     tmp_val = atoi(tmp_str);
     if ((tmp_val > 2) && (tmp_val < 119)) {
-	a_ptr[A_WIS] = tmp_val;
+	p_ptr->max_stat[A_WIS] = tmp_val;
 	(void)res_stat(A_WIS);
     }
 
@@ -55,7 +54,7 @@ static void change_character()
     if (!get_string(tmp_str, 0, 25, 3)) return;
     tmp_val = atoi(tmp_str);
     if ((tmp_val > 2) && (tmp_val < 119)) {
-	a_ptr[A_DEX] = tmp_val;
+	p_ptr->max_stat[A_DEX] = tmp_val;
 	(void)res_stat(A_DEX);
     }
 
@@ -63,7 +62,7 @@ static void change_character()
     if (!get_string(tmp_str, 0, 25, 3)) return;
     tmp_val = atoi(tmp_str);
     if ((tmp_val > 2) && (tmp_val < 119)) {
-	a_ptr[A_CON] = tmp_val;
+	p_ptr->max_stat[A_CON] = tmp_val;
 	(void)res_stat(A_CON);
     }
 
@@ -72,7 +71,7 @@ static void change_character()
 
     tmp_val = atoi(tmp_str);
     if ((tmp_val > 2) && (tmp_val < 119)) {
-	a_ptr[A_CHR] = tmp_val;
+	p_ptr->max_stat[A_CHR] = tmp_val;
 	(void)res_stat(A_CHR);
     }
 
