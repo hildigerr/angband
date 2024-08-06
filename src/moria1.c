@@ -13,9 +13,6 @@
 #include "angband.h"
 
 
-static void inven_screen(int);
-static void sub1_move_light(int, int, int, int);
-static void sub3_move_light(int, int, int, int);
 
 
 /*

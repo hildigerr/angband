@@ -13,47 +13,6 @@
 #include "angband.h"
 
 
-static void correct_dir(int *, int *, int, int, int, int);
-static void rand_dir(int *, int *);
-static void fill_cave(int);
-static void place_streamer(int, int);
-static cave_type *test_place_obj(int, int);
-static void place_open_door(int, int);
-static void place_broken_door(int, int);
-static void place_closed_door(int, int);
-static void place_locked_door(int, int);
-static void place_stuck_door(int, int);
-static void place_secret_door(int, int);
-static void place_door(int, int);
-static void place_up_stairs(int, int);
-static void place_down_stairs(int, int);
-static void place_stairs(int, int, int);
-static void vault_trap(int, int, int, int, int);
-static void vault_monster(int, int, int);
-static void vault_jelly(int, int);
-static void vault_orc(int, int, int);
-static void vault_troll(int, int, int);
-static void vault_undead(int, int);
-static void vault_dragon(int, int, int, int);
-static void vault_demon(int, int, int);
-static void vault_giant(int, int, int);
-static void build_room(int, int);
-static void build_type1(int, int);
-static void build_type5(int, int);
-static void build_type2(int, int);
-static void build_type3(int, int);
-static void vault_nasty(int, int, int, int, int);
-static void special_pit(int, int, int);
-static void build_tunnel(int, int, int, int);
-static int next_to(int, int);
-static void try_door(int, int);
-static void build_pit(int, int);
-static void build_store(int, int, int);
-static void place_boundary();
-static void place_destroyed();
-static void blank_cave();
-static void cave_gen();
-static void town_gen();
 
 typedef struct coords {
     int x, y;

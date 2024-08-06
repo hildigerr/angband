@@ -55,11 +55,6 @@ struct passwd      *getpwuid();
 #endif
 #endif
 
-static char *center_string(char *, const char *);
-static void  print_tomb(void);
-static void  kingly(void);
-
-
 #if !defined(time_t)
 #define time_t long
 #endif

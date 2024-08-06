@@ -13,11 +13,6 @@
 #include "angband.h"
 
 
-static void py_attack(int, int);
-static void inven_throw(int, struct inven_type *);
-static void facts(struct inven_type *, int *, int *, int *, int *, int *);
-static void py_bash(int, int);
-static int fearless(monster_race *);
 
 
 /*
