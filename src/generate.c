@@ -231,14 +231,13 @@ static void alloc_object(int set, int typ, int num)
 	    y = rand_int(cur_height);
 	    x = rand_int(cur_width);
 
+	    /* Require "naked" floor grid */
+	    if (!naked_grid_bold(y, x)) continue;
+
 	    if ((set == ALLOC_SET_CORR) && (cave[y][x].fval == CORR_FLOOR || cave[y][x].fval == BLOCKED_FLOOR)) continue;
 
 	    if ((set == ALLOC_SET_ROOM) && ((cave[y][x].fval == DARK_FLOOR) || (cave[y][x].fval == LIGHT_FLOOR) ||
 	    (cave[y][x].fval == NT_DARK_FLOOR) || (cave[y][x].fval == NT_LIGHT_FLOOR))) continue;
-
-	    if ((set == ALLOC_SET_BOTH) && (cave[y][x].fval < MIN_WALL)) continue;
-
-	    if ((cave[y][x].i_idx != 0) || (y == char_row && x == char_col)) continue;
 
 	    /* Accept it */
 	    break;
