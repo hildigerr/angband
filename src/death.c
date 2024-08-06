@@ -79,26 +79,55 @@ struct _high_score {
 static int highscore_fd = -1;
 
 
+static errr highscore_open(void)
+{
+    int fd;
+
+    /* Permissions for file */
+    int mode = 0666;
+    
+#ifdef SET_UID
+    /* Reduce the permissions */
+    mode = 0644;
+#endif
+
+    /* Open (or create) a file, for reading/writing */
+    fd = my_topen(ANGBAND_TOP, O_RDWR | O_CREAT, mode);
+
+    /* Save the fd */
+    highscore_fd = fd;
+
+    /* Check for success */
+    if (fd >= 0) return (0);
+
+
+    /* Warning message */
+    plog_fmt("cannot create the '%s' score file", ANGBAND_TOP);
+
+    /* Abort */
+    quit("fatal error attempting to access the Angband 'lib' directory");
+
+    /* Failure */
+    return (1);
+}
+
+
 /*
  * Open the score file while we still have the setuid privileges.
  * Later when the score is being written out, you must be sure
  * to flock the file so we don't have multiple people trying to
  * write to it at the same time.
  *
+ * Notice that a failure to open the high score file often indicates
+ * incorrect directory structure or starting directory or permissions.
+ *
  * Note that a LOT of functions in this file assume that this
  * function call will succeed, so if not, we quit.
  */
 void init_scorefile()
 {
-#ifdef SET_UID
-    if (1 > (highscore_fd = my_topen(ANGBAND_TOP, O_RDWR | O_CREAT, 0644)))
-#else
-    if (1 > (highscore_fd = my_topen(ANGBAND_TOP, O_RDWR | O_CREAT, 0666)))
-#endif
-    {
-    (void)fprintf(stderr, "Can't open score file \"%s\"\n", ANGBAND_TOP);
-    quit(NULL);
-    }
+    /* Open the scorefile */
+    (void)highscore_open();
 }
 
 
@@ -450,7 +479,7 @@ static char *center_string(char *centered_str, cptr in_str)
 void display_scores(int from, int to)
 {
     register int i = 0, j, k, l;
-    int          fd;
+    int          fd = highscore_fd;
     high_score  score;
 
 /* MAX_SAVE_HISCORES scores, 2 lines per score */
@@ -464,15 +493,6 @@ void display_scores(int from, int to)
 	to = 20;
     if (to > MAX_SAVE_HISCORES)
 	to = MAX_SAVE_HISCORES;
-#ifdef SET_UID
-    if (1 > (fd = my_topen(ANGBAND_TOP, O_RDONLY | O_CREAT, 0644))) {
-#else
-    if (1 > (fd = my_topen(ANGBAND_TOP, O_RDONLY | O_CREAT, 0666))) {
-#endif
-	(void)sprintf(string, "Error opening score file \"%s\"\n", ANGBAND_TOP);
-	prt(string, 0, 0);
-	return;
-    }
     while (0 < read(fd, (char *)&score, sizeof(high_score))) {
 	if (score.uid != -1 && getpwuid(score.uid) != NULL)
 	    (void)sprintf(hugebuffer, "%3d) %-7ld %s the %s %s (Level %d), played by %s",
