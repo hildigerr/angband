@@ -213,6 +213,30 @@ static errr highscore_chop(int i)
 
 
 /*
+ * Read one score from the highscore file
+ */
+static errr highscore_read(high_score *score)
+{
+    int num;
+
+    /* Paranoia -- it may not have opened */
+    if (highscore_fd < 0) return (1);
+    
+    /* Read a record, note failure */
+    num = read(highscore_fd, (char*)(score), sizeof(high_score));
+
+    /* Nothing read, means end of file */
+    if (!num) return (1);
+
+    /* Partial read, means major error */
+    if (num != sizeof(high_score)) return (-1);
+
+    /* Success */
+    return (0);
+}
+
+
+/*
  * Open the score file while we still have the setuid privileges.
  * Later when the score is being written out, you must be sure
  * to flock the file so we don't have multiple people trying to
@@ -579,7 +603,6 @@ static char *center_string(char *centered_str, cptr in_str)
 void display_scores(int from, int to)
 {
     register int i = 0, j, k, l;
-    int          fd = highscore_fd;
     high_score  score;
 
 /* MAX_SAVE_HISCORES scores, 2 lines per score */
@@ -593,7 +616,7 @@ void display_scores(int from, int to)
 	to = 20;
     if (to > MAX_SAVE_HISCORES)
 	to = MAX_SAVE_HISCORES;
-    while (0 < read(fd, (char *)&score, sizeof(high_score))) {
+    while (!highscore_read(&score)) {
 	if (score.uid != -1 && getpwuid(score.uid) != NULL)
 	    (void)sprintf(hugebuffer, "%3d) %-7ld %s the %s %s (Level %d), played by %s",
 			  i / 2 + 1,
@@ -875,7 +898,7 @@ static errr top_twenty(void)
     i = 0;
     highscore_seek(0);
     while ((i < MAX_SAVE_HISCORES)
-    && (0 != read(highscore_fd, (char *)&scores[i], sizeof(high_score)))) {
+    && (!highscore_read(&scores[i]))) {
 	i++;
     }
 
@@ -944,7 +967,7 @@ void delete_entry(int which)
     i = 0;
     highscore_seek(0);
     while ((i < MAX_SAVE_HISCORES) &&
-	 (0 != read(highscore_fd, (char *)&scores[i], sizeof(high_score))))
+	 (!highscore_read(&scores[i])))
 	i++;
 
     if (i >= which) {
