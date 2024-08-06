@@ -196,6 +196,23 @@ static int highscore_seek(int i)
 
 
 /*
+ * Chop all scores from 'i' on from the highscore file
+ */
+static errr highscore_chop(int i)
+{
+    /* Paranoia -- it may not have opened */
+    if (highscore_fd < 0) return (1);
+    
+#if defined(sun) || defined(ultrix) || defined(NeXT)
+    ftruncate(highscore_fd, i * sizeof(high_score));
+#endif
+
+    /* Success */
+    return (0);
+}
+
+
+/*
  * Open the score file while we still have the setuid privileges.
  * Later when the score is being written out, you must be sure
  * to flock the file so we don't have multiple people trying to
@@ -932,9 +949,7 @@ void delete_entry(int which)
 
     if (i >= which) {
 
-#if defined(sun) || defined(ultrix) || defined(NeXT)
-	ftruncate(highscore_fd, 0);
-#endif
+	highscore_chop(0);
 
 /* If its the first score, or it gets appended to the file */
 	highscore_seek(0);
