@@ -237,6 +237,27 @@ static errr highscore_read(high_score *score)
 
 
 /*
+ * Write one score to the highscore file
+ */
+static int highscore_write(high_score *score)
+{
+    int num;
+    
+    /* Paranoia -- it may not have been opened */
+    if (highscore_fd < 0) return (1);
+    
+    /* Write the record */
+    num = write(highscore_fd, (char*)(score), sizeof(high_score));
+
+    /* Fail */
+    if (num != sizeof(high_score)) return (-1);
+    
+    /* Success */
+    return (0);
+}
+
+
+/*
  * Open the score file while we still have the setuid privileges.
  * Later when the score is being written out, you must be sure
  * to flock the file so we don't have multiple people trying to
@@ -911,18 +932,18 @@ static errr top_twenty(void)
 /* If its the first score, or it gets appended to the file */
     if (!i || (i == j && j < MAX_SAVE_HISCORES)) {
 	highscore_seek(j);
-	(void)write(highscore_fd, (char *)&myscore, sizeof(high_score));
+	highscore_write(&myscore);
     } else if (j < i) {
     /* If it gets inserted in the middle */
     /* Bump all the scores up one place */
 	for (k = MY_MIN(i, (MAX_SAVE_HISCORES - 1)); k > j; k--) {
 	    highscore_seek(k);
-	    (void)write(highscore_fd, (char *)&scores[k - 1], sizeof(high_score));
+	    highscore_write(&scores[k - 1]);
 	}
 
     /* Write out your score */
 	highscore_seek(j);
-	(void)write(highscore_fd, (char *)&myscore, sizeof(high_score));
+	highscore_write(&myscore);
     }
 
     /* Unlock the highscore file */
