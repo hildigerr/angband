@@ -888,7 +888,7 @@ void restore_signals(void);
 void corrode_gas(cptr);
 void fire_dam(int, cptr);
 void cold_dam(int, cptr);
-void light_dam(int, cptr);
+void elec_dam(int, cptr);
 void acid_dam(int, cptr);
 void poison_gas(int, cptr);
 bool project(int, int, int, int, int, int, int);

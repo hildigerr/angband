@@ -1262,7 +1262,7 @@ static void make_attack(int m_idx)
 	      /* Lightning attack */
 	      case 8:
 		msg_print("Lightning strikes you!");
-		light_dam(damage, ddesc);
+		elec_dam(damage, ddesc);
 		break;
 
 	      /* Hack -- Corrosion attack (really acid) */

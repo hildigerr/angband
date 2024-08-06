@@ -527,7 +527,7 @@ void acid_dam(int dam, cptr kb_str)
 /*
  * Hurt the player with electricity
  */
-void light_dam(int dam, cptr kb_str)
+void elec_dam(int dam, cptr kb_str)
 {
     if (p_ptr->oppose_elec) dam = dam / 3;
     if (p_ptr->resist_elec) dam = dam / 3;
@@ -1924,7 +1924,7 @@ static bool project_p(int who, int rad, int y, int x, int dam, int typ, int flg)
 	/* Standard damage -- hurts inventory too */
 	case GF_ELEC:
 	    if (fuzzy) msg_print("You are hit by electricity!");
-	    light_dam(dam, killer);
+	    elec_dam(dam, killer);
 	    break;
 
 	/* Standard damage */
