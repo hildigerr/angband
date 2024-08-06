@@ -234,7 +234,7 @@ static void alloc_object(int set, int typ, int num)
 	    /* Require "naked" floor grid */
 	    if (!naked_grid_bold(y, x)) continue;
 
-	    if ((set == ALLOC_SET_CORR) && (cave[y][x].fval == CORR_FLOOR || cave[y][x].fval == BLOCKED_FLOOR)) continue;
+	    if ((set == ALLOC_SET_CORR) && (cave[y][x].fval == CORR_FLOOR) continue;
 
 	    if ((set == ALLOC_SET_ROOM) && ((cave[y][x].fval == DARK_FLOOR) || (cave[y][x].fval == LIGHT_FLOOR) ||
 	    (cave[y][x].fval == NT_DARK_FLOOR) || (cave[y][x].fval == NT_LIGHT_FLOOR))) continue;
@@ -531,7 +531,7 @@ static void place_closed_door(int y, int x)
     c_ptr->i_idx = cur_pos;
     i_ptr = &i_list[cur_pos];
     invcopy(i_ptr, OBJ_CLOSED_DOOR);
-    c_ptr->fval = BLOCKED_FLOOR;
+    c_ptr->fval = CORR_FLOOR;
 }
 
 
@@ -548,10 +548,12 @@ static void place_locked_door(int y, int x)
     c_ptr->i_idx = cur_pos;
     i_ptr = &i_list[cur_pos];
     invcopy(i_ptr, OBJ_CLOSED_DOOR);
-    c_ptr->fval = BLOCKED_FLOOR;
 
     /* Lock the door */
     i_ptr->pval = randint(10) + 10;
+
+    /* Hack -- nuke any walls */
+    c_ptr->fval = CORR_FLOOR;
 }
 
 
@@ -568,10 +570,12 @@ static void place_stuck_door(int y, int x)
     c_ptr->i_idx = cur_pos;
     i_ptr = &i_list[cur_pos];
     invcopy(i_ptr, OBJ_CLOSED_DOOR);
-    c_ptr->fval = BLOCKED_FLOOR;
 
     /* Stick the door */
     i_ptr->pval = (-randint(10) - 10);
+
+    /* Hack -- nuke any walls */
+    c_ptr->fval = CORR_FLOOR;
 }
 
 
@@ -591,7 +595,8 @@ static void place_secret_door(int y, int x)
     /* Put the object in the cave */
     c_ptr->i_idx = cur_pos;
 
-    c_ptr->fval = BLOCKED_FLOOR;
+    /* Hack -- nuke any walls */
+    c_ptr->fval = CORR_FLOOR;
 }
 
 
@@ -2581,9 +2586,11 @@ static void build_tunnel(int row1, int col1, int row2, int col2)
 	    }
 	}
 
-	/* Check for corridor */	
+	/* Check for corridor (or doors/rubble) */	
 	else if (c_ptr->fval == CORR_FLOOR ||
-		 (c_ptr->fval == BLOCKED_FLOOR)) {
+		 (i_list[c_ptr->i_idx].tval == TV_RUBBLE) ||
+		 (i_list[c_ptr->i_idx].tval == TV_CLOSED_DOOR) ||
+		 (i_list[c_ptr->i_idx].tval == TV_SECRET_DOOR)) {
 
 	    row1 = tmp_row;
 	    col1 = tmp_col;

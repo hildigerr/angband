@@ -2485,7 +2485,10 @@ void place_rubble(int y, int x)
     cur_pos = i_pop();
     c_ptr = &cave[y][x];
     c_ptr->i_idx = cur_pos;
-    c_ptr->fval = BLOCKED_FLOOR;
+
+    /* Hack -- nuke any walls */
+    c_ptr->fval = CORR_FLOOR;
+
     invcopy(&i_list[cur_pos], OBJ_RUBBLE);
 }
 

@@ -388,7 +388,6 @@
 #define NT_LIGHT_FLOOR  4
 #define MAX_CAVE_ROOM   4
 #define CORR_FLOOR      5	/* Floor, in a corridor */
-#define BLOCKED_FLOOR   6       /* a corridor space with cl/st/se door or rubble */
 
 #define MIN_WALL	8	/* Hack -- minimum "wall" fval */
 
@@ -838,6 +837,7 @@
 #define TV_UP_STAIR     107	/* Staircase up */
 #define TV_DOWN_STAIR   108	/* Staircase down */
 #define TV_STORE_DOOR   110	/* Entrance to store */
+#define TV_MIN_BLOCK	112	/* This is the first "line of sight blocker" */
 #define TV_SECRET_DOOR  117	/* Secret door -- treated as a "wall" */
 #define TV_CLOSED_DOOR  118	/* Closed door -- treated as a "wall" */
 #define TV_RUBBLE       119	/* Rubble pile -- treated as a "wall" */

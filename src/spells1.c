@@ -838,7 +838,9 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
 		}
 
 		/* Rubble, and (closed) doors go away */
-		if (c_ptr->fval == BLOCKED_FLOOR) {
+		if ((i_ptr->tval == TV_CLOSED_DOOR) ||
+		    (i_ptr->tval == TV_SECRET_DOOR) ||
+		    (i_ptr->tval == TV_RUBBLE)) {
 
 		    do_kill = TRUE;
 		    note_kill = " turns into mud.";
@@ -988,7 +990,6 @@ static bool project_i(int who, int dist, int y, int x, int dam, int typ, int flg
 		i = i_pop();
 
 		/* Make a closed door */
-		c_ptr->fval = BLOCKED_FLOOR;
 		invcopy(&i_list[i], OBJ_CLOSED_DOOR);
 
 		/* Put the door in the cave */

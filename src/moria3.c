@@ -246,7 +246,7 @@ static int look_see(int x, int y, int *transparent)
 	}
 
 	/* Examine rocks. */
-	if ((gl_rock || out_val[0]) && c_ptr->fval >= BLOCKED_FLOOR) {
+	if ((gl_rock || out_val[0]) && (c_ptr->fval >= MIN_WALL)) {
 	    switch (c_ptr->fval) {
 	      case BOUNDARY_WALL:
 	      case GRANITE_WALL:
@@ -1045,7 +1045,6 @@ void do_cmd_close()
 	    /* Hack -- kill the old object */
 	    i_ptr = &i_list[c_ptr->i_idx];
 	    invcopy(i_ptr, OBJ_CLOSED_DOOR);
-	    c_ptr->fval = BLOCKED_FLOOR;
 
 	    /* Redisplay */
 	    lite_spot(y, x);
