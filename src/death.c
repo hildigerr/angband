@@ -934,12 +934,6 @@ static void kingly()
  */
 void exit_game(void)
 {
-
-#ifdef MACINTOSH
-/* Prevent strange things from happening */
-    enablefilemenu(FALSE);
-#endif
-
     /* Flush the messages */
     msg_print(NULL);
 

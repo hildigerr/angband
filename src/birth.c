@@ -970,13 +970,7 @@ void player_birth()
 	    (void)sleep((unsigned)PLAYER_EXIT_PAUSE);
 #else
 #endif
-#ifdef MACINTOSH
-	enablefilemenu(FALSE);
 	exit_game();
-	enablefilemenu(TRUE);
-#else
-	exit_game();
-#endif
     }
     erase_line(23, 0);
 }
