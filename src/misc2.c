@@ -12,9 +12,6 @@
 
 #include "angband.h"
 
-extern int peek;
-extern int rating;
-
 monster_type blank_monster = {0,0,0,0,0,0,0,FALSE,0,FALSE};
 
 /*

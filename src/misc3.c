@@ -18,9 +18,6 @@ char               *index();
 #endif
 
 
-extern int rating;
-
-
 /*
  * Pushs a record back onto free space list		-RAK-
  *

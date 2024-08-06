@@ -22,8 +22,8 @@ typedef struct coords {
 static coords doorstk[100];
 static int    doorindex;
 
-extern int    rating;
-extern int    peek;
+
+
 
 /*
  * Always picks a correct direction		 
