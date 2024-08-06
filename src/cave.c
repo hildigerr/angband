@@ -337,7 +337,7 @@ void lite_spot(int y, int x)
 
 void move_cursor_relative(int row, int col)
 
-#ifdef MAC
+#ifdef MACINTOSH
 {
     /* Real co-ords convert to screen positions */
     row -= panel_row_prt;
@@ -564,7 +564,7 @@ void screen_map(void)
 
     int   row, orow, col, myrow = 0, mycol = 0;
 
-#ifndef MAC
+#ifndef MACINTOSH
     char  prntscrnbuf[80];
 
 #endif
@@ -588,7 +588,7 @@ void screen_map(void)
 
     save_screen();
     clear_screen();
-#ifdef MAC
+#ifdef MACINTOSH
     DSetScreenCursor(0, 0);
     DWriteScreenCharAttr(CH_TL, ATTR_NORMAL);
     for (i = 0; i < MAP_WID; i++)
@@ -607,7 +607,7 @@ void screen_map(void)
 	row = i / RATIO;
 	if (row != orow) {
 	    if (orow >= 0) {
-#ifdef MAC
+#ifdef MACINTOSH
 		DSetScreenCursor(0, orow + 1);
 		DWriteScreenCharAttr(CH_VE, ATTR_NORMAL);
 		DWriteScreenString(map);
@@ -639,7 +639,7 @@ void screen_map(void)
 	}
     }
     if (orow >= 0) {
-#ifdef MAC
+#ifdef MACINTOSH
 	DSetScreenCursor(0, orow + 1);
 	DWriteScreenCharAttr(CH_VE, ATTR_NORMAL);
 	DWriteScreenString(map);
@@ -651,7 +651,7 @@ void screen_map(void)
 
 #endif
     }
-#ifdef MAC
+#ifdef MACINTOSH
     DSetScreenCursor(0, orow + 2);
     DWriteScreenCharAttr(CH_BL, ATTR_NORMAL);
     for (i = 0; i < MAP_WID; i++)
@@ -665,7 +665,7 @@ void screen_map(void)
     (void)addch(CH_BR);
 #endif
 
-#ifdef MAC
+#ifdef MACINTOSH
     DSetScreenCursor(23, 23);
     DWriteScreenStringAttr("Hit any key to continue", ATTR_NORMAL);
     if (mycol > 0)

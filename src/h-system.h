@@ -34,7 +34,7 @@
 # include <fcntl.h>
 #endif
 
-#ifdef MAC
+#ifdef MACINTOSH
 #else
 # ifndef __TURBOC__
 #  include <unistd.h>

@@ -318,7 +318,7 @@ int main(int argc, char *argv[])
     /* Wait for response */
     pause_line(23);
 
-#ifndef MAC
+#ifndef MACINTOSH
     /* On Mac, if -n is passed, no savefile is used */
     /* If -n is not passed, the calling routine will know savefile name,
        hence, this code is not necessary */
@@ -590,7 +590,7 @@ void play_game()
 	/* Process the level */
 	dungeon();
 
-#ifndef MAC
+#ifndef MACINTOSH
 	/* check for eof here, see inkey() in io.c */
 	/* eof can occur if the process gets a HANGUP signal */
 	if (eof_flag)

@@ -23,7 +23,7 @@
 /*
  * OPTION: Compile on a Macintosh with MPW C 3.0
  */
-/* #define MAC */
+/* #define MACINTOSH */
 
 /*
  * OPTION: Compile on a SYS V version of UNIX
@@ -104,7 +104,7 @@
  */
 #undef SET_UID
 #define SET_UID
-#if defined(MAC) || defined(MSDOS) || \
+#if defined(MACINTOSH) || defined(MSDOS) || \
     defined(__MINT__) || defined(__EMX__)
 # undef SET_UID
 #endif
@@ -124,7 +124,7 @@
 /*
  * Lots of systems use USG
  */
-#if defined(MAC) || defined(MSDOS) || \
+#if defined(MACINTOSH) || defined(MSDOS) || \
     defined(SYS_III) || defined(SYS_V) || defined(HPUX) || \
     defined(ATARIST_MWC) || defined (__MINT__)
 # undef USG
@@ -152,7 +152,7 @@
 # undef PATH_SEP
 # define PATH_SEP "."
 #endif
-#ifdef MAC
+#ifdef MACINTOSH
 # undef PATH_SEP
 # define PATH_SEP ":"
 #endif
@@ -160,7 +160,7 @@
 
 
 /* substitute strchr for index on USG versions of UNIX */
-#if defined(SYS_V) || defined(MSDOS) || defined(MAC) || vms
+#if defined(SYS_V) || defined(MSDOS) || defined(MACINTOSH) || vms
 #define index strchr
 #endif
 

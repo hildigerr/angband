@@ -45,7 +45,7 @@
 /*** SHUT MSDOS ***/
 
 # else /* not MSDOS */
-#  if !defined(ATARIST_MWC) && !defined(MAC)
+#  if !defined(ATARIST_MWC) && !defined(MACINTOSH)
 
 /*** OPEN NORMAL ***/
 #   include <signal.h>

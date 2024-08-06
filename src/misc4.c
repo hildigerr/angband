@@ -1314,7 +1314,7 @@ void get_name()
     strcpy(tmp, p_ptr->name);
     prt("Enter your player's name  [press <RETURN> when finished]", 21, 2);
 
-#ifdef MAC
+#ifdef MACINTOSH
 /*
  * Force player to give a name, would be nice to get name from chooser (STR
  * -16096), but that name might be too long 
@@ -1327,7 +1327,7 @@ void get_name()
     }
 #endif
     clear_from(20);
-#ifdef MAC
+#ifdef MACINTOSH
 /* Use the new name to set save file default name. */
     initsavedefaults();
 #endif
@@ -1341,11 +1341,7 @@ void change_name()
 {
     register char c;
     register int  flag;
-
-#ifndef MAC
     vtype         temp;
-
-#endif
 
     display_player();
 
@@ -1361,7 +1357,7 @@ void change_name()
 	    break;
 
 	  case 'f':
-#ifdef MAC
+#ifdef MACINTOSH
 	    if (file_character()) flag = TRUE;
 #else
 	    prt("File name:", 0, 0);

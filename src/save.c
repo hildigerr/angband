@@ -34,7 +34,7 @@
 #endif
 
 #if !defined(ATARIST_MWC)
-#ifdef MAC
+#ifdef MACINTOSH
 #else
 long time();
 
@@ -2471,7 +2471,7 @@ closefiles:
     /* Allow suspend again */
     signals();
 
-#ifdef MAC
+#ifdef MACINTOSH
     *exit_flag = TRUE;
 #else
     exit_game();

@@ -17,10 +17,10 @@
 # include <sys/file.h>
 #endif
 
+#if !defined(MACINTOSH) && !defined(ATARIST_MWC)
 # ifdef MSDOS
 #  include <io.h>
 # else
-#  if !defined(ATARIST_MWC) && !defined(MAC)
 #  ifndef VMS
 #   include <pwd.h>
 #  else
@@ -40,7 +40,7 @@
 #endif
 
 #ifndef VMS
-#ifndef MAC
+#ifndef MACINTOSH
 #if defined(ultrix) || defined(USG)
 void                perror();
 void                exit();
@@ -48,7 +48,7 @@ void                exit();
 #endif
 #endif
 
-#ifndef MAC
+#ifndef MACINTOSH
 #ifdef SYS_V
 struct passwd      *getpwuid();
 
@@ -935,7 +935,7 @@ static void kingly()
 void exit_game(void)
 {
 
-#ifdef MAC
+#ifdef MACINTOSH
 /* Prevent strange things from happening */
     enablefilemenu(FALSE);
 #endif

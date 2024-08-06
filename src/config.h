@@ -86,15 +86,8 @@
 
 
 
-#ifdef MAC
-#ifdef RSRC
-#define MACRSRC		/* i.e., we're building the resources */
-#else
-#define MACGAME		/* i.e., we're building the game */
-#endif
-#endif
 
-#ifdef MAC
+#ifdef MACINTOSH
 /* Screen dimensions */
 #define SCRN_ROWS	24
 #define SCRN_COLS	80

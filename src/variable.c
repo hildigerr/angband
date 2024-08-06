@@ -167,7 +167,7 @@ vtype died_from;
 /* The savefile to use. */
 vtype savefile;
 
-#ifdef MAC
+#ifdef MACINTOSH
 cave_type (*cave)[MAX_WIDTH];
 #else
 cave_type cave[MAX_HEIGHT][MAX_WIDTH];

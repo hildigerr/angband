@@ -17,7 +17,7 @@
 
 /* Signals have no significance on the Mac */
 
-#ifdef MAC
+#ifdef MACINTOSH
 
 void 
 signals_ignore_tstp()

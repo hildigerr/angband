@@ -342,7 +342,7 @@ extern u16b target_col;
 #endif
 
 /*  Following are all floor definitions				*/
-#ifdef MAC
+#ifdef MACINTOSH
 extern cave_type (*cave)[MAX_WIDTH];
 #else
 extern cave_type cave[MAX_HEIGHT][MAX_WIDTH];
@@ -352,7 +352,7 @@ extern cave_type cave[MAX_HEIGHT][MAX_WIDTH];
 extern player_type *p_ptr;
 
 
-#ifdef MACGAME
+#ifdef MACINTOSH
 extern char *(*player_title)[MAX_PLAYER_LEVEL];
 extern player_race *race;
 extern player_background *background;
@@ -373,7 +373,7 @@ extern player_class class[MAX_CLASS];
 extern s16b class_level_adj[MAX_CLASS][MAX_LEV_ADJ];
 
 /* Warriors don't have spells, so there is no entry for them. */
-#ifdef MACGAME
+#ifdef MACINTOSH
 extern spell_type (*magic_spell)[63];
 #else
 extern spell_type magic_spell[MAX_CLASS-1][63];
@@ -394,13 +394,13 @@ extern s16b total_winner;
 
 /*** Store information ***/
 
-#ifdef MAC
+#ifdef MACINTOSH
 extern store_type *store;
 #else
 extern store_type store[MAX_STORES];
 #endif
 
-#ifndef MAC
+#ifndef MACINTOSH
 extern int (*store_buy[MAX_STORES])();
 #endif
 
@@ -430,7 +430,7 @@ extern s16b i_max;
 extern inven_type i_list[MAX_I_IDX];
 
 /* The array of object types */
-#ifdef MACGAME
+#ifdef MACINTOSH
 extern inven_kind *k_list;
 #else
 extern inven_kind k_list[MAX_K_IDX];
@@ -443,7 +443,7 @@ extern inven_xtra *x_list;
 /* Following are creature arrays and variables			*/
 
 /* The array of monster races */
-#ifdef MACGAME
+#ifdef MACINTOSH
 extern monster_race *r_list;
 #else
 extern monster_race r_list[MAX_R_IDX];
@@ -452,7 +452,7 @@ extern monster_race r_list[MAX_R_IDX];
 extern monster_type m_list[MAX_M_IDX];
 extern s16b r_level[MAX_R_LEV+1];
 extern monster_attack a_list[MAX_A_IDX];	/* Monster attacks */
-#ifdef MAC
+#ifdef MACINTOSH
 extern monster_lore *l_list;
 #else
 extern monster_lore l_list[MAX_R_IDX];	/* Monster memories. -CJS- */
@@ -868,7 +868,7 @@ char *setstate(char *);
 #endif
 
 /* save.c */
-#ifdef MAC
+#ifdef MACINTOSH
 int save_player(int);
 #else
 int save_player(void);

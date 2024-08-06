@@ -12,7 +12,7 @@
 
 
 #if !defined(GEMDOS)
-#ifdef MAC
+#ifdef MACINTOSH
 #include <scrnmgr.h>
 #endif
 #endif
@@ -20,17 +20,17 @@
 #include "angband.h"
 
 #if !defined(MSDOS)
-#if !defined(ATARIST_MWC) && !defined(MAC)
+#if !defined(ATARIST_MWC) && !defined(MACINTOSH)
 #include <signal.h>
 #endif
 #endif
 
-#ifndef MAC
+#ifndef MACINTOSH
 static WINDOW *savescr;	   /* Spare window for saving the screen.
 				    * -CJS- */
 #endif
 
-#ifdef MAC
+#ifdef MACINTOSH
 /* Attributes of normal and hilighted characters */
 #define ATTR_NORMAL	attrNormal
 #define ATTR_HILITED	attrReversed
@@ -45,7 +45,7 @@ void bell()
     /* Flush the output */
     put_qio();
 
-#ifdef MAC
+#ifdef MACINTOSH
     mac_beep();
 #else
     (void)write(1, "\007", 1);
@@ -59,7 +59,7 @@ void bell()
  */
 void move_cursor(int row, int col)
 {
-#ifdef MAC
+#ifdef MACINTOSH
     DSetScreenCursor(col, row);
 #else
     (void)move(row, col);
@@ -69,7 +69,7 @@ void move_cursor(int row, int col)
 
 
 
-#ifdef MAC
+#ifdef MACINTOSH
 
 /* initializes curses routines */
 void init_curses()
@@ -91,7 +91,7 @@ void init_curses()
 /* Dump IO to buffer					-RAK-	 */
 void put_str(cptr out_str, int row, int col)
 
-#ifdef MAC
+#ifdef MACINTOSH
 {
 /* The screen manager handles writes past the edge ok */
     DSetScreenCursor(col, row);
@@ -150,7 +150,7 @@ void put_qio()
  */
 char inkey()
 {
-#ifdef MAC
+#ifdef MACINTOSH
 /* The Mac does not need ^R, so it just consumes it */
 /* This routine does nothing special with direction keys */
 /* Just returns their keypad ascii value (e.g. '0'-'9') */
@@ -217,7 +217,7 @@ char inkey()
 }
 
 
-#ifdef MAC
+#ifdef MACINTOSH
 char inkeydir()
 /* The Mac does not need ^R, so it just consumes it */
 /* This routine translates the direction keys in rogue-like mode */
@@ -271,7 +271,7 @@ char inkeydir()
 /* Flush the buffer					-RAK-	 */
 void flush()
 {
-#ifdef MAC
+#ifdef MACINTOSH
 /* Removed put_qio() call.  Reduces flashing.  Doesn't seem to hurt. */
     FlushScreenKeys();
 #else
@@ -299,7 +299,7 @@ void flush()
 /* Clears given line of text				-RAK-	 */
 void erase_line(int row, int col)
 {
-#ifdef MAC
+#ifdef MACINTOSH
     Rect line;
 
     if (row == MSG_LINE && msg_flag)
@@ -323,7 +323,7 @@ void erase_line(int row, int col)
 /* Clears screen */
 void clear_screen()
 {
-#ifdef MAC
+#ifdef MACINTOSH
     Rect area;
 
     if (msg_flag)
@@ -345,7 +345,7 @@ void clear_screen()
 
 void clear_from(int row)
 {
-#ifdef MAC
+#ifdef MACINTOSH
     Rect area;
 
     area.left = 0;
@@ -405,7 +405,7 @@ void count_msg_print(cptr p)
 /* Outputs a line to a given y, x position		-RAK-	 */
 void prt(cptr str_buff, int row, int col)
 {
-#ifdef MAC
+#ifdef MACINTOSH
     Rect line;
 
     if (row == MSG_LINE && msg_flag)
@@ -527,7 +527,7 @@ int get_check(cptr prompt)
 
     prt(prompt, 0, 0);
 
-#ifdef MAC
+#ifdef MACINTOSH
     GetScreenCursor(&x, &y);
 #else
     getyx(stdscr, y, x);
@@ -544,7 +544,7 @@ int get_check(cptr prompt)
 #else
 	(void)move(0, 73);
 #endif
-#ifdef MAC
+#ifdef MACINTOSH
     DWriteScreenStringAttr(" [y/n]", ATTR_NORMAL);
 #else
     (void)addstr(" [y/n]");
@@ -578,7 +578,7 @@ int get_com(cptr prompt, char *command)
     return (*command != 0 && *command != ESCAPE);
 }
 
-#ifdef MAC
+#ifdef MACINTOSH
 /* Same as get_com(), but translates direction keys from keypad */
 int get_comdir(char *prompt, char *command)
 {
@@ -645,7 +645,7 @@ int get_string(char *buf, int row, int col, int len)
 	    if (!isprint(i) || col > x2)
 		bell();
 	    else {
-#ifdef MAC
+#ifdef MACINTOSH
 		DSetScreenCursor(col, row);
 		DWriteScreenCharAttr((char)i, ATTR_NORMAL);
 #else
@@ -689,7 +689,7 @@ void pause_line(int prt_line)
 
 void save_screen()
 {
-#ifdef MAC
+#ifdef MACINTOSH
     mac_save_screen();
 #else
     overwrite(stdscr, savescr);
@@ -698,7 +698,7 @@ void save_screen()
 
 void restore_screen()
 {
-#ifdef MAC
+#ifdef MACINTOSH
     mac_restore_screen();
 #else
     overwrite(savescr, stdscr);

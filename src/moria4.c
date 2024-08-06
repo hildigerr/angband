@@ -446,7 +446,7 @@ int get_a_dir(cptr prompt, int *dir, int mode)
 	    }
 
 	save = command_rep;	   /* Don't end a counted command. -CJS- */
-#ifdef MAC
+#ifdef MACINTOSH
 	    if (!get_comdir(pbuf, &command)) command = ESCAPE;
 #else
 	    if (!get_com(pbuf, &command)) command = ESCAPE;
