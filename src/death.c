@@ -39,13 +39,6 @@
 #endif
 #endif
 
-#ifndef VMS
-#ifndef MACINTOSH
-#if defined(ultrix) || defined(USG)
-void                exit();
-#endif
-#endif
-#endif
 
 #ifndef MACINTOSH
 #ifdef SYS_V
@@ -85,6 +78,9 @@ struct _high_score {
  * Later when the score is being written out, you must be sure
  * to flock the file so we don't have multiple people trying to
  * write to it at the same time.
+ *
+ * Note that a LOT of functions in this file assume that this
+ * function call will succeed, so if not, we quit.
  */
 void init_scorefile()
 {
@@ -95,7 +91,7 @@ void init_scorefile()
 #endif
     {
     (void)fprintf(stderr, "Can't open score file \"%s\"\n", ANGBAND_TOP);
-    exit(1);
+    quit(NULL);
     }
 }
 
@@ -141,7 +137,7 @@ void read_times(void)
     else {
 	restore_term();
 	(void)fprintf(stderr, "There is no hours file \"%s\".\nPlease inform the wizard, %s, so he can correct this!\n", ANGBAND_HOURS, WIZARD);
-	exit(1);
+	exit_game();
     }
 
 /* Check the hours, if closed	then exit. */
@@ -711,27 +707,21 @@ static errr top_twenty(void)
     /* Wizard-mode pre-empts scoring */
     if (wizard || to_be_wizard) {
 	display_scores(0, 10);
-	(void)save_player();
-	restore_term();
-	exit(0);
+	return (0);
     }
 
     /* Interupted */    
     if (!total_winner && !stricmp(died_from, "Interrupting")) {
 	msg_print("Score not registered due to interruption.");
 	display_scores(0, 10);
-	(void)save_player();
-	restore_term();
-	exit(0);
+	return (0);
     }
 
     /* Quitter */
     if (!total_winner && !stricmp(died_from, "Quitting")) {
 	msg_print("Score not registered due to quitting.");
 	display_scores(0, 10);
-	(void)save_player();
-	restore_term();
-	exit(0);
+	return (0);
     }
 
     myscore.points = total_points();
