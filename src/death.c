@@ -113,6 +113,54 @@ static errr highscore_open(void)
 
 
 /*
+ * Lock the highscore file
+ */
+static errr highscore_lock(void)
+{
+    int oops;
+
+    /* Paranoia -- it may not have opened */
+    if (highscore_fd < 0) return (1);
+
+/* First, get a lock on the high score file so no-one else tries */
+/* to write to it while we are using it */
+/* added sys_v call to lockf - cba */
+
+#ifdef USG
+    oops = (lockf(highscore_fd, F_LOCK, 0) != 0);
+#else
+    oops = (0 != flock(highscore_fd, LOCK_EX));
+#endif
+
+    /* Trouble */
+    if (oops) return (1);
+
+    /* Success */
+    return (0);
+}
+
+
+/*
+ * Unlock the highscore file
+ */
+static errr highscore_unlock()
+{
+    /* Paranoia -- it may not have opened */
+    if (highscore_fd < 0) return (1);
+
+/* added usg lockf call - cba */
+#ifdef USG
+    lockf(highscore_fd, F_ULOCK, 0);
+#else
+    (void)flock(highscore_fd, LOCK_UN);
+#endif
+
+    /* Success */
+    return (0);
+}
+
+
+/*
  * Open the score file while we still have the setuid privileges.
  * Later when the score is being written out, you must be sure
  * to flock the file so we don't have multiple people trying to
@@ -766,16 +814,8 @@ static errr top_twenty(void)
     myscore.died_from[strlen(died_from)] = '\0';
 /* Get rid of '.' at end of death description */
 
-/* First, get a lock on the high score file so no-one else tries */
-/* to write to it while we are using it */
-/* added sys_v call to lockf - cba */
-#ifdef USG
-    if (lockf(highscore_fd, F_LOCK, 0) != 0)
-#else
-    if (0 != flock(highscore_fd, LOCK_EX))
-#endif
-
-    {
+    /* Lock the highscore file, or fail */
+    if (highscore_lock()) {
 	plog("Error gaining lock for score file");
 	exit_game();
     }
@@ -814,12 +854,9 @@ static errr top_twenty(void)
 	(void)write(highscore_fd, (char *)&myscore, sizeof(high_score));
     }
 
-/* added usg lockf call - cba */
-#ifdef USG
-    lockf(highscore_fd, F_ULOCK, 0);
-#else
-    (void)flock(highscore_fd, LOCK_UN);
-#endif
+    /* Unlock the highscore file */
+    highscore_unlock();
+
     (void)close(highscore_fd);
 
     if (j < 10) {
