@@ -14,8 +14,6 @@ SRCS = \
   misc1.c misc2.c misc3.c misc4.c moria1.c moria2.c moria3.c moria4.c \
   spells1.c spells2.c cave.c desc.c tables.c variable.c \
   store.c recall.c wizard.c \
-  sets.c eat.c player.c \
-  potions.c staffs.c wands.c scrolls.c rods.c \
   random.c z-util.c z-virt.c z-form.c
 
 OBJS = \
@@ -25,8 +23,6 @@ OBJS = \
   misc1.o misc2.o misc3.o misc4.o moria1.o moria2.o moria3.o moria4.o \
   spells1.o spells2.o cave.o desc.o tables.o variable.o \
   store.o recall.o wizard.o \
-  sets.o eat.o player.o \
-  potions.o staffs.o wands.o scrolls.o rods.o \
   random.o z-util.o z-virt.o z-form.o
 
 
@@ -127,21 +123,6 @@ angband: $(OBJS)
 depend:
 	makedepend -D__MAKEDEPEND__ $(SRCS)
 
-####
-# verify that the monsters.c and describe_mon.c files correspond
-
-check:
-	@/bin/rm -f temp1 temp2
-	@egrep '^{' monsters.c | awk -F\" '{print $$2}' > temp1
-	@egrep '^{' describe_mon.c | awk -F\" '{print $$2}' > temp2
-	@echo Monster name problems present:
-	@diff -c1 temp1 temp2
-
-query:
-	@echo "Monsters.c:"
-	egrep '^{"' monsters.c | wc -l
-	@echo "Describe_Mon.c:"
-	egrep '^{"' describe_mon.c | wc -l
 
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
