@@ -13,9 +13,6 @@
 #include "angband.h"
 
 
-#ifdef ATARIST_MWC
-char               *index();
-#endif
 
 
 /*
