@@ -113,6 +113,25 @@ static errr highscore_open(void)
 
 
 /*
+ * Close the highscore file
+ */
+static errr highscore_close()
+{
+    /* Already closed */
+    if (highscore_fd < 0) return (1);
+
+    /* All done */
+    (void)close(highscore_fd);
+
+    /* No fd */
+    highscore_fd = -1;
+
+    /* Success */
+    return (0);
+}
+
+
+/*
  * Lock the highscore file
  */
 static errr highscore_lock(void)
@@ -857,7 +876,7 @@ static errr top_twenty(void)
     /* Unlock the highscore file */
     highscore_unlock();
 
-    (void)close(highscore_fd);
+    highscore_close();
 
     if (j < 10) {
 	display_scores(0, 10);
