@@ -42,7 +42,6 @@
 #ifndef VMS
 #ifndef MACINTOSH
 #if defined(ultrix) || defined(USG)
-void                perror();
 void                exit();
 #endif
 #endif
@@ -761,7 +760,7 @@ static errr top_twenty(void)
 #endif
 
     {
-	perror("Error gaining lock for score file");
+	plog("Error gaining lock for score file");
 	exit_game();
     }
 /* Check to see if this score is a high one and where it goes */
@@ -837,7 +836,7 @@ void delete_entry(int which)
     if (0 != flock(highscore_fd, LOCK_EX))
 #endif
     {
-	perror("Error gaining lock for score file");
+	plog("Error gaining lock for score file");
 	exit_game();
     }
 /* Check to see if this score is a high one and where it goes */
