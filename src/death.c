@@ -33,10 +33,8 @@
 # include <sys/file.h>
 #endif
 
-#if defined(USG) || defined(VMS)
 #ifndef L_SET
 # define L_SET 0
-#endif
 #endif
 
 
@@ -173,6 +171,24 @@ static errr highscore_unlock()
 #else
     (void)flock(highscore_fd, LOCK_UN);
 #endif
+
+    /* Success */
+    return (0);
+}
+
+
+/*
+ * Seek score 'i' in the highscore file
+ */
+static int highscore_seek(int i)
+{
+    long p = (long)(i) * sizeof(high_score);
+    
+    /* Paranoia -- it may not have opened */
+    if (highscore_fd < 0) return (1);
+    
+    /* Seek for the requested record */
+    if (lseek(highscore_fd, p, L_SET) < 0) return (2);
 
     /* Success */
     return (0);
@@ -840,11 +856,7 @@ static errr top_twenty(void)
     }
 /* Check to see if this score is a high one and where it goes */
     i = 0;
-#ifndef BSD4_3
-    (void)lseek(highscore_fd, (long)0, L_SET);
-#else
-    (void)lseek(highscore_fd, (off_t) 0, L_SET);
-#endif
+    highscore_seek(0);
     while ((i < MAX_SAVE_HISCORES)
     && (0 != read(highscore_fd, (char *)&scores[i], sizeof(high_score)))) {
 	i++;
@@ -858,18 +870,18 @@ static errr top_twenty(void)
 
 /* If its the first score, or it gets appended to the file */
     if (!i || (i == j && j < MAX_SAVE_HISCORES)) {
-	(void)lseek(highscore_fd, (long)(j * sizeof(high_score)), L_SET);
+	highscore_seek(j);
 	(void)write(highscore_fd, (char *)&myscore, sizeof(high_score));
     } else if (j < i) {
     /* If it gets inserted in the middle */
     /* Bump all the scores up one place */
 	for (k = MY_MIN(i, (MAX_SAVE_HISCORES - 1)); k > j; k--) {
-	    (void)lseek(highscore_fd, (long)(k * sizeof(high_score)), L_SET);
+	    highscore_seek(k);
 	    (void)write(highscore_fd, (char *)&scores[k - 1], sizeof(high_score));
 	}
 
     /* Write out your score */
-	(void)lseek(highscore_fd, (long)(j * sizeof(high_score)), L_SET);
+	highscore_seek(j);
 	(void)write(highscore_fd, (char *)&myscore, sizeof(high_score));
     }
 
@@ -913,7 +925,7 @@ void delete_entry(int which)
     }
 /* Check to see if this score is a high one and where it goes */
     i = 0;
-    (void)lseek(highscore_fd, (off_t) 0, L_SET);
+    highscore_seek(0);
     while ((i < MAX_SAVE_HISCORES) &&
 	 (0 != read(highscore_fd, (char *)&scores[i], sizeof(high_score))))
 	i++;
@@ -925,7 +937,7 @@ void delete_entry(int which)
 #endif
 
 /* If its the first score, or it gets appended to the file */
-	lseek(highscore_fd, 0, L_SET);
+	highscore_seek(0);
 	if (which > 0)
 	    write(highscore_fd, (char *)&scores[0],
 		  (which - 1) * sizeof(high_score));
