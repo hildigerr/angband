@@ -74,6 +74,12 @@ struct _high_score {
 
 
 /*
+ * The "highscore" file descriptor
+ */
+static int highscore_fd = -1;
+
+
+/*
  * Open the score file while we still have the setuid privileges.
  * Later when the score is being written out, you must be sure
  * to flock the file so we don't have multiple people trying to
