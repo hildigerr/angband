@@ -257,6 +257,30 @@ static int highscore_write(high_score *score)
 }
 
 
+
+/*
+ * Just determine where a new score *would* be placed
+ * Return the location (0 is best) or -1 on failure
+ */
+static int highscore_where(high_score *score)
+{
+    int			i;
+    high_score		the_score;
+
+    /* Go to the start of the highscore file */
+    if (highscore_seek(0)) return (-1);
+
+    /* Read until we get to a higher score */
+    for (i = 0; i < MAX_SAVE_HISCORES; i++) {
+	if (highscore_read(&the_score)) return (i);
+	if (the_score.pts < score->pts) return (i);
+    }
+
+    /* The "last" entry is always usable */
+    return (MAX_SAVE_HISCORES - 1);
+}
+
+
 /*
  * Open the score file while we still have the setuid privileges.
  * Later when the score is being written out, you must be sure
@@ -923,10 +947,7 @@ static errr top_twenty(void)
 	i++;
     }
 
-    j = 0;
-    while (j < i && (scores[j].points >= myscore.points)) {
-	j++;
-    }
+    j = highscore_where(&myscore);
 /* i is now how many scores we have, and j is where we put this score */
 
 /* If its the first score, or it gets appended to the file */
