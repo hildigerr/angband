@@ -280,6 +280,50 @@ static int highscore_where(high_score *score)
     return (MAX_SAVE_HISCORES - 1);
 }
 
+ 
+/*
+ * Actually place an entry into the high score file
+ * Return the location (0 is best) or -1 on "failure"
+ */
+static int highscore_add(high_score *score)
+{
+    int			i, slot;
+    bool		done = FALSE;
+	
+    high_score		the_score, tmpscore;
+
+
+    /* Determine where the score should go */
+    slot = highscore_where(score);
+
+    /* Hack -- Not on the list */
+    if (slot < 0) return (-1);
+        
+    /* Hack -- prepare to dump the new score */
+    the_score = (*score);
+    
+    /* Slide all the scores down one */
+    for (i = slot; !done && (i < MAX_SAVE_HISCORES); i++) {
+
+	/* Read the old guy, note errors */
+	if (highscore_seek(i)) return (-1);
+	if (highscore_read(&tmpscore)) done = TRUE;
+	
+	/* Back up and dump the score we were holding */
+	if (highscore_seek(i)) return (-1);
+	if (highscore_write(&the_score)) return (-1);
+
+	/* Hack -- Save the old score, for the next pass */
+	the_score = tmpscore;
+    }
+
+    /* Return location used */
+    return (slot);
+}
+
+ 
+
+
 
 /*
  * Open the score file while we still have the setuid privileges.
@@ -939,33 +983,8 @@ static errr top_twenty(void)
 	plog("Error gaining lock for score file");
 	exit_game();
     }
-/* Check to see if this score is a high one and where it goes */
-    i = 0;
-    highscore_seek(0);
-    while ((i < MAX_SAVE_HISCORES)
-    && (!highscore_read(&scores[i]))) {
-	i++;
-    }
-
-    j = highscore_where(&myscore);
-/* i is now how many scores we have, and j is where we put this score */
-
-/* If its the first score, or it gets appended to the file */
-    if (!i || (i == j && j < MAX_SAVE_HISCORES)) {
-	highscore_seek(j);
-	highscore_write(&myscore);
-    } else if (j < i) {
-    /* If it gets inserted in the middle */
-    /* Bump all the scores up one place */
-	for (k = MY_MIN(i, (MAX_SAVE_HISCORES - 1)); k > j; k--) {
-	    highscore_seek(k);
-	    highscore_write(&scores[k - 1]);
-	}
-
-    /* Write out your score */
-	highscore_seek(j);
-	highscore_write(&myscore);
-    }
+    /* Add a new entry to the score list, see where it went */
+    j = highscore_add(&the_score);
 
     /* Unlock the highscore file */
     highscore_unlock();
