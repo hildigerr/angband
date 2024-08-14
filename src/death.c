@@ -958,9 +958,12 @@ void display_scores(int from, int to)
 	strncpy(list[i * 2 + 1], hugebuffer, 127);
     }
 
+    /* Forget about the last entries */
+    if (i > to) i = to;
+
     signal(SIGTSTP, SIG_IGN);
 
-    for (k = from; k < to && k < i; k += 20) {
+    for (k = from; k < i; k += 20) {
 
 	/* Clear those */
 	clear_screen();
@@ -974,7 +977,7 @@ void display_scores(int from, int to)
 	}
 
 	n = 0;
-	for (j = k; j < i && j < to && j < (k + 20); j++, n++)
+	for (j = k; j < i && j < (k + 20); j++, n++)
 	    put_str(list[j], n + 2, 0);
 /* Pause for user response before returning		-RAK-	 */
     prt("[Press ESC to quit, any other key to continue.]", 23, 17);
