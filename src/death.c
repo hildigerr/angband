@@ -880,50 +880,53 @@ static void show_info(void)
 
     /* Flush all input keys */
     flush();
+
     put_str("(ESC to abort, return to print on screen, or file name)", 23, 0);
     put_str("Character record?", 22, 0);
+
     if (!get_string(str, 22, 18, 60)) return;
 
 
     /* Know everything the player is wearing/carrying */
-	for (i = 0; i < INVEN_TOTAL; i++) {
-	    i_ptr = &inventory[i];
-	    if (i_ptr && i_ptr->tval != TV_NOTHING) {
+    for (i = 0; i < INVEN_TOTAL; i++) {
+	i_ptr = &inventory[i];
+	if (i_ptr && i_ptr->tval) {
 	    inven_aware(i_ptr);
 	    known2(i_ptr);
-	    }
 	}
+    }
 
     /* Show player */
-	calc_bonuses();
-	clear_screen();
-	display_player();
-	put_str("Type ESC to skip the inventory:", 23, 0);
-	if (inkey() == ESCAPE) return;
+    calc_bonuses();
+    clear_screen();
+    display_player();
+
+    put_str("Type ESC to skip the inventory:", 23, 0);
+
+    if (inkey() == ESCAPE) return;
 
 
     /* Show equipment and inventory */
 
     /* Equipment XXX Assume there is some */
-	    clear_screen();
-	    msg_print("You are using:");
-	    (void)show_equip(TRUE, 0);
-	    msg_print(NULL);
+	clear_screen();
+	msg_print("You are using:");
+	show_equip(TRUE, 0);
+	msg_print(NULL);
 
     /* Inventory -- no assumptions */
-	    if (inven_ctr) {
-		msg_print("You are carrying:");
-		clear_from(1);
-		(void)show_inven(0, inven_ctr - 1, TRUE, 0);
-		msg_print(NULL);
-	    }
+    if (inven_ctr) {
+	msg_print("You are carrying:");
+	clear_from(1);
+	show_inven(0, inven_ctr - 1, TRUE, 0);
+	msg_print(NULL);
+    }
 
     /* Access the home */
-            st_ptr = &store[7];
-            
+    st_ptr = &store[7];
 
 	/* show home's inventory... */
-	for (k = 0, i = 0; i <st_ptr->store_ctr; k++) {
+	for (k = 0, i = 0; i < st_ptr->store_ctr; k++) {
 
 	    /* What did they hoard? */
 	    clear_screen();
@@ -931,17 +934,17 @@ static void show_info(void)
 	    msg_print(t2);
 
 	    /* Show 12 (XXX) items (why bother with indexes?) */
-              for (j = 0; j < 12 && i < st_ptr->store_ctr; j++, i++) {
+	    for (j = 0; j < 12 && i < st_ptr->store_ctr; j++, i++) {
 		i_ptr = &st_ptr->store_item[i];
 		inven_aware(i_ptr);
 		known2(i_ptr);
 		objdes(t1, i_ptr, TRUE);
-                sprintf(t2, "%c) %s", 'a'+j, t1);
-                prt(t2, j+2, 4); 
+		sprintf(t2, "%c) %s", 'a'+j, t1);
+		prt(t2, j+2, 4);
 	    }
-	  }
+	}
 	    /* Flush it */
-            msg_print(NULL);
+	    msg_print(NULL);
 }
 
 
