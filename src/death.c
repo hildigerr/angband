@@ -701,80 +701,6 @@ static char *center_string(char *centered_str, cptr in_str)
 }
 
 
-/* Not touched for Mac port */
-void display_scores(int from, int to)
-{
-    register int i = 0, j, k, l;
-    high_score  score;
-
-/* MAX_SAVE_HISCORES scores, 2 lines per score */
-    char         list[2 * MAX_SAVE_HISCORES][128];
-    char         hugebuffer[10000];
-    char         string[100];
-
-    vtype        tmp_str;
-
-    if (to < 0)
-	to = 20;
-    if (to > MAX_SAVE_HISCORES)
-	to = MAX_SAVE_HISCORES;
-    while (!highscore_read(&score)) {
-	if (score.uid != -1 && getpwuid(score.uid) != NULL)
-	    (void)sprintf(hugebuffer, "%3d) %-7ld %s the %s %s (Level %d), played by %s",
-			  i / 2 + 1,
-			  (long)score.points, score.name,
-			  race[score.prace].trace, class[score.pclass].title,
-			  (int)score.lev, getpwuid(score.uid)->pw_name);
-	else
-	    (void)sprintf(hugebuffer, "%3d) %-7ld %s the %s %s (Level %d)",
-			  i / 2 + 1,
-			  (long)score.points, score.name,
-			  race[score.prace].trace, class[score.pclass].title,
-			  (int)score.lev);
-	strncpy(list[i], hugebuffer, 127);
-	(void)sprintf(hugebuffer,
-		      "             Killed by %s on Dungeon Level %d.",
-		      score.died_from, score.dun_level);
-	strncpy(list[i + 1], hugebuffer, 127);
-	i += 2;
-	if (i >= (MAX_SAVE_HISCORES * 2))
-	    break;
-    }
-
-    signal(SIGTSTP, SIG_IGN);
-    k = from * 2;
-    do {
-	if (k > 0) {
-	    sprintf(tmp_str, "\t\tAngband Hall of Fame (from position %d)",
-		    (k / 2) + 1);
-	    put_str(tmp_str, 0, 0);
-	} else {
-	    put_str("\t\tAngband Hall of Fame                     ", 0, 0);
-	}
-	put_str("     Score", 1, 0);
-	l = 0;
-	for (j = k; j < i && j < (to * 2) && j < (k + 20); j++, l++)
-	    put_str(list[j], l + 2, 0);
-	k += 20;
-/* Pause for user response before returning		-RAK-	 */
-    prt("[Press ESC to quit, any other key to continue.]", 23, 17);
-    if (inkey() == ESCAPE) erase_line(23, 0);
-    else {
-	erase_line(23, 0);
-	/* What happens upon dying.				-RAK-	 */
-	    msg_print(NULL);
-	    clear_screen();
-	    flush();		   /* flush all input */
-	    signals_ignore_tstp();	   /* Can't interrupt or suspend. */
-	    (void)save_player();	   /* Save the memory at least. */
-	    restore_term();
-	    quit(NULL);
-	}
-	clear_screen();
-    } while (k < (to * 2) && k < i);
-}
-
-
 /*
  * Save a "bones" file for a dead character
  * Should probably attempt some form of locking...
@@ -984,6 +910,81 @@ static void show_info(void)
     }
 }
 
+
+/*
+ * Display the scores in a given range.
+ */
+void display_scores(int from, int to)
+{
+    int i = 0, j, k, l;
+    high_score  score;
+
+/* MAX_SAVE_HISCORES scores, 2 lines per score */
+    char         list[2 * MAX_SAVE_HISCORES][128];
+    char         hugebuffer[10000];
+    char         string[100];
+
+    vtype        tmp_str;
+
+    if (to < 0) to = 20;
+    if (to > MAX_SAVE_HISCORES) to = MAX_SAVE_HISCORES;
+
+
+    while (!highscore_read(&score)) {
+	if (score.uid != -1 && getpwuid(score.uid) != NULL)
+	    (void)sprintf(hugebuffer, "%3d) %-7ld %s the %s %s (Level %d), played by %s",
+			  i / 2 + 1,
+			  (long)score.points, score.name,
+			  race[score.prace].trace, class[score.pclass].title,
+			  (int)score.lev, getpwuid(score.uid)->pw_name);
+	else
+	    (void)sprintf(hugebuffer, "%3d) %-7ld %s the %s %s (Level %d)",
+			  i / 2 + 1,
+			  (long)score.points, score.name,
+			  race[score.prace].trace, class[score.pclass].title,
+			  (int)score.lev);
+	strncpy(list[i], hugebuffer, 127);
+	(void)sprintf(hugebuffer,
+		      "             Killed by %s on Dungeon Level %d.",
+		      score.died_from, score.dun_level);
+	strncpy(list[i + 1], hugebuffer, 127);
+	i += 2;
+	if (i >= (MAX_SAVE_HISCORES * 2))
+	    break;
+    }
+
+    signal(SIGTSTP, SIG_IGN);
+    k = from * 2;
+    do {
+	if (k > 0) {
+	    sprintf(tmp_str, "\t\tAngband Hall of Fame (from position %d)",
+		    (k / 2) + 1);
+	    put_str(tmp_str, 0, 0);
+	} else {
+	    put_str("\t\tAngband Hall of Fame                     ", 0, 0);
+	}
+	put_str("     Score", 1, 0);
+	l = 0;
+	for (j = k; j < i && j < (to * 2) && j < (k + 20); j++, l++)
+	    put_str(list[j], l + 2, 0);
+	k += 20;
+/* Pause for user response before returning		-RAK-	 */
+    prt("[Press ESC to quit, any other key to continue.]", 23, 17);
+    if (inkey() == ESCAPE) erase_line(23, 0);
+    else {
+	erase_line(23, 0);
+	/* What happens upon dying.				-RAK-	 */
+	    msg_print(NULL);
+	    clear_screen();
+	    flush();		   /* flush all input */
+	    signals_ignore_tstp();	   /* Can't interrupt or suspend. */
+	    (void)save_player();	   /* Save the memory at least. */
+	    restore_term();
+	    quit(NULL);
+	}
+	clear_screen();
+    } while (k < (to * 2) && k < i);
+}
 
 
 /*
