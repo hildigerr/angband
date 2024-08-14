@@ -917,7 +917,8 @@ static void show_info(void)
 void display_scores(int from, int to)
 {
     int i = 0, j, k, l;
-    high_score  score;
+
+    high_score  the_score;
 
 /* MAX_SAVE_HISCORES scores, 2 lines per score */
     char         list[2 * MAX_SAVE_HISCORES][128];
@@ -930,23 +931,23 @@ void display_scores(int from, int to)
     if (to > MAX_SAVE_HISCORES) to = MAX_SAVE_HISCORES;
 
 
-    while (!highscore_read(&score)) {
-	if (score.uid != -1 && getpwuid(score.uid) != NULL)
+    while (!highscore_read(&the_score)) {
+	if (the_score.uid != -1 && getpwuid(the_score.uid) != NULL)
 	    (void)sprintf(hugebuffer, "%3d) %-7ld %s the %s %s (Level %d), played by %s",
 			  i / 2 + 1,
-			  (long)score.points, score.name,
-			  race[score.prace].trace, class[score.pclass].title,
-			  (int)score.lev, getpwuid(score.uid)->pw_name);
+			  (long)the_score.points, the_score.name,
+			  race[the_score.prace].trace, class[the_score.pclass].title,
+			  (int)the_score.lev, getpwuid(the_score.uid)->pw_name);
 	else
 	    (void)sprintf(hugebuffer, "%3d) %-7ld %s the %s %s (Level %d)",
 			  i / 2 + 1,
-			  (long)score.points, score.name,
-			  race[score.prace].trace, class[score.pclass].title,
-			  (int)score.lev);
+			  (long)the_score.points, the_score.name,
+			  race[the_score.prace].trace, class[the_score.pclass].title,
+			  (int)the_score.lev);
 	strncpy(list[i], hugebuffer, 127);
 	(void)sprintf(hugebuffer,
 		      "             Killed by %s on Dungeon Level %d.",
-		      score.died_from, score.dun_level);
+		      the_score.died_from, the_score.dun_level);
 	strncpy(list[i + 1], hugebuffer, 127);
 	i += 2;
 	if (i >= (MAX_SAVE_HISCORES * 2))
