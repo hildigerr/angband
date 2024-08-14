@@ -798,7 +798,12 @@ static void make_bones(void)
 	    /* Do not over-write a previous ghost */
 	    if (fp) return;
 
-	    if ((fp = my_tfopen(str, "w")) != NULL) {
+	    /* Try to write a new "Bones File" */
+	    fp = my_tfopen(str, "w");
+
+	    /* Not allowed to write it?  Weird. */
+	    if (!fp) return;
+
 #ifndef __MINT__
 #ifdef SET_UID
 		(void)fchmod(fileno(fp), 0644);
@@ -808,8 +813,9 @@ static void make_bones(void)
 #endif
 		fprintf(fp, "%s\n%d\n%d\n%d",
 		  p_ptr->name, p_ptr->mhp, p_ptr->prace, p_ptr->pclass);
-		if (fp) fclose(fp);
-	    }
+
+	    /* Close and save the Bones file */
+	    fclose(fp);
 	}
     }
 }
