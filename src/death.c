@@ -963,7 +963,7 @@ void display_scores(int from, int to)
 	/* Dump 5 entries */
 	for (j = k, n = 0; j < i && n < 5; place++, j++, n++) {
 
-	    int pr, pc;
+	    int pr, pc, clev, cdun;
 
 		/* Read the proper record */
 		if (highscore_seek(j)) break;
@@ -973,20 +973,24 @@ void display_scores(int from, int to)
 	    pr = the_score.prace;
 	    pc = the_score.pclass;
 
+	    /* Extract the level info */
+	    clev = the_score.lev;
+	    cdun = the_score.dun_level;
+
 	if (the_score.uid != -1 && getpwuid(the_score.uid) != NULL)
 	    (void)sprintf(buf, "%3d) %-7ld %s the %s %s (Level %d), played by %s",
 			  place, (long)the_score.points, the_score.name,
 			  race[pr].trace, class[pc].title,
-			  (int)the_score.lev, getpwuid(the_score.uid)->pw_name);
+			  clev, getpwuid(the_score.uid)->pw_name);
 	else
 	    (void)sprintf(buf, "%3d) %-7ld %s the %s %s (Level %d)",
 			  place, (long)the_score.points, the_score.name,
 			  race[pr].trace, class[pc].title,
-			  (int)the_score.lev);
+			  clev);
 	    put_str(buf, n*4 + 2, 0);
 	(void)sprintf(buf,
 		      "             Killed by %s on Dungeon Level %d.",
-		      the_score.died_from, the_score.dun_level);
+		      the_score.died_from, cdun);
 	    put_str(buf, n*4 + 3, 0);
 	}
 
