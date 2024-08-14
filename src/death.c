@@ -811,8 +811,12 @@ static void make_bones(void)
 		(void)fchmod(fileno(fp), 0666);
 #endif
 #endif
-		fprintf(fp, "%s\n%d\n%d\n%d",
-		  p_ptr->name, p_ptr->mhp, p_ptr->prace, p_ptr->pclass);
+
+	    /* Save the info */
+	    fprintf(fp, "%s\n", p_ptr->name);
+	    fprintf(fp, "%d\n", p_ptr->mhp);
+	    fprintf(fp, "%d\n", p_ptr->prace);
+	    fprintf(fp, "%d\n", p_ptr->pclass);
 
 	    /* Close and save the Bones file */
 	    fclose(fp);
