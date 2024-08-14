@@ -922,8 +922,7 @@ void display_scores(int from, int to)
 
     high_score  the_score;
 
-    char         hugebuffer[10000];
-    char         string[100];
+    char         buf[256];
 
     vtype        tmp_str;
 
@@ -969,20 +968,20 @@ void display_scores(int from, int to)
 		if (highscore_read(&the_score)) break;
 
 	if (the_score.uid != -1 && getpwuid(the_score.uid) != NULL)
-	    (void)sprintf(hugebuffer, "%3d) %-7ld %s the %s %s (Level %d), played by %s",
+	    (void)sprintf(buf, "%3d) %-7ld %s the %s %s (Level %d), played by %s",
 			  place, (long)the_score.points, the_score.name,
 			  race[the_score.prace].trace, class[the_score.pclass].title,
 			  (int)the_score.lev, getpwuid(the_score.uid)->pw_name);
 	else
-	    (void)sprintf(hugebuffer, "%3d) %-7ld %s the %s %s (Level %d)",
+	    (void)sprintf(buf, "%3d) %-7ld %s the %s %s (Level %d)",
 			  place, (long)the_score.points, the_score.name,
 			  race[the_score.prace].trace, class[the_score.pclass].title,
 			  (int)the_score.lev);
-	    put_str(hugebuffer, n*4 + 2, 0);
-	(void)sprintf(hugebuffer,
+	    put_str(buf, n*4 + 2, 0);
+	(void)sprintf(buf,
 		      "             Killed by %s on Dungeon Level %d.",
 		      the_score.died_from, the_score.dun_level);
-	    put_str(hugebuffer, n*4 + 3, 0);
+	    put_str(buf, n*4 + 3, 0);
 	}
 
 /* Pause for user response before returning		-RAK-	 */
