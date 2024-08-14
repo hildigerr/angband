@@ -756,7 +756,11 @@ void display_scores(int from, int to)
 	for (j = k; j < i && j < (to * 2) && j < (k + 20); j++, l++)
 	    put_str(list[j], l + 2, 0);
 	k += 20;
-	if (!look_line(23)) {
+/* Pause for user response before returning		-RAK-	 */
+    prt("[Press ESC to quit, any other key to continue.]", 23, 17);
+    if (inkey() == ESCAPE) erase_line(23, 0);
+    else {
+	erase_line(23, 0);
 	/* What happens upon dying.				-RAK-	 */
 	    msg_print(NULL);
 	    clear_screen();
@@ -768,19 +772,6 @@ void display_scores(int from, int to)
 	}
 	clear_screen();
     } while (k < (to * 2) && k < i);
-}
-
-/* Pauses for user response before returning		-RAK-	 */
-int look_line(int prt_line)
-{
-    prt("[Press ESC to quit, any other key to continue.]", prt_line, 17);
-    if (inkey() == ESCAPE) {
-	erase_line(prt_line, 0);
-	return 0;
-    } else {
-	erase_line(prt_line, 0);
-	return 1;
-    }
 }
 
 

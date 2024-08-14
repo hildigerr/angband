@@ -539,7 +539,6 @@ void exit_game(void);
 void display_scores(int, int);
 void delete_entry(int);
 long total_points(void);
-int look_line(int);
 
 /* desc.c */
 void flavor_init(void);
