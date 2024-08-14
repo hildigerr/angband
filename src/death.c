@@ -865,6 +865,16 @@ static void print_tomb()
     put_str("*|   *     *     *    *   *     *  | *", 18, 8);
     put_str("________)/\\\\_)_/___(\\/___(//_\\)/_\\//__\\\\(/_|_)_______",
 	       19, 0);
+}
+
+
+/*
+ * Display some character info
+ */
+static void show_info(void)
+{
+    int i;
+    vtype  str;
 
     flush();
     put_str("(ESC to abort, return to print on screen, or file name)", 23, 0);
@@ -1130,6 +1140,9 @@ void exit_game(void)
 
 	/* You are dead */
 	print_tomb();
+
+	/* Show more info */
+	show_info();
 
 	if (!wizard && !to_be_wizard)
 	top_twenty();
