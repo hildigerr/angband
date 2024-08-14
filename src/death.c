@@ -907,20 +907,18 @@ static void show_info(void)
           msg_print ("You have stored at your house:");
           clear_from (1);
             st_ptr = &store[7]; /* home */
-            ii = 0, j = 0;
             
-            while ( ii <st_ptr->store_ctr) {
-              j = 0;
+            for (ii = 0; ii <st_ptr->store_ctr) {
+
               sprintf(t2, "(page %d)", (ii==0?1:2));
               prt(t2, 1, 3);
-              while ((ii<st_ptr->store_ctr) && (j<12)){
+
+              for (j = 0; j < 12 && ii < st_ptr->store_ctr; j++, ii++) {
                 inven_aware(&st_ptr->store_item[ii]);
                 known2(&st_ptr->store_item[ii]);
                 objdes(t1, &st_ptr->store_item[ii], TRUE);
                 sprintf(t2, "%c) %s", 'a'+j, t1);
                 prt(t2, j+2, 4); 
-                j++;
-                ii++;
 	    } /* items 1-12, 13-24 loop */
               if (ii < st_ptr->store_ctr) { /* if we're done, skip this */
                 msg_print(NULL);
