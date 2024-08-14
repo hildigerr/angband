@@ -776,17 +776,15 @@ void display_scores(int from, int to)
 
 
 /*
- * Prints the gravestone of the character  -RAK-
+ * Save a "bones" file for a dead character
+ * Should probably attempt some form of locking...
  */
-static void print_tomb()
+static void make_bones(void)
 {
-    vtype                str, tmp_str;
-    register int         i;
-    char                 day[11];
-    cptr		 p;
     FILE                *fp;
 
-    time_t ct = time((time_t)0);
+    char                str[1024];
+
 
     if (stricmp(died_from, "Interrupting") && !wizard) {
 	sprintf(str, "%s/%d", ANGBAND_DIR_BONES, dun_level);
@@ -807,6 +805,21 @@ static void print_tomb()
 	    if (fp) fclose(fp);
 	}
     }
+}
+
+
+/*
+ * Prints the gravestone of the character  -RAK-
+ */
+static void print_tomb()
+{
+    register int         i;
+    char                 day[11];
+    cptr		 p;
+    vtype                str, tmp_str;
+
+    time_t ct = time((time_t)0);
+
 
     /* Draw a tombstone */
     clear_screen();
@@ -1156,6 +1169,9 @@ void exit_game(void)
 
 	/* Handle retirement */
 	if (total_winner) kingly();
+
+	/* Dump bones file */
+	make_bones();
 
 	/* You are dead */
 	print_tomb();
