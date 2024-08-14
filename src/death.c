@@ -909,10 +909,12 @@ static void show_info(void)
     /* Show equipment and inventory */
 
     /* Equipment XXX Assume there is some */
+    if (equip_ctr) {
 	clear_screen();
 	msg_print("You are using:");
 	show_equip(TRUE, 0);
 	msg_print(NULL);
+    }
 
     /* Inventory -- no assumptions */
     if (inven_ctr) {
