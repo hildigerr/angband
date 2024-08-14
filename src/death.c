@@ -873,15 +873,17 @@ static void print_tomb()
  */
 static void show_info(void)
 {
-    int i;
-    vtype  str;
+    int i, ii, j;
+    inven_type *i_ptr;
+    store_type *s_ptr;
+    vtype t1, t2, str;
 
     flush();
     put_str("(ESC to abort, return to print on screen, or file name)", 23, 0);
     put_str("Character record?", 22, 0);
     if (get_string(str, 22, 18, 60)) {
 	for (i = 0; i < INVEN_TOTAL; i++) {
-	    inven_type *i_ptr = &inventory[i];
+	    i_ptr = &inventory[i];
 	    if (i_ptr && i_ptr->tval != TV_NOTHING) {
 	    inven_aware(i_ptr);
 	    known2(i_ptr);
@@ -905,9 +907,8 @@ static void show_info(void)
           msg_print ("You have stored at your house:");
           clear_from (1);
 	{ /* show home's inventory... */
-            store_type *s_ptr = &store[7]; /* home */
-            int ii = 0, j = 0;
-            vtype t1, t2;
+            s_ptr = &store[7]; /* home */
+            ii = 0, j = 0;
             
             while ( ii <s_ptr->store_ctr) {
               j = 0;
