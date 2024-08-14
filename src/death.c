@@ -914,9 +914,10 @@ static void show_info(void)
               prt(t2, 1, 3);
 
               for (j = 0; j < 12 && ii < st_ptr->store_ctr; j++, ii++) {
-                inven_aware(&st_ptr->store_item[ii]);
-                known2(&st_ptr->store_item[ii]);
-                objdes(t1, &st_ptr->store_item[ii], TRUE);
+		i_ptr = &st_ptr->store_item[ii];
+		inven_aware(i_ptr);
+		known2(i_ptr);
+		objdes(t1, i_ptr, TRUE);
                 sprintf(t2, "%c) %s", 'a'+j, t1);
                 prt(t2, j+2, 4); 
 	    } /* items 1-12, 13-24 loop */
