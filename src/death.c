@@ -917,7 +917,7 @@ static void show_info(void)
  */
 void display_scores(int from, int to)
 {
-    int i = 0, j, k, n;
+    int i, j, k, n;
 
     high_score  the_score;
 
@@ -935,32 +935,32 @@ void display_scores(int from, int to)
     /* Seek to the beginning */
     if (highscore_seek(0)) return;
 
-    while (!highscore_read(&the_score)) {
+    /* Hack -- Count the high scores */
+    for (i = 0; i < MAX_SAVE_HISCORES; i++) {
+	if (highscore_read(&the_score)) break;
+
 	if (the_score.uid != -1 && getpwuid(the_score.uid) != NULL)
 	    (void)sprintf(hugebuffer, "%3d) %-7ld %s the %s %s (Level %d), played by %s",
-			  i / 2 + 1,
+			  i + 1,
 			  (long)the_score.points, the_score.name,
 			  race[the_score.prace].trace, class[the_score.pclass].title,
 			  (int)the_score.lev, getpwuid(the_score.uid)->pw_name);
 	else
 	    (void)sprintf(hugebuffer, "%3d) %-7ld %s the %s %s (Level %d)",
-			  i / 2 + 1,
+			  i + 1,
 			  (long)the_score.points, the_score.name,
 			  race[the_score.prace].trace, class[the_score.pclass].title,
 			  (int)the_score.lev);
-	strncpy(list[i], hugebuffer, 127);
+	strncpy(list[i * 2], hugebuffer, 127);
 	(void)sprintf(hugebuffer,
 		      "             Killed by %s on Dungeon Level %d.",
 		      the_score.died_from, the_score.dun_level);
-	strncpy(list[i + 1], hugebuffer, 127);
-	i += 2;
-	if (i >= (MAX_SAVE_HISCORES * 2))
-	    break;
+	strncpy(list[i * 2 + 1], hugebuffer, 127);
     }
 
     signal(SIGTSTP, SIG_IGN);
 
-    for (k = from * 2; k < (to * 2) && k < i; k += 20) {
+    for (k = from; k < to && k < i; k += 20) {
 
 	/* Clear those */
 	clear_screen();
@@ -969,12 +969,12 @@ void display_scores(int from, int to)
 
 	/* Indicate non-top scores */
 	if (k > 0) {
-	    sprintf(tmp_str, "(from position %d)", (k / 2) + 1);
+	    sprintf(tmp_str, "(from position %d)", k + 1);
 	    put_str(tmp_str, 0, 40);
 	}
 
 	n = 0;
-	for (j = k; j < i && j < (to * 2) && j < (k + 20); j++, n++)
+	for (j = k; j < i && j < to && j < (k + 20); j++, n++)
 	    put_str(list[j], n + 2, 0);
 /* Pause for user response before returning		-RAK-	 */
     prt("[Press ESC to quit, any other key to continue.]", 23, 17);
