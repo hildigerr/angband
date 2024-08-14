@@ -955,8 +955,9 @@ void display_scores(int from, int to)
     }
 
     signal(SIGTSTP, SIG_IGN);
-    k = from * 2;
-    do {
+
+    for (k = from * 2; k < (to * 2) && k < i; k += 20) {
+
 	if (k > 0) {
 	    sprintf(tmp_str, "\t\tAngband Hall of Fame (from position %d)",
 		    (k / 2) + 1);
@@ -968,7 +969,6 @@ void display_scores(int from, int to)
 	n = 0;
 	for (j = k; j < i && j < (to * 2) && j < (k + 20); j++, n++)
 	    put_str(list[j], n + 2, 0);
-	k += 20;
 /* Pause for user response before returning		-RAK-	 */
     prt("[Press ESC to quit, any other key to continue.]", 23, 17);
     if (inkey() == ESCAPE) erase_line(23, 0);
@@ -984,7 +984,7 @@ void display_scores(int from, int to)
 	    quit(NULL);
 	}
 	clear_screen();
-    } while (k < (to * 2) && k < i);
+    }
 }
 
 
