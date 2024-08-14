@@ -678,6 +678,16 @@ int file_character(cptr filename1)
 
 
 /*
+ * Hack -- Calculates the total number of points earned		-JWT-	 
+ */
+long total_points(void)
+{
+    return (p_ptr->max_exp + (100 * p_ptr->max_dlv));
+}
+
+
+
+/*
  * Centers a string within a 31 character string		-JWT-	 
  */
 static char *center_string(char *centered_str, cptr in_str)
@@ -922,13 +932,6 @@ static void print_tomb()
 
 	}
     }
-}
-
-
-/* Calculates the total number of points earned		-JWT-	 */
-long total_points()
-{
-    return (p_ptr->max_exp + (100 * p_ptr->max_dlv));
 }
 
 
