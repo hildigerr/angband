@@ -791,7 +791,13 @@ static void make_bones(void)
 	if (dun_level > 1) {
 
 	sprintf(str, "%s/%d", ANGBAND_DIR_BONES, dun_level);
-	if ((fp = my_tfopen(str, "r")) == NULL) {
+
+	    /* Attempt to open the bones file */
+	    fp = my_tfopen(str, "r");
+
+	    /* Do not over-write a previous ghost */
+	    if (fp) return;
+
 	    if ((fp = my_tfopen(str, "w")) != NULL) {
 #ifndef __MINT__
 #ifdef SET_UID
@@ -804,9 +810,6 @@ static void make_bones(void)
 		  p_ptr->name, p_ptr->mhp, p_ptr->prace, p_ptr->pclass);
 		if (fp) fclose(fp);
 	    }
-	} else {
-	    if (fp) fclose(fp);
-	}
 	}
     }
 }
