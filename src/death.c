@@ -963,19 +963,25 @@ void display_scores(int from, int to)
 	/* Dump 5 entries */
 	for (j = k, n = 0; j < i && n < 5; place++, j++, n++) {
 
+	    int pr, pc;
+
 		/* Read the proper record */
 		if (highscore_seek(j)) break;
 		if (highscore_read(&the_score)) break;
+	    
+	    /* Extract the race/class */
+	    pr = the_score.prace;
+	    pc = the_score.pclass;
 
 	if (the_score.uid != -1 && getpwuid(the_score.uid) != NULL)
 	    (void)sprintf(buf, "%3d) %-7ld %s the %s %s (Level %d), played by %s",
 			  place, (long)the_score.points, the_score.name,
-			  race[the_score.prace].trace, class[the_score.pclass].title,
+			  race[pr].trace, class[pc].title,
 			  (int)the_score.lev, getpwuid(the_score.uid)->pw_name);
 	else
 	    (void)sprintf(buf, "%3d) %-7ld %s the %s %s (Level %d)",
 			  place, (long)the_score.points, the_score.name,
-			  race[the_score.prace].trace, class[the_score.pclass].title,
+			  race[pr].trace, class[pc].title,
 			  (int)the_score.lev);
 	    put_str(buf, n*4 + 2, 0);
 	(void)sprintf(buf,
