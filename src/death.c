@@ -881,7 +881,7 @@ static void show_info(void)
     flush();
     put_str("(ESC to abort, return to print on screen, or file name)", 23, 0);
     put_str("Character record?", 22, 0);
-    if (get_string(str, 22, 18, 60)) {
+    if (!get_string(str, 22, 18, 60)) return;
 	for (i = 0; i < INVEN_TOTAL; i++) {
 	    i_ptr = &inventory[i];
 	    if (i_ptr && i_ptr->tval != TV_NOTHING) {
@@ -893,7 +893,7 @@ static void show_info(void)
 	clear_screen();
 	display_player();
 	put_str("Type ESC to skip the inventory:", 23, 0);
-	if (inkey() != ESCAPE) {
+	if (inkey() == ESCAPE) return;
 	    clear_screen();
 	    msg_print("You are using:");
 	    (void)show_equip(TRUE, 0);
@@ -929,10 +929,6 @@ static void show_info(void)
 	    }
 	  } /* outer while loop */
             msg_print(NULL);
-	} /* scope block of display-home inventory code -CFT */
-
-	}
-    }
 }
 
 
