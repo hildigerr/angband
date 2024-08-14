@@ -873,7 +873,7 @@ static void print_tomb()
  */
 static void show_info(void)
 {
-    int i, ii, j, k;
+    int i, j, k;
     inven_type *i_ptr;
     store_type *st_ptr;
     vtype t1, t2, str;
@@ -906,14 +906,14 @@ static void show_info(void)
 	    }
             st_ptr = &store[7]; /* home */
             
-	for (k = 0, ii = 0; ii <st_ptr->store_ctr; k++) {
+	for (k = 0, i = 0; i <st_ptr->store_ctr; k++) {
 
 	    clear_screen();
 	    sprintf(t2, "You have stored at your house (page %d):", k);
 	    msg_print(t2);
 
-              for (j = 0; j < 12 && ii < st_ptr->store_ctr; j++, ii++) {
-		i_ptr = &st_ptr->store_item[ii];
+              for (j = 0; j < 12 && i < st_ptr->store_ctr; j++, i++) {
+		i_ptr = &st_ptr->store_item[i];
 		inven_aware(i_ptr);
 		known2(i_ptr);
 		objdes(t1, i_ptr, TRUE);
