@@ -958,14 +958,17 @@ void display_scores(int from, int to)
 
     for (k = from * 2; k < (to * 2) && k < i; k += 20) {
 
+	/* Clear those */
+	clear_screen();
+
+	put_str("                Angband Hall of Fame", 0, 0);
+
+	/* Indicate non-top scores */
 	if (k > 0) {
-	    sprintf(tmp_str, "\t\tAngband Hall of Fame (from position %d)",
-		    (k / 2) + 1);
-	    put_str(tmp_str, 0, 0);
-	} else {
-	    put_str("\t\tAngband Hall of Fame                     ", 0, 0);
+	    sprintf(tmp_str, "(from position %d)", (k / 2) + 1);
+	    put_str(tmp_str, 0, 40);
 	}
-	put_str("     Score", 1, 0);
+
 	n = 0;
 	for (j = k; j < i && j < (to * 2) && j < (k + 20); j++, n++)
 	    put_str(list[j], n + 2, 0);
@@ -983,7 +986,6 @@ void display_scores(int from, int to)
 	    restore_term();
 	    quit(NULL);
 	}
-	clear_screen();
     }
 }
 
