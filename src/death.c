@@ -875,7 +875,7 @@ static void show_info(void)
 {
     int i, ii, j;
     inven_type *i_ptr;
-    store_type *s_ptr;
+    store_type *st_ptr;
     vtype t1, t2, str;
 
     flush();
@@ -906,24 +906,23 @@ static void show_info(void)
 	    }
           msg_print ("You have stored at your house:");
           clear_from (1);
-	{ /* show home's inventory... */
-            s_ptr = &store[7]; /* home */
+            st_ptr = &store[7]; /* home */
             ii = 0, j = 0;
             
-            while ( ii <s_ptr->store_ctr) {
+            while ( ii <st_ptr->store_ctr) {
               j = 0;
               sprintf(t2, "(page %d)", (ii==0?1:2));
               prt(t2, 1, 3);
-              while ((ii<s_ptr->store_ctr) && (j<12)){
-                inven_aware(&s_ptr->store_item[ii]);
-                known2(&s_ptr->store_item[ii]);
-                objdes(t1, &s_ptr->store_item[ii], TRUE);
+              while ((ii<st_ptr->store_ctr) && (j<12)){
+                inven_aware(&st_ptr->store_item[ii]);
+                known2(&st_ptr->store_item[ii]);
+                objdes(t1, &st_ptr->store_item[ii], TRUE);
                 sprintf(t2, "%c) %s", 'a'+j, t1);
                 prt(t2, j+2, 4); 
                 j++;
                 ii++;
 	    } /* items 1-12, 13-24 loop */
-              if (ii < s_ptr->store_ctr) { /* if we're done, skip this */
+              if (ii < st_ptr->store_ctr) { /* if we're done, skip this */
                 msg_print(NULL);
                 msg_print("Home inventory:");
                 clear_from (1);
