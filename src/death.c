@@ -873,7 +873,7 @@ static void print_tomb()
  */
 static void show_info(void)
 {
-    int i, ii, j;
+    int i, ii, j, k;
     inven_type *i_ptr;
     store_type *st_ptr;
     vtype t1, t2, str;
@@ -904,14 +904,13 @@ static void show_info(void)
 		(void)show_inven(0, inven_ctr - 1, TRUE, 0);
 		msg_print(NULL);
 	    }
-          msg_print ("You have stored at your house:");
-          clear_from (1);
             st_ptr = &store[7]; /* home */
             
-            for (ii = 0; ii <st_ptr->store_ctr) {
+	for (k = 0, ii = 0; ii <st_ptr->store_ctr; k++) {
 
-              sprintf(t2, "(page %d)", (ii==0?1:2));
-              prt(t2, 1, 3);
+	    clear_screen();
+	    sprintf(t2, "You have stored at your house (page %d):", k);
+	    msg_print(t2);
 
               for (j = 0; j < 12 && ii < st_ptr->store_ctr; j++, ii++) {
 		i_ptr = &st_ptr->store_item[ii];
@@ -921,11 +920,6 @@ static void show_info(void)
                 sprintf(t2, "%c) %s", 'a'+j, t1);
                 prt(t2, j+2, 4); 
 	    } /* items 1-12, 13-24 loop */
-              if (ii < st_ptr->store_ctr) { /* if we're done, skip this */
-                msg_print(NULL);
-                msg_print("Home inventory:");
-                clear_from (1);
-	    }
 	  } /* outer while loop */
             msg_print(NULL);
 }
