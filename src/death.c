@@ -918,12 +918,10 @@ static void show_info(void)
  */
 void display_scores(int from, int to)
 {
-    int i, j, k, n;
+    int i, j, k, n, place;
 
     high_score  the_score;
 
-/* MAX_SAVE_HISCORES scores, 2 lines per score */
-    char         list[2 * MAX_SAVE_HISCORES][128];
     char         hugebuffer[10000];
     char         string[100];
 
@@ -942,24 +940,6 @@ void display_scores(int from, int to)
     /* Hack -- Count the high scores */
     for (i = 0; i < MAX_SAVE_HISCORES; i++) {
 	if (highscore_read(&the_score)) break;
-
-	if (the_score.uid != -1 && getpwuid(the_score.uid) != NULL)
-	    (void)sprintf(hugebuffer, "%3d) %-7ld %s the %s %s (Level %d), played by %s",
-			  i + 1,
-			  (long)the_score.points, the_score.name,
-			  race[the_score.prace].trace, class[the_score.pclass].title,
-			  (int)the_score.lev, getpwuid(the_score.uid)->pw_name);
-	else
-	    (void)sprintf(hugebuffer, "%3d) %-7ld %s the %s %s (Level %d)",
-			  i + 1,
-			  (long)the_score.points, the_score.name,
-			  race[the_score.prace].trace, class[the_score.pclass].title,
-			  (int)the_score.lev);
-	strncpy(list[i * 2], hugebuffer, 127);
-	(void)sprintf(hugebuffer,
-		      "             Killed by %s on Dungeon Level %d.",
-		      the_score.died_from, the_score.dun_level);
-	strncpy(list[i * 2 + 1], hugebuffer, 127);
     }
 
     /* Forget about the last entries */
@@ -968,7 +948,7 @@ void display_scores(int from, int to)
     signal(SIGTSTP, SIG_IGN);
 
     /* Show 5 per page, until "done" */
-    for (k = from; k < i; k += 5) {
+    for (k = from, place = k+1; k < i; k += 5) {
 
 	/* Clear those */
 	clear_screen();
@@ -982,8 +962,27 @@ void display_scores(int from, int to)
 	}
 
 	/* Dump 5 entries */
-	for (j = k, n = 0; j < i && n < 5; j++, n++) {
-	    put_str(list[j], n*4 + 2, 0);
+	for (j = k, n = 0; j < i && n < 5; place++, j++, n++) {
+
+		/* Read the proper record */
+		if (highscore_seek(j)) break;
+		if (highscore_read(&the_score)) break;
+
+	if (the_score.uid != -1 && getpwuid(the_score.uid) != NULL)
+	    (void)sprintf(hugebuffer, "%3d) %-7ld %s the %s %s (Level %d), played by %s",
+			  place, (long)the_score.points, the_score.name,
+			  race[the_score.prace].trace, class[the_score.pclass].title,
+			  (int)the_score.lev, getpwuid(the_score.uid)->pw_name);
+	else
+	    (void)sprintf(hugebuffer, "%3d) %-7ld %s the %s %s (Level %d)",
+			  place, (long)the_score.points, the_score.name,
+			  race[the_score.prace].trace, class[the_score.pclass].title,
+			  (int)the_score.lev);
+	    put_str(hugebuffer, n*4 + 2, 0);
+	(void)sprintf(hugebuffer,
+		      "             Killed by %s on Dungeon Level %d.",
+		      the_score.died_from, the_score.dun_level);
+	    put_str(hugebuffer, n*4 + 3, 0);
 	}
 
 /* Pause for user response before returning		-RAK-	 */
