@@ -925,6 +925,9 @@ static void show_info(void)
     /* Access the home */
     st_ptr = &store[7];
 
+    /* Only show home if stuff in it */
+    if (st_ptr->store_ctr) {
+
 	/* show home's inventory... */
 	for (k = 0, i = 0; i < st_ptr->store_ctr; k++) {
 
@@ -946,6 +949,7 @@ static void show_info(void)
 	    /* Flush it */
 	    msg_print(NULL);
 	}
+    }
 }
 
 
