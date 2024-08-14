@@ -493,7 +493,7 @@ int file_character(cptr filename1)
 
     int                 xbth, xbthb, xfos, xsrh;
     int			xstl, xdis, xsave, xdev;
-    vtype                 xinfra;
+    char                xinfra[32];
 
     bigvtype              prt2;
     inven_type			*i_ptr;
