@@ -916,7 +916,7 @@ static void show_info(void)
  */
 void display_scores(int from, int to)
 {
-    int i = 0, j, k, l;
+    int i = 0, j, k, n;
 
     high_score  the_score;
 
@@ -965,9 +965,9 @@ void display_scores(int from, int to)
 	    put_str("\t\tAngband Hall of Fame                     ", 0, 0);
 	}
 	put_str("     Score", 1, 0);
-	l = 0;
-	for (j = k; j < i && j < (to * 2) && j < (k + 20); j++, l++)
-	    put_str(list[j], l + 2, 0);
+	n = 0;
+	for (j = k; j < i && j < (to * 2) && j < (k + 20); j++, n++)
+	    put_str(list[j], n + 2, 0);
 	k += 20;
 /* Pause for user response before returning		-RAK-	 */
     prt("[Press ESC to quit, any other key to continue.]", 23, 17);
