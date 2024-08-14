@@ -484,15 +484,16 @@ int file_character(cptr filename1)
 {
     register int		i;
     int				j;
-    int                 xbth, xbthb, xfos, xsrh;
-    int			xstl, xdis, xsave, xdev;
-    vtype                 xinfra;
     int				fd = -1;
     cptr			p;
     cptr			colon = ":";
     cptr			blank = " ";
 
     register FILE		*file1;
+
+    int                 xbth, xbthb, xfos, xsrh;
+    int			xstl, xdis, xsave, xdev;
+    vtype                 xinfra;
 
     bigvtype              prt2;
     inven_type			*i_ptr;
@@ -514,6 +515,28 @@ int file_character(cptr filename1)
     else {
 	file1 = NULL;
     }
+
+
+    xbth = p_ptr->bth + p_ptr->ptohit * BTH_PLUS_ADJ +
+	   (class_level_adj[p_ptr->pclass][CLA_BTH] * p_ptr->lev);
+
+    xbthb = p_ptr->bthb + p_ptr->ptohit * BTH_PLUS_ADJ +
+	    (class_level_adj[p_ptr->pclass][CLA_BTHB] * p_ptr->lev);
+
+    /* Basic abilities */
+    xfos = 40 - p_ptr->fos;
+    if (xfos < 0) xfos = 0;
+    xsrh = p_ptr->srh;
+    xstl = p_ptr->stl + 1;
+    xdis = p_ptr->disarm + 2 * todis_adj() + stat_adj(A_INT) +
+	   (class_level_adj[p_ptr->pclass][CLA_DISARM] * p_ptr->lev / 3);
+    xsave = p_ptr->save + stat_adj(A_WIS) +
+	    (class_level_adj[p_ptr->pclass][CLA_SAVE] * p_ptr->lev / 3);
+    xdev = p_ptr->save + stat_adj(A_INT) +
+	   (class_level_adj[p_ptr->pclass][CLA_DEVICE] * p_ptr->lev / 3);
+
+    /* Infravision string */
+    (void)sprintf(xinfra, "%d feet", p_ptr->see_infra * 10);
 
     /* Dump a character sheet */
     if (file1) {
@@ -574,26 +597,6 @@ int file_character(cptr filename1)
 
 	(void)fprintf(file1, "   Cur Mana%8s %6d\n", colon, p_ptr->cmana);
 	(void)fprintf(file1, "%28sGold%8s%9ld\n", blank, colon, (long)p_ptr->au);
-
-	xbth = p_ptr->bth + p_ptr->ptohit * BTH_PLUS_ADJ
-	    + (class_level_adj[p_ptr->pclass][CLA_BTH] * p_ptr->lev);
-	xbthb = p_ptr->bthb + p_ptr->ptohit * BTH_PLUS_ADJ
-	    + (class_level_adj[p_ptr->pclass][CLA_BTHB] * p_ptr->lev);
-    /* this results in a range from 0 to 29 */
-	xfos = 40 - p_ptr->fos;
-	if (xfos < 0)
-	    xfos = 0;
-	xsrh = p_ptr->srh;
-    /* this results in a range from 0 to 9 */
-	xstl = p_ptr->stl + 1;
-	xdis = p_ptr->disarm + 2 * todis_adj() + stat_adj(A_INT)
-	    + (class_level_adj[p_ptr->pclass][CLA_DISARM] * p_ptr->lev / 3);
-	xsave = p_ptr->save + stat_adj(A_WIS)
-	    + (class_level_adj[p_ptr->pclass][CLA_SAVE] * p_ptr->lev / 3);
-	xdev = p_ptr->save + stat_adj(A_INT)
-	    + (class_level_adj[p_ptr->pclass][CLA_DEVICE] * p_ptr->lev / 3);
-
-	(void)sprintf(xinfra, "%d feet", p_ptr->see_infra * 10);
 
 	(void)fprintf(file1, "(Miscellaneous Abilities)\n\n");
 	(void)fprintf(file1, " Fighting    : %-10s", likert(xbth, 12));
