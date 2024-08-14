@@ -897,8 +897,8 @@ static void show_info(void)
     }
 
     /* Show player */
-    calc_bonuses();
     clear_screen();
+    calc_bonuses();
     display_player();
 
     put_str("Type ESC to skip the inventory:", 23, 0);
@@ -916,8 +916,8 @@ static void show_info(void)
 
     /* Inventory -- no assumptions */
     if (inven_ctr) {
+	clear_screen();
 	msg_print("You are carrying:");
-	clear_from(1);
 	show_inven(0, inven_ctr - 1, TRUE, 0);
 	msg_print(NULL);
     }
@@ -942,9 +942,10 @@ static void show_info(void)
 		sprintf(t2, "%c) %s", 'a'+j, t1);
 		prt(t2, j+2, 4);
 	    }
-	}
+
 	    /* Flush it */
 	    msg_print(NULL);
+	}
 }
 
 
