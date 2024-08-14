@@ -913,6 +913,7 @@ static void show_info(void)
 
 /*
  * Display the scores in a given range.
+ * Assumes the high score list is already open.
  */
 void display_scores(int from, int to)
 {
@@ -930,6 +931,9 @@ void display_scores(int from, int to)
     if (to < 0) to = 20;
     if (to > MAX_SAVE_HISCORES) to = MAX_SAVE_HISCORES;
 
+
+    /* Seek to the beginning */
+    if (highscore_seek(0)) return;
 
     while (!highscore_read(&the_score)) {
 	if (the_score.uid != -1 && getpwuid(the_score.uid) != NULL)
