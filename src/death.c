@@ -914,6 +914,7 @@ static void show_info(void)
 /*
  * Display the scores in a given range.
  * Assumes the high score list is already open.
+ * Only five entries per line, too much info.
  */
 void display_scores(int from, int to)
 {
@@ -928,7 +929,10 @@ void display_scores(int from, int to)
 
     vtype        tmp_str;
 
-    if (to < 0) to = 20;
+
+    /* Assume we will show the first 10 */
+    if (from < 0) from = 0;
+    if (to < 0) to = 10;
     if (to > MAX_SAVE_HISCORES) to = MAX_SAVE_HISCORES;
 
 
@@ -963,7 +967,8 @@ void display_scores(int from, int to)
 
     signal(SIGTSTP, SIG_IGN);
 
-    for (k = from; k < i; k += 20) {
+    /* Show 5 per page, until "done" */
+    for (k = from; k < i; k += 5) {
 
 	/* Clear those */
 	clear_screen();
@@ -976,9 +981,11 @@ void display_scores(int from, int to)
 	    put_str(tmp_str, 0, 40);
 	}
 
-	n = 0;
-	for (j = k; j < i && j < (k + 20); j++, n++)
-	    put_str(list[j], n + 2, 0);
+	/* Dump 5 entries */
+	for (j = k, n = 0; j < i && n < 5; j++, n++) {
+	    put_str(list[j], n*4 + 2, 0);
+	}
+
 /* Pause for user response before returning		-RAK-	 */
     prt("[Press ESC to quit, any other key to continue.]", 23, 17);
     if (inkey() == ESCAPE) erase_line(23, 0);
