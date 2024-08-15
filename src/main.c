@@ -118,8 +118,6 @@ int main(int argc, char *argv[])
     
     /* default command set defined in config.h file */
     rogue_like_commands = ROGUE_LIKE;
-    
-    strcpy(p_ptr->name, "\0");
 
 
     /* Save the "program name" */
@@ -144,11 +142,6 @@ int main(int argc, char *argv[])
 
     /* Get the user id (?) */
     player_uid = getuid();
-
-    if (player_uid < 0) {
-	quit("Can't set permissions correctly!  Getuid call failed.\n");
-    }
-    user_name(p_ptr->name, player_uid);
 
 #if defined(SET_UID) && !defined(SECURE)
     /* Set the user id or quit */
@@ -184,6 +177,8 @@ int main(int argc, char *argv[])
     fclose(fp);
 #endif
 
+    /* Acquire the "user name" as a default player name */
+    user_name(p_ptr->name, player_uid);
 
     /* check for user interface option */
     for (--argc, ++argv; argc > 0 && argv[0][0] == '-'; --argc, ++argv) {
@@ -297,6 +292,9 @@ int main(int argc, char *argv[])
 	display_scores(0, show_score);
 	exit_game();
     }
+
+    /* XXX XXX Verify the "player name" */
+    if (streq(player_name, "")) strcpy(player_name, "PLAYER");
 
     /* catch those nasty signals */
     /* must come after init_curses as some of the signal handlers use curses */

@@ -72,10 +72,16 @@ void user_name(char *buf, int id)
     struct passwd *pw;
 
     /* Look up the user name */
-    pw = getpwuid(id);
+    if ((pw = getpwuid(id))) {
     (void)strcpy(buf, pw->pw_name);
 
     if (*buf >= 'a' && *buf <= 'z') *buf = (*buf - 'a') + 'A';
+
+	return;
+    }
+
+    /* Oops.  Hack -- default to "PLAYER" */
+    strcpy(buf, "PLAYER");
 }
 
 
