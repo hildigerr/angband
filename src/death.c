@@ -1004,12 +1004,14 @@ void display_scores(int from, int to)
 	    put_str(buf, n*4 + 4, 0);
 	}
 
-/* Pause for user response before returning		-RAK-	 */
-    prt("[Press ESC to quit, any other key to continue.]", 23, 17);
-    if (inkey() == ESCAPE) erase_line(23, 0);
-    else {
+
+	/* Wait for response. */
+	prt("[Press ESC to quit, any other key to continue.]", 23, 17);
+	j = inkey();
 	erase_line(23, 0);
-	}
+
+	/* Hack -- notice Escape */
+	if (j == ESCAPE) break;
     }
 }
 
