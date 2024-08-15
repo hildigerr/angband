@@ -944,7 +944,6 @@ void display_scores(int from, int to)
     /* Forget about the last entries */
     if (i > to) i = to;
 
-    signal(SIGTSTP, SIG_IGN);
 
     /* Show 5 per page, until "done" */
     for (k = from, place = k+1; k < i; k += 5) {
@@ -1010,14 +1009,6 @@ void display_scores(int from, int to)
     if (inkey() == ESCAPE) erase_line(23, 0);
     else {
 	erase_line(23, 0);
-	/* What happens upon dying.				-RAK-	 */
-	    msg_print(NULL);
-	    clear_screen();
-	    flush();		   /* flush all input */
-	    signals_ignore_tstp();	   /* Can't interrupt or suspend. */
-	    (void)save_player();	   /* Save the memory at least. */
-	    restore_term();
-	    quit(NULL);
 	}
     }
 }
