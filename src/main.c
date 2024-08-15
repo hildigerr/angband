@@ -142,7 +142,6 @@ int main(int argc, char *argv[])
     /* Prepare the "hiscore" file (while we have permission) */
     init_scorefile();
 
-#ifndef MSDOS
     /* Get the user id (?) */
     player_uid = getuid();
 
@@ -150,10 +149,7 @@ int main(int argc, char *argv[])
 	quit("Can't set permissions correctly!  Getuid call failed.\n");
     }
     user_name(p_ptr->name, player_uid);
-#else
-    user_name(p_ptr->name);
-#endif
-    
+
 #if defined(SET_UID) && !defined(SECURE)
     /* Set the user id or quit */
     if (setuid(geteuid()) != 0) {
