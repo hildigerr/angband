@@ -965,6 +965,8 @@ void display_scores(int from, int to)
 
 	    int pr, pc, clev, cdun;
 
+	    cptr user;
+
 		/* Read the proper record */
 		if (highscore_seek(j)) break;
 		if (highscore_read(&the_score)) break;
@@ -977,12 +979,8 @@ void display_scores(int from, int to)
 	    clev = the_score.lev;
 	    cdun = the_score.dun_level;
 
-	if (the_score.uid != -1 && getpwuid(the_score.uid) != NULL)
-	    (void)sprintf(buf, "%3d) %-7ld %s the %s %s (Level %d), played by %s",
-			  place, (long)the_score.points, the_score.name,
-			  race[pr].trace, class[pc].title,
-			  clev, getpwuid(the_score.uid)->pw_name);
-	else
+	    user = (the_score.uid != -1) ? getpwuid(the_score.uid)? getpwuid(the_score.uid)->pw_name: NULL : NULL;
+
 	    (void)sprintf(buf, "%3d) %-7ld %s the %s %s (Level %d)",
 			  place, (long)the_score.points, the_score.name,
 			  race[pr].trace, class[pc].title,
@@ -992,6 +990,11 @@ void display_scores(int from, int to)
 		      "             Killed by %s on Dungeon Level %d.",
 		      the_score.died_from, cdun);
 	    put_str(buf, n*4 + 3, 0);
+
+	    /* And still another line of info */
+	    sprintf(buf, "               (User %s).",
+		    user);
+	    put_str(buf, n*4 + 4, 0);
 	}
 
 /* Pause for user response before returning		-RAK-	 */
