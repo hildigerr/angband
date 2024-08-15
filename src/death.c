@@ -979,11 +979,14 @@ void display_scores(int from, int to)
 	    cdun = the_score.dun_level;
 
 	    user = (the_score.uid != -1) ? getpwuid(the_score.uid)? getpwuid(the_score.uid)->pw_name: NULL : NULL;
-
+	    
+	    /* Dump some info */
 	    (void)sprintf(buf, "%3d) %-7ld %s the %s %s (Level %d)",
 			  place, (long)the_score.points, the_score.name,
 			  race[pr].trace, class[pc].title,
 			  clev);
+
+	    /* Dump the first line */
 	    put_str(buf, n*4 + 2, 0);
 
 	    /* Another line of info */
@@ -996,6 +999,7 @@ void display_scores(int from, int to)
 			the_score.died_from);
 	    }
 
+	    /* Dump the info */
 	    put_str(buf, n*4 + 3, 0);
 
 	    /* And still another line of info */
