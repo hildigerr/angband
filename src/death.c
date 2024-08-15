@@ -986,9 +986,17 @@ void display_scores(int from, int to)
 			  race[pr].trace, class[pc].title,
 			  clev);
 	    put_str(buf, n*4 + 2, 0);
-	(void)sprintf(buf,
-		      "             Killed by %s on Dungeon Level %d.",
-		      the_score.died_from, cdun);
+
+	    /* Another line of info */
+	    sprintf(buf, "               Killed by %s on %s %d.",
+		    the_score.died_from, "Dungeon Level", cdun);
+	    
+	    /* Hack -- some people die in the town */
+	    if (!cdun) {
+		sprintf(buf, "               Killed by %s in the Town",
+			the_score.died_from);
+	    }
+
 	    put_str(buf, n*4 + 3, 0);
 
 	    /* And still another line of info */
