@@ -113,10 +113,12 @@ int main(int argc, char *argv[])
     int show_score = 0;
 
 #ifndef __MINT__
+#ifdef CHECK_LOAD
     FILE *fp;
     char temphost[MAXHOSTNAMELEN+1];
     char thishost[MAXHOSTNAMELEN+1];
     char discard[120];
+#endif
 #endif
     
     /* default command set defined in config.h file */
@@ -156,7 +158,7 @@ int main(int argc, char *argv[])
     /* Check for "Wizard" permission */
     can_be_wizard = is_wizard(player_uid);
 
-#if !defined(MSDOS) && !defined(__MINT__)
+#ifdef CHECK_LOAD
     (void)gethostname(thishost, (sizeof thishost) - 1);	/* get host */
     fp = my_tfopen(ANGBAND_LOAD, "r");
     if (!fp) quit("cannot get load-check!");

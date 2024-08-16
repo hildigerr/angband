@@ -101,6 +101,12 @@
 #undef CHECK_HOURS
 
 /*
+ * OPTION: Check the "hours" file (may need the 'rpcsvs' library)
+ */
+#undef CHECK_LOAD
+
+
+/*
  * OPTION: this sets the default user interface
  * to use the original key bindings (keypad for movement) set ROGUE_LIKE
  * to FALSE, to use the rogue-like key bindings (vi style movement)

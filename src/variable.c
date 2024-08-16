@@ -29,7 +29,7 @@ int character_generated = 0;	/* A character has been generated */
 int character_saved = 0;	/* The character has been saved */
 
 
-int LOAD = 0;
+int LOAD = 0;			/* Hack -- used for CHECK_LOAD */
 
 
 u32b randes_seed;		/* Hack -- consistent object colors */
