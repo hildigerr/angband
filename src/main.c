@@ -94,7 +94,7 @@ static bool name_okay(cptr s)
 
 	/* No control characters */
 	if (iscntrl(*a)) {
-	    msg_print("Yuch! No control characters, Thankyou!");
+	    plog_fmt("The name '%s' contains control characters", s);
 	    return (FALSE);
 	}
     }
