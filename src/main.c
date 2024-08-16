@@ -119,14 +119,6 @@ int main(int argc, char *argv[])
     char discard[120];
 #endif
     
-#if !defined(MSDOS) && !defined(HPUX)
-    struct rlimit rlp;
-    /* Disable core dumps */
-    getrlimit(RLIMIT_CORE,&rlp);
-    rlp.rlim_cur=0;
-    setrlimit(RLIMIT_CORE,&rlp);
-#endif
-    
     /* default command set defined in config.h file */
     rogue_like_commands = ROGUE_LIKE;
 
