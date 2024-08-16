@@ -803,15 +803,15 @@ int protect_evil()
  */
 void satisfy_hunger(void)
 {
-     msg_print("You feel full!");
-	 msg_print(NULL);
+    msg_print("You feel full!");
+    msg_print(NULL);
 
     /* No longer hungry */
-	 p_ptr->food = PLAYER_FOOD_MAX;
+    p_ptr->food = PLAYER_FOOD_MAX;
 
     /* Hack -- update the display */
-     p_ptr->status &= ~(PY_WEAK | PY_HUNGRY);
-     prt_hunger();
+    p_ptr->status &= ~(PY_WEAK | PY_HUNGRY);
+    prt_hunger();
 }
 
 
