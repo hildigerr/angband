@@ -945,7 +945,7 @@ int cure_poison(void);
 int remove_fear(void);
 void earthquake(void);
 int protect_evil(void);
-void create_food(void);
+void satisfy_hunger(void);
 int dispel_creature(int, int);
 int turn_undead(void);
 void warding_glyph(void);

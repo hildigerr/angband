@@ -799,21 +799,15 @@ int protect_evil()
 
 
 /*
- * Create some high quality mush for the player.	-RAK-
- * Nope, let's just fill him up and save everybody time... -CWS
+ * Make the player no longer hungry
  */
-void create_food(void)
+void satisfy_hunger(void)
 {
      msg_print("You feel full!");
 	 msg_print(NULL);
 
-#if defined(SATISFY_HUNGER)				/* new create food code -CWS */
     /* No longer hungry */
 	 p_ptr->food = PLAYER_FOOD_MAX;
-#else
-     /* add to food timer rather than create mush - cba */
-     add_food(k_list[OBJ_MUSH].pval);
-#endif
 
     /* Hack -- update the display */
      p_ptr->status &= ~(PY_WEAK | PY_HUNGRY);

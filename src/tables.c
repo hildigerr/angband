@@ -1351,12 +1351,8 @@ cptr spell_names[127] = {
   "Confusion", "Lightning Bolt",  "Trap/Door Destruction", "Sleep I",
   "Cure Poison",  "Teleport Self",  "Spear of Light",  "Frost Bolt",
   "Turn Stone to Mud",
-#ifdef SATISFY_HUNGER
-  "Staisfy Hunger",
-#else
-  "Create Food",
-#endif
-  "Recharge Item I",  "Sleep II", "Polymorph Other",
+  
+  "Satisfy Hunger", "Recharge Item I",  "Sleep II", "Polymorph Other",
   "Identify",  "Sleep III",  "Fire Bolt",  "Slow Monster",
 
   "Frost Ball", "Recharge Item II", "Teleport Other", "Haste Self",
@@ -1410,13 +1406,8 @@ cptr spell_names[127] = {
   "Call Light", "Find Traps",  "Detect Doors/Stairs",  "Slow Poison",
   
   "Blind Creature", "Portal",  "Cure Medium Wounds",  "Chant",
-  "Sanctuary",
-#ifdef SATISFY_HUNGER
-  "Satisfy Hunger",
-#else
-  "Create Food",
-#endif
-  "Remove Curse",  "Resist Heat and Cold",
+  "Sanctuary",  "Satisfy Hunger", "Remove Curse",  "Resist Heat and Cold",
+  
   "Neutralize Poison", "Orb of Draining",  "Cure Serious Wounds",
   "Sense Invisible", "Protection from Evil",  "Earthquake",
   "Sense Surroundings", "Cure Critical Wounds",  "Turn Undead",

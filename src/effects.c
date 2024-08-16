@@ -1245,7 +1245,7 @@ void do_cmd_read_scroll(void)
 	    break;
 
 	  case 29:
-	    create_food();
+	    satisfy_hunger();
 	    ident = TRUE;
 	    break;
 

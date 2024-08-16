@@ -35,8 +35,6 @@
  * wishes.
  */
 #define ALLOW_SCORE          /* Allow the user to check his score (v-key)    */
-#define SATISFY_HUNGER		 /* Do 'satisfy hunger' rather then 'create food'
-								to reduce the tedium for handling food. -CWS */
 
 
 /*

@@ -798,7 +798,7 @@ void cast()
 	    break;
 
 	  case 19:
-	    create_food();
+	    satisfy_hunger();
 	    break;
 	    
 	  case 20:
@@ -1187,7 +1187,7 @@ void pray()
 	    break;
 	    
 	  case 14:
-	    create_food();
+	    satisfy_hunger();
 	    break;
 	    
 	  case 15:
