@@ -976,7 +976,7 @@ void do_command(char com_val)
 	    free_turn_flag = TRUE;
 	    break;
 
-#ifdef ALLOW_ARTIFACT_CHECK /* -CWS */
+#ifdef ALLOW_CHECK_ARTIFACTS /* -CWS */
 	/* Check artifacts */
 	case '~':
 	    do_cmd_check_artifacts(); break;

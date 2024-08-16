@@ -60,7 +60,7 @@
 /*
  * OPTION: Allow checking of artifacts (in town)
  */
-#define ALLOW_ARTIFACT_CHECK
+#define ALLOW_CHECK_ARTIFACTS
  
 /*
  * OPTION: Allow checking of dead uniques
