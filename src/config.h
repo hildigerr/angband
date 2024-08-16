@@ -107,6 +107,12 @@
 
 
 /*
+ * OPTION: Capitalize the "user_name" (used as the "default" player name)
+ */
+#define CAPITALIZE_USER_NAME
+
+
+/*
  * OPTION: this sets the default user interface
  * to use the original key bindings (keypad for movement) set ROGUE_LIKE
  * to FALSE, to use the rogue-like key bindings (vi style movement)

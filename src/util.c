@@ -75,7 +75,9 @@ void user_name(char *buf, int id)
     if ((pw = getpwuid(id))) {
     (void)strcpy(buf, pw->pw_name);
 
-    if (*buf >= 'a' && *buf <= 'z') *buf = (*buf - 'a') + 'A';
+#ifdef CAPITALIZE_USER_NAME
+	if (islower(buf[0])) buf[0] = toupper(buf[0]);
+#endif
 
 	return;
     }
