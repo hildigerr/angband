@@ -89,12 +89,17 @@ static bool name_okay(cptr s)
 {
     cptr a;
 
+    /* Cannot contain "icky" characters */
     for (a = s; *a; a++) {
+
+	/* No control characters */
 	if (iscntrl(*a)) {
 	    msg_print("Yuch! No control characters, Thankyou!");
 	    return (FALSE);
 	}
     }
+
+    /* Acceptable */
     return (TRUE);
 }
 
