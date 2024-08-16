@@ -10,6 +10,20 @@
  * included in all such copies.
  */
 
+
+/*
+ * Look through the following lines, and where a comment includes the
+ * tag "OPTION:", examine the associated "#define" statements, and decide
+ * whether you wish to keep, comment, or uncomment them.  You should not
+ * have to modify any lines not indicated by "OPTION".
+ *
+ * Note: Also examine the "system" configuration file "h-config.h"
+ * and the variable initialization file "variables.c".  If you change
+ * anything in "variables.c", you only need to recompile that file.
+ */
+
+
+
 /*
  * OPTION: Person to bother if something goes wrong.
  */
@@ -64,11 +78,6 @@
 #define TARGET
 
 
-/*****************************************************
- * files used by moria, set these to valid pathnames *
- *****************************************************/
-
-
 /*
  * OPTION: Set the "default" path to the angband "lib" directory.
  * Angband will use this value if it cannot getenv("ANGBAND_PATH").
@@ -99,28 +108,6 @@
  * if you change this, you only need to recompile main.c
  */
 #define ROGUE_LIKE TRUE
-
-
-
-
-
-
-/****************************************************************************
- * System dependent defines follow, you should not need to change anything  *
- * below (if you have a supported system).  If you run into problems during *
- * compilation, you might want to check the defines below.                  *
- ****************************************************************************/
-
-
-
-
-
-
-
-
-
-
-
 
 
 #ifdef MACINTOSH
