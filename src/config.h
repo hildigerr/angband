@@ -10,16 +10,16 @@
  * included in all such copies.
  */
 
-/* Person to bother if something goes wrong.
+/*
+ * OPTION: Person to bother if something goes wrong.
  */
 #define WIZARD	"root"
 
 
-
-/* Other miscellaneous defines that can be configured as the local maintainer
+/*
+ * OPTION: Other miscellaneous defines that can be configured as the local maintainer
  * wishes.
  */
-
 #define ALLOW_SCORE          /* Allow the user to check his score (v-key)    */
 #define SATISFY_HUNGER		 /* Do 'satisfy hunger' rather then 'create food'
 								to reduce the tedium for handling food. -CWS */
@@ -91,13 +91,13 @@
  */
 #undef CHECK_HOURS
 
-
-/* this sets the default user interface
+/*
+ * OPTION: this sets the default user interface
  * to use the original key bindings (keypad for movement) set ROGUE_LIKE
  * to FALSE, to use the rogue-like key bindings (vi style movement)
  * set ROGUE_LIKE to TRUE
- * if you change this, you only need to recompile main.c */
-
+ * if you change this, you only need to recompile main.c
+ */
 #define ROGUE_LIKE TRUE
 
 
