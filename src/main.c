@@ -390,7 +390,7 @@ void play_game()
     /* Load and re-save a player's character (only Unix) */
     if (fiddle) {
 	if (load_player(&generate)) save_player();
-	exit_game();
+	quit(NULL);
     }
 
     /*
