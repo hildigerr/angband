@@ -976,17 +976,13 @@ void do_command(char com_val)
 	    free_turn_flag = TRUE;
 	    break;
 
-#ifdef ALLOW_CHECK_ARTIFACTS /* -CWS */
 	/* Check artifacts */
 	case '~':
 	    do_cmd_check_artifacts(); break;
-#endif
 
-#ifdef ALLOW_CHECK_UNIQUES /* -CWS */
 	/* Check uniques */
 	case '|':
 	    do_cmd_check_uniques(); break;
-#endif
 
 #ifdef ALLOW_SCORE
 	case 'v':   /* score patch originally by Mike Welsh mikewe@acacia.cs.pdx.edu */

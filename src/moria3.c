@@ -2078,6 +2078,14 @@ void do_cmd_check_artifacts(void)
 {
     int i, j;
 
+
+#ifndef ALLOW_CHECK_ARTIFACTS
+    if (!wizard) {
+	msg_print("That command was not compiled.");
+	return;
+    }
+#endif
+
     /* Hack -- no checking in the dungeon */
     if (dun_level && !wizard) {
 	msg_print("You need to be in town to check artifacts!");
@@ -2582,6 +2590,15 @@ void do_cmd_check_uniques()
 {
     int      i, j, k, t;
     bigvtype msg;
+
+
+#ifndef ALLOW_CHECK_UNIQUES
+    if (!wizard) {
+	msg_print("That command was not compiled.");
+	return;
+    }
+#endif
+
 
     save_screen();
 
