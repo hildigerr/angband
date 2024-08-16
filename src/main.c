@@ -82,14 +82,20 @@ static bool is_wizard(int uid)
 }
 
 
-static int d_check(char *a)
+/*
+ * Verify the name
+ */
+static bool name_okay(cptr s)
 {
+    cptr a;
+
+    a = s;
     while (*a)
 	if (iscntrl(*a)) {
 	    msg_print("Yuch! No control characters, Thankyou!");
-	    exit_game();
+	    return (FALSE);
 	} else a++;
-    return (0);
+    return (TRUE);
 }
 
 
@@ -236,7 +242,6 @@ int main(int argc, char *argv[])
 	  case 'U':
 	    if (!argv[0][2]) goto usage;
 	    strcpy(p_ptr->name, &argv[0][2]);
-	    d_check(p_ptr->name);
 	    break;
 
 	  default:
@@ -282,6 +287,8 @@ int main(int argc, char *argv[])
 	}
     }
 
+    /* Verify the "player name" */
+    if (!name_okay(p_ptr->name)) quit("bad player name");
 
     /* use curses */
     init_curses();
