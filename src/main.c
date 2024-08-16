@@ -302,7 +302,7 @@ int main(int argc, char *argv[])
     /* Handle "score list" requests */
     if (show_score > 0) {
 	display_scores(0, show_score);
-	exit_game();
+	quit(NULL);
     }
 
     /* XXX XXX Verify the "player name" */
