@@ -89,12 +89,12 @@ static bool name_okay(cptr s)
 {
     cptr a;
 
-    a = s;
-    while (*a)
+    for (a = s; *a; a++) {
 	if (iscntrl(*a)) {
 	    msg_print("Yuch! No control characters, Thankyou!");
 	    return (FALSE);
-	} else a++;
+	}
+    }
     return (TRUE);
 }
 
