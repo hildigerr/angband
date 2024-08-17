@@ -292,7 +292,7 @@ int show_equip(int weight, int col)
 
 
 /*
- * Get the ID of an item and return the CTR value of it	-RAK-	 
+ * Let the user select an item, return its "index"  -RAK-
  */
 int get_item(int *com_val, cptr pmt, int s1, int s2)
 {
@@ -302,6 +302,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
     int          full, i_scr, redraw;
 
 
+    /* No item selected */
     item = FALSE;
     redraw = FALSE;
     *com_val = 0;
@@ -324,6 +325,8 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 		else
 		    (void)show_equip(FALSE, 80);
 	    }
+
+	/* Prepare the prompt */
 	    if (full)
 		(void)sprintf(out_val,
 			      "(%s: %c-%c,%s%s / for %s, or ESC) %s",
@@ -335,10 +338,17 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 			"(Items %c-%c,%s ESC to exit) %s", s1 + 'a', s2 + 'a',
 			      (redraw ? "" : " * for inventory list,"), pmt);
 	    test_flag = FALSE;
+
+	/* Show the prompt */	    
 	    prt(out_val, 0, 0);
 	    do {
+	/* Get a key */
 		which = inkey();
+
+	/* Parse it */
 		switch (which) {
+
+	  /* Cancel */
 		  case ESCAPE:
 		    test_flag = TRUE;
 		    free_turn_flag = TRUE;
@@ -395,6 +405,8 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 			*com_val = which - 'A';
 		    else
 			*com_val = which - 'a';
+
+	    /* Require legal entry */
 		    if ((*com_val >= s1) && (*com_val <= s2)) {
 			if (i_scr == 0) {
 			    s1 = 21;
@@ -406,12 +418,16 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 			    while (s2 >= 0);
 			    *com_val = s1;
 			}
+	    	    		    
+	    /* Verify, abort if requested */
 			if (isupper((int)which) && !verify("Try", *com_val)) {
 			    test_flag = TRUE;
 			    free_turn_flag = TRUE;
 			    i_scr = (-1);
 			    break;
 			}
+
+	    /* Accept that choice */
 			test_flag = TRUE;
 			item = TRUE;
 			i_scr = (-1);
@@ -423,11 +439,18 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 	    while (!test_flag);
 	}
 	while (i_scr >= 0);
+
+
+    /* Fix the screen if necessary */
 	if (redraw)
 	    restore_screen();
+
+    /* Erase the prompt (if any) */
 	erase_line(MSG_LINE, 0);
     } else
 	prt("You are not carrying anything.", 0, 0);
+    
+    /* Return TRUE if something was picked */
     return (item);
 }
 
