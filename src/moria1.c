@@ -299,7 +299,8 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
     vtype        out_val;
     char         which;
     register int test_flag, item;
-    int          full, i_scr, redraw;
+    int          i_scr, redraw;
+    bool	allow_equip;
 
 
     /* No item selected */
@@ -307,18 +308,21 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 
     redraw = FALSE;
     *com_val = 0;
+
+    /* Determine which "pages" are allowed */
+    allow_equip = (s2 > INVEN_WIELD);
+    
+
     i_scr = 1;
-    if (s2 > INVEN_WIELD) {
-	full = TRUE;
+    if (allow_equip) {
 	if (inven_ctr == 0) {
 	    i_scr = 0;
 	    s2 = equip_ctr - 1;
 	} else
 	    s2 = inven_ctr - 1;
-    } else
-	full = FALSE;
+    }
 
-    if (inven_ctr > 0 || (full && equip_ctr > 0)) {
+    if (inven_ctr > 0 || (allow_equip && equip_ctr > 0)) {
 	do {
 	    if (redraw) {
 		if (i_scr > 0)
@@ -328,7 +332,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 	    }
 
 	/* Prepare the prompt */
-	if (full)
+	if (allow_equip)
 	    (void)sprintf(out_val,
 			  "(%s: %c-%c,%s%s / for %s, or ESC) %s",
 			  (i_scr > 0 ? "Inven" : "Equip"), s1 + 'a', s2 + 'a',
@@ -360,7 +364,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 
 	  case '/':
 
-		    if (full) {
+		    if (allow_equip) {
 			if (i_scr > 0) {
 			    if (equip_ctr == 0) {
 				prt("But you're not using anything -more-", 0, 0);
