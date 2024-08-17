@@ -294,7 +294,7 @@ int show_equip(int weight, int col)
 /*
  * Get the ID of an item and return the CTR value of it	-RAK-	 
  */
-int get_item(int *com_val, cptr pmt, int i, int j)
+int get_item(int *com_val, cptr pmt, int s1, int s2)
 {
     vtype        out_val;
     char         which;
@@ -306,13 +306,13 @@ int get_item(int *com_val, cptr pmt, int i, int j)
     redraw = FALSE;
     *com_val = 0;
     i_scr = 1;
-    if (j > INVEN_WIELD) {
+    if (s2 > INVEN_WIELD) {
 	full = TRUE;
 	if (inven_ctr == 0) {
 	    i_scr = 0;
-	    j = equip_ctr - 1;
+	    s2 = equip_ctr - 1;
 	} else
-	    j = inven_ctr - 1;
+	    s2 = inven_ctr - 1;
     } else
 	full = FALSE;
 
@@ -320,19 +320,19 @@ int get_item(int *com_val, cptr pmt, int i, int j)
 	do {
 	    if (redraw) {
 		if (i_scr > 0)
-		    (void)show_inven(i, j, FALSE, 80);
+		    (void)show_inven(s1, s2, FALSE, 80);
 		else
 		    (void)show_equip(FALSE, 80);
 	    }
 	    if (full)
 		(void)sprintf(out_val,
 			      "(%s: %c-%c,%s%s / for %s, or ESC) %s",
-			     (i_scr > 0 ? "Inven" : "Equip"), i + 'a', j + 'a',
+			     (i_scr > 0 ? "Inven" : "Equip"), s1 + 'a', s2 + 'a',
 			      (redraw ? "" : " * to see,"),
 			      (i_scr > 0 ? "Equip" : "Inven"), pmt);
 	    else
 		(void)sprintf(out_val,
-			"(Items %c-%c,%s ESC to exit) %s", i + 'a', j + 'a',
+			"(Items %c-%c,%s ESC to exit) %s", s1 + 'a', s2 + 'a',
 			      (redraw ? "" : " * for inventory list,"), pmt);
 	    test_flag = FALSE;
 	    prt(out_val, 0, 0);
@@ -354,13 +354,13 @@ int get_item(int *com_val, cptr pmt, int i, int j)
 				i_scr = 0;
 				test_flag = TRUE;
 				if (redraw) {
-				    j = equip_ctr;
-				    while (j < inven_ctr) {
-					j++;
-					erase_line(j, 0);
+				    s2 = equip_ctr;
+				    while (s2 < inven_ctr) {
+					s2++;
+					erase_line(s2, 0);
 				    }
 				}
-				j = equip_ctr - 1;
+				s2 = equip_ctr - 1;
 			    }
 			    prt(out_val, 0, 0);
 			} else {
@@ -371,13 +371,13 @@ int get_item(int *com_val, cptr pmt, int i, int j)
 				i_scr = 1;
 				test_flag = TRUE;
 				if (redraw) {
-				    j = inven_ctr;
-				    while (j < equip_ctr) {
-					j++;
-					erase_line(j, 0);
+				    s2 = inven_ctr;
+				    while (s2 < equip_ctr) {
+					s2++;
+					erase_line(s2, 0);
 				    }
 				}
-				j = inven_ctr - 1;
+				s2 = inven_ctr - 1;
 			    }
 			}
 
@@ -395,16 +395,16 @@ int get_item(int *com_val, cptr pmt, int i, int j)
 			*com_val = which - 'A';
 		    else
 			*com_val = which - 'a';
-		    if ((*com_val >= i) && (*com_val <= j)) {
+		    if ((*com_val >= s1) && (*com_val <= s2)) {
 			if (i_scr == 0) {
-			    i = 21;
-			    j = *com_val;
+			    s1 = 21;
+			    s2 = *com_val;
 			    do {
-				while (inventory[++i].tval == TV_NOTHING);
-				j--;
+				while (inventory[++s1].tval == TV_NOTHING);
+				s2--;
 			    }
-			    while (j >= 0);
-			    *com_val = i;
+			    while (s2 >= 0);
+			    *com_val = s1;
 			}
 			if (isupper((int)which) && !verify("Try", *com_val)) {
 			    test_flag = TRUE;
