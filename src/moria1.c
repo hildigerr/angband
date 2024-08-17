@@ -304,6 +304,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 
     /* No item selected */
     item = FALSE;
+
     redraw = FALSE;
     *com_val = 0;
     i_scr = 1;
@@ -327,34 +328,38 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 	    }
 
 	/* Prepare the prompt */
-	    if (full)
-		(void)sprintf(out_val,
-			      "(%s: %c-%c,%s%s / for %s, or ESC) %s",
-			     (i_scr > 0 ? "Inven" : "Equip"), s1 + 'a', s2 + 'a',
-			      (redraw ? "" : " * to see,"),
-			      (i_scr > 0 ? "Equip" : "Inven"), pmt);
-	    else
-		(void)sprintf(out_val,
-			"(Items %c-%c,%s ESC to exit) %s", s1 + 'a', s2 + 'a',
-			      (redraw ? "" : " * for inventory list,"), pmt);
+	if (full)
+	    (void)sprintf(out_val,
+			  "(%s: %c-%c,%s%s / for %s, or ESC) %s",
+			  (i_scr > 0 ? "Inven" : "Equip"), s1 + 'a', s2 + 'a',
+			  (redraw ? "" : " * to see,"),
+			  (i_scr > 0 ? "Equip" : "Inven"), pmt);
+	else
+	    (void)sprintf(out_val,
+			  "(Items %c-%c,%s ESC to exit) %s", s1 + 'a', s2 + 'a',
+			  (redraw ? "" : " * for inventory list,"), pmt);
 	    test_flag = FALSE;
 
 	/* Show the prompt */	    
-	    prt(out_val, 0, 0);
+	prt(out_val, 0, 0);
 	    do {
+
+
 	/* Get a key */
-		which = inkey();
+	which = inkey();
 
 	/* Parse it */
-		switch (which) {
+	switch (which) {
 
 	  /* Cancel */
-		  case ESCAPE:
+	  case ESCAPE:
 		    test_flag = TRUE;
 		    free_turn_flag = TRUE;
 		    i_scr = (-1);
-		    break;
-		  case '/':
+	    break;
+
+	  case '/':
+
 		    if (full) {
 			if (i_scr > 0) {
 			    if (equip_ctr == 0) {
@@ -390,17 +395,19 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 				s2 = inven_ctr - 1;
 			    }
 			}
+		    }
+	    break;
 
-		    }
-		    break;
-		  case '*':
-		    if (!redraw) {
+	  case '*':
+	    if (!redraw) {
 			test_flag = TRUE;
-			save_screen();
-			redraw = TRUE;
-		    }
-		    break;
-		  default:
+	        save_screen();
+		redraw = TRUE;
+	    }
+	    break;
+
+	  default:
+
 		    if (isupper((int)which))
 			*com_val = which - 'A';
 		    else
@@ -420,33 +427,33 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 			}
 	    	    		    
 	    /* Verify, abort if requested */
-			if (isupper((int)which) && !verify("Try", *com_val)) {
+	    if (isupper((int)which) && !verify("Try", *com_val)) {
 			    test_flag = TRUE;
-			    free_turn_flag = TRUE;
+		free_turn_flag = TRUE;
 			    i_scr = (-1);
-			    break;
-			}
+		break;
+	    }
 
 	    /* Accept that choice */
-			test_flag = TRUE;
-			item = TRUE;
+	    test_flag = TRUE;
+	    item = TRUE;
 			i_scr = (-1);
 		    } else
 			bell();
-		    break;
-		}
+	    break;
+	}
 	    }
 	    while (!test_flag);
-	}
+    }
 	while (i_scr >= 0);
 
 
     /* Fix the screen if necessary */
-	if (redraw)
-	    restore_screen();
+    if (redraw) restore_screen();
 
     /* Erase the prompt (if any) */
-	erase_line(MSG_LINE, 0);
+    erase_line(MSG_LINE, 0);
+
     } else
 	prt("You are not carrying anything.", 0, 0);
     
