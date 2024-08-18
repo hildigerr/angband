@@ -382,7 +382,12 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 
 	  case '/':
 
-		    if (allow_equip) {
+	    /* Hack -- no "changing pages" allowed */
+	    if (!allow_equip) {
+		bell();
+		break;
+	    }
+	    
 			if (i_scr > 0) {
 			    if (equip_ctr == 0) {
 				prt("But you're not using anything -more-", 0, 0);
@@ -417,7 +422,6 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 				s2 = inven_ctr - 1;
 			    }
 			}
-		    }
 	    break;
 
 	  default:
