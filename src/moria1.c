@@ -297,9 +297,8 @@ int show_equip(int weight, int col)
 int get_item(int *com_val, cptr pmt, int s1, int s2)
 {
     char         which;
-    register int item;
     int          i_scr, redraw;
-    bool	done;
+    bool	done, item;
     bool	allow_equip;
     vtype       out_val;
 
