@@ -296,7 +296,7 @@ int show_equip(int weight, int col)
  */
 int get_item(int *com_val, cptr pmt, int s1, int s2)
 {
-    char         which;
+    char        n1, n2, which;
     int          i_scr, redraw;
     bool	done, item;
     bool	allow_equip;
@@ -328,6 +328,9 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 	    s2 = inven_ctr - 1;
     }
 
+	n1 = 'a' + s1;
+	n2 = 'a' + s2;
+
     if (inven_ctr > 0 || (allow_equip && equip_ctr > 0)) {
 	do {
 	    if (redraw) {
@@ -341,12 +344,12 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 	if (allow_equip)
 	    (void)sprintf(out_val,
 			  "(%s: %c-%c,%s%s / for %s, or ESC) %s",
-			  (i_scr > 0 ? "Inven" : "Equip"), s1 + 'a', s2 + 'a',
+			  (i_scr > 0 ? "Inven" : "Equip"), n1, n2,
 			  (redraw ? "" : " * to see,"),
 			  (i_scr > 0 ? "Equip" : "Inven"), pmt);
 	else
 	    (void)sprintf(out_val,
-			  "(Items %c-%c,%s ESC to exit) %s", s1 + 'a', s2 + 'a',
+			  "(Items %c-%c,%s ESC to exit) %s", n1, n2,
 			  (redraw ? "" : " * for inventory list,"), pmt);
 
 	/* Show the prompt */	    
