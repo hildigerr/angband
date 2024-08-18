@@ -297,11 +297,15 @@ int show_equip(int weight, int col)
 int get_item(int *com_val, cptr pmt, int s1, int s2)
 {
     char         which;
-    register int test_flag, item;
+    register int item;
     int          i_scr, redraw;
+    bool	done;
     bool	allow_equip;
     vtype       out_val;
 
+
+    /* Not done */    
+    done = FALSE;
 
     /* No item selected */
     item = FALSE;
@@ -345,11 +349,12 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 	    (void)sprintf(out_val,
 			  "(Items %c-%c,%s ESC to exit) %s", s1 + 'a', s2 + 'a',
 			  (redraw ? "" : " * for inventory list,"), pmt);
-	    test_flag = FALSE;
 
 	/* Show the prompt */	    
 	prt(out_val, 0, 0);
-	    do {
+
+    /* Repeat until done */
+    while (!done) {
 
 
 	/* Get a key */
@@ -360,14 +365,14 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 
 	  /* Cancel */
 	  case ESCAPE:
-		    test_flag = TRUE;
+	    done = TRUE;
 		    free_turn_flag = TRUE;
 		    i_scr = (-1);
 	    break;
 
 	  case '*':
 	    if (!redraw) {
-			test_flag = TRUE;
+			done = TRUE;
 	        save_screen();
 		redraw = TRUE;
 	    }
@@ -382,7 +387,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 				(void)inkey();
 			    } else {
 				i_scr = 0;
-				test_flag = TRUE;
+				done = TRUE;
 				if (redraw) {
 				    s2 = equip_ctr;
 				    while (s2 < inven_ctr) {
@@ -399,7 +404,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 				(void)inkey();
 			    } else {
 				i_scr = 1;
-				test_flag = TRUE;
+				done = TRUE;
 				if (redraw) {
 				    s2 = inven_ctr;
 				    while (s2 < equip_ctr) {
@@ -435,22 +440,21 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 	    	    		    
 	    /* Verify, abort if requested */
 	    if (isupper((int)which) && !verify("Try", *com_val)) {
-			    test_flag = TRUE;
 		free_turn_flag = TRUE;
+		done = TRUE;
 			    i_scr = (-1);
 		break;
 	    }
 
 	    /* Accept that choice */
-	    test_flag = TRUE;
 	    item = TRUE;
+	    done = TRUE;
 			i_scr = (-1);
 		    } else
 			bell();
 	    break;
 	}
 	    }
-	    while (!test_flag);
     }
 	while (i_scr >= 0);
 
