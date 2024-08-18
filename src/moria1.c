@@ -296,18 +296,21 @@ int show_equip(int weight, int col)
  */
 int get_item(int *com_val, cptr pmt, int s1, int s2)
 {
-    vtype        out_val;
     char         which;
     register int test_flag, item;
     int          i_scr, redraw;
     bool	allow_equip;
+    vtype       out_val;
 
 
     /* No item selected */
     item = FALSE;
 
-    redraw = FALSE;
     *com_val = 0;
+
+
+    redraw = FALSE;
+
 
     /* Determine which "pages" are allowed */
     allow_equip = (s2 > INVEN_WIELD);
@@ -362,6 +365,14 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 		    i_scr = (-1);
 	    break;
 
+	  case '*':
+	    if (!redraw) {
+			test_flag = TRUE;
+	        save_screen();
+		redraw = TRUE;
+	    }
+	    break;
+
 	  case '/':
 
 		    if (allow_equip) {
@@ -400,14 +411,6 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 			    }
 			}
 		    }
-	    break;
-
-	  case '*':
-	    if (!redraw) {
-			test_flag = TRUE;
-	        save_screen();
-		redraw = TRUE;
-	    }
 	    break;
 
 	  default:
