@@ -293,6 +293,9 @@ int show_equip(int weight, int col)
 
 /*
  * Let the user select an item, return its "index"  -RAK-
+ *
+ * If a legal item is selected, we save it in "com_val" and return TRUE.
+ * Otherwise, we set "com_val" to "-1" and return FALSE.
  */
 int get_item(int *com_val, cptr pmt, int s1, int s2)
 {
@@ -310,7 +313,8 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
     /* No item selected */
     item = FALSE;
 
-    *com_val = 0;
+    /* Default to "no item" */
+    *com_val = -1;
 
 
     redraw = FALSE;
@@ -421,27 +425,27 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 	    ver = isupper(which);
 	    if (ver) which = tolower(which);
 
-			*com_val = which - 'a';
+		k = which - 'a';
 
 	    /* Require legal entry */
-	    if ((*com_val < s1) || (*com_val > s2)) {
+	    if ((k < s1) || (k > s2)) {
 		bell();
 		break;
 	    }
 		    
 			if (i_scr == 0) {
 			    s1 = 21;
-			    s2 = *com_val;
+			    s2 = k;
 			    do {
 				while (inventory[++s1].tval == TV_NOTHING);
 				s2--;
 			    }
 			    while (s2 >= 0);
-			    *com_val = s1;
+			    k = s1;
 			}
 	    	    		    
 	    /* Verify, abort if requested */
-	    if (ver && !verify("Try", *com_val)) {
+	    if (ver && !verify("Try", k)) {
 		free_turn_flag = TRUE;
 		done = TRUE;
 			    i_scr = (-1);
@@ -449,6 +453,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 	    }
 
 	    /* Accept that choice */
+	    (*com_val) = k;
 	    item = TRUE;
 	    done = TRUE;
 			i_scr = (-1);
