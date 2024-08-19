@@ -299,7 +299,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
     char        n1, n2, which;
     int		k;
     int          i_scr, redraw;
-    bool	done, item;
+    bool	ver, done, item;
     bool	allow_equip;
     vtype       out_val;
 
@@ -417,9 +417,10 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 
 	  default:
 
-		    if (isupper((int)which))
-			*com_val = which - 'A';
-		    else
+	    /* Extract "query" setting */
+	    ver = isupper(which);
+	    if (ver) which = tolower(which);
+
 			*com_val = which - 'a';
 
 	    /* Require legal entry */
@@ -440,7 +441,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 			}
 	    	    		    
 	    /* Verify, abort if requested */
-	    if (isupper((int)which) && !verify("Try", *com_val)) {
+	    if (ver && !verify("Try", *com_val)) {
 		free_turn_flag = TRUE;
 		done = TRUE;
 			    i_scr = (-1);
