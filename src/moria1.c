@@ -337,7 +337,10 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 	n2 = 'a' + s2;
 
     if (inven_ctr > 0 || (allow_equip && equip_ctr > 0)) {
-	do {
+
+    /* Repeat until done */
+    while (!done) {
+
 	    if (redraw) {
 		if (i_scr > 0)
 		    (void)show_inven(s1, s2, FALSE, 80);
@@ -360,9 +363,6 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 	/* Show the prompt */	    
 	prt(out_val, 0, 0);
 
-    /* Repeat until done */
-    while (!done) {
-
 
 	/* Get a key */
 	which = inkey();
@@ -374,7 +374,6 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 	  case ESCAPE:
 	    done = TRUE;
 		    free_turn_flag = TRUE;
-		    i_scr = (-1);
 	    break;
 
 	  case '*':
@@ -448,7 +447,6 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 	    if (ver && !verify("Try", k)) {
 		free_turn_flag = TRUE;
 		done = TRUE;
-			    i_scr = (-1);
 		break;
 	    }
 
@@ -456,12 +454,9 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 	    (*com_val) = k;
 	    item = TRUE;
 	    done = TRUE;
-			i_scr = (-1);
 	    break;
 	}
-	    }
     }
-	while (i_scr >= 0);
 
 
     /* Fix the screen if necessary */
