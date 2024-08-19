@@ -423,7 +423,11 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 			*com_val = which - 'a';
 
 	    /* Require legal entry */
-		    if ((*com_val >= s1) && (*com_val <= s2)) {
+	    if ((*com_val < s1) || (*com_val > s2)) {
+		bell();
+		break;
+	    }
+		    
 			if (i_scr == 0) {
 			    s1 = 21;
 			    s2 = *com_val;
@@ -447,8 +451,6 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 	    item = TRUE;
 	    done = TRUE;
 			i_scr = (-1);
-		    } else
-			bell();
 	    break;
 	}
 	    }
