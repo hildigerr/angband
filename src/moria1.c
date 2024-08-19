@@ -297,6 +297,7 @@ int show_equip(int weight, int col)
 int get_item(int *com_val, cptr pmt, int s1, int s2)
 {
     char        n1, n2, which;
+    int		k;
     int          i_scr, redraw;
     bool	done, item;
     bool	allow_equip;
@@ -396,13 +397,8 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 				i_scr = 0;
 				done = TRUE;
 				if (redraw) {
-				    s2 = equip_ctr;
-				    while (s2 < inven_ctr) {
-					s2++;
-					erase_line(s2, 0);
-				    }
+				    for (k = equip_ctr; k < inven_ctr; k++) erase_line(k+1,0);
 				}
-				s2 = equip_ctr - 1;
 			    }
 			    prt(out_val, 0, 0);
 			} else {
@@ -413,13 +409,8 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 				i_scr = 1;
 				done = TRUE;
 				if (redraw) {
-				    s2 = inven_ctr;
-				    while (s2 < equip_ctr) {
-					s2++;
-					erase_line(s2, 0);
-				    }
+				    for (k = inven_ctr; k < equip_ctr; k++) erase_line(k+1,0);
 				}
-				s2 = inven_ctr - 1;
 			    }
 			}
 	    break;
