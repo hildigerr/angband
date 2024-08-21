@@ -399,30 +399,15 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 		break;
 	    }
 	    
-			if (command_xxx > 0) {
-			    if (equip_ctr == 0) {
-				prt("But you're not using anything -more-", 0, 0);
-				(void)inkey();
-			    } else {
-				command_xxx = 0;
-				done = TRUE;
-				if (command_see) {
-				    for (k = equip_ctr; k < inven_ctr; k++) erase_line(k+1,0);
-				}
-			    }
-			    prt(out_val, 0, 0);
-			} else {
-			    if (inven_ctr == 0) {
-				prt("But you're not carrying anything -more-", 0, 0);
-				(void)inkey();
-			    } else {
-				command_xxx = 1;
-				done = TRUE;
-				if (command_see) {
-				    for (k = inven_ctr; k < equip_ctr; k++) erase_line(k+1,0);
-				}
-			    }
-			}
+	    /* Hack -- Erase old info */
+	    if (command_see) {
+		for (k = n1 - 'a'; k <= n2 - 'a'; k++) erase_line(k+1,0);
+	    }
+
+	    /* Switch "pages" */
+	    command_xxx = (command_xxx ? FALSE : TRUE);
+
+	    /* Need to redraw */
 	    break;
 
 	  default:
