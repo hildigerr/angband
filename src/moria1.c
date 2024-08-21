@@ -292,6 +292,17 @@ int show_equip(int weight, int col)
 
 
 /*
+ * Auxiliary function for "get_item()" -- test an index
+ */
+static bool get_item_okay(int i)
+{
+    if ((i < 0) || (i >= INVEN_TOTAL)) return (FALSE);
+    if (!inventory[i].tval) return (FALSE);
+    return (TRUE);
+}
+
+
+/*
  * Let the user select an item, return its "index"  -RAK-
  *
  * If a legal item is selected, we save it in "com_val" and return TRUE.
@@ -428,7 +439,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 			    s1 = 21;
 			    s2 = k;
 			    do {
-				while (inventory[++s1].tval == TV_NOTHING);
+				while (!get_item_okay(++s1));
 				s2--;
 			    }
 			    while (s2 >= 0);
