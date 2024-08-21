@@ -300,7 +300,7 @@ int show_equip(int weight, int col)
 int get_item(int *com_val, cptr pmt, int s1, int s2)
 {
     char        n1, n2, which;
-    int		k;
+    int		k, i1, i2;
     int          i_scr, redraw;
     bool	ver, done, item;
     bool	allow_equip;
@@ -324,17 +324,24 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
     allow_equip = (s2 > INVEN_WIELD);
     
 
+    /* Start with "default" indexes */
+    i1 = 0, i2 = inven_ctr - 1;
+
+    /* Allow "restrictions" on inventory/equipment */
+    if (s1 > i1) i1 = s1;
+    if ((s2 < INVEN_WIELD) && (s2 < i2)) i2 = s2;
+    
+
     i_scr = 1;
     if (allow_equip) {
 	if (inven_ctr == 0) {
 	    i_scr = 0;
-	    s2 = equip_ctr - 1;
-	} else
-	    s2 = inven_ctr - 1;
+	    i2 = equip_ctr - 1;
+	}
     }
 
-	n1 = 'a' + s1;
-	n2 = 'a' + s2;
+	n1 = 'a' + i1;
+	n2 = 'a' + i2;
 
     if (inven_ctr > 0 || (allow_equip && equip_ctr > 0)) {
 
@@ -343,7 +350,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 
 	    if (redraw) {
 		if (i_scr > 0)
-		    (void)show_inven(s1, s2, FALSE, 80);
+		    (void)show_inven(i1, i2, FALSE, 80);
 		else
 		    (void)show_equip(FALSE, 80);
 	    }
@@ -427,7 +434,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 		k = which - 'a';
 
 	    /* Require legal entry */
-	    if ((k < s1) || (k > s2)) {
+	    if ((k < n1) || (k > n2)) {
 		bell();
 		break;
 	    }
