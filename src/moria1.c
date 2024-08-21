@@ -301,7 +301,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 {
     char        n1, n2, which;
     int		k, i1, i2;
-    int          i_scr, redraw;
+    int          i_scr, command_see;
     bool	ver, done, item;
     bool	allow_equip;
     vtype       out_val;
@@ -317,7 +317,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
     *com_val = -1;
 
 
-    redraw = FALSE;
+    command_see = FALSE;
 
 
     /* Determine which "pages" are allowed */
@@ -348,7 +348,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
     /* Repeat until done */
     while (!done) {
 
-	    if (redraw) {
+	    if (command_see) {
 		if (i_scr > 0)
 		    (void)show_inven(i1, i2, FALSE, 80);
 		else
@@ -360,12 +360,12 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 	    (void)sprintf(out_val,
 			  "(%s: %c-%c,%s%s / for %s, or ESC) %s",
 			  (i_scr > 0 ? "Inven" : "Equip"), n1, n2,
-			  (redraw ? "" : " * to see,"),
+			  (command_see ? "" : " * to see,"),
 			  (i_scr > 0 ? "Equip" : "Inven"), pmt);
 	else
 	    (void)sprintf(out_val,
 			  "(Items %c-%c,%s ESC to exit) %s", n1, n2,
-			  (redraw ? "" : " * for inventory list,"), pmt);
+			  (command_see ? "" : " * for inventory list,"), pmt);
 
 	/* Show the prompt */	    
 	prt(out_val, 0, 0);
@@ -384,10 +384,10 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 	    break;
 
 	  case '*':
-	    if (!redraw) {
+	    if (!command_see) {
 			done = TRUE;
 	        save_screen();
-		redraw = TRUE;
+		command_see = TRUE;
 	    }
 	    break;
 
@@ -406,7 +406,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 			    } else {
 				i_scr = 0;
 				done = TRUE;
-				if (redraw) {
+				if (command_see) {
 				    for (k = equip_ctr; k < inven_ctr; k++) erase_line(k+1,0);
 				}
 			    }
@@ -418,7 +418,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 			    } else {
 				i_scr = 1;
 				done = TRUE;
-				if (redraw) {
+				if (command_see) {
 				    for (k = inven_ctr; k < equip_ctr; k++) erase_line(k+1,0);
 				}
 			    }
@@ -467,7 +467,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 
 
     /* Fix the screen if necessary */
-    if (redraw) restore_screen();
+    if (command_see) restore_screen();
 
     /* Erase the prompt (if any) */
     erase_line(MSG_LINE, 0);
