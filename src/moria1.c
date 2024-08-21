@@ -301,7 +301,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 {
     char        n1, n2, which;
     int		k, i1, i2;
-    int          i_scr, command_see;
+    int          command_xxx, command_see;
     bool	ver, done, item;
     bool	allow_equip;
     vtype       out_val;
@@ -332,10 +332,10 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
     if ((s2 < INVEN_WIELD) && (s2 < i2)) i2 = s2;
     
 
-    i_scr = 1;
+    command_xxx = 1;
     if (allow_equip) {
 	if (inven_ctr == 0) {
-	    i_scr = 0;
+	    command_xxx = 0;
 	    i2 = equip_ctr - 1;
 	}
     }
@@ -349,7 +349,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
     while (!done) {
 
 	    if (command_see) {
-		if (i_scr > 0)
+		if (command_xxx)
 		    (void)show_inven(i1, i2, FALSE, 80);
 		else
 		    (void)show_equip(FALSE, 80);
@@ -359,9 +359,9 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 	if (allow_equip)
 	    (void)sprintf(out_val,
 			  "(%s: %c-%c,%s%s / for %s, or ESC) %s",
-			  (i_scr > 0 ? "Inven" : "Equip"), n1, n2,
+			  (command_xxx ? "Inven" : "Equip"), n1, n2,
 			  (command_see ? "" : " * to see,"),
-			  (i_scr > 0 ? "Equip" : "Inven"), pmt);
+			  (command_xxx ? "Equip" : "Inven"), pmt);
 	else
 	    (void)sprintf(out_val,
 			  "(Items %c-%c,%s ESC to exit) %s", n1, n2,
@@ -399,12 +399,12 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 		break;
 	    }
 	    
-			if (i_scr > 0) {
+			if (command_xxx > 0) {
 			    if (equip_ctr == 0) {
 				prt("But you're not using anything -more-", 0, 0);
 				(void)inkey();
 			    } else {
-				i_scr = 0;
+				command_xxx = 0;
 				done = TRUE;
 				if (command_see) {
 				    for (k = equip_ctr; k < inven_ctr; k++) erase_line(k+1,0);
@@ -416,7 +416,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 				prt("But you're not carrying anything -more-", 0, 0);
 				(void)inkey();
 			    } else {
-				i_scr = 1;
+				command_xxx = 1;
 				done = TRUE;
 				if (command_see) {
 				    for (k = inven_ctr; k < equip_ctr; k++) erase_line(k+1,0);
@@ -439,7 +439,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 		break;
 	    }
 		    
-			if (i_scr == 0) {
+			if (command_xxx) {
 			    s1 = 21;
 			    s2 = k;
 			    do {
