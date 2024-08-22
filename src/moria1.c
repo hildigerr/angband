@@ -172,7 +172,7 @@ int show_inven(int r1, int r2, int col)
 
 	/* Describe the object, enforce max length */
 	objdes(tmp_val, i_ptr, TRUE);
-	tmp_val[lim] = 0;  /* Truncate if too long. */
+	tmp_val[lim] = '\0';
 
 	/* Save the object index and description */
 	out_index[k] = i;
@@ -194,6 +194,7 @@ int show_inven(int r1, int r2, int col)
     /* Find the column to start in */
     col = (len > 76) ? 0 : (79 - len);
 
+    /* Output each entry */
     for (j = 0; j < k; j++) {
 
 	/* Get the index */
