@@ -120,6 +120,20 @@ cptr describe_use(int i)
 
 
 
+
+
+/* 
+ * Here is a "hook" used during calls to "get_item()" and
+ * "show_inven()" and "show_equip()".
+ */
+bool (*item_tester_hook)(inven_type*) = NULL;
+
+
+
+
+
+
+
 /*
  * Displays inventory items from r1 to r2	-RAK-
  * If "weight" is set, the item weights will be displayed also
@@ -239,7 +253,13 @@ int show_equip(int col)
 
 	i_ptr = &inventory[i];
 
-	if (i_ptr->tval != TV_NOTHING) {
+	/* Sometimes, skip empty equipment slots */
+	if (!i_ptr->tval) {
+	    if (item_tester_hook) continue;
+	}
+	
+	/* Is this item acceptable? */
+	if (item_tester_hook && (!(*item_tester_hook)(i_ptr))) continue;
 
 	prt1 = mention_use(i);
 
@@ -257,7 +277,6 @@ int show_equip(int col)
 
 	/* Advance the entry */
 	line++;
-	}
     }
 
     /* Find a column to start in */
@@ -303,12 +322,17 @@ static bool get_item_okay(int i)
 {
     if ((i < 0) || (i >= INVEN_TOTAL)) return (FALSE);
     if (!inventory[i].tval) return (FALSE);
-    return (TRUE);
+    if (!item_tester_hook) return (TRUE);
+    if ((*item_tester_hook)(&inventory[i])) return (TRUE);
+    return (FALSE);
 }
 
 
 /*
  * Let the user select an item, return its "index"  -RAK-
+ *
+ * The selected item must fall in a slot between "s1" and "s2", and must
+ * satisfy the "item_tester_hook()" function, if that hook is set.
  *
  * If a legal item is selected, we save it in "com_val" and return TRUE.
  * Otherwise, we set "com_val" to "-1" and return FALSE.
@@ -469,6 +493,9 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 
     /* Fix the screen if necessary */
     if (command_see) restore_screen();
+    
+    /* Forget the tester hook */
+    item_tester_hook = NULL;
 
     /* Erase the prompt (if any) */
     erase_line(MSG_LINE, 0);
