@@ -152,7 +152,7 @@ int show_inven(int r1, int r2, int col)
     bigvtype     tmp_val;
 
     int		 out_index[23];
-    vtype        out_val[23];
+    char	 out_desc[23][80];
 
     int weight = show_inven_weight;
 
@@ -176,10 +176,10 @@ int show_inven(int r1, int r2, int col)
 
 	/* Save the object index and description */
 	out_index[k] = i;
-	(void)sprintf(out_val[k], "%c) %s", index_to_label(i), tmp_val);
+	(void)strcpy(out_desc[k], tmp_val);
 
 	/* Find the predicted "line length" */
-	l = strlen(out_val[k]) + 2;
+	l = strlen(out_desc[k]) + 5;
 
 	/* Be sure to account for the weight */
 	if (weight) l += 9;
@@ -205,8 +205,14 @@ int show_inven(int r1, int r2, int col)
 	/* Clear the line */
 	prt("", j + 1, col ? col - 2 : col);
 
-	/* Display the entry with the (possibly indented) index */
-	prt(out_val[j], 1 + j, col);
+	/* Prepare an index --(-- */
+	sprintf(tmp_val, "%c)", index_to_label(i));
+
+	/* Clear the line with the (possibly indented) index */
+	put_str(tmp_val, j + 1, col);
+
+	/* Display the entry itself */
+	put_str(out_desc[j], j + 1, col + 3);
 
 	/* Display the weight if needed */
 	if (weight) {
