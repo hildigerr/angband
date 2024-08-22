@@ -176,10 +176,10 @@ int show_inven(int r1, int r2, int col)
 
 	/* Save the object index and description */
 	out_index[k] = i;
-	(void)sprintf(out_val[k], "  %c) %s", index_to_label(i), tmp_val);
+	(void)sprintf(out_val[k], "%c) %s", index_to_label(i), tmp_val);
 
 	/* Find the predicted "line length" */
-	l = strlen(out_val[k]);
+	l = strlen(out_val[k]) + 2;
 
 	/* Be sure to account for the weight */
 	if (weight) l += 9;
@@ -202,9 +202,11 @@ int show_inven(int r1, int r2, int col)
 	/* Get the item */
 	i_ptr = &inventory[i];
 
-	/* don't need first two spaces if in first column */
-	    if (col == 0) prt(&out_val[j][2], 1 + j, col);
-	    else prt(out_val[j], 1 + j, col);
+	/* Clear the line */
+	prt("", j + 1, col ? col - 2 : col);
+
+	/* Display the entry with the (possibly indented) index */
+	prt(out_val[j], 1 + j, col);
 
 	/* Display the weight if needed */
 	if (weight) {
@@ -215,7 +217,7 @@ int show_inven(int r1, int r2, int col)
     }
 
     /* Erase the final line */
-    erase_line(j + 1,col);
+    prt("", j + 1, col ? col - 2 : col);
 
     return col;
 }
