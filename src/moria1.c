@@ -122,13 +122,14 @@ cptr describe_use(int i)
 
 /*
  * Displays inventory items from r1 to r2	-RAK-
+ * If "weight" is set, the item weights will be displayed also
  *
  * Designed to keep the display as far to the right as possible.  -CJS-
  *
  * The parameter col gives a column at which to start, but if the display does
  * not fit, it may be moved left.  The return value is the left edge used. 
  */
-int show_inven(int r1, int r2, int weight, int col)
+int show_inven(int r1, int r2, int col)
 {
     register int i, j, k;
     register inven_type	*i_ptr;
@@ -136,6 +137,8 @@ int show_inven(int r1, int r2, int weight, int col)
     int          len, l, lim;
     bigvtype     tmp_val;
     vtype        out_val[23];
+
+    int weight = show_inven_weight;
 
     /* Default "max-length" */
     len = 79 - col;
@@ -361,7 +364,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 
 	    if (command_see) {
 		if (command_xxx)
-		    (void)show_inven(i1, i2, FALSE, 80);
+		    (void)show_inven(i1, i2, 80);
 		else
 		    (void)show_equip(FALSE, 80);
 	    }
@@ -906,11 +909,11 @@ static void inven_screen(int new_scr)
 	    line = 7;
 	    break;
 	  case INVEN_SCR:
-	    scr_left = show_inven(0, inven_ctr - 1, show_inven_weight, scr_left);
+	    scr_left = show_inven(0, inven_ctr - 1, scr_left);
 	    line = inven_ctr;
 	    break;
 	  case WEAR_SCR:
-	    scr_left = show_inven(wear_low, wear_high, show_inven_weight, scr_left);
+	    scr_left = show_inven(wear_low, wear_high, scr_left);
 	    line = wear_high - wear_low + 1;
 	    break;
 	  case EQUIP_SCR:
@@ -1043,7 +1046,7 @@ void inven_command(int command)
 		inventory[INVEN_AUX] = inventory[INVEN_WIELD];
 		inventory[INVEN_WIELD] = tmp_obj;
 		if (scr_state == EQUIP_SCR)
-		    scr_left = show_equip(show_inven_weight, scr_left);
+		    scr_left = show_equip(scr_left);
 		py_bonuses(&inventory[INVEN_AUX], -1);	/* Subtract bonuses */
 		py_bonuses(&inventory[INVEN_WIELD], 1);	/* Add bonuses    */
 

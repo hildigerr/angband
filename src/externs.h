@@ -781,7 +781,7 @@ void get_coin_type(monster_race *);
 void move_rec(int, int, int, int);
 void py_bonuses(struct inven_type *, int);
 void calc_bonuses(void);
-int show_inven(int, int, int, int);
+int show_inven(int, int, int);
 int show_equip(int, int);
 void inven_takeoff(int, int);
 int verify(cptr , int);

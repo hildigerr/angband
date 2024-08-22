@@ -876,7 +876,7 @@ static void show_info(void)
     if (inven_ctr) {
 	clear_screen();
 	msg_print("You are carrying:");
-	show_inven(0, inven_ctr - 1, TRUE, 0);
+	show_inven(0, inven_ctr - 1, 0);
 	msg_print(NULL);
     }
 
