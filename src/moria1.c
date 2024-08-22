@@ -188,18 +188,6 @@ int show_inven(int r1, int r2, int col)
 	k++;
     }
 
-	else {
-
-	    objdes(tmp_val, &inventory[i], TRUE);
-	    tmp_val[lim] = 0;	   /* Truncate if too long. */
-	    (void)sprintf(out_val[i], "  %c) %s", index_to_label(i), tmp_val);
-	    l = strlen(out_val[i]);
-	    if (weight) l += 9;
-	    if (l > len) len = l;
-	    k++;
-	}
-    }
-
     /* Find the column to start in */
     col = 79 - len;
     if (col < 0) col = 0;
