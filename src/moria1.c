@@ -158,7 +158,7 @@ int show_inven(int r1, int r2, int col)
     len = 79 - col;
 
     /* Maximum space allowed for descriptions */
-    if (weight) lim = 68; else lim = 76;
+    lim = weight ? 68 : 76;
 
     for (i = 0; i < 23; i++) out_val[i][0] = '\0';
 
@@ -189,8 +189,7 @@ int show_inven(int r1, int r2, int col)
     }
 
     /* Find the column to start in */
-    col = 79 - len;
-    if (col < 0) col = 0;
+    col = (len > 76) ? 0 : (79 - len);
 
     for (j = 0, i = r1; (i <= r2) && k; i++) {
 
