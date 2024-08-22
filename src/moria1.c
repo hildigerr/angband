@@ -220,7 +220,7 @@ int show_inven(int r1, int r2, int col)
  * Displays (all) equipment items    -RAK-
  * Keep display as far right as possible. -CJS-
  */
-int show_equip(int weight, int col)
+int show_equip(int col)
 {
     register int         i, line = 0;
     register inven_type *i_ptr;
@@ -229,6 +229,8 @@ int show_equip(int weight, int col)
     bigvtype             prt2;
 
     vtype                out_val[INVEN_TOTAL - INVEN_WIELD];
+
+    int weight = show_equip_weight;
 
     len = 79 - col;
     if (weight) lim = 52; else lim = 60;
@@ -366,7 +368,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 		if (command_xxx)
 		    (void)show_inven(i1, i2, 80);
 		else
-		    (void)show_equip(FALSE, 80);
+		    (void)show_equip(80);
 	    }
 
 	/* Prepare the prompt */
@@ -917,7 +919,7 @@ static void inven_screen(int new_scr)
 	    line = wear_high - wear_low + 1;
 	    break;
 	  case EQUIP_SCR:
-	    scr_left = show_equip(show_equip_weight, scr_left);
+	    scr_left = show_equip(scr_left);
 	    line = equip_ctr;
 	    break;
 	}

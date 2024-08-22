@@ -782,7 +782,7 @@ void move_rec(int, int, int, int);
 void py_bonuses(struct inven_type *, int);
 void calc_bonuses(void);
 int show_inven(int, int, int);
-int show_equip(int, int);
+int show_equip(int);
 void inven_takeoff(int, int);
 int verify(cptr , int);
 void inven_command(int);
