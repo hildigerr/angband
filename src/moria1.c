@@ -150,6 +150,8 @@ int show_inven(int r1, int r2, int col)
 
     int          len, l, lim;
     bigvtype     tmp_val;
+
+    int		 out_index[23];
     vtype        out_val[23];
 
     int weight = show_inven_weight;
@@ -160,9 +162,8 @@ int show_inven(int r1, int r2, int col)
     /* Maximum space allowed for descriptions */
     lim = weight ? 68 : 76;
 
-    for (i = 0; i < 23; i++) out_val[i][0] = '\0';
-
-    for (k = 0, i = r1; i <= r2; i++) {
+    /* Extract up to 23 lines of information */
+    for (k = 0, i = r1; (k < 23) && (i <= r2); i++) {
 
 	i_ptr = &inventory[i];
 
@@ -173,10 +174,12 @@ int show_inven(int r1, int r2, int col)
 	objdes(tmp_val, i_ptr, TRUE);
 	tmp_val[lim] = 0;  /* Truncate if too long. */
 
-	(void)sprintf(out_val[i], "  %c) %s", index_to_label(i), tmp_val);
+	/* Save the object index and description */
+	out_index[k] = i;
+	(void)sprintf(out_val[k], "  %c) %s", index_to_label(i), tmp_val);
 
 	/* Find the predicted "line length" */
-	l = strlen(out_val[i]);
+	l = strlen(out_val[k]);
 
 	/* Be sure to account for the weight */
 	if (weight) l += 9;
@@ -191,21 +194,23 @@ int show_inven(int r1, int r2, int col)
     /* Find the column to start in */
     col = (len > 76) ? 0 : (79 - len);
 
-    for (j = 0, i = r1; (i <= r2) && k; i++) {
+    for (j = 0; j < k; j++) {
 
-	if (out_val[i][0]) {
-	    k--;
+	/* Get the index */
+	i = out_index[j];
+
+	/* Get the item */
+	i_ptr = &inventory[i];
+
 	/* don't need first two spaces if in first column */
-	    if (col == 0) prt(&out_val[i][2], 1 + j, col);
-	    else prt(out_val[i], 1 + j, col);
+	    if (col == 0) prt(&out_val[j][2], 1 + j, col);
+	    else prt(out_val[j], 1 + j, col);
 
 	/* Display the weight if needed */
 	if (weight) {
-	    int wgt = inventory[i].weight * inventory[i].number;
+	    int wgt = i_ptr->weight * i_ptr->number;
 	    (void)sprintf(tmp_val, "%3d.%d lb", wgt / 10, wgt % 10);
 	    prt(tmp_val, j + 1, 71);
-	}
-	j++;
 	}
     }
 
