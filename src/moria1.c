@@ -219,7 +219,7 @@ int show_inven(int r1, int r2, int col)
 	if (weight) {
 	    int wgt = i_ptr->weight * i_ptr->number;
 	    (void)sprintf(tmp_val, "%3d.%d lb", wgt / 10, wgt % 10);
-	    prt(tmp_val, j + 1, 71);
+	    put_str(tmp_val, j + 1, 71);
 	}
     }
 
