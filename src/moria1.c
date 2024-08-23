@@ -263,7 +263,7 @@ int show_equip(int col)
 	if (item_tester_hook && (!(*item_tester_hook)(i_ptr))) continue;
 
 	/* Build a truncated object description */
-	objdes(tmp_val, &inventory[i], TRUE);
+	objdes(tmp_val, i_ptr, TRUE);
 	tmp_val[lim] = 0;	   /* Truncate if necessary */
 
 	(void)sprintf(out_val[k], "  %c) %-14s: %s", index_to_label(k), mention_use(i), tmp_val);
