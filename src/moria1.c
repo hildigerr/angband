@@ -240,7 +240,8 @@ int show_equip(int col)
     register int         i, k;
     register inven_type *i_ptr;
     int                  l, len, lim;
-    bigvtype             prt2;
+
+    bigvtype             tmp_val;
 
     vtype                out_val[INVEN_TOTAL - INVEN_WIELD];
 
@@ -262,10 +263,10 @@ int show_equip(int col)
 	if (item_tester_hook && (!(*item_tester_hook)(i_ptr))) continue;
 
 	/* Build a truncated object description */
-	objdes(prt2, &inventory[i], TRUE);
-	prt2[lim] = 0;	   /* Truncate if necessary */
+	objdes(tmp_val, &inventory[i], TRUE);
+	tmp_val[lim] = 0;	   /* Truncate if necessary */
 
-	(void)sprintf(out_val[k], "  %c) %-14s: %s", index_to_label(k), mention_use(i), prt2);
+	(void)sprintf(out_val[k], "  %c) %-14s: %s", index_to_label(k), mention_use(i), tmp_val);
 
 	l = strlen(out_val[k]);
 	if (weight) l += 9;
@@ -295,8 +296,8 @@ int show_equip(int col)
 	/* Display the weight if needed */
 	if (weight) {
 	    int wgt = i_ptr->weight * i_ptr->number;
-	    (void)sprintf(prt2, "%3d.%d lb", wgt / 10, wgt % 10);
-	    prt(prt2, k + 1, 71);
+	    (void)sprintf(tmp_val, "%3d.%d lb", wgt / 10, wgt % 10);
+	    prt(tmp_val, k + 1, 71);
 	}
 	k++;
 	}
