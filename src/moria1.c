@@ -248,7 +248,7 @@ int show_equip(int col)
     int weight = show_equip_weight;
 
     len = 79 - col;
-    if (weight) lim = 52; else lim = 60;
+    lim = weight ? 52 : 60;
 
     for (k = 0, i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 
@@ -279,7 +279,7 @@ int show_equip(int col)
     }
 
     /* Find a column to start in */
-    col = 79 - len; if (col < 0) col = 0;
+    col = (len > 76) ? 0 : (79 - len);
 
     k = 0;
     for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
