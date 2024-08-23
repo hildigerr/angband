@@ -243,6 +243,8 @@ int show_equip(int col)
 
     bigvtype             tmp_val;
 
+    int			 out_index[23];
+
     vtype                out_val[INVEN_TOTAL - INVEN_WIELD];
 
     int weight = show_equip_weight;
@@ -266,9 +268,10 @@ int show_equip(int col)
 	objdes(tmp_val, i_ptr, TRUE);
 	tmp_val[lim] = 0;	   /* Truncate if necessary */
 
-	(void)sprintf(out_val[k], "%c) %-14s: %s", index_to_label(k), mention_use(i), tmp_val);
+	out_index[k] = i;
+	(void)sprintf(out_val[k], "%-14s: %s", mention_use(i), tmp_val);
 
-	l = strlen(out_val[k]) + 2;;
+	l = strlen(out_val[k]) + 2 + 3;
 	if (weight) l += 9;
 
 	/* Maintain the max-length */
@@ -291,9 +294,15 @@ int show_equip(int col)
 
 	/* Clear the line */
 	prt("", k + 1, col ? col - 2 : col);
+	
+	/* Prepare an index --(-- */
+	sprintf(tmp_val, "%c)", index_to_label(i));
 
-	/* Display the entry with the (possibly indented) index */
-	put_str(out_val[k], k + 1, col);
+	/* Clear the line with the (possibly indented) index */
+	put_str(tmp_val, k+1, col);
+
+	/* Display the entry itself */
+	put_str(out_val[k], k + 1, col + 3);
 
 	/* Display the weight if needed */
 	if (weight) {
