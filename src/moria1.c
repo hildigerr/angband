@@ -237,7 +237,7 @@ int show_inven(int r1, int r2, int col)
  */
 int show_equip(int col)
 {
-    register int         i, line = 0;
+    register int         i, k;
     register inven_type *i_ptr;
     int                  l, len, lim;
     register const char *prt1;
@@ -250,7 +250,7 @@ int show_equip(int col)
     len = 79 - col;
     if (weight) lim = 52; else lim = 60;
 
-    for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
+    for (k = 0, i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 
 	i_ptr = &inventory[i];
 
@@ -268,22 +268,22 @@ int show_equip(int col)
 	objdes(prt2, &inventory[i], TRUE);
 	prt2[lim] = 0;	   /* Truncate if necessary */
 
-	(void)sprintf(out_val[line], "  %c) %-14s: %s", index_to_label(line), prt1, prt2);
+	(void)sprintf(out_val[k], "  %c) %-14s: %s", index_to_label(k), prt1, prt2);
 
-	l = strlen(out_val[line]);
+	l = strlen(out_val[k]);
 	if (weight) l += 9;
 
 	/* Maintain the max-length */
 	if (l > len) len = l;
 
 	/* Advance the entry */
-	line++;
+	k++;
     }
 
     /* Find a column to start in */
     col = 79 - len; if (col < 0) col = 0;
 
-    line = 0;
+    k = 0;
     for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 
 	/* Get the item */
@@ -292,21 +292,21 @@ int show_equip(int col)
 	if (i_ptr->tval != TV_NOTHING) {
 
 	/* don't need first two spaces when using whole screen */
-	    if (col == 0) prt(&out_val[line][2], line + 1, col);
-	    else prt(out_val[line], line + 1, col);
+	    if (col == 0) prt(&out_val[k][2], k + 1, col);
+	    else prt(out_val[k], k + 1, col);
 
 	/* Display the weight if needed */
 	if (weight) {
 	    int wgt = i_ptr->weight * i_ptr->number;
 	    (void)sprintf(prt2, "%3d.%d lb", wgt / 10, wgt % 10);
-	    prt(prt2, line + 1, 71);
+	    prt(prt2, k + 1, 71);
 	}
-	line++;
+	k++;
 	}
     }
     
     /* Make a shadow below the list (if possible) */
-    erase_line(line+1, col);
+    erase_line(k+1, col);
 
     return col;
 }
