@@ -240,7 +240,6 @@ int show_equip(int col)
     register int         i, k;
     register inven_type *i_ptr;
     int                  l, len, lim;
-    register const char *prt1;
     bigvtype             prt2;
 
     vtype                out_val[INVEN_TOTAL - INVEN_WIELD];
@@ -262,13 +261,11 @@ int show_equip(int col)
 	/* Is this item acceptable? */
 	if (item_tester_hook && (!(*item_tester_hook)(i_ptr))) continue;
 
-	prt1 = mention_use(i);
-
 	/* Build a truncated object description */
 	objdes(prt2, &inventory[i], TRUE);
 	prt2[lim] = 0;	   /* Truncate if necessary */
 
-	(void)sprintf(out_val[k], "  %c) %-14s: %s", index_to_label(k), prt1, prt2);
+	(void)sprintf(out_val[k], "  %c) %-14s: %s", index_to_label(k), mention_use(i), prt2);
 
 	l = strlen(out_val[k]);
 	if (weight) l += 9;
