@@ -266,9 +266,9 @@ int show_equip(int col)
 	objdes(tmp_val, i_ptr, TRUE);
 	tmp_val[lim] = 0;	   /* Truncate if necessary */
 
-	(void)sprintf(out_val[k], "  %c) %-14s: %s", index_to_label(k), mention_use(i), tmp_val);
+	(void)sprintf(out_val[k], "%c) %-14s: %s", index_to_label(k), mention_use(i), tmp_val);
 
-	l = strlen(out_val[k]);
+	l = strlen(out_val[k]) + 2;;
 	if (weight) l += 9;
 
 	/* Maintain the max-length */
@@ -289,9 +289,11 @@ int show_equip(int col)
 
 	if (i_ptr->tval != TV_NOTHING) {
 
-	/* don't need first two spaces when using whole screen */
-	    if (col == 0) prt(&out_val[k][2], k + 1, col);
-	    else prt(out_val[k], k + 1, col);
+	/* Clear the line */
+	prt("", k + 1, col ? col - 2 : col);
+
+	/* Display the entry with the (possibly indented) index */
+	put_str(out_val[k], k + 1, col);
 
 	/* Display the weight if needed */
 	if (weight) {
