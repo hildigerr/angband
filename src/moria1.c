@@ -237,7 +237,7 @@ int show_inven(int r1, int r2, int col)
  */
 int show_equip(int col)
 {
-    register int         i, k;
+    register int         i, j, k;
     register inven_type *i_ptr;
     int                  l, len, lim;
 
@@ -283,38 +283,37 @@ int show_equip(int col)
     /* Find a column to start in */
     col = (len > 76) ? 0 : (79 - len);
 
-    k = 0;
-    for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
+    /* Output each entry */
+    for (j = 0; j < k; j++) {
+
+	/* Get the index */
+	i = out_index[j];
 
 	/* Get the item */
 	i_ptr = &inventory[i];
 
-	if (i_ptr->tval != TV_NOTHING) {
-
 	/* Clear the line */
-	prt("", k + 1, col ? col - 2 : col);
+	prt("", j + 1, col ? col - 2 : col);
 	
 	/* Prepare an index --(-- */
 	sprintf(tmp_val, "%c)", index_to_label(i));
 
 	/* Clear the line with the (possibly indented) index */
-	put_str(tmp_val, k+1, col);
+	put_str(tmp_val, j+1, col);
 
 	/* Display the entry itself */
-	put_str(out_desc[k], k + 1, col + 3);
+	put_str(out_desc[j], j+1, col + 3);
 
 	/* Display the weight if needed */
 	if (weight) {
 	    int wgt = i_ptr->weight * i_ptr->number;
 	    (void)sprintf(tmp_val, "%3d.%d lb", wgt / 10, wgt % 10);
-	    prt(tmp_val, k + 1, 71);
-	}
-	k++;
+	    prt(tmp_val, j+1, 71);
 	}
     }
     
     /* Make a shadow below the list (if possible) */
-    erase_line(k+1, col);
+    erase_line(j+1, col);
 
     return col;
 }
