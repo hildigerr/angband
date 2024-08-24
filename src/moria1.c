@@ -265,11 +265,12 @@ int show_equip(int col)
 
 	/* Build a truncated object description */
 	objdes(tmp_val, i_ptr, TRUE);
-	tmp_val[lim] = 0;	   /* Truncate if necessary */
+	tmp_val[lim] = 0;
 
 	out_index[k] = i;
 	(void)strcpy(out_desc[k], tmp_val);
 
+	/* Extract the maximal length (see below) */
 	l = strlen(out_desc[k]) + 2 + 3 + 14 + 2;
 	if (weight) l += 9;
 
