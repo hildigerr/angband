@@ -425,7 +425,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 	/* Prepare the prompt */
 	if (allow_equip)
 	    (void)sprintf(out_val,
-			  "(%s: %c-%c,%s%s / for %s, or ESC) %s",
+			  "(%s: %c-%c,%s / for %s, or ESC) %s",
 			  (command_xxx ? "Inven" : "Equip"), n1, n2,
 			  (command_see ? "" : " * to see,"),
 			  (command_xxx ? "Equip" : "Inven"), pmt);
