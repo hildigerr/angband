@@ -235,7 +235,7 @@ int show_inven(int r1, int r2, int col)
  * Displays (all) equipment items    -RAK-
  * Keep display as far right as possible. -CJS-
  */
-int show_equip(int col)
+int show_equip(int s1, int s2, int col)
 {
     register int         i, j, k;
     register inven_type *i_ptr;
@@ -251,13 +251,16 @@ int show_equip(int col)
     len = 79 - col;
     lim = weight ? 52 : 60;
 
-    for (k = 0, i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
+    /* Scan the equipment list */
+    for (k = 0, i = s1; i <= s2; i++) {
 
 	i_ptr = &inventory[i];
 
 	/* Sometimes, skip empty equipment slots */
 	if (!i_ptr->tval) {
 	    if (item_tester_hook) continue;
+	    if (s1 > INVEN_WIELD) continue;
+	    if (s2 < INVEN_TOTAL-1) continue;
 	}
 	
 	/* Is this item acceptable? */
@@ -353,7 +356,7 @@ static bool get_item_okay(int i)
 int get_item(int *com_val, cptr pmt, int s1, int s2)
 {
     char        n1, n2, which;
-    int		k, i1, i2;
+    int		k, i1, i2, e1, e2;
     int          command_xxx, command_see;
     bool	ver, done, item;
     bool	allow_equip;
@@ -379,6 +382,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 
     /* Start with "default" indexes */
     i1 = 0, i2 = inven_ctr - 1;
+    e1 = INVEN_WIELD, e2 = INVEN_TOTAL-1;
 
     /* Allow "restrictions" on inventory/equipment */
     if (s1 > i1) i1 = s1;
@@ -405,7 +409,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 		if (command_xxx)
 		    (void)show_inven(i1, i2, 80);
 		else
-		    (void)show_equip(80);
+		    (void)show_equip(e1, e2, 80);
 	    }
 
 	/* Prepare the prompt */
@@ -959,7 +963,7 @@ static void inven_screen(int new_scr)
 	    line = wear_high - wear_low + 1;
 	    break;
 	  case EQUIP_SCR:
-	    scr_left = show_equip(scr_left);
+	    scr_left = show_equip(INVEN_WIELD, INVEN_TOTAL-1, scr_left);
 	    line = equip_ctr;
 	    break;
 	}
@@ -1088,7 +1092,7 @@ void inven_command(int command)
 		inventory[INVEN_AUX] = inventory[INVEN_WIELD];
 		inventory[INVEN_WIELD] = tmp_obj;
 		if (scr_state == EQUIP_SCR)
-		    scr_left = show_equip(scr_left);
+		    scr_left = show_equip(INVEN_WIELD, INVEN_TOTAL-1, scr_left);
 		py_bonuses(&inventory[INVEN_AUX], -1);	/* Subtract bonuses */
 		py_bonuses(&inventory[INVEN_WIELD], 1);	/* Add bonuses    */
 

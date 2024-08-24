@@ -868,7 +868,7 @@ static void show_info(void)
     if (equip_ctr) {
 	clear_screen();
 	msg_print("You are using:");
-	show_equip(0);
+	show_equip(INVEN_WIELD, INVEN_TOTAL-1, 0);
 	msg_print(NULL);
     }
 
