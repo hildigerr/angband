@@ -268,9 +268,9 @@ int show_equip(int col)
 	tmp_val[lim] = 0;	   /* Truncate if necessary */
 
 	out_index[k] = i;
-	(void)sprintf(out_desc[k], "%-14s: %s", mention_use(i), tmp_val);
+	(void)strcpy(out_desc[k], tmp_val);
 
-	l = strlen(out_desc[k]) + 2 + 3;
+	l = strlen(out_desc[k]) + 2 + 3 + 14 + 2;
 	if (weight) l += 9;
 
 	/* Maintain the max-length */
@@ -301,8 +301,12 @@ int show_equip(int col)
 	/* Clear the line with the (possibly indented) index */
 	put_str(tmp_val, j+1, col);
 
+	/* Mention the use */
+	(void)sprintf(tmp_val, "%-14s: ", mention_use(i));
+	put_str(tmp_val, j+1, col + 3);
+
 	/* Display the entry itself */
-	put_str(out_desc[j], j+1, col + 3);
+	put_str(out_desc[j], j+1, col + 19);
 
 	/* Display the weight if needed */
 	if (weight) {
