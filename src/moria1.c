@@ -389,13 +389,16 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
     /* Allow "restrictions" on inventory/equipment */
     if (s1 > i1) i1 = s1;
     if ((s2 < INVEN_WIELD) && (s2 < i2)) i2 = s2;
+
+    /* Restrict indexes (see above) */
+    while ((i1 <= i2) && (!get_item_okay(i1))) i1++;
+    while ((i1 <= i2) && (!get_item_okay(i2))) i2--;
     
 
     command_xxx = 1;
     if (allow_equip) {
 	if (inven_ctr == 0) {
 	    command_xxx = 0;
-	    i2 = equip_ctr - 1;
 	}
     }
 
@@ -494,16 +497,11 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 		break;
 	    }
 		    
-			if (command_xxx) {
-			    s1 = 21;
-			    s2 = k;
-			    do {
-				while (!get_item_okay(++s1));
-				s2--;
-			    }
-			    while (s2 >= 0);
-			    k = s1;
-			}
+	    /* Validate the item */
+	    if (!get_item_okay(k)) {
+		bell();
+		break;
+	    }
 	    	    		    
 	    /* Verify, abort if requested */
 	    if (ver && !verify("Try", k)) {
