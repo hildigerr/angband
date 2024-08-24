@@ -415,12 +415,10 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
     /* Repeat until done */
     while (!done) {
 
-	    if (command_see) {
 		if (command_xxx)
-		    (void)show_inven(i1, i2, 80);
+	    if (command_see) show_inven(i1, i2, 80);
 		else
-		    (void)show_equip(e1, e2, 80);
-	    }
+	    if (command_see) show_equip(e1, e2, 80);
 
 	/* Prepare the prompt */
 	if (allow_equip)
