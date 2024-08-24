@@ -352,6 +352,8 @@ static bool get_item_okay(int i)
  *
  * If a legal item is selected, we save it in "com_val" and return TRUE.
  * Otherwise, we set "com_val" to "-1" and return FALSE.
+ *
+ * If there *are* no legal items, we return (FALSE) and set "com_val" to "-2".
  */
 int get_item(int *com_val, cptr pmt, int s1, int s2)
 {
@@ -400,7 +402,15 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 	n1 = 'a' + i1;
 	n2 = 'a' + i2;
 
-    if (inven_ctr > 0 || (allow_equip && equip_ctr > 0)) {
+    /* Nothing to choose from */
+    if (!(inven_ctr > 0 || (allow_equip && equip_ctr > 0))) {
+	
+	/* Do not try to select */
+	done = TRUE;
+	
+	/* Nothing to choose */
+	*com_val = -2;
+    }
 
     /* Repeat until done */
     while (!done) {
@@ -516,9 +526,6 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 
     /* Erase the prompt (if any) */
     erase_line(MSG_LINE, 0);
-
-    } else
-	prt("You are not carrying anything.", 0, 0);
     
     /* Return TRUE if something was picked */
     return (item);
