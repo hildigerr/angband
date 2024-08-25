@@ -52,6 +52,42 @@ int index_to_label(int i)
 }
 
 
+/*
+ * Convert a label into the index of an item in the "inven"
+ * Return "-1" if the label does not indicate a real item
+ */
+int label_to_inven(int c)
+{
+    int k = c - 'a';
+
+    /* Verify the index */
+    if ((k < 0) || (k >= inven_ctr)) return (-1);
+
+    /* Return the index */
+    return (k);
+}
+
+
+/*
+ * Convert a label into the index of a item in the "equip"
+ * Return "-1" if the label does not indicate a real item
+ */
+int label_to_equip(int c)
+{
+    int k = INVEN_WIELD + (c - 'a');
+
+    /* Speed -- Ignore silly labels */
+    if (k < INVEN_WIELD) return (-1);
+    if (k >= INVEN_TOTAL) return (-1);
+
+    /* Empty slots can never be chosen */
+    if (!inventory[k].tval) return (-1);
+
+    /* Accept it */
+    return (k);
+}
+
+
 
 /*
  * Return a string mentioning how a given item is carried
@@ -395,15 +431,16 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
     while ((i1 <= i2) && (!get_item_okay(i2))) i2--;
     
 
-    command_xxx = 1;
-    if (allow_equip) {
-	if (inven_ctr == 0) {
-	    command_xxx = 0;
-	}
-    }
-
+	command_xxx = TRUE;
 	n1 = 'a' + i1;
 	n2 = 'a' + i2;
+
+    /* Use equipment */
+    if (allow_equip) {
+	if (inven_ctr == 0) command_xxx = FALSE;
+	n1 = 'a' + e1 - INVEN_WIELD;
+	n2 = 'a' + e2 - INVEN_WIELD;
+    }
 
     /* Nothing to choose from */
     if (!(inven_ctr > 0 || (allow_equip && equip_ctr > 0))) {
@@ -420,11 +457,21 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 
 	/* Inventory screen */
 	if (command_xxx) {
+	
+	    /* Extract the legal requests */
+	    n1 = 'a' + i1;
+	    n2 = 'a' + i2;
+
 	    if (command_see) show_inven(i1, i2, 80);
 	}
 
 	/* Equipment screen */
 	else {
+
+	    /* Extract the legal requests */
+	    n1 = 'a' + e1 - INVEN_WIELD;
+	    n2 = 'a' + e2 - INVEN_WIELD;
+
 	    if (command_see) show_equip(e1, e2, 80);
 	}
 
@@ -489,14 +536,22 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 	    ver = isupper(which);
 	    if (ver) which = tolower(which);
 
-		k = which - 'a';
-
 	    /* Require legal entry */
-	    if ((k < n1) || (k > n2)) {
+	    if ((which < n1) || (which > n2)) {
 		bell();
 		break;
 	    }
 		    
+	    /* Convert letter to inventory index */
+	    if (command_xxx) {
+		k = label_to_inven(which);
+	    }
+
+	    /* Convert letter to equipment index */
+	    else {
+		k = label_to_equip(which);
+	    }
+
 	    /* Validate the item */
 	    if (!get_item_okay(k)) {
 		bell();
