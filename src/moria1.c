@@ -397,7 +397,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
     int		k, i1, i2, e1, e2;
     int          command_xxx, command_see;
     bool	ver, done, item;
-    bool	allow_equip;
+    bool	allow_inven, allow_equip;
     vtype       out_val;
 
 
@@ -415,7 +415,8 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 
 
     /* Determine which "pages" are allowed */
-    allow_equip = (s2 > INVEN_WIELD);
+    allow_inven = (s1 < INVEN_WIELD);
+    allow_equip = (s2 >= INVEN_WIELD);
     
 
     /* Start with "default" indexes */
@@ -430,20 +431,28 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
     while ((i1 <= i2) && (!get_item_okay(i1))) i1++;
     while ((i1 <= i2) && (!get_item_okay(i2))) i2--;
     
+    /* Notice when a "page" is "empty" */
+    if (allow_inven && (i1 > i2)) allow_inven = FALSE;
+    if (allow_equip && !(equip_ctr > 0)) allow_equip = FALSE;
+    
 
+
+    /* Use inventory if allowed */
+    if (allow_inven) {
 	command_xxx = TRUE;
 	n1 = 'a' + i1;
 	n2 = 'a' + i2;
+    }
 
     /* Use equipment */
-    if (allow_equip) {
-	if (inven_ctr == 0) command_xxx = FALSE;
+    else if (allow_equip) {
+	command_xxx = FALSE;
 	n1 = 'a' + e1 - INVEN_WIELD;
 	n2 = 'a' + e2 - INVEN_WIELD;
     }
 
     /* Nothing to choose from */
-    if (!(inven_ctr > 0 || (allow_equip && equip_ctr > 0))) {
+    else {
 	
 	/* Do not try to select */
 	done = TRUE;
@@ -476,16 +485,23 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 	}
 
 	/* Prepare the prompt */
-	if (allow_equip)
+	if (allow_inven && allow_equip) {
 	    (void)sprintf(out_val,
 			  "(%s: %c-%c,%s / for %s, or ESC) %s",
 			  (command_xxx ? "Inven" : "Equip"), n1, n2,
 			  (command_see ? "" : " * to see,"),
 			  (command_xxx ? "Equip" : "Inven"), pmt);
-	else
+	}
+	else if (allow_inven) {
 	    (void)sprintf(out_val,
 			  "(Items %c-%c,%s ESC to exit) %s", n1, n2,
 			  (command_see ? "" : " * for inventory list,"), pmt);
+	}
+	else {
+	    (void)sprintf(out_val,
+			  "(Items %c-%c,%s ESC to exit) %s", n1, n2,
+			  (command_see ? "" : " * for equipment list,"), pmt);
+	}
 
 	/* Show the prompt */	    
 	prt(out_val, 0, 0);
@@ -514,7 +530,7 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 	  case '/':
 
 	    /* Hack -- no "changing pages" allowed */
-	    if (!allow_equip) {
+	    if (!allow_inven || !allow_equip) {
 		bell();
 		break;
 	    }
