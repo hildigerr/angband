@@ -66,6 +66,11 @@
 #define ALLOW_CHECK_UNIQUES
 
 /*
+ * OPTION: Allow "inventory tagging" via inscriptions
+ */
+#define ALLOW_TAGS
+
+/*
  * OPTION: Allow characteres to be "auto-rolled"
  */
 #define AUTOROLLER

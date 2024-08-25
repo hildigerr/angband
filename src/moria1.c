@@ -156,6 +156,51 @@ cptr describe_use(int i)
 
 
 
+#ifdef ALLOW_TAGS
+
+/*
+ * Find the "first" inventory object with the given "tag".
+ *
+ * A "tag" is a char N appearing as "@N" anywhere in the
+ * inscription of an object.
+ */
+int get_tag(int *com_val, char tag)
+{
+    int i;
+    cptr s;
+
+    /* Check every object */
+    for (i = 0; i < INVEN_TOTAL; ++i) {
+
+	/* Skip empty objects */
+	if (!inventory[i].tval) continue;
+
+	/* Find a '@' */
+	s = strchr (inventory[i].inscrip, '@');
+
+	/* Did it work? */
+	if (s) {
+
+	    /* Check the tag */
+	    if (s[1] == tag) {
+
+		/* Save the actual inventory ID */
+		*com_val = i;
+
+		/* Success */
+		return (TRUE);
+	    }
+	}
+    }
+
+    /* No such tag */
+    return (FALSE);
+}
+
+#endif
+
+
+
 
 
 /* 
@@ -549,6 +594,48 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
 
 	    /* Need to redraw */
 	    break;
+
+#ifdef ALLOW_TAGS
+	  case '0':
+	  case '1': case '2': case '3':
+	  case '4': case '5': case '6':
+	  case '7': case '8': case '9':
+
+	    /* XXX Look up that tag */
+	    if (!get_tag(&k, which)) {
+	        bell();
+	        break;
+	    }
+	    
+	    /* Tag was on the inventory */
+	    if (k < INVEN_WIELD) {
+		if ((k < i1) || (k > i2)) {
+		    bell();
+		    break;
+		}
+	    }
+
+	    /* Tag was in the equipment */	    
+	    else {
+		if ((k < e1) || (k > e2)) {
+		    bell();
+		    break;
+		}
+	    }
+	    
+	    /* Validate the item */
+	    if (!get_item_okay(k)) {
+		bell();
+		break;
+	    }
+	    
+	    /* Use that item */
+	    (*com_val) = k;
+	    item = TRUE;
+	    done = TRUE;
+	    break;
+
+#endif
 
 	  default:
 
