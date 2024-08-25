@@ -426,14 +426,18 @@ int get_item(int *com_val, cptr pmt, int s1, int s2)
     /* Allow "restrictions" on inventory/equipment */
     if (s1 > i1) i1 = s1;
     if ((s2 < INVEN_WIELD) && (s2 < i2)) i2 = s2;
+    if ((s1 >= INVEN_WIELD) && (s1 > e1)) e1 = s1;
+    if (s2 < e2) e2 = s2;
 
     /* Restrict indexes (see above) */
     while ((i1 <= i2) && (!get_item_okay(i1))) i1++;
     while ((i1 <= i2) && (!get_item_okay(i2))) i2--;
+    while ((e1 <= e2) && (!get_item_okay(e1))) e1++;
+    while ((e1 <= e2) && (!get_item_okay(e2))) e2--;
     
     /* Notice when a "page" is "empty" */
     if (allow_inven && (i1 > i2)) allow_inven = FALSE;
-    if (allow_equip && !(equip_ctr > 0)) allow_equip = FALSE;
+    if (allow_equip && (e1 > e2)) allow_equip = FALSE;
     
 
 
