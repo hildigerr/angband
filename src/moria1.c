@@ -817,7 +817,10 @@ void calc_bonuses()
     p_ptr->dis_tac = p_ptr->ptoac; /* Display To AC	    */
     for (i = INVEN_WIELD; i <= INVEN_LITE; i++) {
 	i_ptr = &inventory[i];
-	if (i_ptr->tval != TV_NOTHING) {
+
+	/* Skip missing items */
+	if (!i_ptr->tval) continue;
+
 	    if ((cursed_p(i_ptr)) == 0) {
 		p_ptr->pac += i_ptr->ac;
 		p_ptr->dis_ac += i_ptr->ac;
@@ -832,7 +835,6 @@ void calc_bonuses()
 		    p_ptr->dis_td += i_ptr->todam;	/* Bows can't damage. -CJS- */
 		p_ptr->dis_tac += i_ptr->toac;
 	    }
-	}
     }
 
     if (p_ptr->pclass == 2) {
