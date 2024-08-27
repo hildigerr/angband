@@ -976,6 +976,9 @@ void calc_bonuses()
     /* Slow digestion takes less food */
     if (p_ptr->slow_digest) p_ptr->food_digested--;
 
+    /* Resting/Searching takes less food */
+    if (p_ptr->rest || p_ptr->searching) p_ptr->food_digested--;
+
        
     /* Actual Modifier Bonuses */
     p_ptr->ptohit += tohit_adj();
