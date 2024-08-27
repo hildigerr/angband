@@ -850,16 +850,6 @@ void calc_bonuses()
 	    }
     }
 
-    if (p_ptr->pclass == 2) {
-	i_ptr = &inventory[INVEN_WIELD];
-	if (!(i_ptr->flags2 & TR3_BLESSED) && /* blessed blade == no penalty -CWS */
-	    (i_ptr->tval == TV_SWORD || i_ptr->tval == TV_POLEARM)) {
-	    p_ptr->ptohit -= 2;
-	    p_ptr->ptodam -= 2;
-	    p_ptr->dis_th -= 2;
-	    p_ptr->dis_td -= 2;
-	}
-    }
     if (weapon_heavy)
 	p_ptr->dis_th += (p_ptr->use_stat[A_STR] * 15 -
 			  inventory[INVEN_WIELD].weight);
@@ -994,6 +984,25 @@ void calc_bonuses()
 	calc_mana(A_INT);
     } else if (class[p_ptr->pclass].spell == PRIEST) {
 	calc_mana(A_WIS);
+    }
+
+
+    /* Examine the "main weapon" */
+    i_ptr = &inventory[INVEN_WIELD];
+
+
+    /* Priest weapon penalty for non-blessed edged weapons */
+    if ((p_ptr->pclass == 2) &&
+	((i_ptr->tval == TV_SWORD) || (i_ptr->tval == TV_POLEARM)) &&
+	(!(i_ptr->flags3 & TR3_BLESSED))) {
+
+	/* Reduce the real bonuses */
+	p_ptr->ptohit -= 2;
+	p_ptr->ptodam -= 2;
+
+	/* Reduce the mental bonuses */
+	p_ptr->dis_th -= 2;
+	p_ptr->dis_td -= 2;
     }
 }
 
