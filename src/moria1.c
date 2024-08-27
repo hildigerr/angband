@@ -757,8 +757,6 @@ void calc_bonuses()
 
     int			i;
 
-    if (p_ptr->slow_digest) p_ptr->food_digested++;
-    if (p_ptr->regenerate) p_ptr->food_digested -= 3;
 
 
     /* Clear all the flags */
@@ -811,6 +809,10 @@ void calc_bonuses()
     
     /* Displayed/Real armor class */
     p_ptr->dis_ac = p_ptr->pac = 0;
+
+
+    /* Start with "normal" digestion */
+    p_ptr->food_digested = 2;
 
 
 
@@ -967,10 +969,12 @@ void calc_bonuses()
     if (item_flags2 & TR2_SUST_CON) p_ptr->sustain_con = TRUE;
     if (item_flags2 & TR2_SUST_CHR) p_ptr->sustain_chr = TRUE;
 
-    if (p_ptr->slow_digest)
-	p_ptr->food_digested--;
-    if (p_ptr->regenerate)
-	p_ptr->food_digested += 3;
+
+    /* Regeneration takes more food */
+    if (p_ptr->regenerate) p_ptr->food_digested += 3;
+
+    /* Slow digestion takes less food */
+    if (p_ptr->slow_digest) p_ptr->food_digested--;
 
        
     /* Actual Modifier Bonuses */
