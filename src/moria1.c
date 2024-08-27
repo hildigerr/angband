@@ -800,14 +800,23 @@ void calc_bonuses()
     p_ptr->immune_cold = FALSE;
     p_ptr->immune_elec = FALSE;
 
+
+    /* Save the old armor class */
     old_dis_ac = p_ptr->dis_ac;
+
+    /* Displayed/Real Bonuses */    
+    p_ptr->dis_th = p_ptr->ptohit = 0;
+    p_ptr->dis_td = p_ptr->ptodam = 0;
+    p_ptr->dis_tac = p_ptr->ptoac = 0;
+    
+    /* Displayed/Real armor class */
+    p_ptr->dis_ac = p_ptr->pac = 0;
+
     p_ptr->ptohit = tohit_adj();   /* Real To Hit   */
     p_ptr->ptodam = todam_adj();   /* Real To Dam   */
     p_ptr->ptoac = toac_adj();	   /* Real To AC    */
-    p_ptr->pac = 0;		   /* Real AC	     */
     p_ptr->dis_th = p_ptr->ptohit; /* Display To Hit	    */
     p_ptr->dis_td = p_ptr->ptodam; /* Display To Dam	    */
-    p_ptr->dis_ac = 0;		   /* Display AC		 */
     p_ptr->dis_tac = p_ptr->ptoac; /* Display To AC	    */
 
 
