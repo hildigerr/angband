@@ -759,11 +759,19 @@ void calc_bonuses()
 
     if (p_ptr->slow_digest) p_ptr->food_digested++;
     if (p_ptr->regenerate) p_ptr->food_digested -= 3;
+
+
+    /* Clear all the flags */
     p_ptr->see_inv = FALSE;
     p_ptr->teleport = FALSE;
     p_ptr->free_act = FALSE;
     p_ptr->slow_digest = FALSE;
     p_ptr->aggravate = FALSE;
+    p_ptr->regenerate = FALSE;
+    p_ptr->ffall = FALSE;
+    p_ptr->hold_life = FALSE;
+    p_ptr->telepathy = FALSE;
+    p_ptr->lite = FALSE;
     p_ptr->sustain_str = FALSE;
     p_ptr->sustain_int = FALSE;
     p_ptr->sustain_wis = FALSE;
@@ -773,18 +781,8 @@ void calc_bonuses()
     p_ptr->resist_fire = FALSE;
     p_ptr->resist_acid = FALSE;
     p_ptr->resist_cold = FALSE;
-    p_ptr->regenerate = FALSE;
     p_ptr->resist_elec = FALSE;
-    p_ptr->ffall = FALSE;
     p_ptr->resist_pois = FALSE;
-    p_ptr->hold_life = FALSE;
-    p_ptr->telepathy = FALSE;
-    p_ptr->immune_fire = FALSE;
-    p_ptr->immune_acid = FALSE;
-    p_ptr->immune_pois = FALSE;
-    p_ptr->immune_cold = FALSE;
-    p_ptr->immune_elec = FALSE;
-    p_ptr->lite = FALSE;
     p_ptr->resist_conf = FALSE;
     p_ptr->resist_sound = FALSE;
     p_ptr->resist_lite = FALSE;
@@ -796,6 +794,11 @@ void calc_bonuses()
     p_ptr->resist_blind = FALSE;
     p_ptr->resist_nether = FALSE;
     p_ptr->resist_fear = FALSE;
+    p_ptr->immune_fire = FALSE;
+    p_ptr->immune_acid = FALSE;
+    p_ptr->immune_pois = FALSE;
+    p_ptr->immune_cold = FALSE;
+    p_ptr->immune_elec = FALSE;
 
     old_dis_ac = p_ptr->dis_ac;
     p_ptr->ptohit = tohit_adj();   /* Real To Hit   */
