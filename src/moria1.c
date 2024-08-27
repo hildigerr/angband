@@ -828,6 +828,7 @@ void calc_bonuses()
     if (p_ptr->prace == 9) p_ptr->see_inv = TRUE;
 
 
+    /* Scan the usable inventory */
     for (i = INVEN_WIELD; i <= INVEN_LITE; i++) {
 	i_ptr = &inventory[i];
 
@@ -835,8 +836,10 @@ void calc_bonuses()
 	if (!i_ptr->tval) continue;
 
 	    if ((cursed_p(i_ptr)) == 0) {
-		p_ptr->pac += i_ptr->ac;
-		p_ptr->dis_ac += i_ptr->ac;
+	/* Modify the base armor class */
+	p_ptr->pac += i_ptr->ac;
+	
+	p_ptr->dis_ac += i_ptr->ac;
 	    }
 	    p_ptr->ptohit += i_ptr->tohit;
 	    if (i_ptr->tval != TV_BOW)            	/* Bows can't damage. -CJS- */
@@ -851,43 +854,52 @@ void calc_bonuses()
     }
 
 
-/* don't forget stun adj, or we'll get incorrect values... -CFT */
+    /* Apply temporary "stun" */
     if (p_ptr->stun > 50) {
 	p_ptr->ptohit -= 20;
 	p_ptr->dis_th -= 20;
 	p_ptr->ptodam -= 20;
 	p_ptr->dis_td -= 20;
-    } else if (p_ptr->stun > 0) {
+    }
+    else if (p_ptr->stun > 0) {
 	p_ptr->ptohit -= 5;
 	p_ptr->dis_th -= 5;
 	p_ptr->ptodam -= 5;
 	p_ptr->dis_td -= 5;
     }
-/* Add in temporary spell increases	 */
-/*
- * these changed from pac to ptoac, since mana now affected by high pac (to
- * sim. encumberence), and these really should be magical bonuses -CFT 
- */
+
+    /* Add in temporary spell increases */
+    /* these changed from pac to ptoac, since mana now affected by */
+    /* high pac (to simulate encumberence), and these really should */
+    /* be magical bonuses anyway -CFT */
+
     if (p_ptr->status & PY_INVULN) {
 	p_ptr->ptoac += 100;
 	p_ptr->dis_tac += 100;
     }
-    if (p_ptr->status & PY_BLESSED) {	/* changed to agree w/ code in
-					 * dungeon()... -CFT */
+
+    /* Temporary blessing */
+    if (p_ptr->status & PY_BLESSED) {
 	p_ptr->ptoac += 5;
 	p_ptr->dis_tac += 5;
 	p_ptr->ptohit += 10;
 	p_ptr->dis_th += 10;
     }
+
+    /* Temprory shield */
     if (p_ptr->shield > 0) {
 	p_ptr->ptoac += 50;
 	p_ptr->dis_tac += 50;
     }
-    if (p_ptr->status & PY_HERO) { /* now agrees w/ code in dungeon() -CFT */
+
+    /* Temporary "Hero" */
+    if (p_ptr->status & PY_HERO) {
 	p_ptr->ptohit += 12;
 	p_ptr->dis_th += 12;
     }
-    if (p_ptr->status & PY_SHERO) {/* now agrees w/ code in dungeon() -CFT */
+
+    /* Temporary "Beserk" */
+    if (p_ptr->status & PY_SHERO) {
 	p_ptr->ptohit += 24;
 	p_ptr->dis_th += 24;
 	p_ptr->ptoac -= 10;	   /* berserk, so not being careful... -CFT */
@@ -899,13 +911,12 @@ void calc_bonuses()
 	p_ptr->see_inv = TRUE;
     }
 
-    p_ptr->dis_ac += p_ptr->dis_tac;	/* this moved from above, so it will
-					 * show ac adjustments from spells...
-					 * -CFT */
+    
+    /* This must be done AFTER the stuff above */
+    p_ptr->dis_ac += p_ptr->dis_tac;
 
-/* can't print AC here because might be in a store */
-    p_ptr->status |= PY_ARMOR;	   /* This was in an if, but I want to be
-				    * sure ac is shown properly... -CFT */
+    /* Hack -- always redraw armor */
+    p_ptr->status |= PY_ARMOR;
 
 
     /* Check the item flags */
@@ -981,9 +992,11 @@ void calc_bonuses()
     p_ptr->dis_td += todam_adj();
     p_ptr->dis_tac += toac_adj();
 
+    /* Hack -- Recalculate the spells/mana */
     if (class[p_ptr->pclass].spell == MAGE) {
 	calc_mana(A_INT);
-    } else if (class[p_ptr->pclass].spell == PRIEST) {
+    }
+    else if (class[p_ptr->pclass].spell == PRIEST) {
 	calc_mana(A_WIS);
     }
 
