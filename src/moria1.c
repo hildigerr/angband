@@ -850,9 +850,6 @@ void calc_bonuses()
 	    }
     }
 
-    if (weapon_heavy)
-	p_ptr->dis_th += (p_ptr->use_stat[A_STR] * 15 -
-			  inventory[INVEN_WIELD].weight);
 
 /* don't forget stun adj, or we'll get incorrect values... -CFT */
     if (p_ptr->stun > 50) {
@@ -1003,6 +1000,12 @@ void calc_bonuses()
 	/* Reduce the mental bonuses */
 	p_ptr->dis_th -= 2;
 	p_ptr->dis_td -= 2;
+    }
+
+
+    /* It is hard to hit with a heavy weapon */
+    if (weapon_heavy) {
+	p_ptr->dis_th += (p_ptr->use_stat[A_STR] * 15 - i_ptr->weight);
     }
 }
 
