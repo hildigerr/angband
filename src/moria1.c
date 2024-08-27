@@ -883,8 +883,6 @@ void calc_bonuses()
 	p_ptr->ptoac += 50;
 	p_ptr->dis_tac += 50;
     }
-    if (p_ptr->detect_inv > 0)
-	p_ptr->see_inv = TRUE;
     if (p_ptr->status & PY_HERO) { /* now agrees w/ code in dungeon() -CFT */
 	p_ptr->ptohit += 12;
 	p_ptr->dis_th += 12;
@@ -895,6 +893,12 @@ void calc_bonuses()
 	p_ptr->ptoac -= 10;	   /* berserk, so not being careful... -CFT */
 	p_ptr->dis_tac -= 10;
     }
+
+    /* Temporary see invisible */
+    if (p_ptr->detect_inv > 0) {
+	p_ptr->see_inv = TRUE;
+    }
+
     p_ptr->dis_ac += p_ptr->dis_tac;	/* this moved from above, so it will
 					 * show ac adjustments from spells...
 					 * -CFT */
