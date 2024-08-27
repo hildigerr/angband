@@ -812,13 +812,6 @@ void calc_bonuses()
     /* Displayed/Real armor class */
     p_ptr->dis_ac = p_ptr->pac = 0;
 
-    p_ptr->ptohit = tohit_adj();   /* Real To Hit   */
-    p_ptr->ptodam = todam_adj();   /* Real To Dam   */
-    p_ptr->ptoac = toac_adj();	   /* Real To AC    */
-    p_ptr->dis_th = p_ptr->ptohit; /* Display To Hit	    */
-    p_ptr->dis_td = p_ptr->ptodam; /* Display To Dam	    */
-    p_ptr->dis_tac = p_ptr->ptoac; /* Display To AC	    */
-
 
 
     /* Race based special abilities */
@@ -978,6 +971,17 @@ void calc_bonuses()
 	p_ptr->food_digested--;
     if (p_ptr->regenerate)
 	p_ptr->food_digested += 3;
+
+       
+    /* Actual Modifier Bonuses */
+    p_ptr->ptohit += tohit_adj();
+    p_ptr->ptodam += todam_adj();
+    p_ptr->ptoac += toac_adj();
+
+    /* Displayed Modifier Bonuses */
+    p_ptr->dis_th += tohit_adj();
+    p_ptr->dis_td += todam_adj();
+    p_ptr->dis_tac += toac_adj();
 
     if (class[p_ptr->pclass].spell == MAGE) {
 	calc_mana(A_INT);
