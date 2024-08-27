@@ -749,7 +749,7 @@ void py_bonuses(inven_type *t_ptr, int factor)
  */
 void calc_bonuses()
 {
-    u32b		item_flags1, item_flags2;
+    u32b		item_flags1, item_flags2, item_flags3;
 
     int			old_dis_ac;
 
@@ -903,17 +903,14 @@ void calc_bonuses()
     p_ptr->status |= PY_ARMOR;	   /* This was in an if, but I want to be
 				    * sure ac is shown properly... -CFT */
 
-    item_flags1 = 0L;
-    i_ptr = &inventory[INVEN_WIELD];
+
+    /* Check the item flags */
+    item_flags1 = item_flags2 = item_flags3 = 0L;
     for (i = INVEN_WIELD; i <= INVEN_LITE; i++) {
+	i_ptr = &inventory[i];
 	item_flags1 |= i_ptr->flags1;
-	i_ptr++;
-    }
-    item_flags2 = 0L;
-    i_ptr = &inventory[INVEN_WIELD];
-    for (i = INVEN_WIELD; i <= INVEN_LITE; i++) {
 	item_flags2 |= i_ptr->flags2;
-	i_ptr++;
+	item_flags3 |= i_ptr->flags3;
     }
 
     /* Process the item flags */
