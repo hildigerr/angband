@@ -759,29 +759,23 @@ void calc_bonuses()
 
     if (p_ptr->slow_digest) p_ptr->food_digested++;
     if (p_ptr->regenerate) p_ptr->food_digested -= 3;
-    if (p_ptr->prace == 9) p_ptr->see_inv = TRUE;
-    else p_ptr->see_inv = FALSE;
+    p_ptr->see_inv = FALSE;
     p_ptr->teleport = FALSE;
-    if (p_ptr->prace == 4) p_ptr->free_act = TRUE;
-    else p_ptr->free_act = FALSE;
+    p_ptr->free_act = FALSE;
     p_ptr->slow_digest = FALSE;
     p_ptr->aggravate = FALSE;
-    if (p_ptr->prace == 7) p_ptr->sustain_str = TRUE;
-    else p_ptr->sustain_str = FALSE;
+    p_ptr->sustain_str = FALSE;
     p_ptr->sustain_int = FALSE;
     p_ptr->sustain_wis = FALSE;
-    if (p_ptr->prace == 8) p_ptr->sustain_con = TRUE;
-    else p_ptr->sustain_con = FALSE;
-    if (p_ptr->prace == 3) p_ptr->sustain_dex = TRUE;
-    else p_ptr->sustain_dex = FALSE;
+    p_ptr->sustain_con = FALSE;
+    p_ptr->sustain_dex = FALSE;
     p_ptr->sustain_chr = FALSE;
     p_ptr->resist_fire = FALSE;
     p_ptr->resist_acid = FALSE;
     p_ptr->resist_cold = FALSE;
     p_ptr->regenerate = FALSE;
     p_ptr->resist_elec = FALSE;
-    if (p_ptr->prace == 9) p_ptr->ffall = TRUE;
-    else p_ptr->ffall = FALSE;
+    p_ptr->ffall = FALSE;
     p_ptr->resist_pois = FALSE;
     p_ptr->hold_life = FALSE;
     p_ptr->telepathy = FALSE;
@@ -793,16 +787,13 @@ void calc_bonuses()
     p_ptr->lite = FALSE;
     p_ptr->resist_conf = FALSE;
     p_ptr->resist_sound = FALSE;
-    if (p_ptr->prace == 2) p_ptr->resist_lite = TRUE;
-    else p_ptr->resist_lite = FALSE;
-    if (p_ptr->prace == 6) p_ptr->resist_dark = TRUE;
-    else p_ptr->resist_dark = FALSE;
+    p_ptr->resist_lite = FALSE;
+    p_ptr->resist_dark = FALSE;
     p_ptr->resist_chaos = FALSE;
     p_ptr->resist_disen = FALSE;
     p_ptr->resist_shards = FALSE;
     p_ptr->resist_nexus = FALSE;
-    if (p_ptr->prace == 5) p_ptr->resist_blind = TRUE;
-    else p_ptr->resist_blind = FALSE;
+    p_ptr->resist_blind = FALSE;
     p_ptr->resist_nether = FALSE;
     p_ptr->resist_fear = FALSE;
 
@@ -815,6 +806,21 @@ void calc_bonuses()
     p_ptr->dis_td = p_ptr->ptodam; /* Display To Dam	    */
     p_ptr->dis_ac = 0;		   /* Display AC		 */
     p_ptr->dis_tac = p_ptr->ptoac; /* Display To AC	    */
+
+
+
+    /* Race based special abilities */
+    if (p_ptr->prace == 2) p_ptr->resist_lite = TRUE;
+    if (p_ptr->prace == 3) p_ptr->sustain_dex = TRUE;
+    if (p_ptr->prace == 4) p_ptr->free_act = TRUE;
+    if (p_ptr->prace == 5) p_ptr->resist_blind = TRUE;
+    if (p_ptr->prace == 6) p_ptr->resist_dark = TRUE;
+    if (p_ptr->prace == 7) p_ptr->sustain_str = TRUE;
+    if (p_ptr->prace == 8) p_ptr->sustain_con = TRUE;
+    if (p_ptr->prace == 9) p_ptr->ffall = TRUE;
+    if (p_ptr->prace == 9) p_ptr->see_inv = TRUE;
+
+
     for (i = INVEN_WIELD; i <= INVEN_LITE; i++) {
 	i_ptr = &inventory[i];
 
