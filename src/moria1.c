@@ -841,12 +841,6 @@ void calc_bonuses()
 	
 	p_ptr->dis_ac += i_ptr->ac;
 	    }
-	    if (i_ptr->tval != TV_BOW)            	/* Bows can't damage. -CJS- */
-		p_ptr->ptodam += i_ptr->todam;
-	    if (known2_p(i_ptr)) {
-		if (i_ptr->tval != TV_BOW)
-		    p_ptr->dis_td += i_ptr->todam;	/* Bows can't damage. -CJS- */
-	    }
 
 	/* Apply the bonuses to armor class */
 	p_ptr->ptoac += i_ptr->toac;
@@ -856,9 +850,13 @@ void calc_bonuses()
 
 	/* Apply the bonuses to hit/damage */
 	p_ptr->ptohit += i_ptr->tohit;
+	if (i_ptr->tval != TV_BOW)
+	p_ptr->ptodam += i_ptr->todam;
 
 	/* Apply the mental bonuses tp hit/damage, if known */
 	if (known2_p(i_ptr)) p_ptr->dis_th += i_ptr->tohit;
+	if (i_ptr->tval != TV_BOW)
+	if (known2_p(i_ptr)) p_ptr->dis_td += i_ptr->todam;
     }
 
 
