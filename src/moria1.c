@@ -1039,14 +1039,14 @@ void calc_bonuses()
  */
 void inven_takeoff(int item_val, int posn)
 {
+    register inven_type *i_ptr;
     bigvtype             out_val, prt2;
-    register inven_type *t_ptr;
 
     cptr p;
 
     equip_ctr--;
-    t_ptr = &inventory[item_val];
-    inven_weight -= t_ptr->weight * t_ptr->number;
+    i_ptr = &inventory[item_val];
+    inven_weight -= i_ptr->weight * i_ptr->number;
     p_ptr->status |= PY_STR_WGT;
 
     if (item_val == INVEN_WIELD || item_val == INVEN_AUX)
@@ -1056,15 +1056,15 @@ void inven_takeoff(int item_val, int posn)
     else
 	p = "Was wearing ";
 
-    objdes(prt2, t_ptr, TRUE);
+    objdes(prt2, i_ptr, TRUE);
     if (posn >= 0)
 	(void)sprintf(out_val, "%s%s. (%c)", p, prt2, index_to_label(posn));
     else if (posn == -1)
 	(void)sprintf(out_val, "%s%s.", p, prt2);
     msg_print(out_val);
     if (item_val != INVEN_AUX)	   /* For secondary weapon  */
-	py_bonuses(t_ptr, -1);
-    invcopy(t_ptr, OBJ_NOTHING);
+	py_bonuses(i_ptr, -1);
+    invcopy(i_ptr, OBJ_NOTHING);
 }
 
 
