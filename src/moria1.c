@@ -1035,34 +1035,42 @@ void calc_bonuses()
 
 
 /*
- * Remove item from equipment list		-RAK-	
+ * Move an item from equipment list to pack
  */
 void inven_takeoff(int item_val, int posn)
 {
     register inven_type *i_ptr;
-    bigvtype             out_val, prt2;
+    bigvtype            out_val, prt2;
 
     /* What we are doing with the object */
     cptr act;
 
     equip_ctr--;
+
+    /* Get the item to take off */
     i_ptr = &inventory[item_val];
+
     inven_weight -= i_ptr->weight * i_ptr->number;
     p_ptr->status |= PY_STR_WGT;
 
-    if (item_val == INVEN_WIELD || item_val == INVEN_AUX)
+    if (item_val == INVEN_WIELD || item_val == INVEN_AUX) {
 	act = "Was wielding ";
-    else if (item_val == INVEN_LITE)
+    }
+    else if (item_val == INVEN_LITE) {
 	act = "Light source was ";
-    else
+    }
+    else {
 	act = "Was wearing ";
+    }
 
+    /* Describe the result */
     objdes(prt2, i_ptr, TRUE);
     if (posn >= 0)
-	(void)sprintf(out_val, "%s%s. (%c)", act, prt2, index_to_label(posn));
+    (void)sprintf(out_val, "%s%s. (%c)", act, prt2, index_to_label(posn));
     else if (posn == -1)
 	(void)sprintf(out_val, "%s%s.", act, prt2);
     msg_print(out_val);
+
     if (item_val != INVEN_AUX)	   /* For secondary weapon  */
 	py_bonuses(i_ptr, -1);
     invcopy(t_ptr, OBJ_NOTHING);
