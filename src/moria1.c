@@ -1042,7 +1042,8 @@ void inven_takeoff(int item_val, int posn)
     register inven_type *i_ptr;
     bigvtype             out_val, prt2;
 
-    cptr p;
+    /* What we are doing with the object */
+    cptr act;
 
     equip_ctr--;
     i_ptr = &inventory[item_val];
@@ -1050,21 +1051,21 @@ void inven_takeoff(int item_val, int posn)
     p_ptr->status |= PY_STR_WGT;
 
     if (item_val == INVEN_WIELD || item_val == INVEN_AUX)
-	p = "Was wielding ";
+	act = "Was wielding ";
     else if (item_val == INVEN_LITE)
-	p = "Light source was ";
+	act = "Light source was ";
     else
-	p = "Was wearing ";
+	act = "Was wearing ";
 
     objdes(prt2, i_ptr, TRUE);
     if (posn >= 0)
-	(void)sprintf(out_val, "%s%s. (%c)", p, prt2, index_to_label(posn));
+	(void)sprintf(out_val, "%s%s. (%c)", act, prt2, index_to_label(posn));
     else if (posn == -1)
-	(void)sprintf(out_val, "%s%s.", p, prt2);
+	(void)sprintf(out_val, "%s%s.", act, prt2);
     msg_print(out_val);
     if (item_val != INVEN_AUX)	   /* For secondary weapon  */
 	py_bonuses(i_ptr, -1);
-    invcopy(i_ptr, OBJ_NOTHING);
+    invcopy(t_ptr, OBJ_NOTHING);
 }
 
 
