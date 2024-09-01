@@ -669,6 +669,8 @@ static bool grab_one_kind_flag(inven_kind *k_ptr, cptr what)
     else if (streq(what, "SUST_CON"))		flags2 |= TR2_SUST_CON;
     else if (streq(what, "SUST_CHR"))		flags2 |= TR2_SUST_CHR;
 
+    else if (streq(what, "EASY_KNOW"))		flags3 |= TR3_EASY_KNOW;
+
     else if (streq(what, "FEATHER"))		flags3 |= TR3_FEATHER;
     else if (streq(what, "LITE"))		flags3 |= TR3_LITE;
     else if (streq(what, "SEE_INVIS"))		flags3 |= TR3_SEE_INVIS;

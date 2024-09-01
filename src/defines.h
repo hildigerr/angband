@@ -1243,6 +1243,7 @@
 #define TR2_RES_DISEN		0x80000000L	/* Oops */
 
 
+#define TR3_EASY_KNOW		0x00000100L	/* Aware -> Known */
 #define TR3_FEATHER	 	0x00001000L	/* Feather Falling */
 #define TR3_LITE		0x00002000L	/* Permanent Light */
 #define TR3_SEE_INVIS		0x00004000L	/* See Invisible */

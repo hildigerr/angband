@@ -870,6 +870,10 @@ static errr rd_item_old(inven_type *i_ptr)
     /* Some of the old "ident" flags only apply to wearable's */    
     if (wearable_p(i_ptr)) {
 
+	/* Hack -- Inherit "EASY_KNOW" from parent */
+	if (k_ptr->flags3 & TR3_EASY_KNOW) i_ptr->flags3 |= TR3_EASY_KNOW;
+    }
+
     /* Convert old "ID_DAMD" flag into new "ID_FELT" method */
     if (i_ptr->ident & 0x02) {
 	i_ptr->ident |= ID_FELT;

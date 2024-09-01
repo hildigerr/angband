@@ -298,6 +298,26 @@ static bool known2_aux(inven_type *i_ptr)
 {
     /* Analyze the "tval" */
     switch (i_ptr->tval) {
+
+	/* Rings, Amulets */
+	case TV_RING:
+	case TV_AMULET:
+
+	    /* Must be "aware" of the object's effect */
+	    if (!x_list[i_ptr->k_idx].aware) return (FALSE);
+
+	    /* XXX Fall through */
+
+	/* Lites (plus Rings and Amulets).  Could also do weapons/armor */
+	case TV_LITE:
+
+	    /* Check the "EASY_KNOW" flag for wearables */
+	    if (i_ptr->flags3 & TR3_EASY_KNOW) return (TRUE);
+
+	    /* Assume unknown */
+	    return (FALSE);
+
+
 	/* Simple items */
 	case TV_FLASK:
 	case TV_JUNK:
@@ -654,7 +674,9 @@ int item_similar(inven_type *i_ptr, inven_type *j_ptr)
  * rings and amulets, and if "aware", use the "k_list" base-name (Ring or
  * Amulet or Necklace).  They will NEVER "append" the "k_list" name.
  * In all three cases above, the "artifact name" is appended if the object
- * is "known".
+ * is "known".  Some of the Special Rings/Amulets are thus "EASY_KNOW".
+ * Note that not all of them can be, since the "plusses" are hidden.  But
+ * it might be worth it to mark them as "EASY_KNOW" anyway, for convenience.
  *
  * There is extra processing for "The One Ring", though I disapprove...
  */

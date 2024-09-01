@@ -784,34 +784,34 @@ F:CURSED | TELEPORT
 N:139:Slow Digestion
 I:=:45:7:0:1:2:7:250
 A:7/1
-F:SLOW_DIGEST
+F:SLOW_DIGEST | EASY_KNOW
 
 N:140:Resist Fire
 I:=:45:8:0:1:2:14:250
 A:14/1
-F:RES_FIRE | IGNORE_FIRE
+F:RES_FIRE | IGNORE_FIRE | EASY_KNOW
 
 N:141:Resist Cold
 I:=:45:9:0:1:2:14:250
 A:14/1
-F:RES_COLD | IGNORE_COLD
+F:RES_COLD | IGNORE_COLD | EASY_KNOW
 
 N:142:Feather Falling
 I:=:45:10:0:1:2:7:200
 A:7/1
-F:FEATHER
+F:FEATHER | EASY_KNOW
 
 N:143:Poison Resistance
 I:=:45:11:0:1:2:55:16000
 A:55/1
-F:RES_POIS
+F:RES_POIS | EASY_KNOW
 
 # Oops, this ring had an sval of "37" not "12"!
 
 N:144:Free Action
 I:=:45:12:0:1:2:20:1500
 A:20/1
-F:FREE_ACT
+F:FREE_ACT | EASY_KNOW
 
 N:145:Weakness
 I:=:45:13:-5:1:2:7:0
@@ -862,42 +862,42 @@ A:10/1
 N:154:Aggravate Monster
 I:=:45:22:0:1:2:7:0
 A:7/1
-F:CURSED | AGGRAVATE
+F:CURSED | AGGRAVATE | EASY_KNOW
 
 N:155:See Invisible
 I:=:45:23:0:1:2:30:340
 A:30/1
-F:SEE_INVIS
+F:SEE_INVIS | EASY_KNOW
 
 N:156:Sustain Strength
 I:=:45:24:1:1:2:28:750
 A:28/1
-F:SUST_STR
+F:SUST_STR | EASY_KNOW
 
 N:157:Sustain Intelligence
 I:=:45:25:2:1:2:28:600
 A:28/1
-F:SUST_INT
+F:SUST_INT | EASY_KNOW
 
 N:158:Sustain Wisdom
 I:=:45:26:3:1:2:28:600
 A:28/1
-F:SUST_WIS
+F:SUST_WIS | EASY_KNOW
 
 N:159:Sustain Constitution
 I:=:45:27:4:1:2:28:750
 A:28/1
-F:SUST_CON
+F:SUST_CON | EASY_KNOW
 
 N:160:Sustain Dexterity
 I:=:45:28:5:1:2:28:750
 A:28/1
-F:SUST_DEX
+F:SUST_DEX | EASY_KNOW
 
 N:161:Sustain Charisma
 I:=:45:29:6:1:2:28:500
 A:28/1
-F:SUST_CHR
+F:SUST_CHR | EASY_KNOW
 
 N:162:Slaying
 I:=:45:30:0:1:2:40:1000
@@ -924,22 +924,22 @@ F:SEARCH
 N:166:Teleportation
 I:":40:3:0:1:3:14:0
 A:14/1
-F:CURSED | TELEPORT
+F:CURSED | TELEPORT | EASY_KNOW
 
 N:167:Slow Digestion
 I:":40:4:0:1:3:14:200
 A:14/1
-F:SLOW_DIGEST
+F:SLOW_DIGEST | EASY_KNOW
 
 N:168:Resist Acid
 I:":40:5:0:1:3:24:300
 A:24/1
-F:RES_ACID | IGNORE_ACID
+F:RES_ACID | IGNORE_ACID | EASY_KNOW
 
 N:169:Adornment
 I:":40:6:0:1:3:16:20
 A:16/1
-F:
+F:EASY_KNOW
 
 N:171:the Magi
 I:":40:8:0:1:3:50:30000
@@ -1849,13 +1849,13 @@ N:346:& Wooden Torch~
 I:~:10:0:4000:1:30:1:2
 A:1/1
 P:0:1d1:0:0:0
-F:
+F:EASY_KNOW
 
 N:347:& Brass Lantern~
 I:~:10:1:7500:1:50:1:35
 A:1/1
 P:0:1d1:0:0:0
-F:IGNORE_FIRE
+F:EASY_KNOW | IGNORE_FIRE
 
 N:348:& Flask~ of oil
 I:!:77:64:7500:1:10:1:3
@@ -2499,6 +2499,11 @@ I:$:100:18:0:1:0:1:80
 # Note that the "One Ring" also
 # has a specific check for "unknown" in which it changes its name
 # to "a plain gold ring".  See "desc.c"
+#
+# Setting "EASY_KNOW" for LITE's means that they get "auto-identified"
+# while setting it for RING's/AMULET's means that once they have been
+# identified once, they can never be forgotten.  Note that the Lite's
+# do not currently use this feature.
 #
 # Note that at some point, it will probably be useful to create "object
 # templates" for some other objects, including the two "Morgoth" items.
