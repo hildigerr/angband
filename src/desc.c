@@ -317,6 +317,10 @@ static bool known2_aux(inven_type *i_ptr)
 	    /* Assume unknown */
 	    return (FALSE);
 
+	/* Spellbooks */
+	case TV_MAGIC_BOOK:
+	case TV_PRAYER_BOOK:
+	    return (TRUE);
 
 	/* Simple items */
 	case TV_FLASK:
