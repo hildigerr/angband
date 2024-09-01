@@ -292,12 +292,43 @@ bool flavor_p(inven_type *i_ptr)
 
 
 /*
+ * Certain items get "known" very easily
+ */
+static bool known2_aux(inven_type *i_ptr)
+{
+    /* Analyze the "tval" */
+    switch (i_ptr->tval) {
+	/* Simple items */
+	case TV_FLASK:
+	case TV_JUNK:
+	case TV_BOTTLE:
+	case TV_SKELETON:
+	case TV_SPIKE:
+	    return (TRUE);
+    }
+
+    /* Nope */
+    return (FALSE);
+}
+
+
+/*
  * Is a given item "fully identified"?
  */
 bool known2_p(inven_type *i_ptr)
 {
     /* Some items get "tagged" as known */
     if (i_ptr->ident & ID_KNOWN) return (TRUE);
+
+    /* Hack -- auto-know certain items */
+    if (known2_aux(i_ptr)) {
+
+	/* Be ready for it next time */
+	i_ptr->ident |= ID_KNOWN;
+
+	/* This item is known */
+	return (TRUE);
+    }
 
     /* Assume not known */
     return (FALSE);    
