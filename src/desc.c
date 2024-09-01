@@ -307,9 +307,10 @@ static bool known2_aux(inven_type *i_ptr)
 
 	    /* XXX Fall through */
 
-	/* Potions, Scrolls (plus some Food) */
+	/* Potions, Scrolls, Rods (plus some Food) */
 	case TV_POTION:
 	case TV_SCROLL:
+	case TV_ROD:
 
 	    /* The player must be "aware" of the item's effects */
 	    if (!x_list[i_ptr->k_idx].aware) return (FALSE);

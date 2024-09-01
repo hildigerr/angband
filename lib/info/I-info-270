@@ -25,7 +25,7 @@ Made artifacts MUCH more resistant to "death by throwing" :-)
 Added true "object stacking" code, so any items can stack.
 Wrote code for "unstacking" objects (ie wands) for use.
 Functions combine() and combine_pack() to maintain inventory.
-Added "(charging)" to rod descriptions.
+Made rods "EASY_KNOW", and added "(charging)" to rod descriptions.
 Made auto-restackers for charged rods.
 Added "inventory tagging" (grep for "USE_TAGGER").
 Made "store cost" a property of objects
