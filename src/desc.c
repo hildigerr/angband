@@ -299,6 +299,24 @@ static bool known2_aux(inven_type *i_ptr)
     /* Analyze the "tval" */
     switch (i_ptr->tval) {
 
+	/* Food */
+	case TV_FOOD:
+
+	    /* Some food is "always" known */
+	    if (i_ptr->sval >= SV_FOOD_MIN_FOOD) return (TRUE);
+
+	    /* XXX Fall through */
+
+	/* Potions, Scrolls (plus some Food) */
+	case TV_POTION:
+	case TV_SCROLL:
+
+	    /* The player must be "aware" of the item's effects */
+	    if (!x_list[i_ptr->k_idx].aware) return (FALSE);
+
+	    /* Assume knowledge */
+	    return (TRUE);
+
 	/* Rings, Amulets */
 	case TV_RING:
 	case TV_AMULET:
