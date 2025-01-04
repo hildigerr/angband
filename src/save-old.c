@@ -820,6 +820,19 @@ static errr rd_item_old(inven_type *i_ptr)
 
 
 
+
+    /* Update Bows (XXX Handle Bows of Extra Might) */
+    if (i_ptr->tval == TV_BOW) {
+
+	/* Hack -- repair "pval" (ancient "bug") */
+	i_ptr->pval = 0;
+
+	/* XXX XXX Normal bows of extra might */
+	/* i_ptr->flags3 |= (TR3_XTRA_MIGHT); */
+    }
+
+
+
     /* Repair the "flags" in wearable objects */
     if (wearable_p(i_ptr)) {
 

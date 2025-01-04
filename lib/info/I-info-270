@@ -13,6 +13,9 @@ Addition of another flag set for items.
 Reorganization of the flags for items.
 Addition of "IGNORE" flags to allow items to "ignore" damage.
 Removal of the "Resist Acid" properties of various items.
+Added flags "XTRA_MIGHT" and "XTRA_SHOTS" for bows.
+Made an "Ego-Bow" of "Extra Might" (extension of Might)
+Made an "Ego-Bow" of "Extra Shots" (extension of Accuracy)
 Properly handled "identify" inducing object "awareness" and "combining".
 Rewrote the "inventory sorter" and reassigned "subvals" logically.
 Genericized the "item value" routines, help sort inventory by "value".

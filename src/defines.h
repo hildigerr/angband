@@ -569,6 +569,8 @@
 
 #define EGO_SLAY_ANIMAL		55
 
+#define EGO_EXTRA_MIGHT		60
+#define EGO_EXTRA_SHOTS		61
 
 #define EGO_ACCURACY		65
 
@@ -1250,6 +1252,8 @@
 #define TR3_TELEPATHY		0x00008000L	/* Telepathy */
 #define TR3_SLOW_DIGEST		0x00010000L	/* Item slows down digestion */
 #define TR3_REGEN		0x00020000L	/* Item induces regeneration */
+#define TR3_XTRA_MIGHT		0x00040000L	/* Bows get extra multiplier */
+#define TR3_XTRA_SHOTS		0x00080000L	/* Bows get extra shots */
 #define TR3_IGNORE_ACID		0x00100000L	/* Item ignores Acid Damage */
 #define TR3_IGNORE_ELEC		0x00200000L	/* Item ignores Elec Damage */
 #define TR3_IGNORE_FIRE		0x00400000L	/* Item ignores Fire Damage */

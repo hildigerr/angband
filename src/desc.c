@@ -801,6 +801,9 @@ void objdes(char *out_val, inven_type *i_ptr, int pref)
 	/* Hack -- Extract the "base power" */
 	power = (i_ptr->sval % 10);
 
+	/* Apply the "Extra Might" flag */
+	if (i_ptr->flags3 & TR3_XTRA_MIGHT) power++;
+
 	/* Build the damage string */
 	sprintf(damstr, " (x%d)", power);
 

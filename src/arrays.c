@@ -679,6 +679,9 @@ static bool grab_one_kind_flag(inven_kind *k_ptr, cptr what)
     else if (streq(what, "SLOW_DIGEST"))	flags3 |= TR3_SLOW_DIGEST;
     else if (streq(what, "REGEN"))		flags3 |= TR3_REGEN;
 
+    else if (streq(what, "XTRA_MIGHT"))		flags3 |= TR3_XTRA_MIGHT;
+    else if (streq(what, "XTRA_SHOTS"))		flags3 |= TR3_XTRA_SHOTS;
+
     else if (streq(what, "IGNORE_FIRE"))	flags3 |= TR3_IGNORE_FIRE;
     else if (streq(what, "IGNORE_COLD"))	flags3 |= TR3_IGNORE_COLD;
     else if (streq(what, "IGNORE_ELEC"))	flags3 |= TR3_IGNORE_ELEC;

@@ -1066,12 +1066,22 @@ static void facts(inven_type *i_ptr, \
     /*  Default to single shot or throw */
     *thits = 1;
 
-/* multiply damage bonuses instead of adding, when have proper missile/weapon
- * combo, this makes them much more useful 
- */
 
-/* Using Bows,  slings,  or crossbows	 */
-    if (inventory[INVEN_WIELD].tval == TV_BOW)
+    /* Handle Firing a missile while wielding the proper launcher */
+    /* The maximum range is increased, the launcher modifiers are */
+    /* added in, and then the bow multiplier is applied.  Note that */
+    /* Bows of "Extra Might" get extra range and an extra bonus for */
+    /* the damage multiplier, and Bows of "Extra Shots" give an extra */
+    /* shot.  These only work when the proper missile is used.        */
+
+    /* Examine the launcher */
+    if (inventory[INVEN_WIELD].tval == TV_BOW) {
+
+	/* Extract the "Extra Might" flag */
+	bool xm = (inventory[INVEN_WIELD].flags3 & TR3_XTRA_MIGHT) ? TRUE : FALSE;
+
+	/* Extract the "Extra Shots" flag */
+	bool xs = (inventory[INVEN_WIELD].flags3 & TR3_XTRA_SHOTS) ? TRUE : FALSE;
 
 	/* Analyze the launcher */
 	switch (inventory[INVEN_WIELD].sval) {
@@ -1082,18 +1092,9 @@ static void facts(inven_type *i_ptr, \
 	    *tbth = p_ptr->bthb;
 	    *tpth += 2 * inventory[INVEN_WIELD].tohit;
 	    *tdam += inventory[INVEN_WIELD].todam;
-	    *tdam = *tdam * 2;
-	    *tdis = 20;
-	    break;
-
-	  /* Sling of Might and ammo */
-	  case 21:
-	    if (i_ptr->tval != TV_SHOT) break;
-	    *tbth = p_ptr->bthb;
-	    *tpth += 2 * inventory[INVEN_WIELD].tohit;
-	    *tdam += inventory[INVEN_WIELD].todam;
-	    *tdam = *tdam * 3;
-	    *tdis = 20;
+	    *tdam *= (xm ? 3 : 2);
+	    *tdis = (xm ? 25 : 20);
+	    if (xs) *thits += 1;
 	    break;
 
 	  /* Short Bow and Arrow */
@@ -1102,8 +1103,9 @@ static void facts(inven_type *i_ptr, \
 	    *tbth = p_ptr->bthb;
 	    *tpth += 2 * inventory[INVEN_WIELD].tohit;
 	    *tdam += inventory[INVEN_WIELD].todam;
-	    *tdam = *tdam * 2;
-	    *tdis = 25;
+	    *tdam *= (xm ? 3 : 2);
+	    *tdis = (xm ? 30 : 25);
+	    if (xs) *thits += 1;
 	    break;
 
 	  /* Long Bow and Arrow */
@@ -1112,28 +1114,9 @@ static void facts(inven_type *i_ptr, \
 	    *tbth = p_ptr->bthb;
 	    *tpth += 2 * inventory[INVEN_WIELD].tohit;
 	    *tdam += inventory[INVEN_WIELD].todam;
-	    *tdam = *tdam * 3;
-	    *tdis = 30;
-	    break;
-
-	  /* C Bow, BARD, L bow of M and Arrow*/
-	  case 3:
-	    if (i_ptr->tval != TV_ARROW) break;
-	    *tbth = p_ptr->bthb;
-	    *tpth += 2 * inventory[INVEN_WIELD].tohit;
-	    *tdam += inventory[INVEN_WIELD].todam;
-	    *tdam = *tdam * 4;
-	    *tdis = 35;
-	    break;
-
-	  /* C Bow of M, BELEG and Arrow*/
-	  case 4:
-	    if (i_ptr->tval != TV_ARROW) break;
-	    *tbth = p_ptr->bthb;
-	    *tpth += 2 * inventory[INVEN_WIELD].tohit;
-	    *tdam += inventory[INVEN_WIELD].todam;
-	    *tdam = *tdam * 5;
-	    *tdis = 35;
+	    *tdam *= (xm ? 4 : 3);
+	    *tdis = (xm ? 35 : 30);
+	    if (xs) *thits += 1;
 	    break;
 
 	  /* Light Crossbow and Bolt */
@@ -1152,21 +1135,12 @@ static void facts(inven_type *i_ptr, \
 	    *tbth = p_ptr->bthb;
 	    *tpth += 2 * inventory[INVEN_WIELD].tohit;
 	    *tdam += inventory[INVEN_WIELD].todam;
-	    *tdam = *tdam * 4;
-	    *tdis = 35;
+	    *tdam *= (xm ? 5 : 4);
+	    *tdis = (xm ? 40 : 30);
+	    if (xs) *thits += 1;
 	    break;
-
-	  /* H xbow of M and Bolt*/
-	  case 12:
-	    if (i_ptr->tval != TV_BOLT) break;
-	    *tbth = p_ptr->bthb;
-	    *tpth += 2 * inventory[INVEN_WIELD].tohit;
-	    *tdam += inventory[INVEN_WIELD].todam;
-	    *tdam = *tdam * 5;
-	    *tdis = 35;
-	    break;
-	    
 	}
+    }
 }
 
 

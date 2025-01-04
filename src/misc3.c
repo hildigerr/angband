@@ -1654,18 +1654,29 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 		if (okay && make_artifact(i_ptr)) break;
 		if (great && okay && make_artifact(i_ptr)) break;
 
-	    switch (randint(15)) {
+	    switch (randint(10)) {
 
-		  case 1: case 2: case 3:
-		    i_ptr->sval++; /* make it do an extra multiple of damage */
+		  case 1:
+		    i_ptr->flags3 |= TR3_XTRA_MIGHT;
 		    i_ptr->tohit += 5;
 		    i_ptr->todam += 10;
-		    i_ptr->name2 = EGO_MIGHT;
-		    rating += 15;
-		    if (peek) msg_print("Bow of Might");
+		    i_ptr->name2 = EGO_EXTRA_MIGHT;
+		    i_ptr->cost += 10000L;
+		    rating += 20;
+		    if (peek) msg_print("Bow of Extra Might");
 		    break;
 
-		  case 4: case 5: case 6: case 7: case 8:
+		  case 2:
+		    i_ptr->flags3 |= TR3_XTRA_SHOTS;
+		    i_ptr->tohit += 10;
+		    i_ptr->todam += 3;
+		    i_ptr->name2 = EGO_EXTRA_SHOTS;
+		    i_ptr->cost += 10000L;
+		    rating += 20;
+		    if (peek) msg_print("Bow of Extra Shots");
+		    break;
+
+		  case 3: case 4: case 5: case 6:
 		    i_ptr->tohit += 5;
 		    i_ptr->todam += 12;
 		    i_ptr->name2 = EGO_MIGHT;
@@ -1673,8 +1684,7 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 		    if (peek) msg_print("Bow of Might");
 		    break;
 
-		  case 9: case 10: case 11: case 12:
-		  case 13: case 14: case 15:
+		  case 7: case 8: case 9: case 10:
 		    i_ptr->tohit += 12;
 		    i_ptr->todam += 5;
 		    i_ptr->name2 = EGO_ACCURACY;
