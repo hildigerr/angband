@@ -652,7 +652,11 @@ static void charge_staff(inven_type *i_ptr)
  * and "great" flags over-ride this parameter somewhat.
  *			
  * If "okay" is true, this routine will have a small chance of turning
- * the object into an artifact.
+ * the object into an artifact.  If "good" is true, the object is guaranteed
+ * to be good.  If "great" is true, it is guaranteed to be "great".  Note
+ * that even if "good" or "great" are false, there is still a chance for
+ * good stuff to be created, even artifacts (if "okay" is TRUE).  Note that
+ * if "great" is true, then objects get an "extra try" to become an artifact.
  *
  * Note that the "k_list" has been rebuilt to remove the old problems
  * with multiple "similar" objects.
@@ -678,24 +682,26 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 
       case TV_DRAG_ARMOR:
 
-	/* all DSM are enchanted, I guess -CFT */
+	/* Good */
+	if (good || magik(chance)) {
 
 	    /* Enchant */
 	    i_ptr->toac += randint(3) + m_bonus(0, 5, level);
 
 	    /* Perhaps an artifact */
-	    if (great || (magik(chance) && magik(special))) {
+	    if (great || magik(special)) {
+
+		/* Roll for artifact */
+		if (okay && make_artifact(i_ptr)) break;
+		if (great && okay && make_artifact(i_ptr)) break;
 
 		/* Even better */
 		i_ptr->toac += randint(5);
-
-		if ((great || randint(3) == 1) && okay
-		    && make_artifact(i_ptr))	/* ...but is it an artifact? */
-		    break;
 	    }
 
 	    /* Hack -- adjust cost for "toac" */
 	    i_ptr->cost += i_ptr->toac * 500L;
+	}
 
 	rating += 30;
 	if (wizard || peek) msg_print("Dragon Scale Mail");
@@ -716,6 +722,13 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 	    /* Try for artifacts */
 	    if (great || magik(special)) {
 
+		/* Try for artifact */
+		if (okay && make_artifact(i_ptr)) return;
+		if (great && okay && make_artifact(i_ptr)) break;
+		if (great && okay && make_artifact(i_ptr)) break;
+		if (great && okay && make_artifact(i_ptr)) break;
+
+		/* Hack -- Try for "Robes of the Magi" */
 		if ((i_ptr->tval == TV_SOFT_ARMOR) &&
 		    (i_ptr->sval == SV_ROBE) &&
 		    (magik(special)) &&
@@ -746,9 +759,6 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 		switch (randint(9)) {
 
 		  case 1:
-		    if ((great || randint(3) == 1) && okay &&
-			make_artifact(i_ptr))
-			break;
 		    i_ptr->flags2 |= (TR2_RES_ELEC | TR2_RES_COLD |
 				      TR2_RES_ACID | TR2_RES_FIRE);
 		    i_ptr->flags3 |= (TR3_IGNORE_ELEC | TR3_IGNORE_COLD |
@@ -773,9 +783,6 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 		    break;
 
 		  case 2:
-		    if ((great || randint(3) == 1) && okay &&
-			make_artifact(i_ptr))
-			break;
 		    if (!strncmp(k_list[i_ptr->k_idx].name,
 				 "Mithril", 7) ||
 			!strncmp(k_list[i_ptr->k_idx].name,
@@ -790,9 +797,6 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 		    break;
 
 		  case 3: case 4:
-		    if ((great || randint(3) == 1) && okay &&
-			make_artifact(i_ptr))
-			break;
 		    i_ptr->flags2 |= (TR2_RES_FIRE);
 		    i_ptr->flags3 |= (TR3_IGNORE_FIRE);
 		    i_ptr->cost += 600L;
@@ -802,9 +806,6 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 		    break;
 
 		  case 5: case 6:
-		    if ((great || randint(3) == 1) && okay &&
-			make_artifact(i_ptr))
-			break;
 		    i_ptr->flags2 |= (TR2_RES_COLD);
 		    i_ptr->flags3 |= (TR3_IGNORE_COLD);
 		    i_ptr->cost += 600L;
@@ -814,9 +815,6 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 		    break;
 
 		  case 7: case 8: case 9:
-		    if ((great || randint(3) == 1) && okay &&
-			make_artifact(i_ptr))
-			break;
 		    i_ptr->flags2 |= (TR2_RES_ELEC);
 		    i_ptr->flags3 |= (TR3_IGNORE_ELEC);
 		    i_ptr->cost += 500L;
@@ -846,22 +844,12 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 	    /* Make it better */
 	    i_ptr->toac = randint(3) + m_bonus(0, 10, level);
 
-		/* Roll for artifact */
-	    if ((((randint(2) == 1) && magik(5 * special / 2)) || great) &&
-		!stricmp(k_list[i_ptr->k_idx].name,
-			 "& Set of Leather Gloves") &&
-		okay && make_artifact(i_ptr)) break;
-	    if ((((randint(4) == 1) && magik(special)) || great)
-		     && !stricmp(k_list[i_ptr->k_idx].name,
-				 "& Set of Gauntlets") &&
-		     okay && make_artifact(i_ptr)) break;
-	    if ((((randint(5) == 1) && magik(special)) || great)
-		     && !stricmp(k_list[i_ptr->k_idx].name,
-				 "& Set of Cesti") &&
-		     okay && make_artifact(i_ptr)) break;
-
 	    /* Apply more magic */
 	    if (great || magik(special)) {
+
+		/* Roll for artifact */
+		if (okay && make_artifact(i_ptr)) return;
+		if (great && okay && make_artifact(i_ptr)) break;
 		
 		/* Make it excellent */
 		switch (randint(10)) {
@@ -894,9 +882,6 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 		    break;
 
 		  case 10:
-		    if (((great || randint(3) == 1)) && okay &&
-			make_artifact(i_ptr))
-			break;
 		    i_ptr->flags1 |= (TR1_STR);
 		    i_ptr->ident |= ID_SHOW_HITDAM;
 		    i_ptr->ident |= ID_NOSHOW_TYPE;
@@ -954,11 +939,13 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 	    /* Apply more magic */
 	    if (great || magik(special)) {
 
+		/* Roll for artifact */
+		if (okay && make_artifact(i_ptr)) return;
+		if (great && okay && make_artifact(i_ptr)) break;
+
 		tmp = randint(12);
 
 		  if (tmp == 1) {
-		    if (!((randint(2) == 1) && okay
-			  && make_artifact(i_ptr))) {
 		    i_ptr->flags1 |= TR1_SPEED;
 		    i_ptr->name2 = EGO_SPEED;
 		    i_ptr->pval = 1;
@@ -967,7 +954,6 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 		    /* Increase the rating */
 		    rating += 30;
 		    if (wizard || peek) msg_print("Boots of Speed");
-		    }
 		} else if (stricmp("& Pair of Metal Shod Boots",
 				   k_list[i_ptr->k_idx].name))	/* not metal */
 
@@ -1060,6 +1046,10 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 	    /* Apply more magic */
 	    if (great || magik(special)) {
 
+		/* Roll for artifact */
+		if (okay && make_artifact(i_ptr)) return;
+		if (great && okay && make_artifact(i_ptr)) break;
+
 		/* Process "helms" */
 		if (i_ptr->sval < 6) {
 
@@ -1067,73 +1057,55 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 		    switch (randint(14)) {
 
 		      case 1: case 2:
-			if (!((randint(2) == 1) && okay &&
-			      make_artifact(i_ptr))) {
 			i_ptr->flags1 |= TR1_INT;
 			i_ptr->pval = randint(2);	/* +N INT */
 			i_ptr->cost += i_ptr->pval * 500;
 			i_ptr->name2 = EGO_INTELLIGENCE;
 			rating += 13;
 			if (peek) msg_print("Intelligence");
-			}
 			break;
 
 		      case 3: case 4: case 5:
-			if (!((randint(2) == 1) && okay &&
-			      make_artifact(i_ptr))) {
 			i_ptr->flags1 |= TR1_WIS;
 			i_ptr->pval = randint(2);	/* +N Wis */
 			i_ptr->cost += i_ptr->pval * 500;
 			i_ptr->name2 = EGO_WISDOM;
 			rating += 13;
 			if (peek) msg_print("Wisdom");
-			}
 			break;
 
 		      case 6: case 7: case 8: case 9:
-			if (!((randint(2) == 1) && okay &&
-			      make_artifact(i_ptr))) {
 			i_ptr->flags1 |= TR1_INFRA;
 			i_ptr->pval = 1 + randint(4);	/* +N Infra */
 			i_ptr->cost += i_ptr->pval * 250;
 			i_ptr->name2 = EGO_INFRAVISION;
 			rating += 11;
-			}
 			break;
 
 		      case 10: case 11:
-			if (!((randint(2) == 1) && okay &&
-			      make_artifact(i_ptr))) {
 			i_ptr->flags2 |= (TR2_RES_LITE);
 			i_ptr->flags3 |= (TR3_LITE);
 			i_ptr->cost += 500;
 			i_ptr->name2 = EGO_LITE;
 			rating += 6;
 			if (peek) msg_print("Light");
-			}
 			break;
 
 		      case 12: case 13:
-			if (!((randint(2) == 1) && okay &&
-			      make_artifact(i_ptr))) {
 			i_ptr->flags2 |= TR2_RES_BLIND;
 			i_ptr->flags3 |= TR3_SEE_INVIS;
 			i_ptr->cost += 1000;
 			i_ptr->name2 = EGO_SEEING;
 			rating += 8;
 			if (peek) msg_print("Helm of Seeing");
-			}
 			break;
 
 		     default: /* case 14: */
-			if (!((randint(2) == 1) && okay &&
-			      make_artifact(i_ptr))) {
 			i_ptr->flags3 |= TR3_TELEPATHY;
 			i_ptr->cost += 50000L;
 			i_ptr->name2 = EGO_TELEPATHY;
 			rating += 20;
 			if (peek) msg_print("Telepathy");
-			}
 			break;
 		    }
 		}
@@ -1145,8 +1117,6 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 		    switch (randint(6)) {
 
 		      case 1:
-			if (!((great || (randint(2) == 1)) &&
-			      okay && make_artifact(i_ptr))) {
 			i_ptr->flags1 |= (TR1_STR | TR1_DEX | TR1_CON);
 			i_ptr->flags2 |= (TR2_FREE_ACT);
 			i_ptr->pval = randint(3);	/* +N STR/DEX/CON */
@@ -1154,7 +1124,6 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 			i_ptr->name2 = EGO_MIGHT;
 			rating += 19;
 			if (peek) msg_print("Crown of Might");
-			}
 			break;
 
 		      case 2:
@@ -1267,7 +1236,8 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 	    if (great || magik(special)) {
 
 		/* Roll for artifact */
-		if (okay && ((randint(10) == 1)||(randint(20) == 1)) && make_artifact(i_ptr)) return;
+		if (okay && make_artifact(i_ptr)) return;
+		if (great && okay && make_artifact(i_ptr)) break;
 
 		/* Make it "excellent" */
 		if (randint(2) == 1) {
@@ -1384,6 +1354,12 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 	    /* Make it "excellent" */
 	    if (great || magik(special)) {
 
+		/* Roll for artifacts */
+		if (okay && make_artifact(i_ptr)) return;
+		if (great && okay && make_artifact(i_ptr)) break;
+		if (great && okay && make_artifact(i_ptr)) break;
+		if (great && okay && make_artifact(i_ptr)) break;
+
 		/* Hack -- Roll for whips of fire */
 		if ((i_ptr->tval == TV_HAFTED) &&
 		    (i_ptr->sval == SV_WHIP) &&
@@ -1415,10 +1391,6 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 		switch (randint(30)) {
 
 		  case 1:
-			if (((randint(2) == 1) || (great))
-			    && okay &&
-			    make_artifact(i_ptr))
-			    break;
 		    i_ptr->flags1 |= (TR1_SLAY_DEMON | TR1_WIS |
 				      TR1_SLAY_UNDEAD | TR1_SLAY_EVIL);
 		    i_ptr->flags3 |= (TR3_BLESSED | TR3_SEE_INVIS);
@@ -1443,9 +1415,6 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 		    break;
 
 		  case 2:
-			if (((randint(2) == 1) || (great)) && okay &&
-			    make_artifact(i_ptr))
-			    break;
 		    i_ptr->flags1 |= (TR1_STEALTH);
 		    i_ptr->flags2 |= (TR2_FREE_ACT |
 				      TR2_RES_FIRE | TR2_RES_COLD |
@@ -1466,9 +1435,6 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 		    break;
 
 		  case 3: case 4:
-		    if (((randint(2) == 1) || (great)) && okay &&
-			    make_artifact(i_ptr))
-			    break;
 		    i_ptr->flags1 |= (TR1_BRAND_FIRE);
 		    i_ptr->flags2 |= (TR2_RES_FIRE);
 		    i_ptr->flags2 |= (TR3_IGNORE_FIRE);
@@ -1481,9 +1447,6 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 		    break;
 
 		  case 5: case 6:
-			if (((randint(2) == 1) || (great)) && okay &&
-			    make_artifact(i_ptr))
-			    break;
 		    i_ptr->flags1 |= (TR1_BRAND_COLD);
 		    i_ptr->flags2 |= (TR2_RES_COLD);
 		    i_ptr->flags3 |= (TR3_IGNORE_COLD);
@@ -1595,9 +1558,6 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 		    break;
 
 		  case 27:
-			if (((randint(2) == 1) || (great)) && okay &&
-			    make_artifact(i_ptr))
-			    break;
 		    i_ptr->flags1 |= (TR1_SLAY_ORC |
 				      TR1_DEX | TR1_CON | TR1_STR);
 		    i_ptr->flags2 |= (TR2_FREE_ACT);
@@ -1631,9 +1591,6 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 
 		  /* Extra Attacks */
 		  case 30:
-			if (((randint(2) == 1) || (great))
-			    && okay && make_artifact(i_ptr))
-			    break;
 		    i_ptr->tohit += randint(5);
 		    i_ptr->todam += randint(3);
 		    i_ptr->flags1 |= (TR1_ATTACK_SPD);
@@ -1690,12 +1647,16 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 	    i_ptr->tohit = randint(3) + m_bonus(0, 10, level);
 	    i_ptr->todam = randint(3) + m_bonus(0, 10, level);
 
+	    /* Apply more magic */
+	    if (great || magik(special)) {
+
+		/* Make an artifact */
+		if (okay && make_artifact(i_ptr)) break;
+		if (great && okay && make_artifact(i_ptr)) break;
+
 	    switch (randint(15)) {
 
 		  case 1: case 2: case 3:
-		if (((randint(3)==1)||(great)) && okay && make_artifact(i_ptr)) break;
-		if (((randint(5) == 1) || (great)) && okay && make_artifact(i_ptr)) break;
-
 		    i_ptr->sval++; /* make it do an extra multiple of damage */
 		    i_ptr->tohit += 5;
 		    i_ptr->todam += 10;
@@ -1720,6 +1681,7 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 		    rating += 11;
 		    if (peek) msg_print("Accuracy");
 		    break;
+		}
 	    }
 	}
 
@@ -1868,8 +1830,6 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 
       case TV_RING:
 
-	if (!((randint(10) == 1) && okay && make_artifact(i_ptr))) {
-
 	switch (i_ptr->sval) {
 
 	  /* Strength, Constitution, Dexterity, Intelligence */
@@ -1993,7 +1953,6 @@ void apply_magic(inven_type *i_ptr, int level, bool okay, bool good, bool great)
 		i_ptr->cost = -i_ptr->cost;
 	    }
 	    break;
-	}
 	}
 	break;
 
