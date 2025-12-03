@@ -37,4 +37,16 @@
 
 
 
+/*
+ * Place the cursor at a given location
+ */
+errr Term_gotoxy(int x, int y)
+{
+#ifdef MACINTOSH
+    DSetScreenCursor(col, row);
+#else
+    (void)move(row, col);
+#endif
+}
+
 

@@ -59,11 +59,7 @@ void bell()
  */
 void move_cursor(int row, int col)
 {
-#ifdef MACINTOSH
-    DSetScreenCursor(col, row);
-#else
-    (void)move(row, col);
-#endif
+    Term_gotoxy(col, row);
 }
 
 

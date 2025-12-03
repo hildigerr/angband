@@ -336,39 +336,14 @@ void lite_spot(int y, int x)
  */
 
 void move_cursor_relative(int row, int col)
-
-#ifdef MACINTOSH
 {
     /* Real co-ords convert to screen positions */
     row -= panel_row_prt;
     col -= panel_col_prt;
 
-    DSetScreenCursor(col, row);
+    /* Go there */
+    Term_gotoxy(col, row);
 }
-
-#else
-{
-    vtype tmp_str;
-
-    /* Real co-ords convert to screen positions */
-    row -= panel_row_prt;
-    col -= panel_col_prt;
-
-    if (move(row, col) == ERR) {
-	abort();
-    /* clear msg_flag to avoid problems with unflushed messages */
-	msg_flag = 0;
-	(void)sprintf(tmp_str,
-		      "error in move_cursor_relative, row = %d col = %d\n",
-		      row, col);
-	prt(tmp_str, 0, 0);
-	bell();
-    /* wait so user can see error */
-	(void)sleep(2);
-    }
-}
-
-#endif
 
 
 

@@ -5,6 +5,8 @@
 
 #include "h-include.h"
 
+extern errr Term_gotoxy(int x, int y);
+
 #endif
 
 
