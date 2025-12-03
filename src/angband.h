@@ -29,6 +29,13 @@
 #include "z-form.h"
 
 
+
+/* 
+ * Include the header file for the "terminal" stuff
+ */
+#include "term.h"
+
+
 /* 
  * Include the header file for the random number generator
  * Note that ALL machines can safely include this file now,
