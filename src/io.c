@@ -45,11 +45,8 @@ void bell()
     /* Flush the output */
     put_qio();
 
-#ifdef MACINTOSH
-    mac_beep();
-#else
-    (void)write(1, "\007", 1);
-#endif
+    /* Make a bell noise */
+    Term_bell();
 }
 
 

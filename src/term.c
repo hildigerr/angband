@@ -36,6 +36,21 @@
  */
 
 
+/*
+ * Make an "alert sound" on the Term
+ */
+errr Term_bell()
+{
+#ifdef MACINTOSH
+    mac_beep();
+#else
+    (void)write(1, "\007", 1);
+#endif
+
+    /* Success */
+    return (0);
+}
+
 
 /*
  * Place the cursor at a given location
