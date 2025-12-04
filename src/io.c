@@ -298,26 +298,14 @@ void erase_line(int row, int col)
 
 
 
-/* Clears screen */
+/*
+ * Erase the screen (flush msg_print first)
+ */
 void clear_screen()
 {
-#ifdef MACINTOSH
-    Rect area;
+    if (msg_flag) msg_print(NULL);
 
-    if (msg_flag)
-	msg_print(NULL);
-
-    area.left = area.top = 0;
-    area.right = SCRN_COLS;
-    area.bottom = SCRN_ROWS;
-    DEraseScreen(&area);
-#else
-    if (msg_flag)
-	msg_print(NULL);
-    touchwin(stdscr);
-    (void)clear();
-    refresh();
-#endif
+    Term_clear();
 }
 
 

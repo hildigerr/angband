@@ -37,6 +37,29 @@
 
 
 /*
+ * Clear the entire screen
+ */
+errr Term_clear()
+{
+#ifdef MACINTOSH
+    Rect area;
+
+    area.left = area.top = 0;
+    area.right = SCRN_COLS;
+    area.bottom = SCRN_ROWS;
+    DEraseScreen(&area);
+#else
+    touchwin(stdscr);
+    (void)clear();
+    refresh();
+#endif
+
+    /* Success */
+    return (0);
+}
+
+
+/*
  * Make an "alert sound" on the Term
  */
 errr Term_bell()
