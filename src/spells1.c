@@ -2539,7 +2539,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 	    if (!no_color_flag) textcolor(LIGHTGRAY);
 #endif
 	    move_cursor_relative(y9, x9);
-	    put_qio();
+	    Term_fresh();
 #ifdef MSDOS
 	    delay(8 * delay_spd);
 #else
@@ -2627,7 +2627,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 	    /* Note that the cursor may go offscreen */
 	    if (gm[t+1] > gm[t]) {
 		move_cursor_relative(y2, x2);
-		put_qio();
+		Term_fresh();
 #ifdef MSDOS
 		delay(10 * delay_spd);
 #else
@@ -2646,7 +2646,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 	/* Flush the erasing */
 	if (drawn) {
 	    move_cursor_relative(y2, x2);
-	    put_qio();
+	    Term_fresh();
 	}
     }
 

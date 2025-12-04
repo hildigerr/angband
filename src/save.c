@@ -120,7 +120,7 @@ static void prt_note(int where, cptr msg)
     prt(msg, y, 0);
 
     /* Flush it */
-    put_qio();
+    Term_fresh();
 }
 
 
@@ -2002,7 +2002,7 @@ int _save_player(char *fnam)
     /* Forbid suspend */
     signals_ignore_tstp();
 
-    put_qio();
+    Term_fresh();
     disturb(1, 0);		   /* Turn off resting and searching. */
 
     /* Fix the speed */

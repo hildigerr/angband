@@ -82,7 +82,7 @@ static void prt_note(int where, cptr msg)
     prt(msg, y, 0);
 
     /* Flush it */
-    put_qio();
+    Term_fresh();
 }
 
 

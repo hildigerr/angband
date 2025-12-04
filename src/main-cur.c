@@ -132,7 +132,8 @@ void restore_term()
 {
     if (!curses_on) return;
 
-    put_qio();			   /* Dump any remaining buffer */
+    (void)refresh();
+
 #ifdef MSDOS
     (void)sleep(2);		   /* And let it be read. */
 #endif
@@ -550,7 +551,7 @@ void shell_out()
 #else
     put_str("[Escaping to shell]\n", 0, 0);
 #endif
-    put_qio();
+    Term_fresh();
 
 #ifdef USG
 #if !defined(MSDOS) && !defined(ATARIST_MWC) && !defined(__MINT__)

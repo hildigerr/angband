@@ -121,7 +121,7 @@ signal_handler(sig)
 		if (turn > 0)
 		    disturb(1, 0);
 		erase_line(0, 0);
-		put_qio();
+		Term_fresh();
 		error_sig = (-1);
 #ifdef USG
 #ifdef linux
@@ -136,7 +136,7 @@ signal_handler(sig)
 	    /* in case control-c typed during msg_print */
 		if (wait_for_more)
 		    put_str(" -more-", MSG_LINE, 0);
-		put_qio();
+		Term_fresh();;
 
 		/* OK. We don't quit. */
 		return;

@@ -302,7 +302,7 @@ int mass_genocide(int spell)
 	    if (spell) {
 		take_hit(randint(3), "the strain of casting Mass Genocide");
 		prt_chp();
-		put_qio();
+		Term_fresh();
 #ifdef MSDOS
 		delay(20 * delay_spd);	/* milliseconds */
 #else
@@ -362,7 +362,7 @@ int genocide(int spell)
 		    if (spell) {
 			take_hit(randint(4), "the strain of casting Genocide");
 			prt_chp();
-			put_qio();
+			Term_fresh();
 #ifdef MSDOS
 			delay(20 * delay_spd);	/* milliseconds */
 #else

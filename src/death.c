@@ -542,7 +542,7 @@ int file_character(cptr filename1)
     if (file1) {
 
 	prt("Writing character sheet...", 0, 0);
-	put_qio();
+	Term_fresh();
 
 	colon = ":";
 	blank = " ";

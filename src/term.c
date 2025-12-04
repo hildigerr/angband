@@ -59,6 +59,21 @@ errr Term_clear()
 }
 
 
+
+
+/*
+ * Flush the output
+ */
+errr Term_fresh()
+{
+    screen_change = TRUE;	   /* Let inven_command know something has changed. */
+    (void)refresh();
+
+    /* Success */
+    return (0);
+}
+
+
 /*
  * Make an "alert sound" on the Term
  */

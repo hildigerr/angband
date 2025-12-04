@@ -825,7 +825,9 @@ void player_birth()
 		if (stat[stat_idx] <= msstat && stat[stat_idx] >= 3) break;
 	    }
 	}
-	put_qio();
+
+	/* Dump results */
+	Term_fresh();
     }
 
 #endif				   /* AUTOROLLER - main setup code */
@@ -866,7 +868,9 @@ void player_birth()
 		usleep((long)100000L);
 #endif
 
-		put_qio();
+	    /* Make sure they see everything */
+	    Term_fresh();
+
 	    } else
 		put_stats();
 	} while ((autoroll) &&

@@ -43,7 +43,7 @@ static WINDOW *savescr;	   /* Spare window for saving the screen.
 void bell()
 {
     /* Flush the output */
-    put_qio();
+    Term_fresh();
 
     /* Make a bell noise */
     Term_bell();
@@ -126,13 +126,6 @@ void put_str(cptr out_str, int row, int col)
 #endif
 
 
-/* Dump the IO buffer to terminal			-RAK-	 */
-void put_qio()
-{
-    screen_change = TRUE;	   /* Let inven_command know something has
-				    * changed. */
-    (void)refresh();
-}
 
 
 /*
@@ -152,7 +145,7 @@ char inkey()
     int  dir;
     int  shift_flag, ctrl_flag;
 
-    put_qio();
+    Term_fresh();
     command_rep = 0;
 
     do {
@@ -167,7 +160,9 @@ char inkey()
 #else
     int i;
 
-    put_qio();			   /* Dump IO buffer		 */
+    /* Flush the output */
+    Term_fresh();
+
     command_rep = 0;		   /* Just to be safe -CJS- */
     while (TRUE) {
 #ifdef MSDOS
@@ -235,7 +230,7 @@ char inkeydir()
 	CTRL('Y'), CTRL('K'), CTRL('U')
     };
 
-    put_qio();
+    Term_fresh();
     command_rep = 0;
 
     do {

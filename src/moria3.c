@@ -1856,7 +1856,7 @@ void do_cmd_fire()
 			    if (panel_contains(y, x) && (p_ptr->blind < 1)
 				&& (c_ptr->tl || c_ptr->pl)) {
 				print(tchar, y, x);
-				put_qio();	/* show object moving */
+				Term_fresh();	/* show object moving */
 #ifdef MSDOS
 				delay(8 * delay_spd);	/* milliseconds */
 #else
@@ -1969,7 +1969,7 @@ void do_cmd_rest(void)
 	p_ptr->food_digested--;
 
 	prt("Press any key to stop resting...", 0, 0);
-	put_qio();
+	Term_fresh();
     }
 
     /* Rest was cancelled */    

@@ -1336,7 +1336,7 @@ void dungeon(void)
 	    move_cursor_relative(char_row, char_col);
 
 	    /* Flush output */
-	    put_qio();
+	    Term_fresh();
 	}
 
 
@@ -1361,12 +1361,16 @@ void dungeon(void)
 		/* Hack -- If running, run some more */
 		if (find_flag) {
 
+
+		    /* Hack -- flush old output */
+		    Term_fresh();
+		    
 		    /* Take a step */
 		    find_step();
 		    find_count--;
 		    if (find_count == 0)
 			end_find();
-		    put_qio();
+
 		} else if (doing_inven)
 		    inven_command(doing_inven);
 		else {
@@ -1466,7 +1470,9 @@ void dungeon(void)
 		/* Flash the message line. */
 		    erase_line(MSG_LINE, 0);
 		    move_cursor_relative(char_row, char_col);
-		    put_qio();
+
+		    /* Flush the changes */
+		    Term_fresh();
 
 		    do_command(command);
 		/* Find is counted differently, as the command changes. */

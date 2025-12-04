@@ -602,7 +602,6 @@ int suspend(void);
 void init_curses(void);
 void moriaterm(void);
 void put_str(cptr, int, int);
-void put_qio(void);
 void restore_term(void);
 void shell_out(void);
 char inkey(void);
