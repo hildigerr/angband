@@ -261,30 +261,15 @@ char inkeydir()
 #endif
 
 
-/* Flush the buffer					-RAK-	 */
-void flush()
-{
-#ifdef MACINTOSH
-/* Removed put_qio() call.  Reduces flashing.  Doesn't seem to hurt. */
-    FlushScreenKeys();
-#else
-#ifdef MSDOS
-    while (kbhit())
-	(void)getch();
-#else
-/*
- * the code originally used ioctls, TIOCDRAIN, or TIOCGETP/TIOCSETP, or
- * TCGETA/TCSETAF, however this occasionally resulted in loss of output, the
- * happened especially often when rlogin from BSD to SYS_V machine, using
- * check_input makes the desired effect a bit clearer 
- */
-/* wierd things happen on EOF, don't try to flush input in that case */
-    if (!eof_flag)
-	while (check_input(0));
-#endif
 
-/* used to call put_qio() here to drain output, but it is not necessary */
-#endif
+
+/*
+ * Flush all input chars
+ */
+void flush(void)
+{
+    /* Forget old keypresses */
+    Term_flush();
 }
 
 

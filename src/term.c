@@ -52,6 +52,36 @@ errr Term_bell()
 }
 
 
+
+/*** Input routines ***/
+
+
+/*
+ * Flush and forget the input
+ */
+errr Term_flush()
+{
+#ifdef MACINTOSH
+    FlushScreenKeys();
+#else
+  #ifdef MSDOS
+    while (kbhit()) (void)getch();
+  #else
+  /* the code originally used ioctls, TIOCDRAIN, or TIOCGETP/TIOCSETP, or
+   * TCGETA/TCSETAF, however this occasionally resulted in loss of output, the
+   * happened especially often when rlogin from BSD to SYS_V machine, using
+   * check_input makes the desired effect a bit clearer
+   *
+   * wierd things happen on EOF, don't try to flush input in that case */
+    if (!eof_flag) while (check_input(0));
+  #endif
+#endif
+    /* Success */
+    return (0);
+}
+
+
+
 /*
  * Place the cursor at a given location
  */
