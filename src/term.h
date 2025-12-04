@@ -5,6 +5,7 @@
 
 #include "h-include.h"
 
+extern int Term_kbhit(void);
 extern errr Term_flush(void);
 extern errr Term_fresh(void);
 extern errr Term_bell(void);

@@ -133,3 +133,23 @@ errr Term_gotoxy(int x, int y)
 }
 
 
+
+
+/*
+ * Return the pending keypress, if any, or zero.
+ */
+int Term_kbhit()
+{
+    int i;
+
+#if (defined (unix) || defined(ATARI_ST)) /* CFT's if/elif/else    */
+    i = check_input(1);
+#elif (defined(MSDOS) || defined(VMS)) /* stolen from Um55 src -CFT */
+    i = kbhit();
+#endif
+
+    /* A key is ready */
+    return (i);
+}
+
+

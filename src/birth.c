@@ -871,6 +871,11 @@ void player_birth()
 	    /* Make sure they see everything */
 	    Term_fresh();
 
+	    /* Let the auto-roller get stopped by keypresses */
+	    if (Term_kbhit()) {
+		flush();
+		break;
+
 	    } else
 		put_stats();
 	} while ((autoroll) &&
@@ -879,17 +884,7 @@ void player_birth()
 		  (stat[A_WIS] > p_ptr->cur_stat[A_WIS]) ||
 		  (stat[A_DEX] > p_ptr->cur_stat[A_DEX]) ||
 		  (stat[A_CON] > p_ptr->cur_stat[A_CON]) ||
-		  (stat[A_CHR] > p_ptr->cur_stat[A_CHR]))
-
-#if (defined (unix) || defined(ATARI_ST)) /* CFT's if/elif/else    */
-		 && (!check_input(1)));	  /* unix needs flush here */
-#elif (defined(MSDOS) || defined(VMS))
-	&&(!kbhit()));
-    if (kbhit())
-	    flush();
-#else
-    );
-#endif				   /* character checks */
+		  (stat[A_CHR] > p_ptr->cur_stat[A_CHR])));
 
 #endif				   /* AUTOROLLER main looping section */
 

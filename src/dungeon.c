@@ -903,25 +903,6 @@ void dungeon(void)
 	    }
 	}
 
-    /* Check for interrupts to find or rest. */
-	if ((command_rep > 0 || find_flag || p_ptr->rest > 0 || p_ptr->rest == -1
-	     || p_ptr->rest == -2)
-#if defined(MSDOS) || defined(VMS) /* stolen from Um55 src -CFT */
-	    && kbhit()
-#else
-	    && (check_input(find_flag ? 0 : 10000))
-#endif
-	    ) {
-#ifdef MSDOS
-	    (void)msdos_getch();
-#endif
-#ifdef VMS
-	/* Get and ignore the key used to interrupt resting/running.  */
-	    (void)vms_getch();
-#endif
-	    disturb(0, 0);
-	}
-
 
 	/*** All good things must come to an end... ***/
 
@@ -1321,6 +1302,25 @@ void dungeon(void)
 	/* "Tighten" up the monster list */
 	tighten_m_list();
 
+
+	/* Check for interrupts to repetition, or finding, or resting. */
+	if (command_rep > 0 || find_flag || p_ptr->rest > 0 || p_ptr->rest == -1 || p_ptr->rest == -2) {
+
+	    /* check for keypress */
+	    if (Term_kbhit()) {
+
+		/* Get and ignore the key used to interrupt resting/running.  */
+#ifdef MSDOS
+		(void)msdos_getch();
+#endif
+#ifdef VMS
+		(void)vms_getch();
+#endif
+
+		disturb(0, 0);
+
+	    }
+	}
 
 	/* Resting -- Voluntary trade of moves for regeneration */
 	/* Mega-Stunned -- Unable to do anything but stagger */
