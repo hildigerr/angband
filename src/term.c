@@ -33,7 +33,29 @@
  *   printing characters erases the previous contents
  *   may have "fast" routines for "clear to end of line"
  *   may have "fast" routines for "clear entire screen"
+ *
+ * Note that we can easily allow the "term_win" structure to be
+ * exported, allowing users to create various "user defined"
+ * routines, such as "scrolling packages".  These routines would
+ * not tie in the the "terminal capabilities", but they would
+ * be completely portable...
  */
+
+
+
+/*
+ * A macro to determine if an attr/char pair looks "blank"
+ * Note that the "black" attribute is "reserved", and that
+ * currently, the "space" character is hard-coded as "blank".
+ */
+#define BLANK(A,C)	(((A)==0) || ((C)==' '))
+
+
+
+/* The current "term" */
+term *Term = NULL;
+
+
 
 
 /*
