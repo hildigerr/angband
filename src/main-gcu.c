@@ -22,6 +22,15 @@
 
 
 /*
+ * Note that "USE_GCU" must be declared in the Makefile if this file
+ * is to be successfully compiled.  Of course, it can always be left
+ * out of the compilation list as well.
+ */
+
+#ifdef USE_GCU
+
+
+/*
  * Include curses first, since it messes with "bool"
  */
 #include <curses.h>
@@ -101,4 +110,77 @@
 # include <sys/file.h>
 # include <sys/types.h>
 #endif
+
+
+/*
+ * OPTION: some machines lack "cbreak()"
+ */
+/* #define cbreak() crmode() */
+
+
+/*
+ * OPTION: some machines handle "nonl()" and "nl()" incorrectly
+ * On these machines, we can simply ignore those commands.
+ */
+/* #define nonl() */
+/* #define nl() */
+
+
+
+/*
+ * Are we active?  Not really needed.
+ */
+static int active = FALSE;
+
+
+/*
+ * The main screen
+ */
+static term term_screen_body;
+
+
+
+
+/*
+ * Prepare "curses" for use by the file "term.c"
+ */
+errr init_gcu(void)
+{
+    int i, y, x, err;
+
+    term *t = &term_screen_body;
+
+
+    /*** Prepare to play ***/
+
+    /* Erase the screen */
+    (void)clear();
+    (void)refresh();
+    (void)move(0, 0);
+
+    /* Prepare */
+    cbreak();
+    noecho();
+    nonl();
+
+
+    /*** Now prepare the term ***/
+
+    /* Initialize the term */
+    term_init(t, 80, 24, 64);
+
+    /* Save the term */
+    term_screen = t;
+    
+    /* Activate it */
+    Term_activate(term_screen);
+
+
+    /* Success */
+    return (0);
+}
+
+
+#endif /* USE_GCU */
+
 

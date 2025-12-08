@@ -241,6 +241,11 @@ extern int peek;			/* should we display additional msgs */
 extern int coin_type;			/* Hack -- creeping coin treasure */
 extern int opening_chest;		/* Hack -- chest treasure */
 
+/*
+ * Term window info
+ */
+extern term *term_screen;	/* The main screen */
+
 /* Unique artifact weapon flags */
 extern s32b GROND, RINGIL, AEGLOS, ARUNRUTH, MORMEGIL, ANGRIST, GURTHANG,
   CALRIS, ANDURIL, STING, ORCRIST, GLAMDRING, DURIN, AULE, THUNDERFIST,

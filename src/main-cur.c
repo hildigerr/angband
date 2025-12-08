@@ -20,6 +20,9 @@
 #undef bool
 
 
+#ifdef USE_CUR
+
+
 #ifndef __MAKEDEPEND__
 
 
@@ -123,6 +126,13 @@ static int          save_local_chars;
 
 
 static int     curses_on = FALSE;
+
+
+/*
+ * The main screen
+ */
+static term term_screen_body;
+
 
 
 /*
@@ -399,11 +409,14 @@ int check_input(int microsec)
 
 /*
  * initializes curses routines
+ * Prepare "curses" for use by the file "term.c"
  */
-void init_curses(void)
+errr init_cur(void)
 {
     int i, y, x, err;
 
+    term *t = &term_screen_body;
+    
 
 #if defined(VMS) || defined(MSDOS) || \
     defined(ATARIST_MWC) || defined(__MINT__)
@@ -498,6 +511,20 @@ void init_curses(void)
 	msg_print("Tabs must be set 8 spaces apart.");
 	exit_game();
     }
+
+
+    /* Initialize the term */
+    term_init(t, 80, 24, 64);
+
+    /* Save the term */
+    term_screen = t;
+    
+    /* Activate it */
+    Term_activate(term_screen);
+
+
+    /* Success */
+    return (0);
 }
 
 
@@ -758,5 +785,8 @@ int system_cmd(cptr p)
 #endif
 
 #endif
+
+
+#endif /* USE_CUR */
 
 

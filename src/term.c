@@ -59,6 +59,74 @@ term *Term = NULL;
 
 
 /*
+ * Completely "erase" a "term_win".  Mark as "changed".
+ * Note that the "cursor visibility" is turned off,
+ * and the cursor is moved to the top left corner.
+ */
+errr term_win_wipe(term_win *t)
+{
+    int y, x;
+
+    /* Cursor to the top left, and invisible */
+    t->cv = t->cu = t->cx = t->cy = 0;
+
+    /* Scan every row */
+    for (y = 0; y < t->h; y++)
+    {
+	/* Wipe this row */
+	for (x = 0; x < t->w; x++)
+	{
+	    tw_a(t,x,y) = 0;
+	    tw_c(t,x,y) = ' ';
+	}
+
+	/* This row has changed */
+	t->x1[y] = 0;
+	t->x2[y] = t->w - 1;
+    }
+
+    /* Every row has changed */
+    t->y1 = 0;
+    t->y2 = t->h - 1;
+
+    /* Success */
+    return (0);
+}
+
+
+
+
+/*
+ * Initialize a "term_win" (using the given screen size)
+ */
+errr term_win_init(term_win *t, int w, int h)
+{
+    /* Save the size */
+    t->w = w;
+    t->h = h;
+
+    /* Allocate the main arrays */
+    C_MAKE(t->a, w*h, byte);
+    C_MAKE(t->c, w*h, char);
+
+    /* Allocate the change arrays */
+    C_MAKE(t->x1, w, byte);
+    C_MAKE(t->x2, w, byte);
+
+    /* XXX Allocate the "max used col" array */
+    /* C_MAKE(t->rm, w, byte); */
+
+    /* Wipe it */
+    term_win_wipe(t);
+
+    /* Success */
+    return (0);
+}
+
+
+
+
+/*
  * Clear the entire screen
  */
 errr Term_clear()
@@ -172,6 +240,45 @@ int Term_kbhit()
 
     /* A key is ready */
     return (i);
+}
+
+
+
+
+/*
+ * Activate a new Term (and deactivate the current Term)
+ */
+errr Term_activate(term *t)
+{
+    /* Already done */
+    if (Term == t) return (1);
+    
+    /* Remember the Term */
+    Term = t;
+
+    /* Success */
+    return (0);
+}
+
+
+/*
+ * Initialize a term, using a screen of the given size.
+ */
+errr term_init(term *t, int w, int h, int k)
+{
+    /* Hack -- clear the term */
+    WIPE(t, term);
+    
+    /* Initialize the default "physical" screen */
+    MAKE(t->old, term_win);
+    term_win_init(t->old, w, h);
+
+    /* Initialize the default "current" screen */
+    MAKE(t->scr, term_win);
+    term_win_init(t->scr, w, h);
+
+    /* Success */
+    return (0);
 }
 
 

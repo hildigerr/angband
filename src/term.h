@@ -102,12 +102,19 @@ extern term *Term;
 
 /**** Available Functions ****/
 
+extern errr term_win_wipe(term_win*);
+extern errr term_win_init(term_win*, int, int);
+
 extern int Term_kbhit(void);
 extern errr Term_flush(void);
 extern errr Term_fresh(void);
 extern errr Term_bell(void);
 extern errr Term_gotoxy(int x, int y);
 extern errr Term_clear(void);
+
+extern errr Term_activate(term*);
+
+extern errr term_init(term*, int w, int h, int k);
 
 #endif
 

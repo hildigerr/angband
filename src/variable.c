@@ -119,6 +119,9 @@ int plain_descriptions = FALSE;	/* Plain descriptions */
 int hitpoint_warn = 1;		/* Hitpoint warning (0 to 9) */
 int delay_spd = 5;
 
+term *term_screen = NULL;	/* The main screen */
+
+
 int peek = FALSE;		/* Let user "see" internal stuff */
 
 int feeling = 0;		/* Most recent feeling */

@@ -109,6 +109,8 @@ static bool name_okay(cptr s)
  */
 int main(int argc, char *argv[])
 {
+    bool done = FALSE;
+
     /* Dump score list (num lines)? */
     int show_score = 0;
 
@@ -289,8 +291,34 @@ int main(int argc, char *argv[])
     /* Verify the "player name" */
     if (!name_okay(p_ptr->name)) quit("bad player name");
 
-    /* use curses */
-    init_curses();
+#ifdef USE_GCU
+    /* Attempt to use the "main-gcu.c" support */
+    if (!done) {
+	extern errr init_gcu(void);
+	if (0 == init_gcu()) done = TRUE;
+    }
+#endif
+
+#ifdef USE_NCU
+    /* Attempt to use the "main-ncu.c" support */
+    if (!done) {
+	extern errr init_ncu(void);
+	/* When "init_ncu()" fails, it quits (?) */
+	if (0 == init_ncu()) done = TRUE;
+    }
+#endif
+
+#ifdef USE_CUR
+    /* Attempt to use the "main-cur.c" support */
+    if (!done) {
+	extern errr init_cur(void);
+	/* When "init_cur()" fails, it quits (?) */
+	if (0 == init_cur()) done = TRUE;
+    }
+#endif
+
+    /* Make sure we have a display! */
+    if (!done) quit("Unable to prepare any 'display module'!");
 
 
     /* Handle "score list" requests */
