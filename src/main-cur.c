@@ -344,6 +344,50 @@ static errr Term_curs_cur(int x, int y, int z)
     return (0);
 }
 
+/*
+ * Erase a grid of space
+ * Hack -- try to be "semi-efficient".
+ */
+static errr Term_wipe_cur(int x, int y, int w, int h)
+{
+    int dx, dy;
+
+    if (!x && !y && (w >= 80) && (h >= 24))
+    {
+	touchwin(stdscr);
+	(void)clear();
+    }
+
+    else if (!x && (h >= 24) && (w >= 80))
+    {
+	move(y,x);
+	clrtobot();
+    }
+
+    else if (w >= 80)
+    {
+	for (dy = 0; dy < h; ++dy)
+	{
+	    move(y+dy,x);
+	    clrtoeol();
+	}
+    }
+
+    else
+    {
+	for (dy = 0; dy < h; ++dy)
+	{
+	    move(y+dy,x);
+	    for (dx = 0; dx < w; ++dx) addch(' ');
+	}
+    }
+
+    /* Hack -- Fix the cursor */
+    move(y,x);
+
+    return (0);
+}
+
 
 /*
  * Provides for a timeout on input. Does a non-blocking read, consuming the
@@ -565,6 +609,7 @@ errr init_cur(void)
     /* Hack -- shutdown hook */
     t->nuke_hook = Term_nuke_cur;
 
+    t->wipe_hook = Term_wipe_cur;
     t->curs_hook = Term_curs_cur;
     t->xtra_hook = Term_xtra_cur;
 

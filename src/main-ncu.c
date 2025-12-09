@@ -110,6 +110,52 @@ static errr Term_curs_ncu(int x, int y, int z)
 
 
 /*
+ * Erase a grid of space
+ * Hack -- try to be "semi-efficient".
+ */
+static errr Term_wipe_ncu(int x, int y, int w, int h)
+{
+    int dx, dy;
+
+    if (!x && !y && (w >= 80) && (h >= 24))
+    {
+	touchwin(stdscr);
+	(void)clear();
+    }
+
+    else if (!x && (h >= 24) && (w >= 80))
+    {
+	move(y,x);
+	clrtobot();
+    }
+
+    else if (w >= 80)
+    {
+	for (dy = 0; dy < h; ++dy)
+	{
+	    move(y+dy,x);
+	    clrtoeol();
+	}
+    }
+
+    else
+    {
+	for (dy = 0; dy < h; ++dy)
+	{
+	    move(y+dy,x);
+	    for (dx = 0; dx < w; ++dx) addch(' ');
+	}
+    }
+
+    /* Hack -- Fix the cursor */
+    move(y,x);
+
+    /* Success */
+    return (0);
+}
+
+
+/*
  * Prepare "ncurses" for use by the file "term.c"
  */
 errr init_ncu(void)
@@ -142,6 +188,7 @@ errr init_ncu(void)
     /* Stick in some more hooks */
     t->xtra_hook = Term_xtra_ncu;
     t->curs_hook = Term_curs_ncu;
+    t->wipe_hook = Term_wipe_ncu;
 
     /* Extra data -- unused */
     /* t->data = NULL; */

@@ -42,6 +42,7 @@
  *
  *   Term_xtra() = Perform various actions
  *   Term_curs() = Draw or Move the cursor
+ *   Term_wipe() = Erase (part of) the screen
  */
 
 
@@ -235,6 +236,16 @@ errr Term_curs(int x, int y, int z)
 {
     if (!Term->curs_hook) return (-1);
     return ((*Term->curs_hook)(x, y, z));
+}
+
+/*
+ * Erase a "block" of chars starting at "(x,y)", with size "(w,h)"
+ * The input is assumed to be "valid".
+ */
+errr Term_wipe(int x, int y, int w, int h)
+{
+    if (!Term->wipe_hook) return (-1);
+    return ((*Term->wipe_hook)(x, y, w, h));
 }
 
 
