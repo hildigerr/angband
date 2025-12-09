@@ -119,6 +119,7 @@ extern term *Term;
 /**** Available Functions ****/
 
 extern errr term_win_wipe(term_win*);
+extern errr term_win_load(term_win*, term_win*);
 extern errr term_win_nuke(term_win*);
 extern errr term_win_init(term_win*, int, int);
 

@@ -97,6 +97,53 @@ errr term_win_wipe(term_win *t)
 
 
 /*
+ * Load a "term_win()" from another
+ */
+errr term_win_load(term_win *t, term_win *s)
+{
+    int y, x;
+
+    int w = MIN(t->w, s->w);
+    int h = MIN(t->h, s->h);
+    
+    /* Copy all the data from "s" into "t" */
+    for (y = 0; y < h; y++)
+    {
+	for (x = 0; x < w; x++)
+	{
+	    tw_a(t,x,y) = tw_a(s,x,y);
+	    tw_c(t,x,y) = tw_c(s,x,y);
+	}
+    }
+
+    /* Load the "cursor state" */
+    t->cx = s->cx;
+    t->cy = s->cy;
+    t->cu = s->cu;
+    t->cv = s->cv;
+
+    /* XXX Hack -- prevent cursor errors */
+    if (t->cx > t->w - 1) t->cx = t->w - 1;
+    if (t->cy > t->h - 1) t->cy = t->h - 1;
+
+    /* Every row may have changed */
+    t->y1 = 0;
+    if (t->y2 < h - 1) t->y2 = h - 1;
+
+    /* Every col of every row may have changed */
+    for (y = 0; y < h; y++)
+    {
+	t->x1[y] = 0;
+	if (t->x2[y] < w - 1) t->x2[y] = w - 1;
+    }
+
+    /* Success */
+    return (0);
+}
+
+
+
+/*
  * Nuke a term_win
  */
 errr term_win_nuke(term_win *t)
