@@ -361,22 +361,25 @@ errr Term_erase(int x1, int y1, int x2, int y2)
 
 
 /*
- * Clear the entire screen
+ * Clear the entire screen, and move to the top left corner
+ *
+ * After a "clear screen" we are "allowed" to do a total redraw.
+ *
+ * Note that "term_win_wipe()" does the cursor stuff for us.
  */
 errr Term_clear()
 {
-#ifdef MACINTOSH
-    Rect area;
+    /* Hack -- Save the cursor visibility */
+    bool cv = Term->scr->cv;
 
-    area.left = area.top = 0;
-    area.right = SCRN_COLS;
-    area.bottom = SCRN_ROWS;
-    DEraseScreen(&area);
-#else
-    touchwin(stdscr);
-    (void)clear();
-    refresh();
-#endif
+    /* Wipe the screen mentally */
+    term_win_wipe(Term->scr);
+
+    /* Hack -- Restore the cursor visibility */
+    Term->scr->cv = cv;
+
+    /* Success */
+    return (0);
 
     /* Success */
     return (0);
