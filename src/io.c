@@ -650,21 +650,12 @@ void pause_line(int prt_line)
 
 void save_screen()
 {
-#ifdef MACINTOSH
-    mac_save_screen();
-#else
-    overwrite(stdscr, savescr);
-#endif
+    Term_save();
 }
 
 void restore_screen()
 {
-#ifdef MACINTOSH
-    mac_restore_screen();
-#else
-    overwrite(savescr, stdscr);
-    touchwin(stdscr);
-#endif
+    Term_load();
 }
 
 

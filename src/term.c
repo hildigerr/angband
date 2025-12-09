@@ -239,6 +239,43 @@ errr Term_clear()
 
 
 
+
+/*
+ * Save the current screen contents
+ */
+errr Term_save(void)
+{
+#ifdef MACINTOSH
+    mac_save_screen();
+#else
+    overwrite(stdscr, savescr);
+#endif
+
+    /* Success */
+    return (0);
+}
+
+
+/*
+ * Restore screen contents saved above.
+ *
+ */
+errr Term_load(void)
+{
+#ifdef MACINTOSH
+    mac_restore_screen();
+#else
+    overwrite(savescr, stdscr);
+    touchwin(stdscr);
+#endif
+
+    /* Success */
+    return (0);
+}
+
+
+
+
 /*
  * Flush the output
  */

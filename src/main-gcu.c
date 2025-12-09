@@ -236,6 +236,28 @@ errr init_gcu(void)
 }
 
 
+#ifdef AMIGA
+/*
+ * Hack -- this function may be needed by the Amiga version
+ * It was in a separate file, after an #include "curses.h"
+ * so I assume that it can safely be placed here.
+ */
+void
+overwrite(WINDOW *from, WINDOW *to)
+{
+    int l;
+
+    for (l = 0; l < LINES; l++) {
+        memmove(to->LnArry[l].Line, from->LnArry[l].Line, COLS);
+        memmove(to->LnArry[l].ATTRS, from->LnArry[l].ATTRS, COLS);
+        to->LnArry[l].StartCol = from->LnArry[l].StartCol;
+        to->LnArry[l].EndCol = from->LnArry[l].EndCol;
+        to->LnArry[l].Touched = TRUE;
+    }
+}
+#endif
+
+
 #endif /* USE_GCU */
 
 
