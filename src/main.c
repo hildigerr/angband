@@ -104,6 +104,17 @@ static bool name_okay(cptr s)
 }
 
 
+
+/*
+ * A hook for "quit()".
+ * Close down, then fall back into "quit()".
+ */
+static void quit_hook(cptr s)
+{
+    if (term_screen) term_nuke(term_screen);
+}
+
+
 /*
  * Studly machines can actually parse command line args
  */
@@ -319,6 +330,10 @@ int main(int argc, char *argv[])
 
     /* Make sure we have a display! */
     if (!done) quit("Unable to prepare any 'display module'!");
+
+
+    /* Tell "quit()" to call "Term_nuke()" */
+    quit_aux = quit_hook;
 
 
     /* Handle "score list" requests */

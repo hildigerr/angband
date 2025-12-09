@@ -142,6 +142,57 @@ static term term_screen_body;
 
 
 /*
+ * Init the "curses" system
+ */
+static void Term_init_gcu(term *t)
+{
+    if (active) return;
+
+    /* Erase the screen */
+    (void)clear();
+    (void)refresh();
+    (void)move(0, 0);
+
+    /* Prepare */
+    cbreak();
+    noecho();
+    nonl();
+
+    /* Game keymap */
+    keymap_game();
+
+    /* Assume active */
+    active = TRUE;
+}
+
+
+/*
+ * Nuke the "curses" system
+ */
+static void Term_nuke_gcu(term *t)
+{
+    if (!active) return;
+
+
+    /* Flush the curses buffer */
+    (void)refresh();
+
+    /* This moves curses to bottom right corner */
+    mvcur(curscr->_cury, curscr->_curx, LINES - 1, 0);
+
+    /* Exit curses */
+    endwin();
+
+    /* Flush the output */
+    (void)fflush(stdout);
+
+    /* No longer active */
+    active = FALSE;
+}
+
+
+
+/*
  * Prepare "curses" for use by the file "term.c"
  */
 errr init_gcu(void)
@@ -168,6 +219,9 @@ errr init_gcu(void)
 
     /* Initialize the term */
     term_init(t, 80, 24, 64);
+
+    /* Hack -- shutdown hook */
+    t->nuke_hook = Term_nuke_gcu;
 
     /* Save the term */
     term_screen = t;

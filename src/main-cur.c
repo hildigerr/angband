@@ -138,7 +138,7 @@ static term term_screen_body;
 /*
  * Shut down curses (restore_term)
  */
-void restore_term()
+static void unix_restore_curses()
 {
     if (!curses_on) return;
 
@@ -213,7 +213,7 @@ int suspend()
 	(void)ioctl(0, TIOCGLTC, (char *)&lcbuf);
 	(void)ioctl(0, TIOCLGET, (char *)&lbuf);
 
-	restore_term();
+	unix_restore_curses();
 
 	curses_on = TRUE;
 
@@ -315,6 +315,18 @@ void moriaterm()
 #endif
 #endif
 
+}
+
+
+
+
+/*
+ * Nuke the "curses" system
+ */
+static void Term_nuke_cur(term *t)
+{
+    /* XXX Restore the terminal */
+    unix_restore_curses();
 }
 
 
@@ -515,6 +527,9 @@ errr init_cur(void)
 
     /* Initialize the term */
     term_init(t, 80, 24, 64);
+
+    /* Hack -- shutdown hook */
+    t->nuke_hook = Term_nuke_cur;
 
     /* Save the term */
     term_screen = t;

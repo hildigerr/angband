@@ -37,6 +37,31 @@ static term term_screen_body;
 
 
 /*
+ * Nuke NCurses
+ */
+static void Term_nuke_ncu(term *t)
+{
+    if (!ncurses_on) return;
+        
+    /* Clear the screen */
+    touchwin(stdscr);
+    (void)clear();
+
+    /* Refresh */
+    refresh();
+    
+    /* We may want to "undo" the following things */
+    /* cbreak(); noecho(); nonl(); nodelay(stdscr, TRUE); */
+
+    /* We are now off */
+    ncurses_on = FALSE;
+
+    /* Shut down */
+    endwin();
+}
+
+
+/*
  * Init NCurses
  */
 static void Term_init_ncu(term *t)
@@ -74,6 +99,9 @@ errr init_ncu(void)
 
     /* Initialize the term */
     term_init(t, 80, 24, 64);
+
+    /* Stick in some hooks */
+    t->nuke_hook = Term_nuke_ncu;
 
     /* Save the term */
     term_screen = t;

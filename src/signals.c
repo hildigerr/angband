@@ -182,7 +182,8 @@ signal_handler(sig)
 	(void)_save_player(savefile);/* Quietly save the memory anyway. */
     }
 
-    restore_term();
+    /* Shut down the terminal XXX XXX */
+    term_nuke(term_screen);
 
 #ifndef MSDOS
     /* generate a core dump if necessary */

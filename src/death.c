@@ -383,7 +383,6 @@ void read_times(void)
     }
 
     else {
-	restore_term();
 	(void)fprintf(stderr, "There is no hours file \"%s\".\nPlease inform the wizard, %s, so he can correct this!\n", ANGBAND_HOURS, WIZARD);
 	exit_game();
     }
@@ -1240,7 +1239,6 @@ void exit_game(void)
 	(void)save_player();
 
     erase_line(23, 0);
-    restore_term();
 
     /* Actually stop the process */
     quit(NULL);

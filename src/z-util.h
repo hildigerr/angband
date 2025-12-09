@@ -12,6 +12,10 @@
 extern cptr argv0;
 
 
+/* Aux functions */
+extern func_void quit_aux;
+
+
 /**** Available Functions ****/
 
 /* Test suffix */

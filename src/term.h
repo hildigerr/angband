@@ -66,6 +66,9 @@ struct _term_win {
  *	- Current screen image
  *
  *	- Desired screen image
+ *
+ *
+ *	- Hook for nuke-ing the term
  */
 
 typedef struct _term term;
@@ -78,6 +81,9 @@ struct _term {
     term_win *old;
 
     term_win *scr;
+
+
+    void (*nuke_hook)(term *t);
 };
 
 
@@ -103,6 +109,7 @@ extern term *Term;
 /**** Available Functions ****/
 
 extern errr term_win_wipe(term_win*);
+extern errr term_win_nuke(term_win*);
 extern errr term_win_init(term_win*, int, int);
 
 extern int Term_kbhit(void);
@@ -114,6 +121,7 @@ extern errr Term_clear(void);
 
 extern errr Term_activate(term*);
 
+extern errr term_nuke(term*);
 extern errr term_init(term*, int w, int h, int k);
 
 #endif

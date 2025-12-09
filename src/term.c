@@ -97,6 +97,21 @@ errr term_win_wipe(term_win *t)
 
 
 /*
+ * Nuke a term_win
+ */
+errr term_win_nuke(term_win *t)
+{
+    /* Free the arrays */
+    C_KILL(t->a, t->w * t->h, byte);
+    C_KILL(t->c, t->w * t->h, char);
+    C_KILL(t->x1, t->w, byte);
+    C_KILL(t->x2, t->w, byte);
+    
+    return (0);
+}
+
+
+/*
  * Initialize a "term_win" (using the given screen size)
  */
 errr term_win_init(term_win *t, int w, int h)
@@ -255,6 +270,27 @@ errr Term_activate(term *t)
     
     /* Remember the Term */
     Term = t;
+
+    /* Success */
+    return (0);
+}
+
+
+
+/*
+ * Nuke a term
+ */
+errr term_nuke(term *t)
+{
+    /* Hack -- Call the special "nuke" hook */
+    if (t->initialized) {
+	if (t->nuke_hook) (*t->nuke_hook)(t);
+	t->initialized = FALSE;
+    }
+
+    /* Free the arrays */
+    term_win_nuke(t->old);
+    term_win_nuke(t->scr);
 
     /* Success */
     return (0);
