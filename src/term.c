@@ -57,6 +57,14 @@
 
 
 
+/* Next "screen memory slot" to use */
+static int mem_depth = 0;
+
+/* Semi-Hack -- The "memory" screens */
+static term_win mem_array[MEM_SIZE];
+
+
+
 /* The current "term" */
 term *Term = NULL;
 
@@ -380,14 +388,40 @@ errr Term_clear()
 
 /*
  * Save the current screen contents
+ * This may or may not be currently "displayed".
+ *
+ * Note that up to 16 "pending" Term_save()'s are allowed.
+ * Note that only the ones that are used take up memory.
  */
 errr Term_save(void)
 {
-#ifdef MACINTOSH
-    mac_save_screen();
-#else
-    overwrite(stdscr, savescr);
-#endif
+    term_win *mem;
+
+    /* Get the next memory entry */
+    mem = &mem_array[mem_depth];
+
+    /* Hack -- allocate memory screens as needed */
+    if (!mem->w || !mem->h)
+    {
+	/* Efficiency -- Initialize "mem" as needed */	
+	term_win_init(mem, Term->scr->w, Term->scr->h);
+    }
+
+    /* Hack -- react to changing window sizes */
+    if (mem->w != Term->scr->w || mem->h != Term->scr->h)
+    {
+	/* Resize to the desired size */
+	term_win_resize(mem, Term->scr->w, Term->scr->h);
+    }
+
+    /* Save the current screen data */
+    term_win_load(mem, Term->scr);
+
+    /* Advance the depth pointer */
+    mem_depth++;
+
+    /* Hack -- Handle "errors" (better than crashing) */
+    if (mem_depth >= MEM_SIZE) mem_depth = 0;
 
     /* Success */
     return (0);
@@ -397,15 +431,23 @@ errr Term_save(void)
 /*
  * Restore screen contents saved above.
  *
+ * Note that every "Term_save()" MUST have a matching "Term_load()".
  */
 errr Term_load(void)
 {
-#ifdef MACINTOSH
-    mac_restore_screen();
-#else
-    overwrite(savescr, stdscr);
-    touchwin(stdscr);
-#endif
+    term_win *mem;
+
+    /* Hack -- Handle "errors" (see above) */
+    if (mem_depth == 0) mem_depth = MEM_SIZE;
+
+    /* Retreat the depth pointer */
+    mem_depth--;
+
+    /* Get the memory screen */
+    mem = &mem_array[mem_depth];
+
+    /* Restore the saved info */
+    term_win_load(Term->scr, mem);
 
     /* Success */
     return (0);

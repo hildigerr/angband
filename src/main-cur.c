@@ -587,11 +587,6 @@ errr init_cur(void)
 #endif
 #endif
 
-    if ((savescr = newwin(0, 0, 0, 0)) == NULL) {
-	(void)printf("Out of memory in starting up curses.\n");
-	exit_game();
-    }
-
     (void)clear();
     (void)refresh();
 

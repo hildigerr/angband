@@ -25,11 +25,6 @@
 #endif
 #endif
 
-#ifndef MACINTOSH
-static WINDOW *savescr;	   /* Spare window for saving the screen.
-				    * -CJS- */
-#endif
-
 #ifdef MACINTOSH
 /* Attributes of normal and hilighted characters */
 #define ATTR_NORMAL	attrNormal

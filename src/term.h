@@ -118,6 +118,10 @@ struct _term {
 #define TERM_XTRA_NOISE 21	/* Make a noise */
 #define TERM_XTRA_FLUSH 22	/* Flush output */
 
+/* Max recursion depth of "screen memory" */
+/* Note that unused screens waste only 32 bytes each */
+#define MEM_SIZE 16
+
 
 
 /**** Available Macros ****/
@@ -150,6 +154,8 @@ extern int Term_kbhit(void);
 extern errr Term_flush(void);
 extern errr Term_fresh(void);
 extern errr Term_bell(void);
+extern errr Term_save(void);
+extern errr Term_load(void);
 extern errr Term_gotoxy(int x, int y);
 extern errr Term_erase(int x1, int y1, int x2, int y2);
 extern errr Term_clear(void);
