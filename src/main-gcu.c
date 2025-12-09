@@ -191,6 +191,19 @@ static void Term_nuke_gcu(term *t)
 }
 
 
+/*
+ * Actually MOVE the hardware cursor
+ */
+static errr Term_curs_gcu(int x, int y, int z)
+{
+    /* Literally move the cursor */
+    move(y,x);
+
+    /* Success */
+    return (0);
+}
+
+
 
 /*
  * Prepare "curses" for use by the file "term.c"
@@ -223,6 +236,8 @@ errr init_gcu(void)
     /* Hack -- shutdown hook */
     t->init_hook = Term_init_gcu;
     t->nuke_hook = Term_nuke_gcu;
+
+    t->curs_hook = Term_curs_gcu;
 
     /* Save the term */
     term_screen = t;

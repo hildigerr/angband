@@ -74,6 +74,21 @@ static void Term_init_ncu(term *t)
 }
 
 
+
+
+/*
+ * Actually MOVE the hardware cursor
+ */
+static errr Term_curs_ncu(int x, int y, int z)
+{
+    /* Literally move the cursor */
+    move(y,x);
+
+    /* Success */
+    return (0);
+}
+
+
 /*
  * Prepare "ncurses" for use by the file "term.c"
  */
@@ -103,6 +118,8 @@ errr init_ncu(void)
     /* Stick in some hooks */
     t->nuke_hook = Term_nuke_ncu;
     t->init_hook = Term_init_ncu;
+
+    t->curs_hook = Term_curs_ncu;
 
     /* Extra data -- unused */
     /* t->data = NULL; */

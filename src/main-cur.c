@@ -330,6 +330,21 @@ static void Term_nuke_cur(term *t)
 }
 
 
+
+
+
+/*
+ * Actually MOVE the hardware cursor
+ */
+static errr Term_curs_cur(int x, int y, int z)
+{
+    /* Literally move the cursor */
+    move(y,x);
+
+    return (0);
+}
+
+
 /*
  * Provides for a timeout on input. Does a non-blocking read, consuming the
  * data if any, and then returns 1 if data was read, zero otherwise. 
@@ -530,6 +545,8 @@ errr init_cur(void)
 
     /* Hack -- shutdown hook */
     t->nuke_hook = Term_nuke_cur;
+
+    t->curs_hook = Term_curs_cur;
 
     /* Save the term */
     term_screen = t;

@@ -39,6 +39,8 @@
  * routines, such as "scrolling packages".  These routines would
  * not tie in the the "terminal capabilities", but they would
  * be completely portable...
+ *
+ *   Term_curs() = Draw or Move the cursor
  */
 
 
@@ -209,6 +211,17 @@ errr term_win_init(term_win *t, int w, int h)
 
     /* Success */
     return (0);
+}
+
+
+/*
+ * Draw a "cursor" at "(x,y)".  Later, "z" may mean something.
+ * The input is assumed to be "valid".
+ */
+errr Term_curs(int x, int y, int z)
+{
+    if (!Term->curs_hook) return (-1);
+    return ((*Term->curs_hook)(x, y, z));
 }
 
 
