@@ -142,6 +142,32 @@ errr term_win_load(term_win *t, term_win *s)
 }
 
 
+/*
+ * Resize a term_win -- Hack -- not very efficient.
+ */
+static errr term_win_resize(term_win *tw, int w, int h)
+{
+    term_win hack;
+    
+    /* Ignore non-changes */
+    if ((tw->w == w) && (tw->h == h)) return (1);
+
+    /* Hack -- steal the term_win via structure copy */
+    hack = (*tw);
+
+    /* Init ourself to the new size */
+    term_win_init(tw, w, h);
+
+    /* Recopy the contents */
+    term_win_load(tw, &hack);    
+    
+    /* Hack -- nuke the copy of our old contents */
+    term_win_nuke(&hack);
+
+    return (0);
+}
+
+
 
 /*
  * Nuke a term_win
