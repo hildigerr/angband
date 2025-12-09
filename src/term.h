@@ -154,6 +154,7 @@ extern int Term_kbhit(void);
 extern errr Term_flush(void);
 extern errr Term_fresh(void);
 extern errr Term_update(void);
+extern errr Term_resize(int,int);
 extern errr Term_bell(void);
 extern errr Term_save(void);
 extern errr Term_load(void);

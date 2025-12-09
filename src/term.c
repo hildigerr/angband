@@ -44,6 +44,8 @@
  *   Term_curs() = Draw or Move the cursor
  *   Term_wipe() = Erase (part of) the screen
  *   Term_text() = Place some text on the screen
+ *
+ * We provide "Term_resize()" to note a new size.
  */
 
 
@@ -502,6 +504,26 @@ errr Term_update()
     /* Success */
     return (0);
 }
+
+
+/*
+ * React to a new physical screen size.
+ * Hack -- not very efficient.
+ */
+errr Term_resize(int w, int h)
+{
+    errr res = 0;
+    
+    /* Resize the "current" term_win */
+    if (term_win_resize(Term->old, w, h)) res += 1;
+    
+    /* Make a new "desired" term_win */
+    if (term_win_resize(Term->scr, w, h)) res += 2;
+
+    /* Success */
+    return (res);
+}
+
 
 
 /*
