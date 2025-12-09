@@ -221,6 +221,7 @@ errr init_gcu(void)
     term_init(t, 80, 24, 64);
 
     /* Hack -- shutdown hook */
+    t->init_hook = Term_init_gcu;
     t->nuke_hook = Term_nuke_gcu;
 
     /* Save the term */

@@ -262,11 +262,23 @@ int Term_kbhit()
 
 /*
  * Activate a new Term (and deactivate the current Term)
+ *
+ * This function is extremely important, and also somewhat bizarre.
+ * It is the only function that should "modify" the value of "Term".
+ *
+ * To "create" a valid "term", one should do a "term_init()", then set
+ * the various flags and hooks, and then do a "Term_activate()".
  */
 errr Term_activate(term *t)
 {
     /* Already done */
     if (Term == t) return (1);
+
+    /* Hack -- Call the special "init" hook */
+    if (!t->initialized) {
+	if (t->init_hook) (*t->init_hook)(t);
+	t->initialized = TRUE;
+    }
     
     /* Remember the Term */
     Term = t;

@@ -102,6 +102,7 @@ errr init_ncu(void)
 
     /* Stick in some hooks */
     t->nuke_hook = Term_nuke_ncu;
+    t->init_hook = Term_init_ncu;
 
     /* Save the term */
     term_screen = t;

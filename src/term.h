@@ -68,6 +68,7 @@ struct _term_win {
  *	- Desired screen image
  *
  *
+ *	- Hook for init-ing the term
  *	- Hook for nuke-ing the term
  */
 
@@ -83,6 +84,7 @@ struct _term {
     term_win *scr;
 
 
+    void (*init_hook)(term *t);
     void (*nuke_hook)(term *t);
 };
 
