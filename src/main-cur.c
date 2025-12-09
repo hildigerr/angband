@@ -390,6 +390,29 @@ static errr Term_wipe_cur(int x, int y, int w, int h)
 
 
 /*
+ * Place some text on the screen using an attribute
+ * Unfortunately, the "attribute" is ignored...
+ */
+static errr Term_text_cur(int x, int y, int n, byte a, cptr s)
+{
+    int i;
+    char buf[81];
+
+    /* Hack -- force "termination" of the text */
+    if (n > 80) n = 80;
+    for (i = 0; (i < n) && s[i]; ++i) buf[i] = s[i];
+    buf[n]=0;
+
+    /* Move the cursor and dump the string */
+    move(y, x);
+    addstr(buf);
+
+    return (0);
+}
+
+
+
+/*
  * Provides for a timeout on input. Does a non-blocking read, consuming the
  * data if any, and then returns 1 if data was read, zero otherwise. 
  *
@@ -609,6 +632,8 @@ errr init_cur(void)
     /* Hack -- shutdown hook */
     t->nuke_hook = Term_nuke_cur;
 
+    /* Stick in some hooks */
+    t->text_hook = Term_text_cur;
     t->wipe_hook = Term_wipe_cur;
     t->curs_hook = Term_curs_cur;
     t->xtra_hook = Term_xtra_cur;

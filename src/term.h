@@ -78,6 +78,7 @@ struct _term_win {
  *	- Hook for various actions
  *	- Hook for placing a cursor
  *	- Hook for erasing a block of characters
+ *	- Hook for drawing a string of characters
  */
 
 typedef struct _term term;
@@ -102,6 +103,7 @@ struct _term {
     errr (*xtra_hook)(int n, int v);
     errr (*curs_hook)(int x, int y, int z);
     errr (*wipe_hook)(int x, int y, int w, int h);
+    errr (*text_hook)(int x, int y, int n, byte a, cptr s);
 };
 
 
@@ -142,6 +144,7 @@ extern errr term_win_init(term_win*, int, int);
 extern errr Term_xtra(int n, int v);
 extern errr Term_curs(int x, int y, int z);
 extern errr Term_wipe(int x, int y, int w, int h);
+extern errr Term_text(int x, int y, int n, byte a, cptr s);
 
 extern int Term_kbhit(void);
 extern errr Term_flush(void);

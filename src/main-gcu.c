@@ -271,8 +271,39 @@ static errr Term_wipe_gcu(int x, int y, int w, int h)
 
 
 
+
+
+
+/*
+ * Place some text on the screen using an attribute
+ * Unfortunately, the "attribute" is ignored...
+ */
+static errr Term_text_gcu(int x, int y, int n, byte a, cptr s)
+{
+    int i;
+    char buf[81];
+
+    /* Hack -- force "termination" of the text */
+    if (n > 80) n = 80;
+    for (i = 0; (i < n) && s[i]; ++i) buf[i] = s[i];
+    buf[n]=0;
+
+    /* Move the cursor and dump the string */
+    move(y, x);
+
+    /* Add the text */
+    addstr(buf);
+
+    /* Success */
+    return (0);
+}
+
+
+
+
 /*
  * Prepare "curses" for use by the file "term.c"
+ * Installs the "hook" functions defined above
  */
 errr init_gcu(void)
 {
@@ -303,6 +334,8 @@ errr init_gcu(void)
     t->init_hook = Term_init_gcu;
     t->nuke_hook = Term_nuke_gcu;
 
+    /* Stick in some hooks */
+    t->text_hook = Term_text_gcu;
     t->wipe_hook = Term_wipe_gcu;
     t->curs_hook = Term_curs_gcu;
     t->xtra_hook = Term_xtra_gcu;

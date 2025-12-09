@@ -43,6 +43,7 @@
  *   Term_xtra() = Perform various actions
  *   Term_curs() = Draw or Move the cursor
  *   Term_wipe() = Erase (part of) the screen
+ *   Term_text() = Place some text on the screen
  */
 
 
@@ -247,6 +248,18 @@ errr Term_wipe(int x, int y, int w, int h)
     if (!Term->wipe_hook) return (-1);
     return ((*Term->wipe_hook)(x, y, w, h));
 }
+
+/*
+ * Draw "n" chars from the string "s" using attr "a", at location "(x,y)"
+ * The input is assumed to be "valid".  The length is assumed to be positive.
+ */
+errr Term_text(int x, int y, int n, byte a, cptr s)
+{
+    if (!Term->text_hook) return (-1);
+    return ((*Term->text_hook)(x, y, n, a, s));
+}
+
+
 
 
 

@@ -156,7 +156,32 @@ static errr Term_wipe_ncu(int x, int y, int w, int h)
 
 
 /*
+ * Place some text on the screen using an attribute
+ */
+static errr Term_text_ncu(int x, int y, int n, byte a, cptr s)
+{
+    int i;
+    char buf[81];
+
+    /* Hack -- force "termination" of the text */
+    if (n > 80) n = 80;
+    for (i = 0; (i < n) && s[i]; ++i) buf[i] = s[i];
+    buf[n]=0;
+
+    /* Move the cursor */
+    move(y, x);
+
+    /* Dump the string */
+    addstr(buf);
+
+    /* Success */
+    return (0);
+}
+
+
+/*
  * Prepare "ncurses" for use by the file "term.c"
+ * Installs the "hook" functions defined above
  */
 errr init_ncu(void)
 {
@@ -189,6 +214,7 @@ errr init_ncu(void)
     t->xtra_hook = Term_xtra_ncu;
     t->curs_hook = Term_curs_ncu;
     t->wipe_hook = Term_wipe_ncu;
+    t->text_hook = Term_text_ncu;
 
     /* Extra data -- unused */
     /* t->data = NULL; */
