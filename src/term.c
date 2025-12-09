@@ -393,6 +393,28 @@ errr Term_bell()
 }
 
 
+/*
+ * Place the cursor at a given location
+ * Note -- "illegal" requests do not move the cursor.
+ */
+errr Term_gotoxy(int x, int y)
+{
+    /* Verify */
+    if ((x < 0) || (x >= Term->scr->w)) return (-1);
+    if ((y < 0) || (y >= Term->scr->h)) return (-1);
+
+    /* Remember the cursor */    
+    Term->scr->cx = x;
+    Term->scr->cy = y;
+
+    /* The cursor is not useless */
+    Term->scr->cu = 0;
+
+    /* Success */
+    return (0);
+}
+
+
 
 /*** Input routines ***/
 
@@ -419,20 +441,6 @@ errr Term_flush()
 #endif
     /* Success */
     return (0);
-}
-
-
-
-/*
- * Place the cursor at a given location
- */
-errr Term_gotoxy(int x, int y)
-{
-#ifdef MACINTOSH
-    DSetScreenCursor(col, row);
-#else
-    (void)move(row, col);
-#endif
 }
 
 
