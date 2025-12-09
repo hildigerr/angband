@@ -75,6 +75,7 @@ struct _term_win {
  *	- Hook for init-ing the term
  *	- Hook for nuke-ing the term
  *
+ *	- Hook for various actions
  *	- Hook for placing a cursor
  */
 
@@ -97,6 +98,7 @@ struct _term {
     void (*init_hook)(term *t);
     void (*nuke_hook)(term *t);
     
+    errr (*xtra_hook)(int n, int v);
     errr (*curs_hook)(int x, int y, int z);
 };
 
@@ -127,6 +129,7 @@ extern errr term_win_load(term_win*, term_win*);
 extern errr term_win_nuke(term_win*);
 extern errr term_win_init(term_win*, int, int);
 
+extern errr Term_xtra(int n, int v);
 extern errr Term_curs(int x, int y, int z);
 
 extern int Term_kbhit(void);

@@ -191,6 +191,21 @@ static void Term_nuke_gcu(term *t)
 }
 
 
+
+/*
+ * Handle a "special request"
+ */
+static errr Term_xtra_gcu(int n, int v)
+{
+    /* Analyze the request */
+    switch (n)
+    {
+    }
+
+    return (1);
+}
+
+
 /*
  * Actually MOVE the hardware cursor
  */
@@ -238,6 +253,7 @@ errr init_gcu(void)
     t->nuke_hook = Term_nuke_gcu;
 
     t->curs_hook = Term_curs_gcu;
+    t->xtra_hook = Term_xtra_gcu;
 
     /* Save the term */
     term_screen = t;

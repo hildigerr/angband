@@ -40,6 +40,7 @@
  * not tie in the the "terminal capabilities", but they would
  * be completely portable...
  *
+ *   Term_xtra() = Perform various actions
  *   Term_curs() = Draw or Move the cursor
  */
 
@@ -213,6 +214,18 @@ errr term_win_init(term_win *t, int w, int h)
     return (0);
 }
 
+
+
+
+/*
+ * Perform the "extra action" of type "n" with value "v".
+ * Valid actions are defined as the "TERM_XTRA_*" constants.
+ */
+errr Term_xtra(int n, int v)
+{
+    if (!Term->xtra_hook) return (-1);
+    return ((*Term->xtra_hook)(n, v));
+}
 
 /*
  * Draw a "cursor" at "(x,y)".  Later, "z" may mean something.

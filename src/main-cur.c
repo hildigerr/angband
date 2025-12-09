@@ -435,6 +435,20 @@ int check_input(int microsec)
 
 
 /*
+ * Handle a "special request"
+ */
+static errr Term_xtra_cur(int n, int v)
+{
+    /* Analyze the request */
+    switch (n)
+    {
+    }
+
+    return (1);
+}
+
+
+/*
  * initializes curses routines
  * Prepare "curses" for use by the file "term.c"
  */
@@ -547,6 +561,7 @@ errr init_cur(void)
     t->nuke_hook = Term_nuke_cur;
 
     t->curs_hook = Term_curs_cur;
+    t->xtra_hook = Term_xtra_cur;
 
     /* Save the term */
     term_screen = t;

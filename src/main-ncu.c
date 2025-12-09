@@ -74,6 +74,21 @@ static void Term_init_ncu(term *t)
 }
 
 
+/*
+ * Handle a "special request"
+ */
+static errr Term_xtra_ncu(int n, int v)
+{
+    /* Analyze the request */
+    switch (n)
+    {
+    }
+
+    /* Success */
+    return (1);
+}
+
+
 
 
 /*
@@ -119,6 +134,8 @@ errr init_ncu(void)
     t->nuke_hook = Term_nuke_ncu;
     t->init_hook = Term_init_ncu;
 
+    /* Stick in some more hooks */
+    t->xtra_hook = Term_xtra_ncu;
     t->curs_hook = Term_curs_ncu;
 
     /* Extra data -- unused */
