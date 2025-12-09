@@ -111,6 +111,7 @@ struct _term {
 /**** Available Constants ****/
 
 /* Definitions for "Term_xtra" */
+#define TERM_XTRA_NOISE 21	/* Make a noise */
 #define TERM_XTRA_FLUSH 22	/* Flush output */
 
 

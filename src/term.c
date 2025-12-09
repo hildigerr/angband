@@ -413,7 +413,8 @@ errr Term_bell()
 #ifdef MACINTOSH
     mac_beep();
 #else
-    (void)write(1, "\007", 1);
+    /* Make a noise */
+    Term_xtra(TERM_XTRA_NOISE, -999);
 #endif
 
     /* Success */

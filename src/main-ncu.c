@@ -82,6 +82,8 @@ static errr Term_xtra_ncu(int n, int v)
     /* Analyze the request */
     switch (n)
     {
+	/* Make a noise */
+	case TERM_XTRA_NOISE: (void)write(1, "\007", 1); return (0);
 
 	/* Flush the ncurses buffer */
 	case TERM_XTRA_FLUSH: (void)refresh(); return (0);
