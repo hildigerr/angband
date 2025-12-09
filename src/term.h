@@ -68,6 +68,10 @@ struct _term_win {
  *	- Desired screen image
  *
  *
+ *	- Extra info (used by application)
+ *
+ *	- Extra data (used by implementation)
+ *
  *	- Hook for init-ing the term
  *	- Hook for nuke-ing the term
  */
@@ -84,6 +88,10 @@ struct _term {
     term_win *scr;
 
 
+    vptr info;
+
+    vptr data;
+    
     void (*init_hook)(term *t);
     void (*nuke_hook)(term *t);
 };

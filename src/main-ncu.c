@@ -104,6 +104,9 @@ errr init_ncu(void)
     t->nuke_hook = Term_nuke_ncu;
     t->init_hook = Term_init_ncu;
 
+    /* Extra data -- unused */
+    /* t->data = NULL; */
+
     /* Save the term */
     term_screen = t;
     
