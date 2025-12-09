@@ -213,6 +213,94 @@ errr term_win_init(term_win *t, int w, int h)
 
 
 
+/*
+ * Erase part of the screen (given top left, and size)
+ * Note that these changes are NOT flushed immediately
+ * This function is only used below.
+ */
+static void EraseScreen(int ex, int ey, int ew, int eh)
+{
+    register int x, y;
+
+    /* Drop "black spaces" everywhere */
+    int na = 0;
+    int nc = ' ';
+
+    /* Paranoia -- nothing selected */
+    if (ew <= 0) return;
+    if (eh <= 0) return;
+
+    /* Paranoia -- nothing visible */
+    if (ex >= Term->scr->w) return;
+    if (ey >= Term->scr->h) return;
+
+    /* Force legal location */
+    if (ex < 0) ex = 0;
+    if (ey < 0) ey = 0;
+
+    /* Force legal size */
+    if (ex + ew > Term->scr->w) ew = Term->scr->w - ex;
+    if (ey + eh > Term->scr->h) eh = Term->scr->h - ey;
+
+    /* Scan every row */
+    for (y = ey; y < ey + eh; y++)
+    {
+	register int x1 = -1, x2;
+
+	/* Scan every column */
+	for (x = ex; x < ex + ew; x++)
+	{
+	    int oa = tw_a(Term->scr,x,y);
+	    int oc = tw_c(Term->scr,x,y);
+
+	    /* Hack -- Ignore "non-changes" */
+	    if ((oa == na) && (oc == nc)) continue;
+
+	    /* Save the "literal" information */
+	    tw_a(Term->scr,x,y) = na;
+	    tw_c(Term->scr,x,y) = nc;
+
+	    /* Hack -- ignore "double blanks" */
+	    if (BLANK(na,nc) && BLANK(oa,oc)) continue;
+
+	    /* Note the "range" of screen updates */
+	    if (x1 < 0) x1 = x;
+	    x2 = x;
+	}
+
+	/* Expand the "change area" as needed */
+	if (x1 >= 0)
+	{
+	    /* Check for new min/max row info */
+	    if (y < Term->scr->y1) Term->scr->y1 = y;
+	    if (y > Term->scr->y2) Term->scr->y2 = y;
+
+	    /* Check for new min/max col info in this row */
+	    if (x1 < Term->scr->x1[y]) Term->scr->x1[y] = x1;
+	    if (x2 > Term->scr->x2[y]) Term->scr->x2[y] = x2;
+	}
+    }
+}
+
+
+/*
+ * Clear from (x1,y1) to (x2,y2), inclusive, and move to (x1,y1)
+ *
+ * I do not know how efficient this is expected to be...
+ * Nor do I know how efficient the OutputFlush() will be.
+ */
+errr Term_erase(int x1, int y1, int x2, int y2)
+{
+    /* We always leave the cursor at the top-left edge */
+    Term_gotoxy(x1,y1);
+
+    /* Queue the "erase" for later */
+    EraseScreen(x1,y1,1+x2-x1,1+y2-y1);
+
+    /* Success */
+    return (0);
+}
+
 
 /*
  * Clear the entire screen
