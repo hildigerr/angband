@@ -82,6 +82,9 @@ static errr Term_xtra_ncu(int n, int v)
     /* Analyze the request */
     switch (n)
     {
+
+	/* Flush the ncurses buffer */
+	case TERM_XTRA_FLUSH: (void)refresh(); return (0);
     }
 
     /* Success */

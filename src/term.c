@@ -396,7 +396,9 @@ errr Term_load(void)
 errr Term_fresh()
 {
     screen_change = TRUE;	   /* Let inven_command know something has changed. */
-    (void)refresh();
+
+    /* And flush the graphics */
+    Term_xtra(TERM_XTRA_FLUSH, -999);
 
     /* Success */
     return (0);

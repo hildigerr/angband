@@ -442,6 +442,9 @@ static errr Term_xtra_cur(int n, int v)
     /* Analyze the request */
     switch (n)
     {
+
+	/* Flush the Curses buffer */
+	case TERM_XTRA_FLUSH: (void)refresh(); return (0);
     }
 
     return (1);

@@ -108,6 +108,13 @@ struct _term {
 
 
 
+/**** Available Constants ****/
+
+/* Definitions for "Term_xtra" */
+#define TERM_XTRA_FLUSH 22	/* Flush output */
+
+
+
 /**** Available Macros ****/
 
 /* Access to the char/attr at a given location */
