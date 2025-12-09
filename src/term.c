@@ -491,6 +491,19 @@ errr Term_bell()
 }
 
 
+
+
+/*
+ * Update the Term.
+ * XXX Not implemented.
+ */
+errr Term_update()
+{
+    /* Success */
+    return (0);
+}
+
+
 /*
  * Place the cursor at a given location
  * Note -- "illegal" requests do not move the cursor.
