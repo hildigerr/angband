@@ -47,8 +47,8 @@
 #  endif
 /*** SHUT MSDOS ***/
 
-# else /* not MSDOS */
-#  if !defined(ATARIST_MWC) && !defined(MACINTOSH)
+# else /* MSDOS */
+#  ifndef ATARIST_MWC
 
 /*** OPEN NORMAL ***/
 #   include <signal.h>

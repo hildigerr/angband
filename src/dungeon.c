@@ -522,8 +522,6 @@ void dungeon(void)
 	/*** Check the Load ***/
 
 #ifdef CHECK_HOURS
-#ifndef MACINTOSH
-    /* The Mac ignores the game hours file		 */
 	/* Check for game hours			       */
 	if (((turn % 100) == 1) && !check_time()) {
 	    if (closing_flag > 2) {
@@ -543,7 +541,7 @@ void dungeon(void)
 	    }
 	}
 #endif
-#endif
+
 
 	/*** Update the Stores ***/
 	

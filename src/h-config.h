@@ -21,7 +21,7 @@
 /* #define ultrix */
 
 /*
- * OPTION: Compile on a Macintosh with MPW C 3.0
+ * OPTION: Compile on a Macintosh
  */
 /* #define MACINTOSH */
 
@@ -160,7 +160,7 @@
 
 
 /* substitute strchr for index on USG versions of UNIX */
-#if defined(SYS_V) || defined(MSDOS) || defined(MACINTOSH) || vms
+#if defined(SYS_V) || defined(MSDOS) || vms
 #define index strchr
 #endif
 

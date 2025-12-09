@@ -34,14 +34,9 @@
 #endif
 
 #if !defined(ATARIST_MWC)
-#ifdef MACINTOSH
-#else
 long time();
-
-#endif
 #else
 char *malloc();
-
 #endif
 
 #if !defined(SET_UID)

@@ -11,12 +11,6 @@
  */
 
 
-#if !defined(GEMDOS)
-#ifdef MACINTOSH
-#include <scrnmgr.h>
-#endif
-#endif
-
 #include "angband.h"
 
 #if !defined(MSDOS)

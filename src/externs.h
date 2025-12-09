@@ -356,16 +356,11 @@ extern cave_type cave[MAX_HEIGHT][MAX_WIDTH];
 /* A pointer to the main player record */
 extern player_type *p_ptr;
 
-
-#ifdef MACINTOSH
-extern char *(*player_title)[MAX_PLAYER_LEVEL];
-extern player_race *race;
-extern player_background *background;
-#else
-extern cptr player_title[MAX_CLASS][MAX_PLAYER_LEVEL];
 extern player_race race[MAX_RACES];
 extern player_background background[MAX_BACKGROUND];
-#endif
+
+extern cptr player_title[MAX_CLASS][MAX_PLAYER_LEVEL];
+
 extern u32b player_exp[MAX_PLAYER_LEVEL];
 extern u16b player_hp[MAX_PLAYER_LEVEL];
 
@@ -378,11 +373,7 @@ extern player_class class[MAX_CLASS];
 extern s16b class_level_adj[MAX_CLASS][MAX_LEV_ADJ];
 
 /* Warriors don't have spells, so there is no entry for them. */
-#ifdef MACINTOSH
-extern spell_type (*magic_spell)[63];
-#else
 extern spell_type magic_spell[MAX_CLASS-1][63];
-#endif
 extern cptr spell_names[127];
 extern u32b spell_learned;	/* Bit field for spells learnt -CJS- */
 extern u32b spell_learned2;	/* Bit field for spells learnt -CJS- */

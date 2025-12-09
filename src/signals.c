@@ -15,27 +15,6 @@
  * Completely rewritten by				-CJS-
  */
 
-/* Signals have no significance on the Mac */
-
-#ifdef MACINTOSH
-
-void 
-signals_ignore_tstp()
-{
-}
-
-void 
-signals()
-{
-}
-
-void 
-signals_init()
-{
-}
-
-#else				   /* a non-Mac system */
-
 #include <stdio.h>
 
 #ifdef linux
@@ -364,4 +343,3 @@ void restore_signals()
 #endif
 }
 
-#endif				   /* big Mac conditional */

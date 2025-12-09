@@ -5,6 +5,9 @@
 ## to your machine, available libraries, compilation options,
 ## etc...
 ##
+## Note that the Macintosh does not
+## use a Makefile, but a Think C 6.0 project file, see elsewhere.
+##
 
 
 SRCS = \

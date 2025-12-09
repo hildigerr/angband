@@ -35,6 +35,7 @@
 #endif
 
 #ifdef MACINTOSH
+# include <unix.h>
 #else
 # ifndef __TURBOC__
 #  include <unistd.h>

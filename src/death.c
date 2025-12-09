@@ -38,11 +38,8 @@
 #endif
 
 
-#ifndef MACINTOSH
 #ifdef SYS_V
 struct passwd      *getpwuid();
-
-#endif
 #endif
 
 #if !defined(time_t)
